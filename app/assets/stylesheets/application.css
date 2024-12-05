@@ -11,16 +11,15 @@ body {
     justify-content: space-between;
     align-items: center;
     background-color: #E6E6EA;
-    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1); 
     width:100%; 
     z-index: 10;
     position: relative;
 }
 
-.navbar-logo_css {
+.navbar-logo_css img {
     width: 90px;
     object-fit: contain;
-    display:block;
+    display:block; 
 } 
 
 .navbar-center_css {
@@ -119,6 +118,7 @@ body {
 .image_css {
     max-width: 100%; 
     height: auto; 
+    object-fit: cover;
 }
 
 .text-container_css {
@@ -128,6 +128,14 @@ body {
     border-radius: 5px; 
     box-shadow: 0 1px 10px rgba(0, 0, 0, 0.1); 
 }
+
+
+
+
+
+
+
+
 
 
 
