@@ -1,0 +1,13 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  user: one
+  event: one
+  payment: one
+  interested: false
+
+two:
+  user: two
+  event: two
+  payment: two
+  interested: false
