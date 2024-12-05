@@ -1,0 +1,30 @@
+<div class="navbar_css">
+  <div class="navbar-left_css">
+    <div class="navbar-logo_css">
+      <%= image_tag "Le-Circographe_logo_transparent.png" %>
+    </div>
+  </div>
+  <div class="navbar-center_css">
+    <ul class="navbar-links_css">
+      <li><p>Accueil</p></li>
+      <li><p>Le cirque</p></li>
+      <li><p>Le Graphe</p></li>
+      <li><p>Le lieu</p></li>
+      <li><p>À propos</p></li>
+    </ul>
+  </div>
+  <div class="navbar-right_css">
+
+    <% if authenticated? %>
+
+    <button class="white-button_css">Mon profil</button>
+    <button class="blue-button_css">Se déconnecter</button>
+
+    <% else %>
+
+    <button class="white-button_css">Se connecter</button>
+    <button class="blue-button_css">S'inscrire</button>
+
+    <% end %>
+  </div>
+</div>
