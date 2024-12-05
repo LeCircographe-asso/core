@@ -1,7 +1,8 @@
 
 body {
     margin: 0;
-    font-family: 'Arial', sans-serif;
+    padding: 0;
+    width: 100%;
     background-color: white; 
 }
 
@@ -9,10 +10,11 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 10px 20px; 
     background-color: #E6E6EA;
     box-shadow: 0 0 5px rgba(0, 0, 0, 0.1); 
     width:100%; 
+    z-index: 10;
+    position: relative;
 }
 
 .navbar-logo_css {
@@ -82,4 +84,51 @@ body {
 .blue-button_css:hover {
     background-color: #5836a5;
 }
+
+
+.baner_css {
+    position: relative; 
+    background-size: cover;
+    background-position: center;
+    height: 400px;
+    width: 100vw;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    clip-path: ellipse(100% 90% at 70% 10%);
+    z-index: 1;
+}
+
+
+.container_css {
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center; 
+    gap: 100px; 
+    padding: 50px; 
+    margin: auto;
+}
+
+.image-container_css {
+    flex: 2; 
+    display: flex;
+    justify-content: center; 
+    align-items: center;
+}
+
+.image_css {
+    max-width: 100%; 
+    height: auto; 
+}
+
+.text-container_css {
+    flex: 1; 
+    background-color: #f5f5f5; 
+    padding: 20px; 
+    border-radius: 5px; 
+    box-shadow: 0 1px 10px rgba(0, 0, 0, 0.1); 
+}
+
+
+
 
