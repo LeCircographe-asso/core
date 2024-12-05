@@ -1,9 +1,9 @@
 .footer_css {
-  background-color: #cce8e3;
+  background-color: #D9DBDE;
   color: #374151;
   width: 100%;
   border-top: 1px solid #a0aec0;
-  position: fixed;
+  position: relative;
   bottom: 0;
   display: flex;
   justify-content: space-between;
