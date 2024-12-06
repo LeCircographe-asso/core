@@ -1,0 +1,21 @@
+<% content_for :css_file, "pages_contact" %>
+
+<div class="contact-container">
+  <h1>Nous contacter</h1>
+
+  <form class="contact-form">
+    <div class="form-group">
+      <label for="object">Objet</label>
+      <input type="text" id="object" name="object" placeholder="Objet" class="contact-input">
+    </div>
+
+    <div class="form-group">
+      <label for="description">Décrivez votre problème</label>
+      <textarea id="description" name="description" placeholder="Décrivez votre problème" class="contact-textarea"></textarea>
+    </div>
+
+    <div class="form-group">
+      <button type="submit" class="contact-button">Envoyer</button>
+    </div>
+  </form>
+</div>

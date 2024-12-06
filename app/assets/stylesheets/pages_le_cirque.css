@@ -1,0 +1,50 @@
+.cirque-container {
+  background-color: #d8f3dc;
+  font-family: Arial, sans-serif;
+  padding: 20px;
+}
+
+.banner-image {
+  width: 100%;
+  height: auto;
+  max-height: 20vh;
+  object-fit: cover;
+}
+
+.main-content {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+.left-content,
+.right-content {
+  width: 48%;
+}
+
+.image-box {
+  border: 2px solid #ddd;
+  padding: 10px;
+  text-align: center;
+}
+
+.cirque-image {
+  width: 100%;
+  height: auto;
+}
+
+.right-content ul {
+  list-style: none;
+  padding: 0;
+}
+
+.right-content li {
+  margin: 5px 0;
+}
+
+.text-section {
+  margin-top: 30px;
+  background-color: #f8f9fa;
+  padding: 20px;
+  border-radius: 8px;
+}

@@ -1,10 +1,177 @@
-/*
- * This is a manifest file that'll be compiled into application.css.
- *
- * With Propshaft, assets are served efficiently without preprocessing steps. You can still include
- * application-wide styles in this file, but keep in mind that CSS precedence will follow the standard
- * cascading order, meaning styles declared later in the document or manifest will override earlier ones,
- * depending on specificity.
- *
- * Consider organizing styles into separate files for maintainability.
- */
+body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    background-color: white; 
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+main {
+    flex: 1;
+}
+
+.navbar_css {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #E6E6EA;
+    width:100%; 
+    z-index: 10;
+    position: relative;
+}
+
+.navbar-logo_css img {
+    width: 90px;
+    object-fit: contain;
+    display:block; 
+} 
+
+.navbar-center_css {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+}
+
+.navbar-links_css {
+    list-style: none;
+    display: flex;
+    gap: 20px;
+    padding: 0;
+    margin: 0;
+}
+
+.navbar-links_css li a {
+    text-decoration: none;
+    font-size: 16px;
+    color: black;
+    font-weight: bold;
+}
+
+.navbar-links_css li a:hover {
+    text-decoration: underline;
+}
+
+.navbar-right_css {
+    display: flex;
+    gap: 10px;
+    margin-right: 2em;
+}
+
+.white-button_css {
+    padding: 5px 15px;
+    border: 1px solid #007bff;
+    background-color: white;
+    color: #007bff;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.white-button_css:hover {
+    background-color: #e7f0ff;
+}
+
+.blue-button_css {
+    padding: 5px 15px;
+    border: none;
+    background-color: #6b47b8;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px; 
+}
+
+.blue-button_css:hover {
+    background-color: #5836a5;
+}
+
+.baner_css {
+    position: relative; 
+    background-size: cover;
+    background-position: center;
+    height: 400px;
+    width: 100vw;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    clip-path: ellipse(100% 90% at 70% 10%);
+    z-index: 1;
+}
+
+.container_css {
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center; 
+    gap: 100px; 
+    padding: 50px; 
+    margin: auto;
+}
+
+.image-container_css {
+    flex: 2; 
+    display: flex;
+    justify-content: center; 
+    align-items: center;
+}
+
+.image_css {
+    max-width: 100%; 
+    height: auto; 
+    object-fit: cover;
+}
+
+.text-container_css {
+    flex: 1; 
+    background-color: #f5f5f5; 
+    padding: 20px; 
+    border-radius: 5px; 
+    box-shadow: 0 1px 10px rgba(0, 0, 0, 0.1); 
+}
+
+.form-container {
+    background-color: #ffffff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-around;
+    border: solid black 1px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: auto;
+    width: fit-content;
+    padding: 10px;
+
+}
+
+.form-field {
+    padding: 10px;
+}
+
+.form-half {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.form-half h1 {
+    padding-top: 50px;
+    padding-bottom: 50px;
+}
+
+.form-half {
+    padding-left: 20px;
+    padding-right: 20px;
+}
+
+.footer_css {
+    background-color: #D9DBDE;
+    color: #374151;
+    width: 100%;
+    border-top: 1px solid #a0aec0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 10;
+}

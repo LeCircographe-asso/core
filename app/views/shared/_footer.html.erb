@@ -1,0 +1,35 @@
+<footer class="footer_css">
+  <div class="footer_column_css">
+    <h3>A propos de nous :</h3>
+    <ul>
+      <li><%= link_to "Nous contacter", contact_path, class: "footer_link_css" %></li>
+      <li><%= link_to "CGU", "#", class: "footer_link_css" %></li>
+      <li><%= link_to "Politique de confidentialité", "#", class: "footer_link_css" %></li>
+    </ul>
+  </div>
+  <div class="footer_logo_wrapper_css">
+    <%= link_to root_path do %>
+      <%= image_tag "Le-Circographe.png", alt: "Logo Circo Graphe", class: "footer_logo_css" %>
+    <% end %>
+  </div>
+  <div class="footer_column_css">
+    <h3>Suivez-nous !</h3>
+    <ul class="social_icons_css">
+      <li>
+        <%= link_to "https://www.instagram.com/lecircographe/", target: "_blank" do %>
+          <%= image_tag "instagram.png", alt: "Instagram", class: "footer_icon_css" %>
+        <% end %>
+      </li>
+      <li>
+        <%= link_to "https://www.facebook.com/lecircographe/?locale=fr_FR", target: "_blank" do %>
+          <%= image_tag "facebook.png", alt: "Facebook", class: "footer_icon_css" %>
+        <% end %>
+      </li>
+    </ul>
+  </div>
+  <div class="footer_back_to_top">
+    <%= link_to "#", class: "back-to-top_css" do %>
+      <span>↑ Haut de page</span>
+    <% end %>
+  </div>
+</footer>
