@@ -6,25 +6,20 @@
   </div>
   <div class="navbar-center_css">
     <ul class="navbar-links_css">
-      <li><p>Accueil</p></li>
-      <li><p>Le cirque</p></li>
-      <li><p>Le Graphe</p></li>
-      <li><p>Le lieu</p></li>
-      <li><p>À propos</p></li>
+      <li><%= link_to "Accueil", root_path, class: "navbar-link_css" %></li>
+      <li><%= link_to "Le cirque", le_cirque_path, class: "navbar-link_css" %></li>
+      <li><%= link_to "Le Graff", le_graff_path, class: "navbar-link_css" %></li>
+      <li><%= link_to "Le lieu", le_lieu_path, class: "navbar-link_css" %></li>
+      <li><%= link_to "À propos", about_path, class: "navbar-link_css" %></li>
     </ul>
   </div>
   <div class="navbar-right_css">
-
     <% if authenticated? %>
-
-    <button class="white-button_css">Mon profil</button>
-    <button class="blue-button_css">Se déconnecter</button>
-
+      <%= button_to "Mon profil", user_path(current_user), class: "white-button_css" %>
+      <%= button_to "Se déconnecter", destroy_session_path, method: :delete, class: "blue-button_css" %>
     <% else %>
-
-    <button class="white-button_css">Se connecter</button>
-    <button class="blue-button_css">S'inscrire</button>
-
+      <%= link_to "Se connecter", new_session_path, class: "white-button_css" %>
+      <%= link_to "S'inscrire", new_registration_path, class: "blue-button_css" %>
     <% end %>
   </div>
 </div>
