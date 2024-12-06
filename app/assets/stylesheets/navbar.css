@@ -17,7 +17,8 @@ body {
 }
 
 .navbar-logo_css img {
-  width: 90px;
+  width: auto;
+  height: 80px;
   object-fit: contain;
   display: block;
 }
