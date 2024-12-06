@@ -1,0 +1,52 @@
+.graff-container {
+  background-color: #d8f3dc;
+  font-family: Arial, sans-serif;
+  padding: 20px;
+}
+
+.banner-image {
+  width: 100%;
+  height: auto;
+  max-height: 20vh;
+  object-fit: cover;
+}
+
+.main-content {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+.left-content {
+  width: 48%;
+}
+
+.right-content {
+  width: 48%;
+}
+
+.image-box {
+  border: 2px solid #ddd;
+  padding: 10px;
+  text-align: center;
+}
+
+.graff-image {
+  width: 100%;
+  height: auto;
+}
+
+.text-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-top: 30px;
+}
+
+.paragraph-content {
+  width: 60%;
+}
+
+.paragraph-content p {
+  margin: 10px 0;
+}

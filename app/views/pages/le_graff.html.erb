@@ -1,2 +1,32 @@
-<h1>Le Graff</h1>
-<p>Bienvenue sur la page du graff.</p>
+<% content_for :css_file, "pages_le_graff" %>
+
+<div class="graff-container">
+  <div class="banner">
+    <%= image_tag "graff.png", alt: "Scène de vie - Le Graff", class: "banner-image" %>
+  </div>
+
+  <div class="main-content">
+    <div class="left-content">
+      <h2>Le Graff au Circographe :</h2>
+      <p>Fort de l'empreinte artistique de SWED, blabla blablablabli...<br>
+      Continue à partir, explique ton truc.</p>
+    </div>
+    <div class="right-content">
+      <div class="image-box">
+        <%= image_tag "graff.png", alt: "Image Graff", class: "graff-image" %>
+      </div>
+    </div>
+  </div>
+
+  <div class="text-section">
+    <div class="image-box">
+      <%= image_tag "graff.png", alt: "Artwork Graff", class: "graff-image" %>
+    </div>
+    <div class="paragraph-content">
+      <p>Paragraphe : Paragraphe : Paragraphe :</p>
+      <p>Paragraphe : Paragraphe : Paragraphe :</p>
+      <p>Paragraphe : Paragraphe : Paragraphe :</p>
+      <p>Paragraphe : Paragraphe : Paragraphe :</p>
+    </div>
+  </div>
+</div>

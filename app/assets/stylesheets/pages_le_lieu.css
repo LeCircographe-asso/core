@@ -1,0 +1,70 @@
+.place-container {
+  background-color: #d8f3dc;
+  font-family: Arial, sans-serif;
+  padding: 20px;
+}
+
+.banner-image {
+  width: 100%;
+  height: auto;
+  max-height: 20vh;
+  object-fit: cover;
+}
+
+.main-content {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+.left-content {
+  width: 48%;
+}
+
+.right-content {
+  width: 48%;
+}
+
+.image-box {
+  border: 2px solid #ddd;
+  padding: 10px;
+  text-align: center;
+}
+
+.place-image {
+  width: 100%;
+  height: auto;
+}
+
+.contact-button {
+  text-align: center;
+  margin: 30px 0;
+}
+
+.btn-contact {
+  background-color: #6c63ff;
+  color: white;
+  padding: 15px 30px;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.btn-contact:hover {
+  background-color: #5146d6;
+}
+
+.text-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-top: 30px;
+}
+
+.paragraph-content {
+  width: 60%;
+}
+
+.paragraph-content p {
+  margin: 10px 0;
+}
