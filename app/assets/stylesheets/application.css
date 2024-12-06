@@ -138,8 +138,10 @@ body {
     border: solid black 1px;
     margin-left: auto;
     margin-right: auto;
+    margin-bottom: auto;
     width: fit-content;
     padding: 10px;
+
 }
 
 .form-field {
