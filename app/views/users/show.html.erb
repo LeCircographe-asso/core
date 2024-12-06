@@ -1,0 +1,20 @@
+<h1>Profil</h1>
+
+<% @public_attributes.each do |attr_name, attr_value|%>
+  <p>
+    <%= attr_name%> : 
+    <%
+        if attr_value == true 
+         mot = "Oui" 
+        elsif attr_value == false
+          mot = "Non"
+        elsif attr_value == nil
+          mot = "Non précisé"
+        else
+          mot = attr_value
+        end
+    %>
+    <%= mot%>
+  </p>
+<%end%>
+

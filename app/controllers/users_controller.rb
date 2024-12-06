@@ -6,6 +6,12 @@ class UsersController < ApplicationController
 
   def show
     @user = User.find(params[:id])
+    @public_attributes = {
+      "Prénom" => @user.first_name,
+      "Nom" => @user.last_name,
+      "Adresse Mail" => @user.email_address,
+      "Ville" => @user.town
+    }
   end
 
   def new
