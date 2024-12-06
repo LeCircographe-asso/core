@@ -1,9 +1,15 @@
-
 body {
     margin: 0;
     padding: 0;
     width: 100%;
     background-color: white; 
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+main {
+    flex: 1;
 }
 
 .navbar_css {
@@ -54,7 +60,6 @@ body {
 }
 
 .white-button_css {
-
     padding: 5px 15px;
     border: 1px solid #007bff;
     background-color: white;
@@ -65,12 +70,10 @@ body {
 }
 
 .white-button_css:hover {
-
     background-color: #e7f0ff;
 }
 
 .blue-button_css {
-
     padding: 5px 15px;
     border: none;
     background-color: #6b47b8;
@@ -84,7 +87,6 @@ body {
     background-color: #5836a5;
 }
 
-
 .baner_css {
     position: relative; 
     background-size: cover;
@@ -97,7 +99,6 @@ body {
     clip-path: ellipse(100% 90% at 70% 10%);
     z-index: 1;
 }
-
 
 .container_css {
     display: flex; 
@@ -148,28 +149,29 @@ body {
     padding: 10px;
 }
 
-.form-half{
+.form-half {
     display: flex;
     flex-direction: column;
     align-items: center;
 }
 
-.form-half h1{
+.form-half h1 {
     padding-top: 50px;
     padding-bottom: 50px;
 }
 
 .form-half {
     padding-left: 20px;
-    padding-right: 20px
+    padding-right: 20px;
 }
 
-
-
-
-
-
-
-
-
-
+.footer_css {
+    background-color: #D9DBDE;
+    color: #374151;
+    width: 100%;
+    border-top: 1px solid #a0aec0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 10;
+}
