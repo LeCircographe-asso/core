@@ -15,7 +15,6 @@ class SessionsController < ApplicationController
   end
 
   def destroy
-    rails.logger.debug "Destroy action triggered"
     terminate_session
     Rails.logger.debug "Session terminated"
     redirect_to root_path, notice: "Déconnecté avec succès !"
