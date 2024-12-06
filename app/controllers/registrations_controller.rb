@@ -6,7 +6,10 @@ class RegistrationsController < ApplicationController
   end
 
   def create
-    @user = User.new(user_params)
+    email = params[:email_address]
+    pwd = params[:password]
+    pwdc = params[:password_confirmation]
+    @user = User.new(email_address: email, password: pwd, password_confirmation: pwdc)
     if @user.save
       start_new_session_for @user
       redirect_to root_path, notice: 'Inscription réussie !'
