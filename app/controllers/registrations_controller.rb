@@ -2,6 +2,9 @@ class RegistrationsController < ApplicationController
   allow_unauthenticated_access
 
   def new
+    if authenticated?
+      redirect_to root_path
+    end
     @user = User.new
   end
 
