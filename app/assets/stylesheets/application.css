@@ -129,7 +129,38 @@ body {
     box-shadow: 0 1px 10px rgba(0, 0, 0, 0.1); 
 }
 
+.form-container {
+    background-color: #ffffff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-around;
+    border: solid black 1px;
+    margin-left: auto;
+    margin-right: auto;
+    width: fit-content;
+    padding: 10px;
+}
 
+.form-field {
+    padding: 10px;
+}
+
+.form-half{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.form-half h1{
+    padding-top: 50px;
+    padding-bottom: 50px;
+}
+
+.form-half {
+    padding-left: 20px;
+    padding-right: 20px
+}
 
 
 
