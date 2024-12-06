@@ -9,10 +9,10 @@
   <div class="navbar-center_css">
     <ul class="navbar-links_css">
       <li><%= link_to "Accueil", root_path, class: "navbar-link_css" %></li>
-      <li><%= link_to "Le cirque", le_cirque_path, class: "navbar-link_css" %></li>
-      <li><%= link_to "Le graff", le_graff_path, class: "navbar-link_css" %></li>
-      <li><%= link_to "Le lieu", le_lieu_path, class: "navbar-link_css" %></li>
-      <li><%= link_to "À propos", about_path, class: "navbar-link_css" %></li>
+      <li><%= link_to "Le cirque", page_path("le_cirque"), class: "navbar-link_css" %></li>
+      <li><%= link_to "Le graff", page_path("le_graff"), class: "navbar-link_css" %></li>
+      <li><%= link_to "Le lieu", page_path("le_lieu"), class: "navbar-link_css" %></li>
+      <li><%= link_to "À propos", page_path("about"), class: "navbar-link_css" %></li>
     </ul>
   </div>
   <div class="navbar-right_css">
