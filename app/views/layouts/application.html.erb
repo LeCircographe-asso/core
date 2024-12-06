@@ -28,7 +28,7 @@
     <%= javascript_importmap_tags %>
   </head>
 
-  <body>
+  <body class="<%= controller_name %>-<%= action_name %>">
     <%= render 'shared/navbar' %>
     <main>
       <%= yield %>

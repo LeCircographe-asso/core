@@ -15,4 +15,7 @@ class PagesController < ApplicationController
 
   def le_lieu
   end
+
+  def contact
+  end
 end
