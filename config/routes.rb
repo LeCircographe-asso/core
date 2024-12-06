@@ -3,6 +3,7 @@ Rails.application.routes.draw do
   get "le_graff", to: "pages#le_graff", as: :le_graff
   get "le_lieu", to: "pages#le_lieu", as: :le_lieu
   get "about", to: "pages#about", as: :about
+  get "contact", to: "pages#contact", as: :contact
   
   
   namespace :admin do
