@@ -17,6 +17,11 @@ class User < ApplicationRecord
 
   has_secure_password
   validates :email_address, presence: true, uniqueness: true
-
+  
   alias_attribute :email, :email_address
+
+  def has_privileges?
+    ["admin", "godmode", "volunteer"].include? self.role
+  end
+
 end
