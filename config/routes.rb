@@ -18,6 +18,7 @@ Rails.application.routes.draw do
   
   root "home#index"
 
+  match '*unmatched', to: 'application#url_not_found', via: :all
 
 
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
