@@ -1,6 +1,12 @@
 <h1>Profil</h1>
 <% authenticated? %>
 
+<%= %>
+
+<% if current_user.role == "admin" || current_user.role == "godmode" || current_user.role == "volunteer" %>
+  <%= link_to "Dashboard Administrateur", admin_dashboard_path %>
+<% end %>
+
 <% @public_attributes.each do |attr_name, attr_value|%>
 <p>
     <%= attr_name%> :
@@ -19,7 +25,6 @@
 </p>
 
 <%end%>
-<%= %>
-<% if current_user.role == "admin" || current_user.role == "godmode" || current_user.role == "volunteer" %>
-<%= link_to "Dashboard Administrateur", admin_dashboard_path %>
-<% end %>
+
+
+
