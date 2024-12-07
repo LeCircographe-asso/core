@@ -43,7 +43,7 @@
 5. Access the app at http://localhost:3000
 
 ### Deployment
-The app is deployed on Ionos 
+The app is deployed on Ionos [link](http://87.106.173.45:3000/)
 
 ### Team
 - Mentor : Hadrien SAMOUILLAN

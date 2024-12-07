@@ -10,18 +10,15 @@
 
     <%= yield :head %>
 
-    <%# Enable PWA manifest for installable apps (make sure to enable in config/routes.rb too!) %>
-    <%#= tag.link rel: "manifest", href: pwa_manifest_path(format: :json) %>
-
     <link rel="icon" href="/icon.png" type="image/png">
     <link rel="icon" href="/icon.svg" type="image/svg+xml">
     <link rel="apple-touch-icon" href="/icon.png">
 
-    <%# Includes the global stylesheet for the app %>
     <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
 
-    <%# Includes a page-specific stylesheet if defined in the view %>
-    <% if content_for?(:css_file) %>
+    <% if controller_path.start_with?('admin') %>
+      <%= stylesheet_link_tag 'dashboard', "data-turbo-track": "reload" %>
+    <% elsif content_for?(:css_file) %>
       <%= stylesheet_link_tag content_for(:css_file), "data-turbo-track": "reload" %>
     <% end %>
 
