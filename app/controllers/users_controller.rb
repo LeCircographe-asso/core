@@ -5,7 +5,12 @@ class UsersController < ApplicationController
   end
 
   def show
+    authenticated?
     @user = User.find(params[:id])
+    if !Current.user.has_privileges? && @user.id != Current.user.id
+      redirect_to user_path(Current.user.id)
+    end
+    
     @public_attributes = {
       "Prénom" => @user.first_name,
       "Nom" => @user.last_name,
