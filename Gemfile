@@ -71,3 +71,4 @@ gem "stripe"
 gem "actionmailer"
 gem "faker"
 gem "dotenv-rails"
+

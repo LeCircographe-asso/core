@@ -1,29 +1,28 @@
-<div class = "form-half">
-<h1>S'inscrire au Circographe</h1>
-
-
-
-
-  <%= form_with url: registration_path(action: "create"), method: "post", class: "login-form" do |form| %>
-    <div class="form-container">
-    <div class="form-field">
-      <%= form.email_field :email_address, required: true, placeholder: "Adresse mail", maxlength: 72, class: "form-input" %>
-    </div>
-
-    <div class="form-field">
-      <%= form.password_field :password, required: true, placeholder: "Mot de passe", maxlength: 72, class: "form-input" %>
-    </div>
-
-    <div class="form-field">
-      <%= form.password_field :password_confirmation, required: true, placeholder: "Confirmer votre mot de passe", maxlength: 72, class: "form-input" %>
-    </div>
-
-    <div class="form-submit">
-      <%= form.submit "S'inscrire", class: "submit-button blue-button" %>
-    </div>
-    </div>
-
-  <% end %> 
+<div class="container">
+  <div class="image-block">
+    <%= image_tag("about.png") %>
   </div>
+    
+  <div class="form-block">
+    <%= form_with url: registration_path(action: "create"), method: "post", class: "signup-form" do |form| %>
+      <h1>S’inscrire au Circographe</h1>
+
+      <div class="form-group">
+        <%= form.email_field :email_address, required: true, placeholder: "Adresse mail", maxlength: 72, class: "form-input" %>
+      </div>
+
+      <div class="form-group">
+        <%= form.password_field :password, required: true, placeholder: "Mot de passe", maxlength: 72, class: "form-input" %>
+      </div>
+
+      <div class="form-group">
+        <%= form.password_field :password_confirmation, required: true, placeholder: "Confirmer votre mot de passe", maxlength: 72, class: "form-input" %>
+      </div>
+
+      <%= form.submit "S'inscrire", class: "submit-button blue-button" %>
+    <% end %>
+  </div>
+</div>
+
 
 
