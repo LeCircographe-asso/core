@@ -20,8 +20,4 @@ class User < ApplicationRecord
   
   alias_attribute :email, :email_address
 
-  def has_privileges?
-    ["admin", "godmode", "volunteer"].include? self.role
-  end
-
 end

@@ -1,21 +1,8 @@
-# Le Circographe 
+# README
+LE CIRCOGRAPHE 
 
 ## English
 **Le Circographe** is an association in Toulouse, France
-
-### Features  
-- User authentication (sign up/login).  
-- ... 
-- ... 
-- Online payment integration using Stripe.  
-- ... 
-
-### Technologies  
-- **Backend**: Ruby on Rails 8  
-- **Frontend**: Tailwind
-- **Payments**: Stripe  
-- **Database**: SQLite3
-- **Deployment**: Ionos VPS
 
 ### Installation  
 1. Clone the repository:  
@@ -43,22 +30,8 @@
   ./bin/dev
   rails server
   ```
-
-5. Access the app at http://localhost:3000
-
 ### Deployment
 The app is deployed on Ionos
-
-### Team
-- Mentor : Hadrien SAMOUILLAN
-- Team members :
-  - [Christophe Alaterre](https://github.com/AkaKwak)
-  - [Thierry Corlieto](https://github.com/hellijah)         
-  - [Florian Elie](https://github.com/Elie-Kauptairr)
-  - [Luc Ramassamy](https://github.com/Warzieram)
-  - [Sacha Courbé](https://github.com/Sachathp)
-
-### Mockup
 
 [Figma Mockup](https://www.figma.com/design/EDzWXstQDroP9qsXQeDJ0n/Untitled?node-id=0-1&t=L5nyuxxAHArehDCo-0)
 
@@ -154,3 +127,4 @@ french version
 [lien](http://87.106.173.45:3000/)
 Utilisateur Admin : admin@rails.com
 mot de passe : 123456
+
