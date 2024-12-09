@@ -2,4 +2,3 @@
 import "@hotwired/turbo-rails"
 import "controllers"
 import "./back_to_top";
-import './flash.js';
