@@ -13,6 +13,7 @@
   <table class="dashboard-table">
     <thead>
       <tr>
+        <th>Id</th>
         <th>Email</th>
         <th>Rôle</th>
         <th>Actions</th>
@@ -21,10 +22,11 @@
     <tbody>
       <% @users.each do |user| %>
         <tr>
+          <td><%= user.id %></td>
           <td><%= user.email_address %></td>
           <td><%= user.role %></td>
           <td>
-            <%= link_to 'Modifier', edit_admin_user_path(user), class: "btn btn-link" %>
+            <%= button_to "voir", admin_member_show_path(user_id: user.id), class: "btn btn-primary", data: { turbo: false } %>
           </td>
         </tr>
       <% end %>

@@ -10,12 +10,21 @@ class Admin::DashboardController < ApplicationController
     @users = User.all
   end
 
+  def member_show
+    @user = User.find(params[:user_id])
+
+  end
+
   private
 
   def authorize_admin_or_godmode
     unless Current.user&.role.in?(['volunteer','admin', 'godmode'])
       redirect_to root_path, alert: 'Accès non autorisé'
     end
+  end
+
+  def user_params
+    params.require(:user).permit(:email_address, :password, :password_confirmation)
   end
 
 end

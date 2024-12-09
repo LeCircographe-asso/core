@@ -5,7 +5,10 @@ Rails.application.routes.draw do
   namespace :admin do
     get 'dashboard', to: 'dashboard#index'
     get 'members_list', to: 'dashboard#members_list'
+    get 'member_show', to: 'dashboard#member_show'
+    post 'member_show', to: 'dashboard#member_show'
     resources :users
+    resources :members
   end
   
   resources :pages, only: [:show]
