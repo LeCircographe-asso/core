@@ -1,8 +1,12 @@
 class Admin::DashboardController < ApplicationController
-  ApplicationController
+  # ApplicationController
   before_action :authorize_admin_or_godmode
 
   def index
+    @users = User.all
+  end
+
+  def members_list
     @users = User.all
   end
 

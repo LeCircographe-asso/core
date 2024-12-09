@@ -4,6 +4,7 @@ Rails.application.routes.draw do
   
   namespace :admin do
     get 'dashboard', to: 'dashboard#index'
+    get 'members_list', to: 'dashboard#members_list'
     resources :users
   end
   
