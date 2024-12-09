@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Formulaire d'adhésion</title>
+  <link rel="stylesheet" href="formulaire.css">
+</head>
+<body>
+  <div class="form-container">
+    <h1>Formulaire d'adhésion</h1>
+    <form action="/submit_form" method="post">
+      <fieldset>
+        <legend>J'adhère au Circographe pour :</legend>
+        <div class="checkbox-group">
+          <label><input type="checkbox" name="cirque" value="cirque"> CIRQUE</label>
+          <label><input type="checkbox" name="tarif_reduit" value="tarif_reduit"> Tarif Réduit* (7 €)</label>
+          <label><input type="checkbox" name="tarif_plein" value="tarif_plein"> Tarif plein (10 €)</label>
+          <label><input type="checkbox" name="graff" value="graff"> Graff (libre 1 €)</label>
+          <label><input type="checkbox" name="soutien" value="soutien"> Soutien à l’association (libre 1 €)</label>
+        </div>
+        <p>*Mineur.e/RSA/Personne en situation de handicap</p>
+      </fieldset>
+
+      <fieldset>
+        <legend>Informations personnelles</legend>
+        <label for="prenom">Prénom</label>
+        <input type="text" id="prenom" name="prenom" required>
+
+        <label for="nom">Nom</label>
+        <input type="text" id="nom" name="nom" required>
+
+        <label for="date_naissance">Date de naissance</label>
+        <input type="date" id="date_naissance" name="date_naissance" required>
+
+        <label for="adresse">Adresse</label>
+        <input type="text" id="adresse" name="adresse" required>
+
+        <label for="code_postal">Code postal</label>
+        <input type="text" id="code_postal" name="code_postal" required>
+
+        <label for="ville">Ville</label>
+        <input type="text" id="ville" name="ville" required>
+
+        <label for="pays">Pays</label>
+        <input type="text" id="pays" name="pays" required>
+
+        <label for="telephone">Numéro de téléphone</label>
+        <input type="tel" id="telephone" name="telephone" required>
+
+        <label for="email">Adresse mail</label>
+        <input type="email" id="email" name="email" required>
+
+        <label for="profession">Profession</label>
+        <input type="text" id="profession" name="profession">
+
+        <label for="specialite">Spécialité ou Disciplines pratiquées</label>
+        <input type="text" id="specialite" name="specialite">
+      </fieldset>
+
+      <fieldset>
+        <legend>Autorisation de droit à l'image</legend>
+        <label><input type="radio" name="droit_image" value="oui" required> OUI</label>
+        <label><input type="radio" name="droit_image" value="non" required> NON</label>
+        <p>
+          J’accepte d’être photographié.e ou filmé.e dans le cadre des activités du CircoGraphe et de Dark Paillettes et accepte
+          l’utilisation des photos ou vidéos à des fins de communication (site internet, plaquettes, réseaux sociaux …) de l’association.
+        </p>
+      </fieldset>
+
+      <fieldset>
+        <legend>Si le projet vous intéresse :</legend>
+        <label><input type="checkbox" name="newsletter" value="oui"> Je souhaite m’inscrire à la newsletter</label>
+        <label><input type="checkbox" name="investir" value="oui"> Je souhaite m’investir dans le projet</label>
+        <label><input type="checkbox" name="soutenir_financierement" value="oui"> Je souhaite soutenir financièrement le projet (cagnotte en ligne)</label>
+      </fieldset>
+
+      <button type="submit">Envoyer</button>
+    </form>
+  </div>
+</body>
+</html>
