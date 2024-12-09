@@ -1,11 +1,3 @@
-body {
-  margin: 0;
-  padding: 0;
-  width: 100%;
-  background-color: white;
-  font-family: 'RoughTypewriter', sans-serif;
-}
-
 .navbar {
   display: flex;
   justify-content: space-between;
