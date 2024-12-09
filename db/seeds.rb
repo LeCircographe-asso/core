@@ -86,6 +86,12 @@ User.create!(
   role: "admin"
 )
 
+User.create!(
+  email_address: "alixgeydet@gmail.com",
+  password: "123456",
+  role: "admin"
+)
+
 10.times do |i|
   Payment.create(id: i, payment_method: %w[CB check cash].sample, amount: rand(100), status: true)
 end
