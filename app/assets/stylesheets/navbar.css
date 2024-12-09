@@ -6,7 +6,7 @@ body {
   font-family: 'RoughTypewriter', sans-serif;
 }
 
-.navbar_css {
+.navbar {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -16,20 +16,20 @@ body {
   position: relative;
 }
 
-.navbar-logo_css img {
+.navbar-logo img {
   width: auto;
   height: 80px;
   object-fit: contain;
   display: block;
 }
 
-.navbar-center_css {
+.navbar-center {
   flex: 1;
   display: flex;
   justify-content: center;
 }
 
-.navbar-links_css {
+.navbar-links {
   list-style: none;
   display: flex;
   gap: 20px;
@@ -37,7 +37,7 @@ body {
   margin: 0;
 }
 
-.navbar-links_css li a {
+.navbar-links li a {
   text-decoration: none;
   font-size: 16px;
   font-family: 'RoughTypewriter', sans-serif;
@@ -45,17 +45,17 @@ body {
   font-weight: bold;
 }
 
-.navbar-links_css li a:hover {
+.navbar-links li a:hover {
   text-decoration: underline;
 }
 
-.navbar-right_css {
+.navbar-right {
   display: flex;
   gap: 10px;
   margin-right: 2em;
 }
 
-.white-button_css {
+.white-button {
   padding: 5px 15px;
   border: 1px solid #007bff;
   background-color: white;
@@ -66,11 +66,11 @@ body {
   font-family: 'RoughTypewriter', sans-serif;
 }
 
-.white-button_css:hover {
+.white-button:hover {
   background-color: #e7f0ff;
 }
 
-.blue-button_css {
+.blue-button {
   padding: 5px 15px;
   border: none;
   background-color: #6b47b8;
@@ -81,11 +81,11 @@ body {
   font-family: 'RoughTypewriter', sans-serif;
 }
 
-.blue-button_css:hover {
+.blue-button:hover {
   background-color: #5836a5;
 }
 
-.baner_css {
+.baner {
   position: relative;
   background-size: cover;
   background-position: center;
@@ -98,7 +98,7 @@ body {
   z-index: 1;
 }
 
-.container_css {
+.container {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -107,20 +107,20 @@ body {
   margin: 0 auto;
 }
 
-.image-container_css {
+.image-container {
   flex: 2;
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
-.image_css {
+.image {
   max-width: 100%;
   height: auto;
   object-fit: cover;
 }
 
-.text-container_css {
+.text-container {
   flex: 1;
   background-color: #f5f5f5;
   padding: 20px;
