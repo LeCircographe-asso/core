@@ -20,6 +20,7 @@ class User < ApplicationRecord
 
   alias_attribute :email, :email_address
 
+
   def welcome_send
     UserMailer.welcome_email(self).deliver_now
   end
@@ -27,7 +28,5 @@ class User < ApplicationRecord
     [ "admin", "godmode", "volunteer" ].include? self.role
   end
 
-  def welcome_send
-    UserMailer.welcome_email(self).deliver_now
-  end
+  
 end
