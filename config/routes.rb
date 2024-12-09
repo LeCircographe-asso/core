@@ -1,16 +1,13 @@
 Rails.application.routes.draw do
-  get "le_cirque", to: "pages#le_cirque", as: :le_cirque
-  get "le_graff", to: "pages#le_graff", as: :le_graff
-  get "le_lieu", to: "pages#le_lieu", as: :le_lieu
-  get "about", to: "pages#about", as: :about
-  get "contact", to: "pages#contact", as: :contact
   
+  resources :pages
   
   namespace :admin do
     get 'dashboard', to: 'dashboard#index'
     resources :users
   end
-
+  
+  resources :pages, only: [:show]
   resource :session, only: %i[new create destroy]
   resources :passwords, param: :token
   resource :registration, only: %i[new create]
