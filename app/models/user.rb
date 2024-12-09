@@ -10,8 +10,6 @@ class User < ApplicationRecord
   has_many :training_attendees, through: :user_memberships
   has_many :payments, through: :user_memberships
   has_many :payments, through: :donations
-  
-
 
   enum :role, %i[guest membership circus_membership volunteer admin godmode], default: :guest
 
@@ -19,5 +17,7 @@ class User < ApplicationRecord
 
   has_secure_password
   validates :email_address, presence: true, uniqueness: true
+  
+  alias_attribute :email, :email_address
 
 end
