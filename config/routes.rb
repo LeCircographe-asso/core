@@ -12,9 +12,16 @@ Rails.application.routes.draw do
   resources :passwords, param: :token
   resource :registration, only: %i[new create]
   resources :users
+
+  scope '/checkout' do
+    post 'create', to: 'checkout#create', as: 'checkout_create'
+    get 'success', to: 'checkout#success', as: 'checkout_success'
+    get 'cancel', to: 'checkout#cancel', as: 'checkout_cancel'
+  end
   
   root "home#index"
 
+  match '*unmatched', to: 'application#url_not_found', via: :all
 
 
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
