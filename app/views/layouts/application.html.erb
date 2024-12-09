@@ -18,12 +18,11 @@
     <link rel="apple-touch-icon" href="/icon.png">
 
     <%# Includes the global stylesheet for the app %>
-    <%= stylesheet_link_tag "tailwind", "inter-font", "data-turbo-track": "reload" %>
+    
     <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
 
     <%# Includes a page-specific stylesheet if defined in the view %>
     <% if content_for?(:css_file) %>
-    <%= stylesheet_link_tag "tailwind", "inter-font", "data-turbo-track": "reload" %>
       <%= stylesheet_link_tag content_for(:css_file), "data-turbo-track": "reload" %>
     <% end %>
 

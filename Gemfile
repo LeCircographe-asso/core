@@ -71,4 +71,4 @@ gem "stripe"
 gem "actionmailer"
 gem "faker"
 gem "dotenv-rails"
-gem "tailwindcss", "~> 0.1.1"
+
