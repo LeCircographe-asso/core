@@ -12,6 +12,11 @@ main {
     flex: 1;
 }
 
+.banner-text{
+  display: flex;
+  justify-content: center;
+}
+
 .white-button_css {
     padding: 5px 15px;
     border: 1px solid #007bff;
