@@ -21,7 +21,7 @@
 <h2>Confirmer votre inscription</h2>
 <p>Veuillez vérifier que toutes les informations ci-dessus sont correctes avant de continuer.</p>
 
-<%= form_with url: admin_membership_payment_path, method: :post do %>
+<%= form_with url: membership_payment_admin_members_path, method: :post do %>
   <% params.each do |key, value| %>
     <%= hidden_field_tag "membership_data[#{key}]", value %>
   <% end %>
@@ -29,4 +29,4 @@
   <button type="submit">Confirmer et choisir le mode de paiement</button>
 <% end %>
 
-<%= link_to 'Modifier vos informations', admin_membership_register_path, class: 'button' %>
+<%= link_to 'Modifier vos informations', membership_register_admin_members_path, class: 'button' %>

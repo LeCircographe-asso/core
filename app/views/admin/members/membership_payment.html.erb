@@ -1,6 +1,6 @@
 <p><strong>Choisissez votre méthode de paiement :</strong></p>
 
-<%= form_with url: admin_membership_complete_path, method: :post do %>
+<%= form_with url: membership_complete_admin_members_path, method: :post do %>
   <!-- Champs cachés pour passer les données d'inscription aux étapes suivantes -->
   <% @membership_data.each do |key, value| %>
     <%= hidden_field_tag "membership_data[#{key}]", value %>

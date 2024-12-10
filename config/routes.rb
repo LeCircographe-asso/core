@@ -4,17 +4,18 @@ Rails.application.routes.draw do
   
   namespace :admin do
     get 'dashboard', to: 'dashboard#index'
-    get 'members_list', to: 'dashboard#members_list'
-    get 'member_show', to: 'dashboard#member_show'
-    post 'member_show', to: 'dashboard#member_show'
-    get 'membership_register', to: 'dashboard#membership_register', as: :membership_register
-    post 'membership_register2', to: 'dashboard#membership_register2', as: :membership_recap
-    post 'membership_register3', to: 'dashboard#membership_register3', as: :membership_payment
-    post 'membership_register_completed', to: 'dashboard#membership_register_completed', as: :membership_complete
+    resources :dashboard, only: [:index], path: 'dashboard'
     resources :users
-    resources :members
+    resources :members do
+      collection do
+        get 'membership_register'
+        post 'membership_recap'
+        post 'membership_payment'
+        post 'membership_complete'
+      end
+    end
   end
-  
+
   resources :pages, only: [:show]
   resource :session, only: %i[new create destroy]
   resources :passwords, param: :token

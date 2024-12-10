@@ -9,7 +9,7 @@
 <body>
   <div class="form-container">
     <h1>Formulaire d'adhésion</h1>
-    <%= form_with url: admin_membership_recap_path, method: :post, class: "formulaire-adhesion" do |f| %>
+    <%= form_with url: membership_recap_admin_members_path, method: :post, class: "formulaire-adhesion" do |f| %>
 
       <fieldset class="fieldset-adhesion">
         <legend>J'adhère au CircoGraphe pour :</legend>
@@ -18,11 +18,12 @@
         <%= f.label :cirque, "CIRQUE" %><br>
 
         <!-- Utilisation de boutons radio pour sélectionner un seul tarif -->
-        <%= f.radio_button :tarif, 'reduit', id: "tarif-reduit-radio", disabled: true %>
-        <%= f.label :tarif_reduit, "Adhésion Réduite* (7 €)" %><br>
 
         <%= f.radio_button :tarif, 'plein', id: "tarif-plein-radio", disabled: true %>
         <%= f.label :tarif_plein, "Adhésion pleine (10 €)" %><br>
+        
+        <%= f.radio_button :tarif, 'reduit', id: "tarif-reduit-radio", disabled: true %>
+        <%= f.label :tarif_reduit, "Adhésion Réduite* (7 €)" %><br>
 
         <%= f.check_box :graff, { id: "graff-checkbox" }, 'oui', nil %>
         <%= f.label :graff, "Graff (libre 1€)" %><br>
