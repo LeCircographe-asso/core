@@ -1,3 +1,8 @@
+/* application.css */
+
+@import "form";
+@import "flash";
+
 body {
     margin: 0;
     padding: 0;
@@ -10,53 +15,6 @@ body {
 
 main {
     flex: 1;
-}
-
-.navbar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background-color: #E6E6EA;
-    width:100%; 
-    z-index: 10;
-    position: relative;
-}
-
-.navbar-logo img {
-    width: 90px;
-    object-fit: contain;
-    display:block; 
-} 
-
-.navbar-center {
-    flex: 1;
-    display: flex;
-    justify-content: center;
-}
-
-.navbar-links {
-    list-style: none;
-    display: flex;
-    gap: 20px;
-    padding: 0;
-    margin: 0;
-}
-
-.navbar-links li a {
-    text-decoration: none;
-    font-size: 16px;
-    color: black;
-    font-weight: bold;
-}
-
-.navbar-links li a:hover {
-    text-decoration: underline;
-}
-
-.navbar-right {
-    display: flex;
-    gap: 10px;
-    margin-right: 2em;
 }
 
 .white-button {
@@ -130,41 +88,6 @@ main {
     box-shadow: 0 1px 10px rgba(0, 0, 0, 0.1); 
 }
 
-.form-container {
-    background-color: #ffffff;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: space-around;
-    border: solid black 1px;
-    margin-left: auto;
-    margin-right: auto;
-    margin-bottom: auto;
-    width: fit-content;
-    padding: 10px;
-
-}
-
-.form-field {
-    padding: 10px;
-}
-
-.form-half {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-
-.form-half h1 {
-    padding-top: 50px;
-    padding-bottom: 50px;
-}
-
-.form-half {
-    padding-left: 20px;
-    padding-right: 20px;
-}
-
 .footer {
     background-color: #D9DBDE;
     color: #374151;
@@ -184,3 +107,8 @@ main {
     font-weight: 500;
     line-height: 1.6;
 }  
+
+.image-block {
+flex: 1;
+display: flex; 
+}

@@ -1,3 +1,4 @@
+/* footer.css */
 .footer {
   background-color: #D9DBDE;
   color: #374151;
@@ -8,10 +9,6 @@
   align-items: center;
   z-index: 10;
   position: relative;
-}
-
-main {
-  flex: 1;
 }
 
 .footer_column {
