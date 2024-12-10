@@ -12,6 +12,7 @@ main {
     flex: 1;
 }
 
+
 .navbar {
     display: flex;
     justify-content: space-between;
@@ -60,6 +61,7 @@ main {
 }
 
 .white-button {
+
     padding: 5px 15px;
     border: 1px solid #007bff;
     background-color: white;
