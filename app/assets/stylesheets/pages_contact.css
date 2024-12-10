@@ -1,3 +1,4 @@
+/* pages_contact.css */
 .contact-container {
   max-width: 800px;
   margin: 40px auto;
@@ -18,7 +19,7 @@
   gap: 20px;
 }
 
-.form-group {
+.contact-form-group {
   display: flex;
   flex-direction: column;
 }

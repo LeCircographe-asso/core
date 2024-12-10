@@ -1,8 +1,13 @@
+/* application.css */
+
+@import "form";
+@import "flash";
+
 body {
     margin: 0;
     padding: 0;
     width: 100%;
-    background-color: white; 
+    background-color: #E6E6EA; 
     display: flex;
     flex-direction: column;
     height: 100vh;
@@ -12,7 +17,9 @@ main {
     flex: 1;
 }
 
-.white-button_css {
+
+.white-button {
+
     padding: 5px 15px;
     border: 1px solid #007bff;
     background-color: white;
@@ -22,11 +29,11 @@ main {
     font-size: 14px;
 }
 
-.white-button_css:hover {
+.white-button:hover {
     background-color: #e7f0ff;
 }
 
-.blue-button_css {
+.blue-button {
     padding: 5px 15px;
     border: none;
     background-color: #6b47b8;
@@ -36,11 +43,11 @@ main {
     font-size: 14px; 
 }
 
-.blue-button_css:hover {
+.blue-button:hover {
     background-color: #5836a5;
 }
 
-.baner_css {
+.baner {
     position: relative; 
     background-size: cover;
     background-position: center;
@@ -53,7 +60,7 @@ main {
     z-index: 1;
 }
 
-.container_css {
+.container {
     display: flex; 
     justify-content: space-between; 
     align-items: center; 
@@ -62,20 +69,20 @@ main {
     margin: auto;
 }
 
-.image-container_css {
+.image-container {
     flex: 2; 
     display: flex;
     justify-content: center; 
     align-items: center;
 }
 
-.image_css {
+.image {
     max-width: 100%; 
     height: auto; 
     object-fit: cover;
 }
 
-.text-container_css {
+.text-container {
     flex: 1; 
     background-color: #f5f5f5; 
     padding: 20px; 
@@ -83,37 +90,27 @@ main {
     box-shadow: 0 1px 10px rgba(0, 0, 0, 0.1); 
 }
 
-.form-container {
-    background-color: #ffffff;
+.footer {
+    background-color: #D9DBDE;
+    color: #374151;
+    width: 100%;
+    border-top: 1px solid #a0aec0;
     display: flex;
-    flex-direction: column;
+    justify-content: space-between;
     align-items: center;
-    justify-content: space-around;
-    border: solid black 1px;
-    margin-left: auto;
-    margin-right: auto;
-    margin-bottom: auto;
-    width: fit-content;
-    padding: 10px;
-
+    z-index: 10;
 }
 
-.form-field {
-    padding: 10px;
-}
+.banner-text {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 25px;
+    color: #374151;
+    font-weight: 500;
+    line-height: 1.6;
+}  
 
-.form-half {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-
-.form-half h1 {
-    padding-top: 50px;
-    padding-bottom: 50px;
-}
-
-.form-half {
-    padding-left: 20px;
-    padding-right: 20px;
+.image-block {
+flex: 1;
+display: flex; 
 }

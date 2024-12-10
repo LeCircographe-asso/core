@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title><%= content_for(:title) || "Circographe" %></title>
+
+<head>
+    <title><%= content_for(:title) || "Le Circographe" %></title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="mobile-web-app-capable" content="yes">
@@ -17,24 +18,29 @@
     <%# Includes the global stylesheet for the app %>
     
     <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
-
     <% if controller_path.start_with?('admin') %>
-      <%= stylesheet_link_tag 'dashboard', "data-turbo-track": "reload" %>
+    <%= stylesheet_link_tag 'dashboard', "data-turbo-track": "reload" %>
     <% elsif content_for?(:css_file) %>
-      <%= stylesheet_link_tag content_for(:css_file), "data-turbo-track": "reload" %>
+    <%= stylesheet_link_tag content_for(:css_file), "data-turbo-track": "reload" %>
     <% end %>
 
     <%= javascript_importmap_tags %>
-    
+
     <%# stripe libraries JS %>
     <script src="https://js.stripe.com/v3/"></script>
-  </head>
+</head>
 
-  <body class="<%= controller_name %>-<%= action_name %>">
+<body class="<%= controller_name %>-<%= action_name %>">
+  <div class="navbar">
     <%= render 'shared/navbar' %>
-    <main>
-      <%= yield %>
-    </main>
+  </div>
+  <%= render 'shared/flash' %>
+  <main>
+    <%= yield %>
+  </main>
+  <footer class="footer">
     <%= render 'shared/footer' %>
-  </body>
+  </footer>
+</body>
+
 </html>

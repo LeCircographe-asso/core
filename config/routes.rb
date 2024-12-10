@@ -1,7 +1,5 @@
 Rails.application.routes.draw do
   
-  resources :pages
-  
   namespace :admin do
     get 'dashboard', to: 'dashboard#index'
     resources :dashboard, only: [:index], path: 'dashboard'
@@ -15,8 +13,8 @@ Rails.application.routes.draw do
       end
     end
   end
-
-  resources :pages, only: [:show]
+  
+  resources :pages, only: %i[show]
   resource :session, only: %i[new create destroy]
   resources :passwords, param: :token
   resource :registration, only: %i[new create]

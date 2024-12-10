@@ -1,12 +1,12 @@
-<div class="container">
-  <div class="image-block">
+<div class="signin-page">
+  <div class="left-side">
     <%= image_tag("about.png") %>
   </div>
 
-  <div class="form-block">
-    <%= form_with url: session_url, class: "contents", class: "signup-form" do |form| %>
+  <div class="right-side">
+<div class="signin-form-container">
     <h1>Se connecter</h1>
-
+    <%= form_with url: session_url, class: "signup-form" do |form| %>
       <div class="form-group">
         <%= form.email_field :email_address, required: true, autofocus: true, autocomplete: "username", placeholder: "jean@example.com", value: params[:email_address], class: "form-input" %>
       </div>
@@ -16,7 +16,7 @@
       </div>
 
       
-          <%= form.submit "Se connecter", class: "submit-button blue-button_css" %>
+          <%= form.submit "Se connecter", class: "submit-button" %>
       
 
         
@@ -24,8 +24,9 @@
         </div>
         </div>
       </div>
-    <% end %>
     </div>
+  <% end %>
+  </div>
 </div>
 
 

@@ -1,27 +1,30 @@
-.navbar_css {
+/* navbar.css */
+.navbar {
+
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: #E6E6EA;
+  background-color: #F2F3F4;
   width: 100%;
   z-index: 10;
   position: relative;
+  font-weight: bold;
 }
 
-.navbar-logo_css img {
-  width: auto;
+.navbar-logo img {
   height: 80px;
+  width: auto;
   object-fit: contain;
   display: block;
 }
 
-.navbar-center_css {
+.navbar-center {
   flex: 1;
   display: flex;
   justify-content: center;
 }
 
-.navbar-links_css {
+.navbar-links {
   list-style: none;
   display: flex;
   gap: 20px;
@@ -29,25 +32,74 @@
   margin: 0;
 }
 
-.navbar-links_css li a {
+.navbar-links li a {
   text-decoration: none;
   font-size: 16px;
   font-family: 'RoughTypewriter', sans-serif;
   color: black;
-  font-weight: bold;
 }
 
-.navbar-links_css li a:hover {
+.navbar-links li a:hover {
   text-decoration: underline;
 }
 
-.navbar-right_css {
+.navbar-right {
   display: flex;
   gap: 10px;
   margin-right: 2em;
 }
 
-.container_css {
+.navbar-left {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding-left: 20px;
+}
+
+.white-button {
+  padding: 5px 15px;
+  border: 1px solid #007bff;
+  background-color: white;
+  color: #007bff;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px;
+  font-family: 'roboto', sans-serif;
+}
+
+.white-button:hover {
+  background-color: #e7f0ff;
+}
+
+.purple-button {
+  padding: 5px 15px;
+  border: none;
+  background-color: #6b47b8;
+  color: #F4F4F8;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 15px;
+  font-family: 'roboto', sans-serif;
+}
+
+.purple-button:hover {
+  background-color: #5836a5;
+}
+
+.baner {
+  position: relative;
+  background-size: cover;
+  background-position: center;
+  height: 400px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  clip-path: ellipse(100% 90% at 70% 10%);
+  z-index: 1;
+}
+
+.container {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -56,9 +108,31 @@
   margin: 0 auto;
 }
 
+.image-container {
+  flex: 2;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.image {
+  max-width: 100%;
+  height: auto;
+  object-fit: cover;
+}
+
+.text-container {
+  flex: 1;
+  background-color: #f5f5f5;
+  padding: 20px;
+  border-radius: 5px;
+  box-shadow: 0 1px 10px rgba(0, 0, 0, 0.1);
+}
+
 .custom-navbar {
   font-family: 'RoughTypewriter';
   src: url('/assets/fonts/rough_typewriter.otf') format('opentype');
   font-weight: normal;
   font-style: normal;
 }
+
