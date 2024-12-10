@@ -132,7 +132,7 @@
 .custom-navbar {
   font-family: 'RoughTypewriter';
   src: url('/assets/fonts/rough_typewriter.otf') format('opentype');
-  font-weight: normal;
+  font-weight: bold;
   font-style: normal;
 }
 
