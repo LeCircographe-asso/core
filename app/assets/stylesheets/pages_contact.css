@@ -19,7 +19,7 @@
   gap: 20px;
 }
 
-.form-group {
+.contact-form-group {
   display: flex;
   flex-direction: column;
 }
