@@ -1,13 +1,13 @@
-<div class="navbar_css">
-  <div class="navbar-left_css">
-    <div class="navbar-logo_css">
+<div class="navbar">
+  <div class="navbar-left">
+    <div class="navbar-logo">
       <%= link_to root_path do %>
         <%= image_tag "Le-Circographe_logo_transparent.png", alt: "Logo Circographe" %>
       <% end %>
     </div>
   </div>
-  <div class="navbar-center_css">
-    <ul class="navbar-links_css">
+  <div class="navbar-center">
+    <ul class="navbar-links">
       <li><%= link_to "Accueil", root_path, class: "navbar-link_css" %></li>
       <li><%= link_to "Le cirque", page_path("le_cirque"), class: "navbar-link_css" %></li>
       <li><%= link_to "Le graff", page_path("le_graff"), class: "navbar-link_css" %></li>
@@ -15,13 +15,13 @@
       <li><%= link_to "À propos", page_path("about"), class: "navbar-link_css" %></li>
     </ul>
   </div>
-  <div class="navbar-right_css">
+  <div class="navbar-right">
     <% if authenticated? %>
-      <%= link_to "Mon profil", user_path(current_user), class: "white-button_css" %>
-      <%= button_to "Se déconnecter", session_path, method: :delete, class: "blue-button_css" %>
+      <%= link_to "Mon profil", user_path(current_user), class: "white-button" %>
+      <%= button_to "Se déconnecter", session_path, method: :delete, class: "blue-button" %>
     <% else %>
-      <%= link_to "Se connecter", new_session_path, class: "white-button_css" %>
-      <%= link_to "S'inscrire", new_registration_path, class: "blue-button_css" %>
+      <%= link_to "Se connecter", new_session_path, class: "white-button" %>
+      <%= link_to "S'inscrire", new_registration_path, class: "blue-button" %>
     <% end %>
   </div>
 </div>
