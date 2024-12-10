@@ -102,7 +102,7 @@ end
 20.times do
   User.create!(
     email_address: Faker::Internet.email,
-    password: "password123",
+    password: "123456",
     last_name: Faker::Name.last_name,
     first_name: Faker::Name.first_name,
     birthdate: Faker::Date.birthday(min_age: 18, max_age: 99),
