@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Formulaire d'adhésion</title>
+  <link rel="stylesheet" href="formulaire.css">
+</head>
+<body>
+  <div class="form-container">
+    <h1>Formulaire d'adhésion</h1>
+    <%= form_with url: membership_recap_admin_members_path, method: :post, class: "formulaire-adhesion" do |f| %>
+
+      <fieldset class="fieldset-adhesion">
+        <legend>J'adhère au CircoGraphe pour :</legend>
+        
+        <%= f.check_box :cirque, { id: "cirque-checkbox" }, 'oui', nil %>
+        <%= f.label :cirque, "CIRQUE" %><br>
+
+        <!-- Utilisation de boutons radio pour sélectionner un seul tarif -->
+
+        <%= f.radio_button :tarif, 'plein', id: "tarif-plein-radio", disabled: true %>
+        <%= f.label :tarif_plein, "Adhésion pleine (10 €)" %><br>
+        
+        <%= f.radio_button :tarif, 'reduit', id: "tarif-reduit-radio", disabled: true %>
+        <%= f.label :tarif_reduit, "Adhésion Réduite* (7 €)" %><br>
+
+        <%= f.check_box :graff, { id: "graff-checkbox" }, 'oui', nil %>
+        <%= f.label :graff, "Graff (libre 1€)" %><br>
+
+        <%= f.check_box :soutien, { id: "soutien-checkbox" }, 'oui', nil %>
+        <%= f.label :soutien, "Soutien à l'association (libre 1€)" %><br>
+
+        <p>*Mineur.e/RSA/Personne en situation de handicap</p>
+      </fieldset>
+
+      <fieldset class="fieldset-infos">
+        <legend>Informations personnelles</legend>
+        <%= f.label :prenom, "Prénom" %>
+        <%= f.text_field :prenom, required: true, class: "form-field" %><br>
+
+        <%= f.label :nom, "Nom" %>
+        <%= f.text_field :nom, required: true, class: "form-field" %><br>
+
+        <%= f.label :date_naissance, "Date de naissance" %>
+        <%= f.date_field :date_naissance, required: true, class: "form-field" %><br>
+
+        <%= f.label :adresse, "Adresse" %>
+        <%= f.text_field :adresse, required: true, class: "form-field" %><br>
+
+        <%= f.label :code_postal, "Code postal" %>
+        <%= f.text_field :code_postal, required: true, class: "form-field" %><br>
+
+        <%= f.label :ville, "Ville" %>
+        <%= f.text_field :ville, required: true, class: "form-field" %><br>
+
+        <%= f.label :pays, "Pays" %>
+        <%= f.text_field :pays, required: true, class: "form-field" %><br>
+
+        <%= f.label :telephone, "Numéro de téléphone" %>
+        <%= f.telephone_field :telephone, required: true, class: "form-field" %><br>
+
+        <%= f.label :email, "Adresse mail" %>
+        <%= f.email_field :email, required: true, class: "form-field" %><br>
+
+        <%= f.label :profession, "Profession" %>
+        <%= f.text_field :profession, class: "form-field" %><br>
+
+        <%= f.label :specialite, "Spécialité ou Disciplines pratiquées" %>
+        <%= f.text_field :specialite, class: "form-field" %><br>
+      </fieldset>
+
+      <fieldset class="fieldset-droit-image">
+        <legend>Autorisation de droit à l'image</legend>
+        <%= f.label :droit_image, "OUI" %>
+        <%= f.radio_button :droit_image, 'oui', required: true %>
+        <%= f.label :droit_image, "NON" %>
+        <%= f.radio_button :droit_image, 'non', required: true %><br>
+
+        <p>
+          J’accepte d’être photographié.e ou filmé.e dans le cadre des activités du CircoGraphe et de Dark Paillettes et accepte
+          l’utilisation des photos ou vidéos à des fins de communication (site internet, plaquettes, réseaux sociaux …) de l’association.
+        </p>
+      </fieldset>
+
+      <fieldset class="fieldset-projet">
+        <legend>Si le projet vous intéresse :</legend>
+        <%= f.check_box :newsletter, { multiple: false }, 'oui', nil %>
+        <%= f.label :newsletter, "Je souhaite m’inscrire à la newsletter" %><br>
+
+        <%= f.check_box :investir, { multiple: false }, 'oui', nil %>
+        <%= f.label :investir, "Je souhaite m’investir dans le projet" %><br>
+
+        <%= f.check_box :soutenir_financierement, { multiple: false }, 'oui', nil %>
+        <%= f.label :soutenir_financierement, "Je souhaite soutenir financièrement le projet (cagnotte en ligne)" %>
+      </fieldset>
+
+      <div class="form-buttons">
+        <%= f.submit "Valider", class: "btn btn-primary" %>
+        <%= button_tag "Réinitialiser", type: "reset", class: "btn btn-secondary" %>
+      </div>
+    <% end %>
+  </div>
+</body>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const cirqueCheckbox = document.getElementById('cirque-checkbox');
+    const tarifReduitRadio = document.getElementById('tarif-reduit-radio');
+    const tarifPleinRadio = document.getElementById('tarif-plein-radio');
+
+    // Écouteur pour activer/désactiver les cases
+    cirqueCheckbox.addEventListener('change', function () {
+      const isCirqueChecked = cirqueCheckbox.checked;
+      tarifReduitRadio.disabled = !isCirqueChecked;
+      tarifPleinRadio.disabled = !isCirqueChecked;
+
+      // Si "Cirque" est décoché, réinitialiser les sélections
+      if (!isCirqueChecked) {
+        tarifReduitRadio.checked = false;
+        tarifPleinRadio.checked = false;
+      }
+    });
+  });
+</script>

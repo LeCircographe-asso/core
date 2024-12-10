@@ -1,0 +1,32 @@
+<h1>Récapitulatif de votre inscription</h1>
+
+<ul>
+  <li><strong>Prénom :</strong> <%= params[:prenom] %></li>
+  <li><strong>Nom :</strong> <%= params[:nom] %></li>
+  <li><strong>Date de naissance :</strong> <%= params[:date_naissance] %></li>
+  <li><strong>Adresse :</strong> <%= params[:adresse] %></li>
+  <li><strong>Code postal :</strong> <%= params[:code_postal] %></li>
+  <li><strong>Ville :</strong> <%= params[:ville] %></li>
+  <li><strong>Pays :</strong> <%= params[:pays] %></li>
+  <li><strong>Téléphone :</strong> <%= params[:telephone] %></li>
+  <li><strong>Email :</strong> <%= params[:email] %></li>
+  <li><strong>Profession :</strong> <%= params[:profession] %></li>
+  <li><strong>Spécialité :</strong> <%= params[:specialite] %></li>
+  <li><strong>Droit à l'image :</strong> <%= params[:droit_image] == 'oui' ? 'Oui' : 'Non' %></li>
+  <li><strong>Newsletter :</strong> <%= params[:newsletter] == 'oui' ? 'Oui' : 'Non' %></li>
+  <li><strong>Investir :</strong> <%= params[:investir] == 'oui' ? 'Oui' : 'Non' %></li>
+  <li><strong>Soutien financier :</strong> <%= params[:soutenir_financierement] == 'oui' ? 'Oui' : 'Non' %></li>
+</ul>
+
+<h2>Confirmer votre inscription</h2>
+<p>Veuillez vérifier que toutes les informations ci-dessus sont correctes avant de continuer.</p>
+
+<%= form_with url: membership_payment_admin_members_path, method: :post do %>
+  <% params.each do |key, value| %>
+    <%= hidden_field_tag "membership_data[#{key}]", value %>
+  <% end %>
+
+  <button type="submit">Confirmer et choisir le mode de paiement</button>
+<% end %>
+
+<%= link_to 'Modifier vos informations', membership_register_admin_members_path, class: 'button' %>

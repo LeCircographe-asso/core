@@ -1,33 +1,11 @@
 <div class="admin-dashboard">
   <h1 class="dashboard-title">Tableau de bord administrateur</h1>
 
-  <div class="dashboard-stats">
-    <p><strong>Nombre d'utilisateurs :</strong> <%= @users.count %></p>
+
+  <div class="dashboard-actions">
+    <%= link_to "Liste Utilisateurs", admin_members_path, class: "btn btn-primary" %>
   </div>
 
   <div class="dashboard-actions">
-    <%= link_to "Gérer les utilisateurs", admin_users_path, class: "btn btn-primary" %>
+    <%= link_to "Ajouter un adhérent", membership_register_admin_members_path, class: "btn btn-primary" %>
   </div>
-
-  <h2 class="dashboard-subtitle">Liste des utilisateurs</h2>
-  <table class="dashboard-table">
-    <thead>
-      <tr>
-        <th>Email</th>
-        <th>Rôle</th>
-        <th>Actions</th>
-      </tr>
-    </thead>
-    <tbody>
-      <% @users.each do |user| %>
-        <tr>
-          <td><%= user.email_address %></td>
-          <td><%= user.role %></td>
-          <td>
-            <%= link_to 'Modifier', edit_admin_user_path(user), class: "btn btn-link" %>
-          </td>
-        </tr>
-      <% end %>
-    </tbody>
-  </table>
-</div>
