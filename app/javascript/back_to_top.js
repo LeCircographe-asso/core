@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
-  const backToTopButton = document.querySelector(".back-to-top_css");
+  const backToTopButton = document.querySelector(".back-to-top");
 
   backToTopButton.addEventListener("click", (e) => {
     e.preventDefault();

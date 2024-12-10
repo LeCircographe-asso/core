@@ -1,34 +1,34 @@
-<footer class="footer_css">
-  <div class="footer_column_css">
+<footer class="footer">
+  <div class="footer_column">
     <h3>A propos de nous :</h3>
     <ul>
-      <li><%= link_to "Nous contacter", contact_path, class: "footer_link_css" %></li>
-      <li><%= link_to "CGU", "#", class: "footer_link_css" %></li>
-      <li><%= link_to "Politique de confidentialité", "#", class: "footer_link_css" %></li>
+      <li><%= link_to "Nous contacter", page_path("contact"), class: "footer_link" %></li>
+      <li><%= link_to "CGU", "#", class: "footer_link" %></li>
+      <li><%= link_to "Politique de confidentialité", "#", class: "footer_link" %></li>
     </ul>
   </div>
-  <div class="footer_logo_wrapper_css">
+  <div class="footer_logo_wrapper">
     <%= link_to root_path do %>
-      <%= image_tag "Le-Circographe.png", alt: "Logo Circo Graphe", class: "footer_logo_css" %>
+      <%= image_tag "Le-Circographe.png", alt: "Logo Circo Graphe", class: "footer_logo" %>
     <% end %>
   </div>
-  <div class="footer_column_css">
+  <div class="footer_column">
     <h3>Suivez-nous !</h3>
-    <ul class="social_icons_css">
+    <ul class="social_icons">
       <li>
         <%= link_to "https://www.instagram.com/lecircographe/", target: "_blank" do %>
-          <%= image_tag "instagram.png", alt: "Instagram", class: "footer_icon_css" %>
+          <%= image_tag "instagram.png", alt: "Instagram", class: "footer_icon" %>
         <% end %>
       </li>
       <li>
         <%= link_to "https://www.facebook.com/lecircographe/?locale=fr_FR", target: "_blank" do %>
-          <%= image_tag "facebook.png", alt: "Facebook", class: "footer_icon_css" %>
+          <%= image_tag "facebook.png", alt: "Facebook", class: "footer_icon" %>
         <% end %>
       </li>
     </ul>
   </div>
   <div class="footer_back_to_top">
-    <%= link_to "#", class: "back-to-top_css" do %>
+    <%= link_to "#", class: "back-to-top" do %>
       <span>↑</span>
     <% end %>
   </div>

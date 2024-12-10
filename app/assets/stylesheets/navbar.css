@@ -1,35 +1,30 @@
-body {
-  margin: 0;
-  padding: 0;
-  width: 100%;
-  background-color: white;
-  font-family: 'RoughTypewriter', sans-serif;
-}
+/* navbar.css */
+.navbar {
 
-.navbar_css {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: #E6E6EA;
+  background-color: #F2F3F4;
   width: 100%;
   z-index: 10;
   position: relative;
+  font-weight: bold;
 }
 
-.navbar-logo_css img {
-  width: auto;
+.navbar-logo img {
   height: 80px;
+  width: auto;
   object-fit: contain;
   display: block;
 }
 
-.navbar-center_css {
+.navbar-center {
   flex: 1;
   display: flex;
   justify-content: center;
 }
 
-.navbar-links_css {
+.navbar-links {
   list-style: none;
   display: flex;
   gap: 20px;
@@ -37,25 +32,31 @@ body {
   margin: 0;
 }
 
-.navbar-links_css li a {
+.navbar-links li a {
   text-decoration: none;
   font-size: 16px;
   font-family: 'RoughTypewriter', sans-serif;
   color: black;
-  font-weight: bold;
 }
 
-.navbar-links_css li a:hover {
+.navbar-links li a:hover {
   text-decoration: underline;
 }
 
-.navbar-right_css {
+.navbar-right {
   display: flex;
   gap: 10px;
   margin-right: 2em;
 }
 
-.white-button_css {
+.navbar-left {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding-left: 20px;
+}
+
+.white-button {
   padding: 5px 15px;
   border: 1px solid #007bff;
   background-color: white;
@@ -63,29 +64,29 @@ body {
   border-radius: 5px;
   cursor: pointer;
   font-size: 14px;
-  font-family: 'RoughTypewriter', sans-serif;
+  font-family: 'roboto', sans-serif;
 }
 
-.white-button_css:hover {
+.white-button:hover {
   background-color: #e7f0ff;
 }
 
-.blue-button_css {
+.purple-button {
   padding: 5px 15px;
   border: none;
   background-color: #6b47b8;
-  color: white;
+  color: #F4F4F8;
   border-radius: 5px;
   cursor: pointer;
-  font-size: 14px;
-  font-family: 'RoughTypewriter', sans-serif;
+  font-size: 15px;
+  font-family: 'roboto', sans-serif;
 }
 
-.blue-button_css:hover {
+.purple-button:hover {
   background-color: #5836a5;
 }
 
-.baner_css {
+.baner {
   position: relative;
   background-size: cover;
   background-position: center;
@@ -98,7 +99,7 @@ body {
   z-index: 1;
 }
 
-.container_css {
+.container {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -107,20 +108,20 @@ body {
   margin: 0 auto;
 }
 
-.image-container_css {
+.image-container {
   flex: 2;
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
-.image_css {
+.image {
   max-width: 100%;
   height: auto;
   object-fit: cover;
 }
 
-.text-container_css {
+.text-container {
   flex: 1;
   background-color: #f5f5f5;
   padding: 20px;
@@ -131,6 +132,7 @@ body {
 .custom-navbar {
   font-family: 'RoughTypewriter';
   src: url('/assets/fonts/rough_typewriter.otf') format('opentype');
-  font-weight: normal;
+  font-weight: bold;
   font-style: normal;
 }
+

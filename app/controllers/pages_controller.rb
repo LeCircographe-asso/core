@@ -1,21 +1,7 @@
 class PagesController < ApplicationController
-  allow_unauthenticated_access
+  allow_unauthenticated_access # Si cette méthode est requise pour autoriser l'accès
 
   def show
-  end
-
-  def about
-  end
-
-  def le_cirque
-  end
-
-  def le_graff
-  end
-
-  def le_lieu
-  end
-
-  def contact
+    render template: "pages/#{params[:id]}"
   end
 end

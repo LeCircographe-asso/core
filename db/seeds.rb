@@ -79,12 +79,48 @@ User.create!(
   get_involved: true
 )
 
+User.create!(
+  email_address: "guest@rails.com",
+  password: "123456",
+  role: "guest"
+)
+
+User.create!(
+  email_address: "member@rails.com",
+  password: "123456",
+  role: "membership"
+)
+
+User.create!(
+  email_address: "circus_member@rails.com",
+  password: "123456",
+  role: "circus_membership"
+)
+
+User.create!(
+  email_address: "volunteer@rails.com",
+  password: "123456",
+  role: "volunteer"
+)
 
 User.create!(
   email_address: "admin@rails.com",
   password: "123456",
   role: "admin"
 )
+
+User.create!(
+  email_address: "godmode@rails.com",
+  password: "123456",
+  role: "godmode"
+)
+
+User.create!(
+  email_address: "alixgeydet@gmail.com",
+  password: "123456",
+  role: "admin"
+)
+
 
 10.times do |i|
   Payment.create(id: i, payment_method: %w[CB check cash].sample, amount: rand(100), status: true)
@@ -93,10 +129,10 @@ end
 
 
 
-20.times do
+2.times do
   User.create!(
     email_address: Faker::Internet.email,
-    password: "password123",
+    password: "123456",
     last_name: Faker::Name.last_name,
     first_name: Faker::Name.first_name,
     birthdate: Faker::Date.birthday(min_age: 18, max_age: 99),
