@@ -1,0 +1,78 @@
+/* _form.css */
+
+.signup-page ,.signin-page {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 75vh; 
+  }
+
+.left-side, .right-side {
+width: 50%;
+height: 75vh;
+}
+
+.left-side {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.right-side {
+  display: flex;
+  align-items: center;
+  justify-content: start;
+}
+
+.signup-img {
+width: 75%;
+}
+
+.signup-form-container, .signin-form-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.form-input {
+  width: 100%;
+  padding: 12px;
+  font-size: 16px;
+  border: 1px solid #cbd5e0;
+  border-radius: 4px;
+}
+
+.submit-button {
+  width: 50%;
+  padding: 12px;
+  font-size: 16px;
+  background-color: #6b47b8;
+  border: 2px solid #6b47b8;
+  color: white;
+  box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  font-weight: bold;
+}
+
+.submit-button:hover {
+  background-color: #F2F3F4;
+  color: #1F5C55;
+  border: 2px solid #1F5C55;
+  box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+  font-weight: bold;
+}
+
+@media (max-width: 768px) {
+  .signup-page, .signin-page {
+    flex-direction: column;
+  }
+  .left-side, .right-side {
+    width: 100%;
+    height: 50vh;
+  }
+ }
