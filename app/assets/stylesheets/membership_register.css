@@ -1,0 +1,101 @@
+.formulaire-adhesion {
+  background-color: #4e2a84; /* Violet foncé comme dans l'image */
+  color: #fff;
+  padding: 30px;
+  border-radius: 10px;
+  width: 80%;
+  margin: auto;
+  font-family: 'Courier New', Courier, monospace;
+}
+
+.fieldset-adhesion {
+  border: 2px solid #fff;
+  padding: 20px;
+  margin-bottom: 20px;
+  background-color: #6b3e91; /* Violet plus clair pour la section */
+}
+
+.fieldset-info, .fieldset-image, .fieldset-project {
+  border: 2px solid #fff;
+  padding: 20px;
+  margin-bottom: 20px;
+  background-color: #6b3e91; /* Violet plus clair pour les autres sections */
+}
+
+legend {
+  font-size: 1.5em;
+  margin-bottom: 10px;
+  color: #fff;
+}
+
+.form-check-label {
+  font-size: 1.1em;
+  margin-left: 5px;
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+.form-control {
+  width: 100%;
+  padding: 8px;
+  margin-top: 5px;
+  border: 1px solid #fff;
+  background-color: #9b5f9e; /* Couleur de fond des champs de texte */
+  color: #fff;
+  border-radius: 5px;
+}
+
+input[type="checkbox"], input[type="radio"] {
+  accent-color: #bb8f3c; /* Couleur dorée pour les cases à cocher et les radios */
+}
+
+input[type="text"], input[type="email"], input[type="tel"], input[type="date"] {
+  width: 100%; /* Alignement à 100% de la largeur disponible */
+  padding: 8px;
+  margin-top: 5px;
+  border: 1px solid #fff;
+  background-color: #9b5f9e; /* Couleur de fond des champs de texte */
+  color: #fff;
+  border-radius: 5px;
+}
+
+label {
+  font-size: 1.1em;
+  margin-bottom: 5px;
+  display: block; /* Assurer que le label est sur une nouvelle ligne */
+}
+
+.form-buttons {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.btn {
+  background-color: #bb8f3c; /* Couleur dorée des boutons */
+  border: none;
+  padding: 10px 20px;
+  color: #fff;
+  font-size: 1.1em;
+  margin-right: 10px;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.btn-secondary {
+  background-color: #bbb; /* Gris clair pour le bouton réinitialiser */
+}
+
+.form-check-input {
+  margin-right: 10px;
+}
+
+.small-text {
+  font-size: 0.9em;
+  color: #ddd;
+}
+
+input[type="checkbox"], input[type="radio"] {
+  accent-color: #bb8f3c; /* Couleur dorée pour les cases à cocher et les radios */
+}

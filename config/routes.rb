@@ -7,7 +7,10 @@ Rails.application.routes.draw do
     get 'members_list', to: 'dashboard#members_list'
     get 'member_show', to: 'dashboard#member_show'
     post 'member_show', to: 'dashboard#member_show'
-    get 'membership_register', to: 'dashboard#membership_register'
+    get 'membership_register', to: 'dashboard#membership_register', as: :membership_register
+    post 'membership_register2', to: 'dashboard#membership_register2', as: :membership_recap
+    post 'membership_register3', to: 'dashboard#membership_register3', as: :membership_payment
+    post 'membership_register_completed', to: 'dashboard#membership_register_completed', as: :membership_complete
     resources :users
     resources :members
   end

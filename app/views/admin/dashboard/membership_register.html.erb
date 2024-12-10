@@ -9,74 +9,116 @@
 <body>
   <div class="form-container">
     <h1>Formulaire d'adhésion</h1>
-    <form action="/submit_form" method="post">
-      <fieldset>
-        <legend>J'adhère au Circographe pour :</legend>
-        <div class="checkbox-group">
-          <label><input type="checkbox" name="cirque" value="cirque"> CIRQUE</label>
-          <label><input type="checkbox" name="tarif_reduit" value="tarif_reduit"> Tarif Réduit* (7 €)</label>
-          <label><input type="checkbox" name="tarif_plein" value="tarif_plein"> Tarif plein (10 €)</label>
-          <label><input type="checkbox" name="graff" value="graff"> Graff (libre 1 €)</label>
-          <label><input type="checkbox" name="soutien" value="soutien"> Soutien à l’association (libre 1 €)</label>
-        </div>
+    <%= form_with url: admin_membership_recap_path, method: :post, class: "formulaire-adhesion" do |f| %>
+
+      <fieldset class="fieldset-adhesion">
+        <legend>J'adhère au CircoGraphe pour :</legend>
+        
+        <%= f.check_box :cirque, { id: "cirque-checkbox" }, 'oui', nil %>
+        <%= f.label :cirque, "CIRQUE" %><br>
+
+        <!-- Utilisation de boutons radio pour sélectionner un seul tarif -->
+        <%= f.radio_button :tarif, 'reduit', id: "tarif-reduit-radio", disabled: true %>
+        <%= f.label :tarif_reduit, "Adhésion Réduite* (7 €)" %><br>
+
+        <%= f.radio_button :tarif, 'plein', id: "tarif-plein-radio", disabled: true %>
+        <%= f.label :tarif_plein, "Adhésion pleine (10 €)" %><br>
+
+        <%= f.check_box :graff, { id: "graff-checkbox" }, 'oui', nil %>
+        <%= f.label :graff, "Graff (libre 1€)" %><br>
+
+        <%= f.check_box :soutien, { id: "soutien-checkbox" }, 'oui', nil %>
+        <%= f.label :soutien, "Soutien à l'association (libre 1€)" %><br>
+
         <p>*Mineur.e/RSA/Personne en situation de handicap</p>
       </fieldset>
 
-      <fieldset>
+      <fieldset class="fieldset-infos">
         <legend>Informations personnelles</legend>
-        <label for="prenom">Prénom</label>
-        <input type="text" id="prenom" name="prenom" required>
+        <%= f.label :prenom, "Prénom" %>
+        <%= f.text_field :prenom, required: true, class: "form-field" %><br>
 
-        <label for="nom">Nom</label>
-        <input type="text" id="nom" name="nom" required>
+        <%= f.label :nom, "Nom" %>
+        <%= f.text_field :nom, required: true, class: "form-field" %><br>
 
-        <label for="date_naissance">Date de naissance</label>
-        <input type="date" id="date_naissance" name="date_naissance" required>
+        <%= f.label :date_naissance, "Date de naissance" %>
+        <%= f.date_field :date_naissance, required: true, class: "form-field" %><br>
 
-        <label for="adresse">Adresse</label>
-        <input type="text" id="adresse" name="adresse" required>
+        <%= f.label :adresse, "Adresse" %>
+        <%= f.text_field :adresse, required: true, class: "form-field" %><br>
 
-        <label for="code_postal">Code postal</label>
-        <input type="text" id="code_postal" name="code_postal" required>
+        <%= f.label :code_postal, "Code postal" %>
+        <%= f.text_field :code_postal, required: true, class: "form-field" %><br>
 
-        <label for="ville">Ville</label>
-        <input type="text" id="ville" name="ville" required>
+        <%= f.label :ville, "Ville" %>
+        <%= f.text_field :ville, required: true, class: "form-field" %><br>
 
-        <label for="pays">Pays</label>
-        <input type="text" id="pays" name="pays" required>
+        <%= f.label :pays, "Pays" %>
+        <%= f.text_field :pays, required: true, class: "form-field" %><br>
 
-        <label for="telephone">Numéro de téléphone</label>
-        <input type="tel" id="telephone" name="telephone" required>
+        <%= f.label :telephone, "Numéro de téléphone" %>
+        <%= f.telephone_field :telephone, required: true, class: "form-field" %><br>
 
-        <label for="email">Adresse mail</label>
-        <input type="email" id="email" name="email" required>
+        <%= f.label :email, "Adresse mail" %>
+        <%= f.email_field :email, required: true, class: "form-field" %><br>
 
-        <label for="profession">Profession</label>
-        <input type="text" id="profession" name="profession">
+        <%= f.label :profession, "Profession" %>
+        <%= f.text_field :profession, class: "form-field" %><br>
 
-        <label for="specialite">Spécialité ou Disciplines pratiquées</label>
-        <input type="text" id="specialite" name="specialite">
+        <%= f.label :specialite, "Spécialité ou Disciplines pratiquées" %>
+        <%= f.text_field :specialite, class: "form-field" %><br>
       </fieldset>
 
-      <fieldset>
+      <fieldset class="fieldset-droit-image">
         <legend>Autorisation de droit à l'image</legend>
-        <label><input type="radio" name="droit_image" value="oui" required> OUI</label>
-        <label><input type="radio" name="droit_image" value="non" required> NON</label>
+        <%= f.label :droit_image, "OUI" %>
+        <%= f.radio_button :droit_image, 'oui', required: true %>
+        <%= f.label :droit_image, "NON" %>
+        <%= f.radio_button :droit_image, 'non', required: true %><br>
+
         <p>
           J’accepte d’être photographié.e ou filmé.e dans le cadre des activités du CircoGraphe et de Dark Paillettes et accepte
           l’utilisation des photos ou vidéos à des fins de communication (site internet, plaquettes, réseaux sociaux …) de l’association.
         </p>
       </fieldset>
 
-      <fieldset>
+      <fieldset class="fieldset-projet">
         <legend>Si le projet vous intéresse :</legend>
-        <label><input type="checkbox" name="newsletter" value="oui"> Je souhaite m’inscrire à la newsletter</label>
-        <label><input type="checkbox" name="investir" value="oui"> Je souhaite m’investir dans le projet</label>
-        <label><input type="checkbox" name="soutenir_financierement" value="oui"> Je souhaite soutenir financièrement le projet (cagnotte en ligne)</label>
+        <%= f.check_box :newsletter, { multiple: false }, 'oui', nil %>
+        <%= f.label :newsletter, "Je souhaite m’inscrire à la newsletter" %><br>
+
+        <%= f.check_box :investir, { multiple: false }, 'oui', nil %>
+        <%= f.label :investir, "Je souhaite m’investir dans le projet" %><br>
+
+        <%= f.check_box :soutenir_financierement, { multiple: false }, 'oui', nil %>
+        <%= f.label :soutenir_financierement, "Je souhaite soutenir financièrement le projet (cagnotte en ligne)" %>
       </fieldset>
 
-      <button type="submit">Envoyer</button>
-    </form>
+      <div class="form-buttons">
+        <%= f.submit "Valider", class: "btn btn-primary" %>
+        <%= button_tag "Réinitialiser", type: "reset", class: "btn btn-secondary" %>
+      </div>
+    <% end %>
   </div>
 </body>
-</html>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const cirqueCheckbox = document.getElementById('cirque-checkbox');
+    const tarifReduitRadio = document.getElementById('tarif-reduit-radio');
+    const tarifPleinRadio = document.getElementById('tarif-plein-radio');
+
+    // Écouteur pour activer/désactiver les cases
+    cirqueCheckbox.addEventListener('change', function () {
+      const isCirqueChecked = cirqueCheckbox.checked;
+      tarifReduitRadio.disabled = !isCirqueChecked;
+      tarifPleinRadio.disabled = !isCirqueChecked;
+
+      // Si "Cirque" est décoché, réinitialiser les sélections
+      if (!isCirqueChecked) {
+        tarifReduitRadio.checked = false;
+        tarifPleinRadio.checked = false;
+      }
+    });
+  });
+</script>
