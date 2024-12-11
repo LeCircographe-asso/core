@@ -26,6 +26,8 @@ Rails.application.routes.draw do
     get 'cancel', to: 'checkout#cancel', as: 'checkout_cancel'
   end
   
+  post '/newsletter_signup', to: 'users#newsletter_signup', as: :newsletter_signup
+
   root "home#index"
 
   match '*unmatched', to: 'application#url_not_found', via: :all

@@ -1,8 +1,20 @@
 /* pages_le_cirque.css */
+
 .cirque-container {
   background-color: #E6E6EA;
   font-family: Arial, sans-serif;
-  padding: 20px;
+}
+
+.banner_cirque {
+  position: relative; 
+  background-size: cover;
+  background-position: center;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  clip-path: ellipse(100% 90% at 70% 10%);
+  z-index: 1;
 }
 
 .banner-image {
@@ -23,10 +35,9 @@
   width: 48%;
 }
 
-.image-box {
-  border: 2px solid #ddd;
-  padding: 10px;
+.image-box-cirque {
   text-align: center;
+  padding: 30px;
 }
 
 .cirque-image {
@@ -34,16 +45,24 @@
   height: auto;
 }
 
-.right-content ul {
+.right-content-cirque ul li {
   list-style: none;
   padding: 0;
+  margin: 0px;
 }
 
-.right-content li {
-  margin: 5px 0;
+.right-content-cirque {
+  text-align: left;
+  background-color: #f8f9fa;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(44, 44, 44, 0.781);
+  font-size: 16px;
+  line-height: 1.6;
 }
 
-.text-section {
+
+.text-section-cirque {
   margin-top: 30px;
   background-color: #f8f9fa;
   padding: 20px;

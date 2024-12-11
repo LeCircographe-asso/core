@@ -52,7 +52,7 @@ input[type="text"], input[type="email"], input[type="tel"], input[type="date"] {
   padding: 8px;
   margin-top: 5px;
   border: 1px solid #fff;
-  color: #fff;
+  color: black;
   border-radius: 5px;
 }
 
