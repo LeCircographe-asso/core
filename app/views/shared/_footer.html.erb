@@ -1,15 +1,23 @@
 <footer class="footer">
-    <div class="footer_column">
-        <h3>A propos de nous :</h3>
-        <ul>
-            <li><%= link_to "Nous contacter", page_path("contact"), class: "footer_link" %></li>
-            <li><%= link_to "CGU", page_path("cgu"), class: "footer_link" %></li>
-            <li><%= link_to "Politique de confidentialité", "#", class: "footer_link" %></li>
-        </ul>
-    </div>
-    <div class="footer_logo_wrapper">
-        <%= link_to root_path do %>
-        <%= image_tag "Le-Circographe.png", alt: "Logo Circo Graphe", class: "footer_logo" %>
+  <div class="footer_column">
+    <h3>A propos de nous :</h3>
+    <ul>
+      <li><%= link_to "Nous contacter", page_path("contact"), class: "footer_link" %></li>
+      <li><%= link_to "CGU", page_path("cgu"), class: "footer_link" %></li>
+      <li><%= link_to "Politique de confidentialité", page_path("privacy-policy"), class: "footer_link" %></li>
+    </ul>
+  </div>
+  <div class="footer_logo_wrapper">
+    <%= link_to root_path do %>
+      <%= image_tag "Le-Circographe.png", alt: "Logo Circo Graphe", class: "footer_logo" %>
+    <% end %>
+  </div>
+  <div class="footer_column">
+    <h3>Suivez-nous !</h3>
+    <ul class="social_icons">
+      <li>
+        <%= link_to "https://www.instagram.com/lecircographe/", target: "_blank" do %>
+          <%= image_tag "instagram.png", alt: "Instagram", class: "footer_icon" %>
         <% end %>
     </div>
     <div class="footer_column">

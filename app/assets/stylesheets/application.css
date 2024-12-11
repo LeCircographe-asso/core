@@ -17,7 +17,6 @@ main {
     flex: 1;
 }
 
-
 .white-button {
 
     padding: 5px 15px;
@@ -47,7 +46,7 @@ main {
     background-color: #5836a5;
 }
 
-.baner {
+.banner {
     position: relative; 
     background-size: cover;
     background-position: center;
