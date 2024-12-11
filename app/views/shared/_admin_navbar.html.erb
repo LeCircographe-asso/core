@@ -8,7 +8,7 @@
 
     <div class="admin-header-right">
 
-        <%= link_to 'Votre Profil', edit_user_path(Current.user), class: 'btn btn-secondary' %>
+        <%= link_to 'Votre Profil', user_path(current_user), class: 'btn btn-secondary' %>
 
         <%= link_to 'Se déconnecter', session_path, method: :delete, class: 'btn btn-danger' %>
 

@@ -4,7 +4,7 @@ class UpdateUsersTable < ActiveRecord::Migration[8.0]
       t.string :last_name
       t.string :first_name
       t.date :birthdate
-      t.text :adress
+      t.text :address
       t.string :zip_code
       t.text :town
       t.string :country
