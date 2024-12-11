@@ -20,7 +20,7 @@
 .banner-image {
   width: 100%;
   height: auto;
-  max-height: 20vh;
+  max-height: 25vh;
   object-fit: cover;
 }
 
@@ -48,7 +48,7 @@
   height: auto;
 }
 
-.contact-button {
+.contact_us {
   text-align: center;
   margin: 30px 0;
 }

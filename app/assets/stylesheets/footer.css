@@ -3,7 +3,7 @@
   background-color: #D9DBDE;
   color: #374151;
   width: 100%;
-  border-top: 1px solid #a0aec0;
+  border-top: 2px solid #a0aec0;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -46,7 +46,11 @@
 }
 
 .footer_logo {
-  width: 175px;
+  width: 300px;
+}
+
+.newsletter_footer_column {
+  margin-right: 6%;
 }
 
 .social_icons {
