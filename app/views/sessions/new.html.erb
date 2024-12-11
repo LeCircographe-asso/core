@@ -12,10 +12,12 @@
       </div>
 
       <div class="form-group">
-        <%= form.password_field :password, required: true, autocomplete: "current-password", placeholder: "********", maxlength: 72, class: "form-input" %>
+        <%= form.password_field :password, required: true, autocomplete: "current-password", placeholder: "********", maxlength: 72, class: "form-input", id: "password-field" %>
       </div>
 
-      
+      <div class="form-group">
+        <%= form.checkbox :show_password, class: "show-password-box" %> Voir le mot de passe
+      </div>
           <%= form.submit "Se connecter", class: "submit-button" %>
       
 
@@ -29,4 +31,11 @@
   </div>
 </div>
 
+<script>
+  const field = document.querySelector("#password-field");
+  const box = document.querySelector(".show-password-box");
 
+  box.addEventListener("change", () => {
+    field.type = box.checked ? "text" : "password";
+  })
+</script>

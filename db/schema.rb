@@ -116,15 +116,17 @@ ActiveRecord::Schema[8.0].define(version: 2024_12_05_100153) do
     t.integer "role", default: 0
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.text "adress"
     t.string "last_name"
     t.string "first_name"
     t.date "birthdate"
+    t.text "address"
     t.string "zip_code"
-    t.string "town"
+    t.text "town"
     t.string "country"
     t.string "phone_number"
-    t.string "occupation"
-    t.string "specialty"
+    t.text "occupation"
+    t.text "specialty"
     t.boolean "image_rights", default: false
     t.boolean "newsletter", default: false
     t.boolean "get_involved", default: false

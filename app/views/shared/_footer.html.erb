@@ -4,7 +4,7 @@
     <ul>
       <li><%= link_to "Nous contacter", page_path("contact"), class: "footer_link" %></li>
       <li><%= link_to "CGU", page_path("cgu"), class: "footer_link" %></li>
-      <li><%= link_to "Politique de confidentialité", "#", class: "footer_link" %></li>
+      <li><%= link_to "Politique de confidentialité", page_path("privacy-policy"), class: "footer_link" %></li>
     </ul>
   </div>
   <div class="footer_logo_wrapper">
@@ -19,17 +19,32 @@
         <%= link_to "https://www.instagram.com/lecircographe/", target: "_blank" do %>
           <%= image_tag "instagram.png", alt: "Instagram", class: "footer_icon" %>
         <% end %>
-      </li>
-      <li>
-        <%= link_to "https://www.facebook.com/lecircographe/?locale=fr_FR", target: "_blank" do %>
-          <%= image_tag "facebook.png", alt: "Facebook", class: "footer_icon" %>
+    </div>
+    <div class="footer_column">
+        <h3>Inscrivez-vous à notre newsletter :</h3>
+        <%= form_with url: newsletter_signup_path, method: :post, class: "newsletter_form" do |f| %>
+        <%= f.email_field :email, placeholder: "Entrez votre email", required: true %>
+        <%= f.submit "S'inscrire" %>
         <% end %>
-      </li>
-    </ul>
-  </div>
-  <div class="footer_back_to_top">
-    <%= link_to "#", class: "back-to-top" do %>
-      <span>↑</span>
-    <% end %>
-  </div>
+    </div>
+    <div class="footer_column">
+        <h3>Suivez-nous !</h3>
+        <ul class="social_icons">
+            <li>
+                <%= link_to "https://www.instagram.com/lecircographe/", target: "_blank" do %>
+                <%= image_tag "instagram.png", alt: "Instagram", class: "footer_icon" %>
+                <% end %>
+            </li>
+            <li>
+                <%= link_to "https://www.facebook.com/lecircographe/?locale=fr_FR", target: "_blank" do %>
+                <%= image_tag "facebook.png", alt: "Facebook", class: "footer_icon" %>
+                <% end %>
+            </li>
+        </ul>
+    </div>
+    <div class="footer_back_to_top">
+        <%= link_to "#", class: "back-to-top" do %>
+        <span>↑</span>
+        <% end %>
+    </div>
 </footer>
