@@ -24,21 +24,21 @@
   object-fit: cover;
 }
 
-.main-content {
+.main-content-graff {
   display: flex;
   justify-content: space-between;
   margin-top: 20px;
 }
 
-.left-content {
+.left-content-graff {
   width: 48%;
 }
 
-.right-content {
+.right-content-graff {
   width: 48%;
 }
 
-.image-box {
+.image-box-graff {
   text-align: center;
   padding: 30px;
 }
@@ -48,7 +48,7 @@
   height: auto;
 }
 
-.text-section {
+.text-section-graff {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
@@ -56,7 +56,7 @@
   background-color: #E6E6EA;
 }
 
-.paragraph-content {
+.paragraph-content-graff {
   width: 60%;
 }
 
