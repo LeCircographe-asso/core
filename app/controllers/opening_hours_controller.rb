@@ -20,14 +20,15 @@ class OpeningHoursController < ApplicationController
   end
 
   def update
-    updated_hours = params[:opening_hours].to_unsafe_h
+    # updated_hours = params[:opening_hours].to_unsafe_h
+    updated_hours = params.require(:opening_hours).permit(:lundi, :mardi, :mercredi, :jeudi, :vendredi, :samedi, :dimanche).to_h # xss vulnerability resolved
     if valid_hours?(updated_hours)
       Rails.cache.write('opening_hours', updated_hours)
       flash[:notice] = "Les horaires d'ouverture ont été mis à jour !"
       redirect_to opening_hours_path
     else
       flash[:alert] = "Le format des horaires est invalide."
-      render :edit
+      redirect_to edit_opening_hours_path
     end
   end
 
@@ -41,7 +42,9 @@ class OpeningHoursController < ApplicationController
   end
 
   def valid_hours?(hours)
-    hours.values.all? { |time| time.match?(/\A(\d{2}:\d{2} - \d{2}:\d{2}|Fermé)\z/) }
+    hours.values.all? do |time|
+      time.match?(/\A((?:[0-9]|[01][0-9]|2[0-3]):[0-5][0-9] - (?:[0-9]|[01][0-9]|2[0-3]):[0-5][0-9]|Fermé)\z/)
+    end
   end
 
 end
