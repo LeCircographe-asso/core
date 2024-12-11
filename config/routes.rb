@@ -10,6 +10,7 @@ Rails.application.routes.draw do
         post 'membership_recap'
         post 'membership_payment'
         post 'membership_complete'
+        get 'reset_membership'
       end
     end
   end
