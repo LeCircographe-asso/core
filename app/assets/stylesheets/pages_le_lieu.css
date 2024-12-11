@@ -39,9 +39,8 @@
 }
 
 .image-box {
-  border: 2px solid #ddd;
-  padding: 10px;
-  text-align: center;
+  text-align: center;  
+  padding: 30px;
 }
 
 .place-image {

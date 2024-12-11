@@ -39,9 +39,8 @@
 }
 
 .image-box {
-  border: 2px solid #ddd;
-  padding: 10px;
   text-align: center;
+  padding: 30px;
 }
 
 .graff-image {
@@ -54,6 +53,7 @@
   justify-content: space-between;
   align-items: flex-start;
   margin-top: 30px;
+  background-color: #E6E6EA;
 }
 
 .paragraph-content {
