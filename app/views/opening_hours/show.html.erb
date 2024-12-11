@@ -1,0 +1,9 @@
+<h1>Horaires d'ouverture</h1>
+<table>
+  <% @opening_hours.each do |day, hours| %>
+    <tr>
+      <td><%= day.capitalize %></td>
+      <td><%= hours %></td>
+    </tr>
+  <% end %>
+</table>
