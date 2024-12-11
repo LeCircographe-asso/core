@@ -13,21 +13,14 @@
 
 .cgu ul {
   list-style-type: disc;
-  /* Type de puce standard */
-  margin-left: 40px;
-  /* Décale les puces vers la droite */
-  margin-bottom: 20px;
-  /* Ajoute de l'espace entre les listes */
 }
 
 .cgu ul li {
   margin-bottom: 10px;
-  /* Ajoute de l'espace entre les éléments de la liste */
-  line-height: 1.6;
-  /* Améliore la lisibilité */
+  line-height: 1.2;
+
 }
 
 .cgu ul li strong {
   font-weight: bold;
-  /* Mettez en valeur les mots importants dans les listes */
 }
