@@ -13,7 +13,9 @@ Rails.application.routes.draw do
       end
     end
   end
-  
+
+  resource :opening_hours, only: [:show, :edit, :update]
+
   resources :pages, only: %i[show]
   resource :session, only: %i[new create destroy]
   resources :passwords, param: :token
