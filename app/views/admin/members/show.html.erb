@@ -6,9 +6,10 @@
     <h2 class="profile-section-title">Informations</h2>
     <div class="profile-info">
       <div class="info-group">
+        <p><strong>Email:</strong> <%= @user.email_address %></p>
         <p><strong>Date de naissance:</strong> <%= @user.birthdate %></p>
-        <p><strong>Adresse:</strong> nill DB</p>
-        <p><strong>Code Postal:</strong> <%= @user.zip_code %>0</p>
+        <p><strong>Adresse:</strong> <%= @user.adress %></p>
+        <p><strong>Code Postal:</strong> <%= @user.zip_code %></p>
         <p><strong>Ville:</strong> <%= @user.town %></p>
         <p><strong>Pays:</strong> <%= @user.country %></p>
         <p><strong>N° de téléphone:</strong> <%= @user.phone_number %></p>
@@ -25,6 +26,10 @@
           <p><strong>Statut de l'abonnement:</strong> <%= latest_membership.status ? "Actif" : "Inactif" %></p>
         <% else %>
           <p><strong>Inscription ?:</strong> Non</p>
+          <% if @user.subscription_types.exists? %>
+            <p><strong>Type d'abonnement:</strong> <%= latest_membership.subscription_type.name %></p>
+            <p><strong>Statut de l'abonnement:</strong> <%= latest_membership.status ? "Actif" : "Inactif" %></p>
+          <% end %>
         <% end %>
         <p><strong>Newsletter:</strong> <%= @user.newsletter %></p>
         <p><strong>Investissement dans le projet:</strong> <%= @user.get_involved %></p>
