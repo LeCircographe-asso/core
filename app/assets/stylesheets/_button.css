@@ -1,0 +1,113 @@
+/* _button.css */
+.white-button {
+padding: 5px 15px;
+border: 1px solid #007bff;
+background-color: white;
+color: #007bff;
+border-radius: 5px;
+cursor: pointer;
+font-size: 14px;
+font-family: 'roboto', sans-serif;
+}
+
+.white-button:hover {
+background-color: #e7f0ff;
+}
+
+.purple-button {
+padding: 5px 15px;
+border: none;
+background-color: #6b47b8;
+color: #F4F4F8;
+border-radius: 5px;
+cursor: pointer;
+font-size: 15px;
+font-family: 'roboto', sans-serif;
+}
+
+.purple-button:hover {
+background-color: #5836a5;
+}
+
+.contact-button {
+background-color: #6c63ff;
+color: white;
+padding: 10px 20px;
+border: none;
+border-radius: 4px;
+font-size: 16px;
+cursor: pointer;
+}
+
+.contact-button:hover {
+background-color: #5146d6;
+}
+
+.white-button {
+
+padding: 5px 15px;
+border: 1px solid #007bff;
+background-color: white;
+color: #007bff;
+border-radius: 5px;
+cursor: pointer;
+font-size: 14px;
+}
+
+.white-button:hover {
+background-color: #e7f0ff;
+}
+
+.blue-button {
+padding: 5px 15px;
+border: none;
+background-color: #6b47b8;
+color: white;
+border-radius: 5px;
+cursor: pointer;
+font-size: 14px; 
+}
+
+.blue-button:hover {
+background-color: #5836a5;
+}
+
+.submit-button {
+width: 50%;
+padding: 12px;
+font-size: 16px;
+background-color: #6b47b8;
+border: 2px solid #6b47b8;
+color: white;
+box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+border: none;
+border-radius: 4px;
+cursor: pointer;
+transition: background-color 0.3s ease;
+font-weight: bold;
+}
+
+.submit-button:hover {
+background-color: #F2F3F4;
+color: #1F5C55;
+border: 2px solid #1F5C55;
+box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+font-weight: bold;
+}
+
+.edit-button {
+display: block;
+width: 100%;
+background-color: #007BFF;
+color: #ffffff;
+padding: 10px;
+border: none;
+border-radius: 4px;
+font-size: 16px;
+cursor: pointer;
+text-align: center;
+}
+
+.edit-button:hover {
+background-color: #0056b3;
+}
