@@ -4,12 +4,13 @@ class UpdateUsersTable < ActiveRecord::Migration[8.0]
       t.string :last_name
       t.string :first_name
       t.date :birthdate
+      t.text :adress
       t.string :zip_code
-      t.string :town
+      t.text :town
       t.string :country
       t.string :phone_number
-      t.string :occupation
-      t.string :specialty
+      t.text :occupation
+      t.text :specialty
       t.boolean :image_rights, default: false
       t.boolean :newsletter, default: false
       t.boolean :get_involved, default: false
