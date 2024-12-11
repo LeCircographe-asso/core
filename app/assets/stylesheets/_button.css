@@ -43,35 +43,6 @@ cursor: pointer;
 background-color: #5146d6;
 }
 
-.white-button {
-
-padding: 5px 15px;
-border: 1px solid #007bff;
-background-color: white;
-color: #007bff;
-border-radius: 5px;
-cursor: pointer;
-font-size: 14px;
-}
-
-.white-button:hover {
-background-color: #e7f0ff;
-}
-
-.blue-button {
-padding: 5px 15px;
-border: none;
-background-color: #6b47b8;
-color: white;
-border-radius: 5px;
-cursor: pointer;
-font-size: 14px; 
-}
-
-.blue-button:hover {
-background-color: #5836a5;
-}
-
 .submit-button {
 width: 50%;
 padding: 12px;
