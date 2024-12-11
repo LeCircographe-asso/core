@@ -1,0 +1,26 @@
+/* privacy-policy.css */
+.privacy-policy {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  min-height: 80vh;
+  margin: 0 auto;
+  padding: 20px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.privacy-policy ul {
+  list-style-type: disc;
+}
+
+.privacy-policy ul li {
+  margin-bottom: 10px;
+  line-height: 1.2;
+
+}
+
+.privacy-policy ul li strong {
+  font-weight: bold;
+}
