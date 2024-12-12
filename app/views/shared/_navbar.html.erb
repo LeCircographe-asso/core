@@ -1,20 +1,23 @@
+<div class="navbar">
   <div class="navbar-left">
     <div class="navbar-logo">
       <%= link_to root_path do %>
         <%= image_tag "Le-Circographe-crop.png", alt: "Logo Circographe" %>
       <% end %>
     </div>
+    <%= link_to "Accueil", root_path, class: "navbar-text navbar-link-left" %>
   </div>
+
   <div class="navbar-center">
     <ul class="navbar-links">
-      <li><%= link_to "Accueil", root_path, class: "navbar-text" %></li>
       <li><%= link_to "Le cirque", page_path("le_cirque"), class: "navbar-text" %></li>
       <li><%= link_to "Le graff", page_path("le_graff"), class: "navbar-text" %></li>
       <li><%= link_to "Le lieu", page_path("le_lieu"), class: "navbar-text" %></li>
-      <li><%= link_to "À propos", page_path("about"), class: "navbar-text" %></li>
     </ul>
   </div>
+
   <div class="navbar-right">
+    <%= link_to "À propos", page_path("about"), class: "navbar-text navbar-link-right" %>
     <% if authenticated? %>
       <%= link_to "Mon profil", user_path(current_user), class: "white-button" %>
       <%= button_to "Se déconnecter", session_path, method: :delete, class: "purple-button" %>
@@ -23,3 +26,4 @@
       <%= link_to "S'inscrire", new_registration_path, class: "purple-button" %>
     <% end %>
   </div>
+</div>
