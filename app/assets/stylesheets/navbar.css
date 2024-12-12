@@ -38,15 +38,15 @@
 }
 
 .navbar-links li a {
-  font-size: 16px;
+  font-size: 20px;
   font-family: 'RoughTypewriter', sans-serif;
   color: black;
-  transition: box-shadow 0.3s ease;
+  transition: text-shadow 0.3s ease;
 }
 
 .navbar-links li a:hover {
   text-decoration: underline;
-  box-shadow: 0 4px 8px #5836a5;
+  text-shadow: 0 4px 8px #5836a5;
 }
 
 .navbar-links li a:focus {
@@ -107,7 +107,7 @@
   background-color: #f5f5f5;
   padding: 20px;
   border-radius: 5px;
-  box-shadow: 0 1px 10px rgba(0, 0, 0, 0.1);
+  text-shadow: 0 1px 10px rgba(0, 0, 0, 0.1);
 }
 
 .custom-navbar {
