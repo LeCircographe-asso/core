@@ -16,6 +16,7 @@ Rails.application.routes.draw do
 
   resource :opening_hours, only: %i[show edit update]
 
+  resources :events
   resources :pages, only: %i[show]
   resource :session, only: %i[new create destroy]
   resources :passwords, param: :token
