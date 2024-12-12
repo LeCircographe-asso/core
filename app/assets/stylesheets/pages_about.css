@@ -64,7 +64,7 @@
 }
 
 .team-image-about {
-  width: 80px;
+  width: 100px;
   height: 80px;
   border-radius: 50%;
   margin-bottom: 10px;
@@ -87,6 +87,6 @@
 }
 
 .social-image-about {
-  width: 150px;
+  width: 500px;
   height: auto;
 }
