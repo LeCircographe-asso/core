@@ -25,22 +25,33 @@
 }
 
 .navbar-links {
+  text-decoration: none;
   list-style: none;
   display: flex;
-  gap: 20px;
+  gap: 40px;
   padding: 0;
   margin: 0;
 }
 
-.navbar-links li a {
+.navbar-text {
   text-decoration: none;
+}
+
+.navbar-links li a {
   font-size: 16px;
   font-family: 'RoughTypewriter', sans-serif;
   color: black;
+  transition: box-shadow 0.3s ease;
 }
 
 .navbar-links li a:hover {
   text-decoration: underline;
+  box-shadow: 0 4px 8px #5836a5;
+}
+
+.navbar-links li a:focus {
+  outline: 2px solid #8B89B0;
+  outline-offset: 2px;
 }
 
 .navbar-right {
