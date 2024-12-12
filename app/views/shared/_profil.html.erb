@@ -1,8 +1,13 @@
 <div class="profile-container">
+    <% authenticated? %>
+    <%= %>
+    <% if current_user.role == "admin" || current_user.role == "godmode" || current_user.role == "volunteer" %>
+    <%= link_to "Dashboard Administrateur", admin_dashboard_path %>
+    <% end %>
     <div class="profile-header">
-    <h2>
-        <%= Current.user.role %>
-    </h2>
+        <h2>
+            <%= Current.user.role %>
+        </h2>
         <%= Current.user.email %>
         <%= button_to "Editer", edit_user_path, class: "white-button" %>
     </div>
