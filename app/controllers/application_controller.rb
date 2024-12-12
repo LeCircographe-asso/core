@@ -8,11 +8,10 @@ class ApplicationController < ActionController::Base
 
   def url_not_found
     case controller_name
-    when 'users'
+    when "users"
       redirect_to root_path, alert: "L'utilisateur n'existe pas."
     else
       redirect_to root_path, alert: "La page que vous cherchez n'existe pas."
     end
   end
-
 end

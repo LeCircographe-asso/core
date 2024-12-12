@@ -15,9 +15,9 @@ class RegistrationsController < ApplicationController
     @user = User.new(email_address: email, password: pwd, password_confirmation: pwdc)
     if @user.save
       start_new_session_for @user
-      redirect_to root_path, notice: 'Inscription réussie !'
+      redirect_to root_path, notice: "Inscription réussie !"
     else
-      render :new, status: :unprocessable_entity 
+      render :new, status: :unprocessable_entity
     end
   end
 

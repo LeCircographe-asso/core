@@ -5,7 +5,6 @@ class UserMembership < ApplicationRecord
 
   has_many :payments, dependent: :destroy
   has_many :training_attendees
-  
 
   validates :user_id, :subscription_type_id, presence: true
 end
