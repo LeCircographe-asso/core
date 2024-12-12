@@ -20,10 +20,10 @@ class User < ApplicationRecord
 
   alias_attribute :email, :email_address
 
-  after_create :welcome_send
-  def welcome_send
-    UserMailer.welcome_email(self).deliver_now
-  end
+  # after_create :welcome_send
+  # def welcome_send
+  #   UserMailer.welcome_email(self).deliver_now
+  # end
   def has_privileges?
     [ "admin", "godmode", "volunteer" ].include? self.role
   end
