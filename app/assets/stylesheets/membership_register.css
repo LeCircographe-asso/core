@@ -15,7 +15,9 @@
   background-color: #6b3e91;
 }
 
-.fieldset-info, .fieldset-image, .fieldset-project {
+.fieldset-info,
+.fieldset-image,
+.fieldset-project {
   border: 2px solid #fff;
   padding: 20px;
   margin-bottom: 20px;
@@ -43,11 +45,15 @@ legend {
   border-radius: 5px;
 }
 
-input[type="checkbox"], input[type="radio"] {
+input[type="checkbox"],
+input[type="radio"] {
   accent-color: #bb8f3c;
 }
 
-input[type="text"], input[type="email"], input[type="tel"], input[type="date"] {
+input[type="text"],
+input[type="email"],
+input[type="tel"],
+input[type="date"] {
   width: 100%;
   padding: 8px;
   margin-top: 5px;
@@ -91,6 +97,7 @@ label {
   color: #ddd;
 }
 
-input[type="checkbox"], input[type="radio"] {
+input[type="checkbox"],
+input[type="radio"] {
   accent-color: #bb8f3c;
 }

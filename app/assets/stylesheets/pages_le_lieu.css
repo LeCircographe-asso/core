@@ -1,7 +1,7 @@
 /* pages_le_lieu.css */
 
 .banner_lieu {
-  position: relative; 
+  position: relative;
   background-size: cover;
   background-position: center;
   width: 100%;
@@ -39,7 +39,7 @@
 }
 
 .image-box {
-  text-align: center;  
+  text-align: center;
   padding: 30px;
 }
 

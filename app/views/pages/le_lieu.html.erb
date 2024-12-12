@@ -1,39 +1,39 @@
 <% content_for :css_file, "pages_le_lieu" %>
 
 <div class="place-container">
-  <div class="banner_lieu">
-    <%= image_tag "place.png", alt: "Scène de vie - Le Lieu", class: "banner-image" %>
-  </div>
+    <div class="banner_lieu">
+        <%= image_tag "place.jpg", alt: "Scène de vie - Le Lieu", class: "banner-image" %>
+    </div>
 
-  <div class="main-content">
-    <div class="left-content">
-      <h2>Le Lieu</h2>
-      <p>Text : Text : Text :<br>
-      Text : Text : Text :<br>
-      Text : Text : Text :<br>
-      Text : Text : Text :<br>
-      Text : Text : Text :</p>
+    <div class="main-content">
+        <div class="left-content">
+            <h2>Le Lieu</h2>
+            <p>Text : Text : Text :<br>
+                Text : Text : Text :<br>
+                Text : Text : Text :<br>
+                Text : Text : Text :<br>
+                Text : Text : Text :</p>
+        </div>
+        <div class="right-content">
+            <div class="image-box">
+                <%= image_tag "place.jpg", alt: "Image Le Lieu", class: "place-image" %>
+            </div>
+        </div>
     </div>
-    <div class="right-content">
-      <div class="image-box">
-        <%= image_tag "place.png", alt: "Image Le Lieu", class: "place-image" %>
-      </div>
-    </div>
-  </div>
 
-  <div class="contact_us">
-    <%= link_to "Contact et résidence", page_path("contact"), class: "btn-contact" %>
-  </div>
+    <div class="contact_us">
+        <%= link_to "Contact et résidence", page_path("contact"), class: "btn-contact" %>
+    </div>
 
-  <div class="text-section">
-    <div class="image-box">
-      <%= image_tag "place.png", alt: "Image supplémentaire", class: "place-image" %>
+    <div class="text-section">
+        <div class="image-box">
+            <%= image_tag "place.jpg", alt: "Image supplémentaire", class: "place-image" %>
+        </div>
+        <div class="paragraph-content">
+            <p>Paragraphe : Paragraphe : Paragraphe :</p>
+            <p>Paragraphe : Paragraphe : Paragraphe :</p>
+            <p>Paragraphe : Paragraphe : Paragraphe :</p>
+            <p>Paragraphe : Paragraphe : Paragraphe :</p>
+        </div>
     </div>
-    <div class="paragraph-content">
-      <p>Paragraphe : Paragraphe : Paragraphe :</p>
-      <p>Paragraphe : Paragraphe : Paragraphe :</p>
-      <p>Paragraphe : Paragraphe : Paragraphe :</p>
-      <p>Paragraphe : Paragraphe : Paragraphe :</p>
-    </div>
-  </div>
 </div>

@@ -8,15 +8,15 @@
 
 .image-block-stripe {
   flex: 1;
-  display: flex; 
+  display: flex;
 }
 
 .form-block-stripe {
-  flex: 1; 
+  flex: 1;
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: #000; 
+  background-color: #000;
 }
 
 .signup-form-stripe {
@@ -40,6 +40,3 @@
   border: 1px solid #ccc;
   border-radius: 4px;
 }
-
-
-

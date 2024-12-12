@@ -1,19 +1,21 @@
 /* _form.css */
 
-.signup-page ,.signin-page {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 75vh; 
-  }
+.signup-page,
+.signin-page {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 75vh;
+}
 
 .form-group {
   padding-bottom: 2px;
 }
 
-.left-side, .right-side {
-width: 50%;
-height: 75vh;
+.left-side,
+.right-side {
+  width: 50%;
+  height: 75vh;
 }
 
 .left-side {
@@ -29,10 +31,11 @@ height: 75vh;
 }
 
 .signup-img {
-width: 75%;
+  width: 75%;
 }
 
-.signup-form-container, .signin-form-container {
+.signup-form-container,
+.signin-form-container {
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -72,11 +75,15 @@ width: 75%;
 }
 
 @media (max-width: 768px) {
-  .signup-page, .signin-page {
+
+  .signup-page,
+  .signin-page {
     flex-direction: column;
   }
-  .left-side, .right-side {
+
+  .left-side,
+  .right-side {
     width: 100%;
     height: 50vh;
   }
- }
+}

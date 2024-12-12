@@ -16,7 +16,7 @@
     <link rel="apple-touch-icon" href="/icon.png">
 
     <%# Includes the global stylesheet for the app %>
-    
+
     <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
     <% if controller_path.start_with?('admin') %>
     <%= stylesheet_link_tag 'dashboard', "data-turbo-track": "reload" %>
@@ -31,18 +31,18 @@
 </head>
 
 <body class="<%= controller_name %>-<%= action_name %>">
-  <div class="navbar">
-    <%= render 'shared/navbar' %>
-  </div>
+    <div class="navbar">
+        <%= render 'shared/navbar' %>
+    </div>
 
-  <%= render 'shared/flash' %>
+    <%= render 'shared/flash' %>
 
-  <main>
-    <%= yield %>
-  </main>
+    <main>
+        <%= yield %>
+    </main>
 
     <%= render 'shared/footer' %>
-    
+
 </body>
 
 </html>
