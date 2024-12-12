@@ -20,8 +20,7 @@ module Admin
     end
 
     def membership_recap
-      # session[:membership_data] = params.permit(:cirque, :tarif, :graff, :soutien, :prenom, :nom, :date_naissance, :adresse, :code_postal, :ville, :pays, :telephone, :email, :profession, :specialite, :droit_image, :newsletter, :investir, :soutenir_financierement).to_h
-      session[:membership_data] = params[:membership_data] if params[:membership_data].present?
+      session[:membership_data] = params.permit(:cirque, :tarif, :graff, :soutien, :prenom, :nom, :date_naissance, :adresse, :code_postal, :ville, :pays, :telephone, :email, :profession, :specialite, :droit_image, :newsletter, :investir, :soutenir_financierement).to_h
       @membership_data = session[:membership_data] || {}
     end
 
