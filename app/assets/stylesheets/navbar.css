@@ -29,9 +29,8 @@
 
 .navbar-center {
   display: flex;
-  justify-content: center;
-  flex-grow: 1;
-  max-width: 800px;
+  flex: 1;
+  width: 100%;
 }
 
 .navbar-links {
@@ -49,25 +48,19 @@
 }
 
 .navbar-text {
+  width: 115px;
   text-decoration: none;
   font-size: 20px;
   color: black;
   transition: text-shadow 0.3s ease;
 }
 
+.navbar-link-middle {
+  margin-left: 3%;
+}
 
 .navbar-text:hover {
   text-shadow: 0 4px 8px #5836a5;
-}
-
-.navbar-links li a:hover {
-  text-decoration: none;
-  text-shadow: 0 4px 8px #5836a5;
-}
-
-.navbar-links li a:visited {
-  text-decoration: none;
-  color: black;
 }
 
 .navbar-left {
@@ -85,10 +78,23 @@
 }
 
 .navbar-link-left {
-  margin-left: 0;
+  margin-right: auto;
+  margin-left: 14%;
 }
 
 .navbar-link-right {
-  margin-right: 0;
+  margin-left: auto;
+  margin-right: 14%;
 
+}
+
+@media (max-width:1300px) {
+    .navbar-link-left {
+      margin-right: none;
+      margin-left: 15px;
+    }
+    .navbar-link-right {
+      margin-left: none;
+      margin-right: 0%;
+    }
 }
