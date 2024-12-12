@@ -1,9 +1,9 @@
-.cirque-container {
+.circus-container {
   background-color: #E6E6EA;
   font-family: Arial, sans-serif;
 }
 
-.banner-cirque {
+.banner-circus {
   position: relative;
   background-size: cover;
   background-position: center;
@@ -21,7 +21,7 @@
   object-fit: cover;
 }
 
-.main-content-cirque {
+.main-content-circus {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -30,17 +30,17 @@
   padding: 0 5%;
 }
 
-.left-content-cirque {
+.left-content-circus {
   width: 45%;
 }
 
-.image-box-cirque {
+.image-box-circus {
   padding: 30px;
   max-width: 100%;
   height: auto;
 }
 
-.right-content-cirque {
+.right-content-circus {
   width: 20%;
   background-color: #f8f9fa;
   padding: 20px;
@@ -50,7 +50,7 @@
   line-height: 1.8;
 }
 
-.text-section-cirque {
+.text-section-circus {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -59,7 +59,7 @@
   padding: 0 5%;
 }
 
-.text-section-cirque .text-box-cirque {
+.text-section-circus .text-box-circus {
   background-color: #f8f9fa;
   padding: 20px;
   border-radius: 8px;
