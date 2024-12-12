@@ -1,70 +1,71 @@
-/* pages_le_cirque.css */
-
-.cirque-container {
+.circus-container {
   background-color: #E6E6EA;
   font-family: Arial, sans-serif;
 }
 
-.banner_cirque {
+.banner-circus {
   position: relative;
   background-size: cover;
   background-position: center;
   width: 100%;
   display: flex;
   align-items: center;
-  justify-content: center;
   clip-path: ellipse(100% 90% at 70% 10%);
   z-index: 1;
 }
 
-.banner-image {
+.banner-image-circus {
   width: 100%;
   height: auto;
   max-height: 25vh;
   object-fit: cover;
 }
 
-.main-content {
+.main-content-circus {
   display: flex;
   justify-content: space-between;
+  align-items: center;
+  gap: 5%;
   margin-top: 20px;
+  padding: 0 5%;
 }
 
-.left-content,
-.right-content {
-  width: 48%;
+.left-content-circus {
+  width: 45%;
 }
 
-.image-box-cirque {
-  text-align: center;
+.image-box-circus {
   padding: 30px;
-}
-
-.cirque-image {
-  width: 100%;
+  max-width: 100%;
   height: auto;
 }
 
-.right-content-cirque ul li {
-  list-style: none;
-  padding: 0;
-  margin: 0px;
-}
-
-.right-content-cirque {
-  text-align: left;
+.right-content-circus {
+  width: 20%;
   background-color: #f8f9fa;
   padding: 20px;
   border-radius: 8px;
-  box-shadow: 0 4px 6px rgba(44, 44, 44, 0.781);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   font-size: 16px;
-  line-height: 1.6;
+  line-height: 1.8;
 }
 
-
-.text-section-cirque {
+.text-section-circus {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   margin-top: 30px;
+  gap: 25%;
+  padding: 0 5%;
+}
+
+.text-section-circus .text-box-circus {
   background-color: #f8f9fa;
   padding: 20px;
   border-radius: 8px;
+  width: 40%;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  font-size: 16px;
+  line-height: 1.8;
 }
+
