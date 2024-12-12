@@ -1,0 +1,15 @@
+<h1>Modifier les horaires d'ouverture</h1>
+
+<%= form_with url: opening_hours_path, method: :patch do %>
+  <table>
+    <% @opening_hours.each do |day, hours| %>
+      <tr>
+        <td><%= day.capitalize %></td>
+        <td>
+          <%= text_field_tag "opening_hours[#{day}]", hours %>
+        </td>
+      </tr>
+    <% end %>
+  </table>
+  <%= submit_tag 'Mettre à jour', class: 'btn btn-primary' %>
+<% end %>

@@ -1,8 +1,4 @@
 /* application.css */
-
-@import "form";
-@import "flash";
-
 body {
     margin: 0;
     padding: 0;
@@ -15,35 +11,6 @@ body {
 
 main {
     flex: 1;
-}
-
-.white-button {
-
-    padding: 5px 15px;
-    border: 1px solid #007bff;
-    background-color: white;
-    color: #007bff;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 14px;
-}
-
-.white-button:hover {
-    background-color: #e7f0ff;
-}
-
-.blue-button {
-    padding: 5px 15px;
-    border: none;
-    background-color: #6b47b8;
-    color: white;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 14px; 
-}
-
-.blue-button:hover {
-    background-color: #5836a5;
 }
 
 .banner {
@@ -77,7 +44,7 @@ main {
 
 .image {
     max-width: 100%; 
-    height: auto; 
+height: fit-content; 
     object-fit: cover;
 }
 
@@ -87,17 +54,6 @@ main {
     padding: 20px; 
     border-radius: 5px; 
     box-shadow: 0 1px 10px rgba(0, 0, 0, 0.1); 
-}
-
-.footer {
-    background-color: #D9DBDE;
-    color: #374151;
-    width: 100%;
-    border-top: 1px solid #a0aec0;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    z-index: 10;
 }
 
 .banner-text {

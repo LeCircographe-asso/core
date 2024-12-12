@@ -9,24 +9,9 @@
   </div>
   <div class="footer_logo_wrapper">
     <%= link_to root_path do %>
-      <%= image_tag "Le-Circographe.png", alt: "Logo Circo Graphe", class: "footer_logo" %>
+      <%= image_tag "Le-Circographe-crop.png", alt: "Logo Circographe", class: "footer_logo" %>
     <% end %>
   </div>
-  <div class="footer_column">
-    <h3>Suivez-nous !</h3>
-    <ul class="social_icons">
-      <li>
-        <%= link_to "https://www.instagram.com/lecircographe/", target: "_blank" do %>
-          <%= image_tag "instagram.png", alt: "Instagram", class: "footer_icon" %>
-        <% end %>
-    </div>
-    <div class="footer_column">
-        <h3>Inscrivez-vous à notre newsletter :</h3>
-        <%= form_with url: newsletter_signup_path, method: :post, class: "newsletter_form" do |f| %>
-        <%= f.email_field :email, placeholder: "Entrez votre email", required: true %>
-        <%= f.submit "S'inscrire" %>
-        <% end %>
-    </div>
     <div class="footer_column">
         <h3>Suivez-nous !</h3>
         <ul class="social_icons">
@@ -42,6 +27,13 @@
             </li>
         </ul>
     </div>
+    <div class="newsletter_footer_column">
+    <h3>Inscrivez-vous à notre newsletter :</h3>
+    <%= form_with url: newsletter_signup_path, method: :post, class: "newsletter_form" do |f| %>
+    <%= f.email_field :email, placeholder: "Entrez votre email", required: true %>
+    <%= f.submit "S'inscrire", class: "purple-button" %>
+    <% end %>
+</div>
     <div class="footer_back_to_top">
         <%= link_to "#", class: "back-to-top" do %>
         <span>↑</span>
