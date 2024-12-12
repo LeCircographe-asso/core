@@ -17,7 +17,7 @@ class UsersController < ApplicationController
       "Nom"          => @user.last_name,
       "Adresse Mail" => @user.email_address,
       "Newsletter" => @user.newsletter,
-      "Abonnement" => @user.subscription_types.order(:created_at).last.name
+      "Abonnement" => @user.subscription_types.order(:created_at).last&.name || "Aucun abonnement"
     }
   end
 
