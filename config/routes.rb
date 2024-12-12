@@ -1,7 +1,7 @@
 Rails.application.routes.draw do
   namespace :admin do
     get "dashboard", to: "dashboard#index"
-    resources :dashboard, only: [ :index ], path: "dashboard"
+    resources :dashboard, only: %i[index], path: "dashboard"
     resources :users
     resources :members do
       collection do
@@ -14,7 +14,7 @@ Rails.application.routes.draw do
     end
   end
 
-  resource :opening_hours, only: [ :show, :edit, :update ]
+  resource :opening_hours, only: %i[show edit update]
 
   resources :pages, only: %i[show]
   resource :session, only: %i[new create destroy]
