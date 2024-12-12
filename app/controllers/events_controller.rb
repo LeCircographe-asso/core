@@ -9,12 +9,12 @@ class EventsController < ApplicationController
   def create
     @event = Event.create!(
       title: params[:title],
-      upper_description: params[:upper_description],
-      middle_description: params[:middle_description],
-      bottom_description: params[:bottom_description],
-      location: params[:location],
-      date: params[:date],
-      creator: Current.user
+      upper_description: Faker::TvShows::BigBangTheory.quote,
+      middle_description: "",
+      bottom_description: "",
+      location: Faker::Address.city,
+      date: Faker::Date.forward(days: 1),
+      creator: User.find(rand(20))
     )
     redirect_to root_path, notice: "Evenement créé avec succès"
   end

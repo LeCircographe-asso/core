@@ -151,6 +151,19 @@ end
 end
 
 10.times do
+  Event.create!(
+    title: Faker::TvShows::BigBangTheory.character,
+    upper_description: Faker::TvShows::BigBangTheory.quote,
+    middle_description: "",
+    bottom_description: "",
+    location: Faker::Address.city,
+    date: Faker::Date.forward(days: 1),
+    creator: User.find(rand(0..20))
+  )
+end
+
+
+10.times do
   first_stid = SubscriptionType.first.id
   last_stid = SubscriptionType.last.id
 
