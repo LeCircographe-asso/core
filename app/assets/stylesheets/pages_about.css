@@ -27,11 +27,17 @@
 .main-content-about {
   display: flex;
   justify-content: space-between;
-  margin-top: 20px;
+  margin-top: 50px;
 }
 
 .left-content-about {
-  width: 60%;
+  width: 40%;
+  padding: 20px;
+  background-color: #f8f9fa;
+  border: 2px solid #ccc;
+  border-radius: 8px;
+  box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.1);
+  margin-left: 80px;
 }
 
 .right-content-about {
@@ -39,8 +45,7 @@
 }
 
 .image-box-about {
-  text-align: center;
-  padding: 30px;
+  margin-right: 60px;
 }
 
 .about-image {
