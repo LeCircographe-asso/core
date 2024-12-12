@@ -1,7 +1,7 @@
 /* pages_about.css */
 
 .banner_about {
-  position: relative; 
+  position: relative;
   background-size: cover;
   background-position: center;
   width: 100%;
@@ -17,30 +17,35 @@
   font-family: Arial, sans-serif;
 }
 
-.banner-image {
+.banner-image-about {
   width: 100%;
   height: auto;
   max-height: 25vh;
   object-fit: cover;
 }
 
-.main-content {
+.main-content-about {
   display: flex;
   justify-content: space-between;
-  margin-top: 20px;
+  margin-top: 50px;
 }
 
-.left-content {
-  width: 60%;
+.left-content-about {
+  width: 40%;
+  padding: 20px;
+  background-color: #f8f9fa;
+  border: 2px solid #ccc;
+  border-radius: 8px;
+  box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.1);
+  margin-left: 80px;
 }
 
-.right-content {
+.right-content-about {
   width: 35%;
 }
 
-.image-box {
-  text-align: center;
-  padding: 30px;
+.image-box-about {
+  margin-right: 60px;
 }
 
 .about-image {
@@ -48,45 +53,45 @@
   height: auto;
 }
 
-.team-section {
+.team-section-about {
   margin-top: 40px;
   text-align: center;
 }
 
-.team-grid {
+.team-grid-about {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 20px;
 }
 
-.team-member {
+.team-member-about {
   text-align: center;
 }
 
-.team-image {
-  width: 80px;
+.team-image-about {
+  width: 100px;
   height: 80px;
   border-radius: 50%;
   margin-bottom: 10px;
 }
 
-.social-section {
+.social-section-about {
   margin-top: 40px;
   text-align: center;
 }
 
-.social-grid {
+.social-grid-about {
   display: flex;
   justify-content: center;
   gap: 40px;
   margin-top: 20px;
 }
 
-.social-item {
+.social-item-about {
   text-align: center;
 }
 
-.social-image {
-  width: 150px;
+.social-image-about {
+  width: 500px;
   height: auto;
 }

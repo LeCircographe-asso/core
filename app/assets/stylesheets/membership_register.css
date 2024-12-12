@@ -1,5 +1,5 @@
 .formulaire-adhesion {
-  background-color: #4e2a84; /* Violet foncé comme dans l'image */
+  background-color: #4e2a84;
   color: #fff;
   padding: 30px;
   border-radius: 10px;
@@ -12,14 +12,16 @@
   border: 2px solid #fff;
   padding: 20px;
   margin-bottom: 20px;
-  background-color: #6b3e91; /* Violet plus clair pour la section */
+  background-color: #6b3e91;
 }
 
-.fieldset-info, .fieldset-image, .fieldset-project {
+.fieldset-info,
+.fieldset-image,
+.fieldset-project {
   border: 2px solid #fff;
   padding: 20px;
   margin-bottom: 20px;
-  background-color: #6b3e91; /* Violet plus clair pour les autres sections */
+  background-color: #6b3e91;
 }
 
 legend {
@@ -38,17 +40,21 @@ legend {
   padding: 8px;
   margin-top: 5px;
   border: 1px solid #fff;
-  background-color: #9b5f9e; /* Couleur de fond des champs de texte */
+  background-color: #9b5f9e;
   color: #fff;
   border-radius: 5px;
 }
 
-input[type="checkbox"], input[type="radio"] {
-  accent-color: #bb8f3c; /* Couleur dorée pour les cases à cocher et les radios */
+input[type="checkbox"],
+input[type="radio"] {
+  accent-color: #bb8f3c;
 }
 
-input[type="text"], input[type="email"], input[type="tel"], input[type="date"] {
-  width: 100%; /* Alignement à 100% de la largeur disponible */
+input[type="text"],
+input[type="email"],
+input[type="tel"],
+input[type="date"] {
+  width: 100%;
   padding: 8px;
   margin-top: 5px;
   border: 1px solid #fff;
@@ -59,7 +65,7 @@ input[type="text"], input[type="email"], input[type="tel"], input[type="date"] {
 label {
   font-size: 1.1em;
   margin-bottom: 5px;
-  display: block; /* Assurer que le label est sur une nouvelle ligne */
+  display: block;
 }
 
 .form-buttons {
@@ -68,7 +74,7 @@ label {
 }
 
 .btn {
-  background-color: #bb8f3c; /* Couleur dorée des boutons */
+  background-color: #bb8f3c;
   border: none;
   padding: 10px 20px;
   color: #fff;
@@ -79,7 +85,7 @@ label {
 }
 
 .btn-secondary {
-  background-color: #bbb; /* Gris clair pour le bouton réinitialiser */
+  background-color: #bbb;
 }
 
 .form-check-input {
@@ -91,6 +97,7 @@ label {
   color: #ddd;
 }
 
-input[type="checkbox"], input[type="radio"] {
-  accent-color: #bb8f3c; /* Couleur dorée pour les cases à cocher et les radios */
+input[type="checkbox"],
+input[type="radio"] {
+  accent-color: #bb8f3c;
 }
