@@ -1,5 +1,5 @@
 class PagesController < ApplicationController
-  allow_unauthenticated_access # Si cette méthode est requise pour autoriser l'accès
+  allow_unauthenticated_access
 
   def show
     render template: "pages/#{params[:id]}"

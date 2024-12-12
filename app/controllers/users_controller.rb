@@ -16,7 +16,7 @@ class UsersController < ApplicationController
       "Nom" => @user.last_name,
       "Adresse Mail" => @user.email_address,
       "Newsletter" => @user.newsletter,
-      "Abonnement" => @user.subscription_types.order(:created_at).last.name,
+      "Abonnement" => @user.subscription_types.order(:created_at).last.name
     }
   end
 
@@ -75,7 +75,7 @@ class UsersController < ApplicationController
   def unsubscribe
     @user = User.find(params[:id])
     @user.update(newsletter: false)
-    redirect_to @user, notice: 'Vous avez été désinscrit de la newsletter'
+    redirect_to @user, notice: "Vous avez été désinscrit de la newsletter"
   end
 
   private
