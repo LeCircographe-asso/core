@@ -1,43 +1,44 @@
 .admin-header {
-position: fixed;
-top: 0;
-left: 0;
-width: 100%;
-z-index: 100;
-height: 60px;
-background-color: #E6E6EA;
-display: flex;
-justify-content: space-between;
-align-items: center;
-padding: 10px 20px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 100;
+  height: 60px;
+  background-color: #E6E6EA;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 20px;
 }
 
 .admin-header .btn {
-text-decoration: none;
-padding: 10px 15px;
-border-radius: 5px;
-font-weight: bold;
-color: white;
+  text-decoration: none;
+  padding: 10px 15px;
+  border-radius: 5px;
+  font-weight: bold;
+  color: white;
 }
 
 .admin-header .btn.btn-secondary {
-background-color: #6b47b8;
+  background-color: #6b47b8;
 }
 
 .admin-header .btn.btn-secondary:hover {
-background-color: #5836a5;
+  background-color: #5836a5;
 }
 
 .admin-header .btn.btn-danger {
-background-color: #ff4d4d;
+  background-color: #ff4d4d;
 }
 
 .admin-header .btn.btn-danger:hover {
-background-color: #e63939;
+  background-color: #e63939;
 }
 
-.admin-header-left, .admin-header-right {
-display: flex;
-align-items: center;
-gap: 10px;
+.admin-header-left,
+.admin-header-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }

@@ -10,7 +10,8 @@
   src: url('/assets/fonts/rough_typewriter.otf') format('opentype');
   font-family: 'RoughTypewriter', sans-serif;
   font-weight: bold;
-  font-style: normal;  display: flex;
+  font-style: normal;
+  display: flex;
   position: relative;
   z-index: 10;
 }
@@ -89,12 +90,13 @@
 }
 
 @media (max-width:1300px) {
-    .navbar-link-left {
-      margin-right: none;
-      margin-left: 15px;
-    }
-    .navbar-link-right {
-      margin-left: none;
-      margin-right: 0%;
-    }
+  .navbar-link-left {
+    margin-right: none;
+    margin-left: 15px;
+  }
+
+  .navbar-link-right {
+    margin-left: none;
+    margin-right: 0%;
+  }
 }

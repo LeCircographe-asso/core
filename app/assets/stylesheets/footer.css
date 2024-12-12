@@ -22,7 +22,7 @@
 }
 
 .footer_column ul {
-  list-style-type: none; 
+  list-style-type: none;
   margin: auto;
 }
 
@@ -67,7 +67,8 @@
   height: 40px;
 }
 
-.footer_link:hover, .footer_icon:hover {
+.footer_link:hover,
+.footer_icon:hover {
   transition: color 0.3s ease, transform 0.3s ease;
   transform: scale(1.1);
 }
