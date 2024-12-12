@@ -2,7 +2,7 @@ class CheckoutController < ApplicationController
   def create
     @order = Order.find(params[:order_id])
 
-    @total = (params[:total].to_d * 100).to_i # Convert amount in cents
+    @total = (params[:total].to_d * 100).to_i
 
     session = Stripe::Checkout::Session.create(
       payment_method_types: [ "card" ],
