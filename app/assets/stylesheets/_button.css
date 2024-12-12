@@ -13,6 +13,7 @@
   font-size: 16px;
   font-weight: bold;
   font-family: 'roboto', sans-serif;
+  z-index: 102;
 }
 
 .white-button:hover {
@@ -32,6 +33,7 @@
   font-size: 16px;
   font-weight: bold;
   font-family: 'roboto', sans-serif;
+  z-index: 102;
 }
 
 .purple-button:hover {
