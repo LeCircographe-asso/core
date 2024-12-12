@@ -1,23 +1,19 @@
-.admin-layout {
-  display: flex;
-  margin-left: 250px;
-  padding-top: 60px;
-}
-
 .admin-sidebar {
   position: fixed;
-  top: 60px;
+  top: 0;
   left: 0;
   width: 250px;
-  height: calc(100vh - 60px);
+  height: max-content;
   background-color: #f3f4f6;
   overflow-y: auto;
   box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+  min-height: 100vh;
 }
 
 .sidebar-logo img {
   max-width: 100%;
   margin-bottom: 20px;
+  z-index: 102;
 }
 
 .sidebar-menu {
@@ -43,10 +39,4 @@
 .sidebar-link:hover {
   background-color: #6c63ff;
   color: white;
-}
-
-.admin-content {
-  flex: 1;
-  padding: 20px;
-  background-color: #ffffff;
 }

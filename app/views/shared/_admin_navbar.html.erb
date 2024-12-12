@@ -2,15 +2,15 @@
 
     <div class="admin-header-left">
 
-        <%= link_to "Retour au site", root_path, class: "btn btn-secondary" %>
+        <%= link_to "Retour au site", root_path, class: "purple-button" %>
 
     </div>
 
     <div class="admin-header-right">
 
-        <%= link_to 'Votre Profil', user_path(current_user), class: 'btn btn-secondary' %>
+        <%= link_to 'Votre Profil', user_path(current_user), class: "white-button" %>
 
-        <%= link_to 'Se déconnecter', session_path, method: :delete, class: 'btn btn-danger' %>
+        <%= link_to 'Se déconnecter', session_path, method: :delete, class: "purple-button" %>
 
     </div>
 

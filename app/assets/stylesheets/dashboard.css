@@ -1,12 +1,16 @@
 /* dashboard.css */
 .admin-dashboard {
-  max-width: 1200px;
-  margin: 0 auto;
+  margin-top: 60px;
+  margin-left: 250px;
+  margin-right: 0;
+  max-width: calc(100% - 250px);
   padding: 20px;
   background-color: #E6E6EA;
   border-radius: 10px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  min-height: calc(100vh - 60px);
 }
+
 
 .dashboard-title {
   font-size: 2rem;
