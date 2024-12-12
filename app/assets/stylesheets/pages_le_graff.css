@@ -27,11 +27,18 @@
 .main-content-graff {
   display: flex;
   justify-content: space-between;
-  margin-top: 20px;
+  align-items: flex-start;
+  margin-top: 40px;
 }
 
 .left-content-graff {
-  width: 48%;
+  width: 40%;
+  padding: 20px;
+  background-color: #f8f9fa;
+  border: 2px solid #ccc;
+  border-radius: 8px;
+  box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.1);
+  margin-left: 80px;
 }
 
 .right-content-graff {
@@ -40,7 +47,6 @@
 
 .image-box-graff {
   text-align: center;
-  padding: 30px;
 }
 
 .graff-image {
@@ -49,11 +55,13 @@
 }
 
 .text-section-graff {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin-top: 30px;
-  background-color: #E6E6EA;
+  width: 40%;
+  padding: 20px;
+  background-color: #f8f9fa;
+  border: 2px solid #ccc;
+  border-radius: 8px;
+  box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.1);
+  margin-left: 20px;
 }
 
 .paragraph-content-graff {
