@@ -16,11 +16,6 @@
   z-index: 10;
 }
 
-.navbar-logo {
-  display: flex;
-  align-items: center;
-}
-
 .navbar-logo img {
   height: 80px;
   width: auto;
@@ -34,24 +29,10 @@
   width: 100%;
 }
 
-.navbar-links {
-  text-decoration: none;
-  list-style: none;
-  display: flex;
-  flex-wrap: nowrap;
-  gap: 40px;
-  padding: 0;
-  margin: 0;
-  font-size: 20px;
-  font-family: 'RoughTypewriter', sans-serif;
-  color: black;
-  transition: text-shadow 0.3s ease;
-}
-
 .navbar-text {
-  width: 115px;
+  width: 125px;
   text-decoration: none;
-  font-size: 20px;
+  font-size: 21px;
   color: black;
   transition: text-shadow 0.3s ease;
 }
@@ -75,6 +56,7 @@
   display: flex;
   align-items: center;
   gap: 20px;
+  margin-right: 15px;
   flex-shrink: 0;
 }
 
