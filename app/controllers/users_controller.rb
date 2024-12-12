@@ -1,5 +1,6 @@
 class UsersController < ApplicationController
-  allow_unauthenticated_access only: %i[ new show create newsletter_signup]
+  allow_unauthenticated_access only: %i[new show create newsletter_signup]
+
   def index
     @users = User.all
   end
@@ -12,11 +13,12 @@ class UsersController < ApplicationController
     end
 
     @public_attributes = {
-      "Prénom" => @user.first_name,
-      "Nom" => @user.last_name,
+      "Prénom"       => @user.first_name,
+      "Nom"          => @user.last_name,
       "Adresse Mail" => @user.email_address,
-      "Newsletter" => @user.newsletter,
-      "Abonnement" => @user.subscription_types.order(:created_at).last.name,
+      "Ville"        => @user.town,
+      "Newsletter"   => @user.newsletter,
+      "Abonnement"   => @user.subscription_types.order(:created_at).last&.name || "Aucun abonnement"
     }
   end
 
