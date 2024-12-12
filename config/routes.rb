@@ -15,11 +15,11 @@ Rails.application.routes.draw do
   end
 
   resource :opening_hours, only: %i[show edit update]
-
   resources :pages, only: %i[show]
   resource :session, only: %i[new create destroy]
   resources :passwords, param: :token
   resource :registration, only: %i[new create]
+
   resources :users do
     post "unsubscribe", on: :member
   end
@@ -29,8 +29,6 @@ Rails.application.routes.draw do
     get "success", to: "checkout#success", as: "checkout_success"
     get "cancel", to: "checkout#cancel", as: "checkout_cancel"
   end
-
-  post "/newsletter_signup", to: "users#newsletter_signup", as: :newsletter_signup
 
   root "home#index"
 

@@ -1,5 +1,6 @@
 class UsersController < ApplicationController
-  allow_unauthenticated_access only: %i[new show create newsletter_signup]
+  include UsersHelper
+  allow_unauthenticated_access only: %i[new show create]
 
   def index
     @users = User.all
@@ -27,6 +28,7 @@ class UsersController < ApplicationController
 
   def create
     @user = User.new(user_params)
+    return newsletter_signup(user_params[:email_address]) unless user_params[:password]
     if @user.save
       redirect_to @user, notice: "Utilisateur créé avec succès."
     else
@@ -51,26 +53,6 @@ class UsersController < ApplicationController
     @user = User.find(params[:id])
     @user.destroy
     redirect_to users_path, notice: "Utilisateur supprimé avec succès."
-  end
-
-  def newsletter_signup
-    email = params[:email]
-
-    if email.blank?
-      flash[:alert] = "Veuillez entrer une adresse email valide."
-      redirect_back fallback_location: root_path
-      return
-    end
-
-    result = NewsletterSignupService.new(email, authenticated? ? Current.user : nil).call_newsletter
-
-    if result[:success]
-      flash[:notice] = result[:message]
-    else
-      flash[:alert] = result[:message]
-    end
-
-    redirect_back fallback_location: root_path
   end
 
   def unsubscribe
