@@ -1,16 +1,15 @@
 .profile-container {
-  margin: 50px auto;
+  margin: 120px auto;
   background-color: #f5f5f5;
   border: 3px solid black;
   border-radius: 50px;
   padding: 20px;
-  width: 50%;
-  height: 60%;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  width: 35%;
+  height: 40%;
   text-align: center;
-  max-width: 1200px; /* Empêche qu'il devienne trop large */
+  max-width: 1200px; 
   min-width: 400px;
-  max-height: 600px;
+  max-height: 500px;
   min-height: 350px;
   overflow: hidden;
 }
@@ -20,7 +19,6 @@
   justify-content: space-between;
   align-items: center;
   margin-bottom: 2px;
-  margin-left: 20px;
   margin-right: 10px;
 }
 
@@ -28,6 +26,12 @@
   font-size: 20px;
   font-weight: bold;
   color: #333;
+  margin-left: 45px;
+}
+
+.profile-header button {
+  font-size: 12px ;
+  padding: 4px 14px;
 }
 
 .profile-avatar {
@@ -39,10 +43,10 @@
 }
 
 .profile-avatar img {
-  width: 100px;
+  width: 120px;
   height: 100px;
-  border-radius: 50%;
-  border: 2px solid #333;
+  
+  
 }
 
 .profile-avatar p {
@@ -64,6 +68,11 @@
   justify-content: space-around;
   margin-top: 30px;
   min-width: 200px;
+}
+
+.profile-actions button {
+  font-size: 12px ;
+  padding: 10px 10px;
 }
 
 
