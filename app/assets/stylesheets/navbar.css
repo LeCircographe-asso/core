@@ -56,36 +56,6 @@
   padding-left: 20px;
 }
 
-.white-button {
-  padding: 5px 15px;
-  border: 1px solid #007bff;
-  background-color: white;
-  color: #007bff;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 14px;
-  font-family: 'roboto', sans-serif;
-}
-
-.white-button:hover {
-  background-color: #e7f0ff;
-}
-
-.purple-button {
-  padding: 5px 15px;
-  border: none;
-  background-color: #6b47b8;
-  color: #F4F4F8;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 15px;
-  font-family: 'roboto', sans-serif;
-}
-
-.purple-button:hover {
-  background-color: #5836a5;
-}
-
 .banner {
   position: relative;
   background-size: cover;
