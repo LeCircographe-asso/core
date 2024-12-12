@@ -17,28 +17,28 @@
   font-family: Arial, sans-serif;
 }
 
-.banner-image {
+.banner-image-about {
   width: 100%;
   height: auto;
   max-height: 25vh;
   object-fit: cover;
 }
 
-.main-content {
+.main-content-about {
   display: flex;
   justify-content: space-between;
   margin-top: 20px;
 }
 
-.left-content {
+.left-content-about {
   width: 60%;
 }
 
-.right-content {
+.right-content-about {
   width: 35%;
 }
 
-.image-box {
+.image-box-about {
   text-align: center;
   padding: 30px;
 }
@@ -48,45 +48,45 @@
   height: auto;
 }
 
-.team-section {
+.team-section-about {
   margin-top: 40px;
   text-align: center;
 }
 
-.team-grid {
+.team-grid-about {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 20px;
 }
 
-.team-member {
+.team-member-about {
   text-align: center;
 }
 
-.team-image {
+.team-image-about {
   width: 80px;
   height: 80px;
   border-radius: 50%;
   margin-bottom: 10px;
 }
 
-.social-section {
+.social-section-about {
   margin-top: 40px;
   text-align: center;
 }
 
-.social-grid {
+.social-grid-about {
   display: flex;
   justify-content: center;
   gap: 40px;
   margin-top: 20px;
 }
 
-.social-item {
+.social-item-about {
   text-align: center;
 }
 
-.social-image {
+.social-image-about {
   width: 150px;
   height: auto;
 }
