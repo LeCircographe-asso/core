@@ -136,7 +136,7 @@ end
     last_name: Faker::Name.last_name,
     first_name: Faker::Name.first_name,
     birthdate: Faker::Date.birthday(min_age: 18, max_age: 99),
-    adress: Faker::Address.street_address,
+    address: Faker::Address.street_address,
     zip_code: Faker::Address.zip_code,
     town: Faker::Address.city,
     country: Faker::Address.country,
@@ -158,7 +158,8 @@ end
     bottom_description: "",
     location: Faker::Address.city,
     date: Faker::Date.forward(days: 1),
-    creator: User.find(rand(0..20))
+    creator: User.all.sample
+
   )
 end
 
