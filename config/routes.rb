@@ -10,6 +10,7 @@ Rails.application.routes.draw do
         post 'membership_recap'
         post 'membership_payment'
         post 'membership_complete'
+        get 'reset_membership'
       end
     end
   end
@@ -20,7 +21,9 @@ Rails.application.routes.draw do
   resource :session, only: %i[new create destroy]
   resources :passwords, param: :token
   resource :registration, only: %i[new create]
-  resources :users
+  resources :users do
+    post 'unsubscribe', on: :member
+  end
 
   scope '/checkout' do
     post 'create', to: 'checkout#create', as: 'checkout_create'

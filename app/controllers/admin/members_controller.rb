@@ -14,8 +14,15 @@ module Admin
       @membership_data = session[:membership_data] || {}
     end
 
+    def reset_membership
+      session.delete(:membership_data)
+      redirect_to membership_register_admin_members_path
+    end
+    
+
     def membership_recap
-      session[:membership_data] = params[:membership_data] if params[:membership_data].present?
+      session[:membership_data] = params.permit(:cirque, :tarif, :graff, :soutien, :prenom, :nom, :date_naissance, :adresse, :code_postal, :ville, :pays, :telephone, :email, :profession, :specialite, :droit_image, :newsletter, :investir, :soutenir_financierement).to_h
+      # session[:membership_data] = params[:membership_data] if params[:membership_data].present?
       @membership_data = session[:membership_data] || {}
     end
 
@@ -33,6 +40,7 @@ module Admin
         flash[:alert] = "Adhésion annulée."
       end
 
+      session.delete(:membership_data)
       redirect_to admin_members_path
     end
 

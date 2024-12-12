@@ -8,6 +8,11 @@
 
 <h1>Profil</h1>
 
+<%= link_to "Modifier email", user_path(current_user), class: "btn btn-primary" %>
+<%= link_to "Modifier mot de passe", user_path(current_user), class: "btn btn-primary" %>
+<%= link_to "Supprimer mon compte", user_path(current_user), class: "btn btn-primary" %>
+<%= button_to "Se désinscrire de la newsletter", unsubscribe_user_path(@user), method: :post, class: "btn btn-primary" %>
+
 <% @public_attributes.each do |attr_name, attr_value|%>
 <p>
     <%= attr_name%> :
