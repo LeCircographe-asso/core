@@ -1,6 +1,8 @@
 module ApplicationHelper
   def current_user
-    Current.user
+    if authenticated?
+      Current.user
+    end
   end
 
   def authorized_roles

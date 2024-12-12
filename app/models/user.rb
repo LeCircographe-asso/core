@@ -27,4 +27,14 @@ class User < ApplicationRecord
   def has_privileges?
     [ "admin", "godmode", "volunteer" ].include? self.role
   end
+
+  def is_interested_in?(event_id)
+    events = self.event_attendees
+    events.each do |event|
+      if event.event_id == event_id
+        return true
+      end
+    end
+    false
+  end
 end
