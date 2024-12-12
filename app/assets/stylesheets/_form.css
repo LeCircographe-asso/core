@@ -7,6 +7,10 @@
     min-height: 75vh; 
   }
 
+.form-group {
+  padding-bottom: 2px;
+}
+
 .left-side, .right-side {
 width: 50%;
 height: 75vh;
@@ -41,7 +45,7 @@ width: 75%;
   padding: 12px;
   font-size: 16px;
   border: 1px solid #cbd5e0;
-  border-radius: 4px;
+  border-radius: 6px;
 }
 
 .submit-button {
@@ -53,7 +57,7 @@ width: 75%;
   color: white;
   box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
   border: none;
-  border-radius: 4px;
+  border-radius: 6px;
   cursor: pointer;
   transition: background-color 0.3s ease;
   font-weight: bold;

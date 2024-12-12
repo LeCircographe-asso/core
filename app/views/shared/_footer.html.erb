@@ -9,7 +9,7 @@
   </div>
   <div class="footer_logo_wrapper">
     <%= link_to root_path do %>
-      <%= image_tag "Le-Circographe.png", alt: "Logo Circo Graphe", class: "footer_logo" %>
+      <%= image_tag "Le-Circographe-crop.png", alt: "Logo Circographe", class: "footer_logo" %>
     <% end %>
   </div>
     <div class="footer_column">
@@ -31,7 +31,7 @@
     <h3>Inscrivez-vous à notre newsletter :</h3>
     <%= form_with url: newsletter_signup_path, method: :post, class: "newsletter_form" do |f| %>
     <%= f.email_field :email, placeholder: "Entrez votre email", required: true %>
-    <%= f.submit "S'inscrire" %>
+    <%= f.submit "S'inscrire", class: "purple-button" %>
     <% end %>
 </div>
     <div class="footer_back_to_top">
