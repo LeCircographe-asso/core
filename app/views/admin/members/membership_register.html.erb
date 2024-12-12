@@ -10,7 +10,6 @@
     <div class="form-container">
       <h1>Formulaire d'adhésion</h1>
       <%= form_with url: membership_recap_admin_members_path, method: :post, class: "formulaire-adhesion" do |f| %>
-
         <fieldset class="fieldset-adhesion">
           <legend>J'adhère au CircoGraphe pour :</legend>
           
@@ -74,7 +73,6 @@
           <%= f.radio_button :droit_image, 'oui', checked: (@membership_data['droit_image'] == 'oui'), required: true %>
           <%= f.label :droit_image, "NON" %>
           <%= f.radio_button :droit_image, 'non', checked: (@membership_data['droit_image'] == 'non'), required: true %><br>
-
           <p>
             J’accepte d’être photographié.e ou filmé.e dans le cadre des activités du CircoGraphe et de Dark Paillettes et accepte
             l’utilisation des photos ou vidéos à des fins de communication (site internet, plaquettes, réseaux sociaux …) de l’association.
