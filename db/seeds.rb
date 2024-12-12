@@ -143,9 +143,9 @@ end
     phone_number: Faker::PhoneNumber.phone_number,
     occupation: Faker::Job.title,
     specialty: Faker::Job.field,
-    image_rights: [true, false].sample,
-    newsletter: [true, false].sample,
-    get_involved: [true, false].sample,
+    image_rights: [ true, false ].sample,
+    newsletter: [ true, false ].sample,
+    get_involved: [ true, false ].sample,
     role: Role.all.sample.name
   )
 end
@@ -162,4 +162,3 @@ end
     status: true
   )
 end
-

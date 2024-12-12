@@ -1,12 +1,11 @@
 <p><strong>Choisissez votre méthode de paiement :</strong></p>
 
 <%= form_with url: membership_complete_admin_members_path, method: :post do %>
-  <!-- Champs cachés pour passer les données d'inscription aux étapes suivantes -->
+
   <% @membership_data.each do |key, value| %>
     <%= hidden_field_tag "membership_data[#{key}]", value %>
   <% end %>
 
-  <!-- Méthodes de paiement -->
   <div>
     <label>
       <%= radio_button_tag :payment_method, 'Carte bancaire' %>
@@ -22,7 +21,6 @@
     </label><br>
   </div>
 
-  <!-- Actions de finalisation -->
   <div>
     <button type="submit" name="action_type" value="validate" class="btn btn-success">Valider l'adhésion</button>
     <button type="submit" name="action_type" value="pending" class="btn btn-warning">Mettre en attente</button>
