@@ -1,23 +1,18 @@
-<% content_for :css_file, "pages_le_lieu" %>
-
 <div class="place-container">
   <div class="banner-place">
     <%= image_tag "place.jpg", alt: "Scène de vie - Le Lieu", class: "banner-image-place" %>
   </div>
 
-  <div class="main-content-place">
-    <div class="left-content-place">
-      <h2>Le Lieu</h2>
-      <p>Text : Text : Text :<br>
-      Text : Text : Text :<br>
-      Text : Text : Text :<br>
-      Text : Text : Text :<br>
-      Text : Text : Text :</p>
+  <div class="text">
+    <h1> Le Lieu <h1>
+  </div>
+
+  <div class="container">
+    <div class="text-container">
+      <p> Adresse ?</p>
     </div>
-    <div class="right-content-place">
-      <div class="image-box-place">
-        <%= image_tag "place.jpg", alt: "Image Le Lieu", class: "place-image" %>
-      </div>
+    <div class="image-container">  
+      <%= image_tag "place.jpg", alt: "Image Le Lieu", class: "image-main" %>
     </div>
   </div>
 
@@ -25,15 +20,12 @@
     <%= link_to "Contact et résidence", page_path("contact"), class: "btn-contact" %>
   </div>
 
-  <div class="text-section-place">
-    <div class="image-box">
-      <%= image_tag "place.jpg", alt: "Image supplémentaire", class: "place-image" %>
+  <div class="container">
+    <div class="image-container">
+      <%= image_tag "place.jpg", alt: "Image supplémentaire", class: "image-main" %>
     </div>
-    <div class="paragraph-content-place">
-      <p>Paragraphe : Paragraphe : Paragraphe :</p>
-      <p>Paragraphe : Paragraphe : Paragraphe :</p>
-      <p>Paragraphe : Paragraphe : Paragraphe :</p>
-      <p>Paragraphe : Paragraphe : Paragraphe :</p>
+    <div class="text-container">
+      <p>Le Circographe se distingue par son atmosphère chaleureuse et sa philosophie basée sur la collaboration et la diversité artistique. C’est un lieu où les murs respirent la créativité, où les mouvements des circassiens croisent les lignes colorées des graffeurs, et où les spectateurs découvrent des univers captivants.</p>
     </div>
   </div>
 </div>
