@@ -37,7 +37,10 @@ class UsersController < ApplicationController
   end
 
   def edit
-    @user = User.find(params[:id])
+    @user = User.find(params[:id]) 
+    if @user.nil?
+      render plain: "Utilisateur introuvable", status: :not_found
+    end
   end
 
   def update

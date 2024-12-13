@@ -14,7 +14,7 @@
         <p>Abonné à la Newsletter : </p>
     </div>
     <div class="profile-actions">
-        <%= button_to "Modifier mon mot de passe", new_password_path, class: "purple-button" %>
+        <%= link_to "Modifier le mot de passe", edit_password_path(Current.user.password_reset_token), class: "btn btn-primary" %>
         <%= button_to "S'inscrire à la newsletter", new_password_path, class: "white-button" %>
         <%= button_to "Supprimer mon compte", user_path, method: :delete, class:"purple-button" %>
     </div>
