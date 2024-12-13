@@ -13,7 +13,11 @@
   
   <div class="profile-avatar">
     <%= image_tag "utilisateur.png", alt: "Avatar" %>
-    <p><strong>Date d'inscription:</strong> <%= @user.user_memberships.order(:created_at).first.created_at.strftime("%d/%m/%Y") %></p>
+<% if @user.user_memberships.exists? %>
+  <p><strong>Date d'inscription :</strong> <%= @user.user_memberships.order(:created_at).last.created_at.strftime("%d/%m/%Y") %></p>
+<% else %>
+  <p><strong>Date d'inscription :</strong> Pas encore membre</p>
+<% end %>
   </div>
   
   <div class="profile-info">
