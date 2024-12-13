@@ -23,7 +23,7 @@ Rails.application.routes.draw do
   resource :registration, only: %i[new create]
   resources :event_attendees, only: %i[create destroy]
   resources :users do
-    post "unsubscribe", on: :member
+    post "change_newsletter_status", on: :member
   end
 
   scope "/checkout" do

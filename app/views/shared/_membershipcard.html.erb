@@ -1,0 +1,32 @@
+<div class="profile-container">
+  <% if authenticated? %>
+    <% if current_user.role.in?(["admin", "godmode", "volunteer"]) %>
+      <%= link_to "Dashboard Administrateur", admin_dashboard_path %>
+    <% end %>
+  <% end %>
+  
+  <div class="membership-card">
+    <h2><%= user.role %></h2>
+    <p><%= user.email %></p>
+    <%= link_to "Edit this user", edit_user_path(user), class: "white-button" %>
+  </div>
+  
+  <div class="profile-avatar">
+    <%= image_tag "utilisateur.png", alt: "Avatar" %>
+    <p><strong>Date d'inscription:</strong> <%= @user.user_memberships.order(:created_at).first.created_at.strftime("%d/%m/%Y") %></p>
+  </div>
+  
+  <div class="profile-info">
+    <p>Abonné à la Newsletter : <%= user.newsletter ? "Oui" : "Non" %></p>
+  </div>
+  
+  <div class="profile-actions">
+    <% if defined?(form) && form.present? %>
+      <%= form.submit "Save Changes", class: "purple-button" %>
+    <% else %>
+      <%= button_to "Modifier mon mot de passe", new_password_path, class: "purple-button" %>
+      <%= button_to "Se désinscrire de la newsletter", change_newsletter_status_user_path(user), method: :post, class: "white-button" %>
+      <%= button_to "Supprimer mon compte", user, method: :delete, class: "purple-button", data: { confirm: "Êtes-vous sûr de vouloir supprimer votre compte ? Cette action est irréversible." } %>
+    <% end %>
+  </div>
+</div>

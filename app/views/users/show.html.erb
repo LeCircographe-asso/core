@@ -1,4 +1,5 @@
-<%= render "shared/profil" %>
+<% content_for :title, "Mon Profil" %>
 
-
-
+<div class="additional-info">
+  <%= render "shared/membershipcard", user: @user %>
+</div>
