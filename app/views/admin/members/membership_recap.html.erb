@@ -26,7 +26,7 @@
 <h2>Confirmer votre inscription</h2>
 <p>Veuillez vérifier que toutes les informations ci-dessus sont correctes avant de continuer.</p>
 
-<%= form_with url: membership_payment_admin_members_path, method: :post do %>
+<%= form_with url: membership_register_admin_members_path, method: :post do %>
   <% params.each do |key, value| %>
     <%= hidden_field_tag "membership_data[#{key}]", value %>
   <% end %>

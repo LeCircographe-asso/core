@@ -2,6 +2,7 @@ Rails.application.routes.draw do
   namespace :admin do
     get "dashboard", to: "dashboard#index"
     resources :dashboard, only: %i[index], path: "dashboard"
+    resource :opening_hours, only: %i[show edit update]
     resources :users
     resources :events
     resources :members do
@@ -15,10 +16,9 @@ Rails.application.routes.draw do
     end
   end
 
-  resource :opening_hours, only: %i[show edit update]
-  resource :notepad, only: %i[show edit update]
 
-  resources :events
+  resource :notepad, only: %i[show edit update]
+  resources :events, only: %i[show index]
   resources :pages, only: %i[show]
   resource :session, only: %i[new create destroy]
   resources :passwords, only: %i[new create edit update], param: :token

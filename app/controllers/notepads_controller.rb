@@ -1,14 +1,12 @@
 class NotepadsController < ApplicationController
   before_action :require_admin_or_godmode, only: [ :edit, :update ]
-
-  DEFAULT_NOTEPAD = ""
-
+  include NotepadHelper
   def show
-    @notepad = Rails.cache.fetch("notepad") || DEFAULT_NOTEPAD
+    @notepad = Rails.cache.fetch("notepad") || default_notepad
   end
 
   def edit
-    @notepad = Rails.cache.fetch("notepad") || DEFAULT_NOTEPAD
+    @notepad = Rails.cache.fetch("notepad") || default_notepad
   end
 
   def update
