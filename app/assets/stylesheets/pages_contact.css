@@ -1,5 +1,6 @@
 /* pages_contact.css */
 .contact-container {
+  
   max-width: 800px;
   margin: 40px auto;
   padding: 20px;
@@ -56,4 +57,13 @@
 
 .contact-button:hover {
   background-color: #5146d6;
+}
+
+.contact-background {
+  background-image: url("background.webp");
+  background-size: cover; 
+  background-repeat: no-repeat; 
+  background-position: center; 
+  height: 87.7vh; 
+  padding-top: 200px;
 }
