@@ -41,9 +41,11 @@
   display: flex;
   flex: 1;
   width: 100%;
+  gap: 1rem;
 }
 
 .navbar-text {
+  text-wrap: nowrap;
   width: 125px;
   text-decoration: none;
   font-size: 21px;

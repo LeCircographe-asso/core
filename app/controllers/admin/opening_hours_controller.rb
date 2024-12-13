@@ -1,22 +1,13 @@
-class OpeningHoursController < ApplicationController
-  before_action :require_admin_or_godmode, only: [ :edit, :update ]
-
-  DEFAULT_OPENING_HOURS = {
-    lundi: "Fermé",
-    mardi: "14:00 - 22:00",
-    mercredi: "14:00 - 22:00",
-    jeudi: "14:00 - 22:00",
-    vendredi: "14:00 - 22:00",
-    samedi: "14:00 - 22:00",
-    dimanche: "14:00 - 22:00"
-  }.freeze
+module Admin
+class OpeningHoursController < BaseController
+  before_action :require_admin_or_godmode, only: %i[ edit update ]
+  before_action :set_opening_hours, only: %i[ show edit ]
+  include OpeningHoursHelper
 
   def show
-    @opening_hours = Rails.cache.fetch("opening_hours") || DEFAULT_OPENING_HOURS
   end
 
   def edit
-    @opening_hours = Rails.cache.fetch("opening_hours") || DEFAULT_OPENING_HOURS
   end
 
   def update
@@ -41,9 +32,14 @@ class OpeningHoursController < ApplicationController
     end
   end
 
+  def set_opening_hours
+    @opening_hours = Rails.cache.fetch("opening_hours") || default_opening_hours
+  end
+
   def valid_hours?(hours)
     hours.values.all? do |time|
       time.match?(/\A((?:[0-9]|[01][0-9]|2[0-3]):[0-5][0-9] - (?:[0-9]|[01][0-9]|2[0-3]):[0-5][0-9]|Fermé)\z/)
     end
   end
+end
 end

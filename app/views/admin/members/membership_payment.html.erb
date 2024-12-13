@@ -1,6 +1,6 @@
-<p><strong>Choisissez votre méthode de paiement :</strong></p>
+<div class="admin-dashboard"><p><strong>Choisissez votre méthode de paiement :</strong></p>
 
-<%= form_with url: membership_complete_admin_members_path, method: :post do %>
+<%= form_with url: membership_payment_admin_members_path, method: :post do %>
 
   <% @membership_data.each do |key, value| %>
     <%= hidden_field_tag "membership_data[#{key}]", value %>
@@ -27,3 +27,4 @@
     <button type="submit" name="action_type" value="cancel" class="btn btn-danger">Annuler</button>
   </div>
 <% end %>
+</div>

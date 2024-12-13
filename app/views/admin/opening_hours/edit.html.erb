@@ -1,6 +1,7 @@
+<div class="admin-dashboard">
 <h1>Modifier les horaires d'ouverture</h1>
 
-<%= form_with url: opening_hours_path, method: :patch do %>
+<%= form_with url: edit_admin_opening_hours_path, method: :patch do %>
   <table>
     <% @opening_hours.each do |day, hours| %>
       <tr>
@@ -13,3 +14,4 @@
   </table>
   <%= submit_tag 'Mettre à jour', class: 'btn btn-primary' %>
 <% end %>
+</div>

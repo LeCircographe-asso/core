@@ -1,18 +1,10 @@
 module Admin
   class DashboardController < BaseController
+    include OpeningHoursHelper
+    include NotepadHelper
     def index
-      @notepad = Rails.cache.fetch("notepad") || ""
-      @opening_hours = Rails.cache.fetch("opening_hours") || DEFAULT_OPENING_HOURS
+      @notepad = Rails.cache.fetch("notepad") || default_notepad
+      @opening_hours = Rails.cache.fetch("opening_hours") || default_opening_hours
     end
-
-    DEFAULT_OPENING_HOURS = {
-      lundi: "Fermé",
-      mardi: "14:00 - 22:00",
-      mercredi: "14:00 - 22:00",
-      jeudi: "14:00 - 22:00",
-      vendredi: "14:00 - 22:00",
-      samedi: "14:00 - 22:00",
-      dimanche: "14:00 - 22:00"
-    }.freeze
   end
 end
