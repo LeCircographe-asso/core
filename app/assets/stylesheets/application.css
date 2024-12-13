@@ -56,6 +56,18 @@ main {
   align-items: center;
 }
 
+.text-container {
+  border-left: auto;
+  flex-direction: column;
+  font-size: 33px;
+  font-family: Rough_typewritter;
+}
+
+.text-container strong {
+  font-family: Circographe;
+  font-weight: 600;
+} 
+
 .image {
   border-radius: 15%;
   width: 100%;
@@ -85,6 +97,8 @@ main {
   color: #374151;
   font-weight: 500;
   line-height: 1.6;
+  font-family: Rough_Typewritter;
+  font-weight: bold;
 }
 
 @media (max-width: 800px) {

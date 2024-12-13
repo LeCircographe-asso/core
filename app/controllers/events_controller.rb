@@ -1,5 +1,4 @@
 class EventsController < ApplicationController
-  include EventsHelper
   layout :set_layout
   before_action :authenticate_user!, except: [:index, :show]
   def index
@@ -41,13 +40,13 @@ end
   private
   def set_layout
     if Current.user&.admin? || Current.user&.godmode?
-      self.class.layout "admin"
+      "admin"
     else
-      self.class.layout "application"
+      "application"
     end
+  end
 
   def event_params
       params.fetch(:event, {})
       params.require(:event).permit(:title, :upper_description, :middle_description, :bottom_description, :location, :date)
   end
-end

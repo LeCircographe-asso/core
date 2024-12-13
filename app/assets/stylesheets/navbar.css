@@ -1,8 +1,8 @@
 /* navbar.css */
 @font-face {
   font-family: 'RoughTypewriter';
-  src: url('Rough_typewriter-itl.woff2') format('woff2'),
-       url('Rough_typewriter-bld-itl.woff2') format('woff2'),
+  src: url('Rough_typewriter-bld-itl.woff2') format('woff2'),
+       url('Rough_typewriter-itl.woff2') format('woff2'),
        url('Rough_typewriter.woff2') format('woff2'),
        url('Rough_typewriter-itl.woff') format('woff'),
        url('Rough_typewriter-bld-itl.woff') format('woff'),
@@ -10,7 +10,7 @@
 }
 
 @font-face {
-  font-family: 'NomDeVotrePolice';
+  font-family: 'Circographe';
   src: url('Circographe-Regular.woff2') format('woff2'),
        url('Circographe-Regular.woff') format('woff');
 }
