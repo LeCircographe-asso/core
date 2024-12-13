@@ -1,8 +1,10 @@
 class PagesController < ApplicationController
   allow_unauthenticated_access
+  helper NotepadHelper
 
   def show
     @opening_hours = Rails.cache.fetch("opening_hours") || DEFAULT_OPENING_HOURS
+    @notepad = Rails.cache.fetch("notepad") || DEFAULT_NOTEPAD
     render template: "pages/#{params[:id]}"
   end
     DEFAULT_OPENING_HOURS = {

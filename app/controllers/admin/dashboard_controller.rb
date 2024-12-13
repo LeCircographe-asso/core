@@ -1,7 +1,7 @@
 module Admin
   class DashboardController < BaseController
-
     def index
+      @notepad = Rails.cache.fetch("notepad") || ""
       @opening_hours = Rails.cache.fetch("opening_hours") || DEFAULT_OPENING_HOURS
     end
 
@@ -14,6 +14,6 @@ module Admin
       samedi: "14:00 - 22:00",
       dimanche: "14:00 - 22:00"
     }.freeze
-
   end
 end
+
