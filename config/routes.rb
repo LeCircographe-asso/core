@@ -4,18 +4,10 @@ Rails.application.routes.draw do
     resources :dashboard, only: %i[index], path: "dashboard"
     resources :users
     resources :events
-    resources :members do
-      collection do
-        get "membership_register"
-        post "membership_recap"
-        post "membership_payment"
-        post "membership_complete"
-        get "reset_membership"
-      end
-    end
   end
 
   resource :opening_hours, only: %i[show edit update]
+  resource :notepad, only: %i[show edit update]
 
   resources :events
   resources :pages, only: %i[show]
@@ -36,7 +28,7 @@ Rails.application.routes.draw do
   root "home#index"
 
   match "*unmatched", to: "application#url_not_found", via: :all
-      # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
+  # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
   # Can be used by load balancers and uptime monitors to verify that the app is live.
