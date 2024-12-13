@@ -7,10 +7,12 @@ Rails.application.routes.draw do
     resources :events
     resources :members do
       collection do
-      get :membership_register
-      post :membership_recap
-      post :membership_payment
-    end
+        get :membership_register
+        post :membership_recap
+        post :reset_membership
+        post :membership_payment
+        post :membership_complete
+      end
     end
   end
 

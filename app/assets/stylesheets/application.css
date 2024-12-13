@@ -66,6 +66,7 @@ main {
 .text-container strong {
   font-family: Circographe;
   font-weight: 600;
+  font-size: 35px;
 } 
 
 .image {
@@ -92,13 +93,12 @@ main {
 
 .banner-text {
   text-align: center;
-  margin-top: 20px;
+  margin-top: 18px;
   font-size: 35px;
   color: #374151;
   font-weight: 500;
-  line-height: 1.6;
-  font-family: Rough_Typewritter;
-  font-weight: bold;
+  line-height: 1.4;
+  font-family: RoughTypewriter;
 }
 
 @media (max-width: 800px) {
