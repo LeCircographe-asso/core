@@ -35,4 +35,5 @@ Rails.application.routes.draw do
   root "home#index"
 
   match "*unmatched", to: "application#url_not_found", via: :all
+    get "up" => "rails/health#show", as: :rails_health_check
 end
