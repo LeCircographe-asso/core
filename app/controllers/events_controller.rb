@@ -35,7 +35,6 @@ class EventsController < ApplicationController
       redirect_to event_path, notice: "Evenement modifié avec succès"
     end
   end
-end
 
   private
   def set_layout
