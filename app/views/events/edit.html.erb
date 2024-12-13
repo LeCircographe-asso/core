@@ -11,6 +11,6 @@
   <%= form.text_area :bottom_description, required: false, value: @event.bottom_description, placeholder: "Description basse", maxlength: 72, class: "form-input"%> 
   <%= form.text_field :location, required: true, value: @event.location, placeholder: "ex.: Toulouse", maxlength: 72, class: "form-input"%>
   <%= form.date_field :date, required: true, value: @event.date, maxlength: 72, class: "form-input"%>
-  <%= form.submit "Modifier l'évenement'", class: "submit-button"%> 
+  <%= form.submit "Modifier l'évenement", class: "submit-button"%> 
 <% end %>
 </div>
