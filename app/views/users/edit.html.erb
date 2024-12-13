@@ -1,15 +1,13 @@
-<% content_for :title, "Editing user" %>
 
-<%= form_with(model: @user, local: true) do |form| %>
-  <div class="additional-info">
-    <%= render "shared/membershipcard", user: @user, form: form %>
-  </div>
-  <%= link_to "Retour", @user, class: "white-button" %>
-<% end %>
-
-<div>
-  
+<div class="signin-page"> 
+  <% content_for :title, "Editing user" %>
+  <%= form_with(model: @user, local: true) do |form| %>
+  <% end %>
+  <h1>Edit User</h1>
+  <%= render 'form', user: @user %>
 </div>
-<h1>Edit User</h1>
-<%= render 'form', user: @user %>
-<%= link_to 'Back', user_path(@user) %>
+
+<%= link_to 'Back', user_path(@user), class: "white-button" %>
+
+
+
