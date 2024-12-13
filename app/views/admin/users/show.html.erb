@@ -1,6 +1,5 @@
 <h1>Profil <%= @user.id %></h1>
-
-  <div class="profile-container">
+ <div class="profile-container">
     <h1 class="profile-name"><%= @user.first_name %> <%= @user.last_name %></h1>
     <h2 class="profile-section-title">Informations</h2>
     <div class="profile-info">
@@ -36,3 +35,10 @@
     </div>
     <button class="edit-button">Éditer</button>
   </div>
+
+<div>
+  <%= link_to "Edit this user", edit_admin_user_path(@user) %> |
+  <%= link_to "Back to users", admin_users_path %>
+
+  <%= button_to "Destroy this user", [:admin, @user], method: :delete %>
+</div>

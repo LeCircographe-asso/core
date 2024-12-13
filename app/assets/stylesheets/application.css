@@ -17,7 +17,7 @@ main {
   position: relative;
   background-size: cover;
   background-position: center;
-  height: 400px;
+  height: 600px;
   width: 100%;
   display: flex;
   align-items: center;
@@ -29,14 +29,28 @@ main {
 .container {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: stretch;
   gap: 100px;
   padding: 50px;
   margin: auto;
 }
+.container.reverse {
+  flex-direction: row-reverse;
+}
 
-.image-container {
-  flex: 2;
+
+.page-container {
+  display: flex;
+  /* justify-content: center;
+  align-items: center;
+  min-height: calc(100vh - 60px);
+  margin-left: 200px;
+  padding-top: 60px;  */
+}
+
+.image-container,
+.text-container {
+  flex: 1;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -48,15 +62,6 @@ main {
   object-fit: cover;
 }
 
-
-.text-container {
-  flex: 1;
-  background-color: #f5f5f5;
-  padding: 20px;
-  border-radius: 5px;
-  box-shadow: 0 1px 10px rgba(0, 0, 0, 0.1);
-}
-
 .banner-text {
   text-align: center;
   margin-top: 20px;
@@ -64,4 +69,11 @@ main {
   color: #374151;
   font-weight: 500;
   line-height: 1.6;
+}
+
+@media (max-width: 800px) {
+  .container {
+    flex-direction: column;
+    gap: 20px;
+  }
 }

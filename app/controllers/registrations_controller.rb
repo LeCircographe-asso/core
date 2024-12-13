@@ -1,5 +1,5 @@
 class RegistrationsController < ApplicationController
-  allow_unauthenticated_access
+  allow_unauthenticated_access only: %i[new create]
 
   def new
     if authenticated?
