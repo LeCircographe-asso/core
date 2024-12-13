@@ -1,0 +1,17 @@
+<p style="color: green"><%= notice %></p>
+  <div class="profile-container">
+    <h1 class="profile-name"><%= @user.first_name %> <%= @user.last_name %></h1>
+      <%= render @user %>
+    </div>
+    <button class="edit-button">Éditer</button>
+  </div>
+
+</div>
+
+
+<div>
+  <%= link_to "Edit this user", edit_admin_user_path(@user) %> |
+  <%= link_to "Back to users", admin_users_path %>
+
+  <%= button_to "Destroy this user", [:admin, @user], method: :delete %>
+</div>

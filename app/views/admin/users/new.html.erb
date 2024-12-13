@@ -1,0 +1,17 @@
+<% content_for :title, "Nouvel utilisateur" %>
+
+<div class="container">
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+      <h1>Nouvel utilisateur</h1>
+
+      <%= render "form", user: @user %>
+
+      <br>
+
+      <div>
+        <%= link_to "Retour aux utilisateurs", admin_users_path, class: "btn btn-secondary" %>
+      </div>
+    </div>
+  </div>
+</div>

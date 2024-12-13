@@ -24,6 +24,9 @@ class User < ApplicationRecord
   # def welcome_send
   #   UserMailer.welcome_email(self).deliver_now
   # end
+  
+  scope :published, -> { where(published: true) }
+
   def has_privileges?
     [ "admin", "godmode", "volunteer" ].include? self.role
   end
