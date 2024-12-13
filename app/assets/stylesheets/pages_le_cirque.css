@@ -21,50 +21,19 @@
   object-fit: cover;
 }
 
-.main-content-circus {
+.text h1 {
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
-  gap: 5%;
-  margin-top: 20px;
-  padding: 0 5%;
+  font-family:'Circographe';
+  src: url('Circographe-Regular.woff2') format('woff2'),
+       url('Circographe-Regular.woff') format('woff');
+  font-weight: bold;
+  padding-top: 40px;
+  font-size: 50px;
 }
 
-.left-content-circus {
-  width: 45%;
-}
-
-.image-box-circus {
-  padding: 30px;
-  max-width: 100%;
-  height: auto;
-}
-
-.right-content-circus {
-  width: 20%;
-  background-color: #f8f9fa;
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  font-size: 16px;
-  line-height: 1.8;
-}
-
-.text-section-circus {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-top: 30px;
-  gap: 25%;
-  padding: 0 5%;
-}
-
-.text-section-circus .text-box-circus {
-  background-color: #f8f9fa;
-  padding: 20px;
-  border-radius: 8px;
-  width: 40%;
-  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-  font-size: 16px;
-  line-height: 1.8;
+.text-container h3 {
+  font-weight: bold;
+  padding-bottom: 15px;
 }

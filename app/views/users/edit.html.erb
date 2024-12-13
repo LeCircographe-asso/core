@@ -22,7 +22,3 @@
 <% end %>
 
 <hr>
-
-<h2>Actions supplémentaires</h2>
-<%= link_to "Supprimer mon compte", user_path(@user), method: :delete, data: { confirm: "Êtes-vous sûr de vouloir supprimer votre compte ?" }, class: "btn btn-danger" %>
-<%= button_to "Se désinscrire de la newsletter", unsubscribe_user_path(@user), method: :post, class: "btn btn-secondary" %>

@@ -4,6 +4,15 @@ Rails.application.routes.draw do
     resources :dashboard, only: %i[index], path: "dashboard"
     resources :users
     resources :events
+    resources :members do
+      collection do
+        get :membership_register
+        post :membership_recap
+        post :reset_membership
+        post :membership_payment
+        post :membership_complete
+      end
+    end
   end
 
   resource :opening_hours, only: %i[show edit update]

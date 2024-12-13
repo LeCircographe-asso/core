@@ -3,14 +3,16 @@
     <%= image_tag "jongleur.jpg", alt: "Scène de vie", class: "banner-image-circus" %>
   </div>
 
-  <div class="main-content-circus">
-    <div class="left-content-circus">
-      <h2>Le cirque au circographe :</h2>
-      <div class="image-box-circus">
-        <%= image_tag "jongleur.jpg", alt: "Cirque au Circographe" %>
-      </div>
+  <div class="text">
+  <h1>Le cirque au circographe :</h1>
+  </div>
+
+  <div class="container">
+    <div class="image-container">
+        <%= image_tag "jongleur.jpg", alt: "Cirque au Circographe", class: "image-main" %>
     </div>
-    <div class="right-content-circus">
+
+    <div class="text-container">
       <h3>Les horaires d'ouverture :</h3>
       <table>
             <% @opening_hours.each do |day, hours| %>
@@ -22,19 +24,3 @@
         </table>
     </div>
   </div>
-
-  <div class="text-section-circus">
-    <div class="image-box-circus">
-      <%= image_tag "jongleur.jpg", alt: "Cirque au Circographe" %>
-    </div>
-    <div class="text-box-circus">
-      <p>Paragraphe : Paragraphe :</p>
-      <p>Paragraphe : Paragraphe :</p>
-      <p>Paragraphe : Paragraphe :</p>
-      <p>Paragraphe : Paragraphe :</p>
-      <p>Paragraphe : Paragraphe :</p>
-      <p>Paragraphe : Paragraphe :</p>
-      <p>Paragraphe : Paragraphe :</p>
-    </div>
-  </div>
-</div>      

@@ -34,7 +34,15 @@ class User < ApplicationRecord
     password_reset_sent_at.present? && password_reset_sent_at > 2.hours.ago
   end
 
-  def reset_password!(password, password_confirmation)
+  def formatted_registration_date
+    if authenticated?
+      user_memberships.order(:created_at).last.created_at.strftime("%d/%m/%Y")
+    else
+      "Pas encore membre"
+    end
+  end
+
+    def reset_password!(password, password_confirmation)
     self.password_reset_token = nil
     self.password_reset_sent_at = nil
     self.password = password
