@@ -12,12 +12,28 @@
   </div>
   
   <div class="profile-avatar">
-    <%= image_tag "utilisateur.png", alt: "Avatar" %>
-<% if @user.user_memberships.exists? %>
-  <p><strong>Date d'inscription :</strong> <%= @user.user_memberships.order(:created_at).last.created_at.strftime("%d/%m/%Y") %></p>
-<% else %>
-  <p><strong>Date d'inscription :</strong> Pas encore membre</p>
-<% end %>
+    <% case @user.role %>
+      <% when 'godmode' %>
+        <%= image_tag "godmode.png", alt: "Avatar God Mode" %>
+      <% when 'admin' %>
+        <%= image_tag "admin.png", alt: "Avatar Admin" %>
+      <% when 'volunteer' %>
+        <%= image_tag "volunteer.png", alt: "Avatar Bénévole" %>
+      <% when 'circus_membership' %>
+        <%= image_tag "circus.png", alt: "Avatar Membre du Cirque" %>
+      <% when 'membership' %>
+        <%= image_tag "member.png", alt: "Avatar Membre" %>
+      <% when 'guest' %>
+        <%= image_tag "utilisateur.png", alt: "Avatar Invité" %>
+      <% else %>
+        <%= image_tag "utilisateur.png", alt: "Avatar" %>
+    <% end %>
+    
+    <% if @user.user_memberships.exists? %>
+      <p><strong>Date d'inscription :</strong> <%= @user.user_memberships.order(:created_at).last.created_at.strftime("%d/%m/%Y") %></p>
+    <% else %>
+      <p><strong>Date d'inscription :</strong> Pas encore membre</p>
+    <% end %>
   </div>
   
   <div class="profile-info">
