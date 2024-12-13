@@ -1,0 +1,16 @@
+<% 
+  authenticated?
+  params[:creator_id] = current_user.id
+%>
+<div class="form-container">
+<%= form_with model: @event, url: event_path, method: "put" do |form| %>
+  
+  <%= form.text_field :title, required: true, value: @event.title, placeholder: "ex.: Concert Super Cool", maxlength: 72, class: "form-input"%>
+  <%= form.text_area :upper_description, required: false, value: @event.upper_description, placeholder: "Description haute", maxlength: 72, class: "form-input"%>
+  <%= form.text_area :middle_description, required: true, value: @event.middle_description, placeholder: "Description milieu", maxlength: 72, class: "form-input"%>
+  <%= form.text_area :bottom_description, required: false, value: @event.bottom_description, placeholder: "Description basse", maxlength: 72, class: "form-input"%> 
+  <%= form.text_field :location, required: true, value: @event.location, placeholder: "ex.: Toulouse", maxlength: 72, class: "form-input"%>
+  <%= form.date_field :date, required: true, value: @event.date, maxlength: 72, class: "form-input"%>
+  <%= form.submit "Modifier l'évenement", class: "submit-button"%> 
+<% end %>
+</div>
