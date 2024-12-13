@@ -20,11 +20,24 @@ class User < ApplicationRecord
 
   alias_attribute :email, :email_address
 
-  after_create :welcome_send
-  def welcome_send
-    UserMailer.welcome_email(self).deliver_now
-  end
+  # after_create :welcome_send
+  # def welcome_send
+  #   UserMailer.welcome_email(self).deliver_now
+  # end
+  
+  scope :published, -> { where(published: true) }
+
   def has_privileges?
     [ "admin", "godmode", "volunteer" ].include? self.role
+  end
+
+  def is_interested_in?(event_id)
+    events = self.event_attendees
+    events.each do |event|
+      if event.event_id == event_id
+        return true
+      end
+    end
+    false
   end
 end

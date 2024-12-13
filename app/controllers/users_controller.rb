@@ -1,41 +1,33 @@
 class UsersController < ApplicationController
-  allow_unauthenticated_access only: %i[new show create newsletter_signup]
+  include UsersHelper
+  before_action :set_user, only: %i[ show edit update destroy ] #THIS WAS SCAFFOLD
+  allow_unauthenticated_access only: %i[new show create]
 
+  # GET /users or /users.json
   def index
     @users = User.all
   end
 
   def show
-    authenticated?
     @user = User.find(params[:id])
-    if !Current.user.has_privileges? && @user.id != Current.user.id
-      redirect_to user_path(Current.user.id)
-    end
-
-    @public_attributes = {
-      "Prénom"       => @user.first_name,
-      "Nom"          => @user.last_name,
-      "Adresse Mail" => @user.email_address,
-      "Newsletter" => @user.newsletter,
-      "Abonnement" => @user.subscription_types.order(:created_at).last&.name || "Aucun abonnement"
-    }
   end
 
   def new
     @user = User.new
   end
 
+  def edit
+    @user = User.find(params[:id])
+  end
+
   def create
     @user = User.new(user_params)
+    return newsletter_signup(user_params[:email_address]) unless user_params[:password]
     if @user.save
       redirect_to @user, notice: "Utilisateur créé avec succès."
     else
       render :new, status: :unprocessable_entity
     end
-  end
-
-  def edit
-    @user = User.find(params[:id])
   end
 
   def update
@@ -48,40 +40,32 @@ class UsersController < ApplicationController
   end
 
   def destroy
-    @user = User.find(params[:id])
-    @user.destroy
-    redirect_to users_path, notice: "Utilisateur supprimé avec succès."
-  end
+    @user.destroy!
 
-  def newsletter_signup
-    email = params[:email]
-
-    if email.blank?
-      flash[:alert] = "Veuillez entrer une adresse email valide."
-      redirect_back fallback_location: root_path
-      return
+    respond_to do |format|
+      format.html { redirect_to users_path, status: :see_other, notice: "Utilisateur supprimé avec succès." }
+      format.json { head :no_content }
     end
-
-    result = NewsletterSignupService.new(email, authenticated? ? Current.user : nil).call_newsletter
-
-    if result[:success]
-      flash[:notice] = result[:message]
-    else
-      flash[:alert] = result[:message]
-    end
-
-    redirect_back fallback_location: root_path
   end
-
-  def unsubscribe
+  
+  def change_newsletter_status
     @user = User.find(params[:id])
-    @user.update(newsletter: false)
-    redirect_to @user, notice: "Vous avez été désinscrit de la newsletter"
+    @user.update(newsletter: !@user.newsletter)
+  
+    message = @user.newsletter ? 'Vous êtes inscrit à la newsletter' : 'Vous êtes désinscrit de la newsletter'
+    redirect_to @user, notice: message
   end
 
   private
 
-  def user_params
-    params.require(:user).permit(:email_address, :password, :password_confirmation)
-  end
+    # Use callbacks to share common setup or constraints between actions.
+    def set_user
+      @user = User.find(params[:id])
+    end
+
+    # Only allow a list of trusted parameters through.
+    def user_params
+      params.fetch(:user, {})
+      params.require(:user).permit(:email_address)
+    end
 end

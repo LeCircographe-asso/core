@@ -16,12 +16,14 @@ Rails.application.routes.draw do
 
   resource :opening_hours, only: %i[show edit update]
 
+  resources :events
   resources :pages, only: %i[show]
   resource :session, only: %i[new create destroy]
   resources :passwords, param: :token
   resource :registration, only: %i[new create]
+  resources :event_attendees, only: %i[create destroy]
   resources :users do
-    post "unsubscribe", on: :member
+    post "change_newsletter_status", on: :member
   end
 
   scope "/checkout" do
@@ -29,8 +31,6 @@ Rails.application.routes.draw do
     get "success", to: "checkout#success", as: "checkout_success"
     get "cancel", to: "checkout#cancel", as: "checkout_cancel"
   end
-
-  post "/newsletter_signup", to: "users#newsletter_signup", as: :newsletter_signup
 
   root "home#index"
 

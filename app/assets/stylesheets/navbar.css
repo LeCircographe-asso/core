@@ -1,18 +1,32 @@
 /* navbar.css */
+@font-face {
+  font-family: 'RoughTypewriter';
+  src: url('Rough_typewriter-itl.woff2') format('woff2'),
+       url('Rough_typewriter-bld-itl.woff2') format('woff2'),
+       url('Rough_typewriter.woff2') format('woff2'),
+       url('Rough_typewriter-itl.woff') format('woff'),
+       url('Rough_typewriter-bld-itl.woff') format('woff'),
+       url('Rough_typewriter.woff') format('woff');
+}
+
+@font-face {
+  font-family: 'NomDeVotrePolice';
+  src: url('Circographe-Regular.woff2') format('woff2'),
+       url('Circographe-Regular.woff') format('woff');
+}
+
 .navbar {
   display: flex;
   flex-wrap: nowrap;
   justify-content: space-between;
   align-items: center;
   background-color: #F2F3F4;
-  padding: 0 10px;
   width: 100%;
-  src: url('/assets/fonts/rough_typewriter.otf') format('opentype');
   font-family: 'RoughTypewriter', sans-serif;
   font-weight: bold;
   font-style: normal;
   display: flex;
-  position: relative;
+  position: fixed;
   z-index: 10;
 }
 
@@ -48,6 +62,7 @@
 .navbar-left {
   display: flex;
   align-items: center;
+  padding-left: 1%;
   gap: 20px;
   flex-shrink: 0;
 }
@@ -56,7 +71,7 @@
   display: flex;
   align-items: center;
   gap: 20px;
-  margin-right: 15px;
+  padding-right: 1%;
   flex-shrink: 0;
 }
 

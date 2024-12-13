@@ -29,8 +29,8 @@
     </div>
     <div class="newsletter_footer_column">
     <h3>Inscrivez-vous à notre newsletter :</h3>
-    <%= form_with url: newsletter_signup_path, method: :post, class: "newsletter_form" do |f| %>
-    <%= f.email_field :email, placeholder: "Entrez votre email", required: true %>
+    <%= form_with url: users_path, model: User, method: :post, class: "newsletter_form" do |f| %>
+    <%= f.email_field :email_address, placeholder: "Entrez votre email", required: true %>
     <%= f.submit "S'inscrire", class: "purple-button" %>
     <% end %>
 </div>

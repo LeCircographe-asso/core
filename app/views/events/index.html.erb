@@ -1,0 +1,8 @@
+<% @events.each do |event| %>
+  <div class="event-card">
+    <%= event.title %><br>
+    <%= event.date %><br>
+    <%= event.users.length %> personnes intéressé·e·s<br><br>
+    <%= link_to "Voir l'évenement" ,event_path(event.id), class: "submit-button" %><br>
+  </div>
+<% end %>

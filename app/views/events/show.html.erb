@@ -1,0 +1,16 @@
+<div>
+  <% authenticated? %>
+  <%= @event.title %><br>
+  <%= @event.upper_description %><br>
+  <%= @event.middle_description %><br>
+  <%= @event.bottom_description %><br>
+  <%= @event.location %><br>
+  <%= @event.date %><br>
+  <%= @event.users.length %> personnes intéressé·e·s<br>
+  <% if !current_user.is_interested_in? @event.id %>
+    <%= button_to "Je suis intéressé·e", event_attendees_path, params: {id: @event.id}, class: "submit-button", method: :post %>
+  <% else %>
+    <%= button_to "Je ne suis plus intéressé·e", event_attendee_path, params: {id: @event.id},  method: :delete, class: "submit-button"%>
+  <% end %>
+
+</div>

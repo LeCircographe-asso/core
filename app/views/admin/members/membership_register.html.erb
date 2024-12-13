@@ -10,23 +10,22 @@
     <div class="form-container">
       <h1>Formulaire d'adhésion</h1>
       <%= form_with url: membership_recap_admin_members_path, method: :post, class: "formulaire-adhesion" do |f| %>
-
         <fieldset class="fieldset-adhesion">
           <legend>J'adhère au CircoGraphe pour :</legend>
-          
-          <%= f.check_box :cirque, { id: "cirque-checkbox" }, 'oui', nil %>
+
+          <%= f.check_box :cirque, { id: "cirque-checkbox", checked: @membership_data['cirque'] == 'oui' }, 'oui', nil %>
           <%= f.label :cirque, "CIRQUE" %><br>
 
-          <%= f.radio_button :tarif, 'plein', id: "tarif-plein-radio" %>
+          <%= f.radio_button :tarif, 'plein', id: "tarif-plein-radio", checked: @membership_data['tarif'] == 'plein' %>
           <%= f.label :tarif_plein, "Adhésion pleine (10 €)" %><br>
-          
-          <%= f.radio_button :tarif, 'reduit', id: "tarif-reduit-radio" %>
+
+          <%= f.radio_button :tarif, 'reduit', id: "tarif-reduit-radio", checked: @membership_data['tarif'] == 'reduit' %>
           <%= f.label :tarif_reduit, "Adhésion Réduite* (7 €)" %><br>
 
-          <%= f.check_box :graff, { id: "graff-checkbox" }, 'oui', nil %>
+          <%= f.check_box :graff, { id: "graff-checkbox", checked: @membership_data['graff'] == 'oui' }, 'oui', nil %>
           <%= f.label :graff, "Graff (libre 1€)" %><br>
 
-          <%= f.check_box :soutien, { id: "soutien-checkbox" }, 'oui', nil %>
+          <%= f.check_box :soutien, { id: "soutien-checkbox", checked: @membership_data['soutien'] == 'oui' }, 'oui', nil %>
           <%= f.label :soutien, "Soutien à l'association (libre 1€)" %><br>
 
           <p>*Mineur.e/RSA/Étudiants/Personne en situation de handicap</p>
@@ -74,7 +73,6 @@
           <%= f.radio_button :droit_image, 'oui', checked: (@membership_data['droit_image'] == 'oui'), required: true %>
           <%= f.label :droit_image, "NON" %>
           <%= f.radio_button :droit_image, 'non', checked: (@membership_data['droit_image'] == 'non'), required: true %><br>
-
           <p>
             J’accepte d’être photographié.e ou filmé.e dans le cadre des activités du CircoGraphe et de Dark Paillettes et accepte
             l’utilisation des photos ou vidéos à des fins de communication (site internet, plaquettes, réseaux sociaux …) de l’association.
@@ -83,13 +81,13 @@
 
         <fieldset class="fieldset-projet">
           <legend>Si le projet vous intéresse :</legend>
-          <%= f.check_box :newsletter, { multiple: false }, 'oui', nil %>
+          <%= f.check_box :newsletter, { id: "newsletter-checkbox", checked: @membership_data['newsletter'] == 'oui' }, 'oui', nil %>
           <%= f.label :newsletter, "Je souhaite m’inscrire à la newsletter" %><br>
 
-          <%= f.check_box :investir, { multiple: false }, 'oui', nil %>
+          <%= f.check_box :investir, { id: "investir-checkbox", checked: @membership_data['investir'] == 'oui' }, 'oui', nil %>
           <%= f.label :investir, "Je souhaite m’investir dans le projet" %><br>
 
-          <%= f.check_box :soutenir_financierement, { multiple: false }, 'oui', nil %>
+          <%= f.check_box :soutenir_financierement, { id: "soutenir-financierement-checkbox", checked: @membership_data['soutenir_financierement'] == 'oui' }, 'oui', nil %>
           <%= f.label :soutenir_financierement, "Je souhaite soutenir financièrement le projet (cagnotte en ligne)" %>
         </fieldset>
 

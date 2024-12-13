@@ -12,16 +12,17 @@
     </div>
     <div class="right-content-circus">
       <h3>Les horaires d'ouverture :</h3>
-      <ul>
-        <li>Lundi : fermé</li>
-        <li>Mardi : 14h - 22h</li>
-        <li>Mercredi : 14h - 22h</li>
-        <li>Jeudi : 14h - 22h</li>
-        <li>Vendredi : 14h - 22h</li>
-        <li>Samedi : 14h - 22h</li>
-        <li>Dimanche : 14h - 22h</li>
-      </ul>
+      <table>
+            <% @opening_hours.each do |day, hours| %>
+            <tr>
+                <td><%= day.capitalize %></td>
+                <td><%= hours %></td>
+            </tr>
+            <% end %>
+        </table>
     </div>
+  </div>
+
   <div class="text-section-circus">
     <div class="image-box-circus">
       <%= image_tag "jongleur.jpg", alt: "Cirque au Circographe" %>
@@ -36,4 +37,4 @@
       <p>Paragraphe : Paragraphe :</p>
     </div>
   </div>
-</div>
+</div>      
