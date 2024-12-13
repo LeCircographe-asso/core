@@ -16,4 +16,16 @@
     <div class="dashboard-actions">
         <%= link_to "Creer un Adhérent (basique)", new_admin_user_path, class: "btn btn-primary"%>
     </div>
+
+    <div class="page-container">
+        <h1>Horaires d'ouverture</h1>
+        <table>
+            <% @opening_hours.each do |day, hours| %>
+            <tr>
+                <td><%= day.capitalize %></td>
+                <td><%= hours %></td>
+            </tr>
+            <% end %>
+        </table>
+    </div>
 </div>
