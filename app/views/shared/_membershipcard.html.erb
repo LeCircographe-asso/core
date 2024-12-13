@@ -35,7 +35,7 @@
   <div class="profile-info">
     <% if authenticated? %>
       <% if current_user.role.in?(["admin", "godmode", "volunteer"]) %>
-        <%= button_to "Dashboard Administrateur", admin_dashboard_path, class: "white-button" %>
+        <%= link_to "Dashboard Administrateur", admin_dashboard_path, class: "white-button" %>
       <% end %>
     <% end %>
     
