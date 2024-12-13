@@ -24,50 +24,8 @@
   object-fit: cover;
 }
 
-.main-content-graff {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin-top: 40px;
-}
 
-.left-content-graff {
-  width: 40%;
-  padding: 20px;
-  background-color: #f8f9fa;
-  border: 2px solid #ccc;
-  border-radius: 8px;
-  box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.1);
-  margin-left: 80px;
-}
 
-.right-content-graff {
-  width: 48%;
-}
 
-.image-box-graff {
-  text-align: center;
-}
 
-.graff-image {
-  width: 100%;
-  height: auto;
-}
 
-.text-section-graff {
-  width: 40%;
-  padding: 20px;
-  background-color: #f8f9fa;
-  border: 2px solid #ccc;
-  border-radius: 8px;
-  box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.1);
-  margin-left: 20px;
-}
-
-.paragraph-content-graff {
-  width: 60%;
-}
-
-.paragraph-content p {
-  margin: 10px 0;
-}
