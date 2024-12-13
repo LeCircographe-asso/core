@@ -13,5 +13,6 @@
   <% else %>
     <%= button_to "Je ne suis plus intéressé·e", event_attendee_path, params: {id: @event.id},  method: :delete, class: "submit-button"%>
   <% end %>
+  <%= button_to "Payer 10€", checkout_create_path(event_id: @event.id), method: :post, class: "purple-button" %>
  </div>
 </div>
