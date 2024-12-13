@@ -8,7 +8,7 @@
     <meta name="mobile-web-app-capable" content="yes">
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
-
+    
     <%= yield :head %>
 
     <link rel="icon" href="/icon.png" type="image/png">
@@ -16,7 +16,6 @@
     <link rel="apple-touch-icon" href="/icon.png">
 
     <%# Includes the global stylesheet for the app %>
-
     <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
     <% if controller_path.start_with?('admin') %>
     <%= stylesheet_link_tag 'dashboard', "data-turbo-track": "reload" %>

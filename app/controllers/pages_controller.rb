@@ -7,6 +7,9 @@ class PagesController < ApplicationController
     @notepad = Rails.cache.fetch("notepad") || DEFAULT_NOTEPAD
     render template: "pages/#{params[:id]}"
   end
+
+    DEFAULT_NOTEPAD = ""
+    
     DEFAULT_OPENING_HOURS = {
           lundi: "Fermé",
           mardi: "14:00 - 22:00",

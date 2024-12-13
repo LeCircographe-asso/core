@@ -1,0 +1,1 @@
+//= link favicon/site.webmanifest
