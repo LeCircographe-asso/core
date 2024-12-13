@@ -20,15 +20,40 @@ class User < ApplicationRecord
 
   alias_attribute :email, :email_address
 
-  # after_create :welcome_send
+    # after_create :welcome_send
   # def welcome_send
   #   UserMailer.welcome_email(self).deliver_now
   # end
   
+  def generate_password_reset_token!
+    self.password_reset_token = SecureRandom.urlsafe_base64
+    self.password_reset_sent_at = Time.current
+    save!
+  end
+
+  def password_reset_token_valid?
+    password_reset_sent_at.present? && password_reset_sent_at > 2.hours.ago
+  end
+
+  def reset_password!(password, password_confirmation)
+    self.password_reset_token = nil
+    self.password_reset_sent_at = nil
+    self.password = password
+    self.password_confirmation = password_confirmation
+    save!
+  end
+
+    def clear_password_reset_token!
+      self.password_reset_token = nil
+      self.password_reset_sent_at = nil
+      save!
+    end
+
+  
   scope :published, -> { where(published: true) }
 
   def has_privileges?
-    [ "admin", "godmode", "volunteer" ].include? self.role
+    %w[admin godmode volunteer].include?(self.role)
   end
 
   def is_interested_in?(event_id)
