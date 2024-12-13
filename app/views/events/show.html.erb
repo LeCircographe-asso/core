@@ -1,4 +1,5 @@
-<div>
+<div class=admin-dashboard>
+  <div class ="event-card">
   <% authenticated? %>
   <%= @event.title %><br>
   <%= @event.upper_description %><br>
@@ -12,5 +13,5 @@
   <% else %>
     <%= button_to "Je ne suis plus intéressé·e", event_attendee_path, params: {id: @event.id},  method: :delete, class: "submit-button"%>
   <% end %>
-
+ </div>
 </div>

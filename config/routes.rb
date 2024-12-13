@@ -3,6 +3,7 @@ Rails.application.routes.draw do
     get "dashboard", to: "dashboard#index"
     resources :dashboard, only: %i[index], path: "dashboard"
     resources :users
+    resources :events
     resources :members do
       collection do
         get "membership_register"
