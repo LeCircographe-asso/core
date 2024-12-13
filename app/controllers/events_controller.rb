@@ -1,6 +1,6 @@
 class EventsController < ApplicationController
   layout :set_layout
-  before_action :authenticate_user!, except: [:index, :show]
+  before_action :authenticate_user!, except: [ :index, :show ]
   def index
     @events = Event.all
   end
@@ -50,4 +50,3 @@ class EventsController < ApplicationController
       params.require(:event).permit(:title, :upper_description, :middle_description, :bottom_description, :location, :date)
   end
 end
-

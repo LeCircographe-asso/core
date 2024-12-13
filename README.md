@@ -3,7 +3,7 @@
 LE CIRCOGRAPHE
 
 ## English
-
+ 
 **Le Circographe** is an association in Toulouse, France
 
 ### Installation
@@ -13,7 +13,7 @@ LE CIRCOGRAPHE
 ```bash
 
 https://github.com/Team-stash/le_circographe.git
-cd le_circographe
+cd le_circo
 ```
 
 2. Install dependencies :
