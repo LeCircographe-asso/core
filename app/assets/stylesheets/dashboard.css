@@ -1,13 +1,12 @@
 /* dashboard.css */
 .admin-dashboard {
-  margin-top: 60px;
+  margin-top: 80px;
   margin-left: 250px;
   margin-right: 0;
   max-width: calc(100% - 250px);
   padding: 20px;
   background-color: #E6E6EA;
   border-radius: 10px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   min-height: calc(100vh - 60px);
 }
 

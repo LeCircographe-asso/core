@@ -1,9 +1,5 @@
 <div class="profile-container">
-  <% if authenticated? %>
-    <% if current_user.role.in?(["admin", "godmode", "volunteer"]) %>
-      <%= link_to "Dashboard Administrateur", admin_dashboard_path %>
-    <% end %>
-  <% end %>
+  
   
   <div class="membership-card">
     <h2><%= user.role %></h2>
@@ -35,8 +31,15 @@
       <p><strong>Date d'inscription :</strong> Pas encore membre</p>
     <% end %>
   </div>
-  
+
   <div class="profile-info">
+    <% if authenticated? %>
+      <% if current_user.role.in?(["admin", "godmode", "volunteer"]) %>
+        <%= link_to "Dashboard Administrateur", admin_dashboard_path, class: "white-button" %>
+      <% end %>
+    <% end %>
+    
+    
     <p>Abonné à la Newsletter : <%= user.newsletter ? "Oui" : "Non" %></p>
   </div>
   
@@ -44,8 +47,11 @@
     <% if defined?(form) && form.present? %>
       <%= form.submit "Save Changes", class: "purple-button" %>
     <% else %>
-      <%= button_to "Modifier mon mot de passe", new_password_path, class: "purple-button" %>
-      <%= button_to "Se désinscrire de la newsletter", change_newsletter_status_user_path(user), method: :post, class: "white-button" %>
+      <%= link_to "Modifier le mot de passe", edit_password_path(Current.user.password_reset_token), class: "purple-button" %>
+      <%= button_to (current_user.newsletter? ? "Se désincrire de la newsletter" : "S'inscrire à la newsletter"),
+      change_newsletter_status_user_path(user), 
+      method: :post,
+      class: "white-button" %>
       <%= button_to "Supprimer mon compte", user, method: :delete, class: "purple-button", data: { confirm: "Êtes-vous sûr de vouloir supprimer votre compte ? Cette action est irréversible." } %>
     <% end %>
   </div>

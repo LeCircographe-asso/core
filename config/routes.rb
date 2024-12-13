@@ -3,6 +3,7 @@ Rails.application.routes.draw do
     get "dashboard", to: "dashboard#index"
     resources :dashboard, only: %i[index], path: "dashboard"
     resources :users
+    resources :events
     resources :members do
       collection do
         get "membership_register"
@@ -19,7 +20,7 @@ Rails.application.routes.draw do
   resources :events
   resources :pages, only: %i[show]
   resource :session, only: %i[new create destroy]
-  resources :passwords, param: :token
+  resources :passwords, only: %i[new create edit update], param: :token
   resource :registration, only: %i[new create]
   resources :event_attendees, only: %i[create destroy]
   resources :users do
@@ -35,9 +36,7 @@ Rails.application.routes.draw do
   root "home#index"
 
   match "*unmatched", to: "application#url_not_found", via: :all
-
-
-  # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
+      # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
   # Can be used by load balancers and uptime monitors to verify that the app is live.

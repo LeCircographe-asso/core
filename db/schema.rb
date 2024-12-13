@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2024_12_05_100153) do
+ActiveRecord::Schema[8.0].define(version: 2024_12_13_011346) do
   create_table "donations", force: :cascade do |t|
     t.integer "user_id", null: false
     t.integer "payment_id", null: false
@@ -129,6 +129,8 @@ ActiveRecord::Schema[8.0].define(version: 2024_12_05_100153) do
     t.boolean "image_rights", default: false
     t.boolean "newsletter", default: false
     t.boolean "get_involved", default: false
+    t.string "password_reset_token"
+    t.datetime "password_reset_sent_at"
     t.index ["email_address"], name: "index_users_on_email_address", unique: true
   end
 
