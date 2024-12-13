@@ -49,3 +49,5 @@ class EventsController < ApplicationController
       params.fetch(:event, {})
       params.require(:event).permit(:title, :upper_description, :middle_description, :bottom_description, :location, :date)
   end
+end
+
