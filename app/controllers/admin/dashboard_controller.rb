@@ -16,4 +16,3 @@ module Admin
     }.freeze
   end
 end
-

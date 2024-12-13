@@ -20,11 +20,10 @@ class User < ApplicationRecord
 
   alias_attribute :email, :email_address
 
-    # after_create :welcome_send
+  # after_create :welcome_send
   # def welcome_send
   #   UserMailer.welcome_email(self).deliver_now
   # end
-  
   def generate_password_reset_token!
     self.password_reset_token = SecureRandom.urlsafe_base64
     self.password_reset_sent_at = Time.current
@@ -49,7 +48,6 @@ class User < ApplicationRecord
       save!
     end
 
-  
   scope :published, -> { where(published: true) }
 
   def has_privileges?
