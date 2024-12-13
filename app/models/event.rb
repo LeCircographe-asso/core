@@ -4,4 +4,8 @@ class Event < ApplicationRecord
   has_many :users, through: :event_attendees
 
   validates :title, :date, presence: true
+
+  def is_user_registered?(user)
+    event_attendees.exists?(user_id: user.id)
+  end
 end

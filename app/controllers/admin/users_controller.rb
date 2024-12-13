@@ -23,6 +23,7 @@ module Admin
     # POST /admin/users or /admin/users.json
     def create
       @user = User.new(user_params)
+      @user.password = generate_secure_password
 
       respond_to do |format|
         if @user.save
@@ -67,6 +68,11 @@ module Admin
     # Only allow a list of trusted parameters through.
     def user_params
       params.fetch(:user, {})
+      params.require(:user).permit(:email_address, :first_name, :last_name, :password)
+    end
+
+    def generate_secure_password
+      SecureRandom.hex(10)
     end
   end
 end
