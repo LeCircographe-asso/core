@@ -1,6 +1,6 @@
 class UsersController < ApplicationController
   include UsersHelper
-  before_action :set_user, only: %i[ show edit update destroy ] #THIS WAS SCAFFOLD
+  before_action :set_user, only: %i[ show edit update destroy ] # THIS WAS SCAFFOLD
   allow_unauthenticated_access only: %i[new show create]
 
   # GET /users or /users.json
@@ -31,7 +31,7 @@ class UsersController < ApplicationController
   end
 
   def edit
-    @user = User.find(params[:id]) 
+    @user = User.find(params[:id])
     if @user.nil?
       render plain: "Utilisateur introuvable", status: :not_found
     end
@@ -54,12 +54,12 @@ class UsersController < ApplicationController
       format.json { head :no_content }
     end
   end
-  
+
   def change_newsletter_status
     @user = User.find(params[:id])
     @user.update(newsletter: !@user.newsletter)
-  
-    message = @user.newsletter ? 'Vous êtes inscrit à la newsletter' : 'Vous êtes désinscrit de la newsletter'
+
+    message = @user.newsletter ? "Vous êtes inscrit à la newsletter" : "Vous êtes désinscrit de la newsletter"
     redirect_to @user, notice: message
   end
 

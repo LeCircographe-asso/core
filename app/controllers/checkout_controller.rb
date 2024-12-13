@@ -24,7 +24,6 @@ class CheckoutController < ApplicationController
 
       cancel_url: checkout_cancel_url,
       metadata: {
-        
         event_id: @event.id,
         user_id: Current.user.id
       }

@@ -1,0 +1,6 @@
+<div class="admin-dashboard">
+<%= form_with url: notepad_url, method: :put do |form| %>
+  <%= text_area_tag "notepad", @notepad%>
+  <%= submit_tag "Mettre à jour", class: "btn btn-primary" %>
+<% end %>
+<div>
