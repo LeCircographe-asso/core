@@ -14,19 +14,19 @@
   <div class="profile-avatar">
     <% case @user.role %>
       <% when 'godmode' %>
-        <%= image_tag "godmode.png", alt: "Avatar God Mode" %>
+        <%= image_tag "godmode.webp", alt: "Avatar God Mode" %>
       <% when 'admin' %>
-        <%= image_tag "admin.png", alt: "Avatar Admin" %>
+        <%= image_tag "admin.webp", alt: "Avatar Admin" %>
       <% when 'volunteer' %>
-        <%= image_tag "volunteer.png", alt: "Avatar Bénévole" %>
+        <%= image_tag "volunteer.webp", alt: "Avatar Bénévole" %>
       <% when 'circus_membership' %>
-        <%= image_tag "circus.png", alt: "Avatar Membre du Cirque" %>
+        <%= image_tag "circus_members.webp", alt: "Avatar Membre du Cirque" %>
       <% when 'membership' %>
-        <%= image_tag "member.png", alt: "Avatar Membre" %>
+        <%= image_tag "members.webp", alt: "Avatar Membre" %>
       <% when 'guest' %>
-        <%= image_tag "utilisateur.png", alt: "Avatar Invité" %>
+        <%= image_tag "users.png", alt: "Avatar Invité" %>
       <% else %>
-        <%= image_tag "utilisateur.png", alt: "Avatar" %>
+        <%= image_tag "users.png", alt: "Avatar" %>
     <% end %>
     
     <% if @user.user_memberships.exists? %>
