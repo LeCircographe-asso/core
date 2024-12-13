@@ -7,15 +7,9 @@ class EventsController < ApplicationController
   end
 
   def create
-    @event = Event.create!(
-      title: params[:title],
-      upper_description: params[:upper_description],
-      middle_description: params[:middle_description],
-      bottom_description: params[:bottom_description],
-      location: params[:location],
-      date: params[:date],
-      creator: params[:creator]
-    )
+    @event = Event.new(event_params)
+    @event.creator = User.find Current.user.id
+    @event.save!
     redirect_to root_path, notice: "Evenement créé avec succès"
   end
 
@@ -44,6 +38,6 @@ class EventsController < ApplicationController
   private
   def event_params
       params.fetch(:event, {})
-      params.require(:event).permit(:title, :upper_description, :middle_description, :bottom_description, :location, :date, :creator)
+      params.require(:event).permit(:title, :upper_description, :middle_description, :bottom_description, :location, :date)
   end
 end
