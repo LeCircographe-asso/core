@@ -19,12 +19,14 @@
 </head>
 
 <body class="<%= controller_name %>-<%= action_name %>">
-    <%= render 'shared/admin_navbar' %>
-    <%= render 'shared/admin_lateral_navbar' %>
-    <%= render 'shared/flash' %>
-    <main>
-        <%= yield %>
-    </main>
+    <div class="page-container">
+        <%= render 'shared/admin_navbar' %>
+        <%= render 'shared/admin_lateral_navbar' %>
+        <%= render 'shared/flash' %>
+        <main>
+            <%= yield %>
+        </main>
+    </div>
 </body>
 
 </html>

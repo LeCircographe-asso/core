@@ -6,7 +6,6 @@ module Admin
     # GET /admin/users or /admin/users.json
     def index
       @users = User.all
-      @published_articles = Article.published
     end
 
     # GET /admin/users/1 or /admin/users/1.json

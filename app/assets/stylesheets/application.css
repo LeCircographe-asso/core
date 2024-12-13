@@ -35,6 +35,15 @@ main {
   margin: auto;
 }
 
+.page-container {
+  display: flex;
+  /* justify-content: center;
+  align-items: center;
+  min-height: calc(100vh - 60px);
+  margin-left: 200px;
+  padding-top: 60px;  */
+}
+
 .image-container {
   flex: 2;
   display: flex;

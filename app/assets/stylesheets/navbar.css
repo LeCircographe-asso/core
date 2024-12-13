@@ -11,7 +11,7 @@
   font-weight: bold;
   font-style: normal;
   display: flex;
-  position: relative;
+  position: fixed;
   z-index: 10;
 }
 
