@@ -24,6 +24,8 @@ module Admin
     def create
       @user = User.new(user_params)
       @user.password = generate_secure_password
+      @user.payments.amount = 1
+      @user.roles.name = "membership"
 
       if @user.save
         membership_role = Role.find_or_create_by(name: "membership")
