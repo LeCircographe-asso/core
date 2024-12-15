@@ -1,23 +1,14 @@
 class UsersController < ApplicationController
   include UsersHelper
   before_action :set_user, only: %i[ show edit update destroy ] # THIS WAS SCAFFOLD
-  allow_unauthenticated_access only: %i[new show create]
-
-  # GET /users or /users.json
-  def index
-    @users = User.all
-  end
+  skip_before_action :require_authentication, only: %i[create]
 
   def show
-    @user = User.find(params[:id])
-  end
-
-  def new
-    @user = User.new
+    @user = Current.user
   end
 
   def edit
-    @user = User.find(params[:id])
+    @user = Current.user
   end
 
   def create
@@ -30,15 +21,8 @@ class UsersController < ApplicationController
     end
   end
 
-  def edit
-    @user = User.find(params[:id])
-    if @user.nil?
-      render plain: "Utilisateur introuvable", status: :not_found
-    end
-  end
-
   def update
-    @user = User.find(params[:id])
+    @user = Current.user
     if @user.update(user_params)
       redirect_to @user, notice: "Utilisateur mis à jour avec succès."
     else
@@ -56,7 +40,6 @@ class UsersController < ApplicationController
   end
 
   def change_newsletter_status
-    @user = User.find(params[:id])
     @user.update(newsletter: !@user.newsletter)
 
     message = @user.newsletter ? "Vous êtes inscrit à la newsletter" : "Vous êtes désinscrit de la newsletter"
@@ -67,7 +50,7 @@ class UsersController < ApplicationController
 
     # Use callbacks to share common setup or constraints between actions.
     def set_user
-      @user = User.find(params[:id])
+      @user = Current.user
     end
 
     # Only allow a list of trusted parameters through.

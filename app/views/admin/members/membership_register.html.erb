@@ -1,12 +1,3 @@
-<!DOCTYPE html>
-<html lang="fr">
-  <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Formulaire d'adhésion</title>
-    <link rel="stylesheet" href="formulaire.css">
-  </head>
-  <body>
     <div class="form-container">
       <h1>Formulaire d'adhésion</h1>
       <%= form_with url: membership_recap_admin_members_path, method: :post, class: "formulaire-adhesion" do |f| %>
@@ -93,12 +84,10 @@
 
         <div class="form-buttons">
           <%= f.submit "Valider", class: "btn btn-primary" %>
-          <%= link_to "Réinitialiser", reset_membership_admin_members_path, class: "btn btn-secondary", data: { turbo_method: :post } %>
+          <button type="reset" class= "btn btn-secondary"> Réinitialiser</button>
         </div>
       <% end %>
     </div>
-  </body>
-
   <script>
 
     document.addEventListener('DOMContentLoaded', function () {
@@ -118,4 +107,3 @@
       });
     });
   </script>
-</html>
