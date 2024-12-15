@@ -24,6 +24,8 @@ module Admin
     def create
       @user = User.new(user_params)
       @user.password = generate_secure_password
+      @user.payments.amount = 1
+      @user.roles.name = "membership"
 
       respond_to do |format|
         if @user.save
@@ -68,7 +70,7 @@ module Admin
     # Only allow a list of trusted parameters through.
     def user_params
       params.fetch(:user, {})
-      params.require(:user).permit(:email_address, :first_name, :last_name, :password)
+      params.require(:user).permit(:email_address, :first_name, :last_name, :password, :payments, :roles)
     end
 
     def generate_secure_password
