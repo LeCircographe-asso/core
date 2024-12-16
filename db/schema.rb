@@ -128,7 +128,6 @@ ActiveRecord::Schema[8.0].define(version: 2024_12_15_151614) do
     t.integer "role", default: 0
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.text "adress"
     t.string "last_name"
     t.string "first_name"
     t.date "birthdate"
