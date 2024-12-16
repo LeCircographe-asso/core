@@ -138,3 +138,5 @@ input:-webkit-autofill:active {
     gap: 20px;
   }
 }
+
+*= require cookie_popup
