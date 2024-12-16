@@ -7,6 +7,7 @@ body {
   display: flex;
   flex-direction: column;
   height: 100vh;
+  font-size: clamp(14px, 1vw, 18px);
 }
 
 main {
@@ -25,10 +26,12 @@ main {
   clip-path: ellipse(100% 90% at 70% 10%);
   z-index: 1;
 }
+
 .banner_hero {
-  position: relative; 
+  position: relative;
   background-size: cover;
   background-position: center;
+  height: 350px;
   width: 100%;
   display: flex;
   align-items: center;
@@ -45,6 +48,16 @@ main {
   object-position: center;
 }
 
+.banner-text {
+  text-align: center;
+  margin-top: 18px;
+  font-size: clamp(18px, 3vw, 35px);
+  color: #374151;
+  font-weight: 500;
+  line-height: 1.4;
+  font-family: 'RoughTypewriter';
+}
+
 .container {
   display: flex;
   justify-content: space-between;
@@ -52,19 +65,15 @@ main {
   gap: 100px;
   padding: 50px;
   margin: auto;
+  font-size: clamp(16px, 2vw, 20px);
 }
+
 .container.reverse {
   flex-direction: row-reverse;
 }
 
-
 .page-container {
   display: flex;
-  /* justify-content: center;
-  align-items: center;
-  min-height: calc(100vh - 60px);
-  margin-left: 200px;
-  padding-top: 60px;  */
 }
 
 .image-container,
@@ -78,22 +87,21 @@ main {
 .text-container {
   border-left: auto;
   flex-direction: column;
-  font-size: 33px;
-  font-family: Rough_typewritter;
+  font-size: clamp(20px, 2.5vw, 33px);
+  font-family: 'RoughTypewriter';
 }
 
 .text-container strong {
-  font-family: Circographe;
+  font-family: 'Circographe';
   font-weight: 600;
-  font-size: 35px;
-} 
+  font-size: clamp(22px, 2.8vw, 35px);
+}
 
 .image {
   border-radius: 15%;
   width: 100%;
   height: auto;
   object-fit: cover;
-
 }
 
 .image-main {
@@ -110,31 +118,62 @@ main {
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
 }
 
-.banner-text {
-  text-align: center;
-  margin-top: 18px;
-  font-size: 35px;
-  color: #374151;
-  font-weight: 500;
-  line-height: 1.4;
-  font-family: RoughTypewriter;
+@media (max-width: 1200px) {
+  .container {
+    flex-direction: column;
+    gap: 50px;
+    padding: 40px;
+  }
+
+  .banner-text {
+    font-size: clamp(16px, 2.5vw, 28px);
+  }
+
+  .text-container {
+    font-size: clamp(18px, 2.2vw, 30px);
+  }
+
+  .text-container strong {
+    font-size: clamp(20px, 2.5vw, 32px);
+  }
+
+  .banner_hero {
+    height: 300px;
+  }
+
+  .banner_image_hero {
+    max-height: 25vh;
+  }
 }
 
-
-/* Neutralise l'effet bleu de l'autofill Google Chrome*/
-input:-webkit-autofill,
-input:-webkit-autofill:hover,
-input:-webkit-autofill:focus,
-input:-webkit-autofill:active {
-    box-shadow: 0 0 0px 1000px white inset !important;
-    -webkit-text-fill-color: #000 !important; 
-    transition: background-color 5000s ease-in-out 0s;
-}
-
-
-@media (max-width: 800px) {
+@media (max-width: 768px) {
   .container {
     flex-direction: column;
     gap: 20px;
+    padding: 20px;
+  }
+
+  .banner_hero {
+    height: 300px;
+  }
+
+  .banner_image_hero {
+    max-height: 25vh;
+  }
+
+  .banner-text {
+    font-size: clamp(14px, 4vw, 20px);
+  }
+
+  .text-container {
+    font-size: clamp(16px, 4vw, 22px);
+  }
+
+  .text-container strong {
+    font-size: clamp(18px, 4.5vw, 24px);
+  }
+
+  .image-main {
+    border-radius: 10%;
   }
 }

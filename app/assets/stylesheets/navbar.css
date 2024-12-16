@@ -1,4 +1,4 @@
-/* navbar.css */
+/* Fonts */
 @font-face {
   font-family: 'RoughTypewriter';
   src: url('Rough_typewriter.woff') format('woff'),
@@ -16,6 +16,7 @@
        url('Circographe-Regular.woff') format('woff');
 }
 
+/* Navbar */
 .navbar {
   display: flex;
   flex-wrap: nowrap;
@@ -25,78 +26,90 @@
   width: 100%;
   font-family: 'RoughTypewriter';
   font-weight: bold;
-  font-style: normal;
-  display: flex;
   position: fixed;
   z-index: 10;
+  padding: 10px 20px;
 }
 
 .navbar-logo img {
-  height: 80px;
+  height: clamp(60px, 8vw, 80px);
   width: auto;
   object-fit: contain;
-  display: block;
 }
 
 .navbar-center {
   display: flex;
   flex: 1;
-  width: 100%;
-  gap: 1rem;
+  justify-content: center;
+  gap: clamp(10px, 2vw, 30px);
 }
 
 .navbar-text {
-  text-wrap: nowrap;
-  width: 200px;
   text-decoration: none;
-  font-size: 22px;
+  font-size: clamp(16px, 2vw, 22px);
   color: black;
   transition: text-shadow 0.3s ease;
-}
-
-.navbar-link-middle {
-  margin-left: 3%;
 }
 
 .navbar-text:hover {
   text-shadow: 0 4px 8px #5836a5;
 }
 
-.navbar-left {
-  display: flex;
-  align-items: center;
-  padding-left: 1%;
-  gap: 15px;
-  flex-shrink: 0;
-}
-
+.navbar-left,
 .navbar-right {
   display: flex;
   align-items: center;
   gap: 15px;
-  padding-right: 1%;
-  flex-shrink: 0;
 }
 
 .navbar-link-left {
-  margin-right: auto;
-  margin-left: 14%;
+  margin-left: clamp(10px, 3vw, 14%);
 }
 
 .navbar-link-right {
-  margin-left: auto;
-  margin-right: 14%;
-
+  margin-right: clamp(10px, 3vw, 14%);
 }
 
-@media (max-width:1300px) {
-  .navbar-link-left {
-    margin-right: none;
-    margin-left: 15px;
+
+@media (max-width: 1200px) {
+  .navbar {
+    flex-wrap: wrap;
+    padding: 10px;
   }
 
-  .navbar-link-right {
-    margin-left: none;
-    margin-right: 0%;
+  .navbar-center {
+    justify-content: space-around;
+    gap: 20px;
+  }
+
+  .navbar-logo img {
+    height: clamp(50px, 7vw, 70px);
+  }
+
+  .navbar-text {
+    font-size: clamp(14px, 2vw, 18px);
+  }
+}
+
+@media (max-width: 768px) {
+  .navbar {
+    flex-direction: column;
+    align-items: center;
+    padding: 15px;
+  }
+
+  .navbar-left,
+  .navbar-right,
+  .navbar-center {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .navbar-logo img {
+    height: 50px;
+  }
+
+  .navbar-text {
+    font-size: clamp(12px, 4vw, 16px);
   }
 }
