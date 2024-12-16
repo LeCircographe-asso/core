@@ -1,7 +1,7 @@
 <div class="events-grid">
 <div class="container-page">
 <% if current_user&.admin? %>
-<%= link_to 'Créer un nouvel événement', new_admin_event_path, class: 'btn btn-primary' %>
+<%= link_to 'Créer un nouvel événement', new_admin_event_path, class: 'purple-button' %>
 <% end %>
 </div>
   <% @events.each do |event| %>
