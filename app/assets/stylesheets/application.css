@@ -25,6 +25,25 @@ main {
   clip-path: ellipse(100% 90% at 70% 10%);
   z-index: 1;
 }
+.banner_hero {
+  position: relative; 
+  background-size: cover;
+  background-position: center;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  clip-path: ellipse(100% 90% at 70% 10%);
+  z-index: 1;
+}
+
+.banner_image_hero {
+  width: 100%;
+  height: auto;
+  max-height: 30vh;
+  object-fit: cover;
+  object-position: center;
+}
 
 .container {
   display: flex;
@@ -101,13 +120,6 @@ main {
   font-family: RoughTypewriter;
 }
 
-.banner-image-hero {
-  width: 100%;
-  height: auto;
-  max-height: 30vh;
-  object-fit: cover;
-  object-position: center;
-}
 
 /* Neutralise l'effet bleu de l'autofill Google Chrome*/
 input:-webkit-autofill,
