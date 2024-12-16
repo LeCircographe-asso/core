@@ -60,7 +60,6 @@
   border: 2px solid #6b47b8;
   color: white;
   box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
-  border: none;
   border-radius: 6px;
   cursor: pointer;
   transition: background-color 0.3s ease;
@@ -75,6 +74,60 @@
   font-weight: bold;
 }
 
+.checkbox-container {
+  display: flex;
+  align-items: center;
+}
+
+.checkbox-container input[type="checkbox"] {
+  margin-right: 10px;
+}
+
+.form-group label {
+  margin: 0;
+}
+
+.toggle-password {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+}
+
+.password-container {
+  position: relative;
+}
+
+.password-container {
+  position: relative;
+}
+
+.password-container .toggle-password {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+}
+
+.password-container .toggle-password i {
+  font-size: 1.2em;
+  color: #555;
+}
+
+.checkbox-container {
+  display: flex;
+  align-items: center;
+}
+
+.checkbox-container input[type="checkbox"] {
+  margin-right: 10px;
+}
+
+.form-group label {
+  margin: 0;
+}
 @media (max-width: 768px) {
 
   .signup-page,
