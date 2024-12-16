@@ -1,26 +1,53 @@
 <div class="navbar">
-    <div class="navbar-left">
-        <div class="navbar-logo">
-            <%= link_to root_path do %>
-            <%= image_tag "Le-Circographe-crop.png", alt: "Logo Circographe" %>
-            <% end %>
-        </div>
+  <div class="navbar-left">
+    <div class="navbar-logo">
+      <%= link_to root_path do %>
+        <%= image_tag "Le-Circographe-crop.png", alt: "Logo Circographe" %>
+      <% end %>
     </div>
-    <div class="navbar-center">
-        <%= link_to "Accueil", root_path, class: "navbar-text navbar-link-left" %>
-        <%= link_to "Le cirque", page_path("le_cirque"), class: "navbar-text navbar-link-middle" %>
-        <%= link_to "Le graff", page_path("le_graff"), class: "navbar-text navbar-link-middle" %>
-        <%= link_to "Le lieu", page_path("le_lieu"), class: "navbar-text navbar-link-middle" %>
-        <%= link_to "Programme", events_path, class: "navbar-text navbar-link-right" %>
-        <%= link_to "À propos", page_path("about"), class: "navbar-text navbar-link-right" %>
-    </div>
-    <div class="navbar-right">
-        <% if authenticated? %>
-        <%= link_to "Mon profil", user_path(current_user), class: "white-button" %>
-        <%= button_to "Se déconnecter", session_path, method: :delete, class: "purple-button" %>
-        <% else %>
-        <%= link_to "Se connecter", new_session_path, class: "white-button" %>
-        <%= link_to "S'inscrire", new_registration_path, class: "purple-button" %>
-        <% end %>
-    </div>
+  </div>
+
+  <div class="navbar-burger" onclick="toggleMenu()">
+    <div></div>
+    <div></div>
+    <div></div>
+  </div>
+
+  <div class="navbar-center">
+    <%= link_to "Accueil", root_path, class: "navbar-text navbar-link-left" %>
+    <%= link_to "Le cirque", page_path("le_cirque"), class: "navbar-text navbar-link-middle" %>
+    <%= link_to "Le graff", page_path("le_graff"), class: "navbar-text navbar-link-middle" %>
+    <%= link_to "Le lieu", page_path("le_lieu"), class: "navbar-text navbar-link-middle" %>
+    <%= link_to "Programme", events_path, class: "navbar-text navbar-link-right" %>
+    <%= link_to "À propos", page_path("about"), class: "navbar-text navbar-link-right" %>
+  </div>
+
+  <div class="navbar-right">
+    <% if authenticated? %>
+      <%= link_to "Mon profil", user_path(current_user), class: "white-button" %>
+      <%= button_to "Se déconnecter", session_path, method: :delete, class: "purple-button" %>
+    <% else %>
+      <%= link_to "Se connecter", new_session_path, class: "white-button" %>
+      <%= link_to "S'inscrire", new_registration_path, class: "purple-button" %>
+    <% end %>
+  </div>
 </div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const burgerMenu = document.querySelector('.navbar-burger');
+    const navbar = document.querySelector('.navbar');
+
+    console.log('Burger Menu:', burgerMenu);
+    console.log('Navbar:', navbar);
+
+    if (burgerMenu) {
+      burgerMenu.addEventListener('click', function () {
+        console.log('Burger menu clicked!');
+        navbar.classList.toggle('open');
+      });
+    } else {
+      console.error('Burger menu element not found.');
+    }
+  });
+</script>
