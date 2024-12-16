@@ -1,7 +1,8 @@
 /* _form.css */
 
 .signup-page,
-.signin-page {
+.signin-page,
+.edit-form {
   display: flex;
   justify-content: center;
   align-items: center;
