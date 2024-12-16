@@ -5,6 +5,7 @@ Rails.application.routes.draw do
     resources :users
     resources :events, only: %i[new create edit destroy index]
     resource :session, only: %i[destroy]
+    resource :notepad, only: %i[show edit update]
     resources :members do
       collection do
         get :membership_register
@@ -16,7 +17,6 @@ Rails.application.routes.draw do
     end
   end
 
-  resource :notepad, only: %i[show edit update]
   resources :events, only: %i[show index]
   resources :pages, only: %i[show]
   resource :session, only: %i[new create destroy]
