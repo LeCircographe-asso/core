@@ -101,6 +101,14 @@ main {
   font-family: RoughTypewriter;
 }
 
+.banner-image-hero {
+  width: 100%;
+  height: auto;
+  max-height: 30vh;
+  object-fit: cover;
+  object-position: center;
+}
+
 @media (max-width: 800px) {
   .container {
     flex-direction: column;

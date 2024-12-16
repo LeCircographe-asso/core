@@ -14,13 +14,6 @@
   z-index: 1;
 }
 
-.banner-image-circus {
-  width: 100%;
-  height: auto;
-  max-height: 25vh;
-  object-fit: cover;
-}
-
 .text h1 {
   display: flex;
   justify-content: center;
