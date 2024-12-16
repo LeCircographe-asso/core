@@ -1,16 +1,23 @@
 module Admin
   class EventsController < BaseController
+
+    def index
+      @events = Event.all
+    end
     def new
       @event = Event.new
-      if !Current.user.has_privileges?
-        redirect_to root_path, alert: "Réservé aux administrateurs"
-      end
     end
+
     def create
       @event = Event.new(event_params)
-      @event.creator = User.find Current.user.id
-      @event.save!
-      redirect_to root_path, notice: "Evenement créé avec succès"
+      @event.creator = current_user
+      respond_to do |format|
+        if @event.save!
+          format.html { redirect_to admin_events_path, notice: "Evenement créé avec succès"}
+        else
+          format.html { render :new, alert: @event.errors.full_messages}
+        end
+      end
     end
     def edit
       @event = Event.find params[:id]

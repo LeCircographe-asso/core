@@ -40,28 +40,9 @@ legend {
   padding: 8px;
   margin-top: 5px;
   border: 1px solid #fff;
-  background-color: #9b5f9e;
-  color: #fff;
   border-radius: 5px;
 }
 
-input[type="checkbox"],
-input[type="radio"] {
-  accent-color: #bb8f3c;
-}
-
-input[type="text"],
-input[type="email"],
-input[type="tel"],
-input[type="password"],
-input[type="date"] {
-  width: 100%;
-  padding: 8px;
-  margin-top: 5px;
-  border: 1px solid #fff;
-  color: black;
-  border-radius: 5px;
-}
 
 label {
   font-size: 1.1em;
@@ -96,9 +77,4 @@ label {
 .small-text {
   font-size: 0.9em;
   color: #ddd;
-}
-
-input[type="checkbox"],
-input[type="radio"] {
-  accent-color: #bb8f3c;
 }

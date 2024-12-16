@@ -1,0 +1,15 @@
+<div class="events-grid">
+<div class="container-page">
+<% if current_user&.admin? %>
+<%= link_to 'Créer un nouvel événement', new_admin_event_path, class: 'purple-button' %>
+<% end %>
+</div>
+  <% @events.each do |event| %>
+    <div class="event-card">
+      <h2><%= event.title %></h2>
+      <p><strong>Date :</strong> <%= event.date.strftime("%d/%m/%Y") %></p>
+      <p><strong>Participants :</strong> <%= event.users.length %> intéressé·e·s</p>
+      <%= link_to "Voir l'événement", event_path(event.id), class: "event-button" %>
+    </div>
+  <% end %>
+</div>

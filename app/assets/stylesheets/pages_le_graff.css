@@ -1,31 +1,6 @@
 /* pages_le_graff.css */
 
-.banner_graff {
-  position: relative; 
-  background-size: cover;
-  background-position: center;
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  clip-path: ellipse(100% 90% at 70% 10%);
-  z-index: 1;
-}
-
 .graff-container {
   background-color: #E6E6EA;
   font-family: Arial, sans-serif;
 }
-
-.banner-image-graff {
-  width: 100%;
-  height: auto;
-  max-height: 25vh;
-  object-fit: cover;
-}
-
-
-
-
-
-

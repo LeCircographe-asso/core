@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2024_12_13_011346) do
+ActiveRecord::Schema[8.0].define(version: 2024_12_15_151614) do
   create_table "donations", force: :cascade do |t|
     t.integer "user_id", null: false
     t.integer "payment_id", null: false
@@ -52,6 +52,8 @@ ActiveRecord::Schema[8.0].define(version: 2024_12_13_011346) do
     t.boolean "status", default: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "user_id"
+    t.index ["user_id"], name: "index_payments_on_user_id"
   end
 
   create_table "roles", force: :cascade do |t|
@@ -89,6 +91,15 @@ ActiveRecord::Schema[8.0].define(version: 2024_12_13_011346) do
     t.index ["user_membership_id"], name: "index_training_attendees_on_user_membership_id"
   end
 
+  create_table "user_membership_subscriptions", force: :cascade do |t|
+    t.integer "user_membership_id", null: false
+    t.integer "subscription_type_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["subscription_type_id"], name: "index_user_membership_subscriptions_on_subscription_type_id"
+    t.index ["user_membership_id"], name: "index_user_membership_subscriptions_on_user_membership_id"
+  end
+
   create_table "user_memberships", force: :cascade do |t|
     t.integer "user_id", null: false
     t.integer "subscription_type_id", null: false
@@ -96,6 +107,7 @@ ActiveRecord::Schema[8.0].define(version: 2024_12_13_011346) do
     t.boolean "status"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.date "expiration_date"
     t.index ["payment_id"], name: "index_user_memberships_on_payment_id"
     t.index ["subscription_type_id"], name: "index_user_memberships_on_subscription_type_id"
     t.index ["user_id"], name: "index_user_memberships_on_user_id"
@@ -140,9 +152,12 @@ ActiveRecord::Schema[8.0].define(version: 2024_12_13_011346) do
   add_foreign_key "event_attendees", "payments"
   add_foreign_key "event_attendees", "users"
   add_foreign_key "events", "users", column: "creator_id"
+  add_foreign_key "payments", "users"
   add_foreign_key "sessions", "users"
   add_foreign_key "training_attendees", "user_memberships"
   add_foreign_key "training_attendees", "users"
+  add_foreign_key "user_membership_subscriptions", "subscription_types"
+  add_foreign_key "user_membership_subscriptions", "user_memberships"
   add_foreign_key "user_memberships", "payments"
   add_foreign_key "user_memberships", "subscription_types"
   add_foreign_key "user_memberships", "users"

@@ -1,4 +1,10 @@
 class User < ApplicationRecord
+  attr_accessor :cgu, :private_policy
+
+  enum :role, %i[guest membership circus_membership volunteer admin godmode], default: :guest
+
+  alias_attribute :email, :email_address
+
   has_many :user_roles, dependent: :destroy
   has_many :roles, through: :user_roles
   has_many :sessions, dependent: :destroy
@@ -8,17 +14,15 @@ class User < ApplicationRecord
   has_many :user_memberships, dependent: :destroy
   has_many :subscription_types, through: :user_memberships
   has_many :training_attendees, through: :user_memberships
-  has_many :payments, through: :user_memberships
-  has_many :payments, through: :donations
+  has_many :payments, dependent: :destroy
 
-  enum :role, %i[guest membership circus_membership volunteer admin godmode], default: :guest
 
   normalizes :email_address, with: ->(e) { e.strip.downcase }
 
   has_secure_password
   validates :email_address, presence: true, uniqueness: true
-
-  alias_attribute :email, :email_address
+  validates :cgu, acceptance: { message: "Vous devez accepter les CGU pour continuer." }
+  validates :privacy_policy, acceptance: { message: "Vous devez accepter la politique de confidentialité pour continuer." }
 
   # after_create :welcome_send
   # def welcome_send
@@ -42,7 +46,7 @@ class User < ApplicationRecord
     end
   end
 
-    def reset_password!(password, password_confirmation)
+  def reset_password!(password, password_confirmation)
     self.password_reset_token = nil
     self.password_reset_sent_at = nil
     self.password = password
@@ -50,11 +54,11 @@ class User < ApplicationRecord
     save!
   end
 
-    def clear_password_reset_token!
-      self.password_reset_token = nil
-      self.password_reset_sent_at = nil
-      save!
-    end
+  def clear_password_reset_token!
+    self.password_reset_token = nil
+    self.password_reset_sent_at = nil
+    save!
+  end
 
   scope :published, -> { where(published: true) }
 

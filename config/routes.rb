@@ -1,10 +1,11 @@
 Rails.application.routes.draw do
   namespace :admin do
-    get "dashboard", to: "dashboard#index"
     resources :dashboard, only: %i[index], path: "dashboard"
     resource :opening_hours, only: %i[show edit update]
     resources :users
-    resources :events
+    resources :events, only: %i[new create edit destroy index]
+    resource :session, only: %i[destroy]
+    resource :notepad, only: %i[show edit update]
     resources :members do
       collection do
         get :membership_register
@@ -16,9 +17,6 @@ Rails.application.routes.draw do
     end
   end
 
-  get "privacy_policy", to: "cookies#privacy_policy", as: :privacy_policy
-
-  resource :notepad, only: %i[show edit update]
   resources :events, only: %i[show index]
   resources :pages, only: %i[show]
   resource :session, only: %i[new create destroy]
@@ -37,7 +35,7 @@ Rails.application.routes.draw do
 
   root "home#index"
 
-  match "*unmatched", to: "application#url_not_found", via: :all
+  # match "*unmatched", to: "application#url_not_found", via: :all
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
