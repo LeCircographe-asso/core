@@ -16,6 +16,7 @@ Rails.application.routes.draw do
     end
   end
 
+  get "privacy_policy", to: "cookies#privacy_policy", as: :privacy_policy
 
   resource :notepad, only: %i[show edit update]
   resources :events, only: %i[show index]
