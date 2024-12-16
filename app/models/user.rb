@@ -1,4 +1,10 @@
 class User < ApplicationRecord
+  attr_accessor :cgu, :private_policy
+
+  enum :role, %i[guest membership circus_membership volunteer admin godmode], default: :guest
+
+  alias_attribute :email, :email_address
+
   has_many :user_roles, dependent: :destroy
   has_many :roles, through: :user_roles
   has_many :sessions, dependent: :destroy
@@ -11,14 +17,11 @@ class User < ApplicationRecord
   has_many :payments, through: :user_memberships
   has_many :payments, through: :donations
 
-  enum :role, %i[guest membership circus_membership volunteer admin godmode], default: :guest
 
   normalizes :email_address, with: ->(e) { e.strip.downcase }
 
   has_secure_password
   validates :email_address, presence: true, uniqueness: true
-
-  alias_attribute :email, :email_address
 
   # after_create :welcome_send
   # def welcome_send

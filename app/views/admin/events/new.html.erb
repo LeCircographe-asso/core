@@ -3,7 +3,7 @@
   authenticated?
 %>
 <div class="form-container">
-<%= form_with model: @event, url: events_path(action: "create"), method: "post" do |form| %>
+<%= form_with model: @event, url: admin_events_path, method: "post" do |form| %>
   
   <%= form.text_field :title, required: true, placeholder: "ex.: Concert Super Cool", maxlength: 72, class: "form-input"%>
   <%= form.text_area :upper_description, required: false, placeholder: "Description haute", maxlength: 72, class: "form-input"%>

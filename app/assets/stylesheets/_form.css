@@ -35,7 +35,8 @@
 }
 
 .signup-form-container,
-.signin-form-container {
+.signin-form-container,
+.edit-form-container {
   flex: 1;
   display: flex;
   flex-direction: column;

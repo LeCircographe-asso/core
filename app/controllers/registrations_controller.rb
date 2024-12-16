@@ -9,15 +9,13 @@ class RegistrationsController < ApplicationController
   end
 
   def create
-    email = params[:email_address]
-    pwd = params[:password]
-    pwdc = params[:password_confirmation]
-    @user = User.new(email_address: email, password: pwd, password_confirmation: pwdc)
+    @user = User.new(user_params)
     if @user.save
       start_new_session_for @user
       redirect_to root_path, notice: "Inscription réussie !"
     else
-      render :new, status: :unprocessable_entity
+      p @user.errors.full_messages
+      render :new, notice: @user.errors.full_messages, status: :unprocessable_entity
     end
   end
 

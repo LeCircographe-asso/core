@@ -54,7 +54,7 @@ module Admin
       @user.destroy!
 
       respond_to do |format|
-        format.html { redirect_to admin_users_path, status: :see_other, notice: "User was successfully destroyed." }
+        format.html { redirect_to admin_users_path, status: :see_other, notice: "Utilisateur supprimé avec succès." }
         format.json { head :no_content }
       end
     end
