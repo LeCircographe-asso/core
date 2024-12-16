@@ -155,7 +155,7 @@ end
   )
 end
 
-10.times do
+5.times do
   event = Event.create!(
     title: Faker::TvShows::BigBangTheory.character,
     upper_description: "",

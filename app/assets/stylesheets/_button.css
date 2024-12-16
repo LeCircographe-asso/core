@@ -3,7 +3,7 @@
 
 .white-button {
   text-decoration: none;
-  padding: 5px 15px;
+  padding: 10px 10px;
   outline-offset: 0;
   outline: 1px solid #1F5C55;
   background-color: #fafdff;
@@ -24,7 +24,7 @@
 
 .purple-button {
   text-decoration: none;
-  padding: 5px 15px;
+  padding: 10px 10px;
   border: none;
   background-color: #5836a5;
   color: #fafdff;
