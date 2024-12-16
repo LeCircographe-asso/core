@@ -14,8 +14,7 @@ class User < ApplicationRecord
   has_many :user_memberships, dependent: :destroy
   has_many :subscription_types, through: :user_memberships
   has_many :training_attendees, through: :user_memberships
-  has_many :payments, through: :user_memberships
-  has_many :payments, through: :donations
+  has_many :payments, dependent: :destroy
 
 
   normalizes :email_address, with: ->(e) { e.strip.downcase }
@@ -47,7 +46,7 @@ class User < ApplicationRecord
     end
   end
 
-    def reset_password!(password, password_confirmation)
+  def reset_password!(password, password_confirmation)
     self.password_reset_token = nil
     self.password_reset_sent_at = nil
     self.password = password
@@ -55,11 +54,11 @@ class User < ApplicationRecord
     save!
   end
 
-    def clear_password_reset_token!
-      self.password_reset_token = nil
-      self.password_reset_sent_at = nil
-      save!
-    end
+  def clear_password_reset_token!
+    self.password_reset_token = nil
+    self.password_reset_sent_at = nil
+    save!
+  end
 
   scope :published, -> { where(published: true) }
 

@@ -1,0 +1,9 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  user_membership: one
+  subscription_type: one
+
+two:
+  user_membership: two
+  subscription_type: two

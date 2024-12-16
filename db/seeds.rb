@@ -123,7 +123,12 @@ User.create!(
 
 
 10.times do |i|
-  Payment.create(id: i, payment_method: %w[CB check cash].sample, amount: rand(100), status: true)
+  Payment.create(
+    payment_method: %w[CB check cash].sample,
+    amount: rand(100),
+    status: true,
+    user: User.all.sample
+  )
 end
 
 
@@ -151,7 +156,7 @@ end
 end
 
 10.times do
-  Event.create!(
+  event = Event.create!(
     title: Faker::TvShows::BigBangTheory.character,
     upper_description: "",
     middle_description: Faker::TvShows::BigBangTheory.quote,
@@ -159,8 +164,18 @@ end
     location: Faker::Address.city,
     date: Faker::Date.forward(days: 1),
     creator: User.all.sample
-
   )
+
+  rand(1..5).times do
+    user = User.all.sample
+    unless event.users.include?(user) || event.creator == user
+      EventAttendee.create!(
+        user: user,
+        event: event,
+        payment: Payment.create!(user: user, amount: rand(10..50), status: true, payment_method: [ 'CB', 'check', 'cash' ].sample)
+      )
+    end
+  end
 end
 
 

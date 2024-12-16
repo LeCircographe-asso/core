@@ -25,6 +25,60 @@ module Admin
       @user = User.new(user_params)
       @user.password = generate_secure_password
 
+      if @user.save
+        membership_role = Role.find_or_create_by(name: "membership")
+
+        @user.roles << membership_role
+
+        payment = @user.payments.build(amount: 1, status: "pending", payment_method: "credit_card")
+        payment.save!
+
+        if Date.today.month < 9
+          expiration_date = Date.new(Date.today.year, 9, 1)
+        else
+          expiration_date = Date.new(Date.today.year + 1, 9, 1)
+        end
+
+        subscription = SubscriptionType.find_by(name: "membership")
+        if subscription.nil?
+          subscription = SubscriptionType.create(name: "membership", price: 1, duration: "jusqu'au 01/09", description: "adhésion asso")
+        end
+        @user_membership = @user.user_memberships.create(
+          subscription_type_id: subscription.id,
+          status: "active",
+          expiration_date: expiration_date
+        )
+      else
+
+      end
+
+      if @user.save
+        membership_role = Role.find_or_create_by(name: "membership")
+
+        @user.roles << membership_role
+
+        payment = @user.payments.build(amount: 1, status: "pending", payment_method: "credit_card")
+        payment.save!
+
+        if Date.today.month < 9
+          expiration_date = Date.new(Date.today.year, 9, 1)
+        else
+          expiration_date = Date.new(Date.today.year + 1, 9, 1)
+        end
+
+        subscription = SubscriptionType.find_by(name: "membership")
+        if subscription.nil?
+          subscription = SubscriptionType.create(name: "membership", price: 1, duration: "jusqu'au 01/09", description: "adhésion asso")
+        end
+        @user_membership = @user.user_memberships.create(
+          subscription_type_id: subscription.id,
+          status: "active",
+          expiration_date: expiration_date
+        )
+      else
+
+      end
+
       respond_to do |format|
         if @user.save
           format.html { redirect_to [ :admin, @user ], notice: "User was successfully created." }
@@ -68,7 +122,7 @@ module Admin
     # Only allow a list of trusted parameters through.
     def user_params
       params.fetch(:user, {})
-      params.require(:user).permit(:email_address, :first_name, :last_name, :password)
+      params.require(:user).permit(:email_address, :first_name, :last_name, :password, :payments, :roles)
     end
 
     def generate_secure_password
