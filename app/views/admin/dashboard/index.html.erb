@@ -17,12 +17,15 @@
         <div class="page-container">
             <table>
                 <% @opening_hours.each do |day, hours| %>
-                <tr>
-                    <td><%= day.capitalize %></td>
-                    <td><%= hours %></td>
-                </tr>
+                    <tr>
+                        <td><%= day.capitalize %></td>
+                        <td><%= hours %></td>
+                    </tr>
                 <% end %>
             </table>
+        </div>
+        <div class="page-container">
+            <%= render "shared/notepad" %>
         </div>
     </div>
 </div>
