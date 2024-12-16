@@ -17,8 +17,6 @@
     <link rel="icon" href="/icon.png" type="image/png">
     <link rel="icon" href="/icon.svg" type="image/svg+xml">
     <link rel="apple-touch-icon" href="/icon.png">
-
-    <%# Includes the global stylesheet for the app %>
     <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
     <% if controller_path.start_with?('admin') %>
     <%= stylesheet_link_tag 'dashboard', "data-turbo-track": "reload" %>
@@ -28,7 +26,6 @@
 
     <%= javascript_importmap_tags %>
 
-    <%# stripe libraries JS %>
     <script src="https://js.stripe.com/v3/"></script>
 </head>
 
