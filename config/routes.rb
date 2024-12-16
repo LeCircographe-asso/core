@@ -4,6 +4,7 @@ Rails.application.routes.draw do
     resource :opening_hours, only: %i[show edit update]
     resources :users
     resources :events, only: %i[new create edit destroy index]
+    resource :session, only: %i[destroy]
     resources :members do
       collection do
         get :membership_register
@@ -14,7 +15,6 @@ Rails.application.routes.draw do
       end
     end
   end
-
 
   resource :notepad, only: %i[show edit update]
   resources :events, only: %i[show index]
