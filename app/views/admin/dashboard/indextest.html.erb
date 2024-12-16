@@ -1,0 +1,31 @@
+<div class="admin-dashboard">
+    <h1 class="dashboard-title">Tableau de bord administrateur</h1>   
+    <div class="dashboard-container">
+        <div class="dashboard-actions">
+            <%= link_to "Modifier les horaires", edit_admin_opening_hours_path, class: "btn btn-primary" %>
+        </div>
+        <div class="dashboard-actions">
+            <%= link_to "Liste Utilisateurs", admin_users_path, class: "btn btn-primary" %>
+        </div>
+
+        <div class="dashboard-actions">
+            <%= link_to "Adhésion COMPLETE + FORM", membership_register_admin_members_path, class: "btn btn-primary" %>
+        </div>
+        <div class="dashboard-actions">
+            <%= link_to "Creer un Adhérent (basique)", new_admin_user_path, class: "btn btn-primary"%>
+        </div>
+        <div class="page-container">
+            <table>
+                <% @opening_hours.each do |day, hours| %>
+                    <tr>
+                        <td><%= day.capitalize %></td>
+                        <td><%= hours %></td>
+                    </tr>
+                <% end %>
+            </table>
+        </div>
+        <div class="page-container">
+            <%= render "shared/notepad" %>
+        </div>
+    </div>
+</div>
