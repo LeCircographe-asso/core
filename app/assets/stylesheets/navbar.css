@@ -22,13 +22,13 @@
   flex-wrap: nowrap;
   justify-content: space-between;
   align-items: center;
+  text-wrap: nowrap;
   background-color: #F2F3F4;
   width: 100%;
   font-family: 'RoughTypewriter';
   font-weight: bold;
   position: fixed;
   z-index: 10;
-  padding: 2px 5px;
 }
 
 .navbar-logo img {
