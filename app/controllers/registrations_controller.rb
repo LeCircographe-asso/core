@@ -15,13 +15,14 @@ class RegistrationsController < ApplicationController
       redirect_to root_path, notice: "Inscription réussie !"
     else
       p @user.errors.full_messages
-      render :new, notice: @user.errors.full_messages, status: :unprocessable_entity
+      flash.now[:alert] = @user.errors.full_messages.join(", ")
+    render :new, status: :unprocessable_entity
     end
   end
 
   private
 
   def user_params
-    params.require(:user).permit(:email_address, :password, :password_confirmation)
+    params.require(:user).permit(:email_address, :password, :password_confirmation, :cgu, :privacy_policy)
   end
 end

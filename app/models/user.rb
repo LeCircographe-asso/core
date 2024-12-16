@@ -22,6 +22,8 @@ class User < ApplicationRecord
 
   has_secure_password
   validates :email_address, presence: true, uniqueness: true
+  validates :cgu, acceptance: { message: "Vous devez accepter les CGU pour continuer." }
+  validates :privacy_policy, acceptance: { message: "Vous devez accepter la politique de confidentialité pour continuer." }
 
   # after_create :welcome_send
   # def welcome_send
