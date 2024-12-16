@@ -14,16 +14,20 @@
     <p>Rejoignez-nous pour explorer diverses disciplines, des acrobaties aux arts aériens, et laissez libre cours à votre créativité. </p>
   </div>
   <div class="image-container">
-    <%= image_tag "home1.webp", class: "image-main" %>
+    <%= link_to page_path("le_cirque") do %>
+      <%= image_tag "home1.webp", class: "image-main" %>
+    <% end %>
   </div>
 </div>
 
 <div class="container reverse">
   <div class="image-container">
-    <%= image_tag "home2.webp", class: "image-main" %>
+    <%= link_to page_path("le_graff") do %>
+      <%= image_tag "home2.webp", class: "image-main" %>
+    <% end %>
   </div>
   <div class="text-container">
-    <strong>Le Graph</strong>
+    <strong>Le Graff</strong>
 <p>Plongez dans le monde vibrant du graphisme, où chaque trait raconte une histoire.</p>
 <p>Nos ateliers vous permettent d'exprimer votre créativité et de développer vos compétences artistiques.</p> 
 <p>Que vous soyez débutant ou professionnel, notre espace est conçu pour inspirer et encourager l'innovation visuelle.</p>
@@ -39,6 +43,8 @@
     <p>Venez découvrir un lieu où l'inspiration et la créativité sont au rendez-vous.</p>
   </div>
   <div class="image-container">
-    <%= image_tag "home3.webp", class: "image-main" %>
+    <%= link_to page_path("le_lieu") do %>
+      <%= image_tag "home3.webp", class: "image-main" %>
+    <% end %>
   </div>
 </div>
