@@ -2,7 +2,9 @@
 
     <div class="sidebar-logo">
 
-        <%= image_tag 'circo-admin.png', alt: 'Logo Admin' %>
+        <%= link_to admin_dashboard_index_path do %>
+            <%= image_tag "circo-admin.png", class: "image-main" %>
+        <% end %>
 
     </div>
 

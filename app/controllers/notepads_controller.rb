@@ -12,7 +12,7 @@ class NotepadsController < ApplicationController
   def update
     updated_notepad = params[:notepad]
     Rails.cache.write("notepad", updated_notepad)
-    redirect_to notepad_path, notice: "Bloc-note mis à jour !"
+    redirect_to admin_dashboard_index_path, notice: "Bloc-note mis à jour !"
   end
 
   private
