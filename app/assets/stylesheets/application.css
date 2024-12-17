@@ -88,7 +88,6 @@ main {
   border-left: auto;
   flex-direction: column;
   font-size: clamp(20px, 2.5vw, 33px);
-  font-family: 'RoughTypewriter';
 }
 
 .text-container strong {
@@ -116,6 +115,16 @@ main {
 .image-main:hover {
   transform: translateX(+12px);
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+/* Neutralise l'effet bleu de l'autofill Google Chrome*/
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+    box-shadow: 0 0 0px 1000px white inset !important;
+    -webkit-text-fill-color: #000 !important; 
+    transition: background-color 5000s ease-in-out 0s;
 }
 
 @media (max-width: 1200px) {
@@ -152,6 +161,7 @@ main {
     gap: 20px;
     padding: 20px;
   }
+}
 
   .banner_hero {
     height: 300px;

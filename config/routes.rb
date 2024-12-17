@@ -4,7 +4,7 @@ Rails.application.routes.draw do
     resource :opening_hours, only: %i[show edit update]
     resources :users
     resources :events, only: %i[new create edit destroy index]
-    resource :session, only: %i[destroy]
+    resource :session, only: %i[new create destroy]
     resource :notepad, only: %i[show edit update]
     resources :members do
       collection do

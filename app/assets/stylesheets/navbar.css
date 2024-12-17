@@ -55,8 +55,14 @@
   text-shadow: 0 4px 8px #5836a5;
 }
 
-.navbar-left,
 .navbar-right {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding-right: 10px;
+}
+
+.navbar-left {
   display: flex;
   align-items: center;
   gap: 15px;
@@ -74,6 +80,7 @@
   display: none;
   flex-direction: column;
   justify-content: space-between;
+  padding-right: 15px;
   width: 30px;
   height: 22px;
   cursor: pointer;
@@ -118,6 +125,7 @@
     margin-left: auto;
   }
 
+  /* Cache les éléments du menu par défaut */
   .navbar-center,
   .navbar-left,
   .navbar-right {
@@ -127,12 +135,30 @@
     width: 100%;
   }
 
+  /* Affiche les éléments lorsque le menu est ouvert */
   .navbar.open .navbar-center,
   .navbar.open .navbar-left,
   .navbar.open .navbar-right {
     display: flex;
+    align-items: center; /* Centre horizontalement */
+    justify-content: center; /* Centre verticalement */
+    text-align: center; /* Centre le texte */
+    height: auto; /* Utilise toute la hauteur de l'écran */
+    gap: 20px; /* Espace entre les liens */
   }
 
+  /* Ajout d'un fond plein écran pour le menu ouvert */
+  .navbar.open {
+    position: fixed; /* Fixe le menu burger sur toute la page */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: auto; /* Pleine hauteur */
+    background-color: #F2F3F4; /* Fond de couleur */
+    z-index: 10;
+  }
+
+  /* Animation du burger menu */
   .navbar.open .navbar-burger div:nth-child(1) {
     transform: rotate(45deg) translateY(9px);
   }

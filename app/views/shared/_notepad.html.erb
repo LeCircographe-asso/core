@@ -1,13 +1,3 @@
-<div class="admin-dashboard">
 <div>
   <%= @notepad %>
-</div>
-<br>
-<br>
-<% if current_user.role == "admin" || current_user.role == "godmode" %>
-  <div class="dashboard-actions">
-    <%= link_to "Modifier le bloc-note", edit_admin_notepad_path, class: "btn btn-primary" %>
-  </div> 
-<% end %>
-
 </div>

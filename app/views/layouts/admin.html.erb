@@ -14,11 +14,20 @@
 
 
     <%= yield :head %>
+
     <link rel="icon" href="/icon.png" type="image/png">
     <link rel="icon" href="/icon.svg" type="image/svg+xml">
     <link rel="apple-touch-icon" href="/icon.png">
     <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
+    <% if controller_path.start_with?('admin') %>
+    <%= stylesheet_link_tag 'dashboard', "data-turbo-track": "reload" %>
+    <% elsif content_for?(:css_file) %>
+    <%= stylesheet_link_tag content_for(:css_file), "data-turbo-track": "reload" %>
+    <% end %>
+
     <%= javascript_importmap_tags %>
+
+    <script src="https://js.stripe.com/v3/"></script>
 </head>
 
 <body class="<%= controller_name %>-<%= action_name %>">

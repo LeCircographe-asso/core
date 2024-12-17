@@ -6,7 +6,7 @@
 <br>
 <% if current_user.role == "admin" || current_user.role == "godmode" %>
   <div class="dashboard-actions">
-    <%= link_to "Modifier le bloc-note", edit_admin_notepad_path, class: "btn btn-primary" %>
+    <%= link_to "Modifier le bloc-note", edit_admin_notepad_path, class: "purple-button" %>
   </div> 
 <% end %>
 

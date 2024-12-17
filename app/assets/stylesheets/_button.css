@@ -43,6 +43,20 @@
   outline: 1px solid #1F5C55
 }
 
+#fat-button {
+  text-decoration: none;
+  padding: 20px 30px; /* Plus grand padding pour augmenter la taille */
+  border: none;
+  background-color: #5836a5;
+  color: #fafdff;
+  border-radius: 50px; /* Arrondi total pour un bouton ovale */
+  cursor: pointer;
+  font-size: 18px; /* Texte légèrement plus grand */
+  font-weight: bold;
+  font-family: 'roboto', sans-serif;
+  z-index: 102;
+}
+
 .submit-button {
   width: 50%;
   padding: 12px;

@@ -129,6 +129,7 @@
 .form-group label {
   margin: 0;
 }
+
 @media (max-width: 768px) {
 
   .signup-page,

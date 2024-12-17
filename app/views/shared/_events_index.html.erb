@@ -9,7 +9,7 @@
       <h2><%= event.title %></h2>
       <p><strong>Date :</strong> <%= event.date.strftime("%d/%m/%Y") %></p>
       <p><strong>Participants :</strong> <%= event.users.length %> intéressé·e·s</p>
-      <%= link_to "Voir l'événement", event_path(event.id), class: "event-button" %>
+      <%= link_to "Voir l'événement", event_path(event.id), class: "white-button" %>
     </div>
   <% end %>
 </div>
