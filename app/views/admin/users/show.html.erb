@@ -24,10 +24,6 @@
           <p><strong>Statut de l'abonnement:</strong> <%= latest_membership.status ? "Actif" : "Inactif" %></p>
         <% else %>
           <p><strong>Inscription ?:</strong> Non</p>
-          <% if @user.subscription_types.exists? %>
-            <p><strong>Type d'abonnement:</strong> <%= latest_membership.subscription_type.name %></p>
-            <p><strong>Statut de l'abonnement:</strong> <%= latest_membership.status ? "Actif" : "Inactif" %></p>
-          <% end %>
         <% end %>
         <p><strong>Newsletter:</strong> <%= @user.newsletter %></p>
         <p><strong>Investissement dans le projet:</strong> <%= @user.get_involved %></p>
