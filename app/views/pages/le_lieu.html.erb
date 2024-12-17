@@ -1,31 +1,37 @@
 <div class="place-container">
-  <div class="banner-place">
-    <%= image_tag "place.jpg", alt: "Scène de vie - Le Lieu", class: "banner-image-place" %>
-  </div>
-
-  <div class="text">
-    <h1> Le Lieu <h1>
-  </div>
-
-  <div class="container">
-    <div class="text-container">
-      <p> 97 bis rue du boulevard de Suisse</p>
+    <div class="banner_hero">
+        <%= image_tag "home3.webp", alt: "Espace intérieur industriel avec logo Circographe et machine à écrire vintage", class: "banner_image_hero" %>
     </div>
-    <div class="image-container">  
-      <%= image_tag "place.jpg", alt: "Image Le Lieu", class: "image-main" %>
-    </div>
-  </div>
 
-  <div class="contact-us-place">
-    <%= link_to "Contact et résidence", page_path("contact"), class: "btn-contact" %>
-  </div>
+    <div class="text">
+        <h1> Le Lieu <h1>
+    </div>
 
-  <div class="container">
-    <div class="image-container">
-      <%= image_tag "place.jpg", alt: "Image supplémentaire", class: "image-main" %>
+    <div class="container">
+        <div class="text-container">
+            <p>
+                Le Circographe propose une <strong>flexibilité unique</strong> pour les artistes et les collectifs à la recherche d’un espace pour concrétiser leurs projets. Que ce soit pour des <strong>résidences artistiques</strong>, des entraînements libres ou des <strong>événements spéciaux</strong>, la salle est à disposition pour répondre à vos besoins. Vous souhaitez organiser un spectacle, un atelier ou une soirée immersive ? Vous envisagez de réserver un créneau pour développer votre projet artistique ? <strong>Tout est possible</strong> ! La location de la salle et les créneaux de résidence peuvent être adaptés à vos besoins spécifiques.
+            </p>
+            <p>
+                N’hésitez pas à <strong>nous contacter</strong> pour discuter de vos idées et planifier votre événement au Circographe.
+            </p>
+            </p>
+        </div>
+        <div class="image-container">
+            <%= image_tag "lelieu2.webp", alt: "Espace intérieur industriel avec logo Circographe et machine à écrire vintage", class: "image-main" %>
+        </div>
     </div>
-    <div class="text-container">
-      <p>Le Circographe se distingue par son atmosphère chaleureuse et sa philosophie basée sur la collaboration et la diversité artistique. C’est un lieu où les murs respirent la créativité, où les mouvements des circassiens croisent les lignes colorées des graffeurs, et où les spectateurs découvrent des univers captivants.</p>
+
+    <div class="contact-us-place">
+        <%= link_to "Contact et résidence", page_path("contact"), class: "purple-button", id: "fat-button" %>
     </div>
-  </div>
+
+    <div class="container">
+        <div class="image-container">
+            <%= image_tag "lelieu1.webp", alt: "Espace intérieur industriel avec logo Circographe et machine à écrire vintage", class: "image-main" %>
+        </div>
+        <div class="text-container">
+            <p>Le Circographe se distingue par son atmosphère chaleureuse et sa philosophie basée sur la collaboration et la diversité artistique. C’est un lieu où les murs respirent la créativité, où les mouvements des circassiens croisent les lignes colorées des graffeurs, et où les spectateurs découvrent des univers captivants.</p>
+        </div>
+    </div>
 </div>

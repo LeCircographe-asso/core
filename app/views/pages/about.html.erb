@@ -1,40 +1,43 @@
-<% content_for :css_file, "pages_about" %>
-
 <div class="about-container">
-    <div class="banner_about">
-        <%= image_tag "about.jpg", alt: "Scène de vie - À Propos", class: "banner-image-about" %>
+    <div class="banner_hero">
+        <%= image_tag "about.jpg", alt: "Logo Circographe avec motifs floraux sur fond coloré de graffiti", class: "banner_image_hero" %>
     </div>
 
-    <div class="main-content-about">
-        <div class="left-content-about">
-            <h2>À propos du projet :</h2>
-            <p>Le Circographe est un espace associatif situé à Toulouse, dédié à la création, la pratique et la diffusion dans les arts du cirque et des arts urbains...</p>
-            <h3>La Dépêche :</h3>
-            <p>Le Circographe a déjà été la théâtre d'événements majeurs, notamment le Festival de cirque organisé...</p>
+    <div class="container">
+        <div class="text-container">
+            <h3>À propos du projet :</h3>
+            <p>Cet espace de 300 m2 a d'ailleurs connu deux événements majeurs avant son ouverture officielle : le premier en mai avec un festival de cirque organisé par la Cie Dark Paillettes et le second avec Mister Freeze qui a célébré ses dix ans de street art en juin dernier en organisant le level 2 de son "Next Level" sur ce site. "Reso et les graffeurs de Mister Freeze ont d'emblée adhéré au projet, assure Cédric Denjean. Cela évidemment nous a encouragés". Un soutien également apporté par la Ville de Toulouse. Cécile Dufraisse, la maire de quartier étant très favorable au projet.
+            <h3>Tous les arts sont les bienvenus</h3>
+            <p>Le Circographe est une porte ouverte aux résidences d'artistes de cirque et de graff, avec des créneaux  d'entraînement libre pour le cirque et dans un futur proche, un lieu d'ateliers et de stages pour ces deux disciplines. Et pour rentrer un peu d'argent, nerf de la guerre, c'est aussi une étape pour accueillir des spectacles et divers évènements. "Toulouse est une place forte du cirque avec le Lido, la Grainerie, constate Cédric. On avait noté que beaucoup de personnes étaient à la recherche de nouveaux lieux pour s'entraîner et créer. D'où l'ouverture de cet espace de vie auto géré que l'on veut, je le répète, décloisonné et ouvrir sur toutes les expressions artistiques. D'ailleurs, récemment nous avons eu une soirée roller qui a beaucoup séduit".
+            <button onclick="window.location.href='https://www.ladepeche.fr/2024/02/05/toulouse-le-nouvel-espace-circographe-entre-lart-du-graffiti-et-du-cirque-11739479.php'" class="white-button">Lire l'article complet </button>
         </div>
-        <div class="right-content-about">
-            <div class="image-box-about">
-                <%= image_tag "about.jpg", alt: "Image À Propos", class: "about-image" %>
-            </div>
+        <div class="image-container">
+            <%= image_tag "about.jpg", alt: "Logo Circographe avec motifs floraux sur fond coloré de graffiti", class: "image-main" %>
         </div>
-        <div class="team-section-about">
-            <h2>L'équipe :</h2>
-            <div class="team-grid-about">
-                <% 6.times do %>
-                <div class="team-member-about">
-                    <%= image_tag "users.png", alt: "Membre de l'équipe", class: "team-image-about" %>
-                    <p>Prénom Nom<br>Rôle</p>
-                </div>
-                <% end %>
+    </div>
+
+    <div class="team-section">
+        <h2 class="team-title">L'équipe</h2>
+        <div class="team-grid">
+            <div class="team-member">
+                <%= image_tag "admin.webp", alt: "Membre de l'équipe", class:"team-image" %>
+                <p>Cédric<br>Denjran<br>Président</p>
             </div>
-            <div class="social-section-about">
-                <h2>Réseaux sociaux et articles</h2>
-                <div class="social-grid-about">
-                    <div class="social-item-about">
-                        <p>Évaluations Google et Facebook</p>
-                        <%= image_tag "avis.png", alt: "Google Reviews", class: "social-image-about" %>
-                    </div>
-                </div>
+            <div class="team-member">
+                <%= image_tag "admin.webp", alt: "Membre de l'équipe", class:"team-image" %>
+                <p>Laetitia<br>Boudet<br>Trésoriere</p>
+            </div>
+            <div class="team-member">
+                <%= image_tag "admin.webp", alt: "Membre de l'équipe", class:"team-image" %>
+                <p>Helene<br>Charbonnier<br>Conseil d'administration</p>
+            </div>
+            <div class="team-member">
+                <%= image_tag "admin.webp", alt: "Membre de l'équipe", class:"team-image" %>
+                <p>Emma<br>Omer<br>Conseil d'administration</p>
+            </div>
+            <div class="team-member">
+                <%= image_tag "admin.webp", alt: "Membre de l'équipe", class:"team-image" %>
+                <p>Dark Paillettes</p>
             </div>
         </div>
     </div>

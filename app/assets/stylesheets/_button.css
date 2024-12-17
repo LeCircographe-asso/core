@@ -3,7 +3,7 @@
 
 .white-button {
   text-decoration: none;
-  padding: 5px 15px;
+  padding: 10px 10px;
   outline-offset: 0;
   outline: 1px solid #1F5C55;
   background-color: #fafdff;
@@ -24,7 +24,7 @@
 
 .purple-button {
   text-decoration: none;
-  padding: 5px 15px;
+  padding: 10px 10px;
   border: none;
   background-color: #5836a5;
   color: #fafdff;
@@ -41,6 +41,20 @@
   color: #1F5C55;
   outline-offset: 0;
   outline: 1px solid #1F5C55
+}
+
+#fat-button {
+  text-decoration: none;
+  padding: 20px 30px; /* Plus grand padding pour augmenter la taille */
+  border: none;
+  background-color: #5836a5;
+  color: #fafdff;
+  border-radius: 50px; /* Arrondi total pour un bouton ovale */
+  cursor: pointer;
+  font-size: 18px; /* Texte légèrement plus grand */
+  font-weight: bold;
+  font-family: 'roboto', sans-serif;
+  z-index: 102;
 }
 
 .submit-button {

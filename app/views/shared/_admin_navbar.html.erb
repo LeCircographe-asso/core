@@ -10,7 +10,7 @@
 
         <%= link_to 'Votre Profil', user_path(current_user), class: "white-button" %>
 
-        <%= link_to 'Se déconnecter', session_path, method: :delete, class: "purple-button" %>
+        <%= button_to 'Se déconnecter', admin_session_path, method: :delete, class: "purple-button" %>
 
     </div>
 

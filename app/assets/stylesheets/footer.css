@@ -51,6 +51,9 @@
 
 .footer_logo {
   max-height: 100px;
+  max-width: 80%; /* Limite la largeur pour s'adapter au conteneur */
+  height: auto; /* Garde le ratio d'aspect */
+  object-fit: contain; /* Assure que le logo s'adapte proprement */
 }
 
 .social_icons {
@@ -97,4 +100,18 @@
 
 .back-to-top span {
   font-size: 14px;
+}
+
+@media (max-width: 768px) {
+  .footer_logo {
+    max-height: 70px; /* Réduit la taille du logo sur les écrans plus petits */
+    max-width: 60%; /* Réduit encore la largeur */
+  }
+}
+
+@media (max-width: 480px) {
+  .footer_logo {
+    max-height: 50px; /* Taille encore plus petite pour les mobiles */
+    max-width: 50%; /* S'adapte parfaitement au plus petit écran */
+  }
 }

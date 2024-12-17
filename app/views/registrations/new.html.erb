@@ -1,38 +1,79 @@
 <div class="signup-page">
-  <div class="left-side">
-    <%= image_tag("about.jpg", alt: "Circographe Image", class: "signup-img") %>
-  </div>
-  <div class="right-side">
-    <div class="signup-form-container">
-      <h1>S'inscrire au Circographe</h1>
-      <%= form_with url: registration_path(action: "create"), method: "post", class: "signup-form" do |form| %>
-        <div class="form-group">
-          <%= form.email_field :email_address, required: true, placeholder: "Adresse mail", maxlength: 72, class: "form-input"%>
-        </div>
-        <div class="form-group">
-          <%= form.password_field :password, required: true, placeholder: "Mot de passe", maxlength: 72, class: "form-input password-field"%>
-        </div>
-        <div class="form-group">
-          <%= form.password_field :password_confirmation, required: true, placeholder: "Confirmer votre mot de passe", maxlength: 72, class: "form-input password-field" %>
-        </div>
-        <div class="form-group">
-          <%= form.checkbox :show_password, class: "show-password-box" %> Voir le mot de passe
-        </div>
-        <%= form.submit "S'inscrire", class: "submit-button" %>
-      <% end %>
+    <div class="left-side">
+        <%= image_tag("about.jpg", alt: "Circographe Image", class: "signup-img") %>
     </div>
-  </div>
+    <div class="right-side">
+        <div class="signup-form-container">
+            <h1>S'inscrire au Circographe</h1>
+            <%= form_with model: @user, url: registration_path, method: "post", class: "signup-form" do |form| %>
+                <div class="form-group">
+                    <%= form.email_field :email_address, required: true, placeholder: "Adresse mail", maxlength: 72, class: "form-input" %>
+                </div>
+                <div class="form-group password-container">
+                    <%= form.password_field :password, required: true, placeholder: "Mot de passe", maxlength: 72, id: "password", class: "form-input password-field" %>
+                    <span class="toggle-password" onclick="togglePassword('password', 'password-icon')">
+                        <i class="fa fa-eye" id="password-icon"></i>
+                    </span>
+                </div>
+                <div class="form-group password-container">
+                    <%= form.password_field :password_confirmation, required: true, placeholder: "Confirmer votre mot de passe", maxlength: 72, id: "password_confirmation", class: "form-input password-field", style: "bg-white" %>
+                    <span class="toggle-password" onclick="togglePassword('password_confirmation', 'password_confirmation-icon')">
+                        <i class="fa fa-eye" id="password_confirmation-icon"></i>
+                    </span>
+                </div>
+                <div class="form-group checkbox-container">
+                    <%= form.check_box :cgu, id: "cgu" %>
+                    <label for="cgu">J'accepte les Conditions Générales d'Utilisation (CGU)</label>
+                    <% if @user.errors[:cgu].any? %>
+                        <div class="error-message"><%= @user.errors[:cgu].first %></div>
+                    <% end %>
+                </div>
+                <div class="form-group checkbox-container">
+                    <%= form.check_box :privacy_policy, id: "privacy_policy" %>
+                    <label for="privacy_policy">J'accepte la Politique de Confidentialité</label>
+                    <% if @user.errors[:privacy_policy].any? %>
+                        <div class="error-message"><%= @user.errors[:privacy_policy].first %></div>
+                    <% end %>
+                </div>
+                <% if flash[:alert] %>
+                    <script>
+                        Swal.fire({
+                            title: "Erreur",
+                            text: "<%= j flash[:alert] %>",
+                            icon: "error",
+                            confirmButtonText: "Ok"
+                        });
+                    </script>
+                <% elsif flash[:notice] %>
+                    <script>
+                        Swal.fire({
+                            title: "Succès",
+                            text: "<%= j flash[:notice] %>",
+                            icon: "success",
+                            confirmButtonText: "Ok"
+                        });
+                    </script>
+                <% end %>
+                <%= form.submit "S'inscrire", class: "submit-button" %>
+            <% end %>
+        </div>
+    </div>
 </div>
 
-<script>
-  const fields = document.getElementsByClassName("password-field");
-  const box = document.querySelector(".show-password-box");
 
-  box.addEventListener("change", () => {
-    for(let i = 0; i < fields.length; i += 1){
-      var field = fields[i];
-      console.log(field)
-      field.type = box.checked ? "text" : "password";
+<script>
+    function togglePassword(fieldId, iconId) {
+        const field = document.getElementById(fieldId);
+        const icon = document.getElementById(iconId);
+
+        if (field.type === "password") {
+            field.type = "text";
+            icon.classList.remove("fa-eye");
+            icon.classList.add("fa-eye-slash");
+        } else {
+            field.type = "password";
+            icon.classList.remove("fa-eye-slash");
+            icon.classList.add("fa-eye");
+        }
     }
-  })
 </script>

@@ -4,7 +4,7 @@
   <div class="membership-card">
     <h2><%= @user.role %></h2>
     <p><%= @user.email %></p>
-    <%= link_to "Edit this user", edit_user_path(@user), class: "white-button" %>
+    <%= link_to "Modifer mon email", edit_user_path(@user), class: "white-button" %>
   </div>
   
   <div class="profile-avatar">
@@ -36,7 +36,7 @@
   <div class="profile-info">
     <% if authenticated? %>
       <% if @user.role.in?(["admin", "godmode", "volunteer"]) %>
-        <%= link_to "Dashboard Administrateur", admin_dashboard_path, class: "white-button" %>
+        <%= link_to "Dashboard Administrateur", admin_dashboard_index_path, class: "white-button" %>
       <% end %>
     <% end %>
     

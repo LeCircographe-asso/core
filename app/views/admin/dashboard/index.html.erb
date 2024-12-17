@@ -1,28 +1,36 @@
 <div class="admin-dashboard">
-    <h1 class="dashboard-title">Tableau de bord administrateur</h1>   
-    <div class="dashboard-container">
-        <div class="dashboard-actions">
-            <%= link_to "Modifier les horaires", edit_admin_opening_hours_path, class: "btn btn-primary" %>
-        </div>
-        <div class="dashboard-actions">
-            <%= link_to "Liste Utilisateurs", admin_users_path, class: "btn btn-primary" %>
-        </div>
+    <h1 class="dashboard-title">Tableau de bord administrateur</h1>
 
-        <div class="dashboard-actions">
-            <%= link_to "Adhésion COMPLETE + FORM", membership_register_admin_members_path, class: "btn btn-primary" %>
-        </div>
-        <div class="dashboard-actions">
-            <%= link_to "Creer un Adhérent (basique)", new_admin_user_path, class: "btn btn-primary"%>
-        </div>
-        <div class="page-container">
-            <table>
+    <!-- Boutons d'actions principaux -->
+    <div class="dashboard-actions-center">
+        <%= link_to "Modifier les horaires", edit_admin_opening_hours_path, class: "purple-button" %>
+        <%= link_to "Liste Utilisateurs", admin_users_path, class: "purple-button" %>
+        <%= link_to "Adhésion COMPLETE + FORM", membership_register_admin_members_path, class: "purple-button" %>
+        <%= link_to "Créer un Adhérent (basique)", new_admin_user_path, class: "purple-button"%>
+    </div>
+
+    <!-- Contenu principal -->
+    <div class="dashboard-content">
+        <!-- Section Horaires -->
+        <div class="dashboard-section">
+            <h3 class="dashboard-subtitle">Horaires d'ouverture</h3>
+            <table class="dashboard-table">
                 <% @opening_hours.each do |day, hours| %>
-                <tr>
-                    <td><%= day.capitalize %></td>
-                    <td><%= hours %></td>
-                </tr>
+                    <tr>
+                        <td><%= day.capitalize %></td>
+                        <td><%= hours %></td>
+                    </tr>
                 <% end %>
             </table>
+        </div>
+
+        <!-- Section Bloc-note -->
+        <div class="dashboard-section">
+            <h3 class="dashboard-subtitle">Bloc-note</h3>
+            <div class="notepad-container">
+                <%= render "shared/notepad" %>
+            </div>
+            <%= link_to "Modifier", edit_admin_notepad_path, class: "purple-button" %>
         </div>
     </div>
 </div>

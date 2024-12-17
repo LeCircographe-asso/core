@@ -16,7 +16,7 @@ class OpeningHoursController < BaseController
     if valid_hours?(updated_hours)
       Rails.cache.write("opening_hours", updated_hours)
       flash[:notice] = "Les horaires d'ouverture ont été mis à jour !"
-      redirect_to admin_dashboard_path
+      redirect_to admin_dashboard_index_path
     else
       flash[:alert] = "Le format des horaires est invalide."
       redirect_to edit_opening_hours_path

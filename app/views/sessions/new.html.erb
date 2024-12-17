@@ -11,8 +11,11 @@
                 <%= form.email_field :email_address, required: true, autofocus: true, autocomplete: "username", placeholder: "jean@example.com", value: params[:email_address], class: "form-input" %>
             </div>
 
-            <div class="form-group">
-                <%= form.password_field :password, required: true, autocomplete: "current-password", placeholder: "********", maxlength: 72, class: "form-input", id: "password-field" %>
+            <div class="form-group password-container">
+                <%= form.password_field :password, required: true, placeholder: "Mot de passe", maxlength: 72, id: "password", class: "form-input password-field" %>
+                <span class="toggle-password" onclick="togglePassword('password', 'password-icon')">
+                    <i class="fa fa-eye" id="password-icon"></i>
+                </span>
             </div>
 
             <div class="form-group">
@@ -22,7 +25,7 @@
                 <%= form.submit "Se connecter", class: "submit-button" %>
             </div>
             <div>
-                <%= link_to "Forgot password?", new_password_path, class: "text-gray-700 underline" %>
+                <%= link_to "Mot de passe oublié ?", new_password_path, class: "text-gray-700 underline" %>
             </div>
             <% end %>
         </div>
@@ -30,10 +33,18 @@
 </div>
 
 <script>
-    const field = document.querySelector("#password-field");
-    const box = document.querySelector(".show-password-box");
+function togglePassword(fieldId, iconId) {
+  const passwordField = document.getElementById(fieldId);
+  const icon = document.getElementById(iconId);
 
-    box.addEventListener("change", () => {
-        field.type = box.checked ? "text" : "password";
-    })
+  if (passwordField.type === "password") {
+    passwordField.type = "text";
+    icon.classList.remove("fa-eye");
+    icon.classList.add("fa-eye-slash");
+  } else {
+    passwordField.type = "password";
+    icon.classList.remove("fa-eye-slash");
+    icon.classList.add("fa-eye");
+  }
+}
 </script>

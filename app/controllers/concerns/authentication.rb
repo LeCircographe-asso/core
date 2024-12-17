@@ -12,6 +12,10 @@ module Authentication
     end
   end
 
+  def current_user
+    Current.user if authenticated?
+  end
+
   private
     def authenticated?
       resume_session

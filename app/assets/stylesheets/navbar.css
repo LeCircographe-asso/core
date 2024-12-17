@@ -1,4 +1,4 @@
-/* navbar.css */
+/* Fonts */
 @font-face {
   font-family: 'RoughTypewriter';
   src: url('Rough_typewriter.woff') format('woff'),
@@ -16,87 +16,158 @@
        url('Circographe-Regular.woff') format('woff');
 }
 
+/* Navbar */
 .navbar {
   display: flex;
   flex-wrap: nowrap;
   justify-content: space-between;
   align-items: center;
+  text-wrap: nowrap;
   background-color: #F2F3F4;
   width: 100%;
   font-family: 'RoughTypewriter';
   font-weight: bold;
-  font-style: normal;
-  display: flex;
   position: fixed;
   z-index: 10;
 }
 
 .navbar-logo img {
-  height: 80px;
+  height: clamp(60px, 8vw, 80px);
   width: auto;
   object-fit: contain;
-  display: block;
 }
 
 .navbar-center {
   display: flex;
   flex: 1;
-  width: 100%;
-  gap: 1rem;
+  justify-content: center;
+  gap: clamp(10px, 2vw, 30px);
 }
 
 .navbar-text {
-  text-wrap: nowrap;
-  width: 200px;
   text-decoration: none;
-  font-size: 22px;
+  font-size: clamp(16px, 2vw, 22px);
   color: black;
   transition: text-shadow 0.3s ease;
-}
-
-.navbar-link-middle {
-  margin-left: 3%;
 }
 
 .navbar-text:hover {
   text-shadow: 0 4px 8px #5836a5;
 }
 
-.navbar-left {
-  display: flex;
-  align-items: center;
-  padding-left: 1%;
-  gap: 15px;
-  flex-shrink: 0;
-}
-
 .navbar-right {
   display: flex;
   align-items: center;
   gap: 15px;
-  padding-right: 1%;
-  flex-shrink: 0;
+  padding-right: 10px;
+}
+
+.navbar-left {
+  display: flex;
+  align-items: center;
+  gap: 15px;
 }
 
 .navbar-link-left {
-  margin-right: auto;
-  margin-left: 14%;
+  margin-left: clamp(10px, 3vw, 14%);
 }
 
 .navbar-link-right {
-  margin-left: auto;
-  margin-right: 14%;
-
+  margin-right: clamp(10px, 3vw, 14%);
 }
 
-@media (max-width:1300px) {
-  .navbar-link-left {
-    margin-right: none;
-    margin-left: 15px;
+.navbar-burger {
+  display: none;
+  flex-direction: column;
+  justify-content: space-between;
+  padding-right: 15px;
+  width: 30px;
+  height: 22px;
+  cursor: pointer;
+  z-index: 11;
+}
+
+.navbar-burger div {
+  width: 100%;
+  height: 4px;
+  background-color: black;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+@media (max-width: 1200px) {
+  .navbar {
+    flex-wrap: wrap;
+    padding: 10px;
   }
 
-  .navbar-link-right {
-    margin-left: none;
-    margin-right: 0%;
+  .navbar-center {
+    justify-content: space-around;
+    gap: 20px;
+  }
+
+  .navbar-logo img {
+    height: clamp(50px, 7vw, 70px);
+  }
+
+  .navbar-text {
+    font-size: clamp(14px, 2vw, 18px);
+  }
+}
+
+@media (max-width: 768px) {
+  .navbar {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .navbar-burger {
+    display: flex;
+    margin-left: auto;
+  }
+
+  /* Cache les éléments du menu par défaut */
+  .navbar-center,
+  .navbar-left,
+  .navbar-right {
+    display: none;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+  }
+
+  /* Affiche les éléments lorsque le menu est ouvert */
+  .navbar.open .navbar-center,
+  .navbar.open .navbar-left,
+  .navbar.open .navbar-right {
+    display: flex;
+    align-items: center; /* Centre horizontalement */
+    justify-content: center; /* Centre verticalement */
+    text-align: center; /* Centre le texte */
+    height: auto; /* Utilise toute la hauteur de l'écran */
+    gap: 20px; /* Espace entre les liens */
+  }
+
+  /* Ajout d'un fond plein écran pour le menu ouvert */
+  .navbar.open {
+    position: fixed; /* Fixe le menu burger sur toute la page */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: auto; /* Pleine hauteur */
+    background-color: #F2F3F4; /* Fond de couleur */
+    z-index: 10;
+  }
+
+  /* Animation du burger menu */
+  .navbar.open .navbar-burger div:nth-child(1) {
+    transform: rotate(45deg) translateY(9px);
+  }
+
+  .navbar.open .navbar-burger div:nth-child(2) {
+    opacity: 0;
+  }
+
+  .navbar.open .navbar-burger div:nth-child(3) {
+    transform: rotate(-45deg) translateY(-9px);
   }
 }
