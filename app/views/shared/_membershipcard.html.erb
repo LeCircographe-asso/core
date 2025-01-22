@@ -24,7 +24,7 @@
       <% else %>
         <%= image_tag "users.png", alt: "Avatar" %>
     <% end %>
-    
+
     <% if @user.user_memberships.exists? %>
       <p><strong>Date d'inscription :</strong><br>
       <p><%= @user.user_memberships.order(:created_at).last.created_at.strftime("%d/%m/%Y") %></p>

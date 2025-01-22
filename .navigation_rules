@@ -1,0 +1,27 @@
+# Règles de navigation et d'accès pour le Circographe
+roles:
+  guest:
+    paths: ['/login', '/register']
+    default: '/login'
+  membership:
+    paths: ['/profile', '/trainings', '/events']
+    default: '/profile'
+  circus_membership:
+    paths: ['/profile', '/trainings', '/events', '/circus']
+    default: '/profile'
+  volunteer:
+    paths: ['/admin/trainings', '/admin/members']
+    default: '/admin/trainings'
+  admin:
+    paths: ['*']
+    default: '/admin/dashboard'
+  godmode:
+    paths: ['*']
+    default: '/admin/dashboard'
+
+permissions:
+  manage_users: ['admin', 'godmode']
+  manage_memberships: ['admin', 'godmode']
+  record_training: ['volunteer', 'admin', 'godmode']
+  view_statistics: ['admin', 'godmode']
+  manage_payments: ['admin', 'godmode'] 

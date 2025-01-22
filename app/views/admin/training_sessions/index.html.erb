@@ -1,0 +1,78 @@
+<div class="admin-dashboard">
+  <div class="training-session">
+    <div class="search-section">
+      <%= form_with url: admin_training_sessions_path, method: :get, local: true do |f| %>
+        <div class="input-group">
+          <%= f.text_field :search, 
+                          placeholder: "Rechercher un membre...",
+                          class: "form-control",
+                          data: { 
+                            controller: "search",
+                            action: "input->search#submit"
+                          } %>
+        </div>
+      <% end %>
+    </div>
+
+    <% if @users&.any? %>
+      <div class="search-results">
+        <% @users.each do |user| %>
+          <div class="user-card">
+            <div class="user-info">
+              <h4><%= user.full_name %></h4>
+              <span class="subscription">
+                <%= user.current_subscription&.subscription_details %>
+              </span>
+            </div>
+
+            <div class="actions">
+              <% if user.can_train_today? %>
+                <%= button_to "Ajouter à l'entraînement",
+                            add_attendee_admin_training_sessions_path(user_id: user.id),
+                            class: "btn btn-success" %>
+              <% else %>
+                <div class="subscription-needed">
+                  <%= link_to "Gérer l'abonnement",
+                            edit_admin_user_path(user),
+                            class: "btn btn-warning" %>
+                </div>
+              <% end %>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+
+    <div class="today-attendees">
+      <h3>Passages aujourd'hui (<%= @recent_attendees.count %>)</h3>
+      
+      <div class="attendees-list">
+        <% @recent_attendees.each do |attendance| %>
+          <div class="attendance-card">
+            <%= attendance.user.full_name %>
+            <small>
+              Enregistré par <%= attendance.recorded_by.first_name %>
+              à <%= l attendance.created_at, format: :short %>
+            </small>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div> 
+
+def check_permissions
+  puts "\n=== PERMISSIONS ET SÉCURITÉ ==="
+
+  security_features = {
+    "Authentification" => defined?(ApplicationController.new.authenticate_user!),
+    "Autorisation admin" => defined?(ApplicationController.new.require_admin),
+    "Protection CSRF" => ApplicationController.new.forgery_protection_strategy.present?,
+    "Sessions sécurisées" => defined?(Session) && Session.column_names.include?('user_agent')
+  }
+
+  puts "\nFonctionnalités de sécurité:"
+  security_features.each do |feature, exists|
+    puts "- #{feature}: #{exists ? '✅' : '❌'}"
+  end
+end 

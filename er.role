@@ -1,0 +1,23 @@
+ => 
+[32m#<User:0x00007fa49ba54898[0m
+ id: [34m[1m1[0m,
+ email_address: [31m[1m"[0m[31m[FILTERED][0m[31m[1m"[0m,
+ password_digest: [31m[1m"[0m[31m[FILTERED][0m[31m[1m"[0m,
+ role: [31m[1m"[0m[31mguest[0m[31m[1m"[0m,
+ created_at: [31m[1m"[0m[31m2024-12-16 23:29:06.875565000 +0000[0m[31m[1m"[0m,
+ updated_at: [31m[1m"[0m[31m2024-12-16 23:29:06.875565000 +0000[0m[31m[1m"[0m,
+ last_name: [31m[1m"[0m[31mDupont[0m[31m[1m"[0m,
+ first_name: [31m[1m"[0m[31mJean[0m[31m[1m"[0m,
+ birthdate: [31m[1m"[0m[31m1970-01-01[0m[31m[1m"[0m,
+ address: [36m[1mnil[0m,
+ zip_code: [31m[1m"[0m[31m75000[0m[31m[1m"[0m,
+ town: [31m[1m"[0m[31mParis[0m[31m[1m"[0m,
+ country: [31m[1m"[0m[31mFrance[0m[31m[1m"[0m,
+ phone_number: [31m[1m"[0m[31m0123456789[0m[31m[1m"[0m,
+ occupation: [31m[1m"[0m[31mDeveloper[0m[31m[1m"[0m,
+ specialty: [31m[1m"[0m[31mBackend[0m[31m[1m"[0m,
+ image_rights: [36m[1mtrue[0m,
+ newsletter: [36m[1mfalse[0m,
+ get_involved: [36m[1mtrue[0m,
+ password_reset_token: [36m[1mnil[0m,
+ password_reset_sent_at: [36m[1mnil[0m[32m>[0m 

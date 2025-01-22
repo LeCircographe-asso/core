@@ -51,6 +51,13 @@ group :development, :test do
 
   # Omakase Ruby styling [https://github.com/rails/rubocop-rails-omakase/]
   gem "rubocop-rails-omakase", require: false
+
+  # Nouvelles gems pour les tests
+  gem 'rspec-rails'        # Framework de test
+  gem 'factory_bot_rails'  # Pour créer facilement des objets de test
+  gem 'faker'             # Tu l'as déjà, mais déplace-la ici
+  gem 'shoulda-matchers'   # Pour des assertions plus lisibles
+  gem 'timecop'           # Pour les tests impliquant des dates
 end
 
 group :development do
