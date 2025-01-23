@@ -1,0 +1,74 @@
+<div class="admin-dashboard">
+  <h1 class="dashboard-title">Gestion des entraînements</h1>
+
+  <%= turbo_frame_tag "training_dashboard" do %>
+    <!-- Formulaire de recherche -->
+    <div class="dashboard-actions mb-6">
+      <%= form_with url: admin_training_dashboard_index_path, method: :get, class: "flex gap-4" do |f| %>
+        <%= f.text_field :query, 
+            value: @query,
+            placeholder: "Rechercher un adhérent...",
+            class: "form-input flex-1" %>
+        <%= f.submit "Rechercher", class: "btn" %>
+      <% end %>
+
+      <% if @users&.any? %>
+        <div class="mt-4 bg-white rounded-lg shadow p-4">
+          <h3 class="dashboard-subtitle">Résultats de la recherche</h3>
+          <div class="dashboard-table">
+            <% @users.each do |user| %>
+              <div class="flex items-center justify-between p-2 hover:bg-gray-50">
+                <div>
+                  <div class="font-medium"><%= user.full_name %></div>
+                  <div class="text-sm text-gray-500"><%= user.email %></div>
+                  <% if user.current_subscription %>
+                    <span class="text-green-600 text-sm">
+                      <%= user.current_subscription.subscription_type.name %>
+                    </span>
+                  <% else %>
+                    <span class="text-red-600 text-sm">Pas d'adhésion active</span>
+                  <% end %>
+                </div>
+
+                <div class="flex items-center gap-2">
+                  <% if !user.current_subscription %>
+                    <%= link_to "Adhésion", 
+                        new_admin_member_path(user_id: user.id),
+                        class: "btn btn-link" %>
+                  <% end %>
+
+                  <% if user.can_train_today? %>
+                    <%= button_to "Ajouter",
+                        add_attendee_admin_training_dashboard_path(user_id: user.id),
+                        class: "btn" %>
+                  <% else %>
+                    <span class="text-sm text-red-600">
+                      Ne peut pas s'entraîner aujourd'hui
+                    </span>
+                  <% end %>
+                </div>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+
+    <!-- Dashboard principal -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <!-- Statistiques -->
+      <div class="bg-white rounded-lg shadow p-6">
+        <h2 class="dashboard-subtitle">Statistiques du <%= l(Date.current, format: :long) %></h2>
+        <%= render "stats", stats: @stats %>
+      </div>
+
+      <!-- Liste des présents -->
+      <div class="bg-white rounded-lg shadow p-6">
+        <h2 class="dashboard-subtitle">
+          Participants du jour (<%= @attendees.count %>)
+        </h2>
+        <%= render "attendees_list", attendees: @attendees %>
+      </div>
+    </div>
+  <% end %>
+</div> 

@@ -1,0 +1,33 @@
+<div class="stats-grid grid grid-cols-2 gap-4">
+  <div class="stat-card bg-white p-4 rounded-lg shadow">
+    <h3 class="text-lg font-semibold text-gray-700">Aujourd'hui</h3>
+    <p class="text-3xl font-bold text-purple-600">
+      <%= @current_session.training_attendees.count %>
+      <span class="text-sm text-gray-500">participants</span>
+    </p>
+  </div>
+
+  <div class="stat-card bg-white p-4 rounded-lg shadow">
+    <h3 class="text-lg font-semibold text-gray-700">Maximum</h3>
+    <p class="text-3xl font-bold text-green-600">
+      <%= @stats[:max] %>
+      <span class="text-sm text-gray-500">participants</span>
+    </p>
+  </div>
+
+  <div class="stat-card bg-white p-4 rounded-lg shadow">
+    <h3 class="text-lg font-semibold text-gray-700">Minimum</h3>
+    <p class="text-3xl font-bold text-red-600">
+      <%= @stats[:min] %>
+      <span class="text-sm text-gray-500">participants</span>
+    </p>
+  </div>
+
+  <div class="stat-card bg-white p-4 rounded-lg shadow">
+    <h3 class="text-lg font-semibold text-gray-700">Moyenne</h3>
+    <p class="text-3xl font-bold text-blue-600">
+      <%= @stats[:average].round(1) %>
+      <span class="text-sm text-gray-500">participants</span>
+    </p>
+  </div>
+</div> 

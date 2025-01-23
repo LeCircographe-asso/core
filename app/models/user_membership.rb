@@ -11,6 +11,10 @@ class UserMembership < ApplicationRecord
 
   validates :user_id, :subscription_type_id, presence: true
 
+  scope :active, -> { 
+    where("expiration_date >= ? AND status = ?", Date.current, true)
+  }
+
   def valid_subscription?
     return false unless expiration_date >= Date.today
     return false unless status
@@ -84,6 +88,15 @@ class UserMembership < ApplicationRecord
     true
   rescue ActiveRecord::RecordInvalid
     false
+  end
+
+  def booklet?
+    subscription_type.name == 'booklet'
+  end
+
+  def decrement_entries_count
+    return unless booklet?
+    # ... reste du code ...
   end
 
   private

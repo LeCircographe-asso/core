@@ -1,45 +1,65 @@
 <% content_for :title, "Users" %>
 <div class="admin-dashboard">
-  <h1 class="dashboard-title">Tableau de bord administrateur</h1>
-
-  <div class="dashboard-stats">
-    <p><strong>Nombre d'utilisateurs :</strong> <%= @users.count %></p>
+  <div class="dashboard-title">
+    <h1>Liste des Utilisateurs</h1>
   </div>
 
-  <div class="dashboard-actions">
-    <%= link_to "Modifier les horaires", edit_admin_opening_hours_path, class: "purple-button" %>
-    <%= link_to "Creer un Adhérent (basique)", new_admin_user_path, class: "purple-button"%>
-    <%= link_to "Adhésion complète", membership_register_admin_members_path, class: "purple-button" %>
-  </div>
-
-  <h2 class="dashboard-subtitle">Liste des utilisateurs</h2>
-  
-  <table class="dashboard-table">
-    <thead>
-      <tr>
-        <th>Id</th>
-        <th>Email</th>
-        <th>Rôle</th>
-        <th>Abonnement</th>
-        <th>Actions</th>
-      </tr>
-    </thead>
-    <tbody>
-      <% @users.each do |user| %>
-        <tr>
-          <td><%= user.id %></td>
-          <td><%= user.email_address %></td>
-          <td><%= user.role %></td>
-          <% if user.user_memberships.exists? %>
-            <td><%= user.user_memberships.order(:created_at).last.subscription_type.name %></td>
-          <% else %>
-            <td>non</td>
+  <div id="dashboard-container">
+    <div id="middle-column">
+      <div class="search-filters" data-controller="user-search">
+        <div class="search-bar">
+          <%= form_with url: admin_users_path, method: :get, data: { turbo_frame: "users-list", turbo_action: "advance" } do |f| %>
+            <%= f.text_field :query, 
+                placeholder: "Rechercher un utilisateur...",
+                class: "search-input",
+                data: { 
+                  action: "input->user-search#search",
+                  user_search_target: "input" 
+                } 
+            %>
           <% end %>
-          <td>
-            <%= link_to "voir", admin_user_path(user), class: "purple-button", data: { turbo: false } %>
-          </td>
-        </tr>
+        </div>
+
+        <div class="sort-filters">
+          <%= link_to "Nom ↑↓", 
+              admin_users_path(sort: "name", direction: sort_direction),
+              class: "sort-button #{"active" if params[:sort] == "name"}",
+              data: { turbo_frame: "users-list" } %>
+              
+          <%= link_to "Date d'inscription ↑↓", 
+              admin_users_path(sort: "created_at", direction: sort_direction),
+              class: "sort-button #{"active" if params[:sort] == "created_at"}",
+              data: { turbo_frame: "users-list" } %>
+              
+          <%= link_to "Rôle ↑↓", 
+              admin_users_path(sort: "role", direction: sort_direction),
+              class: "sort-button #{"active" if params[:sort] == "role"}",
+              data: { turbo_frame: "users-list" } %>
+        </div>
+      </div>
+
+      <%= turbo_frame_tag "users-list" do %>
+        <div class="users-grid">
+          <% @users.each do |user| %>
+            <div class="user-card">
+              <div class="user-info">
+                <h3><%= user.full_name %></h3>
+                <p class="user-email"><%= user.email %></p>
+                <p class="user-role"><%= user.role %></p>
+                <p class="user-date">Inscrit le <%= l(user.created_at, format: :long) %></p>
+              </div>
+              <div class="user-actions">
+                <%= link_to "Voir", admin_user_path(user), class: "white-button" %>
+                <%= link_to "Modifier", edit_admin_user_path(user), class: "purple-button" %>
+              </div>
+            </div>
+          <% end %>
+        </div>
+
+        <div class="pagination">
+          <%== pagy_nav(@pagy) %>
+        </div>
       <% end %>
-    </tbody>
-  </table>
+    </div>
+  </div>
 </div>

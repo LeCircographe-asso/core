@@ -1,12 +1,50 @@
 <div class="admin-dashboard">
-    <h1 class="dashboard-title">Tableau de bord administrateur</h1>
+    <div class="dashboard-title">
+        <h1>Tableau de bord administrateur</h1>
+    </div>
 
-    <!-- Boutons d'actions principaux -->
-    <div class="dashboard-actions-center">
-        <%= link_to "Modifier les horaires", edit_admin_opening_hours_path, class: "purple-button" %>
-        <%= link_to "Liste Utilisateurs", admin_users_path, class: "purple-button" %>
-        <%= link_to "Adhésion COMPLETE + FORM", membership_register_admin_members_path, class: "purple-button" %>
-        <%= link_to "Créer un Adhérent (basique)", new_admin_user_path, class: "purple-button"%>
+    <div id="dashboard-container">
+        <div id="middle-column">
+            <div class="quick-search-section" data-controller="quick-search">
+                <%= form_with url: admin_users_path, method: :get, class: "search-form", data: { action: "submit->quick-search#redirect" } do |f| %>
+                    <div class="search-wrapper">
+                        <%= f.text_field :query,
+                            placeholder: "Rechercher un utilisateur...",
+                            class: "search-input",
+                            data: { quick_search_target: "input" }
+                        %>
+                        <button type="submit" class="search-button">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                <% end %>
+            </div>
+
+            <div class="dashboard-stats">
+                <div class="stat-card">
+                    <h3>Total Utilisateurs</h3>
+                    <p class="stat-number"><%= User.count %></p>
+                </div>
+                <!-- Autres stats... -->
+            </div>
+
+            <div class="quick-actions">
+                <%= link_to edit_admin_opening_hours_path, class: "action-card" do %>
+                    <i class="fas fa-clock"></i>
+                    <span>Modifier les horaires</span>
+                <% end %>
+
+                <%= link_to new_admin_user_path, class: "action-card" do %>
+                    <i class="fas fa-user-plus"></i>
+                    <span>Créer un Adhérent</span>
+                <% end %>
+
+                <%= link_to membership_register_admin_members_path, class: "action-card" do %>
+                    <i class="fas fa-id-card"></i>
+                    <span>Adhésion complète</span>
+                <% end %>
+            </div>
+        </div>
     </div>
 
     <!-- Contenu principal -->

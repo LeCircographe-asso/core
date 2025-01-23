@@ -1,0 +1,44 @@
+<div class="dashboard-table">
+  <% attendees.each do |attendee| %>
+    <div class="flex items-center justify-between p-2 hover:bg-gray-50">
+      <div>
+        <div class="font-medium">
+          <%= attendee.user.full_name %>
+          <span class="text-sm text-gray-500">
+            (<%= l(attendee.created_at, format: :short) %>)
+          </span>
+        </div>
+        
+        <div class="text-sm">
+          <% if attendee.user_membership %>
+            <span class="text-green-600">
+              <%= attendee.user_membership.subscription_type.name %>
+              (<%= l(attendee.user_membership.expiration_date, format: :default) %>)
+            </span>
+          <% else %>
+            <span class="text-red-600">Pas d'adhésion active</span>
+          <% end %>
+        </div>
+      </div>
+
+      <!-- Indicateur de paiement -->
+      <div class="flex items-center">
+        <% if attendee.user_membership&.payment&.status %>
+          <span class="px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs">
+            Payé
+          </span>
+        <% else %>
+          <span class="px-2 py-1 bg-red-100 text-red-800 rounded-full text-xs">
+            Non payé
+          </span>
+        <% end %>
+
+        <%= button_to "Départ",
+            check_out_admin_training_dashboard_index_path(user_id: attendee.user_id),
+            method: :delete,
+            class: "btn btn-link ml-2",
+            form: { data: { turbo_confirm: "Confirmer le départ ?" } } %>
+      </div>
+    </div>
+  <% end %>
+</div> 

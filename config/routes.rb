@@ -15,6 +15,14 @@ Rails.application.routes.draw do
         post :membership_complete
       end
     end
+    
+    resources :training_dashboard, only: [:index], path: "entrainements" do
+      collection do
+        post :add_attendee
+        post :check_in
+        delete :check_out
+      end
+    end
   end
 
   resources :events, only: %i[show index]
@@ -48,4 +56,9 @@ Rails.application.routes.draw do
 
   # Defines the root path route ("/")
   # root "posts#index"
+
+  resource :training_dashboard, only: [:show] do
+    post 'check_in'
+    delete 'check_out'
+  end
 end

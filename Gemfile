@@ -2,77 +2,93 @@ source "https://rubygems.org"
 
 ruby "3.2.5"
 
-# Bundle edge Rails instead: gem "rails", github: "rails/rails", branch: "main"
+################################
+# GEMS RAILS DE BASE
+################################
 gem "rails", "~> 8.0.0.1"
-# The modern asset pipeline for Rails [https://github.com/rails/propshaft]
-gem "propshaft"
-# Use sqlite3 as the database for Active Record
-gem "sqlite3", ">= 2.1"
-# Use the Puma web server [https://github.com/puma/puma]
 gem "puma", ">= 5.0"
-# Use JavaScript with ESM import maps [https://github.com/rails/importmap-rails]
-gem "importmap-rails"
-# Hotwire's SPA-like page accelerator [https://turbo.hotwired.dev]
-gem "turbo-rails"
-# Hotwire's modest JavaScript framework [https://stimulus.hotwired.dev]
-gem "stimulus-rails"
-# Build JSON APIs with ease [https://github.com/rails/jbuilder]
-gem "jbuilder"
-
-# Use Active Model has_secure_password [https://guides.rubyonrails.org/active_model_basics.html#securepassword]
-gem "bcrypt", "~> 3.1.7"
-
-# Windows does not include zoneinfo files, so bundle the tzinfo-data gem
-gem "tzinfo-data", platforms: %i[ windows jruby ]
-
-# Use the database-backed adapters for Rails.cache, Active Job, and Action Cable
-gem "solid_cache"
-gem "solid_queue"
-gem "solid_cable"
-
-# Reduces boot times through caching; required in config/boot.rb
+gem "sqlite3", ">= 2.1"
 gem "bootsnap", require: false
+gem "tzinfo-data", platforms: %i[windows jruby]
 
-# Deploy this application anywhere as a Docker container [https://kamal-deploy.org]
-gem "kamal", require: false
+################################
+# FRONTEND & ASSETS
+################################
+gem "propshaft"                    # Asset pipeline moderne
+gem "importmap-rails"              # Import maps pour JavaScript
+gem "turbo-rails"                  # SPA-like avec Hotwire
+gem "stimulus-rails"               # Framework JavaScript minimaliste
+gem "jbuilder"                     # Construction d'API JSON
+gem "flatpickr"                  # Sélecteur de date/heure
+gem "flatpickr_rails"              # Sélecteur de date/heure
 
-# Add HTTP asset caching/compression and X-Sendfile acceleration to Puma [https://github.com/basecamp/thruster/]
-gem "thruster", require: false
+################################
+# AUTHENTIFICATION & SÉCURITÉ
+################################
+gem "bcrypt", "~> 3.1.7"          # Hashage des mots de passe
+gem "brakeman", require: false     # Analyse de sécurité
 
-# Use Active Storage variants [https://guides.rubyonrails.org/active_storage_overview.html#transforming-images]
-# gem "image_processing", "~> 1.2"
+################################
+# PERFORMANCE & CACHE
+################################
+gem "solid_cache"                  # Cache avec base de données
+gem "solid_queue"                  # File d'attente avec base de données
+gem "solid_cable"                  # Action Cable avec base de données
+gem "thruster", require: false     # Optimisation HTTP pour Puma
+
+################################
+# DÉPLOIEMENT & DEVOPS
+################################
+gem "kamal", require: false        # Déploiement Docker
+gem "whenever", require: false     # Gestion des tâches cron
+
+################################
+# PAIEMENT & SERVICES EXTERNES
+################################
+gem "stripe"                       # Intégration Stripe
+gem "actionmailer"                 # Gestion des emails
+
+################################
+# UTILITAIRES
+################################
+gem "dotenv-rails"                 # Variables d'environnement
+
+# Pour la pagination
+gem "pagy"
 
 group :development, :test do
-  # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
-  gem "debug", platforms: %i[ mri windows ], require: "debug/prelude"
-
-  # Static analysis for security vulnerabilities [https://brakemanscanner.org/]
-  gem "brakeman", require: false
-
-  # Omakase Ruby styling [https://github.com/rails/rubocop-rails-omakase/]
+  # DEBUGGING & QUALITÉ DE CODE
+  gem "debug", platforms: %i[mri windows], require: "debug/prelude"
   gem "rubocop-rails-omakase", require: false
 
-  # Nouvelles gems pour les tests
-  gem 'rspec-rails'        # Framework de test
-  gem 'factory_bot_rails'  # Pour créer facilement des objets de test
-  gem 'faker'             # Tu l'as déjà, mais déplace-la ici
-  gem 'shoulda-matchers'   # Pour des assertions plus lisibles
-  gem 'timecop'           # Pour les tests impliquant des dates
+  # TESTING FRAMEWORK
+  gem "rspec-rails"                # Framework de test
+  gem "factory_bot_rails"          # Création d'objets de test
+  gem "faker"                      # Données de test aléatoires
+  gem "shoulda-matchers"           # Assertions plus lisibles
+  gem "timecop"                    # Tests avec manipulation du temps
 end
 
 group :development do
-  # Use console on exceptions pages [https://github.com/rails/web-console]
-  gem "web-console"
+  gem "web-console"                # Console de débogage dans le navigateur
 end
 
 group :test do
-  # Use system testing [https://guides.rubyonrails.org/testing.html#system-testing]
-  gem "capybara"
-  gem "selenium-webdriver"
+  # TESTS SYSTÈME
+  gem "capybara"                   # Tests d'intégration
+  gem "selenium-webdriver"         # Pilote de navigateur pour tests
 end
 
-
-gem "stripe"
-gem "actionmailer"
-gem "faker"
-gem "dotenv-rails"
+################################
+# GEMS OPTIONNELLES (COMMENTÉES)
+################################
+# gem "image_processing", "~> 1.2"  # Traitement d'images
+# gem "redis", ">= 4.0.1"           # Cache Redis
+# gem "sidekiq"                     # Background jobs
+# gem "aws-sdk-s3"                  # Stockage sur Amazon S3
+# gem "sentry-ruby"                 # Monitoring d'erreurs
+# gem "rack-cors"                   # Support CORS pour API
+# gem "paper_trail"                 # Historique des modifications
+# gem "friendly_id"                 # URLs propres
+# gem "kaminari"                    # Pagination
+# gem "ransack"                     # Recherche avancée

@@ -1,0 +1,20 @@
+<div class="users-grid">
+  <% users.each do |user| %>
+    <div class="user-card">
+      <div class="user-info">
+        <h3><%= user.full_name %></h3>
+        <p class="user-email"><%= user.email_address %></p>
+        <p class="user-role"><%= user.role %></p>
+        <p class="user-date">Inscrit le <%= l(user.created_at, format: :long) %></p>
+      </div>
+      <div class="user-actions">
+        <%= link_to "Voir", admin_user_path(user), class: "white-button" %>
+        <%= link_to "Modifier", edit_admin_user_path(user), class: "purple-button" %>
+      </div>
+    </div>
+  <% end %>
+</div>
+
+<div class="pagination">
+  <%== pagy_bootstrap_nav(@pagy) %>
+</div> 

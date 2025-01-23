@@ -186,3 +186,9 @@ input:-webkit-autofill:active {
   .image-main {
     border-radius: 10%;
   }
+
+/*
+ *= require flatpickr
+ *= require_tree .
+ *= require_self
+ */

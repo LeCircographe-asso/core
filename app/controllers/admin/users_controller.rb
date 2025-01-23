@@ -1,10 +1,39 @@
 module Admin
-  class UsersController < BaseController
+  class UsersController < ApplicationController
+    include Pagy::Backend
+    layout 'admin'  # Pour garder ton layout admin
+    before_action :require_admin_or_godmode  # Pour garder ta sécurité
     before_action :set_user, only: %i[ show edit update destroy ]
 
     # GET /admin/users or /admin/users.json
     def index
-      @users = User.all
+      scope = User.all
+
+      # Recherche
+      if params[:query].present?
+        scope = scope.where("LOWER(first_name) LIKE :query OR LOWER(last_name) LIKE :query OR LOWER(email_address) LIKE :query", 
+          query: "%#{params[:query].downcase}%")
+      end
+
+      # Tri
+      scope = case params[:sort]
+        when "name"
+          scope.order(last_name: sort_direction, first_name: sort_direction)
+        when "created_at"
+          scope.order(created_at: sort_direction)
+        when "role"
+          scope.order(role: sort_direction)
+        else
+          scope.order(created_at: :desc)
+        end
+
+      # Pagination avec un nombre fixe d'items par page
+      @pagy, @users = pagy(scope, items: 20)
+
+      # Pour les requêtes Turbo Frame
+      if turbo_frame_request?
+        render partial: "users_list", locals: { users: @users }
+      end
     end
 
     # GET /admin/users/1 or /admin/users/1.json
@@ -128,5 +157,16 @@ module Admin
     def generate_secure_password
       SecureRandom.hex(10)
     end
+
+    def require_admin_or_godmode
+      unless Current.user&.role.in?(%w[admin godmode volunteer])
+        redirect_to root_path, alert: "Vous n'avez pas accès à cette page."
+      end
+    end
+
+    def sort_direction
+      %w[asc desc].include?(params[:direction]) ? params[:direction] : :asc
+    end
+    helper_method :sort_direction
   end
 end

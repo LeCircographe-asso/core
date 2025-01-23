@@ -1,129 +1,62 @@
-# README
+# Le Circographe 🎪
 
-LE CIRCOGRAPHE
+**Le Circographe** est une application de gestion pour une association de cirque basée à Toulouse, France.
 
-## English
- 
-**Le Circographe** is an association in Toulouse, France
+## 🎯 Objectif
 
-### Installation
+Réaliser un site web en Ruby on Rails pour gérer :
+- Les adhésions et abonnements
+- Les entraînements quotidiens
+- Les événements de l'association
 
-1. Clone the repository:
+## 🛠 Technologies
 
-```bash
-
-https://github.com/Team-stash/le_circographe.git
-cd le_circo
-```
-
-2. Install dependencies :
-
-```bash
-
-bundle install
-```
-
-3. Setup the database :
-
-```bash
-
-rails db:create db:migrate db:seed
-```
-
-4. Run the application :
-
-```bash
-
-rails assets:clobber
-./bin/dev
-rails server
-```
-
-### Deployment
-
-The app is deployed on Ionos
-
-[Figma Mockup](https://www.figma.com/design/EDzWXstQDroP9qsXQeDJ0n/Untitled?node-id=0-1&t=L5nyuxxAHArehDCo-0)
-
-### User Experience Journey
-
-french version
-![image](https://github.com/user-attachments/assets/1cd3617d-61bd-4ad7-bd50-9029877bcb8b)
-
-### DataBase
-
-![image](https://github.com/user-attachments/assets/04ab7878-7da6-48bf-95f4-8f11bdd28eda)
-
-### Screenshots and demo
-
-[link](http://87.106.173.45:3000/)
-Admin : admin@rails.com
-password : 123456
-
----
-
----
-
-## Français
-
-**Le Circographe** est une association basée à Toulouse, France
-le but de ce projet est de réaliser une site web en rails 8 pour cette association
-
-### Fonctionnalités
-
-- Authentification des utilisateurs (inscription/connexion).
-- ...
-- ...
-- Intégration du paiement en ligne via Stripe.
-- ...
-
-### Technologies
-
-- **Backend**: Ruby on Rails 8
-- **Paiements**: Stripe
+- **Backend**: Ruby on Rails 8.0.1
+- **Frontend**: Hotwire (Turbo & Stimulus)
 - **Base de données**: SQLite3
-- **Deploiement**: Ionos VPS
+- **Paiements**: Stripe
+- **Déploiement**: Ionos VPS
 
-### Installation
+## 💻 Installation
 
 1. Cloner le repository:
-
 ```bash
-
-https://github.com/Team-stash/le_circographe.git
+git clone https://github.com/Team-stash/le_circographe.git
 cd le_circographe
 ```
 
-2. Installation :
-
+2. Installation des dépendances :
 ```bash
-
 bundle install
 ```
 
-3. mise en place de la base de données :
-
+3. Configuration de la base de données :
 ```bash
-
 rails db:create db:migrate db:seed
 ```
 
-4. RunLancer l'application :
-
+4. Lancer l'application :
 ```bash
-
 rails assets:clobber
 ./bin/dev
 rails server
 ```
 
-5. Accédez à l'application localement à l'adresse suivante : http://localhost:3000
+5. Accédez à l'application : http://localhost:3000
 
-### Deploiement
+## 🎨 Design
 
-L'application est déployée sur Ionos
+- [Maquette Figma](https://www.figma.com/design/EDzWXstQDroP9qsXQeDJ0n/Untitled?node-id=0-1&t=L5nyuxxAHArehDCo-0)
+- [Parcours Utilisateur](https://github.com/user-attachments/assets/1cd3617d-61bd-4ad7-bd50-9029877bcb8b)
+- [Schéma Base de données](https://github.com/user-attachments/assets/04ab7878-7da6-48bf-95f4-8f11bdd28eda)
 
-### Équipe
+## 🚀 Démo
+
+- URL: [http://87.106.173.45:3000/](http://87.106.173.45:3000/)
+- Admin: admin@rails.com
+- Password: 123456
+
+## 👥 Équipe
 
 - Mentor : Hadrien SAMOUILLAN
 - Membres :

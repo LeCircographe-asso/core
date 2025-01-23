@@ -1,4 +1,12 @@
-require_relative '../config/environment'
+➜  le_circographe git:(prep/cursor_explorations) ✗ rails generate migration CreateTrainingAttendees user:references training_session:references user_membership:references recorded_by:references notes:text
+Your Gemfile lists the gem faker (>= 0) more than once.
+You should probably keep only one of them.
+Remove any duplicate entries and specify the gem only once.
+While it's not a problem now, it could cause errors if you change the version of one of them later.
+      invoke  active_record
+    conflict    db/migrate/20250122230335_create_training_attendees.rb
+Another migration is already named create_training_attendees: /home/aka/Final_Project/le_circographe/db/migrate/20241204154239_create_training_attendees.rb. Use --force to replace this migration or --skip to ignore conflicted file.
+➜  le_circographe git:(prep/cursor_explorations) ✗ require_relative '../config/environment'
 
 class AppDiagnostic
   def self.run

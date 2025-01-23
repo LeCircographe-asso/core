@@ -1,17 +1,79 @@
 <div class="admin-dashboard">
-<h1>Modifier les horaires d'ouverture</h1>
+  <div class="dashboard-title">
+    <h1>Modifier les horaires d'ouverture</h1>
+  </div>
 
-<%= form_with url: admin_opening_hours_path, method: :patch do %>
-  <table>
-    <% @opening_hours.each do |day, hours| %>
-      <tr>
-        <td><%= day.capitalize %></td>
-        <td>
-          <%= text_field_tag "opening_hours[#{day}]", hours %>
-        </td>
-      </tr>
-    <% end %>
-  </table>
-  <%= submit_tag 'Mettre à jour', class: 'purple-button' %>
-<% end %>
+  <%= form_with url: admin_opening_hours_path, method: :patch do |f| %>
+    <div id="dashboard-container">
+      <div id="middle-column">
+        <% @opening_hours.each do |day, hours| %>
+          <div class="dashboard-card" data-controller="opening-hours">
+            <div class="dashboard-card-content">
+              <div class="dashboard-subtitle">
+                <%= day.capitalize %>
+              </div>
+              
+              <div class="time-inputs">
+                <div class="hours-section" data-opening-hours-target="hoursSection">
+                  <%= f.time_field "opening_hours[#{day}][open]",
+                    value: hours == "Fermé" ? "09:00" : hours.split(' - ').first,
+                    class: "form-input time-input",
+                    data: { opening_hours_target: "timeInput" }
+                  %>
+
+                  <span class="time-separator">à</span>
+
+                  <%= f.time_field "opening_hours[#{day}][close]",
+                    value: hours == "Fermé" ? "18:00" : hours.split(' - ').last,
+                    class: "form-input time-input",
+                    data: { opening_hours_target: "timeInput" }
+                  %>
+                </div>
+
+                <div class="status-toggle">
+                  <label class="status-label">
+                    <%= f.radio_button "opening_hours[#{day}][status]", "open", 
+                        checked: hours != "Fermé",
+                        class: "status-radio",
+                        data: { 
+                          action: "opening-hours#toggleStatus",
+                          opening_hours_target: "openRadio"
+                        } 
+                    %>
+                    <i class="fas fa-door-open"></i> Ouvert
+                  </label>
+
+                  <label class="status-label">
+                    <%= f.radio_button "opening_hours[#{day}][status]", "closed", 
+                        checked: hours == "Fermé",
+                        class: "status-radio",
+                        data: { 
+                          action: "opening-hours#toggleStatus",
+                          opening_hours_target: "closedRadio"
+                        } 
+                    %>
+                    <i class="fas fa-door-closed"></i> Fermé
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
+        <% end %>
+
+        <div id="dashboard-actions">
+          <%= link_to "Annuler", 
+              admin_opening_hours_path, 
+              class: "white-button" %>
+          
+          <%= f.submit "Mettre à jour", 
+              class: "purple-button",
+              data: { turbo_confirm: "Confirmer la mise à jour des horaires ?" } %>
+        </div>
+      </div>
+    </div>
+  <% end %>
 </div>
+
+<%= content_for :head do %>
+  <%= stylesheet_link_tag "flatpickr" %>
+<% end %>

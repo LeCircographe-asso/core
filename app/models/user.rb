@@ -13,9 +13,12 @@ class User < ApplicationRecord
   has_many :events, through: :event_attendees
   has_many :user_memberships, dependent: :destroy
   has_many :subscription_types, through: :user_memberships
-  has_many :training_attendees, through: :user_memberships
+  has_many :training_attendees
   has_many :payments, dependent: :destroy
-
+  has_many :training_sessions, through: :training_attendees
+  has_many :recorded_training_sessions, 
+           class_name: 'TrainingSession',
+           foreign_key: :recorded_by_id
 
   normalizes :email_address, with: ->(e) { e.strip.downcase }
 
@@ -94,8 +97,9 @@ class User < ApplicationRecord
   end
 
   def can_train_today?
+    return false if already_trained_today?
     return false unless active_circus_membership?
-    current_subscription&.valid_subscription?
+    true
   end
 
   def can_upgrade_subscription?
@@ -185,5 +189,25 @@ class User < ApplicationRecord
 
   def can?(action)
     NavigationRulesService.has_permission?(self, action)
+  end
+
+  def already_trained_today?
+    training_attendees
+      .joins(:training_session)
+      .where(training_sessions: { date: Date.current })
+      .exists?
+  end
+
+  scope :search, ->(query) {
+    where("LOWER(first_name) LIKE :q OR LOWER(last_name) LIKE :q OR LOWER(email_address) LIKE :q",
+          q: "%#{query.downcase}%")
+  }
+
+  def full_name
+    if first_name.present? || last_name.present?
+      [first_name, last_name].compact.join(' ')
+    else
+      email_address
+    end
   end
 end

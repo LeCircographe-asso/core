@@ -3,7 +3,7 @@
 <html>
 
 <head>
-    <title><%= content_for(:title) || "Le Circographe" %></title>
+    <title>Admin - Le Circographe</title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="mobile-web-app-capable" content="yes">
@@ -18,14 +18,14 @@
     <link rel="icon" href="/icon.png" type="image/png">
     <link rel="icon" href="/icon.svg" type="image/svg+xml">
     <link rel="apple-touch-icon" href="/icon.png">
-    <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
+    <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
     <% if controller_path.start_with?('admin') %>
     <%= stylesheet_link_tag 'dashboard', "data-turbo-track": "reload" %>
     <% elsif content_for?(:css_file) %>
     <%= stylesheet_link_tag content_for(:css_file), "data-turbo-track": "reload" %>
     <% end %>
 
-    <%= javascript_importmap_tags %>
+    <%= javascript_include_tag "application", "data-turbo-track": "reload", defer: true %>
 
     <script src="https://js.stripe.com/v3/"></script>
 </head>

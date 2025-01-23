@@ -1,0 +1,21 @@
+<div class="container mx-auto px-4 py-8">
+  <%= turbo_frame_tag "training_dashboard" do %>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <!-- Statistiques en temps réel -->
+      <div class="bg-white rounded-lg shadow p-6">
+        <h2 class="text-xl font-bold mb-4">Présences actuelles</h2>
+        <div class="stats-container">
+          <%= render "stats", stats: @stats %>
+        </div>
+      </div>
+
+      <!-- Liste des présents -->
+      <div class="bg-white rounded-lg shadow p-6">
+        <h2 class="text-xl font-bold mb-4">Participants (<%= @current_session.training_attendees.count %>)</h2>
+        <div id="attendees_list">
+          <%= render "attendees_list", attendees: @attendees %>
+        </div>
+      </div>
+    </div>
+  <% end %>
+</div> 

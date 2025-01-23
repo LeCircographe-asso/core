@@ -1,13 +1,13 @@
 module Admin
   class BaseController < ApplicationController
-    layout "admin"
-    before_action :require_admin_or_godmode
-
+    include Pagy::Backend
+    before_action :require_admin
+    
     private
-
-    def require_admin_or_godmode
-      unless Current.user&.role.in?(%w[admin godmode volunteer])
-        redirect_to root_path, alert: "Vous n'avez pas accès à cette page."
+    
+    def require_admin
+      unless Current.user&.role.in?(%w[admin godmode])
+        redirect_to root_path, alert: "Accès non autorisé"
       end
     end
   end

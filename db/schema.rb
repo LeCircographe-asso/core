@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2024_12_15_151614) do
+ActiveRecord::Schema[8.0].define(version: 2025_01_22_232000) do
   create_table "donations", force: :cascade do |t|
     t.integer "user_id", null: false
     t.integer "payment_id", null: false
@@ -23,7 +23,7 @@ ActiveRecord::Schema[8.0].define(version: 2024_12_15_151614) do
   create_table "event_attendees", force: :cascade do |t|
     t.integer "user_id", null: false
     t.integer "event_id", null: false
-    t.integer "payment_id", null: false
+    t.integer "payment_id"
     t.boolean "interested", default: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -44,6 +44,19 @@ ActiveRecord::Schema[8.0].define(version: 2024_12_15_151614) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["creator_id"], name: "index_events_on_creator_id"
+  end
+
+  create_table "membership_types", force: :cascade do |t|
+    t.string "name", null: false
+    t.decimal "price", null: false
+    t.integer "duration", null: false
+    t.string "category", null: false
+    t.text "description"
+    t.boolean "active", default: true
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["category", "active"], name: "index_membership_types_on_category_and_active"
+    t.index ["name"], name: "index_membership_types_on_name", unique: true
   end
 
   create_table "payments", force: :cascade do |t|
@@ -82,13 +95,30 @@ ActiveRecord::Schema[8.0].define(version: 2024_12_15_151614) do
 
   create_table "training_attendees", force: :cascade do |t|
     t.integer "user_id", null: false
-    t.integer "user_membership_id", null: false
+    t.integer "user_membership_id"
     t.boolean "check"
-    t.text "comments"
+    t.text "notes"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "training_session_id"
+    t.integer "recorded_by_id"
+    t.index ["recorded_by_id"], name: "index_training_attendees_on_recorded_by_id"
+    t.index ["training_session_id"], name: "index_training_attendees_on_training_session_id"
+    t.index ["user_id", "training_session_id", "created_at"], name: "index_training_attendees_on_user_session_date", unique: true
     t.index ["user_id"], name: "index_training_attendees_on_user_id"
     t.index ["user_membership_id"], name: "index_training_attendees_on_user_membership_id"
+  end
+
+  create_table "training_sessions", force: :cascade do |t|
+    t.date "date", null: false
+    t.string "status", default: "open"
+    t.integer "max_capacity", default: 20
+    t.integer "recorded_by_id"
+    t.text "notes"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["date"], name: "index_training_sessions_on_date", unique: true
+    t.index ["recorded_by_id"], name: "index_training_sessions_on_recorded_by_id"
   end
 
   create_table "user_membership_subscriptions", force: :cascade do |t|
@@ -154,8 +184,11 @@ ActiveRecord::Schema[8.0].define(version: 2024_12_15_151614) do
   add_foreign_key "events", "users", column: "creator_id"
   add_foreign_key "payments", "users"
   add_foreign_key "sessions", "users"
+  add_foreign_key "training_attendees", "training_sessions"
   add_foreign_key "training_attendees", "user_memberships"
   add_foreign_key "training_attendees", "users"
+  add_foreign_key "training_attendees", "users", column: "recorded_by_id"
+  add_foreign_key "training_sessions", "users", column: "recorded_by_id"
   add_foreign_key "user_membership_subscriptions", "subscription_types"
   add_foreign_key "user_membership_subscriptions", "user_memberships"
   add_foreign_key "user_memberships", "payments"

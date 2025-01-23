@@ -1,0 +1,18 @@
+<div class="grid grid-cols-2 gap-4">
+  <div class="stat-card">
+    <span class="text-lg font-semibold">Aujourd'hui</span>
+    <span class="text-3xl"><%= @current_session.training_attendees.count %></span>
+  </div>
+  <div class="stat-card">
+    <span class="text-lg font-semibold">Maximum</span>
+    <span class="text-3xl"><%= stats[:max] %></span>
+  </div>
+  <div class="stat-card">
+    <span class="text-lg font-semibold">Minimum</span>
+    <span class="text-3xl"><%= stats[:min] %></span>
+  </div>
+  <div class="stat-card">
+    <span class="text-lg font-semibold">Moyenne</span>
+    <span class="text-3xl"><%= stats[:average].round(1) %></span>
+  </div>
+</div> 

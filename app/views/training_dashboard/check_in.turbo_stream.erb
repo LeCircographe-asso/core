@@ -1,0 +1,7 @@
+<%= turbo_stream.append "attendees_list" do %>
+  <%= render "attendee", attendee: @attendee %>
+<% end %>
+
+<%= turbo_stream.update "stats" do %>
+  <%= render "stats", stats: TrainingSessionReportService.calculate_attendance_stats(Date.current) %>
+<% end %> 

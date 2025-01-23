@@ -20,6 +20,7 @@ Payment.destroy_all
 SubscriptionType.destroy_all
 Role.destroy_all
 User.destroy_all
+MembershipType.destroy_all
 
 
 
@@ -191,3 +192,22 @@ end
 #     status: true
 #   )
 # end
+
+MembershipType.create!([
+  {
+    name: 'basic_membership',
+    price: 1,
+    duration: 365,
+    category: 'membership',
+    description: 'Adhésion simple annuelle',
+    active: true
+  },
+  {
+    name: 'circus_membership',
+    price: 25,
+    duration: 365,
+    category: 'circus_membership',
+    description: 'Adhésion circus annuelle',
+    active: true
+  }
+])

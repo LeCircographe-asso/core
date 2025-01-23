@@ -1,0 +1,58 @@
+.admin-time-inputs {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.time-group {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.time-input {
+  width: 100px;
+  padding: 0.5rem;
+  border: 1px solid var(--admin-border-color);
+  border-radius: var(--admin-border-radius);
+  background: var(--admin-input-bg);
+}
+
+.time-input:disabled {
+  background: var(--admin-disabled-bg);
+  color: var(--admin-disabled-color);
+}
+
+.time-separator {
+  color: var(--admin-text-muted);
+}
+
+.admin-button-icon {
+  padding: 0.5rem;
+  color: var(--admin-danger);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.admin-button-icon:hover {
+  color: var(--admin-danger-hover);
+}
+
+/* État fermé */
+.time-group.closed {
+  opacity: 0.5;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .admin-time-inputs {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .time-input {
+    width: 100%;
+  }
+} 

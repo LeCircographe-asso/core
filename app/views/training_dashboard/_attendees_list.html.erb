@@ -1,0 +1,20 @@
+<div class="space-y-4">
+  <% attendees.each do |attendee| %>
+    <%= turbo_frame_tag dom_id(attendee) do %>
+      <div class="flex items-center justify-between p-4 bg-gray-50 rounded">
+        <div>
+          <span class="font-semibold"><%= attendee.user.full_name %></span>
+          <span class="text-sm text-gray-500">(<%= attendee.created_at.strftime("%H:%M") %>)</span>
+        </div>
+        
+        <% if current_user.admin? %>
+          <%= button_to "Départ", 
+              check_out_training_dashboard_path(user_id: attendee.user_id),
+              method: :delete,
+              class: "btn btn-red",
+              form: { data: { turbo_confirm: "Confirmer le départ ?" } } %>
+        <% end %>
+      </div>
+    <% end %>
+  <% end %>
+</div> 
