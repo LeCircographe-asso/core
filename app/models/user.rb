@@ -16,18 +16,40 @@ class User < ApplicationRecord
   has_many :training_attendees, through: :user_memberships
   has_many :payments, dependent: :destroy
 
-
   normalizes :email_address, with: ->(e) { e.strip.downcase }
 
   has_secure_password
-  validates :email_address, presence: true, uniqueness: true
+  
+  # Validations de base
+  validates :email_address, presence: true, 
+                          uniqueness: true,
+                          format: { with: URI::MailTo::EMAIL_REGEXP, message: "n'est pas une adresse email valide" }
+  validates :first_name, presence: true
+  validates :last_name, presence: true
+  
+  # Validations pour l'inscription
   validates :cgu, acceptance: { message: "Vous devez accepter les CGU pour continuer." }
   validates :privacy_policy, acceptance: { message: "Vous devez accepter la politique de confidentialité pour continuer." }
+  
+  # Méthodes utiles
+  def full_name
+    "#{first_name} #{last_name}"
+  end
+  
+  def active_membership?
+    user_memberships.active.exists?
+  end
+  
+  def active_circus_membership?
+    user_memberships.active.joins(:subscription_type)
+                   .where(subscription_types: { category: 'circus_membership' }).exists?
+  end
+  
+  def can_access_training?
+    active_circus_membership? && user_memberships.active.joins(:subscription_type)
+                                               .where(subscription_types: { category: ['ten_pass', 'trimester', 'annual'] }).exists?
+  end
 
-  # after_create :welcome_send
-  # def welcome_send
-  #   UserMailer.welcome_email(self).deliver_now
-  # end
   def generate_password_reset_token!
     self.password_reset_token = SecureRandom.urlsafe_base64
     self.password_reset_sent_at = Time.current
