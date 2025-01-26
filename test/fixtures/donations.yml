@@ -1,9 +1,15 @@
 # Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
-one:
-  user: one
+simple_member_donation:
+  user: simple_member
   payment: one
+  amount: 5.0
+  status: "pending"
+  processed_by: admin
 
-two:
-  user: two
+circus_member_donation:
+  user: circus_member
   payment: two
+  amount: 10.0
+  status: "completed"
+  processed_by: admin
