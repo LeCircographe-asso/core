@@ -4,7 +4,7 @@ class CreateSubscriptionTypes < ActiveRecord::Migration[8.0]
       t.string :name, null: false
       t.decimal :price, precision: 8, scale: 2, null: false
       t.text :description
-      t.string :category, null: false
+      t.integer :category, null: false
       t.string :duration_type, null: false
       t.integer :duration_value, null: false
       t.boolean :has_limited_sessions, default: false, null: false
