@@ -1,13 +1,13 @@
 # Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
 one:
-  user: one
-  event: one
-  payment: one
+  user_id: one
+  event_id: one
+  payment_id: one
   interested: false
 
 two:
-  user: two
-  event: two
-  payment: two
+  user_id: two
+  event_id: two
+  payment_id: two
   interested: false
