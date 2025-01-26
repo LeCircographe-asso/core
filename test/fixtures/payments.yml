@@ -9,3 +9,56 @@ two:
   payment_method: MyString
   amount: 9.99
   status: false
+
+# Paiement adhésion simple
+completed_simple:
+  user: simple_member
+  amount: 1.0
+  payment_method: "cash"
+  status: "completed"
+  donation_amount: 0
+  processed_by: admin
+
+# Paiement adhésion cirque avec don
+completed_circus:
+  user: circus_member
+  amount: 10.0
+  payment_method: "cash"
+  status: "completed"
+  donation_amount: 5.0
+  processed_by: admin
+
+# Ancien paiement adhésion cirque
+completed_circus_old:
+  user: circus_member
+  amount: 10.0
+  payment_method: "card"
+  status: "completed"
+  donation_amount: 0
+  processed_by: admin
+
+# Paiement en attente pour visiteur
+pending_payment:
+  user: visitor
+  amount: 5.0
+  payment_method: "card"
+  status: "pending"
+  donation_amount: 0
+
+# Paiement adhésion bénévole
+completed_volunteer:
+  user: volunteer
+  amount: 10.0
+  payment_method: "transfer"
+  status: "completed"
+  donation_amount: 2.0
+  processed_by: admin
+
+# Paiement carnet 10 séances
+completed_ten_sessions:
+  user: circus_member
+  amount: 45.0
+  payment_method: "cash"
+  status: "completed"
+  donation_amount: 0
+  processed_by: admin

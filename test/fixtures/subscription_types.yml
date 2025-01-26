@@ -13,3 +13,49 @@ two:
   duration: 1
   description: MyText
   status: false
+
+simple_membership:
+  name: "Adhésion Simple"
+  price: 1.0
+  category: "simple"
+  duration_type: "year"
+  duration_value: 1
+  has_limited_sessions: false
+  active: true
+  valid_from: <%= Date.current %>
+  valid_until: <%= 1.year.from_now.to_date %>
+  year_reference: <%= Date.current.year %>
+
+circus_membership:
+  name: "Adhésion Cirque"
+  price: 10.0
+  category: "circus"
+  duration_type: "year"
+  duration_value: 1
+  has_limited_sessions: false
+  active: true
+  valid_from: <%= Date.current %>
+  valid_until: <%= 1.year.from_now.to_date %>
+  year_reference: <%= Date.current.year %>
+
+day_pass:
+  name: "Journée"
+  price: 5.0
+  category: "training"
+  duration_type: "day"
+  duration_value: 1
+  has_limited_sessions: false
+  active: true
+  valid_from: <%= Date.current %>
+  year_reference: <%= Date.current.year %>
+
+ten_sessions:
+  name: "Carnet 10 séances"
+  price: 45.0
+  category: "training"
+  duration_type: "sessions"
+  duration_value: 10
+  has_limited_sessions: true
+  active: true
+  valid_from: <%= Date.current %>
+  year_reference: <%= Date.current.year %>

@@ -7,3 +7,53 @@ one:
 two:
   email_address: two@example.com
   password_digest: <%= password_digest %>
+
+# Administrateur
+admin:
+  email_address: admin@example.com
+  password_digest: <%= BCrypt::Password.create('password') %>
+  role: 1
+  first_name: Admin
+  last_name: User
+  image_rights: true
+  newsletter: true
+
+# Bénévole
+volunteer:
+  email_address: volunteer@example.com
+  password_digest: <%= BCrypt::Password.create('password') %>
+  role: 2
+  first_name: Volunteer
+  last_name: User
+  image_rights: true
+  get_involved: true
+
+# Membre simple
+simple_member:
+  email_address: simple@example.com
+  password_digest: <%= BCrypt::Password.create('password') %>
+  role: 0
+  first_name: Simple
+  last_name: Member
+  image_rights: false
+  newsletter: true
+
+# Membre cirque
+circus_member:
+  email_address: circus@example.com
+  password_digest: <%= BCrypt::Password.create('password') %>
+  role: 0
+  first_name: Circus
+  last_name: Member
+  image_rights: true
+  newsletter: true
+  specialty: "Jonglage"
+
+# Visiteur
+visitor:
+  email_address: visitor@example.com
+  password_digest: <%= BCrypt::Password.create('password') %>
+  role: 0
+  first_name: Visitor
+  last_name: User
+  image_rights: false

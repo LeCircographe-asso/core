@@ -11,3 +11,77 @@ two:
   subscription_type: two
   payment: two
   status: false
+
+active_simple:
+  user: member
+  subscription_type: simple_membership
+  status: "active"
+  start_date: <%= Date.current %>
+  end_date: <%= 1.year.from_now %>
+  year_reference: <%= Date.current.year %>
+
+active_circus:
+  user: member
+  subscription_type: circus_membership
+  status: "active"
+  start_date: <%= Date.current %>
+  end_date: <%= 1.year.from_now %>
+  year_reference: <%= Date.current.year %>
+
+expired_circus:
+  user: member
+  subscription_type: circus_membership
+  status: "expired"
+  start_date: <%= 1.year.ago %>
+  end_date: <%= Date.current %>
+  year_reference: <%= 1.year.ago.year %>
+
+# Adhésion simple active
+simple_active:
+  user: simple_member
+  subscription_type: simple_membership
+  payment: completed_simple
+  status: "active"
+  start_date: <%= Date.current %>
+  end_date: <%= 1.year.from_now %>
+  year_reference: <%= Date.current.year %>
+
+# Adhésion cirque active
+circus_active:
+  user: circus_member
+  subscription_type: circus_membership
+  payment: completed_circus
+  status: "active"
+  start_date: <%= Date.current %>
+  end_date: <%= 1.year.from_now %>
+  year_reference: <%= Date.current.year %>
+
+# Adhésion cirque expirée
+circus_expired:
+  user: circus_member
+  subscription_type: circus_membership
+  payment: completed_circus_old
+  status: "expired"
+  start_date: <%= 1.year.ago %>
+  end_date: <%= Date.current %>
+  year_reference: <%= 1.year.ago.year %>
+
+# Adhésion visiteur (journée)
+visitor_day:
+  user: visitor
+  subscription_type: day_pass
+  payment: pending_payment
+  status: "pending"
+  start_date: <%= Date.current %>
+  end_date: <%= 1.day.from_now %>
+  year_reference: <%= Date.current.year %>
+
+# Adhésion bénévole
+volunteer_membership:
+  user: volunteer
+  subscription_type: circus_membership
+  payment: completed_volunteer
+  status: "active"
+  start_date: <%= Date.current %>
+  end_date: <%= 1.year.from_now %>
+  year_reference: <%= Date.current.year %>
