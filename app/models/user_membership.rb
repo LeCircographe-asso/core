@@ -15,17 +15,17 @@ class UserMembership < ApplicationRecord
   validate :end_date_after_start_date
   validate :one_active_membership_per_type
 
-  enum status: {
-    pending: 'pending',
-    active: 'active',
-    expired: 'expired',
-    cancelled: 'cancelled',
-    suspended: 'suspended'
-  }
+  enum :status, {
+    pending: 0,
+    active: 1,
+    expired: 2,
+    cancelled: 3,
+    suspended: 4
+  }, prefix: true
 
   # Scopes utiles
-  scope :active, -> { where(status: 'active').where('end_date > ?', Date.current) }
-  scope :expired, -> { where(status: 'active').where('end_date <= ?', Date.current) }
+  scope :active, -> { where(status: :active).where('end_date > ?', Date.current) }
+  scope :expired, -> { where(status: :expired).where('end_date <= ?', Date.current) }
   scope :by_type, ->(category) { joins(:subscription_type).where(subscription_types: { category: category }) }
   scope :with_remaining_sessions, -> { where('remaining_sessions > 0') }
 

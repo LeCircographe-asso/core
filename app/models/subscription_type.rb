@@ -22,7 +22,7 @@ class SubscriptionType < ApplicationRecord
     ten_sessions: 3,        # Pack 10 séances (30€)
     quarterly: 4,           # Abonnement trimestriel (65€)
     yearly: 5              # Abonnement annuel (150€)
-  }
+  }, prefix: true
 
   # Scopes utiles
   scope :active_only, -> { where(active: true) }
@@ -31,7 +31,7 @@ class SubscriptionType < ApplicationRecord
   scope :available_for_purchase, -> { active_only.where.not(category: [:basic_membership, :circus_membership]) }
   
   def requires_circus_membership?
-    training_passes.include?(category)
+    category.in?([:day_pass, :ten_sessions, :quarterly, :yearly])
   end
   
   def has_limited_sessions?
@@ -43,14 +43,14 @@ class SubscriptionType < ApplicationRecord
   end
   
   def has_expiration?
-    !ten_sessions?
+    !category_ten_sessions?
   end
   
   def duration_in_days
-    case category
-    when 'day_pass' then 1
-    when 'quarterly' then 90
-    when 'yearly' then 365
+    case category.to_sym
+    when :day_pass then 1
+    when :quarterly then 90
+    when :yearly then 365
     else nil
     end
   end
@@ -58,7 +58,7 @@ class SubscriptionType < ApplicationRecord
   private
   
   def validate_subscription_prices
-    case category.to_sym
+    case category
     when :basic_membership
       errors.add(:price, "doit être de 1€ pour l'adhésion simple") unless price == 1
     when :circus_membership

@@ -1,9 +1,37 @@
 # Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
-one:
-  user_membership: one
-  subscription_type: one
+active_day_pass:
+  user_membership: circus_active
+  subscription_type: day_pass
+  payment: visitor_payment
+  start_date: <%= Time.current %>
+  end_date: <%= Time.current.end_of_day %>
+  status: pending
+  subscription_priority: day
 
-two:
-  user_membership: two
-  subscription_type: two
+active_ten_sessions:
+  user_membership: circus_active
+  subscription_type: ten_sessions
+  payment: ten_sessions_payment
+  start_date: <%= Time.current %>
+  remaining_sessions: 8
+  status: active
+  subscription_priority: pack
+
+active_trimester:
+  user_membership: circus_active
+  subscription_type: quarterly
+  payment: circus_payment
+  start_date: <%= Time.current %>
+  end_date: <%= Time.current + 3.months %>
+  status: active
+  subscription_priority: trimester
+
+active_year:
+  user_membership: circus_active
+  subscription_type: yearly
+  payment: old_circus_payment
+  start_date: <%= Time.current %>
+  end_date: <%= Time.current + 1.year %>
+  status: active
+  subscription_priority: year

@@ -1,7 +1,6 @@
 class TrainingAttendee < ApplicationRecord
   belongs_to :user
   belongs_to :user_membership
-  belongs_to :training_session
   belongs_to :checked_by, class_name: 'User'
 
   # Validations de base
@@ -17,7 +16,6 @@ class TrainingAttendee < ApplicationRecord
   # Validations métier
   validate :user_has_valid_membership
   validate :validate_practice_requirements
-  validate :session_is_open
   validate :user_has_remaining_sessions, if: -> { !is_visitor && user_membership&.subscription_type&.has_limited_sessions? }
   validate :validate_no_active_subscription_with_day_pass, if: -> { !is_visitor }
   
@@ -52,14 +50,9 @@ class TrainingAttendee < ApplicationRecord
     end
     
     # Vérifie l'abonnement d'entraînement pour les pratiquants
-    unless user_membership.subscription_type.training_passes.exists?
+    unless user_membership.subscription_type.category.in?(['day_pass', 'ten_sessions', 'quarterly', 'yearly'])
       errors.add(:base, "L'utilisateur doit avoir un abonnement d'entraînement valide pour pratiquer")
     end
-  end
-  
-  def session_is_open
-    return if training_session&.open?
-    errors.add(:base, "L'enregistrement des présences est fermé pour cette journée")
   end
 
   def user_has_remaining_sessions
@@ -69,10 +62,10 @@ class TrainingAttendee < ApplicationRecord
   end
 
   def validate_no_active_subscription_with_day_pass
-    return unless user_membership&.subscription_type&.day_pass?
+    return unless user_membership&.subscription_type&.category == 'day_pass'
 
     active_sub = user.user_memberships.active.joins(:subscription_type)
-                    .where(subscription_types: { category: ['trimester', 'annual'] })
+                    .where(subscription_types: { category: ['trimester', 'yearly'] })
                     .exists?
     
     errors.add(:base, "Un abonnement actif existe déjà") if active_sub

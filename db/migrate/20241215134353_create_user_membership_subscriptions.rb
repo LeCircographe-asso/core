@@ -7,7 +7,7 @@ class CreateUserMembershipSubscriptions < ActiveRecord::Migration[8.0]
       t.datetime :start_date, null: false
       t.datetime :end_date
       t.integer :remaining_sessions
-      t.string :status, default: 'pending', null: false
+      t.integer :status, default: 0, null: false
       t.integer :subscription_priority, default: 0, null: false
 
       t.timestamps
