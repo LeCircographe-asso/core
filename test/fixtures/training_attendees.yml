@@ -1,0 +1,35 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+regular_attendance:
+  user: circus_member
+  user_membership: circus_active
+  checked_by: admin
+  check_in_time: <%= Time.current %>
+  is_visitor: false
+  attendance_type: regular
+  year_reference: <%= Time.current.year %>
+  week_number: <%= Time.current.strftime("%U").to_i %>
+  month_number: <%= Time.current.month %>
+
+visitor_attendance:
+  user: simple_member
+  user_membership: visitor_day
+  checked_by: volunteer
+  check_in_time: <%= Time.current - 2.hours %>
+  is_visitor: true
+  attendance_type: regular
+  year_reference: <%= Time.current.year %>
+  week_number: <%= Time.current.strftime("%U").to_i %>
+  month_number: <%= Time.current.month %>
+
+makeup_attendance:
+  user: circus_member
+  user_membership: circus_active
+  checked_by: admin
+  check_in_time: <%= Time.current - 1.day %>
+  is_visitor: false
+  attendance_type: makeup
+  comments: "Makeup session for missed class"
+  year_reference: <%= Time.current.year %>
+  week_number: <%= (Time.current - 1.day).strftime("%U").to_i %>
+  month_number: <%= (Time.current - 1.day).month %> 
