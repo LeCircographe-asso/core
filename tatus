@@ -1,0 +1,4 @@
+[33m376837c[m[33m ([m[1;36mHEAD -> [m[1;32mBDD001[m[33m)[m test(models): Add comprehensive unit tests - Add user and roles tests - Add membership and subscription tests - Add attendance tracking tests - Add payment processing tests
+[33m88b0386[m test(fixtures): Update test fixtures - Add user roles fixtures - Add membership types fixtures - Add subscription fixtures - Add payment fixtures
+[33me2f7ebf[m feat(models): Implement business logic in models - Add role-based permissions in User model - Add membership and subscription validations - Add attendance tracking rules - Add payment processing logic
+[33m226ac2d[m feat(database): Restructure database schema
