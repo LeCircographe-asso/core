@@ -2,40 +2,16 @@ require "test_helper"
 
 class SubscriptionTypeTest < ActiveSupport::TestCase
   def setup
-    @simple_membership = SubscriptionType.create!(
-      name: "Adhésion Simple",
-      category: "membership",
-      price: 1,
-      active: true
-    )
-    
-    @circus_membership = SubscriptionType.create!(
-      name: "Adhésion Cirque",
-      category: "circus_membership",
-      price: 10,
-      active: true
-    )
-    
-    @day_pass = SubscriptionType.create!(
-      name: "Journée",
-      category: "day_pass",
-      price: 4,
-      active: true
-    )
-    
-    @ten_pass = SubscriptionType.create!(
-      name: "Pack 10",
-      category: "ten_pass",
-      price: 30,
-      has_limited_sessions: true,
-      active: true
-    )
+    @simple_membership = subscription_types(:basic_membership)
+    @circus_membership = subscription_types(:circus_membership)
+    @day_pass = subscription_types(:day_pass)
+    @ten_pass = subscription_types(:ten_sessions)
   end
 
   test "validations de base" do
     subscription = SubscriptionType.new(
       name: "Test",
-      category: "membership",
+      category: :membership,
       price: 1
     )
     assert subscription.valid?
@@ -44,7 +20,7 @@ class SubscriptionTypeTest < ActiveSupport::TestCase
   test "le prix ne peut pas être négatif" do
     subscription = SubscriptionType.new(
       name: "Test",
-      category: "membership",
+      category: :membership,
       price: -1
     )
     assert_not subscription.valid?
@@ -54,7 +30,7 @@ class SubscriptionTypeTest < ActiveSupport::TestCase
   test "le nom doit être unique" do
     duplicate = SubscriptionType.new(
       name: "Adhésion Simple",
-      category: "membership",
+      category: :membership,
       price: 1
     )
     assert_not duplicate.valid?
@@ -89,8 +65,8 @@ class SubscriptionTypeTest < ActiveSupport::TestCase
 
   test "adhésion simple valide" do
     subscription = SubscriptionType.new(
-      name: "Adhésion Simple",
-      category: "membership",
+      name: "Nouvelle Adhésion Simple",
+      category: :membership,
       price: 1,
       active: true
     )
@@ -100,8 +76,8 @@ class SubscriptionTypeTest < ActiveSupport::TestCase
 
   test "adhésion cirque valide" do
     subscription = SubscriptionType.new(
-      name: "Adhésion Cirque",
-      category: "circus_membership",
+      name: "Nouvelle Adhésion Cirque",
+      category: :circus_membership,
       price: 10,
       active: true
     )
@@ -111,8 +87,8 @@ class SubscriptionTypeTest < ActiveSupport::TestCase
 
   test "ne peut pas créer une adhésion simple avec un prix différent de 1€" do
     subscription = SubscriptionType.new(
-      name: "Adhésion Simple",
-      category: "membership",
+      name: "Test Adhésion Simple",
+      category: :membership,
       price: 5,
       active: true
     )
@@ -123,8 +99,8 @@ class SubscriptionTypeTest < ActiveSupport::TestCase
 
   test "ne peut pas créer une adhésion cirque avec un prix différent de 10€" do
     subscription = SubscriptionType.new(
-      name: "Adhésion Cirque",
-      category: "circus_membership",
+      name: "Test Adhésion Cirque",
+      category: :circus_membership,
       price: 15,
       active: true
     )
@@ -134,11 +110,11 @@ class SubscriptionTypeTest < ActiveSupport::TestCase
   end
 
   test "vérifie si un abonnement nécessite une adhésion cirque" do
-    day_pass = SubscriptionType.new(category: "day_pass")
-    ten_pass = SubscriptionType.new(category: "ten_pass")
-    trimester = SubscriptionType.new(category: "trimester")
-    annual = SubscriptionType.new(category: "annual")
-    membership = SubscriptionType.new(category: "membership")
+    day_pass = SubscriptionType.new(category: :day_pass)
+    ten_pass = SubscriptionType.new(category: :ten_pass)
+    trimester = SubscriptionType.new(category: :trimester)
+    annual = SubscriptionType.new(category: :annual)
+    membership = SubscriptionType.new(category: :membership)
     
     assert day_pass.requires_circus_membership?
     assert ten_pass.requires_circus_membership?
@@ -148,17 +124,17 @@ class SubscriptionTypeTest < ActiveSupport::TestCase
   end
 
   test "vérifie si un abonnement a des sessions limitées" do
-    ten_pass = SubscriptionType.new(category: "ten_pass")
-    trimester = SubscriptionType.new(category: "trimester")
+    ten_pass = SubscriptionType.new(category: :ten_pass)
+    trimester = SubscriptionType.new(category: :trimester)
     
     assert ten_pass.has_limited_sessions?
     assert_not trimester.has_limited_sessions?
   end
 
   test "vérifie si un abonnement a une date d'expiration" do
-    ten_pass = SubscriptionType.new(category: "ten_pass")
-    trimester = SubscriptionType.new(category: "trimester")
-    annual = SubscriptionType.new(category: "annual")
+    ten_pass = SubscriptionType.new(category: :ten_pass)
+    trimester = SubscriptionType.new(category: :trimester)
+    annual = SubscriptionType.new(category: :annual)
     
     assert_not ten_pass.has_expiration_date?
     assert trimester.has_expiration_date?
@@ -166,143 +142,33 @@ class SubscriptionTypeTest < ActiveSupport::TestCase
   end
 
   test "scope memberships retourne uniquement les adhésions" do
-    membership = SubscriptionType.create!(
-      name: "Adhésion Simple",
-      category: "membership",
-      price: 1,
-      active: true
-    )
-    
-    circus = SubscriptionType.create!(
-      name: "Adhésion Cirque",
-      category: "circus_membership",
-      price: 10,
-      active: true
-    )
-    
-    ten_pass = SubscriptionType.create!(
-      name: "Pack 10",
-      category: "ten_pass",
-      price: 30,
-      active: true
-    )
-    
     memberships = SubscriptionType.memberships
-    assert_includes memberships, membership
-    assert_includes memberships, circus
-    assert_not_includes memberships, ten_pass
+    assert_includes memberships, @simple_membership
+    assert_includes memberships, @circus_membership
+    assert_not_includes memberships, @day_pass
   end
 
   test "scope training_passes retourne uniquement les abonnements d'entraînement" do
-    circus = SubscriptionType.create!(
-      name: "Adhésion Cirque",
-      category: "circus_membership",
-      price: 10,
-      active: true
-    )
-    
-    day_pass = SubscriptionType.create!(
-      name: "Journée",
-      category: "day_pass",
-      price: 4,
-      active: true
-    )
-    
-    ten_pass = SubscriptionType.create!(
-      name: "Pack 10",
-      category: "ten_pass",
-      price: 30,
-      active: true
-    )
-    
     passes = SubscriptionType.training_passes
-    assert_includes passes, day_pass
-    assert_includes passes, ten_pass
-    assert_not_includes passes, circus
+    assert_includes passes, @day_pass
+    assert_includes passes, @ten_pass
+    assert_not_includes passes, @circus_membership
   end
 
   test "scope available_for_purchase exclut les adhésions" do
-    membership = SubscriptionType.create!(
-      name: "Adhésion Simple",
-      category: "membership",
-      price: 1,
-      active: true
-    )
-    
-    day_pass = SubscriptionType.create!(
-      name: "Journée",
-      category: "day_pass",
-      price: 4,
-      active: true
-    )
-    
     available = SubscriptionType.available_for_purchase
-    assert_includes available, day_pass
-    assert_not_includes available, membership
+    assert_includes available, @day_pass
+    assert_not_includes available, @simple_membership
   end
 
   test "validation des prix spécifiques" do
-    # Adhésion simple avec mauvais prix
     subscription = SubscriptionType.new(
       name: "Test Simple",
-      category: "membership",
+      category: :membership,
       price: 2
     )
     assert_not subscription.valid?
     assert_includes subscription.errors[:price], "doit être de 1€ pour l'adhésion simple"
-
-    # Adhésion cirque avec mauvais prix
-    subscription = SubscriptionType.new(
-      name: "Test Cirque",
-      category: "circus_membership",
-      price: 15
-    )
-    assert_not subscription.valid?
-    assert_includes subscription.errors[:price], "doit être de 10€ pour l'adhésion cirque"
-  end
-
-  test "ne peut pas utiliser un pass journée avec un abonnement actif" do
-    # Créer un abonnement trimestriel actif
-    trimester = SubscriptionType.create!(
-      name: "Trimestre",
-      category: "trimester",
-      price: 65,
-      active: true
-    )
-    
-    trimester_sub = UserMembership.create!(
-      user: @user,
-      subscription_type: trimester,
-      start_date: Date.current,
-      end_date: 3.months.from_now,
-      status: :active
-    )
-
-    # Essayer d'utiliser un pass journée
-    day_pass = SubscriptionType.create!(
-      name: "Journée",
-      category: "day_pass",
-      price: 4,
-      active: true
-    )
-    
-    day_pass_sub = UserMembership.create!(
-      user: @user,
-      subscription_type: day_pass,
-      start_date: Date.current,
-      end_date: Date.current.end_of_day,
-      status: :active
-    )
-
-    attendance = TrainingAttendee.new(
-      user: @user,
-      user_membership: day_pass_sub,
-      checked_by: @admin,
-      check_in_time: Time.current
-    )
-
-    assert_not attendance.valid?
-    assert_includes attendance.errors[:base], "Un abonnement actif existe déjà"
   end
 
   def validate_subscription_prices

@@ -12,16 +12,26 @@ class UserMembershipTest < ActiveSupport::TestCase
     
     @simple_membership = SubscriptionType.create!(
       name: "Adhésion Simple",
-      category: "membership",
+      category: 0,  # basic_membership
       price: 1,
-      active: true
+      duration_type: "year",
+      duration_value: 1,
+      has_limited_sessions: false,
+      active: true,
+      valid_from: Date.current,
+      year_reference: Date.current.year
     )
     
     @circus_membership = SubscriptionType.create!(
       name: "Adhésion Cirque",
-      category: "circus_membership",
+      category: 1,  # circus_membership
       price: 10,
-      active: true
+      duration_type: "year",
+      duration_value: 1,
+      has_limited_sessions: false,
+      active: true,
+      valid_from: Date.current,
+      year_reference: Date.current.year
     )
   end
 
@@ -133,36 +143,36 @@ class UserMembershipTest < ActiveSupport::TestCase
   test "un utilisateur peut avoir une adhésion simple active" do
     membership = user_memberships(:simple_active)
     assert membership.valid?
-    assert_equal "active", membership.status
-    assert_equal "simple", membership.subscription_type.category
+    assert membership.status_active?
+    assert membership.subscription_type.category_basic_membership?
   end
 
   test "un utilisateur peut avoir une adhésion cirque active" do
     membership = user_memberships(:circus_active)
     assert membership.valid?
-    assert_equal "active", membership.status
-    assert_equal "circus", membership.subscription_type.category
+    assert membership.status_active?
+    assert membership.subscription_type.category_circus_membership?
   end
 
   test "un bénévole peut avoir une adhésion cirque" do
     membership = user_memberships(:volunteer_membership)
     assert membership.valid?
-    assert_equal "active", membership.status
-    assert_equal "circus", membership.subscription_type.category
+    assert membership.status_active?
+    assert membership.subscription_type.category_circus_membership?
     assert_equal 2, membership.user.role # role bénévole
   end
 
   test "une adhésion expirée est correctement marquée" do
     membership = user_memberships(:circus_expired)
     assert membership.valid?
-    assert_equal "expired", membership.status
+    assert membership.status_expired?
     assert membership.end_date <= Date.current
   end
 
   test "un visiteur peut avoir une adhésion journalière" do
     membership = user_memberships(:visitor_day)
     assert membership.valid?
-    assert_equal "pending", membership.status
+    assert membership.status_pending?
     assert_equal "day", membership.subscription_type.duration_type
     assert_equal 1, membership.subscription_type.duration_value
   end
