@@ -1,64 +1,98 @@
 # Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
 one:
-  payment_method: MyString
+  user: guest
+  payment_method: "cash"
   amount: 9.99
-  status: false
+  status: "pending"
+  donation_amount: 0
 
 two:
-  payment_method: MyString
+  user: member
+  payment_method: "cash"
   amount: 9.99
-  status: false
+  status: "pending"
+  donation_amount: 0
 
 # Paiement adhésion simple
-completed_simple:
-  user: simple_member
+payment_one:
+  user: member
   amount: 1.0
   payment_method: "cash"
   status: "completed"
   donation_amount: 0
-  processed_by: admin
 
-# Paiement adhésion cirque avec don
-completed_circus:
-  user: circus_member
+# Paiement adhésion avec don
+payment_two:
+  user: member
   amount: 10.0
   payment_method: "cash"
   status: "completed"
   donation_amount: 5.0
-  processed_by: admin
 
-# Ancien paiement adhésion cirque
-completed_circus_old:
-  user: circus_member
-  amount: 10.0
+# Paiement abonnement trimestriel
+payment_three:
+  user: member
+  amount: 65.0
   payment_method: "card"
   status: "completed"
   donation_amount: 0
-  processed_by: admin
 
-# Paiement en attente pour visiteur
-pending_payment:
-  user: visitor
+# Paiement en attente
+payment_four:
+  user: guest
   amount: 5.0
   payment_method: "card"
   status: "pending"
   donation_amount: 0
 
-# Paiement adhésion bénévole
-completed_volunteer:
+# Paiement bénévole
+payment_five:
   user: volunteer
   amount: 10.0
   payment_method: "transfer"
   status: "completed"
   donation_amount: 2.0
-  processed_by: admin
 
-# Paiement carnet 10 séances
-completed_ten_sessions:
-  user: circus_member
-  amount: 45.0
+# Paiement carnet séances
+payment_six:
+  user: member
+  amount: 30.0
   payment_method: "cash"
   status: "completed"
   donation_amount: 0
-  processed_by: admin
+
+payment_active_simple:
+  user: member
+  amount: 20.0
+  payment_method: "cash"
+  status: "completed"
+  donation_amount: 0
+
+payment_active_circus:
+  user: circus_member
+  amount: 30.0
+  payment_method: "card"
+  status: "completed"
+  donation_amount: 0
+
+payment_expired_circus:
+  user: circus_member
+  amount: 30.0
+  payment_method: "cash"
+  status: "completed"
+  donation_amount: 0
+
+payment_visitor_day:
+  user: visitor
+  amount: 5.0
+  payment_method: "cash"
+  status: "completed"
+  donation_amount: 0
+
+payment_volunteer:
+  user: volunteer
+  amount: 0.0
+  payment_method: "cash"
+  status: "completed"
+  donation_amount: 0

@@ -1,26 +1,29 @@
+# frozen_string_literal: true
+
 class UserMembershipSubscription < ApplicationRecord
   belongs_to :user_membership
   belongs_to :subscription_type
+  belongs_to :payment
 
   validates :start_date, :end_date, presence: true
   validate :end_date_after_start_date
   validates :subscription_priority, presence: true
 
-  enum status: {
-    pending: 'pending',
-    active: 'active',
-    expired: 'expired',
-    cancelled: 'cancelled',
-    suspended: 'suspended'
-  }
+  enum :status, {
+    pending: "pending",
+    active: "active",
+    expired: "expired",
+    cancelled: "cancelled",
+    suspended: "suspended"
+  }, default: :pending
 
   # Priorités de souscription
-  enum subscription_priority: {
+  enum :subscription_priority, {
     day: 0,
     pack: 1,
     trimester: 2,
     year: 3
-  }
+  }, default: :day
 
   # Scope pour les souscriptions disponibles
   scope :available, -> { where(status: 'active').where('end_date > ? OR end_date IS NULL', Time.current) }

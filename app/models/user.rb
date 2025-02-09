@@ -1,7 +1,14 @@
 class User < ApplicationRecord
   attr_accessor :cgu, :private_policy
 
-  enum :role, %i[guest membership circus_membership volunteer admin godmode], default: :guest
+  # Nouveaux rôles
+  enum :role, {
+    guest: 0,      # Utilisateur inscrit basique
+    member: 1,     # Membre avec droits basiques
+    volunteer: 2,  # Peut gérer les présences et adhésions
+    admin: 3,      # Accès complet admin
+    godmode: 4     # Super admin
+  }, default: :guest
 
   alias_attribute :email, :email_address
 
@@ -35,21 +42,66 @@ class User < ApplicationRecord
   def full_name
     "#{first_name} #{last_name}"
   end
-  
+
+  # Méthodes de vérification des adhésions
   def active_membership?
     user_memberships.active.exists?
   end
   
-  def active_circus_membership?
+  def active_basic_membership?
     user_memberships.active.joins(:subscription_type)
-                   .where(subscription_types: { category: 'circus_membership' }).exists?
+                   .where(subscription_types: { category: :basic_membership }).exists?
   end
   
-  def can_access_training?
-    active_circus_membership? && user_memberships.active.joins(:subscription_type)
-                                               .where(subscription_types: { category: ['ten_pass', 'trimester', 'annual'] }).exists?
+  def active_circus_membership?
+    user_memberships.active.joins(:subscription_type)
+                   .where(subscription_types: { category: :circus_membership }).exists?
   end
 
+  # Méthodes de vérification d'accès
+  def can_access_training?
+    active_circus_membership? && user_memberships.active.joins(:subscription_type)
+                                               .where(subscription_types: { category: [:day_pass, :ten_sessions, :quarterly, :yearly] })
+                                               .exists?
+  end
+
+  def has_valid_training_pass?
+    user_memberships.active.joins(:subscription_type)
+                   .where(subscription_types: { category: [:day_pass, :ten_sessions, :quarterly, :yearly] })
+                   .exists?
+  end
+
+  # Nouvelles méthodes de permission basées sur le rôle
+  def can_manage_users?
+    admin? || godmode?
+  end
+
+  def can_manage_memberships?
+    volunteer? || admin? || godmode?
+  end
+
+  def can_manage_attendance?
+    volunteer? || admin? || godmode?
+  end
+
+  def can_view_statistics?
+    admin? || godmode?
+  end
+
+  def can_manage_events?
+    admin? || godmode?
+  end
+
+  def can_edit_settings?
+    godmode?
+  end
+
+  # Méthode générique de vérification des privilèges
+  def has_privileges?
+    volunteer? || admin? || godmode?
+  end
+
+  # Méthodes pour la réinitialisation du mot de passe
   def generate_password_reset_token!
     self.password_reset_token = SecureRandom.urlsafe_base64
     self.password_reset_sent_at = Time.current
@@ -58,14 +110,6 @@ class User < ApplicationRecord
 
   def password_reset_token_valid?
     password_reset_sent_at.present? && password_reset_sent_at > 2.hours.ago
-  end
-
-  def formatted_registration_date
-    if authenticated?
-      user_memberships.order(:created_at).last.created_at.strftime("%d/%m/%Y")
-    else
-      "Pas encore membre"
-    end
   end
 
   def reset_password!(password, password_confirmation)
@@ -82,19 +126,26 @@ class User < ApplicationRecord
     save!
   end
 
-  scope :published, -> { where(published: true) }
-
-  def has_privileges?
-    %w[admin godmode volunteer].include?(self.role)
+  # Autres méthodes utilitaires
+  def formatted_registration_date
+    if active_membership?
+      user_memberships.order(:created_at).last.created_at.strftime("%d/%m/%Y")
+    else
+      "Pas encore membre"
+    end
   end
 
   def is_interested_in?(event_id)
-    events = self.event_attendees
-    events.each do |event|
-      if event.event_id == event_id
-        return true
-      end
-    end
-    false
+    event_attendees.exists?(event_id: event_id)
   end
+
+  # Scopes utiles
+  scope :with_privileges, -> { where(role: [:volunteer, :admin, :godmode]) }
+  scope :active_members, -> { where(role: [:member, :volunteer, :admin, :godmode]) }
+  scope :administrators, -> { where(role: [:admin, :godmode]) }
+  scope :guests, -> { where(role: :guest) }
+  scope :members, -> { where(role: :member) }
+  scope :volunteers, -> { where(role: :volunteer) }
+  scope :admins, -> { where(role: :admin) }
+  scope :godmodes, -> { where(role: :godmode) }
 end

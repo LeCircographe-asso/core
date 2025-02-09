@@ -52,7 +52,7 @@ class TrainingAttendee < ApplicationRecord
     end
     
     # Vérifie l'abonnement d'entraînement pour les pratiquants
-    unless user_membership.subscription_type.training_passes.exists?
+    unless user_membership.subscription_type.requires_circus_membership?
       errors.add(:base, "L'utilisateur doit avoir un abonnement d'entraînement valide pour pratiquer")
     end
   end

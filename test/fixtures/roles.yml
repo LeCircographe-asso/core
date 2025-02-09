@@ -1,7 +1,16 @@
 # Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
-one:
-  name: MyString
+guest_role:
+  name: "guest"
 
-two:
-  name: MyString
+member_role:
+  name: "member"
+
+volunteer_role:
+  name: "volunteer"
+
+admin_role:
+  name: "admin"
+
+godmode_role:
+  name: "godmode"

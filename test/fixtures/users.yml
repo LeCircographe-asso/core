@@ -1,38 +1,46 @@
+# Mot de passe encodé pour les tests
 <% password_digest = BCrypt::Password.create("password") %>
 
-one:
-  email_address: one@example.com
+guest:
+  email_address: guest@example.com
   password_digest: <%= password_digest %>
-
-two:
-  email_address: two@example.com
-  password_digest: <%= password_digest %>
-
-# Administrateur
-admin:
-  email_address: admin@example.com
-  password_digest: <%= BCrypt::Password.create('password') %>
-  role: 1
-  first_name: Admin
+  first_name: Guest
   last_name: User
-  image_rights: true
-  newsletter: true
+  role: 0  # guest
 
-# Bénévole
+member:
+  email_address: member@example.com
+  password_digest: <%= password_digest %>
+  first_name: Member
+  last_name: User
+  role: 1  # member
+
 volunteer:
   email_address: volunteer@example.com
-  password_digest: <%= BCrypt::Password.create('password') %>
-  role: 2
+  password_digest: <%= password_digest %>
   first_name: Volunteer
   last_name: User
-  image_rights: true
-  get_involved: true
+  role: 2  # volunteer
+
+admin:
+  email_address: admin@example.com
+  password_digest: <%= password_digest %>
+  first_name: Admin
+  last_name: User
+  role: 3  # admin
+
+godmode:
+  email_address: godmode@example.com
+  password_digest: <%= password_digest %>
+  first_name: Godmode
+  last_name: User
+  role: 4  # godmode
 
 # Membre simple
 simple_member:
   email_address: simple@example.com
   password_digest: <%= BCrypt::Password.create('password') %>
-  role: 0
+  role: 1  # member
   first_name: Simple
   last_name: Member
   image_rights: false
@@ -42,7 +50,7 @@ simple_member:
 circus_member:
   email_address: circus@example.com
   password_digest: <%= BCrypt::Password.create('password') %>
-  role: 0
+  role: 1  # member
   first_name: Circus
   last_name: Member
   image_rights: true
@@ -53,7 +61,7 @@ circus_member:
 visitor:
   email_address: visitor@example.com
   password_digest: <%= BCrypt::Password.create('password') %>
-  role: 0
+  role: 0  # guest
   first_name: Visitor
   last_name: User
   image_rights: false

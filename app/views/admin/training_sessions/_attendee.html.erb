@@ -1,0 +1,33 @@
+<div class="bg-white rounded-lg shadow p-4">
+  <div class="flex items-center justify-between">
+    <div>
+      <h4 class="font-semibold"><%= attendee.user.full_name %></h4>
+      <p class="text-sm text-gray-600">
+        <%= l(attendee.check_in_time, format: :short) %> - 
+        <%= attendee.is_visitor ? "Visiteur" : "Pratiquant" %>
+      </p>
+      
+      <div class="mt-1">
+        <% if attendee.is_visitor %>
+          <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+            Visiteur
+          </span>
+        <% else %>
+          <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+            Pratiquant
+          </span>
+          
+          <% if attendee.user_membership.subscription_type.has_limited_sessions? %>
+            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800 ml-2">
+              <%= pluralize(attendee.user_membership.remaining_sessions, "séance") %> restante(s)
+            </span>
+          <% end %>
+        <% end %>
+      </div>
+    </div>
+    
+    <div class="text-sm text-gray-500">
+      Enregistré par <%= attendee.checked_by.full_name %>
+    </div>
+  </div>
+</div> 

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2024_12_15_151614) do
+ActiveRecord::Schema[8.0].define(version: 2025_02_09_181820) do
   create_table "attendance_statistics", force: :cascade do |t|
     t.string "period_type", null: false
     t.date "start_date", null: false
@@ -107,7 +107,7 @@ ActiveRecord::Schema[8.0].define(version: 2024_12_15_151614) do
     t.string "name", null: false
     t.decimal "price", precision: 8, scale: 2, null: false
     t.text "description"
-    t.string "category", null: false
+    t.integer "category", null: false
     t.string "duration_type", null: false
     t.integer "duration_value", null: false
     t.boolean "has_limited_sessions", default: false, null: false
@@ -127,6 +127,7 @@ ActiveRecord::Schema[8.0].define(version: 2024_12_15_151614) do
 
   create_table "training_attendees", force: :cascade do |t|
     t.integer "user_id", null: false
+    t.integer "training_session_id", null: false
     t.integer "user_membership_id", null: false
     t.integer "checked_by_id", null: false
     t.datetime "check_in_time", null: false
@@ -142,6 +143,7 @@ ActiveRecord::Schema[8.0].define(version: 2024_12_15_151614) do
     t.index ["check_in_time"], name: "index_training_attendees_on_check_in_time"
     t.index ["checked_by_id"], name: "index_training_attendees_on_checked_by_id"
     t.index ["month_number"], name: "index_training_attendees_on_month_number"
+    t.index ["training_session_id"], name: "index_training_attendees_on_training_session_id"
     t.index ["user_id", "check_in_time"], name: "index_training_attendees_on_user_and_time", unique: true
     t.index ["user_id"], name: "index_training_attendees_on_user_id"
     t.index ["user_membership_id"], name: "index_training_attendees_on_user_membership_id"
@@ -149,6 +151,26 @@ ActiveRecord::Schema[8.0].define(version: 2024_12_15_151614) do
     t.index ["year_reference", "month_number"], name: "index_training_attendees_on_year_reference_and_month_number"
     t.index ["year_reference", "week_number"], name: "index_training_attendees_on_year_reference_and_week_number"
     t.index ["year_reference"], name: "index_training_attendees_on_year_reference"
+  end
+
+  create_table "training_sessions", force: :cascade do |t|
+    t.date "date", null: false
+    t.string "status", default: "open", null: false
+    t.integer "recorded_by_id"
+    t.text "notes"
+    t.integer "year_reference"
+    t.integer "week_number"
+    t.integer "month_number"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["date"], name: "index_training_sessions_on_date", unique: true
+    t.index ["month_number"], name: "index_training_sessions_on_month_number"
+    t.index ["recorded_by_id"], name: "index_training_sessions_on_recorded_by_id"
+    t.index ["status"], name: "index_training_sessions_on_status"
+    t.index ["week_number"], name: "index_training_sessions_on_week_number"
+    t.index ["year_reference", "month_number"], name: "index_training_sessions_on_year_reference_and_month_number"
+    t.index ["year_reference", "week_number"], name: "index_training_sessions_on_year_reference_and_week_number"
+    t.index ["year_reference"], name: "index_training_sessions_on_year_reference"
   end
 
   create_table "user_membership_histories", force: :cascade do |t|
@@ -227,7 +249,6 @@ ActiveRecord::Schema[8.0].define(version: 2024_12_15_151614) do
   create_table "users", force: :cascade do |t|
     t.string "email_address", null: false
     t.string "password_digest", null: false
-    t.integer "role", default: 0
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "last_name"
@@ -245,7 +266,9 @@ ActiveRecord::Schema[8.0].define(version: 2024_12_15_151614) do
     t.boolean "get_involved", default: false
     t.string "password_reset_token"
     t.datetime "password_reset_sent_at"
+    t.integer "role", default: 0, null: false
     t.index ["email_address"], name: "index_users_on_email_address", unique: true
+    t.index ["role"], name: "index_users_on_role"
   end
 
   add_foreign_key "donations", "payments"
@@ -258,9 +281,11 @@ ActiveRecord::Schema[8.0].define(version: 2024_12_15_151614) do
   add_foreign_key "payments", "users"
   add_foreign_key "payments", "users", column: "processed_by_id"
   add_foreign_key "sessions", "users"
+  add_foreign_key "training_attendees", "training_sessions"
   add_foreign_key "training_attendees", "user_memberships"
   add_foreign_key "training_attendees", "users"
   add_foreign_key "training_attendees", "users", column: "checked_by_id"
+  add_foreign_key "training_sessions", "users", column: "recorded_by_id"
   add_foreign_key "user_membership_histories", "user_memberships"
   add_foreign_key "user_membership_histories", "users", column: "changed_by_id"
   add_foreign_key "user_membership_subscriptions", "payments"

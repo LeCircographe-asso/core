@@ -3,7 +3,62 @@
 one:
   user_membership: one
   subscription_type: one
+  payment: payment_one
+  start_date: <%= Date.current %>
+  end_date: <%= 1.year.from_now %>
+  status: "pending"
+  subscription_priority: 0
 
 two:
   user_membership: two
   subscription_type: two
+  payment: payment_two
+  start_date: <%= Date.current %>
+  end_date: <%= 1.year.from_now %>
+  status: "pending"
+  subscription_priority: 0
+
+active_simple_subscription:
+  user_membership: active_simple
+  subscription_type: basic_membership
+  payment: payment_active_simple
+  start_date: <%= Date.current %>
+  end_date: <%= 1.year.from_now %>
+  status: "active"
+  subscription_priority: 3
+
+active_circus_subscription:
+  user_membership: active_circus
+  subscription_type: circus_membership
+  payment: payment_active_circus
+  start_date: <%= Date.current %>
+  end_date: <%= 1.year.from_now %>
+  status: "active"
+  subscription_priority: 3
+
+expired_circus_subscription:
+  user_membership: expired_circus
+  subscription_type: circus_membership
+  payment: payment_expired_circus
+  start_date: <%= 1.year.ago %>
+  end_date: <%= Date.current %>
+  status: "expired"
+  subscription_priority: 3
+
+visitor_day_subscription:
+  user_membership: visitor_day
+  subscription_type: day_pass
+  payment: payment_visitor_day
+  start_date: <%= Date.current %>
+  end_date: <%= 1.day.from_now %>
+  status: "pending"
+  subscription_priority: 0
+
+volunteer_subscription:
+  user_membership: volunteer_membership
+  subscription_type: circus_membership
+  payment: payment_volunteer
+  start_date: <%= Date.current %>
+  end_date: <%= 1.year.from_now %>
+  status: "active"
+  subscription_priority: 3

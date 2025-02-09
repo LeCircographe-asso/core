@@ -1,0 +1,78 @@
+<div class="admin-dashboard">
+  <h1 class="dashboard-title">Gestion des présences</h1>
+  <h2 class="text-xl font-semibold mb-4">Session du <%= l(@training_session.date, format: :long) %></h2>
+
+  <!-- Barre de recherche -->
+  <div class="dashboard-section mb-8">
+    <div class="search-container">
+      <%= form_with url: search_users_admin_training_session_path(@training_session), method: :get, data: { controller: "search" } do |f| %>
+        <div class="flex gap-4 items-center">
+          <%= f.text_field :query, 
+            class: "search-input",
+            placeholder: "Rechercher un adhérent...",
+            data: { 
+              action: "input->search#search",
+              search_target: "input"
+            } %>
+        </div>
+      <% end %>
+    </div>
+
+    <!-- Résultats de recherche -->
+    <%= turbo_frame_tag "search_results", class: "mt-4" do %>
+      <%= render "search_results", users: @search_results %>
+    <% end %>
+  </div>
+
+  <!-- Liste des présences -->
+  <div class="dashboard-section">
+    <h3 class="dashboard-subtitle">Liste des présences (<%= @attendees.count %>)</h3>
+    
+    <div id="attendees_list" class="mt-4 space-y-2">
+      <% if @attendees.any? %>
+        <%= render partial: "attendee", collection: @attendees %>
+      <% else %>
+        <p class="text-gray-500 italic">Aucune présence enregistrée pour le moment</p>
+      <% end %>
+    </div>
+  </div>
+
+  <!-- Statistiques rapides -->
+  <div class="dashboard-section mt-8">
+    <h3 class="dashboard-subtitle">Statistiques de la journée</h3>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
+      <div class="stat-card">
+        <span class="stat-label">Total</span>
+        <span class="stat-value"><%= @attendees.count %></span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-label">Visiteurs</span>
+        <span class="stat-value"><%= @attendees.where(is_visitor: true).count %></span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-label">Pratiquants</span>
+        <span class="stat-value"><%= @attendees.where(is_visitor: false).count %></span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Flash messages -->
+<div id="flash_messages"></div>
+
+<% content_for :styles do %>
+  <style>
+    .stat-card {
+      @apply bg-white p-4 rounded-lg shadow;
+    }
+    .stat-label {
+      @apply block text-gray-600 text-sm;
+    }
+    .stat-value {
+      @apply block text-2xl font-bold text-purple-600;
+    }
+    .search-input {
+      @apply w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent;
+    }
+  </style>
+<% end %> 

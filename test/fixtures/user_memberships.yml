@@ -1,20 +1,27 @@
 # Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
 one:
-  user: one
-  subscription_type: one
-  payment: one
-  status: false
+  user: guest
+  subscription_type: basic_membership
+  payment: payment_one
+  status: "pending"
+  start_date: <%= Date.current %>
+  end_date: <%= 1.year.from_now %>
+  year_reference: <%= Date.current.year %>
 
 two:
-  user: two
-  subscription_type: two
-  payment: two
-  status: false
+  user: member
+  subscription_type: circus_membership
+  payment: payment_two
+  status: "pending"
+  start_date: <%= Date.current %>
+  end_date: <%= 1.year.from_now %>
+  year_reference: <%= Date.current.year %>
 
 active_simple:
   user: member
-  subscription_type: simple_membership
+  subscription_type: basic_membership
+  payment: payment_active_simple
   status: "active"
   start_date: <%= Date.current %>
   end_date: <%= 1.year.from_now %>
@@ -23,6 +30,7 @@ active_simple:
 active_circus:
   user: member
   subscription_type: circus_membership
+  payment: payment_active_circus
   status: "active"
   start_date: <%= Date.current %>
   end_date: <%= 1.year.from_now %>
@@ -31,6 +39,7 @@ active_circus:
 expired_circus:
   user: member
   subscription_type: circus_membership
+  payment: payment_expired_circus
   status: "expired"
   start_date: <%= 1.year.ago %>
   end_date: <%= Date.current %>
@@ -39,8 +48,8 @@ expired_circus:
 # Adhésion simple active
 simple_active:
   user: simple_member
-  subscription_type: simple_membership
-  payment: completed_simple
+  subscription_type: basic_membership
+  payment: payment_one
   status: "active"
   start_date: <%= Date.current %>
   end_date: <%= 1.year.from_now %>
@@ -50,7 +59,7 @@ simple_active:
 circus_active:
   user: circus_member
   subscription_type: circus_membership
-  payment: completed_circus
+  payment: payment_two
   status: "active"
   start_date: <%= Date.current %>
   end_date: <%= 1.year.from_now %>
@@ -60,7 +69,7 @@ circus_active:
 circus_expired:
   user: circus_member
   subscription_type: circus_membership
-  payment: completed_circus_old
+  payment: payment_three
   status: "expired"
   start_date: <%= 1.year.ago %>
   end_date: <%= Date.current %>
@@ -70,7 +79,7 @@ circus_expired:
 visitor_day:
   user: visitor
   subscription_type: day_pass
-  payment: pending_payment
+  payment: payment_four
   status: "pending"
   start_date: <%= Date.current %>
   end_date: <%= 1.day.from_now %>
@@ -80,8 +89,68 @@ visitor_day:
 volunteer_membership:
   user: volunteer
   subscription_type: circus_membership
-  payment: completed_volunteer
+  payment: payment_five
   status: "active"
   start_date: <%= Date.current %>
   end_date: <%= 1.year.from_now %>
+  year_reference: <%= Date.current.year %>
+
+# Adhésion de base pour le membre
+member_basic:
+  user: member
+  subscription_type: basic_membership
+  payment: payment_one
+  status: "active"
+  start_date: <%= Date.current %>
+  end_date: <%= 1.year.from_now %>
+  remaining_sessions: null
+  renewal_count: 0
+  year_reference: <%= Date.current.year %>
+
+# Adhésion cirque pour le membre
+member_circus:
+  user: member
+  subscription_type: circus_membership
+  payment: payment_two
+  status: "active"
+  start_date: <%= Date.current %>
+  end_date: <%= 1.year.from_now %>
+  remaining_sessions: null
+  renewal_count: 0
+  year_reference: <%= Date.current.year %>
+
+# Abonnement trimestriel pour le membre
+member_quarterly:
+  user: member
+  subscription_type: quarterly
+  payment: payment_three
+  status: "active"
+  start_date: <%= Date.current %>
+  end_date: <%= 3.months.from_now %>
+  remaining_sessions: null
+  renewal_count: 0
+  year_reference: <%= Date.current.year %>
+
+# Adhésion cirque pour le bénévole
+volunteer_circus:
+  user: volunteer
+  subscription_type: circus_membership
+  payment: payment_five
+  status: "active"
+  start_date: <%= Date.current %>
+  end_date: <%= 1.year.from_now %>
+  remaining_sessions: null
+  renewal_count: 0
+  year_reference: <%= Date.current.year %>
+
+# Carnet de séances pour le bénévole
+volunteer_sessions:
+  user: volunteer
+  subscription_type: ten_sessions
+  payment: payment_six
+  status: "active"
+  start_date: <%= Date.current %>
+  end_date: <%= 1.year.from_now %>
+  remaining_sessions: 8
+  renewal_count: 0
   year_reference: <%= Date.current.year %>

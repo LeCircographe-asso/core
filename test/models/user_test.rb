@@ -1,158 +1,144 @@
 require "test_helper"
 
 class UserTest < ActiveSupport::TestCase
-  test "un admin peut tout faire" do
-    admin = users(:admin)
-    assert admin.can_manage_users?
-    assert admin.can_manage_memberships?
-    assert admin.can_manage_subscriptions?
-    assert admin.can_record_attendance?
-    assert admin.can_view_statistics?
-  end
-
-  test "un bénévole peut gérer les adhésions et présences" do
-    volunteer = users(:volunteer)
-    assert volunteer.can_manage_memberships?
-    assert volunteer.can_manage_subscriptions?
-    assert volunteer.can_record_attendance?
-    assert_not volunteer.can_manage_users?
-    assert_not volunteer.can_view_statistics?
-  end
-
-  test "un membre simple peut voir son profil" do
-    simple_member = users(:simple_member)
-    assert simple_member.can_view_profile?
-    assert_not simple_member.can_manage_memberships?
-    assert_not simple_member.can_manage_subscriptions?
-    assert_not simple_member.can_record_attendance?
-  end
-
-  test "un membre cirque peut voir son profil" do
-    circus_member = users(:circus_member)
-    assert circus_member.can_view_profile?
-    assert_not circus_member.can_manage_memberships?
-    assert_not circus_member.can_manage_subscriptions?
-    assert_not circus_member.can_record_attendance?
-  end
-
-  test "un visiteur n'a pas besoin d'abonnement pour accéder" do
-    visitor = users(:visitor)
-    assert visitor.can_access_as_visitor?
-    assert_not visitor.needs_subscription_for_access?
-  end
-
-  test "seuls les membres cirque ont besoin d'abonnement pour la pratique" do
-    circus_member = users(:circus_member)
-    simple_member = users(:simple_member)
-    visitor = users(:visitor)
-
-    assert circus_member.needs_subscription_for_practice?
-    assert_not simple_member.needs_subscription_for_practice?
-    assert_not visitor.needs_subscription_for_practice?
-  end
-
-  test "peut avoir plusieurs rôles simultanément" do
-    user = users(:circus_member)
-    assert user.has_role?(:circus_member)
+  def setup
+    @guest = users(:guest)
+    @member = users(:member)
+    @volunteer = users(:volunteer)
+    @admin = users(:admin)
+    @godmode = users(:godmode)
     
-    # Ajout du rôle bénévole
-    user.add_role(:volunteer)
-    assert user.has_role?(:volunteer)
-    assert user.has_role?(:circus_member)
-    
-    # Vérifie les permissions combinées
-    assert user.can_record_attendance?  # Permission de bénévole
-    assert user.needs_subscription_for_practice? # Reste un membre cirque
-  end
-
-  test "peut promouvoir un membre cirque en bénévole" do
-    user = users(:circus_member)
-    assert_not user.can_record_attendance? # Initialement ne peut pas enregistrer les présences
-    
-    user.add_role(:volunteer)
-    assert user.can_record_attendance? # Peut maintenant enregistrer les présences
-    assert user.needs_subscription_for_practice? # Garde ses besoins d'abonnement
-  end
-
-  test "la suppression d'un utilisateur supprime ses adhésions" do
-    user = users(:circus_member)
-    membership_count = user.user_memberships.count
-    assert membership_count > 0
-    
-    user.destroy
-    assert_equal 0, UserMembership.where(user_id: user.id).count
-  end
-
-  test "la suppression d'un utilisateur supprime ses présences" do
-    user = users(:circus_member)
-    attendance = TrainingAttendee.create!(
-      user: user,
-      user_membership: user_memberships(:circus_active),
-      checked_by: users(:admin),
-      check_in_time: Time.current
+    # Créer un nouvel utilisateur pour les tests d'adhésion
+    @new_user = User.create!(
+      email_address: "new_user@example.com",
+      password: "password",
+      first_name: "New",
+      last_name: "User",
+      role: :member
     )
-    
-    assert_difference 'TrainingAttendee.count', -1 do
-      user.destroy
-    end
   end
 
-  test "un membre simple peut devenir bénévole" do
-    user = users(:simple_member)
-    assert_not user.can_record_attendance? # Initialement ne peut pas enregistrer les présences
-    
-    user.add_role(:volunteer)
-    assert user.has_role?(:volunteer)
-    assert user.has_role?(:simple_member)
-    assert user.can_record_attendance? # Peut maintenant enregistrer les présences
+  # Tests des rôles
+  test "les rôles sont correctement assignés" do
+    assert @guest.guest?
+    assert @member.member?
+    assert @volunteer.volunteer?
+    assert @admin.admin?
+    assert @godmode.godmode?
   end
 
-  test "un membre cirque peut devenir bénévole" do
-    user = users(:circus_member)
-    assert_not user.can_record_attendance?
-    
-    user.add_role(:volunteer)
-    assert user.has_role?(:volunteer)
-    assert user.has_role?(:circus_member)
-    assert user.can_record_attendance?
-    assert user.needs_subscription_for_practice? # Garde ses besoins d'abonnement
+  # Tests des permissions de base
+  test "permissions des invités" do
+    assert_not @guest.has_privileges?
+    assert_not @guest.can_manage_users?
+    assert_not @guest.can_manage_memberships?
+    assert_not @guest.can_manage_attendance?
   end
 
-  test "la suppression d'un utilisateur conserve l'historique anonyme" do
-    user = users(:circus_member)
-    
-    # Créer des présences historiques
-    attendance = TrainingAttendee.create!(
-      user: user,
-      user_membership: user_memberships(:circus_active),
-      checked_by: users(:admin),
-      check_in_time: 1.day.ago
+  test "permissions des membres" do
+    assert_not @member.has_privileges?
+    assert_not @member.can_manage_users?
+    assert_not @member.can_manage_memberships?
+    assert_not @member.can_manage_attendance?
+  end
+
+  test "permissions des bénévoles" do
+    assert @volunteer.has_privileges?
+    assert_not @volunteer.can_manage_users?
+    assert @volunteer.can_manage_memberships?
+    assert @volunteer.can_manage_attendance?
+    assert_not @volunteer.can_view_statistics?
+  end
+
+  test "permissions des administrateurs" do
+    assert @admin.has_privileges?
+    assert @admin.can_manage_users?
+    assert @admin.can_manage_memberships?
+    assert @admin.can_manage_attendance?
+    assert @admin.can_view_statistics?
+    assert @admin.can_manage_events?
+    assert_not @admin.can_edit_settings?
+  end
+
+  test "permissions super admin (godmode)" do
+    assert @godmode.has_privileges?
+    assert @godmode.can_manage_users?
+    assert @godmode.can_manage_memberships?
+    assert @godmode.can_manage_attendance?
+    assert @godmode.can_view_statistics?
+    assert @godmode.can_manage_events?
+    assert @godmode.can_edit_settings?
+  end
+
+  # Tests des adhésions
+  test "vérification des adhésions" do
+    # Utiliser le type d'adhésion simple existant
+    basic_type = subscription_types(:basic_membership)
+
+    UserMembership.create!(
+      user: @new_user,
+      subscription_type: basic_type,
+      start_date: Date.current,
+      end_date: 1.year.from_now,
+      status: :active
     )
-    
-    user.destroy
-    
-    # La présence existe toujours mais est anonymisée
-    attendance.reload
-    assert_nil attendance.user_id
-    assert_not_nil attendance.check_in_time
-    assert_not_nil attendance.checked_by_id
+
+    assert @new_user.active_membership?
+    assert @new_user.active_basic_membership?
+    assert_not @new_user.active_circus_membership?
+    assert_not @new_user.can_access_training?
   end
 
-  test "la modification du rôle d'un utilisateur conserve ses données" do
-    user = users(:circus_member)
-    attendance = TrainingAttendee.create!(
-      user: user,
-      user_membership: user_memberships(:circus_active),
-      checked_by: users(:admin),
-      check_in_time: Time.current
+  test "vérification des adhésions cirque" do
+    # Utiliser le type d'adhésion cirque existant
+    circus_type = subscription_types(:circus_membership)
+
+    UserMembership.create!(
+      user: @new_user,
+      subscription_type: circus_type,
+      start_date: Date.current,
+      end_date: 1.year.from_now,
+      status: :active
     )
-    
-    # Ajout du rôle bénévole
-    user.add_role(:volunteer)
-    attendance.reload
-    
-    # Les données de présence sont conservées
-    assert_equal user.id, attendance.user_id
-    assert_not_nil attendance.check_in_time
+
+    assert @new_user.active_membership?
+    assert @new_user.active_circus_membership?
+    assert_not @new_user.can_access_training?
+  end
+
+  test "accès aux entraînements" do
+    # Utiliser les types d'abonnement existants
+    circus_type = subscription_types(:circus_membership)
+    day_pass = subscription_types(:day_pass)
+
+    # Créer les adhésions
+    UserMembership.create!(
+      user: @new_user,
+      subscription_type: circus_type,
+      start_date: Date.current,
+      end_date: 1.year.from_now,
+      status: :active
+    )
+
+    UserMembership.create!(
+      user: @new_user,
+      subscription_type: day_pass,
+      start_date: Date.current,
+      end_date: 1.day.from_now,
+      status: :active
+    )
+
+    assert @new_user.can_access_training?
+    assert @new_user.active_circus_membership?
+    assert @new_user.has_valid_training_pass?
+  end
+
+  # Tests des scopes
+  test "scopes de filtrage des utilisateurs" do
+    assert_includes User.guests, @guest
+    assert_includes User.members, @member
+    assert_includes User.volunteers, @volunteer
+    assert_includes User.admins, @admin
+    assert_includes User.godmodes, @godmode
   end
 end

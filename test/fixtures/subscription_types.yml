@@ -1,61 +1,108 @@
 # Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
 one:
-  membership_type: MyString
+  name: "Test Subscription 1"
   price: 9.99
-  duration: 1
-  description: MyText
-  status: false
-
-two:
-  membership_type: MyString
-  price: 9.99
-  duration: 1
-  description: MyText
-  status: false
-
-simple_membership:
-  name: "Adhésion Simple"
-  price: 1.0
-  category: "simple"
-  duration_type: "year"
+  description: "Test subscription type 1"
+  category: 0
+  duration_type: "months"
   duration_value: 1
   has_limited_sessions: false
   active: true
   valid_from: <%= Date.current %>
-  valid_until: <%= 1.year.from_now.to_date %>
+  valid_until: <%= 1.year.from_now %>
   year_reference: <%= Date.current.year %>
 
+two:
+  name: "Test Subscription 2"
+  price: 19.99
+  description: "Test subscription type 2"
+  category: 1
+  duration_type: "months"
+  duration_value: 3
+  has_limited_sessions: false
+  active: true
+  valid_from: <%= Date.current %>
+  valid_until: <%= 1.year.from_now %>
+  year_reference: <%= Date.current.year %>
+
+# Types d'adhésion de base
+basic_membership:
+  name: "Adhésion Simple"
+  price: 1.0
+  description: "Adhésion de base pour accéder aux événements"
+  category: 0
+  duration_type: "years"
+  duration_value: 1
+  has_limited_sessions: false
+  active: true
+  valid_from: <%= Date.current %>
+  valid_until: <%= 1.year.from_now %>
+  year_reference: <%= Date.current.year %>
+
+# Types d'adhésion cirque
 circus_membership:
   name: "Adhésion Cirque"
   price: 10.0
-  category: "circus"
-  duration_type: "year"
+  description: "Adhésion pour accéder aux entraînements"
+  category: 1
+  duration_type: "years"
   duration_value: 1
   has_limited_sessions: false
   active: true
   valid_from: <%= Date.current %>
-  valid_until: <%= 1.year.from_now.to_date %>
+  valid_until: <%= 1.year.from_now %>
   year_reference: <%= Date.current.year %>
 
 day_pass:
-  name: "Journée"
-  price: 5.0
-  category: "training"
-  duration_type: "day"
+  name: "Pass Journée"
+  price: 4.0
+  description: "Accès pour une journée d'entraînement"
+  category: 2
+  duration_type: "days"
   duration_value: 1
   has_limited_sessions: false
   active: true
   valid_from: <%= Date.current %>
+  valid_until: <%= 1.year.from_now %>
   year_reference: <%= Date.current.year %>
 
+# Carnet 10 séances
 ten_sessions:
   name: "Carnet 10 séances"
-  price: 45.0
-  category: "training"
+  price: 30.0
+  description: "Pack de 10 séances d'entraînement"
+  category: 3
   duration_type: "sessions"
   duration_value: 10
   has_limited_sessions: true
   active: true
   valid_from: <%= Date.current %>
+  valid_until: <%= 1.year.from_now %>
+  year_reference: <%= Date.current.year %>
+
+quarterly:
+  name: "Abonnement Trimestriel"
+  price: 65.0
+  description: "Accès illimité pendant 3 mois"
+  category: 4
+  duration_type: "months"
+  duration_value: 3
+  has_limited_sessions: false
+  active: true
+  valid_from: <%= Date.current %>
+  valid_until: <%= 1.year.from_now %>
+  year_reference: <%= Date.current.year %>
+
+yearly:
+  name: "Abonnement Annuel"
+  price: 150.0
+  description: "Accès illimité pendant 1 an"
+  category: 5
+  duration_type: "years"
+  duration_value: 1
+  has_limited_sessions: false
+  active: true
+  valid_from: <%= Date.current %>
+  valid_until: <%= 1.year.from_now %>
   year_reference: <%= Date.current.year %>

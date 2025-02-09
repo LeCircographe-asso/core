@@ -1,9 +1,13 @@
 # Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
-one:
-  user: one
-  payment: one
+donation_one:
+  user: member
+  payment: payment_two
+  amount: 5.0
+  status: "completed"
 
-two:
-  user: two
-  payment: two
+donation_two:
+  user: volunteer
+  payment: payment_five
+  amount: 2.0
+  status: "completed"

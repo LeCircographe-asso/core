@@ -1,9 +1,21 @@
 # Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
-one:
-  user: one
-  role: one
+guest_user_role:
+  user: guest
+  role: guest_role
 
-two:
-  user: two
-  role: two
+member_user_role:
+  user: member
+  role: member_role
+
+volunteer_user_role:
+  user: volunteer
+  role: volunteer_role
+
+admin_user_role:
+  user: admin
+  role: admin_role
+
+godmode_user_role:
+  user: godmode
+  role: godmode_role

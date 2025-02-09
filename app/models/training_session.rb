@@ -6,15 +6,15 @@ class TrainingSession < ApplicationRecord
   
   validates :date, presence: true, uniqueness: true
   
-  enum status: {
-    open: 'open',      # Journée en cours
-    closed: 'closed',  # Journée terminée
-    holiday: 'holiday' # Jour férié ou fermeture exceptionnelle
-  }
+  enum :status, {
+    open: "open",      # Journée en cours
+    closed: "closed",  # Journée terminée
+    holiday: "holiday" # Jour férié ou fermeture exceptionnelle
+  }, default: :open
   
   # Scope pour trouver la session du jour
   scope :today, -> { find_or_create_by(date: Date.current) do |session|
-    session.status = 'open'
+    session.status = :open
   end }
   
   # Scope pour les statistiques

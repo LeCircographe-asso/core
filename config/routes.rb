@@ -15,6 +15,12 @@ Rails.application.routes.draw do
         post :membership_complete
       end
     end
+    resources :training_sessions, only: [:show] do
+      member do
+        get :search_users
+        post :add_attendance
+      end
+    end
   end
 
   resources :events, only: %i[show index]

@@ -2,6 +2,7 @@ class CreateTrainingAttendees < ActiveRecord::Migration[8.0]
   def change
     create_table :training_attendees do |t|
       t.references :user, null: false, foreign_key: true
+      t.references :training_session, null: false, foreign_key: true
       t.references :user_membership, null: false, foreign_key: true
       t.references :checked_by, null: false, foreign_key: { to_table: :users }
       t.datetime :check_in_time, null: false

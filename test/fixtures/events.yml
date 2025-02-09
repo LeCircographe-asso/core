@@ -1,21 +1,20 @@
 # Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
-one:
-  title: MyString
-  upper_description: MyText
-  middle_description: MyText
-  bottom_description: MyText
-  location: MyString
-  date: 2024-12-04 10:50:17
-  user: one
-  picture_url: MyString
+# Événements de test
+event_one:
+  title: "Événement Test 1"
+  upper_description: "Description haute"
+  middle_description: "Description milieu"
+  bottom_description: "Description basse"
+  location: "Lieu Test 1"
+  date: <%= Time.current %>
+  creator: admin
 
-two:
-  title: MyString
-  upper_description: MyText
-  middle_description: MyText
-  bottom_description: MyText
-  location: MyString
-  date: 2024-12-04 10:50:17
-  user: two
-  picture_url: MyString
+event_two:
+  title: "Événement Test 2"
+  upper_description: "Description haute 2"
+  middle_description: "Description milieu 2"
+  bottom_description: "Description basse 2"
+  location: "Lieu Test 2"
+  date: <%= 1.day.from_now %>
+  creator: volunteer

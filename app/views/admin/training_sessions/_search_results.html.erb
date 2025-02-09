@@ -1,0 +1,52 @@
+<% if users.any? %>
+  <div class="space-y-2">
+    <% users.each do |user| %>
+      <div class="bg-white rounded-lg shadow p-4">
+        <div class="flex items-center justify-between">
+          <div>
+            <h4 class="font-semibold"><%= user.full_name %></h4>
+            <p class="text-sm text-gray-600"><%= user.email_address %></p>
+            
+            <% if user.active_circus_membership? %>
+              <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                Membre Cirque
+              </span>
+            <% elsif user.active_membership? %>
+              <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                Membre Simple
+              </span>
+            <% else %>
+              <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                Sans adhésion
+              </span>
+            <% end %>
+          </div>
+          
+          <div class="flex gap-2">
+            <% if user.active_circus_membership? && user.can_access_training? %>
+              <%= button_to add_attendance_admin_training_session_path(@training_session),
+                params: { user_id: user.id, is_visitor: false },
+                class: "purple-button",
+                data: { turbo_frame: "_top" } do %>
+                Pratiquant
+              <% end %>
+            <% end %>
+
+            <% if user.active_membership? %>
+              <%= button_to add_attendance_admin_training_session_path(@training_session),
+                params: { user_id: user.id, is_visitor: true },
+                class: "secondary-button",
+                data: { turbo_frame: "_top" } do %>
+                Visiteur
+              <% end %>
+            <% else %>
+              <%= link_to "Adhésion requise",
+                new_admin_member_path(user_id: user.id),
+                class: "text-sm text-red-600 hover:text-red-800" %>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  </div>
+<% end %> 

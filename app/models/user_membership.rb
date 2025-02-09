@@ -15,13 +15,13 @@ class UserMembership < ApplicationRecord
   validate :end_date_after_start_date
   validate :one_active_membership_per_type
 
-  enum status: {
-    pending: 'pending',
-    active: 'active',
-    expired: 'expired',
-    cancelled: 'cancelled',
-    suspended: 'suspended'
-  }
+  enum :status, {
+    pending: "pending",
+    active: "active",
+    expired: "expired",
+    cancelled: "cancelled",
+    suspended: "suspended"
+  }, default: :pending
 
   # Scopes utiles
   scope :active, -> { where(status: 'active').where('end_date > ?', Date.current) }
