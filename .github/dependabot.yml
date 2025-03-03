@@ -2,6 +2,7 @@ version: 2
 updates:
 - package-ecosystem: bundler
   directory: "/"
+  target-branch: "deps"
   schedule:
     interval: daily
   open-pull-requests-limit: 10
@@ -10,3 +11,4 @@ updates:
   schedule:
     interval: daily
   open-pull-requests-limit: 10
+
