@@ -23,7 +23,7 @@ ActiveRecord::Schema[8.0].define(version: 2024_12_15_151614) do
   create_table "event_attendees", force: :cascade do |t|
     t.integer "user_id", null: false
     t.integer "event_id", null: false
-    t.integer "payment_id", null: false
+    t.integer "payment_id"
     t.boolean "interested", default: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
