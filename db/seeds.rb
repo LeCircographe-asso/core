@@ -179,15 +179,15 @@ end
 end
 
 
-10.times do
-  first_stid = SubscriptionType.first.id
-  last_stid = SubscriptionType.last.id
+# 10.times do
+#   first_stid = SubscriptionType.first.id
+#   last_stid = SubscriptionType.last.id
 
-  stid_range = last_stid - first_stid
-  UserMembership.create(
-    user_id: rand(20),
-    subscription_type_id: (first_stid + rand(stid_range)),
-    payment_id: rand(10),
-    status: true
-  )
-end
+#   stid_range = last_stid - first_stid
+#   UserMembership.create(
+#     user_id: rand(20),
+#     subscription_type_id: (first_stid + rand(stid_range)),
+#     payment_id: rand(10),
+#     status: true
+#   )
+# end

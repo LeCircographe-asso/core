@@ -37,7 +37,21 @@ class CheckoutController < ApplicationController
     @payment_intent = Stripe::PaymentIntent.retrieve(@session.payment_intent)
 
     if @payment_intent.status == "succeeded"
-      EventAttendee.create!(user_id: Current.user.id, event_id: @event.id, payment_id: @payment_intent.id, interested: true)
+
+      payment = Payment.create!(
+        amount: 10,
+        payment_method: "card",
+        status: true,
+        user_id: Current.user.id
+      )
+
+      EventAttendee.create!(
+        user_id: Current.user.id,
+        event_id: @event.id,
+        payment_id: payment.id,
+        interested: true
+      )
+
       redirect_to @event, notice: "Paiement réussi et commande mise à jour."
     else
       redirect_to events_path, alert: "Paiement non réussi, commande non mise à jour."
