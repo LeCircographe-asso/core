@@ -397,7 +397,7 @@ DEPENDENCIES
   kamal
   propshaft
   puma (>= 5.0)
-  rails (~> 8.0.1)
+  rails (~> 8.0.2)
   rubocop-rails-omakase
   selenium-webdriver
   solid_cable
