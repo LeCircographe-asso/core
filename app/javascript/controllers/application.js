@@ -1,7 +1,5 @@
 import { Application } from "@hotwired/stimulus"
-import { Application } from "@hotwired/turbo-rails"
 
-import "./controllers/cookie_popup_controller";
 
 const application = Application.start()
 
