@@ -1,6 +1,5 @@
 module Admin
   class BaseController < ApplicationController
-    layout "admin"
     before_action :require_admin_or_godmode
 
     private
