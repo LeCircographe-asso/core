@@ -1,66 +1,73 @@
-<div class="signup-page">
-    <div class="left-side">
-        <%= image_tag("about.jpg", alt: "Circographe Image", class: "signup-img") %>
-    </div>
-    <div class="right-side">
-        <div class="signup-form-container">
-            <h1>S'inscrire au Circographe</h1>
-            <%= form_with model: @user, url: registration_path, method: "post", class: "signup-form" do |form| %>
-                <div class="form-group">
-                    <%= form.email_field :email_address, required: true, placeholder: "Adresse mail", maxlength: 72, class: "form-input" %>
+<div class="bg-white white:bg">
+    <div class="flex flex-col lg:flex-row h-screen">
+        <!-- Partie Image (à gauche) -->
+        <div class="lg:w-2/3 flex-shrink-0">
+            <%= image_tag("graff.jpg", alt: "Circographe Image", class: "w-full h-full object-cover signup-img") %>
+        </div>
+
+        <!-- Partie Formulaire (à droite) -->
+        <div class="flex items-center justify-center w-full lg:w-1/3 px-6">
+            <div class="w-full max-w-md">
+                <div class="text-center">
+                    <h1 class="text-2xl font-bold text-gray-700 dark:text-black">S'inscrire au Circographe</h1>
                 </div>
-                <div class="form-group password-container">
-                    <%= form.password_field :password, required: true, placeholder: "Mot de passe", maxlength: 72, id: "password", class: "form-input password-field" %>
-                    <span class="toggle-password" onclick="togglePassword('password', 'password-icon')">
-                        <i class="fa fa-eye" id="password-icon"></i>
-                    </span>
-                </div>
-                <div class="form-group password-container">
-                    <%= form.password_field :password_confirmation, required: true, placeholder: "Confirmer votre mot de passe", maxlength: 72, id: "password_confirmation", class: "form-input password-field", style: "bg-white" %>
-                    <span class="toggle-password" onclick="togglePassword('password_confirmation', 'password_confirmation-icon')">
-                        <i class="fa fa-eye" id="password_confirmation-icon"></i>
-                    </span>
-                </div>
-                <div class="form-group checkbox-container">
-                    <%= form.check_box :cgu, id: "cgu" %>
-                    <label for="cgu">J'accepte les Conditions Générales d'Utilisation (CGU)</label>
-                    <% if @user.errors[:cgu].any? %>
-                        <div class="error-message"><%= @user.errors[:cgu].first %></div>
+
+                <div class="mt-8">
+                    <%= form_with model: @user, url: registration_path, method: "post", class: "signup-form" do |form| %>
+                        <!-- Champ Email -->
+                        <div class="mt-6">
+                            <label for="signup_email_address" class="block mb-2 text-sm text-black dark:text-black">Adresse Email</label>
+                            <%= form.email_field :email_address, required: true, placeholder: "example@example.com", maxlength: 72, id: "signup_email_address", class: "block w-full px-4 py-2 mt-2 text-black placeholder-gray-400 bg-white border border-gray-200 rounded-lg dark:placeholder-gray-600 dark:bg-gray-900 dark:text-black dark:border-gray-700 focus:border-blue-400 dark:focus:border-blue-400 focus:ring-blue-400 focus:outline-none focus:ring focus:ring-opacity-40 form-input", style: "background-color: white;" %>
+                        </div>
+
+                        <!-- Champ Mot de passe -->
+                        <div class="mt-6 relative">
+                            <label for="password" class="block mb-2 text-sm text-black dark:text-black">Mot de passe</label>
+                            <%= form.password_field :password, required: true, placeholder: "Votre mot de passe", maxlength: 72, id: "password", class: "block w-full px-4 py-2 mt-2 text-black placeholder-gray-400 bg-white border border-gray-200 rounded-lg dark:placeholder-gray-600 dark:bg-gray-900 dark:text-black dark:border-gray-700 focus:border-blue-400 dark:focus:border-blue-400 focus:ring-blue-400 focus:outline-none focus:ring focus:ring-opacity-40 form-input password-field", style: "background-color: white;" %>
+                            <span class="toggle-password absolute inset-y-0 right-0 flex items-center pr-3 mt-8" onclick="togglePassword('password', 'password-icon')">
+                                <i class="fa fa-eye text-gray-500" id="password-icon"></i>
+                            </span>
+                        </div>
+
+                        <!-- Confirmation Mot de passe -->
+                        <div class="mt-6 relative">
+                            <label for="password_confirmation" class="block mb-2 text-sm text-black dark:text-black">Confirmer votre mot de passe</label>
+                            <%= form.password_field :password_confirmation, required: true, placeholder: "Confirmer votre mot de passe", maxlength: 72, id: "password_confirmation", class: "block w-full px-4 py-2 mt-2 text-black placeholder-gray-400 bg-white border border-gray-200 rounded-lg dark:placeholder-gray-600 dark:bg-gray-900 dark:text-black dark:border-gray-700 focus:border-blue-400 dark:focus:border-blue-400 focus:ring-blue-400 focus:outline-none focus:ring focus:ring-opacity-40 form-input password-field", style: "background-color: white;" %>
+                            <span class="toggle-password absolute inset-y-0 right-0 flex items-center pr-3 mt-8" onclick="togglePassword('password_confirmation', 'password_confirmation-icon')">
+                                <i class="fa fa-eye text-gray-500" id="password_confirmation-icon"></i>
+                            </span>
+                        </div>
+
+                        <!-- Checkbox CGU -->
+                        <div class="mt-6 flex items-center">
+                            <%= form.check_box :cgu, id: "cgu", class: "h-4 w-4 text-blue-500 border-gray-300 rounded" %>
+                            <label for="cgu" class="ml-2 text-sm text-black dark:text-black">J'accepte les Conditions Générales d'Utilisation (CGU)</label>
+                        </div>
+                        <% if @user.errors[:cgu].any? %>
+                            <div class="text-red-500 text-sm mt-1"><%= @user.errors[:cgu].first %></div>
+                        <% end %>
+
+                        <!-- Checkbox Politique de Confidentialité -->
+                        <div class="mt-4 flex items-center">
+                            <%= form.check_box :privacy_policy, id: "privacy_policy", class: "h-4 w-4 text-blue-500 border-gray-300 rounded" %>
+                            <label for="privacy_policy" class="ml-2 text-sm text-black dark:text-black">J'accepte la Politique de Confidentialité</label>
+                        </div>
+                        <% if @user.errors[:privacy_policy].any? %>
+                            <div class="text-red-500 text-sm mt-1"><%= @user.errors[:privacy_policy].first %></div>
+                        <% end %>
+
+                        <!-- Bouton Soumettre -->
+                        <div class="mt-6">
+                            <%= form.submit "S'inscrire", class: "w-full px-4 py-2 tracking-wide text-white font-bold bg-[#6b47b8] border-2 border-[#6b47b8] rounded-lg shadow-lg hover:bg-gray-100 hover:text-[#1F5C55] hover:border-[#1F5C55] hover:shadow-lg transition-colors duration-300" %>
+                        </div>
                     <% end %>
                 </div>
-                <div class="form-group checkbox-container">
-                    <%= form.check_box :privacy_policy, id: "privacy_policy" %>
-                    <label for="privacy_policy">J'accepte la Politique de Confidentialité</label>
-                    <% if @user.errors[:privacy_policy].any? %>
-                        <div class="error-message"><%= @user.errors[:privacy_policy].first %></div>
-                    <% end %>
-                </div>
-                <% if flash[:alert] %>
-                    <script>
-                        Swal.fire({
-                            title: "Erreur",
-                            text: "<%= j flash[:alert] %>",
-                            icon: "error",
-                            confirmButtonText: "Ok"
-                        });
-                    </script>
-                <% elsif flash[:notice] %>
-                    <script>
-                        Swal.fire({
-                            title: "Succès",
-                            text: "<%= j flash[:notice] %>",
-                            icon: "success",
-                            confirmButtonText: "Ok"
-                        });
-                    </script>
-                <% end %>
-                <%= form.submit "S'inscrire", class: "submit-button" %>
-            <% end %>
+            </div>
         </div>
     </div>
 </div>
 
-
+<!-- Script pour toggle mot de passe -->
 <script>
     function togglePassword(fieldId, iconId) {
         const field = document.getElementById(fieldId);
