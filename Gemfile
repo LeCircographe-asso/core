@@ -39,6 +39,16 @@ gem "kamal", require: false
 # Add HTTP asset caching/compression and X-Sendfile acceleration to Puma [https://github.com/basecamp/thruster/]
 gem "thruster", require: false
 
+gem "stripe"
+
+gem "actionmailer"
+
+gem "faker"
+
+gem "dotenv-rails"
+
+gem "tailwindcss-rails", "~> 4.2"
+
 # Use Active Storage variants [https://guides.rubyonrails.org/active_storage_overview.html#transforming-images]
 # gem "image_processing", "~> 1.2"
 
@@ -65,7 +75,4 @@ group :test do
 end
 
 
-gem "stripe"
-gem "actionmailer"
-gem "faker"
-gem "dotenv-rails"
+
