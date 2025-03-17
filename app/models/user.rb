@@ -66,6 +66,11 @@ class User < ApplicationRecord
     %w[admin godmode volunteer].include?(self.role)
   end
 
+  def has_admin?
+    %w[admin godmode].include?(self.role)
+  end
+
+
   def is_interested_in?(event_id)
     events = self.event_attendees
     events.each do |event|
