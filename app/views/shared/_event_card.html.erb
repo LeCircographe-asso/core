@@ -1,13 +1,15 @@
 <div class="flex justify-center items-center min-h-screen">
-    <div class="max-w-[360px] mx-auto">
-        <div class="relative flex w-full max-w-[26rem] flex-col rounded-xl bg-white bg-clip-border text-gray-700 shadow-lg">
+    <div class="max-w-[720px] mx-auto">
+        <div class="relative flex w-full max-w-[26rem] flex-col rounded-xl bg-white bg-clip-border text-gray-700 shadow-lg h-[550px]">
 
             <div class="relative mx-4 mt-4 overflow-hidden text-white shadow-lg rounded-xl bg-blue-gray-500 bg-clip-border shadow-blue-gray-500/40">
-                <%= image_tag event.picture_url.presence || "home2.webp", alt: event.title, class: "w-64 h-48  object-cover mx-auto rounded-xl" %>
+                <%= image_tag event.picture_url.presence || "home2.webp", 
+                     alt: event.title, 
+                     class: "w-full h-[250px] object-cover rounded-xl" %>
                 <div class="absolute inset-0 w-full h-full bg-gradient-to-tr from-transparent via-transparent to-black/60"></div>
             </div>
 
-            <div class="p-6">
+            <div class="p-6 flex-grow">
                 <div class="flex items-center justify-between mb-3">
                     <h5 class="block font-sans text-xl antialiased font-medium leading-snug tracking-normal text-blue-gray-900">
                         <%= event.title %>
@@ -19,7 +21,8 @@
             </div>
 
             <div class="p-6 pt-3">
-                <%= link_to "Voir l'événement", event_path(event), class: "block w-full select-none rounded-lg bg-gray-900 py-3.5 px-7 text-center align-middle font-sans text-sm font-bold uppercase text-white shadow-md transition-all hover:shadow-lg focus:opacity-[0.85] active:opacity-[0.85] disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none" %>
+                <%= link_to "Voir l'événement", event_path(event), 
+                     class: "block w-full select-none rounded-lg bg-gray-900 py-3.5 px-7 text-center align-middle font-sans text-sm font-bold uppercase text-white shadow-md transition-all hover:shadow-lg focus:opacity-[0.85] active:opacity-[0.85] disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none" %>
             </div>
         </div>
     </div>
