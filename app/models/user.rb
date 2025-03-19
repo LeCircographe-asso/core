@@ -1,7 +1,7 @@
 class User < ApplicationRecord
   attr_accessor :cgu, :private_policy
 
-  enum :system_role, { super_admin: 0, admin: 1, volonteer: 2, user_connected:3 }
+  enum :system_role, { super_admin: 0, admin: 1, volunteer: 2, user_connected:3 }
 
   alias_attribute :email, :email_address
   has_many :sessions, dependent: :destroy
