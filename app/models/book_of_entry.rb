@@ -8,7 +8,7 @@ class BookOfEntry < ApplicationRecord
   after_create :bookOfEntryValidation
 
 
-  private
+  
 
   def bookOfEntryValidation
     erreurs = []
