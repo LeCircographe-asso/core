@@ -39,6 +39,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_03_19_172136) do
     t.integer "total_entry"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "status"
     t.index ["product_id"], name: "index_book_of_entries_on_product_id"
     t.index ["user_id"], name: "index_book_of_entries_on_user_id"
   end

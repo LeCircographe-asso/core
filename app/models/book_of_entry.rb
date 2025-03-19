@@ -2,8 +2,11 @@ class BookOfEntry < ApplicationRecord
   belongs_to :product
   belongs_to :user
 
+  enum :status, %i[inactive active], default: :active
+
 
   after_create :bookOfEntryValidation
+
 
   private
 
