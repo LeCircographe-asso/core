@@ -10,28 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_03_26_095429) do
-  create_table "attendance_lists", force: :cascade do |t|
-    t.datetime "start_date"
-    t.datetime "end_date"
-    t.integer "list_type"
-    t.integer "status"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
-
-  create_table "attendances", force: :cascade do |t|
-    t.datetime "arrival_time"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.integer "attendance_list_id", null: false
-    t.integer "user_id", null: false
-    t.integer "book_of_entry_id"
-    t.index ["attendance_list_id"], name: "index_attendances_on_attendance_list_id"
-    t.index ["book_of_entry_id"], name: "index_attendances_on_book_of_entry_id"
-    t.index ["user_id"], name: "index_attendances_on_user_id"
-  end
-
+ActiveRecord::Schema[8.0].define(version: 2025_03_19_155700) do
   create_table "book_of_entries", force: :cascade do |t|
     t.integer "product_id", null: false
     t.integer "user_id", null: false
@@ -60,6 +39,71 @@ ActiveRecord::Schema[8.0].define(version: 2025_03_26_095429) do
 
   create_table "memberships", force: :cascade do |t|
     t.integer "type_name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "opening_hours", force: :cascade do |t|
+    t.time "open_at", null: false
+    t.time "close_at", null: false
+    t.integer "day", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "orders", force: :cascade do |t|
+    t.decimal "sum"
+    t.date "date"
+    t.integer "user_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.integer "product_order_id"
+    t.index ["user_id"], name: "index_orders_on_user_id"
+  end
+
+  create_table "payments", force: :cascade do |t|
+    t.string "payment_method"
+    t.decimal "amount"
+    t.boolean "status", default: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.integer "user_id"
+    t.index ["user_id"], name: "index_payments_on_user_id"
+  end
+
+  create_table "price_catalogs", force: :cascade do |t|
+    t.boolean "active"
+    t.decimal "price", precision: 10, scale: 2
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "price_entries", force: :cascade do |t|
+    t.integer "product_id", null: false
+    t.integer "price_catalog_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["price_catalog_id"], name: "index_price_entries_on_price_catalog_id"
+    t.index ["product_id"], name: "index_price_entries_on_product_id"
+  end
+
+  create_table "product_orders", force: :cascade do |t|
+    t.integer "product_id", null: false
+    t.integer "order_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["order_id"], name: "index_product_orders_on_order_id"
+    t.index ["product_id"], name: "index_product_orders_on_product_id"
+  end
+
+  create_table "products", force: :cascade do |t|
+    t.string "product_name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "roles", force: :cascade do |t|
+    t.string "name", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
