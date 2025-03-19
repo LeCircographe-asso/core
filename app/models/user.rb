@@ -7,6 +7,8 @@ class User < ApplicationRecord
   has_many :sessions, dependent: :destroy
   has_many :events, through: :event_attendees
   has_many :user_memberships, dependent: :destroy
+  has_many :book_of_entries
+  has_many :orders
 
   normalizes :email_address, with: ->(e) { e.strip.downcase }
 
