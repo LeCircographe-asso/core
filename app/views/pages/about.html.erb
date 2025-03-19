@@ -1,44 +1,239 @@
-<div class="about-container">
-    <div class="banner_hero">
-        <%= image_tag "about.jpg", alt: "Logo Circographe avec motifs floraux sur fond coloré de graffiti", class: "banner_image_hero" %>
+<div class="min-h-screen bg-cover bg-fixed bg-center p-8" style="background-image: url('<%= asset_path('about.jpg') %>')">
+  <!-- Section titre principal -->
+  <section class="py-10 text-center bg-gray-100/90 rounded-lg backdrop-blur-sm">
+    <h1 class="text-5xl font-bold text-gray-800">À Propos</h1>
+  </section>
+
+  <!-- Section Mission -->
+  <section class="py-12 bg-white/95 rounded-lg shadow-md mx-auto my-10 max-w-6xl backdrop-blur-sm">
+    <div class="px-10">
+      <h2 class="text-3xl font-semibold mb-8">Mission de l'asso</h2>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+        <div>
+          <p class="text-gray-700 mb-4">
+            Sollicitant homines non sunt nisi quam formae rerum principis optiones. Mors enim est 
+            terribilis ut dolorri ataut eise apparet. Sed famse mortis est nasto terribils.
+          </p>
+        </div>
+        <div>
+          <p class="text-gray-700 mb-4">
+            Sollicitant homines non sunt nisi quam formae rerum principis optiones. Mors enim est terribilis ut 
+            dolorri ataut eise apparet. Sed famse mortis est nasto terribilis. Cum qatur impelluntur turbuntur attl 
+            duinos viacamus. Mitis non bibequr nisi nobilc hoc est, in principis inustia.
+          </p>
+          
+          <p class="text-gray-700 mb-4">
+            Ponam in culpa idiota alitis prevelatis. Principium ponere culpam in se ipatum praeciptum. Neque
+            improperes et alis qui non perfecte ipse docut.
+          </p>
+          
+          <p class="text-gray-700 mb-4">
+            Quod Enchinrion Epictetus stoici scripist. Indrigo Abela et Technologiae apud Massiachusetts instituta
+            Opera collectio. Ex anglicus Latine transiata sunt.
+          </p>
+          
+          <p class="text-gray-700">
+            Quidam ais sunt, et non est in nostra poteslate. Quae omnia in nostra sententia, pursut, cupisitatem.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section Équipe -->
+  <section class="py-12 bg-white/90 rounded-lg mx-auto my-10 max-w-6xl backdrop-blur-sm">
+    <div class="text-center mb-12">
+      <h2 class="text-3xl font-semibold">Présentation de l'equipe</h2>
+      <h3 class="text-xl text-gray-700 mt-2">Le Conseil d'Administration</h3>
     </div>
 
-    <div class="container">
-        <div class="text-container">
-            <h3>À propos du projet :</h3>
-            <p>Cet espace de 300 m2 a d'ailleurs connu deux événements majeurs avant son ouverture officielle : le premier en mai avec un festival de cirque organisé par la Cie Dark Paillettes et le second avec Mister Freeze qui a célébré ses dix ans de street art en juin dernier en organisant le level 2 de son "Next Level" sur ce site. "Reso et les graffeurs de Mister Freeze ont d'emblée adhéré au projet, assure Cédric Denjean. Cela évidemment nous a encouragés". Un soutien également apporté par la Ville de Toulouse. Cécile Dufraisse, la maire de quartier étant très favorable au projet.
-            <h3>Tous les arts sont les bienvenus</h3>
-            <p>Le Circographe est une porte ouverte aux résidences d'artistes de cirque et de graff, avec des créneaux  d'entraînement libre pour le cirque et dans un futur proche, un lieu d'ateliers et de stages pour ces deux disciplines. Et pour rentrer un peu d'argent, nerf de la guerre, c'est aussi une étape pour accueillir des spectacles et divers évènements. "Toulouse est une place forte du cirque avec le Lido, la Grainerie, constate Cédric. On avait noté que beaucoup de personnes étaient à la recherche de nouveaux lieux pour s'entraîner et créer. D'où l'ouverture de cet espace de vie auto géré que l'on veut, je le répète, décloisonné et ouvrir sur toutes les expressions artistiques. D'ailleurs, récemment nous avons eu une soirée roller qui a beaucoup séduit".
-            <button onclick="window.location.href='https://www.ladepeche.fr/2024/02/05/toulouse-le-nouvel-espace-circographe-entre-lart-du-graffiti-et-du-cirque-11739479.php'" class="white-button">Lire l'article complet </button>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 px-10">
+      <!-- Bloc texte central -->
+      <div class="md:col-span-1 md:order-2">
+        <div class="text-gray-700 mb-6">
+          <p class="mb-4">
+            Sir de isto et istae percipit vel quam ipsum, ut id isto. Tos autem volutn lorem, ut 
+            lorem, ut meros mas in stato rationar ou confermrer? Et similder cirica alias.
+          </p>
+          <p class="mb-4">
+            Sir de isto et istae percipit vel quam ipsum, ut id isto. Tos autem volutn lorem, ut 
+            meros mas in stato rationar ou confermrer? Et similder cirica alias res. Et sie, si contingit 
+            ea per ou baraldren, et sis hoc paratus et diceret. Tos bun volem kuret ut diceder sivl, 
+            sed ut xremes in stato rationar convensder naturae, et non ut si ego quo ventura
+          </p>
+          <p class="mb-4">
+            Si circularitur poer tuae aut uuvorem tuam, osculum, non dico quod omnia quae sunt hominis, et sic non tangitur, si aut est eis moriatur.
+          </p>
+          <p>
+            Sollicitant homines non sunt nisi quam
+          </p>
         </div>
-        <div class="image-container">
-            <%= image_tag "about.jpg", alt: "Logo Circographe avec motifs floraux sur fond coloré de graffiti", class: "image-main" %>
-        </div>
-    </div>
+      </div>
 
-    <div class="team-section">
-        <h2 class="team-title">L'équipe</h2>
-        <div class="team-grid">
-            <div class="team-member">
-                <%= image_tag "admin.webp", alt: "Membre de l'équipe", class:"team-image" %>
-                <p>Cédric<br>Denjran<br>Président</p>
-            </div>
-            <div class="team-member">
-                <%= image_tag "admin.webp", alt: "Membre de l'équipe", class:"team-image" %>
-                <p>Laetitia<br>Boudet<br>Trésoriere</p>
-            </div>
-            <div class="team-member">
-                <%= image_tag "admin.webp", alt: "Membre de l'équipe", class:"team-image" %>
-                <p>Helene<br>Charbonnier<br>Conseil d'administration</p>
-            </div>
-            <div class="team-member">
-                <%= image_tag "admin.webp", alt: "Membre de l'équipe", class:"team-image" %>
-                <p>Emma<br>Omer<br>Conseil d'administration</p>
-            </div>
-            <div class="team-member">
-                <%= image_tag "admin.webp", alt: "Membre de l'équipe", class:"team-image" %>
-                <p>Dark Paillettes</p>
-            </div>
+      <!-- Membres à gauche -->
+      <div class="md:col-span-1 md:order-1">
+        <div class="transition-transform duration-300 hover:-translate-y-1 text-center mb-8">
+          <div class="mx-auto mb-4 rounded-full overflow-hidden w-32 h-32 bg-gray-200 shadow-md">
+            <%= image_tag "placeholder_avatar.webp", alt: "John Doe", class: "w-full h-full object-cover" %>
+          </div>
+          <h4 class="font-semibold">John Doe</h4>
+          <p class="text-gray-600 text-sm">Rôle dans l'association</p>
+          <div class="flex justify-center space-x-2 mt-2">
+            <a href="#" class="text-gray-500 hover:text-gray-800 transition-colors duration-200">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M9 8h-3v4h3v12h5v-12h3.642l.358-4h-4v-1.667c0-.955.192-1.333 1.115-1.333h2.885v-5h-3.808c-3.596 0-5.192 1.583-5.192 4.615v3.385z"/>
+              </svg>
+            </a>
+            <a href="#" class="text-gray-500 hover:text-gray-800 transition-colors duration-200">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z"/>
+              </svg>
+            </a>
+            <a href="#" class="text-gray-500 hover:text-gray-800 transition-colors duration-200">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M4.98 3.5c0 1.381-1.11 2.5-2.48 2.5s-2.48-1.119-2.48-2.5c0-1.38 1.11-2.5 2.48-2.5s2.48 1.12 2.48 2.5zm.02 4.5h-5v16h5v-16zm7.982 0h-4.968v16h4.969v-8.399c0-4.67 6.029-5.052 6.029 0v8.399h4.988v-10.131c0-7.88-8.922-7.593-11.018-3.714v-2.155z"/>
+              </svg>
+            </a>
+          </div>
         </div>
+
+        <div class="transition-transform duration-300 hover:-translate-y-1 text-center">
+          <div class="mx-auto mb-4 rounded-full overflow-hidden w-32 h-32 bg-gray-200 shadow-md">
+            <%= image_tag "placeholder_avatar.webp", alt: "Amelie Anderson", class: "w-full h-full object-cover" %>
+          </div>
+          <h4 class="font-semibold">Amelie Anderson</h4>
+          <p class="text-gray-600 text-sm">Rôle dans l'association</p>
+          <div class="flex justify-center space-x-2 mt-2">
+            <a href="#" class="text-gray-500 hover:text-gray-800 transition-colors duration-200">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M9 8h-3v4h3v12h5v-12h3.642l.358-4h-4v-1.667c0-.955.192-1.333 1.115-1.333h2.885v-5h-3.808c-3.596 0-5.192 1.583-5.192 4.615v3.385z"/>
+              </svg>
+            </a>
+            <a href="#" class="text-gray-500 hover:text-gray-800 transition-colors duration-200">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z"/>
+              </svg>
+            </a>
+            <a href="#" class="text-gray-500 hover:text-gray-800 transition-colors duration-200">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M4.98 3.5c0 1.381-1.11 2.5-2.48 2.5s-2.48-1.119-2.48-2.5c0-1.38 1.11-2.5 2.48-2.5s2.48 1.12 2.48 2.5zm.02 4.5h-5v16h5v-16zm7.982 0h-4.968v16h4.969v-8.399c0-4.67 6.029-5.052 6.029 0v8.399h4.988v-10.131c0-7.88-8.922-7.593-11.018-3.714v-2.155z"/>
+              </svg>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Membres à droite -->
+      <div class="md:col-span-1 md:order-3">
+        <div class="transition-transform duration-300 hover:-translate-y-1 text-center mb-8">
+          <div class="mx-auto mb-4 rounded-full overflow-hidden w-32 h-32 bg-gray-200 shadow-md">
+            <%= image_tag "placeholder_avatar.webp", alt: "Arthur Malo", class: "w-full h-full object-cover" %>
+          </div>
+          <h4 class="font-semibold">Arthur Malo</h4>
+          <p class="text-gray-600 text-sm">Rôle dans l'association</p>
+          <div class="flex justify-center space-x-2 mt-2">
+            <a href="#" class="text-gray-500 hover:text-gray-800 transition-colors duration-200">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M9 8h-3v4h3v12h5v-12h3.642l.358-4h-4v-1.667c0-.955.192-1.333 1.115-1.333h2.885v-5h-3.808c-3.596 0-5.192 1.583-5.192 4.615v3.385z"/>
+              </svg>
+            </a>
+            <a href="#" class="text-gray-500 hover:text-gray-800 transition-colors duration-200">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z"/>
+              </svg>
+            </a>
+            <a href="#" class="text-gray-500 hover:text-gray-800 transition-colors duration-200">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M4.98 3.5c0 1.381-1.11 2.5-2.48 2.5s-2.48-1.119-2.48-2.5c0-1.38 1.11-2.5 2.48-2.5s2.48 1.12 2.48 2.5zm.02 4.5h-5v16h5v-16zm7.982 0h-4.968v16h4.969v-8.399c0-4.67 6.029-5.052 6.029 0v8.399h4.988v-10.131c0-7.88-8.922-7.593-11.018-3.714v-2.155z"/>
+              </svg>
+            </a>
+          </div>
+        </div>
+
+        <div class="transition-transform duration-300 hover:-translate-y-1 text-center">
+          <div class="mx-auto mb-4 rounded-full overflow-hidden w-32 h-32 bg-gray-200 shadow-md">
+            <%= image_tag "placeholder_avatar.webp", alt: "Olivia Watson", class: "w-full h-full object-cover" %>
+          </div>
+          <h4 class="font-semibold">Olivia Watson</h4>
+          <p class="text-gray-600 text-sm">Rôle dans l'association</p>
+          <div class="flex justify-center space-x-2 mt-2">
+            <a href="#" class="text-gray-500 hover:text-gray-800 transition-colors duration-200">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M9 8h-3v4h3v12h5v-12h3.642l.358-4h-4v-1.667c0-.955.192-1.333 1.115-1.333h2.885v-5h-3.808c-3.596 0-5.192 1.583-5.192 4.615v3.385z"/>
+              </svg>
+            </a>
+            <a href="#" class="text-gray-500 hover:text-gray-800 transition-colors duration-200">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z"/>
+              </svg>
+            </a>
+            <a href="#" class="text-gray-500 hover:text-gray-800 transition-colors duration-200">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M4.98 3.5c0 1.381-1.11 2.5-2.48 2.5s-2.48-1.119-2.48-2.5c0-1.38 1.11-2.5 2.48-2.5s2.48 1.12 2.48 2.5zm.02 4.5h-5v16h5v-16zm7.982 0h-4.968v16h4.969v-8.399c0-4.67 6.029-5.052 6.029 0v8.399h4.988v-10.131c0-7.88-8.922-7.593-11.018-3.714v-2.155z"/>
+              </svg>
+            </a>
+          </div>
+        </div>
+      </div>
     </div>
+  </section>
+
+  <!-- Section Historique -->
+  <section class="py-12 bg-white/95 rounded-lg shadow-md mx-auto my-10 max-w-6xl backdrop-blur-sm">
+    <div class="px-10">
+      <h2 class="text-3xl font-semibold text-center mb-6">Historique de l'association</h2>
+      <h3 class="text-xl text-gray-700 text-center mb-8">Membres fondateurs</h3>
+      
+      <div class="mb-8">
+        <p class="text-gray-700 text-center max-w-3xl mx-auto">
+          Tenete ergo quod si servitus quae natura liber, et aliena tua tunc impeditur. Doloris, et 
+          turbabuntur, et inveniatis, cum culpa tam de hominibusque. Quod si fibi tantum sit 
+          propria et aliena quale sit, nemo uniquam vel invitum te continebis.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-6 justify-items-center mt-12">
+        <!-- Membres fondateurs -->
+        <% 5.times do |i| %>
+          <div class="transition-transform duration-300 hover:-translate-y-1 text-center">
+            <div class="mx-auto mb-4 rounded-full overflow-hidden w-24 h-24 bg-gray-200 shadow-md">
+              <%= image_tag "placeholder_avatar.webp", alt: "Membre fondateur", class: "w-full h-full object-cover" %>
+            </div>
+            <h4 class="font-semibold text-sm"><%= ["John Doe", "Amelie Anderson", "Arthur Malo", "Olivia Watson", "Alex Smith"][i % 5] %></h4>
+            <p class="text-gray-600 text-xs">Rôle fondateur</p>
+            <div class="flex justify-center space-x-2 mt-2">
+              <a href="#" class="text-gray-500 hover:text-gray-800 transition-colors duration-200">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M9 8h-3v4h3v12h5v-12h3.642l.358-4h-4v-1.667c0-.955.192-1.333 1.115-1.333h2.885v-5h-3.808c-3.596 0-5.192 1.583-5.192 4.615v3.385z"/>
+                </svg>
+              </a>
+              <a href="#" class="text-gray-500 hover:text-gray-800 transition-colors duration-200">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z"/>
+                </svg>
+              </a>
+              <a href="#" class="text-gray-500 hover:text-gray-800 transition-colors duration-200">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M4.98 3.5c0 1.381-1.11 2.5-2.48 2.5s-2.48-1.119-2.48-2.5c0-1.38 1.11-2.5 2.48-2.5s2.48 1.12 2.48 2.5zm.02 4.5h-5v16h5v-16zm7.982 0h-4.968v16h4.969v-8.399c0-4.67 6.029-5.052 6.029 0v8.399h4.988v-10.131c0-7.88-8.922-7.593-11.018-3.714v-2.155z"/>
+                </svg>
+              </a>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </section>
 </div>
+
+<!-- CSS spécifique à la page-->
+<style>
+  .about-page {
+    background-image: url('/images/mountain-bg.jpg');
+    background-size: cover;
+    background-attachment: fixed;
+    background-position: center;
+    min-height: 100vh;
+    padding: 2rem;
+  }
+</style>
