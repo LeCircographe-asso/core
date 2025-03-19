@@ -2,3 +2,7 @@
 import "@hotwired/turbo-rails"
 import "controllers"
 import "flowbite"
+
+document.addEventListener("turbo:load", () => {
+    initFlowbite();
+});
