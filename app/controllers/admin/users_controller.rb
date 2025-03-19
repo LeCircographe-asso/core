@@ -26,9 +26,9 @@ module Admin
       @user.password = generate_secure_password
 
       if @user.save
-        membership_role = Role.find_or_create_by(name: "membership")
+        membership_role = Role.find_or_create_by(name: "membership")  #a revoir
 
-        @user.roles << membership_role
+        @user.system_role << membership_role
 
         payment = @user.payments.build(amount: 1, status: "pending", payment_method: "credit_card")
         payment.save!
@@ -53,9 +53,9 @@ module Admin
       end
 
       if @user.save
-        membership_role = Role.find_or_create_by(name: "membership")
+        membership_role = Role.find_or_create_by(name: "membership") #a revoir
 
-        @user.roles << membership_role
+        @user.system_role << membership_role
 
         payment = @user.payments.build(amount: 1, status: "pending", payment_method: "credit_card")
         payment.save!
@@ -122,7 +122,7 @@ module Admin
     # Only allow a list of trusted parameters through.
     def user_params
       params.fetch(:user, {})
-      params.require(:user).permit(:email_address, :first_name, :last_name, :password, :payments, :roles)
+      params.require(:user).permit(:email_address, :first_name, :last_name, :password, :payments, :system_role)
     end
 
     def generate_secure_password
