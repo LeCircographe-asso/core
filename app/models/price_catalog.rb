@@ -3,8 +3,6 @@ class PriceCatalog < ApplicationRecord
 
   after_create :priceValidation
 
-  private
-
   def priceValidation
     if self.price <= 0
       Rails.logger.error("Vous devez ajouter un prix.")
