@@ -1,21 +1,12 @@
 class User < ApplicationRecord
   attr_accessor :cgu, :private_policy
 
-  enum :role, %i[guest membership circus_membership volunteer admin godmode], default: :guest
+  enum :system_role, %i[ super_admin admin volunteer user_connected ]
 
   alias_attribute :email, :email_address
-
-  has_many :user_roles, dependent: :destroy
-  has_many :roles, through: :user_roles
   has_many :sessions, dependent: :destroy
-  has_many :created_events, class_name: "Event", foreign_key: "creator_id", dependent: :destroy
-  has_many :event_attendees, dependent: :destroy
   has_many :events, through: :event_attendees
   has_many :user_memberships, dependent: :destroy
-  has_many :subscription_types, through: :user_memberships
-  has_many :training_attendees, through: :user_memberships
-  has_many :payments, dependent: :destroy
-
 
   normalizes :email_address, with: ->(e) { e.strip.downcase }
 
