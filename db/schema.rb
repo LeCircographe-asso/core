@@ -10,8 +10,28 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
+ActiveRecord::Schema[8.0].define(version: 2025_03_19_172136) do
+  create_table "attendance_lists", force: :cascade do |t|
+    t.datetime "start_date"
+    t.datetime "end_date"
+    t.integer "list_type"
+    t.integer "status"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
 
-ActiveRecord::Schema[8.0].define(version: 2025_03_19_155700) do
+  create_table "attendances", force: :cascade do |t|
+    t.datetime "arrival_time"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.integer "attendance_list_id", null: false
+    t.integer "user_id", null: false
+    t.integer "book_of_entry_id"
+    t.index ["attendance_list_id"], name: "index_attendances_on_attendance_list_id"
+    t.index ["book_of_entry_id"], name: "index_attendances_on_book_of_entry_id"
+    t.index ["user_id"], name: "index_attendances_on_user_id"
+  end
+
   create_table "book_of_entries", force: :cascade do |t|
     t.integer "product_id", null: false
     t.integer "user_id", null: false
@@ -36,7 +56,21 @@ ActiveRecord::Schema[8.0].define(version: 2025_03_19_155700) do
     t.datetime "updated_at", null: false
     t.index ["creator_id"], name: "index_events_on_creator_id"
   end
-  
+
+  create_table "memberships", force: :cascade do |t|
+    t.integer "type_name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "opening_hours", force: :cascade do |t|
+    t.time "open_at", null: false
+    t.time "close_at", null: false
+    t.integer "day", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "orders", force: :cascade do |t|
     t.decimal "sum"
     t.date "date"
@@ -74,12 +108,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_03_19_155700) do
 
   create_table "products", force: :cascade do |t|
     t.string "product_name"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
-
-  create_table "memberships", force: :cascade do |t|
-    t.integer "type_name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
@@ -129,7 +157,9 @@ ActiveRecord::Schema[8.0].define(version: 2025_03_19_155700) do
     t.index ["email_address"], name: "index_users_on_email_address", unique: true
   end
 
-
+  add_foreign_key "attendances", "attendance_lists"
+  add_foreign_key "attendances", "book_of_entries"
+  add_foreign_key "attendances", "users"
   add_foreign_key "book_of_entries", "products"
   add_foreign_key "book_of_entries", "users"
   add_foreign_key "events", "users", column: "creator_id"
@@ -139,8 +169,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_03_19_155700) do
   add_foreign_key "price_entries", "products"
   add_foreign_key "product_orders", "orders"
   add_foreign_key "product_orders", "products"
-  add_foreign_key "events", "users", column: "creator_id"
-
   add_foreign_key "sessions", "users"
   add_foreign_key "user_memberships", "memberships"
   add_foreign_key "user_memberships", "users"
