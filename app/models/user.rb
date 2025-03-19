@@ -2,7 +2,7 @@ class User < ApplicationRecord
   attr_accessor :cgu, :private_policy, :subscribe_to_newsletter
   # after_create :assign_membership
 
-  enum :system_role, { super_admin: 0, admin: 1, volunteer: 2, user_connected:3 }
+  enum :system_role, %i[ super_admin admin volunteer user_connected ]
 
   alias_attribute :email, :email_address
   has_many :sessions, dependent: :destroy
