@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_03_19_172136) do
+ActiveRecord::Schema[8.0].define(version: 2025_03_19_185952) do
   create_table "attendance_lists", force: :cascade do |t|
     t.datetime "start_date"
     t.datetime "end_date"
