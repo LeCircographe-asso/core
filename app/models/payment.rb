@@ -2,8 +2,8 @@ class Payment < ApplicationRecord
   belongs_to :user
   belongs_to :order
 
-  validates :user_id
-  validates :order_id
+  validates :user_id, presence: true
+  validates :order_id, presence: true
 
   enum :status, %i[
     success
