@@ -17,7 +17,7 @@ module Admin
 
     private
 
-    def require_admin_or_godmode
+    def require_admin_or_super_admin
       unless Current.user.has_privileges?
         redirect_to root_path, alert: "Vous n'avez pas acces à cette page"
       end

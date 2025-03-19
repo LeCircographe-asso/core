@@ -2,15 +2,15 @@
   
   
   <div class="membership-card">
-    <h2><%= @user.role %></h2>
+    <h2><%= @user.system_role %></h2>
     <p><%= @user.email %></p>
     <%= link_to "Modifer mon email", edit_user_path(@user), class: "white-button" %>
   </div>
   
   <div class="profile-avatar">
-    <% case @user.role %>
-      <% when 'godmode' %>
-        <%= image_tag "godmode.webp", alt: "Avatar God Mode" %>
+    <% case @user.system_role %>
+      <% when 'super_admin' %>
+        <%= image_tag "super_admin.webp", alt: "Avatar God Mode" %>
       <% when 'admin' %>
         <%= image_tag "admin.webp", alt: "Avatar Admin" %>
       <% when 'volunteer' %>
@@ -19,7 +19,7 @@
         <%= image_tag "circus_members.webp", alt: "Avatar Membre du Cirque" %>
       <% when 'membership' %>
         <%= image_tag "members.webp", alt: "Avatar Membre" %>
-      <% when 'guest' %>
+      <% when 'user_connectedt' %>
         <%= image_tag "users.png", alt: "Avatar Invité" %>
       <% else %>
         <%= image_tag "users.png", alt: "Avatar" %>
@@ -35,7 +35,7 @@
 
   <div class="profile-info">
     <% if authenticated? %>
-      <% if @user.role.in?(["admin", "godmode", "volunteer"]) %>
+      <% if @user.role.in?(["admin", "super_admin", "volunteer"]) %>
         <%= link_to "Dashboard Administrateur", admin_dashboard_index_path, class: "white-button" %>
       <% end %>
     <% end %>

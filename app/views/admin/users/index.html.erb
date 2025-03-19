@@ -29,7 +29,7 @@
         <tr>
           <td><%= user.id %></td>
           <td><%= user.email_address %></td>
-          <td><%= user.role %></td>
+          <td><%= user.system_role %></td>
           <% if user.user_memberships.exists? %>
             <td><%= user.user_memberships.order(:created_at).last.subscription_type.name %></td>
           <% else %>

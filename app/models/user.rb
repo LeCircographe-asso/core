@@ -1,7 +1,7 @@
 class User < ApplicationRecord
   attr_accessor :cgu, :private_policy
 
-  enum :system_role, { super_admin: 0, admin: 1, volonteer: 2, user_connected:3 }
+  enum :system_role, %i[super_admin admin volunteer user_connected], default: :user_connected
 
   alias_attribute :email, :email_address
   has_many :sessions, dependent: :destroy
@@ -54,11 +54,11 @@ class User < ApplicationRecord
   scope :published, -> { where(published: true) }
 
   def has_privileges?
-    %w[admin godmode volunteer].include?(self.role)
+    %w[admin super_admin volunteer].include?(self.system_role)
   end
 
   def has_admin?
-    %w[admin godmode].include?(self.role)
+    %w[admin super_admin].include?(self.system_role)
   end
 
 
