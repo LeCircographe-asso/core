@@ -1,12 +1,12 @@
 class OpeningHour < ApplicationRecord
   enum :day, %i[
-    sunday
     monday
     tuesday
     wednesday
     thursday
     friday
     saturday
+    sunday
 ]
 
   validates :day, presence: true
