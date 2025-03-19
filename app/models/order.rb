@@ -1,8 +1,7 @@
 class Order < ApplicationRecord
-  belongs_to :product_order, optional: true
   belongs_to :user
   has_many :product_orders
-  validates :user_id
+  validates :user_id, presence: true
 
   after_create :sumValidation
 
