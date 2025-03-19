@@ -10,7 +10,28 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_03_19_155700) do
+ActiveRecord::Schema[8.0].define(version: 2025_03_19_172136) do
+  create_table "attendance_lists", force: :cascade do |t|
+    t.datetime "start_date"
+    t.datetime "end_date"
+    t.integer "list_type"
+    t.integer "status"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "attendances", force: :cascade do |t|
+    t.datetime "arrival_time"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.integer "attendance_list_id", null: false
+    t.integer "user_id", null: false
+    t.integer "book_of_entry_id"
+    t.index ["attendance_list_id"], name: "index_attendances_on_attendance_list_id"
+    t.index ["book_of_entry_id"], name: "index_attendances_on_book_of_entry_id"
+    t.index ["user_id"], name: "index_attendances_on_user_id"
+  end
+
   create_table "book_of_entries", force: :cascade do |t|
     t.integer "product_id", null: false
     t.integer "user_id", null: false
