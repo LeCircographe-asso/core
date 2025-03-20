@@ -17,7 +17,7 @@ class ProductsController < ApplicationController
   end
 
   def create
-    @product = Product.new(product_params)
+    @product = Product.create(product_params)
     if @product.save
       redirect_to @product, notice: 'Produit créé avec succès'
     else
@@ -25,12 +25,12 @@ class ProductsController < ApplicationController
     end
   end
 
-  def edit
-    @price_entry = PriceEntry.where(product_id: @product.id).first
-    @price_catalog = PriceCatalog.find(@price_entry.price_catalog_id) if @price_entry
-    @price_catalogs = PriceCatalog.all
-    @product = Product.find(params[:id])
-  end
+  # def edit
+  #   @price_entry = PriceEntry.where(product_id: @product.id).first
+  #   @price_catalog = PriceCatalog.find(@price_entry.price_catalog_id) if @price_entry
+  #   @price_catalogs = PriceCatalog.all
+  #   @product = Product.find(params[:id])
+  # end
 
   def update
     if @product.update(product_params)
