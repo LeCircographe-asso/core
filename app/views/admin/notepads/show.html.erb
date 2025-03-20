@@ -4,7 +4,7 @@
 </div>
 <br>
 <br>
-<% if current_user.role == "admin" || current_user.role == "godmode" %>
+<% if current_user.system_role == "admin" || current_user.system_role == "super_admin" %>
   <div class="dashboard-actions">
     <%= link_to "Modifier le bloc-note", edit_admin_notepad_path, class: "purple-button" %>
   </div> 

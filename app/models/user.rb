@@ -1,12 +1,15 @@
 class User < ApplicationRecord
   attr_accessor :cgu, :private_policy
+  after_create :assign_membership
 
-  enum :system_role, %i[ super_admin admin volunteer user_connected ]
+  enum :system_role, %i[super_admin admin volunteer user_connected], default: :user_connected
 
   alias_attribute :email, :email_address
   has_many :sessions, dependent: :destroy
   has_many :events, through: :event_attendees
   has_many :user_memberships, dependent: :destroy
+  has_many :memberships, through: :user_memberships
+
   has_many :book_of_entries
   has_many :orders
 
@@ -56,11 +59,11 @@ class User < ApplicationRecord
   scope :published, -> { where(published: true) }
 
   def has_privileges?
-    %w[admin godmode volunteer].include?(self.role)
+    %w[admin super_admin volunteer].include?(self.system_role)
   end
 
   def has_admin?
-    %w[admin godmode].include?(self.role)
+    %w[admin super_admin].include?(self.system_role)
   end
 
 
@@ -72,5 +75,19 @@ class User < ApplicationRecord
       end
     end
     false
+  end
+
+  def assign_basic_membership
+      basic_membership = Membership.find_by(type_name: :basic)
+      user_memberships.create(membership: basic_membership) if basic_membership
+  end
+
+  private
+
+  def assign_membership
+    if memberships.empty?
+      no_member_membership = Membership.find_by(type_name: :no_member)
+      user_memberships.create(membership: no_member_membership) if no_member_membership
+    end
   end
 end
