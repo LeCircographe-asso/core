@@ -26,21 +26,27 @@
   <%= form.text_field :last_name %>
 </div>
 
-<%= form.select :membership_id, @membership.map { |m| [m.type_name, m.id] } %>
+<% if @can_promote %>
+<%= form.check_box :promote_role, {}, "1", "0" %>
+<%= form.label :promote_role, "passer à #{@can_promote}" %>
+<% end %>
+
+<% if @can_demote %>
+<%= form.check_box :reduce_role, {}, "1", "0" %>
+<%= form.label :reduce_role, "passer à #{@can_demote}" %>
+<% end %>
+
+
+
+
+
+<%= @can_promote %>
+
 
 <div>
   <%= form.submit "Envoyer", class: "btn btn-primary" %>
 
 </div>
-<!--
-  <% @membership.each do |membership| %>
-  <div>
-    <p><%= membership.type_name %></p>
-  </div>
-  <% end %>
--->
-
-
 
 
 <% end %>
