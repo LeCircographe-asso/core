@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_03_19_172136) do
+ActiveRecord::Schema[8.0].define(version: 2025_03_19_204907) do
   create_table "attendance_lists", force: :cascade do |t|
     t.datetime "start_date"
     t.datetime "end_date"
@@ -88,7 +88,9 @@ ActiveRecord::Schema[8.0].define(version: 2025_03_19_172136) do
     t.boolean "status", default: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.integer "user_id"
+    t.integer "user_id", null: false
+    t.integer "product_order_id", null: false
+    t.index ["product_order_id"], name: "index_payments_on_product_order_id"
     t.index ["user_id"], name: "index_payments_on_user_id"
   end
 
