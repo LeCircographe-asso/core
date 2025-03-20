@@ -1,5 +1,6 @@
 Rails.application.routes.draw do
   namespace :admin do
+    resources :membership, only: %i[index create destroy update]
     resources :dashboard, only: %i[index], path: "dashboard"
     resource :opening_hours, only: %i[show edit update]
     resources :users
@@ -16,6 +17,8 @@ Rails.application.routes.draw do
       end
     end
   end
+
+  
 
   resources :events, only: %i[show index]
   resources :pages, only: %i[show]
