@@ -14,6 +14,7 @@
         <p><strong>Profession ou spécialité:</strong> <%= @user.occupation %></p>
         <p><strong>Disciplines pratiquées:</strong> <%= @user.specialty %></p>
         <p><strong>Droit à l'image:</strong> <%= @user.image_rights %></p>
+        <%= link_to "Cotisation", admin_membership_index_path, class: "purple-button" %>
       </div>
       <div class="info-group">
         <% if @user.user_memberships.exists? %>
