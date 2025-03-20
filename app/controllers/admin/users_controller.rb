@@ -18,7 +18,13 @@ module Admin
 
     # GET /admin/users/1/edit
     def edit
-      @membership = Membership.all
+      @can_promote = User.system_roles.key(@user.system_role_before_type_cast - 1) if can_promote?(@user)
+      @can_demote = User.system_roles.key(@user.system_role_before_type_cast + 1) if can_demote?(@user)
+
+
+
+     
+      
     end
 
     # POST /admin/users or /admin/users.json
@@ -39,7 +45,9 @@ module Admin
 
     # PATCH/PUT /admin/users/1 or /admin/users/1.json
     def update
-
+      p "#"*111
+      p params
+      p "#"*111
 
 
       respond_to do |format|
@@ -80,3 +88,20 @@ module Admin
     end
   end
 end
+
+
+
+
+def can_promote?(other_user)
+  current_user.system_role_before_type_cast < other_user.system_role_before_type_cast - 2
+end
+
+def can_demote?(other_user)
+  current_user.system_role_before_type_cast < other_user.system_role_before_type_cast && other_user.system_role_before_type_cast != 3
+end
+
+
+
+
+
+
