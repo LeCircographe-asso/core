@@ -1,31 +1,26 @@
-<div class="graff-container">
-    <div class="banner_hero">
-        <%= image_tag "home2.webp", alt: "Fresque moderne d'acrobate sur trapèze avec motifs géométriques bleus, jaunes et noirs", class: "banner_image_hero" %>
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 bg-gray-100">
+    <!-- Titre principal -->
+    <div class="text-center mb-12">
+        <h1 class="text-4xl font-bold text-gray-800">Les Arts Graphiques</h1>
     </div>
 
-    <div class="text">
-        <h1> Le graff </h1>
+    <!-- Section centrée avec texte -->
+    <div class="flex justify-center mb-8">
+        <!-- Ajout d'une marge en bas -->
+        <div class="bg-white shadow-md rounded-lg p-6 w-3/4">
+            <p class="text-gray-600 text-center">
+                Sic de isto et tuius peruchti ad actum ipsum, ut si dico "Ego autem vadam lavari, ut mens mea in statu naturae conformiter."
+                Cum igitur impediantur turbulentur aut dolore videamus.
+            </p>
+        </div>
     </div>
 
-    <div class="container">
-        <div class="text-container">
-            <p>Quand l’Art Urbain Rencontre l’Esprit du Cirque "Le Graff" est l’espace dédié aux arts visuels urbains au sein du Circographe. Dans une dynamique de création et de partage, cet atelier se concentre sur l’exploration des formes artistiques telles que le graffiti, le street art, et les fresques murales. Fidèle à l’esprit du Circographe, Le Graph propose un terrain d’expression où les artistes amateurs et confirmés peuvent repousser les limites de leur imagination.</p>
-        </div>
-        <div class="image-container">
-            <%= image_tag "graff-img1.webp", alt: "Fresque moderne d'acrobate sur trapèze avec motifs géométriques bleus, jaunes et noirs", class: "image-main" %>
-        </div>    
+    <!-- Bouton centré "Devenir Membre" -->
+    <div class="flex justify-center">
+        <%= link_to "Devenir Membre",  class: "bg-purple-600 text-white py-2 px-4 rounded-lg hover:bg-purple-700 transition" %>
     </div>
 
-    <div class="container">
-        <div class="image-container">
-            <%= image_tag "graff.jpg", alt: "Fresque moderne d'acrobate sur trapèze avec motifs géométriques bleus, jaunes et noirs", class: "image-main" %>
-        </div>
-            
-        <div class="text-container">
-            <h1>Pourquoi participer ? </h1>
-            <p>Exprimez votre créativité : <br> que vous soyez passionné d’art urbain ou simplement curieux, Le Graff offre un environnement bienveillant pour explorer de nouvelles formes d’expression. <br>
-            Rejoignez une communauté d’artistes : un lieu de rencontre pour échanger, apprendre et créer aux côtés de talents locaux. <br>
-            Contribuez au paysage culturel toulousain : grâce à des projets collectifs, vos œuvres peuvent laisser une empreinte durable dans la ville.:</p>
-        </div>
-    </div>
+    <hr />
+
+    <%= render "shared/carousel_image", images: ["home1.webp", "home1.webp", "home1.webp", "home1.webp", "home1.webp", "home1.webp"] %>
 </div>
