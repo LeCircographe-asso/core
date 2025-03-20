@@ -10,6 +10,8 @@ class User < ApplicationRecord
   has_many :user_memberships, dependent: :destroy
   has_many :memberships, through: :user_memberships
 
+  has_many :book_of_entries
+  has_many :orders
 
   normalizes :email_address, with: ->(e) { e.strip.downcase }
 
