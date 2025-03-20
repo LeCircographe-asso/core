@@ -1,36 +1,40 @@
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 bg-gray-100">
-  <!-- Titre principal -->
-  <div class="text-center mb-12">
-    <h1 class="text-4xl font-bold text-gray-800">Le Cirque</h1>
-  </div>
-
-  <!-- Section avec deux colonnes -->
-  <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
-    <!-- Colonne gauche -->
-    <div class="bg-white shadow-md rounded-lg p-6">
-      <h2 class="text-lg font-bold text-gray-800 mb-4">Modalité</h2>
-      <p class="text-gray-600 mb-4">
-        Quand ambulabat agendis admoneo te quis scito. Scit ad corpus, quae plenunque linguae tacuin in balinea agitam aquam.
-      </p>
-      <h2 class="text-lg font-bold text-gray-800 mb-4">Tarifs</h2>
-      <p class="text-gray-600 mb-4">
-        Quando ambulabat agendis admoneo te quis scito. Scit ad corpus, quae plenunque.
-      </p>
-      <h2 class="text-lg font-bold text-gray-800 mb-4">Horaires</h2>
-      <p class="text-gray-600 mb-4">Aujourd'hui</p>
-      <%= link_to "Devenir Membre", class: "bg-purple-600 text-white py-2 px-4 rounded-lg hover:bg-purple-700 transition" %>
+    <!-- Titre principal -->
+    <div class="text-center mb-12">
+        <h1 class="text-4xl font-bold text-gray-800">Le Cirque</h1>
     </div>
 
-    <!-- Colonne droite -->
-    <div class="bg-white shadow-md rounded-lg p-6">
-      <p class="text-gray-600">
-        Sic de isto et tuius peruchti ad actum ipsum, ut si dico "Ego autem vadam lavari, ut meae mea in statu naturae conformiter."
-        Cum igitur impediantur turbulentur aut dolore videamus.
-      </p>
+    <!-- Section avec deux colonnes -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
+        <!-- Colonne gauche -->
+        <div class="bg-white shadow-md rounded-lg p-6">
+            <h2 class="text-lg font-bold text-gray-800 mb-4">Modalité</h2>
+            <p class="text-gray-600 mb-4">
+                Quand ambulabat agendis admoneo te quis scito. Scit ad corpus, quae plenunque linguae tacuin in balinea agitam aquam.
+            </p>
+            <h2 class="text-lg font-bold text-gray-800 mb-4">Tarifs</h2>
+            <p class="text-gray-600 mb-4">
+                Quando ambulabat agendis admoneo te quis scito. Scit ad corpus, quae plenunque.
+            </p>
+            <h2 class="text-lg font-bold text-gray-800 mb-4">Horaires</h2>
+            <p class="text-gray-600 mb-4">Aujourd'hui</p>
+
+        </div>
+
+        <!-- Colonne droite -->
+        <div class="bg-white shadow-md rounded-lg p-6">
+            <p class="text-gray-600">
+                Sic de isto et tuius peruchti ad actum ipsum, ut si dico "Ego autem vadam lavari, ut meae mea in statu naturae conformiter."
+                Cum igitur impediantur turbulentur aut dolore videamus.
+            </p>
+        </div>
     </div>
-  </div>
+    <div class="flex justify-center">
+        <%= link_to "Devenir Membre",  class: "btn-devenir-membre" %>
 
-  <%= render "shared/carousel_image", images: ["home1.webp", "home1.webp", "home1.webp", "home1.webp", "home1.webp", "home1.webp"] %>
 
- 
+    </div>
 
+    <hr />
+
+    <%= render "shared/carousel_image", images: ["home1.webp", "home1.webp", "home1.webp", "home1.webp", "home1.webp", "home1.webp"] %>
