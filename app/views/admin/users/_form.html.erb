@@ -27,20 +27,22 @@
 </div>
 
 <% if @can_promote %>
-<%= form.check_box :promote_role, {}, "1", "0" %>
-<%= form.label :promote_role, "passer à #{@can_promote}" %>
+<div class="checkbox-container">
+  <%= form.check_box :promote_role, {}, "1", "0" %>
+  <%= form.label :promote_role, "passer à #{@can_promote}" %>
+</div>
 <% end %>
 
 <% if @can_demote %>
-<%= form.check_box :reduce_role, {}, "1", "0" %>
-<%= form.label :reduce_role, "passer à #{@can_demote}" %>
+<div class="checkbox-container">
+  <%= form.check_box :reduce_role, {}, "1", "0" %>
+  <%= form.label :reduce_role, "passer à #{@can_demote}" %>
+</div>
 <% end %>
 
 
 
 
-
-<%= @can_promote %>
 
 
 <div>
