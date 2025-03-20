@@ -5,6 +5,8 @@ class Order < ApplicationRecord
 
   after_create :sumValidation
 
+
+
   def sumValidation
     if self.sum <= 0
       Rails.logger.error("Le panier #{self.id} est vide !")
