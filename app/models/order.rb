@@ -5,7 +5,7 @@ class Order < ApplicationRecord
 
   after_create :sumValidation
 
-  
+
 
   def sumValidation
     if self.sum <= 0
