@@ -1,5 +1,10 @@
 class UserMembership < ApplicationRecord
-  belongs_to :user
-  belongs_to :membership
+
   enum :status, %i[active pending expired canceled]
-end
+  belongs_to :membership
+  belongs_to :user
+  belongs_to :produit, optional: true
+  belongs_to :order, optional: true
+
+
+end 

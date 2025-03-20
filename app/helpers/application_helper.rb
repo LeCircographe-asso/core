@@ -9,6 +9,6 @@ module ApplicationHelper
   end
 
   def admin_view?
-  authenticated? && authorized_roles.include?(Current.user.role)
+  authenticated? && authorized_roles.include?(Current.user.system_role)
   end
 end
