@@ -1,0 +1,14 @@
+NOUVEAU MESSAGE DE CONTACT
+=======================
+
+Catégorie : <%= @category.capitalize %>
+De : <%= @name %> (<%= @email %>)
+Envoyé le : <%= @submitted_at.strftime("%d/%m/%Y à %H:%M") %>
+
+MESSAGE :
+---------
+<%= @message %>
+
+--
+Ce message a été envoyé depuis le formulaire de contact du site Le Circographe.
+Vous pouvez répondre directement à ce message en utilisant la fonction "répondre" de votre client mail. 
