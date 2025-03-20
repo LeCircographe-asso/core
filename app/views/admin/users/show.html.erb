@@ -16,21 +16,6 @@
         <p><strong>Droit à l'image:</strong> <%= @user.image_rights %></p>
         <%= link_to "Cotisation", admin_membership_index_path, class: "purple-button" %>
       </div>
-      <div class="info-group">
-        <% if @user.user_memberships.exists? %>
-          <% latest_membership = @user.user_memberships.order(created_at: :desc).first %>
-          <p><strong>Inscription ?:</strong> Oui</p>
-          <p><strong>Date d'inscription:</strong> <%= @user.user_memberships.order(:created_at).first.created_at.strftime("%d/%m/%Y") %></p>
-          <p><strong>Type d'abonnement:</strong> <%= latest_membership.subscription_type.name %></p>
-          <p><strong>Statut de l'abonnement:</strong> <%= latest_membership.status ? "Actif" : "Inactif" %></p>
-        <% else %>
-          <p><strong>Inscription ?:</strong> Non</p>
-        <% end %>
-        <p><strong>Newsletter:</strong> <%= @user.newsletter %></p>
-        <p><strong>Investissement dans le projet:</strong> <%= @user.get_involved %></p>
-      </div>
-    </div>
-
   </div>
 
 <div>
