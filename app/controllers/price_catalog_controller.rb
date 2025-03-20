@@ -45,6 +45,6 @@ class PriceCatalogController < ApplicationController
   end
 
   def price_catalog_params
-    params.require(:price_catalog).permit(:name, :active, :price)
+    params.require(:price_catalog).permit(:active, :price)
   end
 end
