@@ -36,5 +36,4 @@
 /app/assets/builds/*
 !/app/assets/builds/.keep
 db/seeds.rb
-
-Gemfile
+/node_modules
