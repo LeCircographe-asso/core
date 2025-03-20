@@ -7,7 +7,7 @@ class PriceEntryController < ApplicationController
   end
 
   def new
-    @price_entry = @product.price_entries.new
+    @price_entry = PriceEntry.new
     @price_catalogs = PriceCatalog.all
   end
 
