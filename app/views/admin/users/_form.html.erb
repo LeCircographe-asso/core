@@ -1,32 +1,46 @@
 <%= form_with(model: [:admin, user]) do |form| %>
-  <% if user.errors.any? %>
-    <div style="color: red">
-      <h2><%= pluralize(user.errors.count, "error") %> prohibited this user from being saved:</h2>
+<% if user.errors.any? %>
+<div style="color: red">
+  <h2><%= pluralize(user.errors.count, "error") %> prohibited this user from being saved:</h2>
 
-      <ul>
-        <% user.errors.each do |error| %>
-          <li><%= error.full_message %></li>
-        <% end %>
-      </ul>
-    </div>
-  <% end %>
+  <ul>
+    <% user.errors.each do |error| %>
+    <li><%= error.full_message %></li>
+    <% end %>
+  </ul>
+</div>
+<% end %>
 
-  <div class="field">
-    <%= form.label :email_address %>
-    <%= form.text_field :email_address %>
-  </div>
+<div class="field">
+  <%= form.label :email_address %>
+  <%= form.text_field :email_address %>
+</div>
 
-  <div class="field">
-    <%= form.label :first_name, "Prénom" %>
-    <%= form.text_field :first_name %>
-  </div>
+<div class="field">
+  <%= form.label :first_name, "Prénom" %>
+  <%= form.text_field :first_name %>
+</div>
 
-  <div class="field">
-    <%= form.label :last_name, "Nom" %>
-    <%= form.text_field :last_name %>
-  </div>
+<div class="field">
+  <%= form.label :last_name, "Nom" %>
+  <%= form.text_field :last_name %>
+</div>
 
+<%= form.select :membership_id, @membership.map { |m| [m.type_name, m.id] } %>
+
+<div>
+  <%= form.submit "Envoyer", class: "btn btn-primary" %>
+
+</div>
+<!--
+  <% @membership.each do |membership| %>
   <div>
-    <%= form.submit %>
+    <p><%= membership.type_name %></p>
   </div>
+  <% end %>
+-->
+
+
+
+
 <% end %>

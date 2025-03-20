@@ -18,6 +18,7 @@ module Admin
 
     # GET /admin/users/1/edit
     def edit
+      @membership = Membership.all
     end
 
     # POST /admin/users or /admin/users.json
@@ -38,6 +39,9 @@ module Admin
 
     # PATCH/PUT /admin/users/1 or /admin/users/1.json
     def update
+
+
+
       respond_to do |format|
         if @user.update(user_params)
           format.html { redirect_to [ :admin, @user ], notice: "User was successfully updated." }
