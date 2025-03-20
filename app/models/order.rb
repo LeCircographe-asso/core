@@ -23,6 +23,9 @@ end
 def determine_user_membership
   product_names = product_orders.includes(:product).pluck('products.product_name')
 
+  # Order.product_order.map {|product_order| product_order.product}
+  
+
   circus_products = [
     "Adhésion Cirque - Tarif Plein",
     "Upgrade Basic to Cirque - Tarif Plein",
