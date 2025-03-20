@@ -35,5 +35,5 @@
 
 /app/assets/builds/*
 !/app/assets/builds/.keep
-/db/seeds.rb
-
+db/seeds.rb
+/node_modules
