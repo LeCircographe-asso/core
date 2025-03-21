@@ -1,109 +1,108 @@
-    <div class="form-container">
-      <h1>Formulaire d'adhésion</h1>
-      <%= form_with url: membership_recap_admin_members_path, method: :post, class: "formulaire-adhesion" do |f| %>
-        <fieldset class="fieldset-adhesion">
-          <legend>J'adhère au CircoGraphe pour :</legend>
+<div class="form-container">
+    <h1>Formulaire d'adhésion</h1>
+    <%= form_with url: membership_recap_admin_members_path, method: :post, class: "formulaire-adhesion" do |f| %>
+    <fieldset class="fieldset-adhesion">
+        <legend>J'adhère au CircoGraphe pour :</legend>
 
-          <%= f.check_box :cirque, { id: "cirque-checkbox", checked: @membership_data['cirque'] == 'oui' }, 'oui', nil %>
-          <%= f.label :cirque, "CIRQUE" %><br>
+        <%= f.check_box :cirque, { id: "cirque-checkbox", checked: @membership_data['cirque'] == 'oui' }, 'oui', nil %>
+        <%= f.label :cirque, "CIRQUE" %><br>
 
-          <%= f.radio_button :tarif, 'plein', id: "tarif-plein-radio", checked: @membership_data['tarif'] == 'plein' %>
-          <%= f.label :tarif_plein, "Adhésion pleine (10 €)" %><br>
+        <%= f.radio_button :tarif, 'plein', id: "tarif-plein-radio", checked: @membership_data['tarif'] == 'plein' %>
+        <%= f.label :tarif_plein, "Adhésion pleine (10 €)" %><br>
 
-          <%= f.radio_button :tarif, 'reduit', id: "tarif-reduit-radio", checked: @membership_data['tarif'] == 'reduit' %>
-          <%= f.label :tarif_reduit, "Adhésion Réduite* (7 €)" %><br>
+        <%= f.radio_button :tarif, 'reduit', id: "tarif-reduit-radio", checked: @membership_data['tarif'] == 'reduit' %>
+        <%= f.label :tarif_reduit, "Adhésion Réduite* (7 €)" %><br>
 
-          <%= f.check_box :graff, { id: "graff-checkbox", checked: @membership_data['graff'] == 'oui' }, 'oui', nil %>
-          <%= f.label :graff, "Graff (libre 1€)" %><br>
+        <%= f.check_box :graff, { id: "graff-checkbox", checked: @membership_data['graff'] == 'oui' }, 'oui', nil %>
+        <%= f.label :graff, "Graff (libre 1€)" %><br>
 
-          <%= f.check_box :soutien, { id: "soutien-checkbox", checked: @membership_data['soutien'] == 'oui' }, 'oui', nil %>
-          <%= f.label :soutien, "Soutien à l'association (libre 1€)" %><br>
+        <%= f.check_box :soutien, { id: "soutien-checkbox", checked: @membership_data['soutien'] == 'oui' }, 'oui', nil %>
+        <%= f.label :soutien, "Soutien à l'association (libre 1€)" %><br>
 
-          <p>*Mineur.e/RSA/Étudiants/Personne en situation de handicap</p>
-        </fieldset>
+        <p>*Mineur.e/RSA/Étudiants/Personne en situation de handicap</p>
+    </fieldset>
 
-        <fieldset class="fieldset-infos">
-          <legend>Informations personnelles</legend>
-          <%= f.label :prenom, "Prénom" %>
-          <%= f.text_field :prenom, value: @membership_data['prenom'], required: true, class: "form-field" %><br>
+    <fieldset class="fieldset-infos">
+        <legend>Informations personnelles</legend>
+        <%= f.label :prenom, "Prénom" %>
+        <%= f.text_field :prenom, value: @membership_data['prenom'], required: true, class: "form-field" %><br>
 
-          <%= f.label :nom, "Nom" %>
-          <%= f.text_field :nom, value: @membership_data['nom'], required: true, class: "form-field" %><br>
+        <%= f.label :nom, "Nom" %>
+        <%= f.text_field :nom, value: @membership_data['nom'], required: true, class: "form-field" %><br>
 
-          <%= f.label :date_naissance, "Date de naissance" %>
-          <%= f.date_field :date_naissance, value: @membership_data['date_naissance'], required: true, class: "form-field" %><br>
+        <%= f.label :date_naissance, "Date de naissance" %>
+        <%= f.date_field :date_naissance, value: @membership_data['date_naissance'], required: true, class: "form-field" %><br>
 
-          <%= f.label :adresse, "Adresse" %>
-          <%= f.text_field :adresse, value: @membership_data['adresse'], required: true, class: "form-field" %><br>
+        <%= f.label :adresse, "Adresse" %>
+        <%= f.text_field :adresse, value: @membership_data['adresse'], required: true, class: "form-field" %><br>
 
-          <%= f.label :code_postal, "Code postal" %>
-          <%= f.text_field :code_postal, value: @membership_data['code_postal'], required: true, class: "form-field" %><br>
+        <%= f.label :code_postal, "Code postal" %>
+        <%= f.text_field :code_postal, value: @membership_data['code_postal'], required: true, class: "form-field" %><br>
 
-          <%= f.label :ville, "Ville" %>
-          <%= f.text_field :ville, value: @membership_data['ville'], required: true, class: "form-field" %><br>
+        <%= f.label :ville, "Ville" %>
+        <%= f.text_field :ville, value: @membership_data['ville'], required: true, class: "form-field" %><br>
 
-          <%= f.label :pays, "Pays" %>
-          <%= f.text_field :pays, value: @membership_data['pays'], required: true, class: "form-field" %><br>
+        <%= f.label :pays, "Pays" %>
+        <%= f.text_field :pays, value: @membership_data['pays'], required: true, class: "form-field" %><br>
 
-          <%= f.label :telephone, "Numéro de téléphone" %>
-          <%= f.telephone_field :telephone, value: @membership_data['telephone'], required: true, class: "form-field" %><br>
+        <%= f.label :telephone, "Numéro de téléphone" %>
+        <%= f.telephone_field :telephone, value: @membership_data['telephone'], required: true, class: "form-field" %><br>
 
-          <%= f.label :email, "Adresse mail" %>
-          <%= f.email_field :email, value: @membership_data['email'], required: true, class: "form-field" %><br>
+        <%= f.label :email, "Adresse mail" %>
+        <%= f.email_field :email, value: @membership_data['email'], required: true, class: "form-field" %><br>
 
-          <%= f.label :profession, "Profession" %>
-          <%= f.text_field :profession, value: @membership_data['profession'], class: "form-field" %><br>
+        <%= f.label :profession, "Profession" %>
+        <%= f.text_field :profession, value: @membership_data['profession'], class: "form-field" %><br>
 
-          <%= f.label :specialite, "Spécialité ou Disciplines pratiquées" %>
-          <%= f.text_field :specialite, value: @membership_data['specialite'], class: "form-field" %><br>
-        </fieldset>
+        <%= f.label :specialite, "Spécialité ou Disciplines pratiquées" %>
+        <%= f.text_field :specialite, value: @membership_data['specialite'], class: "form-field" %><br>
+    </fieldset>
 
-        <fieldset class="fieldset-droit-image">
-          <legend>Autorisation de droit à l'image</legend>
-          <%= f.label :droit_image, "OUI" %>
-          <%= f.radio_button :droit_image, 'oui', checked: (@membership_data['droit_image'] == 'oui'), required: true %>
-          <%= f.label :droit_image, "NON" %>
-          <%= f.radio_button :droit_image, 'non', checked: (@membership_data['droit_image'] == 'non'), required: true %><br>
-          <p>
+    <fieldset class="fieldset-droit-image">
+        <legend>Autorisation de droit à l'image</legend>
+        <%= f.label :droit_image, "OUI" %>
+        <%= f.radio_button :droit_image, 'oui', checked: (@membership_data['droit_image'] == 'oui'), required: true %>
+        <%= f.label :droit_image, "NON" %>
+        <%= f.radio_button :droit_image, 'non', checked: (@membership_data['droit_image'] == 'non'), required: true %><br>
+        <p>
             J’accepte d’être photographié.e ou filmé.e dans le cadre des activités du CircoGraphe et de Dark Paillettes et accepte
             l’utilisation des photos ou vidéos à des fins de communication (site internet, plaquettes, réseaux sociaux …) de l’association.
-          </p>
-        </fieldset>
+        </p>
+    </fieldset>
 
-        <fieldset class="fieldset-projet">
-          <legend>Si le projet vous intéresse :</legend>
-          <%= f.check_box :newsletter, { id: "newsletter-checkbox", checked: @membership_data['newsletter'] == 'oui' }, 'oui', nil %>
-          <%= f.label :newsletter, "Je souhaite m’inscrire à la newsletter" %><br>
+    <fieldset class="fieldset-projet">
+        <legend>Si le projet vous intéresse :</legend>
+        <%= f.check_box :newsletter, { id: "newsletter-checkbox", checked: @membership_data['newsletter'] == 'oui' }, 'oui', nil %>
+        <%= f.label :newsletter, "Je souhaite m’inscrire à la newsletter" %><br>
 
-          <%= f.check_box :investir, { id: "investir-checkbox", checked: @membership_data['investir'] == 'oui' }, 'oui', nil %>
-          <%= f.label :investir, "Je souhaite m’investir dans le projet" %><br>
+        <%= f.check_box :investir, { id: "investir-checkbox", checked: @membership_data['investir'] == 'oui' }, 'oui', nil %>
+        <%= f.label :investir, "Je souhaite m’investir dans le projet" %><br>
 
-          <%= f.check_box :soutenir_financierement, { id: "soutenir-financierement-checkbox", checked: @membership_data['soutenir_financierement'] == 'oui' }, 'oui', nil %>
-          <%= f.label :soutenir_financierement, "Je souhaite soutenir financièrement le projet (cagnotte en ligne)" %>
-        </fieldset>
+        <%= f.check_box :soutenir_financierement, { id: "soutenir-financierement-checkbox", checked: @membership_data['soutenir_financierement'] == 'oui' }, 'oui', nil %>
+        <%= f.label :soutenir_financierement, "Je souhaite soutenir financièrement le projet (cagnotte en ligne)" %>
+    </fieldset>
 
-        <div class="form-buttons">
-          <%= f.submit "Valider", class: "purple-button" %>
-          <button type="reset" class= "btn btn-secondary"> Réinitialiser</button>
-        </div>
-      <% end %>
+    <div class="form-buttons">
+        <%= f.submit "Valider", class: "purple-button" %>
+        <button type="reset" class="btn btn-secondary"> Réinitialiser</button>
     </div>
-  <script>
+    <% end %>
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const cirqueCheckbox = document.getElementById('cirque-checkbox');
+        const tarifReduitRadio = document.getElementById('tarif-reduit-radio');
+        const tarifPleinRadio = document.getElementById('tarif-plein-radio');
 
-    document.addEventListener('DOMContentLoaded', function () {
-      const cirqueCheckbox = document.getElementById('cirque-checkbox');
-      const tarifReduitRadio = document.getElementById('tarif-reduit-radio');
-      const tarifPleinRadio = document.getElementById('tarif-plein-radio');
+        cirqueCheckbox.addEventListener('change', function() {
+            const isCirqueChecked = cirqueCheckbox.checked;
+            tarifReduitRadio.disabled = !isCirqueChecked;
+            tarifPleinRadio.disabled = !isCirqueChecked;
 
-      cirqueCheckbox.addEventListener('change', function () {
-        const isCirqueChecked = cirqueCheckbox.checked;
-        tarifReduitRadio.disabled = !isCirqueChecked;
-        tarifPleinRadio.disabled = !isCirqueChecked;
-
-        if (!isCirqueChecked) {
-          tarifReduitRadio.checked = false;
-          tarifPleinRadio.checked = false;
-        }
-      });
+            if (!isCirqueChecked) {
+                tarifReduitRadio.checked = false;
+                tarifPleinRadio.checked = false;
+            }
+        });
     });
-  </script>
+</script>

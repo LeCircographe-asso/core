@@ -5,7 +5,7 @@ self.addEventListener("push", async (event) => {
   event.waitUntil(self.registration.showNotification(title, options))
 })
 
-self.addEventListener("notificationclick", function(event) {
+self.addEventListener("notificationclick", function (event) {
   event.notification.close()
   event.waitUntil(
     clients.matchAll({ type: "window" }).then((clientList) => {

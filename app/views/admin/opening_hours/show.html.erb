@@ -1,11 +1,11 @@
 <div class="admin-dashboard page-container">
-<h1>Horaires d'ouverture</h1>
-<table>
-  <% @opening_hours.each do |day, hours| %>
-    <tr>
-      <td><%= day.capitalize %></td>
-      <td><%= hours %></td>
-    </tr>
-  <% end %>
-</table>
+    <h1>Horaires d'ouverture</h1>
+    <table>
+        <% @opening_hours.each do |day, hours| %>
+        <tr>
+            <td><%= day.capitalize %></td>
+            <td><%= hours %></td>
+        </tr>
+        <% end %>
+    </table>
 </div>
