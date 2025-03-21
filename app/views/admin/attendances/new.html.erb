@@ -1,0 +1,10 @@
+<div class="admin-dashboard">
+  <% @users_not_in_list.each do |user|%>
+  <div>
+    <%= user.last_name %>
+    <%= user.first_name %>
+    <%= button_to  "ajouter à la liste", 
+  admin_attendance_list_attendances_path(attendance_list_id: @me_attendance_list.id, user_id: user.id),method: :post, class: "purple-button" %>
+
+  </div> <% end %>
+</div>
