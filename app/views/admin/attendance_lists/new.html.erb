@@ -1,0 +1,11 @@
+<div class="admin-dashboard">
+  <%= form_with model: AttendanceList.new, url: admin_attendance_lists_path, method: :post do |form| %>
+  <%= form.label :list_type, "Type de liste" %>
+  <%= form.select :list_type, AttendanceList.list_types.keys.map { |type| [type.humanize, type] } %>
+
+  <%= form.label :start_date, "Date de début" %>
+  <%= form.datetime_local_field :start_date %>
+
+  <%= form.submit "Créer" , class: "purple-button"%>
+  <% end %>
+</div>

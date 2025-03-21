@@ -1,0 +1,28 @@
+<div class="admin-dashboard">
+  <%= link_to "creer une nouvelle liste", new_admin_attendance_list_path, class: "purple-button"%>
+
+  <table class="dashboard-table">
+    <thead>
+      <tr>
+        <th>liste type</th>
+        <th>date de debut</th>
+        <th>date de fin</th>
+        <th>voir les participant</th>
+        <th>ajouter une presence</th>
+        <th>status de la liste</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @attendance_list.each do |attendance_list| %>
+      <tr>
+        <td><%= attendance_list.list_type %></td>
+        <td><%= attendance_list.start_date %></td>
+        <td><%= attendance_list.end_date %></td>
+        <td>
+        </td>
+        <td></td>
+        <td><%= attendance_list.status %></td>
+        <% end %>
+    </tbody>
+  </table>
+</div>

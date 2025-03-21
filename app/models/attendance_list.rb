@@ -26,4 +26,4 @@ def end_after_start
       errors.add(:end_date, "doit être après la date de début")
   end
 end
-end
+end 
