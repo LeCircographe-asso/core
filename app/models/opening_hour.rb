@@ -22,4 +22,3 @@ class OpeningHour < ApplicationRecord
     end
   end
 end
-end
