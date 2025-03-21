@@ -25,6 +25,15 @@
   <%= form.label :last_name, "Nom" %>
   <%= form.text_field :last_name %>
 </div>
+<div class="field">
+  <%= form.label :last_name, "Nom" %>
+  <%= form.text_field :last_name %>
+</div>
+
+<div class="field">
+  <%= form.label :subscribe_to_newsletter, "Inscrire à la newsletter ?" %>
+  <%= form.check_box :subscribe_to_newsletter %>
+</div>
 
 <% if @can_promote %>
 <div class="checkbox-container">

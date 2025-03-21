@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta content="text/html; charset=UTF-8" http-equiv="Content-Type" />
+  </head>
+  <body>
+    <h1>Bienvenue sur notre service !</h1>
+    <p>Bonjour <%= @user.first_name %> <%= @user.last_name %>,</p>
+    <p>Merci d'avoir rejoint notre plateforme. Nous sommes heureux de vous compter parmi nos membres.</p>
+
+    <% if @user.subscribe_to_newsletter %>
+      <p>
+        Vous vous êtes également inscrit à notre newsletter ! 🎉 Vous recevrez toutes nos dernières actualités,
+        promotions et recommandations directement dans votre boîte mail.
+      </p>
+    <% end %>
+
+    <p>À bientôt !</p>
+    <p>L'équipe de notre plateforme 🚀</p>
+  </body>
+</html>
