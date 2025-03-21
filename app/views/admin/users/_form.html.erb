@@ -1,7 +1,7 @@
 <%= form_with(model: [:admin, user]) do |form| %>
 <% if user.errors.any? %>
 <div style="color: red">
-  <h2><%= pluralize(user.errors.count, "error") %> prohibited this user from being saved:</h2>
+    <h2><%= pluralize(user.errors.count, "error") %> prohibited this user from being saved:</h2>
 
   <ul>
     <% user.errors.each do |error| %>
@@ -22,14 +22,15 @@
 </div>
 
 <div class="field">
-  <%= form.label :last_name, "Nom" %>
-  <%= form.text_field :last_name %>
+    <%= form.label :last_name, "Nom" %>
+    <%= form.text_field :last_name %>
 </div>
 
 <div class="field">
-  <%= form.label :subscribe_to_newsletter, "Inscrire à la newsletter ?" %>
-  <%= form.check_box :subscribe_to_newsletter %>
+    <%= form.label :subscribe_to_newsletter, "Inscrire à la newsletter ?" %>
+    <%= form.check_box :subscribe_to_newsletter %>
 </div>
+<% end %>
 
 <% if @user.persisted? %>
   <div class="field">
