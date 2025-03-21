@@ -1,9 +1,9 @@
 <div class="bg-white rounded-xl shadow-lg overflow-hidden max-w-md mx-auto">
-  <!-- En-tête avec gradient -->
-  <div class="relative">
-    <div class="h-32 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500">
-      <!-- Badge du type de membre -->
-      <div class="absolute top-4 right-4 px-3 py-1 text-xs font-semibold text-white rounded-full 
+    <!-- En-tête avec gradient -->
+    <div class="relative">
+        <div class="h-32 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500">
+            <!-- Badge du type de membre -->
+            <div class="absolute top-4 right-4 px-3 py-1 text-xs font-semibold text-white rounded-full 
         <%= case @user.role
           when 'godmode' then 'bg-purple-700' 
           when 'admin' then 'bg-indigo-700'
@@ -11,121 +11,120 @@
           when 'circus_membership' then 'bg-yellow-700'
           when 'membership' then 'bg-green-700'
           else 'bg-gray-700'
-          end %>"
-      >
-        <%= @user.role.humanize %>
-      </div>
-    </div>
-    
-    <!-- Avatar -->
-    <div class="absolute -bottom-12 left-1/2 transform -translate-x-1/2">
-      <div class="h-24 w-24 rounded-full border-4 border-white overflow-hidden bg-white">
-        <% case @user.role %>
-          <% when 'godmode' %>
-            <%= image_tag "godmode.webp", alt: "Avatar God Mode", class: "h-full w-full object-cover" %>
-          <% when 'admin' %>
-            <%= image_tag "admin.webp", alt: "Avatar Admin", class: "h-full w-full object-cover" %>
-          <% when 'volunteer' %>
-            <%= image_tag "volunteer.webp", alt: "Avatar Bénévole", class: "h-full w-full object-cover" %>
-          <% when 'circus_membership' %>
-            <%= image_tag "circus_members.webp", alt: "Avatar Membre du Cirque", class: "h-full w-full object-cover" %>
-          <% when 'membership' %>
-            <%= image_tag "members.webp", alt: "Avatar Membre", class: "h-full w-full object-cover" %>
-          <% when 'guest' %>
-            <%= image_tag "users.png", alt: "Avatar Invité", class: "h-full w-full object-cover" %>
-          <% else %>
-            <%= image_tag "users.png", alt: "Avatar", class: "h-full w-full object-cover" %>
-        <% end %>
-      </div>
-    </div>
-  </div>
-  
-  <!-- Contenu principal -->
-  <div class="pt-16 px-6 pb-6">
-    <!-- Informations de l'utilisateur -->
-    <div class="text-center mb-6">
-      <h2 class="text-xl font-bold text-gray-800">
-        <% if @user.first_name.present? || @user.last_name.present? %>
-          <%= [(@user.first_name || ""), (@user.last_name || "")].join(" ").strip %>
-        <% else %>
-          <%= "Membre #{@user.id}" %>
-        <% end %>
-      </h2>
-      <p class="text-gray-500 text-sm mt-1"><%= @user.email_address %></p>
-      
-      <!-- Statut d'adhésion -->
-      <% if @user.user_memberships.exists? %>
-        <% latest_membership = @user.user_memberships.order(created_at: :desc).first %>
-        <span class="inline-flex items-center mt-3 px-3 py-1 rounded-full text-xs font-medium <%= latest_membership.status ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' %>">
-          <%= latest_membership.status ? "Adhésion Active" : "Adhésion Inactive" %>
-        </span>
-      <% else %>
-        <span class="inline-flex items-center mt-3 px-3 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
-          Non adhérent
-        </span>
-      <% end %>
-    </div>
-    
-    <!-- Détails de l'adhésion -->
-    <div class="space-y-3 border-t border-b border-gray-200 py-4 mb-6">
-      <% if @user.user_memberships.exists? %>
-        <div class="flex justify-between items-center">
-          <span class="text-sm text-gray-500">Date d'inscription :</span>
-          <span class="text-sm font-medium text-gray-800">
-            <%= @user.user_memberships.order(:created_at).last.created_at.strftime("%d/%m/%Y") %>
-          </span>
+          end %>">
+                <%= @user.role.humanize %>
+            </div>
         </div>
-        
-        <% latest_membership = @user.user_memberships.order(created_at: :desc).first %>
-        <% if latest_membership.subscription_type.present? %>
-          <div class="flex justify-between items-center">
-            <span class="text-sm text-gray-500">Type d'adhésion :</span>
-            <span class="text-sm font-medium text-gray-800">
-              <%= latest_membership.subscription_type.name %>
+
+        <!-- Avatar -->
+        <div class="absolute -bottom-12 left-1/2 transform -translate-x-1/2">
+            <div class="h-24 w-24 rounded-full border-4 border-white overflow-hidden bg-white">
+                <% case @user.role %>
+                <% when 'godmode' %>
+                <%= image_tag "godmode.webp", alt: "Avatar God Mode", class: "h-full w-full object-cover" %>
+                <% when 'admin' %>
+                <%= image_tag "admin.webp", alt: "Avatar Admin", class: "h-full w-full object-cover" %>
+                <% when 'volunteer' %>
+                <%= image_tag "volunteer.webp", alt: "Avatar Bénévole", class: "h-full w-full object-cover" %>
+                <% when 'circus_membership' %>
+                <%= image_tag "circus_members.webp", alt: "Avatar Membre du Cirque", class: "h-full w-full object-cover" %>
+                <% when 'membership' %>
+                <%= image_tag "members.webp", alt: "Avatar Membre", class: "h-full w-full object-cover" %>
+                <% when 'guest' %>
+                <%= image_tag "users.png", alt: "Avatar Invité", class: "h-full w-full object-cover" %>
+                <% else %>
+                <%= image_tag "users.png", alt: "Avatar", class: "h-full w-full object-cover" %>
+                <% end %>
+            </div>
+        </div>
+    </div>
+
+    <!-- Contenu principal -->
+    <div class="pt-16 px-6 pb-6">
+        <!-- Informations de l'utilisateur -->
+        <div class="text-center mb-6">
+            <h2 class="text-xl font-bold text-gray-800">
+                <% if @user.first_name.present? || @user.last_name.present? %>
+                <%= [(@user.first_name || ""), (@user.last_name || "")].join(" ").strip %>
+                <% else %>
+                <%= "Membre #{@user.id}" %>
+                <% end %>
+            </h2>
+            <p class="text-gray-500 text-sm mt-1"><%= @user.email_address %></p>
+
+            <!-- Statut d'adhésion -->
+            <% if @user.user_memberships.exists? %>
+            <% latest_membership = @user.user_memberships.order(created_at: :desc).first %>
+            <span class="inline-flex items-center mt-3 px-3 py-1 rounded-full text-xs font-medium <%= latest_membership.status ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' %>">
+                <%= latest_membership.status ? "Adhésion Active" : "Adhésion Inactive" %>
             </span>
-          </div>
-        <% end %>
-        
-        <% if latest_membership.subscription_type.present? && latest_membership.subscription_type.duration.present? %>
-          <div class="flex justify-between items-center">
-            <span class="text-sm text-gray-500">Validité :</span>
-            <span class="text-sm font-medium text-gray-800">
-              <%= latest_membership.subscription_type.duration %>
+            <% else %>
+            <span class="inline-flex items-center mt-3 px-3 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                Non adhérent
             </span>
-          </div>
-        <% end %>
-      <% else %>
-        <div class="flex justify-between items-center">
-          <span class="text-sm text-gray-500">Statut :</span>
-          <span class="text-sm font-medium text-gray-800">Pas encore membre</span>
+            <% end %>
         </div>
-        <div class="flex justify-between items-center">
-          <span class="text-sm text-gray-500">Newsletter :</span>
-          <span class="text-sm font-medium text-gray-800">
-            <%= @user.newsletter ? "Inscrit" : "Non inscrit" %>
-          </span>
+
+        <!-- Détails de l'adhésion -->
+        <div class="space-y-3 border-t border-b border-gray-200 py-4 mb-6">
+            <% if @user.user_memberships.exists? %>
+            <div class="flex justify-between items-center">
+                <span class="text-sm text-gray-500">Date d'inscription :</span>
+                <span class="text-sm font-medium text-gray-800">
+                    <%= @user.user_memberships.order(:created_at).last.created_at.strftime("%d/%m/%Y") %>
+                </span>
+            </div>
+
+            <% latest_membership = @user.user_memberships.order(created_at: :desc).first %>
+            <% if latest_membership.subscription_type.present? %>
+            <div class="flex justify-between items-center">
+                <span class="text-sm text-gray-500">Type d'adhésion :</span>
+                <span class="text-sm font-medium text-gray-800">
+                    <%= latest_membership.subscription_type.name %>
+                </span>
+            </div>
+            <% end %>
+
+            <% if latest_membership.subscription_type.present? && latest_membership.subscription_type.duration.present? %>
+            <div class="flex justify-between items-center">
+                <span class="text-sm text-gray-500">Validité :</span>
+                <span class="text-sm font-medium text-gray-800">
+                    <%= latest_membership.subscription_type.duration %>
+                </span>
+            </div>
+            <% end %>
+            <% else %>
+            <div class="flex justify-between items-center">
+                <span class="text-sm text-gray-500">Statut :</span>
+                <span class="text-sm font-medium text-gray-800">Pas encore membre</span>
+            </div>
+            <div class="flex justify-between items-center">
+                <span class="text-sm text-gray-500">Newsletter :</span>
+                <span class="text-sm font-medium text-gray-800">
+                    <%= @user.newsletter ? "Inscrit" : "Non inscrit" %>
+                </span>
+            </div>
+            <% end %>
         </div>
-      <% end %>
-    </div>
-    
-    <!-- Actions -->
-    <div class="space-y-3">
-      <% if defined?(form) && form.present? %>
-        <%= form.submit "Enregistrer les modifications", class: "w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" %>
-      <% else %>
-        <%= link_to "Modifier mon email", edit_user_path(@user), class: "block w-full text-center py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" %>
-        
-        <%= link_to "Modifier le mot de passe", edit_password_path(@user.password_reset_token), class: "block w-full text-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 mt-3" %>
-        
-        <%= button_to (@user.newsletter? ? "Se désinscrire de la newsletter" : "S'inscrire à la newsletter"),
+
+        <!-- Actions -->
+        <div class="space-y-3">
+            <% if defined?(form) && form.present? %>
+            <%= form.submit "Enregistrer les modifications", class: "w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" %>
+            <% else %>
+            <%= link_to "Modifier mon email", edit_user_path(@user), class: "block w-full text-center py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" %>
+
+            <%= link_to "Modifier le mot de passe", edit_password_path(@user.password_reset_token), class: "block w-full text-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 mt-3" %>
+
+            <%= button_to (@user.newsletter? ? "Se désinscrire de la newsletter" : "S'inscrire à la newsletter"),
           change_newsletter_status_user_path(@user), 
           method: :post,
           class: "w-full py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 mt-3" %>
-        
-        <%= button_to "Supprimer mon compte", @user, method: :delete, 
+
+            <%= button_to "Supprimer mon compte", @user, method: :delete, 
           class: "w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 mt-3", 
           data: { confirm: "Êtes-vous sûr de vouloir supprimer votre compte ? Cette action est irréversible." } %>
-      <% end %>
+            <% end %>
+        </div>
     </div>
-  </div>
 </div>
