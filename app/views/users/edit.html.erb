@@ -1,16 +1,16 @@
 <div class="edit-form-container">
-<h1>Modifier votre profil</h1>
+    <h1>Modifier votre profil</h1>
 
-<%= form_with model: @user, local: true do |f| %>
-  <div class="form-group">
-    <%= f.label :email_address, "Nouvel Email" %>
-    <%= f.email_field :email_address, class: "form-control" %>
-  </div>
+    <%= form_with model: @user, local: true do |f| %>
+    <div class="form-group">
+        <%= f.label :email_address, "Nouvel Email" %>
+        <%= f.email_field :email_address, class: "form-control" %>
+    </div>
 
-  <div class="actions">
-    <%= f.submit "Mettre à jour", class: "purple-button" %>
-  </div>
-<% end %>
+    <div class="actions">
+        <%= f.submit "Mettre à jour", class: "purple-button" %>
+    </div>
+    <% end %>
 
-<hr>
+    <hr>
 </div>

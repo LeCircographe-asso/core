@@ -1,15 +1,15 @@
 <div class="w-full relative">
-  <div class="swiper multiple-slide-carousel swiper-container relative">
-    <div class="swiper-wrapper mb-16">
-      <% images.each do |image| %>
-        <div class="swiper-slide">
-          <div class="rounded-2xl h-96 flex justify-center items-center overflow-hidden">
-            <%= image_tag image, alt: "Carousel Image", class: "object-cover w-full h-full" %>
-          </div>
+    <div class="swiper multiple-slide-carousel swiper-container relative">
+        <div class="swiper-wrapper mb-16">
+            <% images.each do |image| %>
+            <div class="swiper-slide">
+                <div class="rounded-2xl h-96 flex justify-center items-center overflow-hidden">
+                    <%= image_tag image, alt: "Carousel Image", class: "object-cover w-full h-full" %>
+                </div>
+            </div>
+            <% end %>
         </div>
-      <% end %>
-    </div>
-     <div class="absolute flex justify-between items-center w-full -translate-x-1/2 left-1/2 top-1/2 -translate-y-1/2 z-50">
+        <div class="absolute flex justify-between items-center w-full -translate-x-1/2 left-1/2 top-1/2 -translate-y-1/2 z-50">
             <button id="slider-button-left" class="swiper-button-prev !border-black !text-black hover:!border-gray-300 hover:!bg-gray-300" data-carousel-prev>
                 <svg class="h-5 w-5 !text-black hover:!text-gray-800" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
                     <path d="M10 12L6 8L10 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
@@ -22,32 +22,32 @@
                 </svg>
             </button>
         </div>
-  </div>
+    </div>
 </div>
 
 
-  <script>
- var swiper = new Swiper(".multiple-slide-carousel", {
-   loop: true,
-   slidesPerView: 3,
-   spaceBetween: 20,
-   navigation: {
-     nextEl: ".multiple-slide-carousel .swiper-button-next",
-     prevEl: ".multiple-slide-carousel .swiper-button-prev",
-   },
-   breakpoints: {
-    1920: {
+<script>
+    var swiper = new Swiper(".multiple-slide-carousel", {
+        loop: true,
         slidesPerView: 3,
-        spaceBetween: 30
-    },
-    1028: {
-        slidesPerView: 2,
-        spaceBetween: 30
-    },
-    990: {
-        slidesPerView: 1,
-        spaceBetween: 0
-    }
-  }
- });
+        spaceBetween: 20,
+        navigation: {
+            nextEl: ".multiple-slide-carousel .swiper-button-next",
+            prevEl: ".multiple-slide-carousel .swiper-button-prev",
+        },
+        breakpoints: {
+            1920: {
+                slidesPerView: 3,
+                spaceBetween: 30
+            },
+            1028: {
+                slidesPerView: 2,
+                spaceBetween: 30
+            },
+            990: {
+                slidesPerView: 1,
+                spaceBetween: 0
+            }
+        }
+    });
 </script>
