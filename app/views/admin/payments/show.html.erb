@@ -1,0 +1,44 @@
+<div style="display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center;">
+  <%= form_with(model: [:admin, @payment]) do |f| %>
+
+    <!-- Affichage du nom du produit -->
+    <div>
+      <%= @product_order.product.product_name %>
+    </div>
+
+    <!-- Affichage du montant du paiement -->
+        <div>
+        <%= f.label :payment_amount, "Montant du paiement" %>
+        <% if @product_order.product.price_entries.any? %>
+          <% latest_price = @product_order.product.price_entries.order(created_at: :desc).first %>
+          <%= f.text_field :payment_amount, value: "#{latest_price.price_catalog.price} €", disabled: true %>
+        <% else %>
+          <%= f.text_field :payment_amount, value: "Non défini", disabled: true %>
+        <% end %>
+      </div>
+
+    <!-- Affichage de la date de création du paiement -->
+    <div>
+      <%= f.label :payment_date, "Date de création" %>
+      <%= f.text_field :payment_date, value: @payment.created_at.strftime("%d-%m-%Y %H:%M:%S"), disabled: true %>
+    </div>
+
+    <!-- Affichage du statut du paiement -->
+    <div>
+      <%= f.label :status, "Statut actuel" %>
+      <%= f.text_field :status, value: @payment.status, disabled: true %>
+    </div>
+
+    <!-- Lien pour revenir à l'utilisateur si le paiement est réussi -->
+    <% if @payment.status == 'success' %>
+      <div>
+        <%= link_to "Retour à l'utilisateur", admin_user_path(@payment.user_id), class: "white-button" %>
+      </div>
+    <% end %>
+
+    <!-- Bouton pour valider le paiement -->
+    <%= button_to "Payment Validé", admin_payment_path(@payments),params:{payment:{status: 'success' , payment_id: @payment, product_order_id: @payment.product_order_id }},method: :patch, class: "purple-button" %>
+
+
+  <% end %> <!-- Fermeture du form_with -->
+</div>

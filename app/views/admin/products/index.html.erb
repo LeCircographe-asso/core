@@ -1,0 +1,38 @@
+<h1 style="text-align: center;">Liste des Cotisations</h1>
+
+<% if @order && @order.product_orders.present? %>
+  <% @order.product_orders.each do |product_order| %>
+    <p>Produit déjà ajouté : <%= product_order.product.product_name %> - Prix : 
+    <%= product_order.product.price_entries.order(created_at: :desc).first.price_catalog.price %> €</p>
+  <% end %>
+<% else %>
+  <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; align-items: center; width: 100%;">
+    <table style="width: 80%; margin: 0 auto; border-collapse: collapse; text-align: left;">
+      <thead>
+        <tr>
+          <th>Produit</th>
+          <th>Prix</th>
+          <th>Cotiser</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @products.each do |product| %>
+          <tr>
+            <td><%= product.product_name %></td>
+            <td>
+              <% if product.price_entries.any? %>
+                <% latest_price = product.price_entries.order(created_at: :desc).first %>
+                <%= latest_price.price_catalog.price %> €
+              <% else %>
+                Non défini
+              <% end %>
+            </td>
+            <td>
+                <%= button_to 'Ajouter', admin_product_orders_path(order_id: @order, product_id: product), method: :post, class: "purple-button" %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+<% end %>

@@ -1,21 +1,15 @@
 Rails.application.routes.draw do
   namespace :admin do
-    resources :membership, only: %i[index create destroy update]
     resources :dashboard, only: %i[index], path: "dashboard"
     resource :opening_hours, only: %i[show edit update]
     resources :users
     resources :events, only: %i[new create edit destroy index]
     resource :session, only: %i[new create destroy]
     resource :notepad, only: %i[show edit update]
-    resources :members do
-      collection do
-        get :membership_register
-        post :membership_recap
-        post :reset_membership
-        post :membership_payment
-        post :membership_complete
-      end
-    end
+    resources :orders
+    resources :product_orders, only: %i[create show]
+    resources :products, only: %i[index]
+    resources :payments, only: %i[show create new update]
   end
 
 
