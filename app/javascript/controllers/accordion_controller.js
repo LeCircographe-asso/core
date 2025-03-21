@@ -4,8 +4,8 @@ import { Controller } from "@hotwired/stimulus"
 export default class extends Controller {
   connect() {
     // Initialiser Flowbite si disponible
-    if (typeof initFlowbite === 'function') {
-      initFlowbite();
+    if (typeof window.initFlowbite === 'function') {
+      window.initFlowbite();
     }
     
     // Initialiser manuellement tous les accordéons
