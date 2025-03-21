@@ -18,7 +18,7 @@ Rails.application.routes.draw do
     end
   end
 
-  
+
 
   resources :events, only: %i[show index]
   resources :pages, only: %i[show]
