@@ -1,9 +1,9 @@
 module Admin
   class ProductOrdersController < BaseController
-    before_action :set_order , only: %i[create]
+    before_action :set_order, only: %i[create]
 
-    def show 
-    end 
+    def show
+    end
 
     def create
       @user = User.find(product_order_params[:user_id])
@@ -15,7 +15,7 @@ module Admin
       @product_subscription = Product.where(product_type: "cotisation")
         if @product_order.save
           respond_to do |format|
-            format.html { redirect_to admin_user_orders_path(@user), notice: 'Produit ajouté à la commande avec succès.' }
+            format.html { redirect_to admin_user_orders_path(@user), notice: "Produit ajouté à la commande avec succès." }
             format.turbo_stream {
               render turbo_stream:
                 turbo_stream.replace("product-container", partial: determine_product_partial, locals: { order: @order, user: @user })
@@ -23,7 +23,7 @@ module Admin
           end
         else
           respond_to do |format|
-            format.html { redirect_to admin_user_orders_path(@user), alert: 'Impossible d\'ajouter ce produit à la commande.' }
+            format.html { redirect_to admin_user_orders_path(@user), alert: "Impossible d'ajouter ce produit à la commande." }
             format.turbo_stream { render turbo_stream: turbo_stream.replace("product-container", html: "Erreur lors de l'ajout du produit.") }
           end
         end
@@ -40,7 +40,7 @@ module Admin
     private
 
     def set_order
-      @order = Order.find(product_order_params[:order_id]) 
+      @order = Order.find(product_order_params[:order_id])
     end
 
     def product_order_params
@@ -48,8 +48,7 @@ module Admin
     end
 
     def determine_product_partial
-      @order.products.any? { |product| product.product_type == 'adhesion' } ? 'admin/orders/product_subscription' : 'admin/orders/product_membership'
+      @order.products.any? { |product| product.product_type == "adhesion" } ? "admin/orders/product_subscription" : "admin/orders/product_membership"
     end
   end
 end
-
