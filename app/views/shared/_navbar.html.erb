@@ -56,10 +56,10 @@
                     <div class="hidden group-hover:block absolute left-0 z-10 w-48 bg-white rounded-lg shadow-lg">
                         <ul class="py-2 text-sm text-gray-700">
                             <li>
-                                <%= link_to "Blog & Newsletters", page_path('blog_newsletter'), class: "block px-4 py-2 hover:bg-gray-100" %>
+                                <%= link_to "Blog & Newsletters", page_path("blog_newsletter"), class: "block px-4 py-2 hover:bg-gray-100" %>
                             </li>
                             <li>
-                                <%= link_to "Galerie Photos", "#", class: "block px-4 py-2 hover:bg-gray-100" %>
+                                <%= link_to "Galerie Photos", page_path("gallery"), class: "block px-4 py-2 hover:bg-gray-100" %>
                             </li>
                         </ul>
                     </div>
@@ -72,8 +72,15 @@
                 
                 <!-- Devenir Membre -->
                 <li>
-                    <%= link_to "Devenir Membre", page_path('become_member'), class: "block py-2 text-gray-900 hover:text-indigo-700" %>
+                    <%= link_to "Devenir Membre", page_path("become_member"), class: "block py-2 text-gray-900 hover:text-indigo-700" %>
                 </li>
+                
+                <!-- Administration (visible seulement pour les utilisateurs avec privilèges) -->
+                <% if authenticated? && Current.user.has_privileges? %>
+                <li>
+                    <%= link_to "Administration", admin_dashboard_index_path, class: "block py-2 text-gray-900 hover:text-indigo-700" %>
+                </li>
+                <% end %>
                 
                 <!-- À propos -->
                 <li class="group relative">
@@ -83,7 +90,7 @@
                     <div class="hidden group-hover:block absolute left-0 z-10 w-48 bg-white rounded-lg shadow-lg">
                         <ul class="py-2 text-sm text-gray-700">
                             <li>
-                                <%= link_to "Informations Utiles", page_path('useful_information'), class: "block px-4 py-2 hover:bg-gray-100" %>
+                                <%= link_to "Informations Utiles", page_path("useful_information"), class: "block px-4 py-2 hover:bg-gray-100" %>
                             </li>
                             <li>
                                 <%= link_to "Nous contacter", page_path('contact'), class: "block px-4 py-2 hover:bg-gray-100" %>
@@ -135,9 +142,11 @@
                             <li>
                                 <%= link_to "Profil", user_path(Current.user), class: "block px-4 py-2 hover:bg-gray-100" %>
                             </li>
+                            <% if Current.user.has_privileges? %>
                             <li>
-                                <%= link_to "Tableau de bord", "#", class: "block px-4 py-2 hover:bg-gray-100" %>
+                                <%= link_to "Tableau de bord", admin_dashboard_index_path, class: "block px-4 py-2 hover:bg-gray-100" %>
                             </li>
+                            <% end %>
                             <li>
                                 <%= link_to "Paramètres", "#", class: "block px-4 py-2 hover:bg-gray-100" %>
                             </li>
@@ -235,6 +244,13 @@
                     <%= link_to "Devenir Membre", new_registration_path, class: "flex items-center w-full py-4 font-medium text-left text-gray-900" %>
                 </div>
                 
+                <!-- Administration (visible seulement pour les utilisateurs avec privilèges) -->
+                <% if authenticated? && Current.user.has_privileges? %>
+                <div class="border-b border-gray-200">
+                    <%= link_to "Administration", admin_dashboard_index_path, class: "flex items-center w-full py-4 font-medium text-left text-gray-900" %>
+                </div>
+                <% end %>
+                
                 <!-- À propos accordion -->
                 <div class="border-b border-gray-200">
                     <h2 id="accordion-apropos-heading">
@@ -253,7 +269,7 @@
                                     <%= link_to "À Propos", page_path('about'), class: "block text-indigo-700 font-medium" %>
                                 </li>
                                 <li>
-                                    <%= link_to "Informations Utiles", "#", class: "block" %>
+                                    <%= link_to "Informations Utiles", page_path("useful_information"), class: "block" %>
                                 </li>
                                 <li>
                                     <%= link_to "Nous contacter", page_path('contact'), class: "block" %>
@@ -265,7 +281,9 @@
                 
                 <!-- F.A.Q (lien simple) -->
                 <div class="border-b border-gray-200">
-                    <%= link_to "F.A.Q", "#", class: "flex items-center w-full py-4 font-medium text-left text-gray-900" %>
+                    <%= link_to page_path("faq"), class: "flex items-center w-full py-4 font-medium text-left text-gray-900" do %>
+                        F.A.Q
+                    <% end %>
                 </div>
             </div>
             
@@ -285,12 +303,22 @@
                             <div class="text-sm text-gray-500 truncate"><%= Current.user.email %></div>
                         </div>
                     </div>
-                    <div class="grid grid-cols-2 gap-3">
-                        <%= link_to "Profil", user_path(Current.user), class: "text-center py-2 px-4 bg-gray-100 rounded-lg hover:bg-gray-200" %>
-                        <%= link_to "Tableau de bord", "#", class: "text-center py-2 px-4 bg-gray-100 rounded-lg hover:bg-gray-200" %>
-                        <%= link_to "Paramètres", "#", class: "text-center py-2 px-4 bg-gray-100 rounded-lg hover:bg-gray-200" %>
-                        <%= button_to "Déconnexion", session_path, method: :delete, class: "text-center py-2 px-4 bg-red-100 text-red-700 rounded-lg hover:bg-red-200" %>
-                    </div>
+                    <% if Current.user.has_privileges? %>
+                        <!-- Pour les utilisateurs avec privilèges : afficher 4 boutons en grille 2x2 -->
+                        <div class="grid grid-cols-2 gap-3">
+                            <%= link_to "Profil", user_path(Current.user), class: "text-center py-2 px-4 bg-gray-100 rounded-lg hover:bg-gray-200" %>
+                            <%= link_to "Tableau de bord", admin_dashboard_index_path, class: "text-center py-2 px-4 bg-gray-100 rounded-lg hover:bg-gray-200" %>
+                            <%= link_to "Paramètres", "#", class: "text-center py-2 px-4 bg-gray-100 rounded-lg hover:bg-gray-200" %>
+                            <%= button_to "Déconnexion", session_path, method: :delete, class: "text-center py-2 px-4 bg-red-100 text-red-700 rounded-lg hover:bg-red-200" %>
+                        </div>
+                    <% else %>
+                        <!-- Pour les utilisateurs sans privilèges : afficher 3 boutons -->
+                        <div class="grid grid-cols-2 gap-3">
+                            <%= link_to "Profil", user_path(Current.user), class: "text-center py-2 px-4 bg-gray-100 rounded-lg hover:bg-gray-200" %>
+                            <%= link_to "Paramètres", "#", class: "text-center py-2 px-4 bg-gray-100 rounded-lg hover:bg-gray-200" %>
+                            <%= button_to "Déconnexion", session_path, method: :delete, class: "text-center py-2 px-4 bg-red-100 text-red-700 rounded-lg hover:bg-red-200 col-span-2" %>
+                        </div>
+                    <% end %>
                 <% else %>
                     <div class="grid grid-cols-2 gap-3">
                         <%= link_to "Se connecter", new_session_path, class: "text-center py-2 px-4 border border-gray-300 rounded-lg hover:bg-gray-50" %>
