@@ -15,10 +15,10 @@
             <h3 class="dashboard-subtitle">Horaires d'ouverture</h3>
             <table class="dashboard-table">
                 <% @opening_hours.each do |day, hours| %>
-                    <tr>
-                        <td><%= day.capitalize %></td>
-                        <td><%= hours %></td>
-                    </tr>
+                <tr>
+                    <td><%= day.capitalize %></td>
+                    <td><%= hours %></td>
+                </tr>
                 <% end %>
             </table>
         </div>
