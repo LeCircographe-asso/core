@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_03_20_093816) do
+ActiveRecord::Schema[8.0].define(version: 2025_03_21_084154) do
   create_table "attendance_lists", force: :cascade do |t|
     t.datetime "start_date"
     t.datetime "end_date"
@@ -115,8 +115,10 @@ ActiveRecord::Schema[8.0].define(version: 2025_03_20_093816) do
     t.integer "order_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "user_id"
     t.index ["order_id"], name: "index_product_orders_on_order_id"
     t.index ["product_id"], name: "index_product_orders_on_product_id"
+    t.index ["user_id"], name: "index_product_orders_on_user_id"
   end
 
   create_table "products", force: :cascade do |t|
