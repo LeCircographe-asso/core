@@ -34,7 +34,12 @@ module Admin
 
       respond_to do |format|
         if @user.save
-          format.html { redirect_to [ :admin, @user ], notice: "User was successfully created." }
+          if subscribe_to_newsletter == true
+            UserMailer.newsletter_subscription(@user).deliver_now
+          end
+          @user.generate_password_reset_token!
+          UserMailer.welcome_by_admin(@user).deliver_now
+          format.html { redirect_to [ :admin, @user ], notice: "User was successfully created. A mail has been sent !" }
           format.json { render :show, status: :created, location: @user }
         else
           format.html { render :new, status: :unprocessable_entity }
@@ -42,6 +47,7 @@ module Admin
         end
       end
     end
+
 
     # PATCH/PUT /admin/users/1 or /admin/users/1.json
     def update
@@ -80,7 +86,7 @@ module Admin
     # Only allow a list of trusted parameters through.
     def user_params
       params.fetch(:user, {})
-      params.require(:user).permit(:email_address, :first_name, :last_name, :password, :payments, :system_role)
+      params.require(:user).permit(:email_address, :first_name, :last_name, :password, :payments, :system_role, :subscribe_to_newsletter)
     end
 
     def generate_secure_password
