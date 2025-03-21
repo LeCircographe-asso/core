@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Informations Utiles</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 font-sans">
+  <div class="container mx-auto p-6">
+    <!-- Titre principal -->
+    <h1 class="text-3xl font-bold text-center mb-8">Informations Utiles</h1>
+
+    <hr/>
+    <br/>
+    <br/>
+
+    <!-- Section principale -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+      <!-- Colonne gauche -->
+      <div class="bg-white shadow-md p-6 rounded-lg">
+        <h2 class="text-lg font-semibold mb-4">Modalité</h2>
+        <p class="text-gray-600 mb-4">Quando ambulabat agendas adnomen te quasi actio. Sic ad corpus, quae planumque.</p>
+
+        <h2 class="text-lg font-semibold mb-4">Tarifs</h2>
+        <p class="text-gray-600 mb-4">Quando ambulabat agendas adnomen te quasi actio. Sic ad corpus, quae planumque.</p>
+
+        <h2 class="text-lg font-semibold mb-4">Horaires</h2>
+        <p class="text-gray-600">Aujourd'hui</p>
+      </div>
+
+      <!-- Colonne droite -->
+      <div class="bg-white shadow-md p-6 rounded-lg">
+        <h2 class="text-lg font-semibold mb-4">Type d'adhésion</h2>
+        <p class="text-gray-600 mb-4">Praeterea, ex culpa non invenies unum aut non accuratis unum.</p>
+
+        <h2 class="text-lg font-semibold mb-4">Tarif = Cotisation</h2>
+        <p class="text-gray-600">Ponam in culpa idotia aliis pravitatis. Principium ponere culpam in se justum praecipuum.</p>
+
+      </div>
+    </div>  
+    <hr/>
+    <!-- Bouton FAQ -->
+    <div class="mt-6 text-center">
+    <button class="bg-blue-500 text-white px-6 py-2 rounded-full hover:bg-blue-600 transition duration-300">
+      FAQ
+    </button>
+  </div>
+  <br/>
+  <hr/>
+  <br/>
+    <!-- Section Adresse et Horaires -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <!-- Adresse -->
+      <div class="bg-white shadow-md p-6 rounded-lg text-center">
+        <h2 class="text-lg font-semibold mb-4">Adresse</h2>
+        <p class="text-gray-600 mb-4">Moyen de transport : Bus Arrêt Le Matisse</p>
+        <!-- Carte (placeholder) -->
+        <div class="bg-gray-200 h-[200px] rounded-lg"></div>
+      </div>
+
+      <!-- Horaires d'ouverture -->
+      <div class="md:col-span-2 bg-white shadow-md p-6 rounded-lg">
+        <h2 class="text-lg font-semibold mb-4 text-center">Semaine du 10 au 16 Mars - Horaires d'ouverture</h2>
+        <!-- Tableau des horaires -->
+       
+         <%= render 'shared/table' %>
+
