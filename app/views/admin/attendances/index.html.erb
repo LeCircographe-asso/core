@@ -1,0 +1,10 @@
+<div class="admin-dashboard">
+  <td><%= link_to "ajouter un utilisateur",new_admin_attendance_list_attendance_path	, class: "purple-button"%></td>
+  <p>liste des utilisateurs présents:</p>
+  <% @users.each do |user|%>
+  <div>
+    <%= user.last_name %>
+    <%= user.first_name %>
+  </div>
+  <% end %>
+</div>

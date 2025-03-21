@@ -18,9 +18,9 @@
         <td><%= attendance_list.list_type %></td>
         <td><%= attendance_list.start_date %></td>
         <td><%= attendance_list.end_date %></td>
-        <td>
-        </td>
-        <td></td>
+        <td><%= link_to "voir",admin_attendance_list_attendances_path(attendance_list.id), class: "purple-button"%></td>
+        <td><%= link_to "ajouter",new_admin_attendance_list_attendance_path(attendance_list.id)	, class: "purple-button"%></td>
+
         <td><%= attendance_list.status %></td>
         <% end %>
     </tbody>
