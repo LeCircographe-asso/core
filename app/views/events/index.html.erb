@@ -1,20 +1,19 @@
 <div class="event-page">
-  
+
     <h1 class="event-title">Événements à venir</h1>
 
-    <hr/>
-  
+    <hr />
 
-  <div class="featured-events">
-    <%= render "shared/event_card", event: @events.last %>
-    <%= render "shared/event_card", event: @events[-2] %> 
-  </div>
 
-  <hr/>
+    <div class="featured-events">
+        <%= render "shared/event_card", event: @events.last %>
+        <%= render "shared/event_card", event: @events[-2] %>
+    </div>
 
-  <div class="event-carousel-container">
-  <h1 class="event-title">Événements passés</h1>
-    <%= render 'shared/event_carousel' %>
-  </div>
+    <hr />
+
+    <div class="event-carousel-container">
+        <h1 class="event-title">Événements passés</h1>
+        <%= render 'shared/event_carousel' %>
+    </div>
 </div>
-
