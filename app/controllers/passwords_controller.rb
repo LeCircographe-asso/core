@@ -9,12 +9,16 @@ class PasswordsController < ApplicationController
     user = User.find_by(email_address: params[:email_address])
     if user
       user.generate_password_reset_token!
-      PasswordsMailer.reset(user).deliver_later
-    end
+      PasswordsMailer.reset_password(user).deliver_now
     redirect_to new_session_path, notice: "Instructions de réinitialisation envoyées si l'email existe."
+    else
+    flash.now[:alert] = "Cette adresse email n'existe pas dans notre système."
+    render :new
+    end
   end
 
   def edit
+    render :edit
   end
 
   def update

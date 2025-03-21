@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_03_20_093816) do
+ActiveRecord::Schema[8.0].define(version: 2025_03_21_125622) do
   create_table "attendance_lists", force: :cascade do |t|
     t.datetime "start_date"
     t.datetime "end_date"
@@ -168,6 +168,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_03_20_093816) do
     t.string "password_reset_token"
     t.datetime "password_reset_sent_at"
     t.integer "system_role", default: 3, null: false
+    t.boolean "newsletter_subscribed"
     t.index ["email_address"], name: "index_users_on_email_address", unique: true
   end
 

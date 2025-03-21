@@ -1,5 +1,5 @@
 class User < ApplicationRecord
-  attr_accessor :cgu, :private_policy
+  attr_accessor :cgu, :private_policy, :subscribe_to_newsletter
   after_create :assign_membership
 
   enum :system_role, %i[super_admin admin volunteer user_connected], default: :user_connected
