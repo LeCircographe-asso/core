@@ -37,3 +37,4 @@
 !/app/assets/builds/.keep
 db/seeds.rb
 /node_modules
+/.cursorrules
