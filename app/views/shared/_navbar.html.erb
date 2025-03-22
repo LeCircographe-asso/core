@@ -109,7 +109,7 @@
 
             <!-- Bouton Mon Espace avec dropdown -->
             <div class="relative">
-                <button id="dropdownUserButton" data-dropdown-toggle="dropdownUser" class="relative inline-flex items-center px-5 py-2.5 text-sm font-medium text-center text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 focus:ring-4 focus:outline-none focus:ring-indigo-300">
+                <button id="dropdownUserButton" data-dropdown-toggle="dropdownUser" class="relative inline-flex items-center px-5 py-2.5 text-sm font-medium text-center text-white bg-[#6b47b8] rounded-lg hover:bg-gray-100 hover:text-[#1F5C55] hover:border-[#1F5C55] hover:border-2 focus:ring-4 focus:outline-none focus:ring-gray-300 transition-colors duration-300 border-2 border-transparent">
                     Mon Espace
                     <svg class="w-2.5 h-2.5 ms-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
                         <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4" />
@@ -155,7 +155,7 @@
                 <%= link_to new_session_path, class: "text-gray-900 hover:text-indigo-700 font-medium rounded-lg text-sm px-4 py-2 text-center" do %>
                 Se connecter
                 <% end %>
-                <%= link_to new_registration_path, class: "text-white bg-indigo-600 hover:bg-indigo-700 font-medium rounded-lg text-sm px-5 py-2.5 text-center" do %>
+                <%= link_to new_registration_path, class: "text-white bg-[#6b47b8] hover:bg-gray-100 hover:text-[#1F5C55] hover:border-[#1F5C55] hover:border-2 font-medium rounded-lg text-sm px-5 py-2.5 text-center transition-colors duration-300 border-2 border-transparent" do %>
                 S'inscrire
                 <% end %>
             </div>
@@ -305,7 +305,7 @@
                 <% else %>
                 <div class="grid grid-cols-2 gap-3">
                     <%= link_to "Se connecter", new_session_path, class: "text-center py-2 px-4 border border-gray-300 rounded-lg hover:bg-gray-50" %>
-                    <%= link_to "S'inscrire", new_registration_path, class: "text-center py-2 px-4 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700" %>
+                    <%= link_to "S'inscrire", new_registration_path, class: "text-center py-2 px-4 bg-[#6b47b8] text-white rounded-lg hover:bg-gray-100 hover:text-[#1F5C55] hover:border-[#1F5C55] hover:border-2 transition-colors duration-300 border-2 border-transparent" %>
                 </div>
                 <% end %>
             </div>
