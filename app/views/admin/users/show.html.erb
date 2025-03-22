@@ -1,26 +1,41 @@
 <h1>Profil <%= @user.id %></h1>
- <div class="profile-container">
-    <h1 class="profile-name"><%= @user.first_name %> <%= @user.last_name %></h1>
-    <h2 class="profile-section-title">Informations</h2>
-    <div class="profile-info">
-      <div class="info-group">
-        <p><strong>Email:</strong> <%= @user.email_address %></p>
-        <p><strong>Date de naissance:</strong> <%= @user.birthdate %></p>
-        <p><strong>Adresse:</strong> <%= @user.address %></p>
-        <p><strong>Code Postal:</strong> <%= @user.zip_code %></p>
-        <p><strong>Ville:</strong> <%= @user.town %></p>
-        <p><strong>Pays:</strong> <%= @user.country %></p>
-        <p><strong>N° de téléphone:</strong> <%= @user.phone_number %></p>
-        <p><strong>Profession ou spécialité:</strong> <%= @user.occupation %></p>
-        <p><strong>Disciplines pratiquées:</strong> <%= @user.specialty %></p>
-        <p><strong>Droit à l'image:</strong> <%= @user.image_rights %></p>
-        <%= link_to "Cotisation", admin_membership_index_path, class: "purple-button" %>
-      </div>
+<div class="profile-container">
+  <h1 class="profile-name"><%= @user.first_name %> <%= @user.last_name %></h1>
+  <h2 class="profile-section-title">Informations</h2>
+  <div class="profile-info">
+    <div class="info-group">
+      <p><strong>Email:</strong> <%= @user.email_address %></p>
+      <p><strong>Date de naissance:</strong> <%= @user.birthdate %></p>
+      <p><strong>Adresse:</strong> <%= @user.address %></p>
+      <p><strong>Code Postal:</strong> <%= @user.zip_code %></p>
+      <p><strong>Ville:</strong> <%= @user.town %></p>
+      <p><strong>Pays:</strong> <%= @user.country %></p>
+      <p><strong>N° de téléphone:</strong> <%= @user.phone_number %></p>
+      <p><strong>Profession ou spécialité:</strong> <%= @user.occupation %></p>
+      <p><strong>Disciplines pratiquées:</strong> <%= @user.specialty %></p>
+      <p><strong>Droit à l'image:</strong> <%= @user.image_rights %></p>
+
+      <p><strong>Memberships :</strong>
+        <% if @user.memberships.any? %>
+          <ul>
+            <% @user.memberships.each do |membership| %>
+              <li><%= membership.type_name %></li>
+            <% end %>
+          </ul>
+        <% else %>
+          Aucun membership actif.
+        <% end %>
+      </p>
+      
+      <%= button_to "Cotisation", admin_orders_path(user_id: @user.id, order_id: @order), method: :post, class: "purple-button" %>
+    </div>
   </div>
 
-<div>
-  <%= link_to "Edit this user", edit_admin_user_path(@user) %> |
-  <%= link_to "Back to users", admin_users_path %>
+  <div>
+    <%= link_to "Edit this user", edit_admin_user_path(@user) %> |
+    <%= link_to "Back to users", admin_users_path %>
 
-  <%= button_to "Destroy this user", [:admin, @user], method: :delete %>
+
+    <%= button_to "Destroy this user", [:admin, @user], method: :delete %>
+  </div>
 </div>
