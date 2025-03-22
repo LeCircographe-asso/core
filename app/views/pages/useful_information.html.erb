@@ -9,18 +9,19 @@
 </head>
 
 <body class="bg-gray-100 font-sans">
+    <% content_for :background_image, "background_temp.webp" %>
+    <% content_for :title, "Le Circographe - Informations Utiles" %>
+
     <div class="container mx-auto p-6">
         <!-- Titre principal -->
-        <h1 class="text-3xl font-bold text-center mb-8">Informations Utiles</h1>
+        <h1 class="text-3xl font-bold text-center mb-8 bg-white/95 p-4 rounded-lg shadow-md">Informations Utiles</h1>
 
-        <hr />
-        <br />
-        <br />
+        <hr class="my-6" />
 
         <!-- Section principale -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
             <!-- Colonne gauche -->
-            <div class="bg-white shadow-md p-6 rounded-lg">
+            <div class="bg-white/95 shadow-md p-6 rounded-lg">
                 <h2 class="text-lg font-semibold mb-4">Modalité</h2>
                 <p class="text-gray-600 mb-4">Quando ambulabat agendas adnomen te quasi actio. Sic ad corpus, quae planumque.</p>
 
@@ -32,29 +33,28 @@
             </div>
 
             <!-- Colonne droite -->
-            <div class="bg-white shadow-md p-6 rounded-lg">
+            <div class="bg-white/95 shadow-md p-6 rounded-lg">
                 <h2 class="text-lg font-semibold mb-4">Type d'adhésion</h2>
                 <p class="text-gray-600 mb-4">Praeterea, ex culpa non invenies unum aut non accuratis unum.</p>
 
                 <h2 class="text-lg font-semibold mb-4">Tarif = Cotisation</h2>
                 <p class="text-gray-600">Ponam in culpa idotia aliis pravitatis. Principium ponere culpam in se justum praecipuum.</p>
-
             </div>
         </div>
-        <hr />
+        
+        <hr class="my-6" />
+        
         <!-- Bouton FAQ -->
         <div class="mt-6 text-center">
-            <button class="bg-blue-500 text-white px-6 py-2 rounded-full hover:bg-blue-600 transition duration-300">
-                FAQ
-            </button>
+            <%= link_to "FAQ", page_path('faq'), class: "px-6 py-3 tracking-wide text-white font-bold bg-[#1F5C55] border-2 border-[#1F5C55] rounded-lg shadow-lg hover:bg-white hover:text-[#1F5C55] hover:border-[#1F5C55] transition-colors duration-300" %>
         </div>
-        <br />
-        <hr />
-        <br />
+        
+        <hr class="my-6" />
+        
         <!-- Section Adresse et Horaires -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
             <!-- Adresse -->
-            <div class="bg-white shadow-md p-6 rounded-lg text-center">
+            <div class="bg-white/95 shadow-md p-6 rounded-lg text-center">
                 <h2 class="text-lg font-semibold mb-4">Adresse</h2>
                 <p class="text-gray-600 mb-4">Moyen de transport : Bus Arrêt Le Matisse</p>
                 <!-- Carte (placeholder) -->
@@ -62,8 +62,12 @@
             </div>
 
             <!-- Horaires d'ouverture -->
-            <div class="md:col-span-2 bg-white shadow-md p-6 rounded-lg">
+            <div class="md:col-span-2 bg-white/95 shadow-md p-6 rounded-lg">
                 <h2 class="text-lg font-semibold mb-4 text-center">Semaine du 10 au 16 Mars - Horaires d'ouverture</h2>
                 <!-- Tableau des horaires -->
-
                 <%= render 'shared/table' %>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

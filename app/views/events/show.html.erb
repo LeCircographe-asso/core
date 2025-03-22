@@ -1,51 +1,58 @@
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-        <div class="relative aspect-[4/3] overflow-hidden rounded-xl">
-            <%= image_tag @event.picture_url.presence || "home2.webp", 
-                   alt: @event.title, 
-                   class: "w-full h-full object-cover rounded-xl" %>
-        </div>
+<% content_for :background_image, "background_temp.webp" %>
+<% content_for :title, "Le Circographe - Détail Événement" %>
 
-        <div class="space-y-6">
-            <h2 class="text-2xl font-bold text-gray-900"><%= @event.title %></h2>
+<main class="py-12">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <h1 class="text-4xl font-bold text-center text-gray-800 bg-white/95 py-6 mb-8 rounded-lg shadow-md"><%= @event.title %></h1>
+        
+        <div class="bg-white/95 rounded-lg shadow-md p-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="relative aspect-[4/3] overflow-hidden rounded-xl">
+                    <%= image_tag @event.picture_url.presence || "home2.webp", 
+                           alt: @event.title, 
+                           class: "w-full h-full object-cover rounded-xl" %>
+                </div>
 
-            <div class="space-y-4">
-                <p class="text-gray-700"><%= @event.upper_description %></p>
-                <p class="text-gray-700"><%= @event.middle_description %></p>
-                <p class="text-gray-700"><%= @event.bottom_description %></p>
+                <div class="space-y-6">
+                    <div class="space-y-4">
+                        <p class="text-gray-700"><%= @event.upper_description %></p>
+                        <p class="text-gray-700"><%= @event.middle_description %></p>
+                        <p class="text-gray-700"><%= @event.bottom_description %></p>
+                    </div>
+
+                    <div class="text-gray-600">
+                        <p class="flex items-center gap-2">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 12.414l4.243-4.242L17.657 7.928v8.729zM1 1v2h2v18a2 2 0 002 2h18a2 2 0 002-2V3a2 2 0 00-2-2H1z" />
+                            </svg>
+                            <%= @event.location %>
+                        </p>
+                        <p class="flex items-center gap-2">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m0 8v4M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                            </svg>
+                            <%= @event.date %>
+                        </p>
+                        <p class="flex items-center gap-2">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h.01M12 12h.01M19 12h.01M6 12a1 1 0 11-2 0 1 1 0 002 0zm7 0a1 1 0 11-2 0 1 1 0 002 0zm7 0a1 1 0 11-2 0 1 1 0 002 0z" />
+                            </svg>
+                            <%= @event.users.length %> personnes intéressées
+                        </p>
+                    </div>
+
+                    <% if authenticated? %>
+                    <div class="mt-6 space-y-2">
+                        <% if !current_user.is_interested_in? @event.id %>
+                        <%= button_to "Je suis intéressé", event_attendees_path, params: {id: @event.id}, class: "w-full px-4 py-2 tracking-wide text-white font-bold bg-[#6b47b8] border-2 border-[#6b47b8] rounded-lg shadow-lg hover:bg-gray-100 hover:text-[#1F5C55] hover:border-[#1F5C55] hover:shadow-lg transition-colors duration-300", method: :post %>
+                        <% else %>
+                        <%= button_to "Je ne suis plus intéressé", event_attendee_path, params: {id: @event.id}, method: :delete, class: "w-full px-4 py-2 tracking-wide text-white font-bold bg-[#6b47b8] border-2 border-[#6b47b8] rounded-lg shadow-lg hover:bg-gray-100 hover:text-[#1F5C55] hover:border-[#1F5C55] hover:shadow-lg transition-colors duration-300" %>
+                        <% end %>
+                        <%= button_to "Payer 10€", checkout_create_path(event_id: @event.id), method: :post, class: "w-full px-4 py-2 tracking-wide text-white font-bold bg-[#6b47b8] border-2 border-[#6b47b8] rounded-lg shadow-lg hover:bg-gray-100 hover:text-[#1F5C55] hover:border-[#1F5C55] hover:shadow-lg transition-colors duration-300" %>
+                    </div>
+                    <% end %>
+                </div>
             </div>
-
-            <div class="text-gray-600">
-                <p class="flex items-center gap-2">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 12.414l4.243-4.242L17.657 7.928v8.729zM1 1v2h2v18a2 2 0 002 2h18a2 2 0 002-2V3a2 2 0 00-2-2H1z" />
-                    </svg>
-                    <%= @event.location %>
-                </p>
-                <p class="flex items-center gap-2">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m0 8v4M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                    </svg>
-                    <%= @event.date %>
-                </p>
-                <p class="flex items-center gap-2">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h.01M12 12h.01M19 12h.01M6 12a1 1 0 11-2 0 1 1 0 002 0zm7 0a1 1 0 11-2 0 1 1 0 002 0zm7 0a1 1 0 11-2 0 1 1 0 002 0z" />
-                    </svg>
-                    <%= @event.users.length %> personnes intéressées
-                </p>
-            </div>
-
-            <% if authenticated? %>
-            <div class="mt-6 space-y-2">
-                <% if !current_user.is_interested_in? @event.id %>
-                <%= button_to "Je suis intéressé", event_attendees_path, params: {id: @event.id}, class: "purple-button w-full", method: :post %>
-                <% else %>
-                <%= button_to "Je ne suis plus intéressé", event_attendee_path, params: {id: @event.id}, method: :delete, class: "purple-button w-full" %>
-                <% end %>
-                <%= button_to "Payer 10€", checkout_create_path(event_id: @event.id), method: :post, class: "purple-button w-full" %>
-            </div>
-            <% end %>
         </div>
     </div>
-</div>
+</main>
