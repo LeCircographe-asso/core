@@ -1,6 +1,9 @@
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 bg-gray-100">
-    <div class="text-center mb-12">
-        <h1 class="text-4xl font-bold text-gray-800">Le Lieu
+<% content_for :background_image, "background_temp.webp" %>
+<% content_for :title, "Le Circographe - Le Lieu" %>
+
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div class="text-center mb-12 bg-white/90 py-6 rounded-lg shadow-md">
+        <h1 class="text-4xl font-bold text-gray-800">Le Lieu</h1>
     </div>
 
     <div class="flex justify-center mb-8">
@@ -12,11 +15,11 @@
         </div>
     </div>
 
-    <div class="flex justify-center">
+    <div class="flex justify-center mb-8">
         <%= link_to "Devenir Membre", page_path('become_member'), class: "px-4 py-2 tracking-wide text-white font-bold bg-[#6b47b8] border-2 border-[#6b47b8] rounded-lg shadow-lg hover:bg-gray-100 hover:text-[#1F5C55] hover:border-[#1F5C55] hover:shadow-lg transition-colors duration-300" %>
     </div>
 
-    <hr />
-
-    <%= render "shared/carousel_image", images: ["home1.webp", "home1.webp", "home1.webp", "home1.webp", "home1.webp", "home1.webp"] %>
+    <div class="bg-white/90 rounded-lg shadow-md p-6">
+        <%= render "shared/carousel_image", images: ["lelieu1.webp", "lelieu2.webp", "home1.webp", "home2.webp", "home3.webp"] %>
+    </div>
 </div>
