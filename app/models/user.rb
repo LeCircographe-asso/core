@@ -8,9 +8,14 @@ class User < ApplicationRecord
   has_many :sessions, dependent: :destroy
   has_many :events, through: :event_attendees
   has_many :user_memberships, dependent: :destroy
-  # has_many :memberships, through: :user_memberships
+
+ 
   has_many :user
   has_many :attendance_lists, through: :attendances
+
+  has_many :memberships, through: :user_memberships
+  has_many :product_orders
+
 
   has_many :book_of_entries
   has_many :orders
