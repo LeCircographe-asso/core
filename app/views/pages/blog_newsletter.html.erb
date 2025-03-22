@@ -1,5 +1,12 @@
-<section class="py-10 text-center bg-gray-100/90 rounded-lg backdrop-blur-sm">
-    <h1 class="text-5xl font-bold text-gray-800">Blog & Newsletter</h1>
-</section>
+<% content_for :background_image, "background_temp.webp" %>
+<% content_for :title, "Le Circographe - Blog & Newsletter" %>
 
-<%= render 'shared/blog_card' %>
+<main class="py-12">
+    <div class="container mx-auto px-4">
+    
+        <h1 class="text-4xl font-bold text-center text-gray-800 bg-white/90 py-6 mb-6 rounded-lg shadow-md">Blog & Newsletter</h1>
+        
+        <%= render 'shared/blog_card' %>
+        
+    </div>
+</main>
