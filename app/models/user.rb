@@ -1,6 +1,6 @@
 class User < ApplicationRecord
   attr_accessor :cgu, :private_policy, :subscribe_to_newsletter
-  after_create :assign_membership
+  # after_create :assign_membership
 
   enum :system_role, %i[super_admin admin volunteer user_connected], default: :user_connected
 
@@ -8,8 +8,14 @@ class User < ApplicationRecord
   has_many :sessions, dependent: :destroy
   has_many :events, through: :event_attendees
   has_many :user_memberships, dependent: :destroy
+
+ 
+  has_many :user
+  has_many :attendance_lists, through: :attendances
+
   has_many :memberships, through: :user_memberships
   has_many :product_orders
+
 
   has_many :book_of_entries
   has_many :orders
@@ -85,10 +91,12 @@ class User < ApplicationRecord
 
   private
 
-  def assign_membership
-    if memberships.empty?
-      no_member_membership = Membership.find_by(type_name: :no_member)
-      user_memberships.create(membership: no_member_membership) if no_member_membership
-    end
-  end
+  # def assign_membership
+  #   if self.memberships.empty?
+  #     no_member_membership = Membership.find_by(type_name: :no_member)
+  #     user_memberships.create(membership: no_member_membership) if no_member_membership
+  #   end
+  # end
 end
+
+

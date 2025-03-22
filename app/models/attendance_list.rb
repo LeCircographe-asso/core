@@ -1,6 +1,7 @@
 class AttendanceList < ApplicationRecord
 
 has_many :attendances, dependent: :destroy
+has_many :users, through: :attendances
 
 enum :list_type, %i[
     training 
@@ -26,4 +27,4 @@ def end_after_start
       errors.add(:end_date, "doit être après la date de début")
   end
 end
-end
+end 

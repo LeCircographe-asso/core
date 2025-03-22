@@ -1,37 +1,63 @@
 <%= form_with(model: [:admin, user]) do |form| %>
 <% if user.errors.any? %>
 <div style="color: red">
-    <h2><%= pluralize(user.errors.count, "error") %> prohibited this user from being saved:</h2>
+  <h2><%= pluralize(user.errors.count, "error") %> prohibited this user from being saved:</h2>
 
-    <ul>
-        <% user.errors.each do |error| %>
-        <li><%= error.full_message %></li>
-        <% end %>
-    </ul>
+  <ul>
+    <% user.errors.each do |error| %>
+    <li><%= error.full_message %></li>
+    <% end %>
+  </ul>
 </div>
 <% end %>
 
 <div class="field">
-    <%= form.label :email_address %>
-    <%= form.text_field :email_address %>
+  <%= form.label :email_address %>
+  <%= form.text_field :email_address %>
 </div>
 
 <div class="field">
-    <%= form.label :first_name, "Prénom" %>
-    <%= form.text_field :first_name %>
+  <%= form.label :first_name, "Prénom" %>
+  <%= form.text_field :first_name %>
 </div>
 
 <div class="field">
-    <%= form.label :last_name, "Nom" %>
-    <%= form.text_field :last_name %>
+  <%= form.label :last_name, "Nom" %>
+  <%= form.text_field :last_name %>
+</div>
+<div class="field">
+  <%= form.label :last_name, "Nom" %>
+  <%= form.text_field :last_name %>
 </div>
 
 <div class="field">
-    <%= form.label :subscribe_to_newsletter, "Inscrire à la newsletter ?" %>
-    <%= form.check_box :subscribe_to_newsletter %>
+  <%= form.label :subscribe_to_newsletter, "Inscrire à la newsletter ?" %>
+  <%= form.check_box :subscribe_to_newsletter %>
 </div>
+
+<% if @can_promote %>
+<div class="checkbox-container">
+  <%= form.check_box :promote_role, {}, "1", "0" %>
+  <%= form.label :promote_role, "passer à #{@can_promote}" %>
+</div>
+<% end %>
+
+<% if @can_demote %>
+<div class="checkbox-container">
+  <%= form.check_box :reduce_role, {}, "1", "0" %>
+  <%= form.label :reduce_role, "passer à #{@can_demote}" %>
+</div>
+<% end %>
+
+
+
+
+
 
 <div>
-    <%= form.submit %>
+  <%= form.submit "Envoyer", class: "btn btn-primary" %>
+
 </div>
+
+
 <% end %>

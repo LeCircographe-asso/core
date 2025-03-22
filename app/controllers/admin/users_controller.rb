@@ -18,6 +18,13 @@ module Admin
 
     # GET /admin/users/1/edit
     def edit
+      @can_promote = User.system_roles.key(@user.system_role_before_type_cast - 1) if can_promote?(@user)
+      @can_demote = User.system_roles.key(@user.system_role_before_type_cast + 1) if can_demote?(@user)
+
+
+
+     
+      
     end
 
     # POST /admin/users or /admin/users.json
@@ -44,15 +51,20 @@ module Admin
 
     # PATCH/PUT /admin/users/1 or /admin/users/1.json
     def update
-      respond_to do |format|
-        if @user.update(user_params)
-          format.html { redirect_to [ :admin, @user ], notice: "User was successfully updated." }
-          format.json { render :show, status: :ok, location: @user }
-        else
-          format.html { render :edit, status: :unprocessable_entity }
-          format.json { render json: @user.errors, status: :unprocessable_entity }
-        end
+      p "#"*111
+      
+      if params.require(:user)[:promote_role] == "1" && can_promote?(@user)
+        @user.update(system_role: User.system_roles.key(@user.system_role_before_type_cast - 1))
+        redirect_to [ :admin, @user ], notice: "User was successfully updated."
       end
+      
+      if params.require(:user)[:reduce_role] == "1" && can_demote?(@user)
+        @user.update(system_role: User.system_roles.key(@user.system_role_before_type_cast + 1))
+        redirect_to [ :admin, @user ], notice: "User was successfully updated."
+      end
+      
+      p "#"*111
+
     end
 
     # DELETE /admin/users/1 or /admin/users/1.json
@@ -80,5 +92,17 @@ module Admin
     def generate_secure_password
       SecureRandom.hex(10)
     end
+
+    def can_promote?(other_user)
+      current_user.system_role_before_type_cast < other_user.system_role_before_type_cast - 1
+    end
+    
+    def can_demote?(other_user)
+      current_user.system_role_before_type_cast < other_user.system_role_before_type_cast && other_user.system_role_before_type_cast != 3
+    end
+
   end
 end
+
+
+
