@@ -29,16 +29,9 @@
       <tr>
         <td><%= user.id %></td>
         <td><%= user.email_address %></td>
-        <td><%= user.system_role %></td>
-        <%
-=begin%>
-        <% if user.user_memberships.exists? %>
-        <td><%= user.user_memberships.order(:created_at).last.subscription_type.name %></td>
-        <% else %>
-        <td>non</td>
-        <% end %>
-        <%
-=end%>
+        <td>
+          <%= link_to "#{user.system_role}", edit_admin_user_path(user), method: :get, class: "btn btn-primary" %>
+        </td>
         <td>
           <%= link_to "voir", admin_user_path(user), class: "purple-button", data: { turbo: false } %>
         </td>

@@ -6,6 +6,9 @@ Rails.application.routes.draw do
     resources :events, only: %i[new create edit destroy index]
     resource :session, only: %i[new create destroy]
     resource :notepad, only: %i[show edit update]
+    resources :attendance_lists, only: %i[new index create show edit update] do
+      resources :attendances, only: %i[new index create show edit update]
+    end
     resources :orders
     resources :product_orders, only: %i[create show]
     resources :products, only: %i[index]
