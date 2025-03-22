@@ -29,7 +29,7 @@
 </head>
 
 <body class="<%= controller_name %>-<%= action_name %>">
-    <% if Current.user&.has_admin? %>
+    <% if controller_path.start_with?('admin/') %>
     <div class="page-container">
         <%= render 'shared/admin_navbar' %>
         <%= render 'shared/admin_lateral_navbar' %>
