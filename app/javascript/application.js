@@ -2,6 +2,7 @@
 import "@hotwired/turbo-rails"
 import "controllers"
 import "flowbite"
+import "leaflet"
 
 // Définir la fonction initFlowbite si elle n'existe pas déjà
 if (typeof window.initFlowbite !== 'function') {
