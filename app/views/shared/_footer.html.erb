@@ -16,11 +16,8 @@
             </div>
             <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 md:w-3/5">
                 <div>
-                    <h2 class="mb-2 text-sm font-semibold text-gray-900 uppercase">Liens rapides</h2>
-                    <ul class="text-gray-500 text-sm">
-                        <li class="mb-1">
-                            <%= link_to "Accueil", root_path, class: "hover:underline" %>
-                        </li>
+                    <h2 class="mb-2 text-sm font-semibold text-gray-900 uppercase dark:text-white">Liens rapides</h2>
+                    <ul class="text-gray-500 dark:text-gray-400 text-sm">
                         <li class="mb-1">
                             <%= link_to "Nos Actualités", page_path("nos_actualites"), class: "hover:underline" %>
                         </li>
@@ -33,11 +30,8 @@
                     </ul>
                 </div>
                 <div>
-                    <h2 class="mb-2 text-sm font-semibold text-gray-900 uppercase">Informations</h2>
-                    <ul class="text-gray-500 text-sm">
-                        <li class="mb-1">
-                            <%= link_to "Le Lieu", page_path("le_lieu"), class: "hover:underline" %>
-                        </li>
+                    <h2 class="mb-2 text-sm font-semibold text-gray-900 uppercase dark:text-white">Informations</h2>
+                    <ul class="text-gray-500 dark:text-gray-400 text-sm">
                         <li class="mb-1">
                             <%= link_to "Le Cirque", page_path("le_cirque"), class: "hover:underline" %>
                         </li>
@@ -50,16 +44,16 @@
                     </ul>
                 </div>
                 <div>
-                    <h2 class="mb-2 text-sm font-semibold text-gray-900 uppercase">Mentions légales</h2>
-                    <ul class="text-gray-500 text-sm">
-                        <li class="mb-1">
-                            <%= link_to "CGU", page_path("cgu"), class: "hover:underline" %>
+                    <h2 class="mb-2 text-sm font-semibold text-gray-900 uppercase dark:text-white">Mentions légales</h2>
+                    <ul class="text-gray-500 dark:text-gray-400 text-sm">
+                        <li class="mt-1">
+                            <%= link_to "F.A.Q", page_path("faq"), class: "hover:underline" %>
                         </li>
                         <li>
                             <%= link_to "Politique de confidentialité", page_path("privacy-policy"), class: "hover:underline" %>
                         </li>
-                        <li class="mt-1">
-                            <%= link_to "F.A.Q", page_path("faq"), class: "hover:underline" %>
+                        <li class="mb-1">
+                            <%= link_to "Conditions générales", page_path("cgu"), class: "hover:underline" %>
                         </li>
                     </ul>
                 </div>
