@@ -31,10 +31,12 @@
   <%= form.check_box :subscribe_to_newsletter %>
 </div>
 
-<div class="field">
-<p> changer le roles </p>
- <%= form.select :system_role, options_for_select(@array_right,@default_role) %>
-</div>
+<% if @user.persisted? %>
+  <div class="field">
+  <p> changer le roles </p>
+  <%= form.select :system_role, options_for_select(@array_right,@default_role) %>
+  </div>
+<% end %>
 
 <div>
   <%= form.submit "Envoyer", class: "btn btn-primary" %>

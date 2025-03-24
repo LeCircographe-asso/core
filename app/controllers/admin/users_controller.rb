@@ -27,20 +27,12 @@ module Admin
       @user = User.new(user_params)
       @user.password = generate_secure_password
 
-      respond_to do |format|
-        if @user.save
-          if subscribe_to_newsletter == true
-            UserMailer.newsletter_subscription(@user).deliver_now
-          end
-          @user.generate_password_reset_token!
-          UserMailer.welcome_by_admin(@user).deliver_now
-          format.html { redirect_to [ :admin, @user ], notice: "User was successfully created. A mail has been sent !" }
-          format.json { render :show, status: :created, location: @user }
-        else
-          format.html { render :new, status: :unprocessable_entity }
-          format.json { render json: @user.errors, status: :unprocessable_entity }
-        end
+      if @user.save
+        redirect_to admin_user_path(@user), notice: "Utilisateur créé avec succès."
+      else
+        redirect_to admin_user_path(@user), alert: "Échec de la création de l'utilisateur."
       end
+
     end
 
 
