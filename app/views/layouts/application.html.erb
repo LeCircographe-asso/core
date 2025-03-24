@@ -28,25 +28,27 @@
     <script src="https://js.stripe.com/v3/"></script>
 </head>
 
-<body class="<%= controller_name %>-<%= action_name %>">
-    <% if controller_path.start_with?('admin/') %>
-    <div class="page-container">
-        <%= render 'shared/admin_navbar' %>
-        <%= render 'shared/admin_lateral_navbar' %>
+<body class="<%= controller_name %>-<%= action_name %> flex flex-col min-h-screen">
+    
+        <% if controller_path.start_with?('admin/') %>
+        
+            <%= render 'shared/admin_navbar' %>
+            <%= render 'shared/admin_lateral_navbar' %>
+            <%= render 'shared/flash' %>
+        <main>
+            <%= yield %>
+        </main>
+        
+        <% else  %>
+        <div class="flex-grow">
+        <%= render 'shared/navbar' %>
         <%= render 'shared/flash' %>
         <main>
             <%= yield %>
         </main>
-    </div>
-    <% else  %>
-    <%= render 'shared/navbar' %>
-    <%= render 'shared/flash' %>
-    <main>
-
-        <%= yield %>
-    </main>
-    <%= render 'shared/footer' %>
-    <% end %>
+        </div>
+        <%= render 'shared/footer' %>
+        <% end %>
 </body>
 
 </html>
