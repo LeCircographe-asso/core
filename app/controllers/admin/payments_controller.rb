@@ -1,6 +1,14 @@
 module Admin
   class PaymentsController < BaseController
 
+    def index
+      @payments=Payment.all
+      @payment= Payment.find_by(params[:id])
+      @user = User.find_by(params[:id])
+      
+
+    end 
+
     def new 
       @payment = Payment.new
     end
