@@ -30,11 +30,14 @@
         <td><%= user.id %></td>
         <td><%= user.email_address %></td>
         <td>
-          <%= link_to "#{user.system_role}", edit_admin_user_path(user), method: :get, class: "btn btn-primary" %>
+          <%= user.system_role%>
         </td>
         <td>
           <%= link_to "voir", admin_user_path(user), class: "purple-button", data: { turbo: false } %>
         </td>
+        <td>
+          <%= link_to "Editer", edit_admin_user_path(user), method: :get, class: "purple-button" %>
+        </td>        
       </tr>
       <% end %>
     </tbody>
