@@ -13,6 +13,7 @@ class User < ApplicationRecord
   has_many :user
   has_many :attendance_lists, through: :attendances
   has_many :product_orders
+  has_many :payments
 
   has_many :memberships, through: :user_memberships
   has_many :product_orders
