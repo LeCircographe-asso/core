@@ -98,7 +98,6 @@ module Admin
 
     # Only allow a list of trusted parameters through.
     def user_params
-      params.fetch(:user, {})
       params.require(:user).permit(:email_address, :first_name, :last_name, :password, :payments, :system_role, :subscribe_to_newsletter)
     end
 
