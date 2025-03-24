@@ -1,6 +1,14 @@
 module Admin
   class PaymentsController < BaseController
 
+    def index
+      @payments=Payment.all
+      @payment= Payment.find_by(params[:id])
+      @user = User.find_by(params[:id])
+      
+
+    end 
+
     def new 
       @payment = Payment.new
     end
@@ -21,6 +29,7 @@ module Admin
         puts"********************************************************************************************************************************"
         if @payment.save
           puts"#{@payment.id}"
+          puts"#{@payment.inspect}"
           redirect_to admin_payment_path(@payment), notice: 'Cotisation prise en compte'  
         else 
           redirect_to admin_product_order_path, notice: ' You fuck it up'
@@ -31,7 +40,8 @@ module Admin
       @payment = Payment.find(params[:id])
       @product_order = ProductOrder.find_by(id: payment_params[:product_order_id])
 
-      if @payment.update(status: 'success')
+      if @payment.update(payment_params)
+        puts"#{@payment.inspect}"
         redirect_to admin_payment_path(@payment), notice: 'Mise à jour réussie'
       else
         redirect_to admin_payment_path(@payment), alert: 'Échec de la mise à jour'
