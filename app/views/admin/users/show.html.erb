@@ -14,23 +14,24 @@
       <p><strong>Profession ou spécialité:</strong> <%= @user.occupation %></p>
       <p><strong>Disciplines pratiquées:</strong> <%= @user.specialty %></p>
       <p><strong>Droit à l'image:</strong> <%= @user.image_rights %></p>
-      <p><strong>Memberships :</strong>
-        <% if @user.memberships.any? %>
-          <ul>
-            <% @user.memberships.each do |membership| %>
-              <li><%= membership.type_name %></li>
-            <% end %>
-          </ul>
-        <% else %>
-          Aucun membership actif.
-        <% end %>
+      <p><strong>Adherent :</strong>
+          <% @user.user_memberships.where(status: "active").each do |user_membership| %>
+            <li><%= user_membership.membership.type_name %></li>
+          <% end %>
       </p>
-      
-      <%= button_to "Cotisation", admin_orders_path(user_id: @user.id, order_id: @order), method: :post, class: "purple-button" %>
+      <p><strong>Abonnement en cours :</strong>
+      <%= @user.payments.last.product_order.product.product_name%></p>
 
+      <% @user.user_memberships.where(status: "active").each do |user_membership| %>
+
+            <p><strong>Expire le :</strong></p>
+        <li><%= user_membership.end_date.strftime("%d/%m/%Y")%>
+        <% end %>
+      <%= button_to "Cotisation", admin_orders_path(user_id: @user.id, order_id: @order), method: :post, class: "purple-button" %>
     </div>
   </div>
   <div>
+    <%= link_to "Voir historique de payment", admin_payments_path(@user)%>
     <%= link_to "Edit this user", edit_admin_user_path(@user) %> |
     <%= link_to "Back to users", admin_users_path %>
     <%= button_to "Destroy this user", [:admin, @user], method: :delete %>

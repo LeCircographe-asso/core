@@ -1,0 +1,32 @@
+<div align="center">
+<h1>Historique des paiements de <%= @user.email %></h1>
+
+<table>
+  <thead>
+    <tr>
+        <th>Montant</th>
+        <th>Date</th>
+        <th>Statut</th>
+        <th>Cotisation</th>    
+    </tr>
+  </thead>
+  <tbody>
+    <% @payments.each do |payment| %>
+      <tr>
+        <td><%= payment.payment_amount.to_s + " €" %> </td>
+            <td>
+            <% if payment.payment_date.present? %>
+            <%= payment.payment_date.strftime("%d/%m/%Y") %>
+            <% else %>
+            <%= "Date non disponible" %>
+            <% end %>
+        </td>
+        <td><%= payment.status %> </td>
+        <td><%= payment.product_order.product.product_name if payment.product_order.product %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<%= link_to 'Retour', admin_user_path(@user), class: "btn" %>
+</div>

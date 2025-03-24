@@ -9,6 +9,9 @@ module Admin
 
     # GET /admin/users/1 or /admin/users/1.json
     def show
+      @user = User.find_by(params[:id])
+      @product_order = Product.find_by(params[:id])
+      @product = Product.find_by(params[:id])
     end
 
     # GET /admin/users/new
@@ -20,11 +23,6 @@ module Admin
     def edit
       @can_promote = User.system_roles.key(@user.system_role_before_type_cast - 1) if can_promote?(@user)
       @can_demote = User.system_roles.key(@user.system_role_before_type_cast + 1) if can_demote?(@user)
-
-
-
-     
-      
     end
 
     # POST /admin/users or /admin/users.json

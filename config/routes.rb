@@ -12,7 +12,7 @@ Rails.application.routes.draw do
     resources :orders
     resources :product_orders, only: %i[create show]
     resources :products, only: %i[index]
-    resources :payments, only: %i[show create new update]
+    resources :payments, only: %i[show create new update index]
   end
 
 
