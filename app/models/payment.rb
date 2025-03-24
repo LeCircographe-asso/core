@@ -24,7 +24,7 @@ class Payment < ApplicationRecord
     user_membership = user.user_memberships.active.last
     if user_membership.nil?
       # Si l'utilisateur n'a pas d'abonnement actif, on en crée un
-      user_membership = UserMembership.create!(user: user, membership_id: membership_type)
+      user_membership = UserMembership.create!(user: user, membership_id: membership_type, start_date: created_at, status: :active)
       puts '**********************************************************************************************'
       puts 'Membership créé'
     else
@@ -74,8 +74,10 @@ class Payment < ApplicationRecord
     puts user_membership.inspect
     product_name = product_order.product.product_name
     end_date = determine_end_date(product_name)
+  
 
     if end_date
+      user_membership.update!(status: :active)
       user_membership.update!(end_date: end_date)
       puts '**********************************************************************************************'
       puts 'End date mise à jour'

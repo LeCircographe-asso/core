@@ -14,16 +14,15 @@
       <p><strong>Profession ou spécialité:</strong> <%= @user.occupation %></p>
       <p><strong>Disciplines pratiquées:</strong> <%= @user.specialty %></p>
       <p><strong>Droit à l'image:</strong> <%= @user.image_rights %></p>
-      <p><strong>Memberships :</strong>
-        <% if @user.memberships.any? %>
-          <ul>
-            <% @user.memberships.each do |membership| %>
-              <li><%= membership.type_name %></li>
-            <% end %>
-          </ul>
-        <% else %>
-          Aucun membership actif.
-        <% end %>
+      <p><strong>Memberships :</strong></p>
+        <ul>
+          <% @user.user_memberships.where(status: "active").each do |user_membership| %>
+            <li><%= user_membership.membership.type_name %></li>
+            <p><strong>Expire le :</strong></p>
+            <li><%= user_membership.end_date%>
+          <% end %>
+        </ul>
+
       </p>
       
       <%= button_to "Cotisation", admin_orders_path(user_id: @user.id, order_id: @order), method: :post, class: "purple-button" %>
