@@ -6,8 +6,6 @@ class BookOfEntry < ApplicationRecord
 
 
   after_create :bookOfEntryValidation
-
-
   
 
   def bookOfEntryValidation
