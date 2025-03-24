@@ -6,12 +6,21 @@ class Payment < ApplicationRecord
   enum :payment_type, %i[cash credit_card check]
 
   after_update :update_user_membership_if_paid
+  after_update :createBookOfEntry
 
   def payment_successful?
     puts "#{product_order.id}"
     puts "**********************************************************************************************"
     product_order.payments.where(status: 'success').exists?
   end
+
+  def createBookOfEntry
+    # Vérifie si le produit acheté est un "Book of Entry"
+    if self.product_order.product.product_name == "Cotisation 10 séances"
+      BookOfEntry.create
+    end
+  end
+
 
   def update_user_membership_if_paid
     return unless payment_successful?
@@ -24,7 +33,7 @@ class Payment < ApplicationRecord
     user_membership = user.user_memberships.active.last
     if user_membership.nil?
       # Si l'utilisateur n'a pas d'abonnement actif, on en crée un
-      user_membership = UserMembership.create!(user: user, membership_id: membership_type)
+      user_membership = UserMembership.create!(user: user, membership_id: membership_type, start_date: created_at, status: :active)
       puts '**********************************************************************************************'
       puts 'Membership créé'
     else
@@ -74,8 +83,10 @@ class Payment < ApplicationRecord
     puts user_membership.inspect
     product_name = product_order.product.product_name
     end_date = determine_end_date(product_name)
+  
 
     if end_date
+      user_membership.update!(status: :active)
       user_membership.update!(end_date: end_date)
       puts '**********************************************************************************************'
       puts 'End date mise à jour'
