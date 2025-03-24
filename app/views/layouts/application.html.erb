@@ -29,6 +29,7 @@
 </head>
 
 <body class="<%= controller_name %>-<%= action_name %> flex flex-col min-h-screen">
+
     
         <% if controller_path.start_with?('admin/') %>
         
@@ -40,7 +41,7 @@
         </main>
         
         <% else  %>
-        <div class="flex-grow">
+        <div class="flex-grow"  style="background-image: url('<%= asset_path(content_for(:background_image) || 'background_temp.webp') %>')">
         <%= render 'shared/navbar' %>
         <%= render 'shared/flash' %>
         <main>
