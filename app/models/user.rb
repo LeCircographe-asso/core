@@ -15,6 +15,7 @@ class User < ApplicationRecord
 
   has_many :memberships, through: :user_memberships
   has_many :product_orders
+  has_many :payments
 
 
   has_many :book_of_entries
