@@ -41,7 +41,9 @@
         </main>
         
         <% else  %>
-        <div class="flex-grow" style="background-image: url('<%= asset_path(content_for(:background_image) || 'background_temp.webp') %>'); background-repeat: no-repeat; background-size: cover; background-position: center;">
+        <div class="flex-grow bg-no-repeat bg-cover bg-center" style="background-image: url('<%= asset_path(content_for(:background_image) || 'background_temp.webp') %>')">
+
+
 
         <%= render 'shared/navbar' %>
         <%= render 'shared/flash' %>
@@ -49,7 +51,7 @@
             <%= yield %>
         </main>
         </div>
-        <%= render 'shared/footer' %>
+        <%= render 'shared/footer' %> 
         <% end %>
 </body>
 
