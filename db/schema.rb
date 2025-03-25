@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_03_21_125622) do
+ActiveRecord::Schema[8.0].define(version: 2025_03_25_145648) do
   create_table "attendance_lists", force: :cascade do |t|
     t.datetime "start_date"
     t.datetime "end_date"
@@ -165,7 +165,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_03_21_125622) do
     t.text "occupation"
     t.text "specialty"
     t.boolean "image_rights", default: false
-    t.boolean "newsletter", default: false
     t.boolean "get_involved", default: false
     t.string "password_reset_token"
     t.datetime "password_reset_sent_at"
