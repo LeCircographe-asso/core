@@ -101,7 +101,7 @@ class User < ApplicationRecord
 
 
   private
-
+  
   # def assign_membership
   #   if self.memberships.empty?
   #     no_member_membership = Membership.find_by(type_name: :no_member)

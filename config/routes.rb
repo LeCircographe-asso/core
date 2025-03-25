@@ -10,7 +10,7 @@ Rails.application.routes.draw do
       resources :attendances, only: %i[new index create show edit update]
     end
     resources :orders
-    resources :product_orders, only: %i[create show]
+    resources :product_orders, only: %i[create show update]
     resources :products, only: %i[index]
     resources :payments, only: %i[show create new update index]
   end
