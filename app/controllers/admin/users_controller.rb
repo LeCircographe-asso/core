@@ -21,9 +21,9 @@ module Admin
     end
 
     # GET /admin/users/1/edit
-    def edit
-      @can_promote = User.system_roles.key(@user.system_role_before_type_cast - 1) if can_promote?(@user)
-      @can_demote = User.system_roles.key(@user.system_role_before_type_cast + 1) if can_demote?(@user)
+    def edit     
+      @array_right = current_user.has_higher_permissions?(User.find(params[:id])) ? current_user.inferior_rights : [User.find(params[:id]).system_role]
+      @default_role = User.find(params[:id]).system_role
     end
 
     # POST /admin/users or /admin/users.json
@@ -61,20 +61,17 @@ module Admin
 
     # PATCH/PUT /admin/users/1 or /admin/users/1.json
     def update
-      p "#"*111
-      
-      if params.require(:user)[:promote_role] == "1" && can_promote?(@user)
-        @user.update(system_role: User.system_roles.key(@user.system_role_before_type_cast - 1))
-        redirect_to [ :admin, @user ], notice: "User was successfully updated."
+           
+      if current_user.inferior_rights.include?(params[:user][:system_role])
+        if @user.update(user_params)
+          redirect_to admin_user_path(@user), notice: "Utilisateur mis à jour avec succès."
+        else
+          redirect_to admin_user_path(@user), alert: "Échec de la mise à jour de l'utilisateur."
+        end
+      else
+        redirect_to admin_user_path(@user), alert: "Vous n'avez pas les droits pour effectuer cette modification."
       end
       
-      if params.require(:user)[:reduce_role] == "1" && can_demote?(@user)
-        @user.update(system_role: User.system_roles.key(@user.system_role_before_type_cast + 1))
-        redirect_to [ :admin, @user ], notice: "User was successfully updated."
-      end
-      
-      p "#"*111
-
     end
 
     # DELETE /admin/users/1 or /admin/users/1.json
@@ -95,7 +92,6 @@ module Admin
 
     # Only allow a list of trusted parameters through.
     def user_params
-      params.fetch(:user, {})
       params.require(:user).permit(:email_address, :first_name, :last_name, :password, :payments, :system_role, :subscribe_to_newsletter)
     end
 
@@ -103,13 +99,8 @@ module Admin
       SecureRandom.hex(10)
     end
 
-    def can_promote?(other_user)
-      current_user.system_role_before_type_cast < other_user.system_role_before_type_cast - 1
-    end
+
     
-    def can_demote?(other_user)
-      current_user.system_role_before_type_cast < other_user.system_role_before_type_cast && other_user.system_role_before_type_cast != 3
-    end
 
   end
 end

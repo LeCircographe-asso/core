@@ -1,3 +1,4 @@
+
 <% content_for :title, "Users" %>
 <div class="admin-dashboard">
   <h1 class="dashboard-title">Tableau de bord administrateur</h1>
@@ -23,6 +24,7 @@
         <th>Email</th>
         <th>Rôle</th>
         <th>Abonnement</th>
+        <th>Action</th>
         <th>Adhesion en cours</th>
       </tr>
     </thead>
@@ -32,10 +34,14 @@
         <td><%= user.id %></td>
         <td><%= user.email_address %></td>
         <td>
-          <%= link_to "#{user.system_role}", edit_admin_user_path(user), method: :get, class: "btn btn-primary" %>
+          <%= user.system_role%>
         </td>
         <td>
           <%= link_to "voir", admin_user_path(user), class: "purple-button", data: { turbo: false } %>
+        </td>
+        <td>
+          <%= link_to "Editer", edit_admin_user_path(user), method: :get, class: "purple-button" %>
+        </td>        
         </td>
         <td>
           <% user.user_memberships.where(status: "active").each do |user_membership| %>

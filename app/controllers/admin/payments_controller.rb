@@ -26,7 +26,7 @@ module Admin
         @payment = Payment.new(payment_params)
         
         puts"#{@product_order.inspect}"
-        puts"********************************************************************************************************************************"
+
         if @payment.save
           puts"#{@payment.id}"
           puts"#{@payment.inspect}"
@@ -39,6 +39,11 @@ module Admin
     def update
       @payment = Payment.find(params[:id])
       @product_order = ProductOrder.find_by(id: payment_params[:product_order_id])
+
+      p "#"*111
+      p @payment
+      p "#"*111
+      
 
       if @payment.update(payment_params)
         puts"#{@payment.inspect}"

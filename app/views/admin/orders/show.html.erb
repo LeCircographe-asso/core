@@ -1,40 +1,43 @@
-<div style="display: flex; flex-direction: column; align-items: center; text-align: center; width: 100%;">
-  <h1>Liste des Cotisations</h1>
+<div class="admin-dashboard">
+  <div class="admin-dashboard">
+    <div style="display: flex; flex-direction: column; align-items: center; text-align: center; width: 100%;">
+      <h1>Liste des Cotisations</h1>
 
-  <% if @order && @order.product_orders.present? %>
-    <% @order.product_orders.each do |product_order| %>
-      <p>Produit déjà ajouté : <%= product_order.product.product_name %> - Prix : 
-      <%= product_order.product.price_entries.order(created_at: :desc).first.price_catalog.price %> €</p>
-    <% end %>
-
-  <% else %>
-  <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; align-items: center; width: 100%;">
-    <table style="width: 80%; margin: 0 auto; border-collapse: collapse; text-align: left;">
-      <thead>
-        <tr>
-          <th> Adhesion</th>
-          <th>Prix</th>
-          <th>Cotiser</th>
-        </tr>
-      </thead>
-      <tbody>
-        <% @products.each do |product| %>
-          <tr>
-            <td><%= product.product_name %></td>
-            <td>
-              <% if product.price_entries.any? %>
-                <% latest_price = product.price_entries.order(created_at: :desc).first %>
-                <%= latest_price.price_catalog.price %> €
-              <% else %>
-                Non défini
-              <% end %>
-            </td>
-            <td>
-                <%= button_to 'Ajouter', admin_product_orders_path,params:{product_order:{order_id: @order, product_id: product, user_id: @user }}, method: :post, class: "purple-button" %>
-            </td>
-          </tr>
+      <% if @order && @order.product_orders.present? %>
+        <% @order.product_orders.each do |product_order| %>
+          <p>Produit déjà ajouté : <%= product_order.product.product_name %> - Prix : 
+          <%= product_order.product.price_entries.order(created_at: :desc).first.price_catalog.price %> €</p>
         <% end %>
-      </tbody>
-    </table>
-  </div>
-<% end %>
+
+    <% else %>
+    <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; align-items: center; width: 100%;">
+      <table style="width: 80%; margin: 0 auto; border-collapse: collapse; text-align: left;">
+        <thead>
+          <tr>
+            <th> Adhesion</th>
+            <th>Prix</th>
+            <th>Cotiser</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @products.each do |product| %>
+            <tr>
+              <td><%= product.product_name %></td>
+              <td>
+                <% if product.price_entries.any? %>
+                  <% latest_price = product.price_entries.order(created_at: :desc).first %>
+                  <%= latest_price.price_catalog.price %> €
+                <% else %>
+                  Non défini
+                <% end %>
+              </td>
+              <td>
+                  <%= button_to 'Ajouter', admin_product_orders_path,params:{product_order:{order_id: @order, product_id: product, user_id: @user }}, method: :post, class: "purple-button" %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  <% end %>
+</div>
