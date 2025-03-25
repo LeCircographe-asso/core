@@ -6,7 +6,7 @@ class Payment < ApplicationRecord
   enum :payment_type, %i[cash credit_card check]
 
   after_update :update_user_membership_if_paid
-  # after_update :createBookOfEntry
+  after_update :createBookOfEntry
 
   def payment_successful?
     puts "#{product_order.id}"
@@ -15,10 +15,10 @@ class Payment < ApplicationRecord
   end
 
   def createBookOfEntry
-    @payment.inspect
+    self.inspect
     # Vérifie si le produit acheté est un "Book of Entry"
     if self.product_order.product.product_name == "Cotisation 10 séances"
-      BookOfEntry.create!()
+      BookOfEntry.create!(user_id: self.user_id, product_id: self.product_order.product.id, remaining: 10, total_entry: 10)
     end
   end
 
@@ -51,6 +51,10 @@ class Payment < ApplicationRecord
     puts product_order
     product_names = product_order.product.product_name
 
+    circus = Membership.find_by(type_name: :Circus).id
+    basic = Membership.find_by(type_name: :Basic).id
+    no_member = Membership.find_by(type_name: :No_Member).id
+
     circus_products = [
       "Adhésion Cirque - Tarif Plein",
       "Upgrade Basic to Cirque - Tarif Plein",
@@ -61,9 +65,9 @@ class Payment < ApplicationRecord
       "Pass journée"
     ]
 
-    return 2 if circus_products.any? { |name| product_names.include?(name) }
-    return 1 if product_names.include?("Adhésion simple")
-    return nil if product_names.include?("Donation")
+    return circus if circus_products.any? { |name| product_names.include?(name) }
+    return  basic if product_names.include?("Adhésion simple")
+    return  no_member if product_names.include?("Donation")
   end
 
   def determine_end_date(product_name)
