@@ -5,11 +5,12 @@ module Admin
     # GET /admin/users or /admin/users.json
     def index
       @users = User.all
+      @total_user_memberships = UserMembership.where(status: "active").count
     end
 
     # GET /admin/users/1 or /admin/users/1.json
     def show
-      @user = User.find_by(params[:id])
+      @user = User.find_by(id: params[:id])
       @product_order = Product.find_by(params[:id])
       @product = Product.find_by(params[:id])
     end
@@ -30,12 +31,31 @@ module Admin
       @user = User.new(user_params)
       @user.password = generate_secure_password
 
-      if @user.save
-        redirect_to admin_user_path(@user), notice: "Utilisateur créé avec succès."
-      else
-        redirect_to admin_user_path(@user), alert: "Échec de la création de l'utilisateur."
-      end
+      @default_membership = Membership.find_by(type_name: :No_Member)
+      @user_membership =UserMembership.create(user: @user, membership_id: @default_membership.id)
+      
 
+      respond_to do |format|
+        if @user.save
+          Rails.logger.info "User saved successfully."
+          
+          if @user_membership.persisted?
+            Rails.logger.info "UserMembership created successfully."
+          else
+            Rails.logger.error "Failed to create UserMembership." "#{@user_membership.errors.full_messages.join(', ')}"
+          end
+        #   if subscribe_to_newsletter == true
+        #     UserMailer.newsletter_subscription(@user).deliver_now
+        #   end
+          @user.generate_password_reset_token!
+          # UserMailer.welcome_by_admin(@user).deliver_now
+          format.html { redirect_to [ :admin, @user ], notice: "User was successfully created. A mail has been sent !" }
+          format.json { render :show, status: :created, location: @user }
+        else
+          format.html { render :new, status: :unprocessable_entity }
+          format.json { render json: @user.errors, status: :unprocessable_entity }
+        end
+      end
     end
 
 

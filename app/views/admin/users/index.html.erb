@@ -5,6 +5,8 @@
 
   <div class="dashboard-stats">
     <p><strong>Nombre d'utilisateurs :</strong> <%= @users.count %></p>
+    <p><strong>Nombre d'Adhesion active :</strong> <%=@total_user_memberships%></p>
+
   </div>
 
   <div class="dashboard-actions">
@@ -22,7 +24,8 @@
         <th>Email</th>
         <th>Rôle</th>
         <th>Abonnement</th>
-        <th>Actions</th>
+        <th>Action</th>
+        <th>Adhesion en cours</th>
       </tr>
     </thead>
     <tbody>
@@ -39,6 +42,12 @@
         <td>
           <%= link_to "Editer", edit_admin_user_path(user), method: :get, class: "purple-button" %>
         </td>        
+        </td>
+        <td>
+          <% user.user_memberships.where(status: "active").each do |user_membership| %>
+            <li><%= user_membership.membership.type_name %></li>
+          <% end %>
+        </td>
       </tr>
       <% end %>
     </tbody>

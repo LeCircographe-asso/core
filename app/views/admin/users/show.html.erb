@@ -15,12 +15,23 @@
       <p><strong>Disciplines pratiquées:</strong> <%= @user.specialty %></p>
       <p><strong>Droit à l'image:</strong> <%= @user.image_rights %></p>
       <p><strong>Adherent :</strong>
-          <% @user.user_memberships.where(status: "active").each do |user_membership| %>
-            <li><%= user_membership.membership.type_name %></li>
-          <% end %>
+        <% @user.user_memberships.each do |user_membership| %>
+          <li>
+            <% if user_membership.status == "active" %>
+              <%= user_membership.membership.type_name %>
+            <% else %>
+              no_member
+            <% end %>
+          </li>
+        <% end %>
       </p>
       <p><strong>Abonnement en cours :</strong>
-      <%= @user.payments.last.product_order.product.product_name%></p>
+          <% if @user.payments.last && @user.payments.last.product_order && @user.payments.last.product_order.product %>
+            <%= @user.payments.last.product_order.product.product_name %>
+          <% else %>
+            Aucun abonnement actif
+          <% end %>
+        </p>
 
       <% @user.user_memberships.where(status: "active").each do |user_membership| %>
 
@@ -33,7 +44,7 @@
     </div>
   </div>
   <div>
-    <%= link_to "Voir historique de payment", admin_payments_path(@user)%>
+    <%= link_to "Voir historique de payment", admin_payments_path(user_id: @user.id)%>
     <%= link_to "Edit this user", edit_admin_user_path(@user) %> |
     <%= link_to "Back to users", admin_users_path %>
     <%= button_to "Destroy this user", [:admin, @user], method: :delete %>
