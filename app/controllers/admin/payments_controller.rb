@@ -4,7 +4,7 @@ module Admin
     def index
       @payments=Payment.all
       @payment= Payment.find_by(params[:id])
-      @user = User.find_by(params[:id])
+      @user = User.find_by(id: params[:user_id])
       
 
     end 
@@ -44,6 +44,7 @@ module Admin
         puts"#{@payment.inspect}"
         redirect_to admin_payment_path(@payment), notice: 'Mise à jour réussie'
       else
+        puts"#{@payment.inspect}"
         redirect_to admin_payment_path(@payment), alert: 'Échec de la mise à jour'
       end
     end 
