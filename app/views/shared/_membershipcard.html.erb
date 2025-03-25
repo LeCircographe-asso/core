@@ -41,7 +41,7 @@
     <% end %>
 
 
-    <%# <p>Abonné à la Newsletter : <%= @user.newsletter ? "Oui" : "Non" %></p> %>
+    <p>Abonné à la Newsletter : <%= @user.newsletter_subscribed ? "Oui" : "Non" %></p>
   </div>
 
   <div class="profile-actions">
@@ -49,7 +49,7 @@
     <%= form.submit "Save Changes", class: "purple-button" %>
     <% else %>
     <%= link_to "Modifier le mot de passe", edit_password_path(@user.password_reset_token), class: "purple-button" %>
-    <%# <%= button_to (@user.newsletter? ? "Se désincrire de la newsletter" : "S'inscrire à la newsletter"), %>
+    <%= button_to (@user.newsletter_subscribed? ? "Se désincrire de la newsletter" : "S'inscrire à la newsletter"),
       change_newsletter_status_user_path(@user), 
       method: :post,
       class: "white-button" %>
