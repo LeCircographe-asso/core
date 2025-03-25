@@ -25,34 +25,18 @@
   <%= form.label :last_name, "Nom" %>
   <%= form.text_field :last_name %>
 </div>
-<div class="field">
-  <%= form.label :last_name, "Nom" %>
-  <%= form.text_field :last_name %>
-</div>
 
 <div class="field">
   <%= form.label :subscribe_to_newsletter, "Inscrire à la newsletter ?" %>
   <%= form.check_box :subscribe_to_newsletter %>
 </div>
 
-<% if @can_promote %>
-<div class="checkbox-container">
-  <%= form.check_box :promote_role, {}, "1", "0" %>
-  <%= form.label :promote_role, "passer à #{@can_promote}" %>
-</div>
+<% if @user.persisted? %>
+  <div class="field">
+  <p> changer le roles </p>
+  <%= form.select :system_role, options_for_select(@array_right,@default_role) %>
+  </div>
 <% end %>
-
-<% if @can_demote %>
-<div class="checkbox-container">
-  <%= form.check_box :reduce_role, {}, "1", "0" %>
-  <%= form.label :reduce_role, "passer à #{@can_demote}" %>
-</div>
-<% end %>
-
-
-
-
-
 
 <div>
   <%= form.submit "Envoyer", class: "btn btn-primary" %>

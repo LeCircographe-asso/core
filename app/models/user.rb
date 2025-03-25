@@ -90,6 +90,16 @@ class User < ApplicationRecord
       user_memberships.create(membership: basic_membership) if basic_membership
   end
 
+  def has_higher_permissions?(other_user)
+    self.system_role_before_type_cast < other_user.system_role_before_type_cast
+  end
+
+  def inferior_rights
+    levels_of_right = self.system_role_before_type_cast
+    ((levels_of_right + 1)..3).map { |level| User.system_roles.key(level) }
+  end
+
+
   private
 
   # def assign_membership
