@@ -4,6 +4,8 @@
 
   <div class="dashboard-stats">
     <p><strong>Nombre d'utilisateurs :</strong> <%= @users.count %></p>
+    <p><strong>Nombre d'Adhesion active :</strong> <%=@total_user_memberships%></p>
+
   </div>
 
   <div class="dashboard-actions">
@@ -21,7 +23,7 @@
         <th>Email</th>
         <th>Rôle</th>
         <th>Abonnement</th>
-        <th>Actions</th>
+        <th>Adhesion en cours</th>
       </tr>
     </thead>
     <tbody>
@@ -34,6 +36,11 @@
         </td>
         <td>
           <%= link_to "voir", admin_user_path(user), class: "purple-button", data: { turbo: false } %>
+        </td>
+        <td>
+          <% user.user_memberships.where(status: "active").each do |user_membership| %>
+            <li><%= user_membership.membership.type_name %></li>
+          <% end %>
         </td>
       </tr>
       <% end %>

@@ -11,14 +11,15 @@
     </tr>
   </thead>
   <tbody>
-    <% @payments.each do |payment| %>
+    <% @user.payments.each do |payment| %>
       <tr>
+        
         <td><%= payment.payment_amount.to_s + " €" %> </td>
-            <td>
+        <td>
             <% if payment.payment_date.present? %>
             <%= payment.payment_date.strftime("%d/%m/%Y") %>
             <% else %>
-            <%= "Date non disponible" %>
+            <%= "Date non disponible" %> 
             <% end %>
         </td>
         <td><%= payment.status %> </td>
