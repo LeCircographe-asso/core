@@ -6,7 +6,7 @@ class Payment < ApplicationRecord
   enum :payment_type, %i[cash credit_card check]
 
   after_update :update_user_membership_if_paid
-  after_update :createBookOfEntry
+  # after_update :createBookOfEntry
 
   def payment_successful?
     puts "#{product_order.id}"
@@ -15,9 +15,10 @@ class Payment < ApplicationRecord
   end
 
   def createBookOfEntry
+    @payment.inspect
     # Vérifie si le produit acheté est un "Book of Entry"
     if self.product_order.product.product_name == "Cotisation 10 séances"
-      BookOfEntry.create
+      BookOfEntry.create!()
     end
   end
 
