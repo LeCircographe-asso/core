@@ -2,7 +2,8 @@ class PagesController < ApplicationController
   skip_before_action :require_authentication
   include NotepadHelper
   include OpeningHoursHelper
-  layout "pages"
+  layout "application"
+
 
   def show
     @opening_hours = Rails.cache.fetch("opening_hours") || default_opening_hours
