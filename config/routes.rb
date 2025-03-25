@@ -13,6 +13,10 @@ Rails.application.routes.draw do
     resources :product_orders, only: %i[create show update]
     resources :products, only: %i[index]
     resources :payments, only: %i[show create new update index]
+
+    resources :exports, only: %i[index] do
+      get :newsletter_subscribed, on: :collection
+    end
   end
 
 
