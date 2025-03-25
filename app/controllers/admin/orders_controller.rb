@@ -14,6 +14,14 @@ class OrdersController < BaseController
 
   def new
     @order = Order.new
+
+    if @user.membership_status == 'No_Member'
+      @products = @products.where(product_name: ['Adhésion simple', 'Adhésion Cirque - Tarif Plein', 'Adhésion Cirque - Tarif Réduit'])
+    elsif @user.membership_status == 'Circus'
+      @products = @products.where(product_name: ['Upgrade Basic to Cirque - Tarif Plein', 'Upgrade Basic to Cirque - Tarif Réduit'])
+    elsif @user.membership_status == 'Basic'
+      @products = @products.where(product_name: ['Cotisation 10 séances', 'Cotisation trimestrielle', 'Cotisation annuelle', 'Pass journée'])
+    end
   end
 
   def create
