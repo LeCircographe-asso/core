@@ -15,9 +15,10 @@ class Payment < ApplicationRecord
   end
 
   def createBookOfEntry
+    @payment.inspect
     # Vérifie si le produit acheté est un "Book of Entry"
     if self.product_order.product.product_name == "Cotisation 10 séances"
-      BookOfEntry.create
+      BookOfEntry.create!()
     end
   end
 
