@@ -16,13 +16,10 @@
       <p><strong>Droit à l'image:</strong> <%= @user.image_rights %></p>
       <p><strong>Adherent :</strong>
         <% @user.user_memberships.each do |user_membership| %>
-          <li>
             <% if user_membership.status == "active" %>
               <%= user_membership.membership.type_name %>
             <% else %>
-              no_member
             <% end %>
-          </li>
         <% end %>
       </p>
       <p><strong>Abonnement en cours :</strong>
@@ -35,9 +32,11 @@
 
       <% @user.user_memberships.where(status: "active").each do |user_membership| %>
 
-            <p><strong>Expire le :</strong></p>
-        <li><%= user_membership.end_date.strftime("%d/%m/%Y")%>
-        <% end %>
+        <p><strong>Expire le :</strong>
+        <%= user_membership.end_date.strftime("%d/%m/%Y")%>
+        <% end %></p>
+
+        
       <%= button_to "Cotisation", admin_orders_path(user_id: @user.id, order_id: @order), method: :post, class: "purple-button" %>
       <%= link_to "editer", edit_admin_user_path, class: "purple-button" %>
 

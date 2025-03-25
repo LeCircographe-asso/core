@@ -37,8 +37,6 @@ module Admin
 
       respond_to do |format|
         if @user.save
-          Rails.logger.info "User saved successfully."
-          
           if @user_membership.persisted?
             Rails.logger.info "UserMembership created successfully."
           else
