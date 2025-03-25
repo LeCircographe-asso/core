@@ -11,33 +11,33 @@
 </div>
 <% end %>
 
-<div class="field">
-  <%= form.label :email_address %>
-  <%= form.text_field :email_address %>
-</div>
+  <div class="field">
+    <%= form.label :email_address %>
+    <%= form.text_field :email_address %>
+  </div>
 
-<div class="field">
-  <%= form.label :first_name, "Prénom" %>
-  <%= form.text_field :first_name %>
-</div>
+  <div class="field">
+    <%= form.label :first_name, "Prénom" %>
+    <%= form.text_field :first_name %>
+  </div>
 
-<div class="field">
+  <div class="field">
     <%= form.label :last_name, "Nom" %>
     <%= form.text_field :last_name %>
-</div>
+  </div>
 
-<div class="field">
+  <div class="field">
     <%= form.label :subscribe_to_newsletter, "Inscrire à la newsletter ?" %>
     <%= form.check_box :subscribe_to_newsletter %>
 </div>
 <% end %>
 
-<% if @user.persisted? %>
-  <div class="field">
-  <p> changer le roles </p>
-  <%= form.select :system_role, options_for_select(@array_right,@default_role) %>
-  </div>
-<% end %>
+  <% if @user.persisted? %>
+    <div class="field">
+      <p>Changer le rôle</p>
+      <%= form.select :system_role, options_for_select(@array_right, @default_role) %>
+    </div>
+  <% end %>
 
 <div>
   <%= form.submit "Créer", class: "btn btn-primary" %>
