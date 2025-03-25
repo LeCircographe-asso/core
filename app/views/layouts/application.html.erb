@@ -30,29 +30,27 @@
 
 <body class="<%= controller_name %>-<%= action_name %> flex flex-col min-h-screen">
 
-    
-        <% if controller_path.start_with?('admin/') %>
-        
-            <%= render 'shared/admin_navbar' %>
-            <%= render 'shared/admin_lateral_navbar' %>
-            <%= render 'shared/flash' %>
-        <main>
-            <%= yield %>
-        </main>
-        
-        <% else  %>
-        <div class="flex-grow bg-no-repeat bg-cover bg-center" style="background-image: url('<%= asset_path(content_for(:background_image) || 'background_temp.webp') %>')">
 
+    <% if controller_path.start_with?('admin/') %>
 
+    <%= render 'shared/admin_navbar' %>
+    <%= render 'shared/admin_lateral_navbar' %>
+    <%= render 'shared/flash' %>
+    <main>
+        <%= yield %>
+    </main>
 
-        <%= render 'shared/navbar' %>
+    <% else  %>
+
+    <%= render 'shared/navbar' %>
+    <div class="flex-grow bg-no-repeat bg-cover bg-center" style="background-image: url('<%= asset_path(content_for(:background_image) || 'background_temp.webp') %>')">
         <%= render 'shared/flash' %>
         <main>
             <%= yield %>
         </main>
-        </div>
-        <%= render 'shared/footer' %> 
-        <% end %>
+    </div>
+    <%= render 'shared/footer' %>
+    <% end %>
 </body>
 
 </html>
