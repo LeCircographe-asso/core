@@ -10,18 +10,11 @@ class OrdersController < BaseController
     @order = Order.find(params[:id])
     @products = Product.all
     @user = @order.user
+    @product = Product.find_by(params[:id])
   end
 
   def new
     @order = Order.new
-
-    if @user.membership_status == 'No_Member'
-      @products = @products.where(product_name: ['Adhésion simple', 'Adhésion Cirque - Tarif Plein', 'Adhésion Cirque - Tarif Réduit'])
-    elsif @user.membership_status == 'Circus'
-      @products = @products.where(product_name: ['Upgrade Basic to Cirque - Tarif Plein', 'Upgrade Basic to Cirque - Tarif Réduit'])
-    elsif @user.membership_status == 'Basic'
-      @products = @products.where(product_name: ['Cotisation 10 séances', 'Cotisation trimestrielle', 'Cotisation annuelle', 'Pass journée'])
-    end
   end
 
   def create
@@ -42,7 +35,7 @@ class OrdersController < BaseController
 
   def update
     if @order.update(order_params)
-      redirect_to admin_order_path(@order), notice: 'Commande mise à jour avec succès.'
+      # redirect_to admin_order_path(@order), notice: 'Commande mise à jour avec succès.'
     else
       render :edit
     end
