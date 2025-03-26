@@ -126,19 +126,11 @@
   </div>
 
   <div>
-  <% if true  %>
-          <%= button_to "Souscrire à un abonnement", admin_user_orders_path(@user), method: :post, params: {order: { user_id: @user.id}}, class: "purple-button", form: { data: { turbo: false } } %>
-        <% elsif @user.user_memberships.where(status: "pending").exists? %>
-          <%= button_to "Souscrire à une adhésion", admin_user_orders_path(@user), method: :post, params: {order: { user_id: @user.id}}, class: "purple-button", form: { data: { turbo: false } } %>
-        <% else %>
-          <!-- Si l'adhésion et l'abonnement sont actifs, ne rien afficher ou autre logique -->
-        <% end %>
+    <%= button_to "Souscrire à un abonnement", admin_user_orders_path(@user), method: :post, params: {order: { user_id: @user.id}}, class: "purple-button", form: { data: { turbo: false } } %>
+    <%= button_to "Souscrire à une adhésion", admin_user_orders_path(@user), method: :post, params: {order: { user_id: @user.id}}, class: "purple-button", form: { data: { turbo: false } } %>
     <%= link_to "Voir historique de payment", admin_payments_path(user_id: @user.id)%>
     <%= link_to "Edit this user", edit_admin_user_path(@user) %> |
     <%= link_to "Back to users", admin_users_path %>
-
-
     <%= button_to "Destroy this user", [:admin, @user], method: :delete %>
-    
   </div>
 </div>

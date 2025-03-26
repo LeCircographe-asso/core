@@ -7,7 +7,7 @@ class OrdersController < BaseController
   end
 
   def show
-    @product_order = ProductOrder.find(params[:id])
+
     @order = Order.find(params[:id])
     @products_membership = Product.where(product_type: "adhesion")
     @product_subscription= Product.where(product_type: "cotisation")
