@@ -1,6 +1,6 @@
 module Admin
 class OrdersController < BaseController
-  before_action :set_order, only: [:show, :edit, :update, :destroy]
+  before_action :set_order, only: %i[show edit update destroy]
 
   def index
     @orders = Order.all
@@ -67,11 +67,13 @@ class OrdersController < BaseController
   private
 
   def set_order
-    @order = Order.find(params[:id])
+    puts "params[:id]: #{params[:id]}"
+    puts "#"*111
+    @order = Order.find(order_params[:id])
   end
 
   def order_params
-    params.require(:order).permit(:user_id, :other_order_attribute) 
+    params.require(:order).permit(:user_id, :other_order_attribute)
   end
 end
 end 
