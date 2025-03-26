@@ -28,7 +28,7 @@ class User < ApplicationRecord
   validates :cgu, acceptance: { message: "Vous devez accepter les CGU pour continuer." }
   validates :privacy_policy, acceptance: { message: "Vous devez accepter la politique de confidentialité pour continuer." }
 
-  after_create :welcome_send
+  # after_create :welcome_send
 
   # def welcome_send
   #   return if user_connected?

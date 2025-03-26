@@ -8,8 +8,8 @@ class UserMailer < ApplicationMailer
     mail(to: @user.email_address, subject: "Bienvenue au Circographe ! 🎉")
   end
 
-  def welcome_email(user)
-    @user = user
+  def welcome_email
+    @user = User.find_by(params[:id])
     @url = "http://lecircographe.fr"
     mail(to: @user.email_address, subject: "Bienvenue au Circographe ! 🎉")
   end
