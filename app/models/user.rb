@@ -1,6 +1,7 @@
 class User < ApplicationRecord
-  attr_accessor :cgu, :private_policy, :newsletter_subscribed
+  attr_accessor :cgu, :private_policy
   # after_create :assign_membership
+  before_create :generate_unsubscribe_token
 
   enum :system_role, %i[super_admin admin volunteer user_connected], default: :user_connected
 
@@ -110,7 +111,11 @@ class User < ApplicationRecord
 
 
   private
-  
+
+  def generate_unsubscribe_token
+    self.unsubscribe_token = SecureRandom.base64(16)
+  end
+
   # def assign_membership
   #   if self.memberships.empty?
   #     no_member_membership = Membership.find_by(type_name: :no_member)
@@ -118,5 +123,3 @@ class User < ApplicationRecord
   #   end
   # end
 end
-
-
