@@ -1,22 +1,20 @@
-<% content_for :title, "Le Circographe - Événements" %>
+<div class="event-page">
+  
+    <h1 class="event-title">Événements à venir</h1>
 
-<section class="py-12">
-    <div class="container mx-auto px-4">
+    <hr/>
+  
 
-        <h1 class="text-4xl font-bold text-center text-gray-800 bg-white/90 py-6 mb-6 rounded-lg shadow-md">Événements à venir</h1>
+  <div class="featured-events">
+    <%= render "shared/event_card", event: @events.last %>
+    <%= render "shared/event_card", event: @events[-2] %> 
+  </div>
 
-        <div class="bg-white/95 rounded-lg shadow-md p-6 mb-8">
-            <div class="featured-events grid grid-cols-1 md:grid-cols-2 gap-6">
-                <%= render "shared/event_card", event: @events.last if @events.present? && @events.size > 0 %>
-                <%= render "shared/event_card", event: @events[-2] if @events.present? && @events.size > 1 %>
-            </div>
-        </div>
+  <hr/>
 
-        <h2 class="text-3xl font-bold text-center text-gray-800 bg-white/95 py-4 mb-6 rounded-lg shadow-md">Événements passés</h2>
+  <div class="event-carousel-container">
+  <h1 class="event-title">Événements passés</h1>
+    <%= render 'shared/event_carousel' %>
+  </div>
+</div>
 
-        <div class="bg-white/95 rounded-lg shadow-md p-6">
-            <%= render 'shared/event_carousel' %>
-        </div>
-        
-    </div>
-</section>
