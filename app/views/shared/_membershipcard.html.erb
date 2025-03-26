@@ -108,9 +108,7 @@
               data: { confirm: "Êtes-vous sûr de vouloir supprimer votre compte ? Cette action est irréversible." } %>
             <% end %>
 
-            <% if @user.has_privileges? %>
-            <%= link_to "Dashboard Administrateur", admin_dashboard_index_path, class: "block w-full text-center py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 mt-3" %>
-            <% end %>
+
         </div>
     </div>
 </div>
