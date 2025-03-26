@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_03_25_145648) do
+ActiveRecord::Schema[8.0].define(version: 2025_03_26_095429) do
   create_table "attendance_lists", force: :cascade do |t|
     t.datetime "start_date"
     t.datetime "end_date"
@@ -126,6 +126,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_03_25_145648) do
     t.string "product_name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "product_type"
   end
 
   create_table "sessions", force: :cascade do |t|
