@@ -103,7 +103,7 @@
 
         <!-- Actions -->
         <div class="mt-8 border-t pt-6 flex flex-wrap gap-4">
-          <%= button_to "Cotisation", admin_orders_path(user_id: @user.id, order_id: @order), 
+          <%= button_to "Cotisation", admin_user_orders_path(user_id: @user.id, order_id: @order), 
               method: :post, 
               class: "inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-purple-600 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500" %>
           
@@ -121,17 +121,18 @@
               class: "inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500",
               data: { confirm: "Êtes-vous sûr de vouloir supprimer cet utilisateur ?" } %>
         </div>
-                  <%= button_to "Souscrire à un abonnement", admin_user_orders_path(@user), method: :post, params: {order: { user_id: @user.id}}, class: "purple-button", form: { data: { turbo: false } } %>
-        <% elsif @user.user_memberships.where(status: "pending").exists? %>
-          <%= button_to "Souscrire à une adhésion", admin_user_orders_path(@user), method: :post, params: {order: { user_id: @user.id}}, class: "purple-button", form: { data: { turbo: false } } %>
-        <% else %>
-          <!-- Si l'adhésion et l'abonnement sont actifs, ne rien afficher ou autre logique -->
-        <% end %>
       </div>
     </div>
   </div>
 
   <div>
+  <% if true  %>
+          <%= button_to "Souscrire à un abonnement", admin_user_orders_path(@user), method: :post, params: {order: { user_id: @user.id}}, class: "purple-button", form: { data: { turbo: false } } %>
+        <% elsif @user.user_memberships.where(status: "pending").exists? %>
+          <%= button_to "Souscrire à une adhésion", admin_user_orders_path(@user), method: :post, params: {order: { user_id: @user.id}}, class: "purple-button", form: { data: { turbo: false } } %>
+        <% else %>
+          <!-- Si l'adhésion et l'abonnement sont actifs, ne rien afficher ou autre logique -->
+        <% end %>
     <%= link_to "Voir historique de payment", admin_payments_path(user_id: @user.id)%>
     <%= link_to "Edit this user", edit_admin_user_path(@user) %> |
     <%= link_to "Back to users", admin_users_path %>

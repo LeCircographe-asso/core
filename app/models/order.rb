@@ -13,4 +13,4 @@ class Order < ApplicationRecord
 #       Rails.logger.error("Le panier #{self.id} est vide !")
 #     end
 #   end
-# end
+end

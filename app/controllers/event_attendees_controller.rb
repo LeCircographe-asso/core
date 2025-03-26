@@ -10,8 +10,8 @@ class EventAttendeesController < ApplicationController
   def destroy
     if authenticated?
       event_id = params[:id]
-      eattendee = EventAttendee.where("user_id = #{Current.user.id} AND event_id = #{event_id}")
-      EventAttendee.destroy eattendee
+      attendee = EventAttendee.where("user_id = #{Current.user.id} AND event_id = #{event_id}")
+      EventAttendee.destroy attendee
     end
     redirect_to event_path(event_id)
   end
