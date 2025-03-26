@@ -21,7 +21,7 @@ module Admin
     end
 
     # GET /admin/users/1/edit
-    def edit     
+    def edit
       @array_right = current_user.has_higher_permissions?(User.find(params[:id])) ? current_user.inferior_rights : [User.find(params[:id]).system_role]
       @default_role = User.find(params[:id]).system_role
     end
@@ -59,7 +59,6 @@ module Admin
 
     # PATCH/PUT /admin/users/1 or /admin/users/1.json
     def update
-           
       if current_user.inferior_rights.include?(params[:user][:system_role])
         if @user.update(user_params)
           redirect_to admin_user_path(@user), notice: "Utilisateur mis à jour avec succès."
@@ -69,7 +68,6 @@ module Admin
       else
         redirect_to admin_user_path(@user), alert: "Vous n'avez pas les droits pour effectuer cette modification."
       end
-      
     end
 
     # DELETE /admin/users/1 or /admin/users/1.json
@@ -96,12 +94,5 @@ module Admin
     def generate_secure_password
       SecureRandom.hex(10)
     end
-
-
-    
-
   end
 end
-
-
-
