@@ -6,7 +6,31 @@
             <%= link_to root_path, class: "flex items-center space-x-3 rtl:space-x-reverse" do %>
             <%= image_tag("Le-Circographe-crop.webp", alt: "le-circographe Logo", class: "w-40 h-auto") %>
             <% end %>
+<nav class="bg-white border-gray-200 sticky top-0 z-50">
+    <div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
+        <!-- Logo et profil regroupés pour mobile -->
+        <div class="flex items-center justify-between w-full md:w-auto">
+            <!-- Logo -->
+            <%= link_to root_path, class: "flex items-center space-x-3 rtl:space-x-reverse" do %>
+            <%= image_tag("Le-Circographe-crop.webp", alt: "le-circographe Logo", class: "w-40 h-auto") %>
+            <% end %>
 
+            <!-- Elements regroupés à droite pour mobile -->
+            <div class="flex items-center md:hidden">
+                <% if authenticated? %>
+                <%= link_to user_path(Current.user), class: "flex mr-3" do %>
+                <%= image_tag("users.png", alt: "photo de profil", class: "w-8 h-8 rounded-full hover:ring-2 hover:ring-indigo-300") %>
+                <% end %>
+                <% end %>
+
+                <!-- Bouton hamburger (mobile et tablette) -->
+                <button data-collapse-toggle="navbar-mobile" type="button" class="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200" aria-controls="navbar-mobile" aria-expanded="false">
+                    <span class="sr-only">Ouvrir le menu</span>
+                    <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 17 14">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 1h15M1 7h15M1 13h15" />
+                    </svg>
+                </button>
+            </div>
             <!-- Elements regroupés à droite pour mobile -->
             <div class="flex items-center md:hidden">
                 <% if authenticated? %>
@@ -35,15 +59,36 @@
                     <% end %>
                     <div class="hidden group-hover:block absolute left-0 top-full z-10 w-48 bg-white rounded-lg shadow-lg">
                         <ul class="py-2 text-sm text-gray-700">
+        <!-- Menu principal (desktop) -->
+        <div class="hidden md:flex flex-grow justify-center items-center mx-4">
+            <ul class="flex flex-row space-x-8 font-medium">
+                <!-- L'association -->
+                <li class="group relative">
+                    <%= link_to page_path('association'), class: "block py-2 text-gray-900 hover:text-indigo-700 group-hover:text-indigo-700" do %>
+                    Le Lieu
+                    <% end %>
+                    <div class="hidden group-hover:block absolute left-0 top-full z-10 w-48 bg-white rounded-lg shadow-lg">
+                        <ul class="py-2 text-sm text-gray-700">
                             <li>
+                                <%= link_to "Le Cirque", page_path('le_cirque'), class: "block px-4 py-2 hover:bg-gray-100" %>
                                 <%= link_to "Le Cirque", page_path('le_cirque'), class: "block px-4 py-2 hover:bg-gray-100" %>
                             </li>
                             <li>
                                 <%= link_to "Les arts Graphiques", page_path('le_graff'), class: "block px-4 py-2 hover:bg-gray-100" %>
+                                <%= link_to "Les arts Graphiques", page_path('le_graff'), class: "block px-4 py-2 hover:bg-gray-100" %>
                             </li>
                         </ul>
                     </div>
+                    </div>
                 </li>
+
+                <!-- Nos actualités -->
+                <li class="group relative">
+                    <%= link_to page_path("nos_actualites"), class: "block py-2 text-gray-900 hover:text-indigo-700 group-hover:text-indigo-700" do %>
+                    Nos actualités
+                    <% end %>
+                    <div class="hidden group-hover:block absolute left-0 top-full z-10 w-48 bg-white rounded-lg shadow-lg">
+                        <ul class="py-2 text-sm text-gray-700">
 
                 <!-- Nos actualités -->
                 <li class="group relative">
@@ -106,7 +151,7 @@
 
             <!-- Bouton Mon Espace avec dropdown -->
             <div class="relative">
-                <button id="dropdownUserButton" data-dropdown-toggle="dropdownUser" class="relative inline-flex items-center px-6 py-2 tracking-wide text-white font-bold bg-[#1F5C55] border-2 border-[#1F5C55] rounded-md shadow-lg hover:bg-white hover:text-[#1F5C55] hover:border-[#1F5C55] transition-colors duration-300 text-sm w-full sm:w-auto focus:outline-none">
+                <button id="dropdownUserButton" data-dropdown-toggle="dropdownUser" class="relative inline-flex items-center px-5 py-2.5 text-sm font-medium text-center text-white bg-[#6b47b8] rounded-lg hover:bg-gray-100 hover:text-[#1F5C55] hover:border-[#1F5C55] hover:border-2 focus:ring-4 focus:outline-none focus:ring-gray-300 transition-colors duration-300 border-2 border-transparent">
                     Mon Espace
                     <svg class="w-2.5 h-2.5 ms-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
                         <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4" />
@@ -165,30 +210,24 @@
         <div class="flex flex-col items-start w-full p-4 bg-white">
             <!-- Accordions pour mobile -->
             <div id="accordion-menu" class="w-full">
-                <!-- L'association accordion -->
+                <!-- Le Lieu accordion -->
                 <div class="border-b border-gray-200">
-                    <h2 id="accordion-association-heading">
-                        <button type="button" class="flex items-center justify-between w-full py-4 font-medium text-left text-gray-900" data-accordion-target="#accordion-association-body" aria-expanded="false" aria-controls="accordion-association-body">
-                            <span>L'association</span>
+                    <h2 id="accordion-lieu-heading">
+                        <button type="button" class="flex items-center justify-between w-full py-4 font-medium text-left text-gray-900" data-accordion-target="#accordion-lieu-body" aria-expanded="false" aria-controls="accordion-lieu-body">
+                            <span>Le Lieu</span>
                             <svg data-accordion-icon class="w-3 h-3 rotate-180 shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
                                 <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5 5 1 1 5" />
                             </svg>
                         </button>
                     </h2>
-                    <div id="accordion-association-body" class="hidden" aria-labelledby="accordion-association-heading">
+                    <div id="accordion-lieu-body" class="hidden" aria-labelledby="accordion-lieu-heading">
                         <div class="pb-4 pl-4">
                             <ul class="space-y-2">
-                                <li>
-                                    <%= link_to "L'association", page_path('association'), class: "block text-indigo-700 font-medium" %>
-                                </li>
                                 <li>
                                     <%= link_to "Le Cirque", page_path('le_cirque'), class: "block" %>
                                 </li>
                                 <li>
                                     <%= link_to "Les arts Graphiques", page_path('le_graff'), class: "block" %>
-                                </li>
-                                <li>
-                                    <%= link_to "Le Lieu", page_path('le_lieu'), class: "block" %>
                                 </li>
                             </ul>
                         </div>
@@ -199,7 +238,7 @@
                 <div class="border-b border-gray-200">
                     <h2 id="accordion-actualites-heading">
                         <button type="button" class="flex items-center justify-between w-full py-4 font-medium text-left text-gray-900" data-accordion-target="#accordion-actualites-body" aria-expanded="false" aria-controls="accordion-actualites-body">
-                            <span>Nos actualités</span>
+                            <span>Actualités</span>
                             <svg data-accordion-icon class="w-3 h-3 rotate-180 shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
                                 <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5 5 1 1 5" />
                             </svg>
@@ -209,7 +248,7 @@
                         <div class="pb-4 pl-4">
                             <ul class="space-y-2">
                                 <li>
-                                    <%= link_to "Actualités", page_path("nos_actualites"), class: "block text-indigo-700 font-medium" %>
+                                    <%= link_to "Nos Actualités", page_path("nos_actualites"), class: "block text-indigo-700 font-medium" %>
                                 </li>
                                 <li>
                                     <%= link_to "Blog & Newsletters", page_path("blog_newsletter"), class: "block" %>
@@ -236,7 +275,7 @@
                 <div class="border-b border-gray-200">
                     <h2 id="accordion-apropos-heading">
                         <button type="button" class="flex items-center justify-between w-full py-4 font-medium text-left text-gray-900" data-accordion-target="#accordion-apropos-body" aria-expanded="false" aria-controls="accordion-apropos-body">
-                            <span>A Propos</span>
+                            <span>À Propos</span>
                             <svg data-accordion-icon class="w-3 h-3 rotate-180 shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
                                 <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5 5 1 1 5" />
                             </svg>
@@ -261,9 +300,7 @@
 
                 <!-- F.A.Q (lien simple) -->
                 <div class="border-b border-gray-200">
-                    <%= link_to page_path("faq"), class: "flex items-center w-full py-4 font-medium text-left text-gray-900" do %>
-                    F.A.Q
-                    <% end %>
+                    <%= link_to "F.A.Q", page_path("faq"), class: "flex items-center w-full py-4 font-medium text-left text-gray-900" %>
                 </div>
             </div>
 
