@@ -7,7 +7,6 @@ class OrdersController < BaseController
   end
 
   def show
-
     @order = Order.find(params[:id])
     @products_membership = Product.where(product_type: "adhesion")
     @product_subscription= Product.where(product_type: "cotisation")
@@ -24,11 +23,11 @@ class OrdersController < BaseController
   end
 
   def create
-    @user = User.find(params[:user_id]) 
+    @user = User.find(params[:user_id])
     @order = @user.orders.create(order_params)
 
     if @order.save
-        redirect_to admin_user_order_path(@order.id, @user.id), notice: 'Choisissez Votre Abonnement'
+        redirect_to admin_user_order_path(@user, @order), notice: "Choisissez Votre Abonnement"
     else
       flash[:error] = "Erreur lors de la création de la commande."
       redirect_to admin_user_path(@user)
@@ -41,8 +40,8 @@ class OrdersController < BaseController
   def update
     if @order.update(order_params)
       respond_to do |format|
-        format.html { redirect_to admin_order_path(@order), notice: 'Commande mise à jour avec succès.' }
-        format.turbo_stream { 
+        format.html { redirect_to admin_order_path(@order), notice: "Commande mise à jour avec succès." }
+        format.turbo_stream {
           render turbo_stream: turbo_stream.replace(
             "product-container",
             partial: "admin/orders/product_container",
@@ -57,23 +56,21 @@ class OrdersController < BaseController
       end
     end
   end
-  
+
 
   def destroy
     @order.destroy
-    redirect_to admin_orders_path, notice: 'Commande supprimée.'
+    redirect_to admin_orders_path, notice: "Commande supprimée."
   end
 
   private
 
   def set_order
-    puts "params[:id]: #{params[:id]}"
-    puts "#"*111
-    @order = Order.find(order_params[:id])
+    @order = Order.find(params[:id])
   end
 
   def order_params
-    params.require(:order).permit(:user_id, :other_order_attribute)
+    params.require(:order).permit(:user_id, :sum, :date)
   end
 end
-end 
+end
