@@ -30,7 +30,7 @@
             <p><strong>Statut de l'abonnement:</strong> <%= latest_membership.status ? "Actif" : "Inactif" %></p>
           <% end %>
         <% end %>
-        <p><strong>Newsletter:</strong> <%= @user.newsletter %></p>
+        <p><strong>Newsletter:</strong> <%= @user.newsletter_subscribed %></p>
         <p><strong>Investissement dans le projet:</strong> <%= @user.get_involved %></p>
       </div>
     </div>

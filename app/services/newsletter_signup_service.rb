@@ -17,10 +17,10 @@ class NewsletterSignupService
 
   def handle_authenticated_user
     if @current_user.email_address == @new_email
-      if @current_user.newsletter
+      if @current_user.newsletter_subscribed
         { success: false, message: "Vous êtes déjà inscrit à la newsletter." }
       else
-        @current_user.update(newsletter: true)
+        @current_user.update(newsletter_subscribed: true)
         { success: true, message: "Vous êtes maintenant inscrit à la newsletter." }
       end
     else
@@ -30,7 +30,7 @@ class NewsletterSignupService
 
   def handle_guest_user
     if @user
-      if @user.newsletter
+      if @user.newsletter_subscribed
         { success: false, message: "Cet utilisateur est déjà inscrit à la newsletter." }
       else
         { success: false, message: "Cet email existe déjà. Veuillez vous connecter pour modifier vos préférences." }
