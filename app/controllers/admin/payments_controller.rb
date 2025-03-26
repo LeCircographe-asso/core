@@ -17,6 +17,7 @@ module Admin
       @payments = Payment.all
       @payment = Payment.find(params[:id])
       @product_order = @payment.product_order
+      @order = @payment.product_order
 
     end 
     
