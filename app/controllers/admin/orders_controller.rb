@@ -7,10 +7,16 @@ class OrdersController < BaseController
   end
 
   def show
+    @product_order = ProductOrder.find(params[:id])
     @order = Order.find(params[:id])
-    @products = Product.all
+    @products_membership = Product.where(product_type: "adhesion")
+    @product_subscription= Product.where(product_type: "cotisation")
     @user = @order.user
     @product = Product.find_by(params[:id])
+    respond_to do |format|
+      format.html
+      format.turbo_stream
+    end
   end
 
   def new
@@ -19,14 +25,13 @@ class OrdersController < BaseController
 
   def create
     @user = User.find(params[:user_id]) 
-    @order = Order.new(user: @user)
-    puts "#{@user.id}"
-    Rails.logger.debug "Params reçus: #{params.inspect}"
-    puts params.inspect
+    @order = @user.orders.create(order_params)
+
     if @order.save
-      redirect_to admin_order_path(@order) , notice: 'Choisissez Votre Cotisation'
+        redirect_to admin_user_order_path(@order.id, @user.id), notice: 'Choisissez Votre Abonnement'
     else
-      puts"****************************************************************************************************************************"
+      flash[:error] = "Erreur lors de la création de la commande."
+      redirect_to admin_user_path(@user)
     end
   end
 
@@ -35,11 +40,24 @@ class OrdersController < BaseController
 
   def update
     if @order.update(order_params)
-      # redirect_to admin_order_path(@order), notice: 'Commande mise à jour avec succès.'
+      respond_to do |format|
+        format.html { redirect_to admin_order_path(@order), notice: 'Commande mise à jour avec succès.' }
+        format.turbo_stream { 
+          render turbo_stream: turbo_stream.replace(
+            "product-container",
+            partial: "admin/orders/product_container",
+            locals: { order: @order, user: @user }
+          )
+        }
+      end
     else
-      render :edit
+      respond_to do |format|
+        format.html { render :edit }
+        format.turbo_stream { render turbo_stream: turbo_stream.replace("product-container", html: "Erreur lors de la mise à jour de la commande") }
+      end
     end
   end
+  
 
   def destroy
     @order.destroy
@@ -53,7 +71,7 @@ class OrdersController < BaseController
   end
 
   def order_params
-    params.require(:order).permit(:status, :order_id , :user_id)
+    params.require(:order).permit(:user_id, :other_order_attribute) 
   end
 end
 end 

@@ -9,7 +9,7 @@ class User < ApplicationRecord
   has_many :events, through: :event_attendees
   has_many :user_memberships, dependent: :destroy
 
- 
+
   has_many :user
   has_many :attendance_lists, through: :attendances
 
@@ -99,6 +99,9 @@ class User < ApplicationRecord
     ((levels_of_right + 1)..3).map { |level| User.system_roles.key(level) }
   end
 
+  def active_subscription?
+    user_memberships.exists?(status: "active")
+  end
 
   private
   
