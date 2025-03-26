@@ -47,7 +47,7 @@
                     <div class="text-red-500 text-sm mt-1"><%= @user.errors[:cgu].first %></div>
                     <% end %>
 
-                    <div class="field">
+                    <div class="mt-6 flex items-center">
                         <%= form.label :newsletter_subscribed, "Inscrire à la newsletter ?" %>
                         <%= form.check_box :newsletter_subscribed %>
                     </div>
