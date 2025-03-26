@@ -3,7 +3,7 @@
 
   <div class="membership-card">
     <h2><%= @user.system_role %></h2>
-    <p><%= @user.email %></p>
+    <p><%= @user.email_address %></p>
     <%= link_to "Modifer mon email", edit_user_path(@user), class: "white-button" %>
   </div>
 
@@ -42,6 +42,7 @@
 
 
     <p>Abonné à la Newsletter : <%= @user.newsletter_subscribed ? "Oui" : "Non" %></p>
+    
   </div>
 
   <div class="profile-actions">
