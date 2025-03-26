@@ -1,0 +1,13 @@
+Bienvenue au Circographe !
+
+Bonjour <%= @user.first_name %> <%= @user.last_name %>,
+
+Merci d'avoir rejoint le Circographe. Nous sommes heureux de vous compter parmi nos membres.
+
+<% if @user.newsletter_subscribed%>
+Vous êtes également inscrit à notre newsletter ! 🎉 Vous recevrez toutes nos dernières actualités et nos recommandations directement dans votre boîte mail.
+<% end %>
+
+À bientôt !
+
+🌟 L'équipe du Circographe 🌟

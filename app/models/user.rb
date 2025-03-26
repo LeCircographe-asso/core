@@ -1,5 +1,5 @@
 class User < ApplicationRecord
-  attr_accessor :cgu, :private_policy, :subscribe_to_newsletter
+  attr_accessor :cgu, :private_policy, :newsletter_subscribed
   # after_create :assign_membership
 
   enum :system_role, %i[super_admin admin volunteer user_connected], default: :user_connected
@@ -28,10 +28,19 @@ class User < ApplicationRecord
   validates :cgu, acceptance: { message: "Vous devez accepter les CGU pour continuer." }
   validates :privacy_policy, acceptance: { message: "Vous devez accepter la politique de confidentialité pour continuer." }
 
-  # after_create :welcome_send
+  after_create :welcome_send
+
   # def welcome_send
-  #   UserMailer.welcome_email(self).deliver_now
+  #   return if user_connected?
+
+  #   if super_admin? || admin? || volunteer?
+  #     # UserMailer.welcome_by_admin(self).deliver_now
+  #   end
+  #   # UserMailer.welcome_email(self).deliver_now
   # end
+
+
+
   def generate_password_reset_token!
     self.password_reset_token = SecureRandom.urlsafe_base64
     self.password_reset_sent_at = Time.current

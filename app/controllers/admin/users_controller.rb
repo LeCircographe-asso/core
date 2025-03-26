@@ -33,7 +33,7 @@ module Admin
 
       @default_membership = Membership.find_by(type_name: :No_Member)
       @user_membership =UserMembership.create(user: @user, membership_id: @default_membership.id)
-      
+
 
       respond_to do |format|
         if @user.save
@@ -42,8 +42,8 @@ module Admin
           else
             Rails.logger.error "Failed to create UserMembership." "#{@user_membership.errors.full_messages.join(', ')}"
           end
-        #   if subscribe_to_newsletter == true
-        #     UserMailer.newsletter_subscription(@user).deliver_now
+        #   if newsletter_subscribed == true
+        #     UserMailer.welcome_by_admin(@user).deliver_now
         #   end
           @user.generate_password_reset_token!
           # UserMailer.welcome_by_admin(@user).deliver_now
@@ -90,7 +90,7 @@ module Admin
 
     # Only allow a list of trusted parameters through.
     def user_params
-      params.require(:user).permit(:email_address, :first_name, :last_name, :password, :payments, :system_role, :subscribe_to_newsletter)
+      params.require(:user).permit(:email_address, :first_name, :last_name, :password, :payments, :system_role, :newsletter_subscribed)
     end
 
     def generate_secure_password
