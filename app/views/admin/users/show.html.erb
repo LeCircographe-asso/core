@@ -80,11 +80,6 @@
               <div class="flex items-center">
                 <span class="text-gray-500 w-32">Abonnement:</span>
                 <span class="text-gray-900">
-                  <% if @user.payments.last&.product_order&.product %>
-                    <%= @user.payments.last.product_order.product.product_name %>
-                  <% else %>
-                    Aucun abonnement actif
-                  <% end %>
                 </span>
               </div>
             </div>
