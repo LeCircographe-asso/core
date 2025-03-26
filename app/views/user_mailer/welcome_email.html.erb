@@ -1,14 +1,20 @@
 <!DOCTYPE html>
 <html>
+  <head>
+    <meta content="text/html; charset=UTF-8" http-equiv="Content-Type" />
+  </head>
+  <body>
+    <h1>Bienvenue au Circographe !</h1>
+    <p>Bonjour <%= @user.first_name %> <%= @user.last_name %>,</p>
+    <p>Merci d'avoir rejoint notre association. Nous sommes heureux de vous compter parmi nos membres.</p>
 
-<body>
-    <h1>Bienvenue au Circographe, <%= @user.name %> !</h1>
-    <p>
-        Merci de vous être inscrit au <a href="<%= @url %>">Circographe</a> !
-        Nous espérons que vous ferez de belles découvertes.
-    </p>
-    <p>À bientôt,</p>
-    <p>L'équipe du Circographe</p>
-</body>
+    <% if @user.newsletter_subscribed %>
+      <p>
+        Vous vous êtes également inscrit à notre newsletter ! 🎉 Vous recevrez toutes nos dernières actualités et recommandations directement dans votre boîte mail.
+      </p>
+    <% end %>
 
+    <p>À bientôt !</p>
+    <p>🌟 L'équipe du Circographe 🌟</p>
+  </body>
 </html>

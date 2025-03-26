@@ -1,20 +1,17 @@
 class UserMailer < ApplicationMailer
   default from: "no-reply@lecircographe.fr"
 
+  def welcome_by_admin(user, reset_password_url)
+    @user = user
+    @reset_password_url = reset_password_url
+    @url = "http://lecircographe.fr"
+    mail(to: @user.email_address, subject: "Bienvenue au Circographe ! 🎉")
+  end
+
   def welcome_email(user)
     @user = user
     @url = "http://lecircographe.fr"
-    mail(to: @user.email_address, subject: "Bienvenue sur Le Circographe !")
-  end
-
-  def welcome_by_admin(user)
-    @user = user
-    mail(to: @user.email_address, subject: "Bienvenue à bord !")
-  end
-
-  def newsletter_subscription(user)
-    @user = user
-    mail(to: @user.email_address, subject: "Bienvenue à notre newsletter ! 🎉")
+    mail(to: @user.email_address, subject: "Bienvenue au Circographe ! 🎉")
   end
 
 

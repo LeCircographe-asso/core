@@ -36,22 +36,22 @@ class NewsletterSignupService
         { success: false, message: "Cet email existe déjà. Veuillez vous connecter pour modifier vos préférences." }
       end
     else
-      create_user_and_subscribe
+      { success: false, message: "Veuillez créer un compte pour vous inscrire à la newsletter.", redirect_to: true }
     end
   end
 
-  def create_user_and_subscribe
-    random_password = SecureRandom.hex(12)
-    new_user = User.new(
-      email_address: @new_email,
-      password_digest: BCrypt::Password.create(random_password),
-      newsletter: true
-    )
+  # def create_user_and_subscribe
+  #   random_password = SecureRandom.hex(12)
+  #   new_user = User.new(
+  #     email_address: @new_email,
+  #     password_digest: BCrypt::Password.create(random_password),
+  #     newsletter: true
+  #   )
 
-    if new_user.save
-      { success: true, message: "Un compte a été créé et vous êtes inscrit à la newsletter." }
-    else
-      { success: false, message: "Une erreur s'est produite lors de l'inscription. Veuillez réessayer." }
-    end
-  end
+  #   if new_user.save
+  #     { success: true, message: "Un compte a été créé et vous êtes inscrit à la newsletter." }
+  #   else
+  #     { success: false, message: "Une erreur s'est produite lors de l'inscription. Veuillez réessayer." }
+  #   end
+  # end
 end

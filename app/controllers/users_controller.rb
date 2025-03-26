@@ -37,9 +37,9 @@ class UsersController < ApplicationController
   end
 
   def change_newsletter_status
-    @user.update(newsletter: !@user.newsletter)
+    @user.update(newsletter_subscribed: !@user.newsletter_subscribed)
 
-    message = @user.newsletter ? "Vous êtes inscrit à la newsletter" : "Vous êtes désinscrit de la newsletter"
+    message = @user.newsletter_subscribed ? "Vous êtes inscrit à la newsletter" : "Vous êtes désinscrit de la newsletter"
     redirect_to @user, notice: message
   end
 
