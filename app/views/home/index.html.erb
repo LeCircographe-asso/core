@@ -1,24 +1,40 @@
 <% content_for :title, "Le Circographe - Accueil" %>
 
-<!-- Conteneur principal -->
-<div class="relative min-h-screen overflow-auto">
+<!-- Conteneur principal - retiré min-h-screen pour permettre au footer de s'afficher -->
+<div class="relative overflow-auto">
 
     <!-- Le contenu principal -->
-    <div id="content" class="relative w-full flex flex-col items-center justify-start text-center h-full">
+    <div id="content" class="relative w-full flex flex-col items-center justify-start text-center">
 
-        <!-- Titre principal -->
-        <h1 id="title" class="text-5xl font-bold text-white mt-16 mb-12 opacity-0 transition-opacity duration-500">Le Circographe</h1>
+        <!-- Grand espace vide en haut -->
+        <div class="h-72"></div>
 
-        <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br />
+        <!-- Titre principal - avec beaucoup d'espace au-dessus -->
+        <h1 id="title" class="text-5xl font-bold text-white opacity-0 transition-opacity duration-500">Le Circographe</h1>
 
-        <!-- Bouton avec animation identique au titre -->
-        <div class="mb-32 main-button opacity-0 transition-opacity duration-500">
+        <!-- Grand espace entre le titre et le bouton -->
+        <div class="h-64"></div>
+
+        <!-- Bouton avec grand espace après le titre -->
+        <div class="main-button opacity-0 transition-opacity duration-500">
             <%= link_to "Découvrir l'association", page_path('association'),
                 class: "px-8 py-4 text-xl font-semibold text-gray-800 bg-white border border-gray-300 rounded-full hover:bg-gray-100 shadow-md" %>
         </div>
 
-        <!-- Section des contenus (initialement cachée) -->
-        <div id="hidden-content" class="grid grid-cols-1 md:grid-cols-2 gap-32 max-w-4xl mt-32 opacity-0 transition-opacity duration-500">
+        <!-- Flèche animée qui défile vers le contenu principal -->
+        <div class="mt-20 opacity-0 transition-opacity duration-500 scroll-arrow-container">
+            <a href="#main-content" class="scroll-arrow">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-10 h-10 text-white">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
+                </svg>
+            </a>
+        </div>
+
+        <!-- Très grand espace avant les cartes, mais pas excessif -->
+        <div class="h-64"></div>
+
+        <!-- Section des contenus (très bas sur la page) -->
+        <div id="main-content" class="grid grid-cols-1 md:grid-cols-2 gap-32 max-w-4xl mb-24 opacity-0 transition-opacity duration-500">
 
             <!-- Article (sans background blanc) -->
             <div class="p-4 flex flex-col">
@@ -68,21 +84,32 @@
                 </table>
             </div>
         </div>
+        
+        <!-- Espace supplémentaire avant le footer pour s'assurer qu'il y a une marge -->
+        <div class="h-24"></div>
     </div>
 </div>
 
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        setTimeout(function() {
-            document.getElementById('title').classList.remove('opacity-0');
-        }, 500); // 1 seconde pour le titre
+<style>
+    /* Animation de la flèche */
+    @keyframes bounce {
+        0%, 100% {
+            transform: translateY(0);
+        }
+        50% {
+            transform: translateY(10px);
+        }
+    }
+    
+    .scroll-arrow {
+        display: inline-block;
+        animation: bounce 2s infinite ease-in-out;
+        cursor: pointer;
+        transition: opacity 0.3s;
+    }
+    
+    .scroll-arrow:hover {
+        opacity: 0.7;
+    }
+</style>
 
-        setTimeout(function() {
-            document.querySelector('.main-button').classList.remove('opacity-0');
-        }, 1500); // 2.5 secondes pour le bouton
-
-        setTimeout(function() {
-            document.getElementById('hidden-content').classList.remove('opacity-0');
-        }, 3000); // 5 secondes pour le reste du contenu
-    });
-</script>
