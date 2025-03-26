@@ -44,6 +44,18 @@ ActiveRecord::Schema[8.0].define(version: 2025_03_26_151908) do
     t.index ["user_id"], name: "index_book_of_entries_on_user_id"
   end
 
+  create_table "event_attendees", force: :cascade do |t|
+    t.integer "user_id", null: false
+    t.integer "event_id", null: false
+    t.integer "payment_id"
+    t.boolean "interested", default: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["event_id"], name: "index_event_attendees_on_event_id"
+    t.index ["payment_id"], name: "index_event_attendees_on_payment_id"
+    t.index ["user_id"], name: "index_event_attendees_on_user_id"
+  end
+
   create_table "events", force: :cascade do |t|
     t.string "title", null: false
     t.text "upper_description"
@@ -180,6 +192,9 @@ ActiveRecord::Schema[8.0].define(version: 2025_03_26_151908) do
   add_foreign_key "attendances", "users"
   add_foreign_key "book_of_entries", "products"
   add_foreign_key "book_of_entries", "users"
+  add_foreign_key "event_attendees", "events"
+  add_foreign_key "event_attendees", "payments"
+  add_foreign_key "event_attendees", "users"
   add_foreign_key "events", "users", column: "creator_id"
   add_foreign_key "orders", "product_orders"
   add_foreign_key "orders", "users"
