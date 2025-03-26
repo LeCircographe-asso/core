@@ -49,7 +49,7 @@ module Admin
           @user.generate_password_reset_token!
           
           format.html { 
-            redirect_to admin_order_url(id: @order.id, user_id: @user.id), 
+            redirect_to admin_user_order_path(id: @order.id, user_id: @user.id), 
             notice: "User was successfully created. A mail has been sent!" 
           }
           format.json { render :show, status: :created, location: @user }
