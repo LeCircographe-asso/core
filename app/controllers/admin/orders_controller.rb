@@ -19,7 +19,7 @@ class OrdersController < BaseController
 
   def create
     @user = User.find(params[:user_id]) 
-    @order = Order.new(user: @user)
+    @order = @user.orders.create!(order_params)
     puts "#{@user.id}"
     Rails.logger.debug "Params reçus: #{params.inspect}"
     puts params.inspect
