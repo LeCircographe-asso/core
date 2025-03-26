@@ -11,6 +11,7 @@
   width: 200px; /* Largeur de la barre latérale */
   position: fixed;
   height: 100%;
+  z-index: 100;
 }
 
 .sidebar-logo img {
@@ -42,4 +43,24 @@
 .sidebar-link:hover {
   background-color: #6c63ff;
   color: white;
+}
+
+/* Structure de mise en page admin */
+.admin-layout {
+  display: flex;
+  min-height: 100vh;
+}
+
+.admin-content {
+  flex: 1;
+  margin-left: 200px; /* Même largeur que .admin-sidebar */
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.admin-main {
+  flex: 1;
+  padding: 20px;
+  overflow-y: auto;
 }

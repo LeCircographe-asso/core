@@ -1,15 +1,14 @@
 <%= form_with(model: [:admin, user]) do |form| %>
-<% if user.errors.any? %>
-<div style="color: red">
-    <h2><%= pluralize(user.errors.count, "error") %> prohibited this user from being saved:</h2>
-
-  <ul>
-    <% user.errors.each do |error| %>
-    <li><%= error.full_message %></li>
-    <% end %>
-  </ul>
-</div>
-<% end %>
+  <% if user.errors.any? %>
+    <div style="color: red">
+      <h2><%= pluralize(user.errors.count, "error") %> prohibited this user from being saved:</h2>
+      <ul>
+        <% user.errors.each do |error| %>
+          <li><%= error.full_message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
 
   <div class="field">
     <%= form.label :email_address %>
@@ -26,11 +25,10 @@
     <%= form.text_field :last_name %>
   </div>
 
-<div class="field">
-  <%= form.label :newsletter_subscribed, "Inscrire à la newsletter ?" %>
-  <%= form.check_box :newsletter_subscribed %>
-</div>
-<% end %>
+  <div class="field">
+    <%= form.label :newsletter_subscribed, "Inscrire à la newsletter ?" %>
+    <%= form.check_box :newsletter_subscribed %>
+  </div>
 
   <% if @user.persisted? %>
     <div class="field">
@@ -39,10 +37,7 @@
     </div>
   <% end %>
 
-<div>
-  <%= form.submit "Créer", class: "btn btn-primary" %>
-
-</div>
-
-
+  <div>
+    <%= form.submit "Créer", class: "btn btn-primary" %>
+  </div>
 <% end %>
