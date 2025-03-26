@@ -1,35 +1,35 @@
-<div class="admin-dashboard">
-    <h1 class="dashboard-title">Tableau de bord administrateur</h1>
+<div class="container mx-auto px-4 py-8 max-w-7xl">
+    <h1 class="text-3xl font-bold text-center text-gray-800 mb-8">Tableau de bord administrateur</h1>
 
     <!-- Boutons d'actions principaux -->
-    <div class="dashboard-actions-center">
-        <%= link_to "Modifier les horaires", edit_admin_opening_hours_path, class: "purple-button" %>
-        <%= link_to "Liste Utilisateurs", admin_users_path, class: "purple-button" %>
-        <%= link_to "Créer un Adhérent (basique)", new_admin_user_path, class: "purple-button"%>
+    <div class="flex justify-center gap-4 mb-8 flex-wrap">
+        <%= link_to "Modifier les horaires", edit_admin_opening_hours_path, class: "bg-purple-600 hover:bg-purple-700 text-white px-6 py-2 rounded-lg transition-colors duration-200" %>
+        <%= link_to "Liste Utilisateurs", admin_users_path, class: "bg-purple-600 hover:bg-purple-700 text-white px-6 py-2 rounded-lg transition-colors duration-200" %>
+        <%= link_to "Créer un Adhérent (basique)", new_admin_user_path, class: "bg-purple-600 hover:bg-purple-700 text-white px-6 py-2 rounded-lg transition-colors duration-200" %>
     </div>
 
     <!-- Contenu principal -->
-    <div class="dashboard-content">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
         <!-- Section Horaires -->
-        <div class="dashboard-section">
-            <h3 class="dashboard-subtitle">Horaires d'ouverture</h3>
-            <table class="dashboard-table">
+        <div class="bg-white rounded-lg shadow-md p-6">
+            <h3 class="text-xl font-semibold text-gray-800 mb-4 text-center">Horaires d'ouverture</h3>
+            <table class="w-full">
                 <% @opening_hours.each do |day, hours| %>
-                <tr>
-                    <td><%= day.capitalize %></td>
-                    <td><%= hours %></td>
+                <tr class="border-b border-gray-200">
+                    <td class="py-2 text-gray-700"><%= day.capitalize %></td>
+                    <td class="py-2 text-gray-700 text-right"><%= hours %></td>
                 </tr>
                 <% end %>
             </table>
         </div>
 
         <!-- Section Bloc-note -->
-        <div class="dashboard-section">
-            <h3 class="dashboard-subtitle">Bloc-note</h3>
-            <div class="notepad-container">
+        <div class="bg-white rounded-lg shadow-md p-6">
+            <h3 class="text-xl font-semibold text-gray-800 mb-4 text-center">Bloc-note</h3>
+            <div class="bg-gray-50 rounded-lg p-4 mb-4 min-h-[150px]">
                 <%= render "shared/notepad" %>
             </div>
-            <%= link_to "Modifier", edit_admin_notepad_path, class: "purple-button" %>
+            <%= link_to "Modifier", edit_admin_notepad_path, class: "bg-purple-600 hover:bg-purple-700 text-white px-6 py-2 rounded-lg transition-colors duration-200 block text-center" %>
         </div>
     </div>
 </div>
