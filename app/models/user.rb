@@ -1,6 +1,7 @@
 class User < ApplicationRecord
-  attr_accessor :cgu, :private_policy, :subscribe_to_newsletter
-  #after_create :assign_membership
+  attr_accessor :cgu, :private_policy
+  # after_create :assign_membership
+  before_create :generate_unsubscribe_token
 
   enum :system_role, %i[ super_admin admin volunteer user_connected ]
 
@@ -31,9 +32,18 @@ class User < ApplicationRecord
   validates :privacy_policy, acceptance: { message: "Vous devez accepter la politique de confidentialité pour continuer." }
 
   # after_create :welcome_send
+
   # def welcome_send
-  #   UserMailer.welcome_email(self).deliver_now
+  #   return if user_connected?
+
+  #   if super_admin? || admin? || volunteer?
+  #     # UserMailer.welcome_by_admin(self).deliver_now
+  #   end
+  #   # UserMailer.welcome_email(self).deliver_now
   # end
+
+
+
   def generate_password_reset_token!
     self.password_reset_token = SecureRandom.urlsafe_base64
     self.password_reset_sent_at = Time.current
@@ -106,7 +116,11 @@ class User < ApplicationRecord
   end
 
   private
-  
+
+  def generate_unsubscribe_token
+    self.unsubscribe_token = SecureRandom.base64(16)
+  end
+
   # def assign_membership
   #   if self.memberships.empty?
   #     no_member_membership = Membership.find_by(type_name: :no_member)
@@ -114,5 +128,3 @@ class User < ApplicationRecord
   #   end
   # end
 end
-
-

@@ -17,10 +17,10 @@ class NewsletterSignupService
 
   def handle_authenticated_user
     if @current_user.email_address == @new_email
-      if @current_user.newsletter
+      if @current_user.newsletter_subscribed
         { success: false, message: "Vous êtes déjà inscrit à la newsletter." }
       else
-        @current_user.update(newsletter: true)
+        @current_user.update(newsletter_subscribed: true)
         { success: true, message: "Vous êtes maintenant inscrit à la newsletter." }
       end
     else
@@ -30,28 +30,28 @@ class NewsletterSignupService
 
   def handle_guest_user
     if @user
-      if @user.newsletter
+      if @user.newsletter_subscribed
         { success: false, message: "Cet utilisateur est déjà inscrit à la newsletter." }
       else
         { success: false, message: "Cet email existe déjà. Veuillez vous connecter pour modifier vos préférences." }
       end
     else
-      create_user_and_subscribe
+      { success: false, message: "Veuillez créer un compte pour vous inscrire à la newsletter.", redirect_to: true }
     end
   end
 
-  def create_user_and_subscribe
-    random_password = SecureRandom.hex(12)
-    new_user = User.new(
-      email_address: @new_email,
-      password_digest: BCrypt::Password.create(random_password),
-      newsletter: true
-    )
+  # def create_user_and_subscribe
+  #   random_password = SecureRandom.hex(12)
+  #   new_user = User.new(
+  #     email_address: @new_email,
+  #     password_digest: BCrypt::Password.create(random_password),
+  #     newsletter: true
+  #   )
 
-    if new_user.save
-      { success: true, message: "Un compte a été créé et vous êtes inscrit à la newsletter." }
-    else
-      { success: false, message: "Une erreur s'est produite lors de l'inscription. Veuillez réessayer." }
-    end
-  end
+  #   if new_user.save
+  #     { success: true, message: "Un compte a été créé et vous êtes inscrit à la newsletter." }
+  #   else
+  #     { success: false, message: "Une erreur s'est produite lors de l'inscription. Veuillez réessayer." }
+  #   end
+  # end
 end
