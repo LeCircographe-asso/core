@@ -40,7 +40,7 @@
 
                     <!-- Checkbox CGU -->
                     <div class="mt-6 flex items-center">
-                        <%= form.check_box :cgu, id: "cgu", class: "h-4 w-4 text-blue-500 border-gray-300 rounded" %>
+                        <%= form.check_box :cgu, id: "cgu", class: "h-4 w-4 text-[#1F5C55] border-gray-300 rounded shadow-[0_0_6px_#1F5C55] outline-none focus:outline-none" %>
                         <label for="cgu" class="ml-2 text-sm text-black dark:text-black">J'accepte les Conditions Générales d'Utilisation (CGU)</label>
                     </div>
                     <% if @user.errors[:cgu].any? %>
@@ -49,7 +49,7 @@
 
                     <!-- Checkbox Politique de Confidentialité -->
                     <div class="mt-4 flex items-center">
-                        <%= form.check_box :privacy_policy, id: "privacy_policy", class: "h-4 w-4 text-blue-500 border-gray-300 rounded" %>
+                        <%= form.check_box :privacy_policy, id: "privacy_policy", class: "h-4 w-4 text-[#1F5C55] border-gray-300 rounded shadow-[0_0_6px_#1F5C55] outline-none focus:outline-none" %>
                         <label for="privacy_policy" class="ml-2 text-sm text-black dark:text-black">J'accepte la Politique de Confidentialité</label>
                     </div>
                     <% if @user.errors[:privacy_policy].any? %>
@@ -58,7 +58,7 @@
 
                     <!-- Bouton Soumettre -->
                     <div class="mt-6">
-                        <%= form.submit "S'inscrire", class: "w-full px-4 py-2 tracking-wide text-white font-bold bg-[#6b47b8] border-2 border-[#6b47b8] rounded-lg shadow-lg hover:bg-gray-100 hover:text-[#1F5C55] hover:border-[#1F5C55] hover:shadow-lg transition-colors duration-300" %>
+                        <%= form.submit "S'inscrire", class: "w-full px-4 py-2 tracking-wide text-white font-bold bg-[#1F5C55] border-2 border-[#1F5C55] rounded-lg shadow-lg hover:bg-gray-100 hover:text-[#1F5C55] hover:border-[#1F5C55] hover:shadow-lg transition-colors duration-300" %>
                     </div>
                     <% end %>
                 </div>
