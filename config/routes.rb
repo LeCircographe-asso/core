@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  resources :blogs
   namespace :admin do
     resources :dashboard, only: %i[index], path: "dashboard"
     resource :opening_hours, only: %i[show edit update]
