@@ -1,0 +1,59 @@
+<% if @order.products.any? %>
+  <!-- Récapitulatif de la commande -->
+  <div style="display: flex; flex-direction: column; align-items: center; width: 100%; margin-bottom: 20px;">
+
+    <h2>Récapitulatif de votre commande</h2>
+  
+    <table style="width: 80%; margin-bottom: 20px;">
+      <thead>
+        <tr>
+          <th>Produit</th>
+          <th>Type</th>
+          <th>Prix</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @order.products.each do |product| %>
+          <tr>
+            <td><%= product.product_name %></td>
+            <td><%= product.product_type %></td>
+            <td>
+              <% if product.price_entries.any? %>
+                <%= product.price_entries.order(created_at: :desc).first.price_catalog.price %> €
+              <% else %>
+                Prix non défini
+              <% end %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+      <tfoot>
+        <tr>
+          <td colspan="2"><strong>Total</strong></td>
+          <td>
+            <strong>
+              <%= @order.products.sum { |p| p.price_entries.order(created_at: :desc).first&.price_catalog&.price || 0 } %> €
+            </strong>
+          </td>
+        </tr>
+      </tfoot>
+    </table>
+
+    <!-- Bouton de paiement -->
+    <div style="display: flex; justify-content: center; width: 100%; margin-bottom: 20px;">
+      <%= button_to 'Payer', admin_payments_path, params: { payment: { product_order_id: @product_order, user_id: @user } }, method: :post, class: "purple-button" %>
+    </div>
+
+  </div>
+<% else %>
+  <p style="text-align: center;">Aucun produit dans votre commande pour le moment.</p>
+<% end %>
+
+<!-- Section pour les dons -->
+<div style="display: flex; flex-direction: column; align-items: center; width: 100%; margin-bottom: 20px;">
+  <div class="donation-container" style="display: flex; align-items: center; gap: 10px; justify-content: center; margin-bottom: 20px;">
+    <label for="donation_amount">Faire un don :</label>
+    <%= number_field_tag :donation_amount, nil, min: 1, step: 1, placeholder: "Montant", style: "width: 100px;" %>
+    <%= button_to 'Donner', admin_payment_path, class: "purple-button", method: :post %>
+  </div>
+</div>

@@ -1,12 +1,11 @@
 <% content_for :title, "Le Circographe - Les Arts Graphiques" %>
 
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-    <div class="text-center mb-12 bg-white/90 py-6 rounded-lg shadow-md">
-        <h1 class="text-4xl font-bold text-gray-800">Les Arts Graphiques</h1>
-    </div>
+    <section class="text-center mb-12 bg-white/70 py-6 rounded-lg shadow-md">
+        <h1 class="text-4xl font-bold text-black">Les Arts Graphiques</h1>
+    </section>
 
     <div class="flex justify-center mb-8">
-        <div class="bg-white/95 shadow-md rounded-lg p-6 w-3/4">
+        <div class="bg-white/70 shadow-md rounded-lg p-6 w-3/4">
             <p class="text-gray-600 text-center">
                 Sic de isto et tuius peruchti ad actum ipsum, ut si dico "Ego autem vadam lavari, ut mens mea in statu naturae conformiter."
                 Cum igitur impediantur turbulentur aut dolore videamus.
@@ -15,10 +14,9 @@
     </div>
 
     <div class="flex justify-center mb-8">
-        <%= link_to "Devenir Membre", page_path('become_member'), class: "px-4 py-2 tracking-wide text-white font-bold bg-[#6b47b8] border-2 border-[#6b47b8] rounded-lg shadow-lg hover:bg-gray-100 hover:text-[#1F5C55] hover:border-[#1F5C55] hover:shadow-lg transition-colors duration-300" %>
+        <%= link_to "Devenir Membre", page_path('become_member'), class: "px-4 py-2 tracking-wide text-white font-bold bg-[#1F5C55] border-2 border-[#1F5C55] rounded-lg shadow-lg hover:bg-gray-100 hover:text-[#1F5C55] hover:border-[#1F5C55] hover:shadow-lg transition-colors duration-300" %>
     </div>
 
-    <div class="bg-white/90 rounded-lg shadow-md p-6">
+    <div class="bg-white/70 rounded-lg shadow-md mb-12 p-6">
         <%= render "shared/carousel_image", images: ["graff-img1.webp", "graff.jpg", "home3.webp", "home1.webp"] %>
     </div>
-</div>

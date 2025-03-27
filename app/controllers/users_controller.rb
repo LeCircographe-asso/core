@@ -37,9 +37,27 @@ class UsersController < ApplicationController
   end
 
   def change_newsletter_status
-    @user.update(newsletter: !@user.newsletter)
+    if params[:token].present?
+      unsubscribe_by_token
+    else
+      toggle_newsletter_status
+    end
+  end
 
-    message = @user.newsletter ? "Vous êtes inscrit à la newsletter" : "Vous êtes désinscrit de la newsletter"
+  def unsubscribe_by_token
+    @user = User.find_by(unsubscribe_token: params[:token])
+    if @user
+      @user.update(newsletter_subscribed: false)
+      redirect_to root_path, notice: "Vous avez été désinscrit de la newsletter avec succès."
+    else
+      redirect_to root_path, alert: "Token de désinscription invalide."
+    end
+    redirect_to page_path("newsletter_unsubscribe_success")
+  end
+
+  def toggle_newsletter_status
+    @user.update(newsletter_subscribed: !@user.newsletter_subscribed)
+    message = @user.newsletter_subscribed ? "Vous êtes inscrit à la newsletter" : "Vous êtes désinscrit de la newsletter"
     redirect_to @user, notice: message
   end
 

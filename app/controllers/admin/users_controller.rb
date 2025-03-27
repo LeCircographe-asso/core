@@ -5,10 +5,14 @@ module Admin
     # GET /admin/users or /admin/users.json
     def index
       @users = User.all
+      @total_user_memberships = UserMembership.where(status: "active").count
     end
 
     # GET /admin/users/1 or /admin/users/1.json
     def show
+      @user = User.find_by(id: params[:id])
+      @product_order = Product.find_by(params[:id])
+      @product = Product.find_by(params[:id])
     end
 
     # GET /admin/users/new
@@ -18,88 +22,62 @@ module Admin
 
     # GET /admin/users/1/edit
     def edit
+      @array_right = current_user.has_higher_permissions?(User.find(params[:id])) ? current_user.inferior_rights : [User.find(params[:id]).system_role]
+      @default_role = User.find(params[:id]).system_role
     end
 
     # POST /admin/users or /admin/users.json
     def create
       @user = User.new(user_params)
       @user.password = generate_secure_password
-
-      if @user.save
-        membership_role = Role.find_or_create_by(name: "membership")
-
-        @user.roles << membership_role
-
-        payment = @user.payments.build(amount: 1, status: "pending", payment_method: "credit_card")
-        payment.save!
-
-        if Date.today.month < 9
-          expiration_date = Date.new(Date.today.year, 9, 1)
-        else
-          expiration_date = Date.new(Date.today.year + 1, 9, 1)
+      @default_membership = Membership.find_by(type_name: :No_Member)
+    
+      begin
+        User.transaction do
+          if @user.save
+            @order = @user.orders.create!
+            @user_membership = UserMembership.create!(user: @user, membership_id: @default_membership.id)
+        #   if newsletter_subscribed == true
+        #     UserMailer.welcome_by_admin(@user).deliver_now
+        #   end
+          end
         end
-
-        subscription = SubscriptionType.find_by(name: "membership")
-        if subscription.nil?
-          subscription = SubscriptionType.create(name: "membership", price: 1, duration: "jusqu'au 01/09", description: "adhésion asso")
-        end
-        @user_membership = @user.user_memberships.create(
-          subscription_type_id: subscription.id,
-          status: "active",
-          expiration_date: expiration_date
-        )
-      else
-
-      end
-
-      if @user.save
-        membership_role = Role.find_or_create_by(name: "membership")
-
-        @user.roles << membership_role
-
-        payment = @user.payments.build(amount: 1, status: "pending", payment_method: "credit_card")
-        payment.save!
-
-        if Date.today.month < 9
-          expiration_date = Date.new(Date.today.year, 9, 1)
-        else
-          expiration_date = Date.new(Date.today.year + 1, 9, 1)
-        end
-
-        subscription = SubscriptionType.find_by(name: "membership")
-        if subscription.nil?
-          subscription = SubscriptionType.create(name: "membership", price: 1, duration: "jusqu'au 01/09", description: "adhésion asso")
-        end
-        @user_membership = @user.user_memberships.create(
-          subscription_type_id: subscription.id,
-          status: "active",
-          expiration_date: expiration_date
-        )
-      else
-
-      end
-
-      respond_to do |format|
-        if @user.save
-          format.html { redirect_to [ :admin, @user ], notice: "User was successfully created." }
+    
+        # Si la transaction réussit
+        respond_to do |format|
+          Rails.logger.info "User, Order et UserMembership créés avec succès"
+          @user.generate_password_reset_token!
+          
+          format.html { 
+            redirect_to admin_user_order_path(id: @order.id, user_id: @user.id), 
+            notice: "User was successfully created. A mail has been sent!" 
+          }
           format.json { render :show, status: :created, location: @user }
-        else
+        end
+    
+      rescue ActiveRecord::RecordInvalid => e
+        # Gestion centralisée des erreurs
+        Rails.logger.error "Erreur de création : #{e.record.errors.full_messages.join(', ')}"
+        
+        respond_to do |format|
           format.html { render :new, status: :unprocessable_entity }
-          format.json { render json: @user.errors, status: :unprocessable_entity }
+          format.json { render json: e.record.errors, status: :unprocessable_entity }
         end
       end
     end
+    
+
 
     # PATCH/PUT /admin/users/1 or /admin/users/1.json
     def update
-      respond_to do |format|
+      if current_user.inferior_rights.include?(params[:user][:system_role])
         if @user.update(user_params)
-          format.html { redirect_to [ :admin, @user ], notice: "User was successfully updated." }
-          format.json { render :show, status: :ok, location: @user }
+          redirect_to admin_user_path(@user), notice: "Utilisateur mis à jour avec succès."
         else
-          format.html { render :edit, status: :unprocessable_entity }
-          format.json { render json: @user.errors, status: :unprocessable_entity }
+          redirect_to admin_user_path(@user), alert: "Échec de la mise à jour de l'utilisateur."
         end
+      else
+        redirect_to admin_user_path(@user), alert: "Vous n'avez pas les droits pour effectuer cette modification."
       end
     end
 
@@ -121,8 +99,7 @@ module Admin
 
     # Only allow a list of trusted parameters through.
     def user_params
-      params.fetch(:user, {})
-      params.require(:user).permit(:email_address, :first_name, :last_name, :password, :payments, :roles)
+      params.require(:user).permit(:email_address, :first_name, :last_name, :password, :payments, :system_role, :newsletter_subscribed)
     end
 
     def generate_secure_password

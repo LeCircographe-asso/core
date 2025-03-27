@@ -42,46 +42,18 @@
             </div>
 
             <!-- Horaires -->
-            <div class="bg-white rounded-lg shadow-md p-4">
-                <h2 class="text-xl font-semibold mb-4 text-blue-800 text-center">Horaires d'ouverture</h2>
-                <table class="w-full border-collapse">
-                    <thead>
-                        <tr>
-                            <th class="border-b py-2 text-center">Jour</th>
-                            <th class="border-b py-2 text-center">Horaires</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td class="py-2 text-center">Lundi</td>
-                            <td class="py-2 text-center">Fermé</td>
-                        </tr>
-                        <tr>
-                            <td class="py-2 text-center">Mardi</td>
-                            <td class="py-2 text-center">XX - XX</td>
-                        </tr>
-                        <tr>
-                            <td class="py-2 text-center">Mercredi</td>
-                            <td class="py-2 text-center">XX - XX</td>
-                        </tr>
-                        <tr>
-                            <td class="py-2 text-center">Jeudi</td>
-                            <td class="py-2 text-center">XX - XX</td>
-                        </tr>
-                        <tr>
-                            <td class="py-2 text-center">Vendredi</td>
-                            <td class="py-2 text-center">XX - XX</td>
-                        </tr>
-                        <tr>
-                            <td class="py-2 text-center">Samedi</td>
-                            <td class="py-2 text-center">XX - XX</td>
-                        </tr>
-                        <tr>
-                            <td class="py-2 text-center">Dimanche</td>
-                            <td class="py-2 text-center">XX - XX</td>
-                        </tr>
-                    </tbody>
-                </table>
+            <div>
+                <% @horaires = begin
+                    Rails.cache.fetch("opening_hours") || 
+                    (defined?(OpeningHoursHelper.default_opening_hours) ? 
+                      OpeningHoursHelper.default_opening_hours : 
+                      { lundi: "Fermé", mardi: "14:00 - 22:00", mercredi: "14:00 - 22:00", jeudi: "14:00 - 22:00", vendredi: "14:00 - 22:00", samedi: "14:00 - 22:00", dimanche: "14:00 - 22:00" })
+                   rescue => e
+                     Rails.logger.error("Erreur lors de la récupération des horaires: #{e.message}")
+                     { lundi: "Fermé", mardi: "14:00 - 22:00", mercredi: "14:00 - 22:00", jeudi: "14:00 - 22:00", vendredi: "14:00 - 22:00", samedi: "14:00 - 22:00", dimanche: "14:00 - 22:00" }
+                   end
+                %>
+                <%= render 'shared/table' %>
             </div>
         </div>
         
