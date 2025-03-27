@@ -1,6 +1,7 @@
 class HomeController < ApplicationController
+  include OpeningHoursHelper
   allow_unauthenticated_access only: %i[index]
-  
+
 
   def index
     @events = Event.all
