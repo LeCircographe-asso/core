@@ -5,7 +5,7 @@ class RegistrationsController < ApplicationController
     if authenticated?
       redirect_to root_path
     end
-    @user = User.new
+    @user = User.new(email_address: session[:newsletter_email])
   end
 
   def create
