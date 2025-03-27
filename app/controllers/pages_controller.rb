@@ -9,5 +9,6 @@ class PagesController < ApplicationController
     @opening_hours = Rails.cache.fetch("opening_hours") || default_opening_hours
     @notepad = Rails.cache.fetch("notepad") || default_notepad
     render template: "pages/#{params[:id]}"
+    
   end
 end
