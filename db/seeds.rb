@@ -223,3 +223,7 @@ puts "Seeds completed! Created:"
 puts "- #{Product.count} products"
 puts "- #{PriceEntry.count} price entries"
 puts "- #{Event.count} events"
+
+# pour pouvoir afficher les images executer en consol :
+# sudo apt install libvips
+# pour modifier comment l'image qui s affiche pour les fronteux, c'est dans app/views/active_storage/blobs/_blob.html.erb

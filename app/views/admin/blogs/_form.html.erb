@@ -1,4 +1,5 @@
-<%= form_with(model: blog, class: "contents") do |form| %>
+<%= form_with model: blog, url: (blog.new_record? ? admin_blogs_path : admin_blog_path(blog)), method: (blog.new_record? ? :post : :patch), local: true, class: "contents" do |form| %>
+
   <% if blog.errors.any? %>
     <div id="error_explanation" class="bg-red-50 text-red-500 px-3 py-2 font-medium rounded-md mt-3">
       <h2><%= pluralize(blog.errors.count, "error") %> prohibited this blog from being saved:</h2>
@@ -11,6 +12,7 @@
     </div>
   <% end %>
 
+  
   <div class="my-5">
     <%= form.label :title %>
     <%= form.text_field :title, class: ["block shadow-sm rounded-md border px-3 py-2 mt-2 w-full", {"border-gray-400 focus:outline-blue-600": blog.errors[:title].none?, "border-red-400 focus:outline-red-600": blog.errors[:title].any?}] %>
