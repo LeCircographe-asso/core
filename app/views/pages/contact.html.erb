@@ -1,7 +1,8 @@
+
 <% content_for :title, "Le Circographe - Contact" %>
 
 <section class="min-h-screen">
-    <div class="flex flex-col min-h-screen bg-black/60 rounded-lg">
+    <div class="flex flex-col min-h-screen bg-black/60 rounded-lg mb-12">
         <div class="container flex flex-col flex-1 px-6 py-12 mx-auto">
             <div class="flex-1 lg:flex lg:items-center lg:-mx-6">
                 <div class="text-white lg:w-1/2 lg:mx-6">
@@ -15,7 +16,7 @@
                         Pensez à la FAQ pour trouver des réponses à vos questions.
                     </p>
 
-                    <%= link_to "FAQ", page_path('faq'), class: "px-6 py-3 mt-6 tracking-wide text-white font-bold bg-[#6b47b8] border-2 border-[#6b47b8] rounded-lg shadow-lg hover:bg-gray-100 hover:text-[#1F5C55] hover:border-[#1F5C55] transition-colors duration-300 inline-block" %>
+                    <%= link_to "FAQ", page_path('faq'), class: "px-6 py-3 mt-6 tracking-wide text-white font-bold bg-[#1F5C55] border-2 border-[#1F5C55] rounded-lg shadow-lg hover:bg-gray-100 hover:text-[#1F5C55] hover:border-[#1F5C55] transition-colors duration-300 inline-block" %>
 
                     <div class="mt-6 md:mt-8">
                         <h3 class="text-gray-300 ">Suivez-nous</h3>
@@ -77,8 +78,8 @@
                                 <textarea name="contact[message]" class="block w-full h-32 px-5 py-3 mt-2 text-gray-700 placeholder-gray-400 bg-white border border-gray-200 rounded-md md:h-48 focus:border-blue-400 focus:ring-blue-300 focus:ring-opacity-40 focus:outline-none focus:ring" placeholder="Votre message" required></textarea>
                             </div>
 
-                            <div class="form-group">
-                                <button type="submit" class="px-6 py-3 tracking-wide text-white font-bold bg-[#6b47b8] border-2 border-[#6b47b8] rounded-lg shadow-lg hover:bg-gray-100 hover:text-[#1F5C55] hover:border-[#1F5C55] transition-colors duration-300">Envoyer</button>
+                            <div class="form-group mt-6">
+                                <button type="submit" class="px-6 py-2 tracking-wide text-white font-bold bg-[#1F5C55] border-2 border-[#1F5C55] rounded-lg shadow-lg hover:bg-gray-100 hover:text-[#1F5C55] hover:border-[#1F5C55] transition-colors duration-300">Envoyer</button>
                             </div>
                         </form>
                     </div>
@@ -87,28 +88,3 @@
         </div>
     </div>
 </section>
-
-
-
-<!--
-<div class="contact-container">
-  <h1>Nous contacter</h1>
-
-  <form class="contact-form">
-    <div class="form-group">
-      <label for="object">Objet</label>
-      <input type="text" id="object" name="object" placeholder="Objet" class="contact-input">
-    </div>
-
-    <div class="form-group">
-      <label for="description">Décrivez votre problème</label>
-      <textarea id="description" name="description" placeholder="Décrivez votre problème" class="contact-textarea"></textarea>
-    </div>
-
-    <div class="form-group">
-      <button type="submit" class="purple-button">Envoyer</button>
-    </div>
-  </form>
-</div>
-
-</div>

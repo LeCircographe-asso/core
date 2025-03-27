@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="fr">
 
 <head>
     <title><%= content_for(:title) || "Le Circographe" %></title>
@@ -33,19 +33,30 @@
 
     <% if controller_path.start_with?('admin/') %>
 
-    <%= render 'shared/admin_navbar' %>
-    <%= render 'shared/admin_lateral_navbar' %>
-    <%= render 'shared/flash' %>
-    <main>
-        <%= yield %>
-    </main>
+    <div class="admin-layout">
+        <%= render 'admin/dashboard/admin_lateral_navbar' %>
+        <div class="admin-content">
+            <%= render 'shared/flash' %>
+            <main class="admin-main">
+                <%= yield %>
+            </main>
+        </div>
+    </div>
 
-    <% else  %>
+    <% elsif controller_name == 'sessions' && action_name == 'new' || controller_name == 'registrations' && action_name == 'new' %>
+    
+    <div class="flex flex-col min-h-screen w-full overflow-x-hidden">
+        <%= render 'shared/navbar' %>
+        <%= render 'shared/flash' %>
+        <%= yield %>
+    </div>
+    
+    <% else %>
 
     <%= render 'shared/navbar' %>
     <div class="flex-grow bg-no-repeat bg-cover bg-center" style="background-image: url('<%= asset_path(content_for(:background_image) || 'background_temp.webp') %>')">
         <%= render 'shared/flash' %>
-        <main>
+        <main class="w-full max-w-7xl mx-auto space-y-6 px-4 sm:px-6 lg:px-8 pt-8">
             <%= yield %>
         </main>
     </div>

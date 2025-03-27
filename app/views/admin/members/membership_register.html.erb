@@ -70,10 +70,10 @@
         </p>
     </fieldset>
 
-    <fieldset class="fieldset-projet">
-        <legend>Si le projet vous intéresse :</legend>
-        <%= f.check_box :newsletter, { id: "newsletter-checkbox", checked: @membership_data['newsletter'] == 'oui' }, 'oui', nil %>
-        <%= f.label :newsletter, "Je souhaite m’inscrire à la newsletter" %><br>
+        <fieldset class="fieldset-projet">
+          <legend>Si le projet vous intéresse :</legend>
+          <%= f.check_box :newsletter_subscribed, { id: "newsletter-checkbox", checked: @membership_data['newsletter'] == 'oui' }, 'oui', nil %>
+          <%= f.label :newsletter_subscribed, "Je souhaite m’inscrire à la newsletter" %><br>
 
         <%= f.check_box :investir, { id: "investir-checkbox", checked: @membership_data['investir'] == 'oui' }, 'oui', nil %>
         <%= f.label :investir, "Je souhaite m’investir dans le projet" %><br>
