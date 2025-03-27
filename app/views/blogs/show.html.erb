@@ -8,6 +8,9 @@
   <h1 class="font-bold text-4xl">Showing blog</h1>
 
   <%= render @blog %>
+  <%@tags.each do |tag|%>
+  <%= tag.name %>
+<% end %>
   <% if current_user.has_admin? %>
   <%= link_to "Edit this blog", edit_admin_blog_path(@blog), class: "w-full sm:w-auto text-center rounded-md px-3.5 py-2.5 bg-gray-100 hover:bg-gray-50 inline-block font-medium"%>
   <% end %>

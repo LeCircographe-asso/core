@@ -23,6 +23,14 @@
     <%= form.rich_textarea  :content, class: ["block shadow-sm rounded-md border px-3 py-2 mt-2 w-full", {"border-gray-400 focus:outline-blue-600": blog.errors[:content].none?, "border-red-400 focus:outline-red-600": blog.errors[:content].any?}] %>
   </div>
 
+  <% @tags.each do |tag| %>
+  <%= check_box_tag "blog[tag_ids][]", tag.id, @blog.tags.include?(tag), id: "tag_#{tag.id}" %>
+  <%= label_tag "tag_#{tag.id}", tag.name %>
+<% end %>
+
+
+
+
   <div class="inline">
     <%= form.submit class: "w-full sm:w-auto rounded-md px-3.5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white inline-block font-medium cursor-pointer" %>
   </div>
