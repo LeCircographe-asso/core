@@ -40,19 +40,21 @@ module Admin
         #   if newsletter_subscribed == true
         #     UserMailer.welcome_by_admin(@user).deliver_now
         #   end
+        Rails.logger.info "Redirection vers : #{admin_user_order_path(id: @order.id, user_id: @user.id)}"
           end
         end
-    
         # Si la transaction réussit
         respond_to do |format|
           Rails.logger.info "User, Order et UserMembership créés avec succès"
           @user.generate_password_reset_token!
           
+          # format.turbo_stream do
+          #   render turbo_stream: turbo_stream.replace("turbo-frame-id", partial: "shared/turbo_redirect", locals: { url: admin_user_order_path(id: @order.id, user_id: @user.id) })
+          # end
           format.html { 
-            redirect_to admin_user_order_path(id: @order.id, user_id: @user.id), 
+            redirect_to admin_user_order_path(id: @order.id, user_id: @user.id),
             notice: "User was successfully created. A mail has been sent!" 
           }
-          format.json { render :show, status: :created, location: @user }
         end
     
       rescue ActiveRecord::RecordInvalid => e

@@ -41,7 +41,7 @@
 
     <!-- Bouton de paiement -->
     <div style="display: flex; justify-content: center; width: 100%; margin-bottom: 20px;">
-      <%= button_to 'Payer', admin_payments_path, params: { payment: { product_order_id: @product_order, user_id: @user } }, method: :post, class: "purple-button" %>
+      <%= button_to 'Payer', admin_payments_path, params: { payment: { order_id: @order, user_id: @user } }, method: :post, class: "purple-button" %>
     </div>
 
   </div>
