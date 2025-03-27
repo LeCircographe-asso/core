@@ -27,7 +27,16 @@
 
             <!-- Horaires -->
             <div>
-                <% @horaires = Rails.cache.fetch("opening_hours") || OpeningHoursHelper.default_opening_hours %>
+                <% @horaires = begin
+                    Rails.cache.fetch("opening_hours") || 
+                    (defined?(OpeningHoursHelper.default_opening_hours) ? 
+                      OpeningHoursHelper.default_opening_hours : 
+                      { lundi: "Fermé", mardi: "14:00 - 22:00", mercredi: "14:00 - 22:00", jeudi: "14:00 - 22:00", vendredi: "14:00 - 22:00", samedi: "14:00 - 22:00", dimanche: "14:00 - 22:00" })
+                   rescue => e
+                     Rails.logger.error("Erreur lors de la récupération des horaires: #{e.message}")
+                     { lundi: "Fermé", mardi: "14:00 - 22:00", mercredi: "14:00 - 22:00", jeudi: "14:00 - 22:00", vendredi: "14:00 - 22:00", samedi: "14:00 - 22:00", dimanche: "14:00 - 22:00" }
+                   end
+                %>
                 <%= render 'shared/table' %>
             </div>
         </div>
