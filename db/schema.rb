@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_03_26_151908) do
+ActiveRecord::Schema[8.0].define(version: 2025_03_27_103151) do
   create_table "attendance_lists", force: :cascade do |t|
     t.datetime "start_date"
     t.datetime "end_date"
@@ -90,7 +90,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_03_26_151908) do
     t.integer "user_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.integer "product_order_id"
     t.index ["user_id"], name: "index_orders_on_user_id"
   end
 
@@ -102,8 +101,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_03_26_151908) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "user_id", null: false
-    t.integer "product_order_id", null: false
-    t.index ["product_order_id"], name: "index_payments_on_product_order_id"
+    t.integer "order_id"
     t.index ["user_id"], name: "index_payments_on_user_id"
   end
 
@@ -196,9 +194,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_03_26_151908) do
   add_foreign_key "event_attendees", "payments"
   add_foreign_key "event_attendees", "users"
   add_foreign_key "events", "users", column: "creator_id"
-  add_foreign_key "orders", "product_orders"
   add_foreign_key "orders", "users"
-  add_foreign_key "payments", "product_orders"
   add_foreign_key "payments", "users"
   add_foreign_key "price_entries", "price_catalogs"
   add_foreign_key "price_entries", "products"

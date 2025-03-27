@@ -1,3 +1,14 @@
+# Nettoyage des données existantes
+ActiveRecord::Base.connection.disable_referential_integrity do
+  PriceEntry.destroy_all
+  PriceCatalog.destroy_all
+  Product.destroy_all
+  User.destroy_all
+  
+end
+
+puts "Suppression des données existantes... OK"
+
 # Le Circographe ASCII Art Logo
 puts %(
 ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣤⡶⠿⠿⠷⣶⣄⠀⠀⠀⠀⠀
@@ -96,14 +107,7 @@ puts "- 1 Member (member@rails.com)"
 puts "- 10 Guests (guest1@rails.com through guest10@rails.com)"
 puts "All passwords are set to: 123456"
 
-# Nettoyage des données existantes
-ActiveRecord::Base.connection.disable_referential_integrity do
-  PriceEntry.destroy_all
-  PriceCatalog.destroy_all
-  Product.destroy_all
-end
 
-puts "Suppression des données existantes... OK"
 
 price_catalogs = [
   { active: true, price: 1.0 },
@@ -128,8 +132,8 @@ products = [
   { product_name: "Adhésion simple", product_type: "adhesion" },
   { product_name: "Adhésion Cirque - Tarif Plein", product_type: "adhesion" },
   { product_name: "Adhésion Cirque - Tarif Réduit", product_type: "adhesion" },
-  { product_name: "Upgrade Basic to Cirque - Tarif Plein", product_type: "adhesion" },
-  { product_name: "Upgrade Basic to Cirque - Tarif Réduit", product_type: "adhesion" },
+  { product_name: "Upgrade Basic to Cirque - Tarif Plein", product_type: "cotisation" },
+  { product_name: "Upgrade Basic to Cirque - Tarif Réduit", product_type: "cotisation" },
   { product_name: "Pass journée", product_type: "cotisation" },
   { product_name: "Cotisation 10 séances", product_type: "cotisation" },
   { product_name: "Cotisation trimestrielle", product_type: "cotisation" },

@@ -24,6 +24,10 @@
             </td>
             <td>
               <%= button_to 'Ajouter', admin_product_orders_path, params: { product_order: { order_id: @order, product_id: product, user_id: @user } }, method: :post, class: "purple-button", data: { turbo_stream: true } %>
+            </td>
+            <td>
+              <%# <%= button_to 'Supprimer', admin_user_order_product_order_path(order_id: @order.id, product_order_id: @product_order), method: :delete, data: { turbo_stream: true }, class: "delete-button" %> %>
+            </td>
           </tr>
         <% end %>
       </tbody>
