@@ -1,5 +1,5 @@
 class User < ApplicationRecord
-  attr_accessor :cgu, :private_policy
+  attr_accessor :cgu, :privacy_policy
   # after_create :assign_membership
   before_create :generate_unsubscribe_token
 

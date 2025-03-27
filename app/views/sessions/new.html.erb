@@ -1,49 +1,52 @@
-<div class="bg-white white:bg">
-    <div class="flex flex-col lg:flex-row h-screen">
-        <!-- Partie Image (à gauche) -->
-        <div class="lg:w-2/3 flex-shrink-0">
+<div class="bg-white w-full max-w-full flex flex-col lg:flex-row overflow-hidden" style="height: calc(100vh - 4rem);">
+    <!-- Image de fond en version mobile -->
+    <div class="lg:hidden absolute inset-0 z-0 opacity-20">
+        <%= image_tag("about.jpg", alt: "", class: "w-full h-full object-cover") %>
+    </div>
+    
+    <!-- Partie Image (à gauche) - visible uniquement sur desktop -->
+    <div class="hidden lg:block lg:w-1/2 overflow-hidden">
+        <div class="h-full w-full">
             <%= image_tag("about.jpg", alt: "Circographe Image", class: "w-full h-full object-cover") %>
         </div>
+    </div>
 
-        <!-- Partie Formulaire (à droite) -->
-        <div class="flex items-center justify-center w-full lg:w-1/3 px-6">
-            <div class="w-full max-w-md">
-                <div class="text-center">
-                    <h1 class="text-2xl font-bold text-gray-700 dark:text-black">Se connecter</h1>
-                </div>
-
-                <div class="mt-8">
-                    <%= form_with url: session_url, class: "signup-form" do |form| %>
-                    <!-- Champ Email -->
-                    <div>
-                        <label for="email_address" class="block mb-2 text-sm text-black dark:text-black">Adresse Email</label>
-                        <%= form.email_field :email_address, required: true, autofocus: true, autocomplete: "username", placeholder: "jean@example.com", value: params[:email_address], id: "email_address", class: "block w-full px-4 py-2 mt-2 text-black placeholder-gray-400 bg-white border border-gray-200 rounded-lg dark:placeholder-gray-600 dark:bg-gray-900 dark:text-black dark:border-gray-700 focus:border-blue-400 dark:focus:border-blue-400 focus:ring-blue-400 focus:outline-none focus:ring focus:ring-opacity-40", style: "background-color: white;" %>
-                    </div>
-
-                    <!-- Champ Mot de passe -->
-                    <div class="mt-6 relative">
-                        <div class="flex justify-between mb-2">
-                            <label for="password" class="text-sm text-black dark:text-black">Mot de passe</label>
-                            <%= link_to "Mot de passe oublié ?", new_password_path, class: "text-sm text-gray-400 focus:text-blue-500 hover:text-blue-500 hover:underline dark:text-gray-500 dark:focus:text-blue-400 dark:hover:text-blue-400" %>
-                        </div>
-                        <%= form.password_field :password, required: true, placeholder: "Mot de passe", maxlength: 72, id: "password", class: "block w-full px-4 py-2 mt-2 text-black placeholder-gray-400 bg-white border border-gray-200 rounded-lg dark:placeholder-gray-600 dark:bg-gray-900 dark:text-black dark:border-gray-700 focus:border-blue-400 dark:focus:border-blue-400 focus:ring-blue-400 focus:outline-none focus:ring focus:ring-opacity-40 password-field", style: "background-color: white;" %>
-                        <span class="toggle-password absolute inset-y-0 right-0 flex items-center pr-3 mt-8" onclick="togglePassword('password', 'password-icon')">
-                            <i class="fa fa-eye text-gray-500 dark:text-gray-400" id="password-icon"></i>
-                        </span>
-                    </div>
-
-                    <!-- Bouton Soumettre -->
-                    <div class="mt-6">
-                        <%= form.submit "Se connecter", class: "w-full px-4 py-2 tracking-wide text-white font-bold bg-[#6b47b8] border-2 border-[#6b47b8] rounded-lg shadow-lg hover:bg-gray-100 hover:text-[#1F5C55] hover:border-[#1F5C55] hover:shadow-lg transition-colors duration-300" %>
-                    </div>
-
-                    <!-- Lien S'inscrire -->
-                    <div class="mt-6 text-center">
-                        <%= link_to "Pas encore de compte ? S'inscrire", new_registration_path, class: "text-sm text-gray-400 focus:text-blue-500 hover:text-blue-500 hover:underline dark:text-gray-500 dark:focus:text-blue-400 dark:hover:text-blue-400" %>
-                    </div>
-                    <% end %>
-                </div>
+    <!-- Partie Formulaire (à droite) -->
+    <div class="flex items-center justify-center w-full lg:w-1/2 p-4 overflow-y-auto overflow-x-hidden relative z-10">
+        <div class="w-full max-w-md bg-white bg-opacity-95 p-5 rounded-lg shadow-sm">
+            <div class="text-center mb-4">
+                <h1 class="text-2xl font-bold text-gray-700">Se connecter</h1>
             </div>
+
+            <%= form_with url: session_url, class: "signup-form space-y-4" do |form| %>
+            <!-- Champ Email -->
+            <div>
+                <label for="email_address" class="block mb-2 text-sm text-gray-800">Adresse Email</label>
+                <%= form.email_field :email_address, required: true, autofocus: true, autocomplete: "username", placeholder: "jean@example.com", value: params[:email_address], id: "email_address", class: "block w-full px-4 py-2 text-black placeholder-gray-400 bg-white border border-gray-200 rounded-lg focus:border-[#5836a5] focus:ring-[#5836a5] focus:outline-none focus:ring focus:ring-opacity-40", style: "background-color: white;" %>
+            </div>
+
+            <!-- Champ Mot de passe -->
+            <div class="relative">
+                <div class="flex justify-between mb-2">
+                    <label for="password" class="text-sm text-gray-800">Mot de passe</label>
+                    <%= link_to "Mot de passe oublié ?", new_password_path, class: "text-sm text-gray-400 hover:text-[#5836a5] hover:underline focus:outline-[#5836a5] outline-offset-1" %>
+                </div>
+                <%= form.password_field :password, required: true, placeholder: "Mot de passe", maxlength: 72, id: "password", class: "block w-full px-4 py-2 text-black placeholder-gray-400 bg-white border border-gray-200 rounded-lg focus:border-[#5836a5] focus:ring-[#5836a5] focus:outline-none focus:ring focus:ring-opacity-40 password-field", style: "background-color: white;" %>
+                <span class="toggle-password absolute inset-y-0 right-0 flex items-center pr-3 mt-8" onclick="togglePassword('password', 'password-icon')">
+                    <i class="fa fa-eye text-gray-500" id="password-icon"></i>
+                </span>
+            </div>
+
+            <!-- Bouton Soumettre -->
+            <div>
+                <%= form.submit "Se connecter", class: "w-full px-4 py-2 tracking-wide text-white font-bold bg-[#1F5C55] border-2 border-[#1F5C55] rounded-lg shadow-lg hover:bg-gray-100 hover:text-[#1F5C55] hover:border-[#1F5C55] hover:shadow-lg transition-colors duration-300" %>
+            </div>
+
+            <!-- Lien S'inscrire -->
+            <div class="text-center">
+                <%= link_to "Pas encore de compte ? S'inscrire", new_registration_path, class: "text-sm text-gray-400 hover:text-[#5836a5] hover:underline focus:outline-[#5836a5] outline-offset-1" %>
+            </div>
+            <% end %>
         </div>
     </div>
 </div>
