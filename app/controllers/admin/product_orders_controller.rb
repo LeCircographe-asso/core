@@ -37,14 +37,30 @@ module Admin
       @product_order.product << @product
     end
 
+    def destroy
+      @order = Order.find(params[:order_id])
+      @product_order = @order.product_orders.find(params[:id])
+      
+      @product_order.destroy
+      respond_to do |format|
+        format.html { redirect_to admin_order_path(@order) }
+        format.turbo_stream
+      end
+    end
+    
+
     private
 
     def set_order
       @order = Order.find(product_order_params[:order_id])
     end
 
+    def set_product_order
+      @product_order = ProductOrder.find(params[:id])
+    end
+
     def product_order_params
-      params.require(:product_order).permit(:product_id, :user_id, :order_id)
+      params.require(:product_order).permit(:product_id, :user_id, :order_id, :product_order_id)
     end
 
     def determine_product_partial
