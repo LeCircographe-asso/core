@@ -6,31 +6,7 @@
             <%= link_to root_path, class: "flex items-center space-x-3 rtl:space-x-reverse" do %>
             <%= image_tag("Le-Circographe-crop.webp", alt: "le-circographe Logo", class: "w-40 h-auto") %>
             <% end %>
-<nav class="bg-white border-gray-200 sticky top-0 z-50">
-    <div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
-        <!-- Logo et profil regroupés pour mobile -->
-        <div class="flex items-center justify-between w-full md:w-auto">
-            <!-- Logo -->
-            <%= link_to root_path, class: "flex items-center space-x-3 rtl:space-x-reverse" do %>
-            <%= image_tag("Le-Circographe-crop.webp", alt: "le-circographe Logo", class: "w-40 h-auto") %>
-            <% end %>
 
-            <!-- Elements regroupés à droite pour mobile -->
-            <div class="flex items-center md:hidden">
-                <% if authenticated? %>
-                <%= link_to user_path(Current.user), class: "flex mr-3" do %>
-                <%= image_tag("users.png", alt: "photo de profil", class: "w-8 h-8 rounded-full hover:ring-2 hover:ring-indigo-300") %>
-                <% end %>
-                <% end %>
-
-                <!-- Bouton hamburger (mobile et tablette) -->
-                <button data-collapse-toggle="navbar-mobile" type="button" class="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200" aria-controls="navbar-mobile" aria-expanded="false">
-                    <span class="sr-only">Ouvrir le menu</span>
-                    <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 17 14">
-                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 1h15M1 7h15M1 13h15" />
-                    </svg>
-                </button>
-            </div>
             <!-- Elements regroupés à droite pour mobile -->
             <div class="flex items-center md:hidden">
                 <% if authenticated? %>
@@ -59,36 +35,15 @@
                     <% end %>
                     <div class="hidden group-hover:block absolute left-0 top-full z-10 w-48 bg-white rounded-lg shadow-lg">
                         <ul class="py-2 text-sm text-gray-700">
-        <!-- Menu principal (desktop) -->
-        <div class="hidden md:flex flex-grow justify-center items-center mx-4">
-            <ul class="flex flex-row space-x-8 font-medium">
-                <!-- L'association -->
-                <li class="group relative">
-                    <%= link_to page_path('association'), class: "block py-2 text-gray-900 hover:text-indigo-700 group-hover:text-indigo-700" do %>
-                    Le Lieu
-                    <% end %>
-                    <div class="hidden group-hover:block absolute left-0 top-full z-10 w-48 bg-white rounded-lg shadow-lg">
-                        <ul class="py-2 text-sm text-gray-700">
                             <li>
-                                <%= link_to "Le Cirque", page_path('le_cirque'), class: "block px-4 py-2 hover:bg-gray-100" %>
                                 <%= link_to "Le Cirque", page_path('le_cirque'), class: "block px-4 py-2 hover:bg-gray-100" %>
                             </li>
                             <li>
-                                <%= link_to "Les arts Graphiques", page_path('le_graff'), class: "block px-4 py-2 hover:bg-gray-100" %>
                                 <%= link_to "Les arts Graphiques", page_path('le_graff'), class: "block px-4 py-2 hover:bg-gray-100" %>
                             </li>
                         </ul>
                     </div>
-                    </div>
                 </li>
-
-                <!-- Nos actualités -->
-                <li class="group relative">
-                    <%= link_to page_path("nos_actualites"), class: "block py-2 text-gray-900 hover:text-indigo-700 group-hover:text-indigo-700" do %>
-                    Nos actualités
-                    <% end %>
-                    <div class="hidden group-hover:block absolute left-0 top-full z-10 w-48 bg-white rounded-lg shadow-lg">
-                        <ul class="py-2 text-sm text-gray-700">
 
                 <!-- Nos actualités -->
                 <li class="group relative">
