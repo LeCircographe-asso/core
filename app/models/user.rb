@@ -7,6 +7,7 @@ class User < ApplicationRecord
 
   alias_attribute :email, :email_address
   has_many :sessions, dependent: :destroy
+  has_many :event_attendees, dependent: :destroy
   has_many :events, through: :event_attendees
   has_many :user_memberships, dependent: :destroy
 
@@ -88,13 +89,7 @@ class User < ApplicationRecord
 
 
   def is_interested_in?(event_id)
-    events = self.event_attendees
-    events.each do |event|
-      if event.event_id == event_id
-        return true
-      end
-    end
-    false
+    event_attendees.exists?(event_id: event_id)
   end
 
   def assign_basic_membership
