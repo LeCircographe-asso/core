@@ -37,36 +37,22 @@ module Admin
       begin
         User.transaction do
           if @user.save
-            @order = @user.orders.create!
+            @order = @user.orders.new
             @user_membership = UserMembership.create!(user: @user, membership_id: @default_membership.id)
-        #   if newsletter_subscribed == true
-        #     UserMailer.welcome_by_admin(@user).deliver_now
-        #   end
-        Rails.logger.info "Redirection vers : #{admin_user_order_path(id: @order.id, user_id: @user.id)}"
+
+            if @order.save
+              redirect_to admin_user_order_path(id: @order, user_id: @user), 
+              notice: "User was successfully created. A mail has been sent!" 
+              Rails.logger.info "Redirection vers : #{admin_user_order_path(id: @order.id, user_id: @user.id)}"
+            else
+              Rails.logger.info "User, Order et UserMembership créés avec succès"
+            end 
           end
         end
-        # Si la transaction réussit
-        respond_to do |format|
-          Rails.logger.info "User, Order et UserMembership créés avec succès"
-          @user.generate_password_reset_token!
-          
-          # format.turbo_stream do
-          #   render turbo_stream: turbo_stream.replace("turbo-frame-id", partial: "shared/turbo_redirect", locals: { url: admin_user_order_path(id: @order.id, user_id: @user.id) })
-          # end
-          format.html { 
-            redirect_to admin_user_order_path(id: @order.id, user_id: @user.id),
-            notice: "User was successfully created. A mail has been sent!" 
-          }
-        end
-    
-      rescue ActiveRecord::RecordInvalid => e
-        # Gestion centralisée des erreurs
-        Rails.logger.error "Erreur de création : #{e.record.errors.full_messages.join(', ')}"
+
+
         
-        respond_to do |format|
-          format.html { render :new, status: :unprocessable_entity }
-          format.json { render json: e.record.errors, status: :unprocessable_entity }
-        end
+        @user.generate_password_reset_token!
       end
     end
     
