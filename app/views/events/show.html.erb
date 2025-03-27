@@ -1,10 +1,9 @@
 <% content_for :title, "Le Circographe - Détail Événement" %>
 
-<main class="py-12">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <h1 class="text-4xl font-bold text-center text-gray-800 bg-white/95 py-6 mb-8 rounded-lg shadow-md"><%= @event.title %></h1>
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-12">
+        <h1 class="text-4xl font-bold text-center text-black bg-white/70 py-6 mb-8 rounded-lg shadow-md"><%= @event.title %></h1>
         
-        <div class="bg-white/95 rounded-lg shadow-md p-6">
+        <div class="bg-white/70 rounded-lg shadow-md p-6">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <div class="relative aspect-[4/3] overflow-hidden rounded-xl">
                     <%= image_tag @event.picture_url.presence || "home2.webp", 
@@ -43,15 +42,14 @@
                     <% if authenticated? %>
                     <div class="mt-6 space-y-2">
                         <% if !current_user.is_interested_in? @event.id %>
-                        <%= button_to "Je suis intéressé", event_attendees_path, params: {id: @event.id}, class: "w-full px-4 py-2 tracking-wide text-white font-bold bg-[#6b47b8] border-2 border-[#6b47b8] rounded-lg shadow-lg hover:bg-gray-100 hover:text-[#1F5C55] hover:border-[#1F5C55] hover:shadow-lg transition-colors duration-300", method: :post %>
+                        <%= button_to "Je suis intéressé", event_attendees_path, params: {id: @event.id}, class: "w-full px-4 py-2 tracking-wide text-white font-bold bg-[#1F5C55] border-2 border-[#1F5C55] rounded-lg shadow-lg hover:bg-gray-100 hover:text-[#1F5C55] hover:border-[#1F5C55] hover:shadow-lg transition-colors duration-300", method: :post %>
                         <% else %>
-                        <%= button_to "Je ne suis plus intéressé", event_attendee_path, params: {id: @event.id}, method: :delete, class: "w-full px-4 py-2 tracking-wide text-white font-bold bg-[#6b47b8] border-2 border-[#6b47b8] rounded-lg shadow-lg hover:bg-gray-100 hover:text-[#1F5C55] hover:border-[#1F5C55] hover:shadow-lg transition-colors duration-300" %>
+                        <%= button_to "Je ne suis plus intéressé", event_attendee_path, params: {id: @event.id}, method: :delete, class: "w-full px-4 py-2 tracking-wide text-white font-bold bg-[#1F5C55] border-2 border-[#1F5C55] rounded-lg shadow-lg hover:bg-gray-100 hover:text-[#1F5C55] hover:border-[#1F5C55] hover:shadow-lg transition-colors duration-300" %>
                         <% end %>
-                        <%= button_to "Payer 10€", checkout_create_path(event_id: @event.id), method: :post, class: "w-full px-4 py-2 tracking-wide text-white font-bold bg-[#6b47b8] border-2 border-[#6b47b8] rounded-lg shadow-lg hover:bg-gray-100 hover:text-[#1F5C55] hover:border-[#1F5C55] hover:shadow-lg transition-colors duration-300" %>
+                        <%= button_to "Payer 10€", checkout_create_path(event_id: @event.id), method: :post, class: "w-full px-4 py-2 tracking-wide text-white font-bold bg-[#1F5C55] border-2 border-[#1F5C55] rounded-lg shadow-lg hover:bg-gray-100 hover:text-[#1F5C55] hover:border-[#1F5C55] hover:shadow-lg transition-colors duration-300" %>
                     </div>
                     <% end %>
                 </div>
             </div>
         </div>
     </div>
-</main>

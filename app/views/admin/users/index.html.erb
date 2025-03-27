@@ -1,45 +1,80 @@
-<% content_for :title, "Users" %>
-<div class="admin-dashboard">
-    <h1 class="dashboard-title">Tableau de bord administrateur</h1>
+<% content_for :title, "Utilisateurs" %>
 
-    <div class="dashboard-stats">
-        <p><strong>Nombre d'utilisateurs :</strong> <%= @users.count %></p>
+<div class="min-h-screen py-6">
+  <div class="max-w-7xl mx-auto">
+    <!-- En-tête -->
+    <div class="bg-white shadow-lg rounded-lg overflow-hidden mb-6">
+      <div class="bg-gradient-to-r from-purple-600 to-indigo-600 px-6 py-4">
+        <h1 class="text-2xl font-bold text-white">Gestion des utilisateurs</h1>
+        <p class="text-white/80 mt-1">Voir et gérer tous les utilisateurs</p>
+      </div>
+
+      <div class="p-6">
+        <!-- Statistiques -->
+        <div class="mb-6 bg-purple-50 p-4 rounded-lg">
+          <p class="text-purple-800 font-medium">
+            <span class="font-bold">Nombre d'utilisateurs :</span> <%= @users.count %>
+          </p>
+        </div>
+
+        <!-- Actions -->
+        <div class="flex flex-wrap gap-3 mb-8">
+          <%= link_to "Modifier les horaires", edit_admin_opening_hours_path, 
+              class: "inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-purple-600 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500" %>
+          
+          <%= link_to "Créer un Adhérent", new_admin_user_path, 
+              class: "inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-purple-600 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500" %>
+        </div>
+
+        <!-- Titre section -->
+        <h2 class="text-lg font-semibold text-gray-900 border-b pb-2 mb-4">Liste des utilisateurs</h2>
+
+        <!-- Tableau -->
+        <div class="overflow-x-auto">
+          <table class="min-w-full bg-white border border-gray-200 rounded-lg">
+            <thead class="bg-gray-50">
+              <tr>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Id</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Rôle</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Abonnement</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-200">
+              <% @users.each do |user| %>
+                <tr class="hover:bg-gray-50">
+                  <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900"><%= user.id %></td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500"><%= user.email_address %></td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-purple-100 text-purple-800">
+                      <%= user.system_role.humanize %>
+                    </span>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <% if user.user_memberships.exists? %>
+                      <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full <%= user.user_memberships.exists?(status: "active") ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800' %>">
+                        <%= user.user_memberships.order(:created_at).last.membership.type_name %>
+                      </span>
+                    <% else %>
+                      <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">
+                        Non adhérent
+                      </span>
+                    <% end %>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                    <%= link_to "Voir", admin_user_path(user), 
+                        class: "text-purple-600 hover:text-purple-900 mr-3", 
+                        data: { turbo: false } %>
+                    <%= link_to "Modifier", edit_admin_user_path(user), 
+                        class: "text-blue-600 hover:text-blue-900" %>
+                  </td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
-
-    <div class="dashboard-actions">
-        <%= link_to "Modifier les horaires", edit_admin_opening_hours_path, class: "purple-button" %>
-        <%= link_to "Creer un Adhérent (basique)", new_admin_user_path, class: "purple-button"%>
-        <%= link_to "Adhésion complète", membership_register_admin_members_path, class: "purple-button" %>
-    </div>
-
-    <h2 class="dashboard-subtitle">Liste des utilisateurs</h2>
-
-    <table class="dashboard-table">
-        <thead>
-            <tr>
-                <th>Id</th>
-                <th>Email</th>
-                <th>Rôle</th>
-                <th>Abonnement</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            <% @users.each do |user| %>
-            <tr>
-                <td><%= user.id %></td>
-                <td><%= user.email_address %></td>
-                <td><%= user.role %></td>
-                <% if user.user_memberships.exists? %>
-                <td><%= user.user_memberships.order(:created_at).last.subscription_type.name %></td>
-                <% else %>
-                <td>non</td>
-                <% end %>
-                <td>
-                    <%= link_to "voir", admin_user_path(user), class: "purple-button", data: { turbo: false } %>
-                </td>
-            </tr>
-            <% end %>
-        </tbody>
-    </table>
+  </div>
 </div>
