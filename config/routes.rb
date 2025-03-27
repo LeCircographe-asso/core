@@ -14,7 +14,7 @@ Rails.application.routes.draw do
     resources :attendance_lists, only: %i[new index create show edit update] do
       resources :attendances, only: %i[new index create show edit update]
     end
-    resources :product_orders, only: %i[create show update]
+    resources :product_orders, only: %i[create update]
     resources :products, only: %i[index]
     resources :payments, only: %i[show create new update index]
 
