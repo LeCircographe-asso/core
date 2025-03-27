@@ -1,28 +1,102 @@
-<div class="admin-dashboard">
-  <%= link_to "creer une nouvelle liste", new_admin_attendance_list_path, class: "purple-button"%>
+<% content_for :title, "Gestion des listes de présence" %>
 
-  <table class="dashboard-table">
-    <thead>
-      <tr>
-        <th>liste type</th>
-        <th>date de debut</th>
-        <th>date de fin</th>
-        <th>voir les participant</th>
-        <th>ajouter une presence</th>
-        <th>status de la liste</th>
-      </tr>
-    </thead>
-    <tbody>
-      <% @attendance_list.each do |attendance_list| %>
-      <tr>
-        <td><%= attendance_list.list_type %></td>
-        <td><%= attendance_list.start_date %></td>
-        <td><%= attendance_list.end_date %></td>
-        <td><%= link_to "voir",admin_attendance_list_attendances_path(attendance_list.id), class: "purple-button"%></td>
-        <td><%= link_to "ajouter",new_admin_attendance_list_attendance_path(attendance_list.id)	, class: "purple-button"%></td>
-
-        <td><%= attendance_list.status %></td>
+<div class="min-h-screen py-6">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <!-- En-tête -->
+    <div class="mb-6">
+      <div class="flex justify-between items-center">
+        <h1 class="text-2xl font-bold text-gray-900">Listes de présence</h1>
+        <%= link_to new_admin_attendance_list_path, class: "px-4 py-2 bg-[#1F5C55] hover:bg-[#194A45] text-white text-sm font-medium rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1F5C55] flex items-center" do %>
+          <i class="fas fa-plus mr-2"></i> Créer une nouvelle liste
         <% end %>
-    </tbody>
-  </table>
+      </div>
+      <p class="mt-2 text-sm text-gray-500">Gérez les listes de présence pour les formations, événements et réunions</p>
+    </div>
+
+    <!-- Liste des présences -->
+    <div class="bg-white shadow overflow-hidden rounded-lg">
+      <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200">
+          <thead class="bg-gray-50">
+            <tr>
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date de début</th>
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date de fin</th>
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Statut</th>
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+            </tr>
+          </thead>
+          <tbody class="bg-white divide-y divide-gray-200">
+            <% if @attendance_list.present? %>
+              <% @attendance_list.each do |attendance_list| %>
+                <tr class="hover:bg-gray-50">
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <div class="flex items-center">
+                      <% 
+                        icon_class = case attendance_list.list_type 
+                        when "training" then "fas fa-graduation-cap text-blue-500"
+                        when "event" then "fas fa-calendar-check text-purple-500"
+                        when "meeting" then "fas fa-users text-green-500"
+                        else "fas fa-list text-gray-500"
+                        end
+                      %>
+                      <i class="<%= icon_class %> mr-2"></i>
+                      <span class="text-sm font-medium text-gray-900"><%= attendance_list.list_type.humanize %></span>
+                    </div>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <%= attendance_list.start_date.strftime("%d/%m/%Y %H:%M") %>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <%= attendance_list.end_date.strftime("%d/%m/%Y %H:%M") %>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <% 
+                      status_class = case attendance_list.status 
+                      when "open" then "bg-green-100 text-green-800"
+                      when "close" then "bg-amber-100 text-amber-800"
+                      when "archived" then "bg-gray-100 text-gray-800"
+                      else "bg-gray-100 text-gray-800"
+                      end
+                      
+                      status_icon = case attendance_list.status
+                      when "open" then "fas fa-lock-open"
+                      when "close" then "fas fa-lock"
+                      when "archived" then "fas fa-archive"
+                      else "fas fa-question"
+                      end
+                    %>
+                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full <%= status_class %>">
+                      <i class="<%= status_icon %> mr-1"></i>
+                      <%= attendance_list.status.humanize %>
+                    </span>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                    <div class="flex space-x-2">
+                      <%= link_to admin_attendance_list_attendances_path(attendance_list.id), class: "text-[#1F5C55] hover:text-[#194A45]", title: "Voir les participants" do %>
+                        <i class="fas fa-eye"></i>
+                      <% end %>
+                      <%= link_to new_admin_attendance_list_attendance_path(attendance_list.id), class: "text-[#1F5C55] hover:text-[#194A45]", title: "Ajouter un participant" do %>
+                        <i class="fas fa-user-plus"></i>
+                      <% end %>
+                    </div>
+                  </td>
+                </tr>
+              <% end %>
+            <% else %>
+              <tr>
+                <td colspan="5" class="px-6 py-4 text-center text-sm text-gray-500">
+                  <div class="flex flex-col items-center py-6">
+                    <i class="fas fa-list text-gray-400 text-3xl mb-3"></i>
+                    <p>Aucune liste de présence disponible</p>
+                    <p class="mt-1 text-xs">Créez une nouvelle liste pour commencer</p>
+                  </div>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
 </div>
