@@ -1,10 +1,65 @@
-<div class="admin-dashboard">
-  <td><%= link_to "ajouter un utilisateur",new_admin_attendance_list_attendance_path	, class: "purple-button"%></td>
-  <p>liste des utilisateurs présents:</p>
-  <% @users.each do |user|%>
-  <div>
-    <%= user.last_name %>
-    <%= user.first_name %>
+<% content_for :title, "Participants à la liste de présence" %>
+
+<div class="min-h-screen py-6">
+  <div class="max-w-5xl mx-auto px-4 sm:px-6">
+    <!-- En-tête -->
+    <div class="mb-6">
+      <div class="flex items-center">
+        <%= link_to admin_attendance_lists_path, class: "mr-4 text-gray-500 hover:text-[#1F5C55]" do %>
+          <i class="fas fa-arrow-left"></i>
+        <% end %>
+        <h1 class="text-2xl font-bold text-gray-900">Liste des participants</h1>
+      </div>
+      <div class="mt-2 flex justify-between items-center">
+        <p class="text-sm text-gray-500">
+          <span class="font-medium"><%= pluralize(@users.count, "personne", "personnes") %></span> présente(s) sur cette liste
+        </p>
+        <%= link_to new_admin_attendance_list_attendance_path, class: "px-4 py-2 bg-[#1F5C55] hover:bg-[#194A45] text-white text-sm font-medium rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1F5C55] flex items-center" do %>
+          <i class="fas fa-user-plus mr-2"></i> Ajouter un participant
+        <% end %>
+      </div>
+    </div>
+
+    <!-- Liste des participants -->
+    <div class="bg-white shadow overflow-hidden rounded-lg">
+      <% if @users.present? %>
+        <ul class="divide-y divide-gray-200">
+          <% @users.each do |user| %>
+            <li class="px-6 py-4 flex items-center hover:bg-gray-50">
+              <div class="flex-shrink-0 h-10 w-10">
+                <div class="h-10 w-10 rounded-full bg-[#1F5C55]/10 flex items-center justify-center">
+                  <span class="text-[#1F5C55] font-medium"><%= "#{user.first_name.first}#{user.last_name.first}" %></span>
+                </div>
+              </div>
+              <div class="ml-4 flex-grow">
+                <div class="text-sm font-medium text-gray-900"><%= "#{user.first_name} #{user.last_name}" %></div>
+                <div class="text-sm text-gray-500"><%= user.email %></div>
+              </div>
+              <div>
+                <% 
+                  attendance = Attendance.find_by(user: user, attendance_list_id: params[:attendance_list_id])
+                  if attendance && attendance.arrival_time
+                %>
+                  <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                    <i class="far fa-clock mr-1"></i>
+                    Arrivé à <%= attendance.arrival_time.strftime("%H:%M") %>
+                  </span>
+                <% end %>
+              </div>
+            </li>
+          <% end %>
+        </ul>
+      <% else %>
+        <div class="p-6 text-center">
+          <div class="flex flex-col items-center py-6">
+            <i class="fas fa-users text-gray-400 text-3xl mb-3"></i>
+            <p class="text-gray-500">Aucun participant n'est présent dans cette liste</p>
+            <p class="mt-1 text-xs text-gray-500">
+              Ajoutez des participants à l'aide du bouton ci-dessus
+            </p>
+          </div>
+        </div>
+      <% end %>
+    </div>
   </div>
-  <% end %>
 </div>

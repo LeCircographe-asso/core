@@ -1,35 +1,178 @@
-<div class="container mx-auto px-4 py-8 max-w-7xl">
-    <h1 class="text-3xl font-bold text-center text-gray-800 mb-8">Tableau de bord administrateur</h1>
+<% content_for :title, "Tableau de bord administrateur" %>
+
+<div class="container mx-auto px-4 py-6 max-w-7xl">
+    <div class="bg-gradient-to-r from-[#1F5C55] to-teal-600 rounded-lg shadow-lg mb-8 p-6 text-white">
+        <h1 class="text-3xl font-bold text-center mb-2">Tableau de bord administrateur</h1>
+        <p class="text-center text-white/80">Bienvenue, <%= Current.user.first_name %> <%= Current.user.last_name %></p>
+    </div>
+
+    <!-- Statistiques principales -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+        <div class="bg-white rounded-lg shadow-md p-4 border-l-4 border-blue-500">
+            <div class="flex items-center">
+                <div class="p-3 rounded-full bg-blue-100 mr-4">
+                    <i class="fas fa-users text-blue-500 text-xl"></i>
+                </div>
+                <div>
+                    <p class="text-sm text-gray-500">Utilisateurs</p>
+                    <p class="text-2xl font-bold text-gray-800"><%= User.count %></p>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-lg shadow-md p-4 border-l-4 border-green-500">
+            <div class="flex items-center">
+                <div class="p-3 rounded-full bg-green-100 mr-4">
+                    <i class="fas fa-calendar-check text-green-500 text-xl"></i>
+                </div>
+                <div>
+                    <p class="text-sm text-gray-500">Événements</p>
+                    <p class="text-2xl font-bold text-gray-800"><%= Event.count %></p>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-lg shadow-md p-4 border-l-4 border-purple-500">
+            <div class="flex items-center">
+                <div class="p-3 rounded-full bg-purple-100 mr-4">
+                    <i class="fas fa-id-card text-purple-500 text-xl"></i>
+                </div>
+                <div>
+                    <p class="text-sm text-gray-500">Adhésions actives</p>
+                    <p class="text-2xl font-bold text-gray-800"><%= UserMembership.where(status: "active").count %></p>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-lg shadow-md p-4 border-l-4 border-amber-500">
+            <div class="flex items-center">
+                <div class="p-3 rounded-full bg-amber-100 mr-4">
+                    <i class="fas fa-shopping-cart text-amber-500 text-xl"></i>
+                </div>
+                <div>
+                    <p class="text-sm text-gray-500">Commandes du mois</p>
+                    <p class="text-2xl font-bold text-gray-800"><%= Order.where(created_at: Time.current.beginning_of_month..Time.current.end_of_month).count %></p>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- Boutons d'actions principaux -->
     <div class="flex justify-center gap-4 mb-8 flex-wrap">
-        <%= link_to "Modifier les horaires", edit_admin_opening_hours_path, class: "bg-purple-600 hover:bg-purple-700 text-white px-6 py-2 rounded-lg transition-colors duration-200" %>
-        <%= link_to "Liste Utilisateurs", admin_users_path, class: "bg-purple-600 hover:bg-purple-700 text-white px-6 py-2 rounded-lg transition-colors duration-200" %>
-        <%= link_to "Créer un Adhérent (basique)", new_admin_user_path, class: "bg-purple-600 hover:bg-purple-700 text-white px-6 py-2 rounded-lg transition-colors duration-200" %>
+        <%= link_to edit_admin_opening_hours_path, class: "flex items-center bg-[#1F5C55] hover:bg-[#194A45] text-white px-6 py-3 rounded-lg shadow transition-colors duration-200" do %>
+            <i class="fas fa-clock mr-2"></i> Modifier les horaires
+        <% end %>
+        
+        <%= link_to admin_users_path, class: "flex items-center bg-[#1F5C55] hover:bg-[#194A45] text-white px-6 py-3 rounded-lg shadow transition-colors duration-200" do %>
+            <i class="fas fa-users mr-2"></i> Gérer les utilisateurs
+        <% end %>
+        
+        <%= link_to new_admin_user_path, class: "flex items-center bg-[#1F5C55] hover:bg-[#194A45] text-white px-6 py-3 rounded-lg shadow transition-colors duration-200" do %>
+            <i class="fas fa-user-plus mr-2"></i> Créer un adhérent
+        <% end %>
+        
+        <%= link_to admin_attendance_lists_path, class: "flex items-center bg-[#1F5C55] hover:bg-[#194A45] text-white px-6 py-3 rounded-lg shadow transition-colors duration-200" do %>
+            <i class="fas fa-clipboard-list mr-2"></i> Listes de présence
+        <% end %>
     </div>
 
     <!-- Contenu principal -->
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-        <!-- Section Horaires -->
-        <div class="bg-white rounded-lg shadow-md p-6">
-            <h3 class="text-xl font-semibold text-gray-800 mb-4 text-center">Horaires d'ouverture</h3>
-            <table class="w-full">
-                <% @opening_hours.each do |day, hours| %>
-                <tr class="border-b border-gray-200">
-                    <td class="py-2 text-gray-700"><%= day.capitalize %></td>
-                    <td class="py-2 text-gray-700 text-right"><%= hours %></td>
-                </tr>
-                <% end %>
-            </table>
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Section Horaires wireframe style -->
+        <div class="lg:col-span-1">
+            <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                <div class="border-b border-gray-200 px-6 py-4 flex justify-between items-center">
+                    <h3 class="text-lg font-semibold text-gray-800">Horaires d'ouverture</h3>
+                    <%= link_to edit_admin_opening_hours_path, class: "text-[#1F5C55] hover:text-[#194A45]", title: "Modifier les horaires" do %>
+                        <i class="fas fa-edit"></i>
+                    <% end %>
+                </div>
+                <div class="p-4">
+                    <% opening_hours = Rails.cache.fetch("opening_hours") || OpeningHoursHelper.default_opening_hours %>
+                    
+                    <% if opening_hours.present? %>
+                        <div class="mb-2 text-center">
+                            <h4 class="font-medium">Cette semaine :<br>Les horaires d'ouverture :</h4>
+                        </div>
+                        <div class="space-y-1">
+                            <% opening_hours.each do |day, hours| %>
+                                <div class="flex justify-between items-center py-1 <%= Time.zone.now.strftime('%A').downcase == day.to_s ? 'font-bold' : '' %>">
+                                    <span><%= day.to_s.capitalize %> :</span>
+                                    <span><%= hours %></span>
+                                </div>
+                            <% end %>
+                        </div>
+                        <div class="mt-4 text-center">
+                            <%= link_to "Modifier", edit_admin_opening_hours_path, class: "px-4 py-1.5 bg-[#1F5C55] hover:bg-[#194A45] text-white text-sm rounded-md" %>
+                        </div>
+                    <% else %>
+                        <div class="text-center py-4 text-gray-500">
+                            <i class="fas fa-clock text-[#1F5C55] text-2xl mb-2"></i>
+                            <p>Aucun horaire n'est disponible.</p>
+                            <div class="mt-3">
+                                <%= link_to "Définir les horaires", edit_admin_opening_hours_path, class: "px-4 py-1.5 bg-[#1F5C55] hover:bg-[#194A45] text-white text-sm rounded-md" %>
+                            </div>
+                        </div>
+                    <% end %>
+                </div>
+            </div>
         </div>
 
         <!-- Section Bloc-note -->
-        <div class="bg-white rounded-lg shadow-md p-6">
-            <h3 class="text-xl font-semibold text-gray-800 mb-4 text-center">Bloc-note</h3>
-            <div class="bg-gray-50 rounded-lg p-4 mb-4 min-h-[150px]">
-                <%= render "shared/notepad" %>
+        <div class="lg:col-span-1">
+            <div class="bg-white rounded-lg shadow-md overflow-hidden h-full">
+                <div class="border-b border-gray-200 px-6 py-4 flex justify-between items-center">
+                    <h3 class="text-lg font-semibold text-gray-800">Bloc-note</h3>
+                    <%= link_to edit_admin_notepad_path, class: "text-[#1F5C55] hover:text-[#194A45]", title: "Modifier le bloc-note" do %>
+                        <i class="fas fa-edit"></i>
+                    <% end %>
+                </div>
+                <div class="p-4">
+                    <div class="bg-gray-50 rounded-lg p-4 mb-4 min-h-[200px] prose">
+                        <%= render "shared/notepad" %>
+                    </div>
+                </div>
             </div>
-            <%= link_to "Modifier", edit_admin_notepad_path, class: "bg-purple-600 hover:bg-purple-700 text-white px-6 py-2 rounded-lg transition-colors duration-200 block text-center" %>
+        </div>
+
+        <!-- Section Activité récente -->
+        <div class="lg:col-span-1">
+            <div class="bg-white rounded-lg shadow-md overflow-hidden h-full">
+                <div class="border-b border-gray-200 px-6 py-4">
+                    <h3 class="text-lg font-semibold text-gray-800">Activité récente</h3>
+                </div>
+                <div class="overflow-y-auto max-h-[400px]">
+                    <ul class="divide-y divide-gray-200">
+                        <% User.order(created_at: :desc).limit(5).each do |user| %>
+                            <li class="p-4 hover:bg-gray-50">
+                                <div class="flex items-center">
+                                    <div class="flex-shrink-0 h-10 w-10 rounded-full bg-[#1F5C55]/10 flex items-center justify-center">
+                                        <span class="text-[#1F5C55] font-medium"><%= "#{user.first_name.first}#{user.last_name.first}" %></span>
+                                    </div>
+                                    <div class="ml-4">
+                                        <p class="text-sm font-medium text-gray-900">Nouvel utilisateur : <%= user.first_name %> <%= user.last_name %></p>
+                                        <p class="text-xs text-gray-500"><%= time_ago_in_words(user.created_at) %></p>
+                                    </div>
+                                </div>
+                            </li>
+                        <% end %>
+                        
+                        <% Event.order(created_at: :desc).limit(3).each do |event| %>
+                            <li class="p-4 hover:bg-gray-50">
+                                <div class="flex items-center">
+                                    <div class="flex-shrink-0 h-10 w-10 rounded-full bg-purple-100 flex items-center justify-center">
+                                        <i class="fas fa-calendar text-purple-500"></i>
+                                    </div>
+                                    <div class="ml-4">
+                                        <p class="text-sm font-medium text-gray-900">Nouvel événement : <%= event.title %></p>
+                                        <p class="text-xs text-gray-500"><%= time_ago_in_words(event.created_at) %></p>
+                                    </div>
+                                </div>
+                            </li>
+                        <% end %>
+                    </ul>
+                </div>
+            </div>
         </div>
     </div>
 </div>
