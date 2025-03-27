@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_03_27_100928) do
+ActiveRecord::Schema[8.0].define(version: 2025_03_27_153325) do
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.string "name", null: false
     t.text "body"
@@ -195,6 +195,21 @@ ActiveRecord::Schema[8.0].define(version: 2025_03_27_100928) do
     t.index ["user_id"], name: "index_sessions_on_user_id"
   end
 
+  create_table "tag_blogs", force: :cascade do |t|
+    t.integer "tag_id", null: false
+    t.integer "blog_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["blog_id"], name: "index_tag_blogs_on_blog_id"
+    t.index ["tag_id"], name: "index_tag_blogs_on_tag_id"
+  end
+
+  create_table "tags", force: :cascade do |t|
+    t.string "name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "user_memberships", force: :cascade do |t|
     t.date "start_date"
     t.date "end_date"
@@ -253,6 +268,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_03_27_100928) do
   add_foreign_key "product_orders", "products"
   add_foreign_key "product_orders", "users"
   add_foreign_key "sessions", "users"
+  add_foreign_key "tag_blogs", "blogs"
+  add_foreign_key "tag_blogs", "tags"
   add_foreign_key "user_memberships", "memberships"
   add_foreign_key "user_memberships", "users"
 end
