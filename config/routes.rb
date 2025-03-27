@@ -33,6 +33,7 @@ Rails.application.routes.draw do
   resources :event_attendees, only: %i[create destroy]
   resources :users do
     post "change_newsletter_status", on: :member
+    get "change_newsletter_status", on: :member
   end
 
   scope "/checkout" do
