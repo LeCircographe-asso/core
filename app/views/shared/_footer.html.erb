@@ -14,7 +14,7 @@
                     <% end %>
                 </div>
             </div>
-            <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 md:w-3/5">
+            <div class="grid grid-cols-2 gap-4 sm:gap-6 sm:grid-cols-2 md:grid-cols-3 md:w-3/5">
                 <div>
                     <h2 class="mb-2 text-sm font-semibold text-gray-900 uppercase">Liens rapides</h2>
                     <ul class="text-gray-500 text-sm">
@@ -43,16 +43,16 @@
                         </li>
                     </ul>
                 </div>
-                <div>
-                    <h2 class="mb-2 text-sm font-semibold text-gray-900 uppercase">Mentions légales</h2>
-                    <ul class="text-gray-500 text-sm">
-                        <li class="mb-1">
+                <div class="col-span-2 sm:col-span-1">
+                    <h2 class="mb-2 text-sm font-semibold text-gray-900 uppercase text-center sm:text-left">Mentions légales</h2>
+                    <ul class="text-gray-500 text-sm text-center sm:text-left">
+                        <li class="inline-block mr-4 sm:block sm:mr-0 mb-1">
                             <%= link_to "F.A.Q", page_path("faq"), class: "hover:underline" %>
                         </li>
-                        <li>
+                        <li class="inline-block mr-4 sm:block sm:mr-0 mb-1">
                             <%= link_to "Politique de confidentialité", page_path("privacy-policy"), class: "hover:underline" %>
                         </li>
-                        <li class="mb-1">
+                        <li class="inline-block sm:block mb-1">
                             <%= link_to "Conditions générales", page_path("cgu"), class: "hover:underline" %>
                         </li>
                     </ul>
