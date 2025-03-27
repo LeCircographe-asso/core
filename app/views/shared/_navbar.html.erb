@@ -106,7 +106,7 @@
 
             <!-- Bouton Mon Espace avec dropdown -->
             <div class="relative">
-                <button id="dropdownUserButton" data-dropdown-toggle="dropdownUser" class="relative inline-flex items-center px-5 py-2.5 text-sm font-medium text-center text-white bg-[#1F5C55] rounded-lg hover:bg-gray-100 hover:text-[#1F5C55] hover:border-[#1F5C55] hover:border-2 focus:ring-4 focus:outline-none focus:ring-gray-300 transition-colors duration-300 border-2 border-transparent">
+                <button id="dropdownUserButton" data-dropdown-toggle="dropdownUser" class="relative inline-flex items-center px-5 py-2.5 text-sm font-medium text-center text-white bg-[#1F5C55] rounded-lg hover:bg-gray-100 hover:text-[#1F5C55] hover:border-[#1F5C55] hover:border-2 focus:ring-4 focus:outline-none focus:ring-gray-300 transition-colors duration-300 border-2 border-transparent cursor-pointer">
                     Mon Espace
                     <svg class="w-2.5 h-2.5 ms-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
                         <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4" />
@@ -142,7 +142,7 @@
                         </li>
                     </ul>
                     <div class="py-1">
-                        <%= button_to "Déconnexion", session_path, method: :delete, class: "block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" %>
+                        <%= button_to "Déconnexion", session_path, method: :delete, class: "block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer" %>
                     </div>
                 </div>
             </div>
@@ -152,7 +152,7 @@
                 <%= link_to new_session_path, class: "text-gray-900 hover:text-indigo-700 font-medium rounded-lg text-sm px-4 py-2 text-center" do %>
                 Se connecter
                 <% end %>
-                <%= link_to new_registration_path, class: "px-6 py-3 tracking-wide text-white font-bold bg-[#1F5C55] border-2 border-[#1F5C55] rounded-lg shadow-lg hover:bg-gray-100 hover:text-[#1F5C55] hover:border-[#1F5C55] transition-colors duration-300" do %>
+                <%= link_to new_registration_path, class: "px-6 py-2 tracking-wide text-white font-bold bg-[#1F5C55] border-2 border-[#1F5C55] rounded-lg shadow-lg hover:bg-gray-100 hover:text-[#1F5C55] hover:border-[#1F5C55] transition-colors duration-300" do %>
                 S'inscrire
                 <% end %>
             </div>
@@ -281,14 +281,14 @@
                     <%= link_to "Profil", user_path(Current.user), class: "text-center py-2 px-4 bg-gray-100 rounded-lg hover:bg-gray-200" %>
                     <%= link_to "Tableau de bord", admin_dashboard_index_path, class: "text-center py-2 px-4 bg-gray-100 rounded-lg hover:bg-gray-200" %>
                     <%= link_to "Paramètres", "#", class: "text-center py-2 px-4 bg-gray-100 rounded-lg hover:bg-gray-200" %>
-                    <%= button_to "Déconnexion", session_path, method: :delete, class: "text-center py-2 px-4 bg-red-100 text-red-700 rounded-lg hover:bg-red-200" %>
+                    <%= button_to "Déconnexion", session_path, method: :delete, class: "text-center py-2 px-4 bg-red-100 text-red-700 rounded-lg hover:bg-red-200 cursor-pointer" %>
                 </div>
                 <% else %>
                 <!-- Pour les utilisateurs sans privilèges : afficher 3 boutons -->
                 <div class="grid grid-cols-2 gap-3">
                     <%= link_to "Profil", user_path(Current.user), class: "text-center py-2 px-4 bg-gray-100 rounded-lg hover:bg-gray-200" %>
                     <%= link_to "Paramètres", "#", class: "text-center py-2 px-4 bg-gray-100 rounded-lg hover:bg-gray-200" %>
-                    <%= button_to "Déconnexion", session_path, method: :delete, class: "text-center py-2 px-4 bg-red-100 text-red-700 rounded-lg hover:bg-red-200 col-span-2" %>
+                    <%= button_to "Déconnexion", session_path, method: :delete, class: "text-center py-2 px-4 bg-red-100 text-red-700 rounded-lg hover:bg-red-200 col-span-2 cursor-pointer" %>
                 </div>
                 <% end %>
                 <% else %>
