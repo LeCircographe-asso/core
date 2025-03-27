@@ -15,8 +15,16 @@ module Admin
       attendance.attendance_list = @attendance_list
       attendance.user = User.find(params[:user_id])
       attendance.arrival_time = Time.current
+      puts"################################################"
+      puts"#{attendance.user.book_of_entries.first}" "*********************************************************************"
+      book_of_entry = attendance.user.book_of_entries.first
+
+      if book_of_entry
+        attendance.book_of_entry = book_of_entry
+      end
 
       if attendance.save
+
         redirect_to admin_attendance_list_attendances_path(@attendance_list),
           notice: "#{attendance.user.first_name} #{attendance.user.last_name} a été ajouté(e) avec succès."
       else
