@@ -1,5 +1,3 @@
-console.log("Le fichier home_animations.js est chargé!");
-
 document.addEventListener('turbo:load', initAnimations);
 document.addEventListener('DOMContentLoaded', initAnimations);
 
@@ -10,11 +8,11 @@ function initAnimations() {
     const mainContent = document.getElementById('main-content');
     const scrollArrow = document.querySelector('.scroll-arrow-container');
     
-    // Vérifier si les éléments existent
-    if (!titleElement || !mainButton || !mainContent) {
-        console.error("Certains éléments de la page n'ont pas été trouvés");
-        return; // Sortir si des éléments sont manquants
-    }
+   
+    // if (!titleElement || !mainButton || !mainContent) {
+    //     console.error("Certains éléments de la page n'ont pas été trouvés");
+    //     return; // Sortir si des éléments sont manquants
+    // } 
     
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     
@@ -76,7 +74,7 @@ function animateTextLetterByLetter(element) {
             letterSpan.style.opacity = '1';
         }, delay);
         
-        delay += 100; // Ajouter un délai pour chaque lettre
+        delay += 75; // Ajouter un délai pour chaque lettre
     }
 }
 
