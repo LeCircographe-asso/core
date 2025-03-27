@@ -37,9 +37,12 @@ module Admin
           if @user.save
             @order = @user.orders.create!
             @user_membership = UserMembership.create!(user: @user, membership_id: @default_membership.id)
+        #   if newsletter_subscribed == true
+        #     UserMailer.welcome_by_admin(@user).deliver_now
+        #   end
+        Rails.logger.info "Redirection vers : #{admin_user_order_path(id: @order.id, user_id: @user.id)}"
           end
         end
-        puts "#{@user} saved"
         # Si la transaction réussit
         respond_to do |format|
           Rails.logger.info "User, Order et UserMembership créés avec succès"
@@ -52,7 +55,6 @@ module Admin
             redirect_to admin_user_order_path(id: @order.id, user_id: @user.id), 
             notice: "User was successfully created. A mail has been sent!" 
           }
-          format.json { render :show, status: :created, location: @user }
         end
 
       rescue ActiveRecord::RecordInvalid => e
