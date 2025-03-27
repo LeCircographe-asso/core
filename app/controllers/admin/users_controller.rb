@@ -33,7 +33,7 @@ module Admin
       @user = User.new(user_params)
       @user.password = generate_secure_password
       @default_membership = Membership.find_by(type_name: :No_Member)
-    
+
       begin
         User.transaction do
           if @user.save
@@ -49,13 +49,12 @@ module Admin
             end 
           end
         end
-
-
-        
         @user.generate_password_reset_token!
+        reset_password_url = @user.reset_password_url
+        UserMailer.welcome_by_admin(@user, reset_password_url).deliver_now
       end
     end
-    
+
 
 
     # PATCH/PUT /admin/users/1 or /admin/users/1.json
@@ -89,7 +88,7 @@ module Admin
 
     # Only allow a list of trusted parameters through.
     def user_params
-      params.require(:user).permit(:email_address, :first_name, :last_name, :password, :payments, :system_role, :newsletter_subscribed)
+      params.require(:user).permit(:email_address, :first_name, :last_name, :password, :payments, :system_role, :newsletter_subscribed, :reset_password_url)
     end
 
     def generate_secure_password
