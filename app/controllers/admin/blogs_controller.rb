@@ -13,6 +13,7 @@ module Admin
 
     # GET /blogs/1/edit
     def edit
+      @tags=Tag.all
     end
 
     # POST /blogs or /blogs.json
@@ -46,6 +47,11 @@ module Admin
 
     # PATCH/PUT /blogs/1 or /blogs/1.json
     def update
+      @blog = Blog.new(blog_params)
+      params[:blog][:tag_ids].each do |i|
+        @blog.tags << Tag.find(i)
+      end
+
       respond_to do |format|
         if @blog.update(blog_params)
           format.html { redirect_to @blog, notice: "Blog was successfully updated." }
