@@ -15,11 +15,12 @@ class OpeningHoursController < BaseController
     updated_hours = params.require(:opening_hours).permit(:lundi, :mardi, :mercredi, :jeudi, :vendredi, :samedi, :dimanche).to_h # xss vulnerability resolved
     if valid_hours?(updated_hours)
       Rails.cache.write("opening_hours", updated_hours)
-      flash[:notice] = "Les horaires d'ouverture ont été mis à jour !"
+      flash[:success] = "Les horaires d'ouverture ont été mis à jour avec succès !"
       redirect_to admin_dashboard_index_path
     else
-      flash[:alert] = "Le format des horaires est invalide."
-      redirect_to edit_opening_hours_path
+      flash[:error] = "Le format des horaires est invalide. Veuillez utiliser le format HH:MM - HH:MM ou 'Fermé'."
+      @opening_hours = updated_hours
+      render :edit, status: :unprocessable_entity
     end
   end
 
@@ -38,7 +39,7 @@ class OpeningHoursController < BaseController
 
   def valid_hours?(hours)
     hours.values.all? do |time|
-      time.match?(/\A((?:[0-9]|[01][0-9]|2[0-3]):[0-5][0-9] - (?:[0-9]|[01][0-9]|2[0-3]):[0-5][0-9]|Fermé)\z/)
+      time.match?(/\A((?:[0-9]|[01][0-9]|2[0-3]):[0-5][0-9] - (?:[0-9]|[01][0-9]|2[0-3]):[0-5][0-9]|Fermé)\z/i)
     end
   end
 end
