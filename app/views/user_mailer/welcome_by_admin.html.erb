@@ -15,7 +15,7 @@
     <p>
         Vous vous êtes également inscrit à notre newsletter ! 🎉 Vous recevrez toutes nos dernières actualités et recommandations directement dans votre boîte mail.
     </p>
-    <p><a href="<%= change_newsletter_status_user_path(@user) %>" >Se désinscrire de la newsletter</a></p>
+    <a href="<%= Rails.application.routes.url_helpers.change_newsletter_status_user_url(@user, host: 'http://lecircographe.fr') %>">Se désinscrire de la newsletter</a>
     <% end %>
 
 
