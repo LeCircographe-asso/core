@@ -13,6 +13,8 @@ module Admin
       @user = User.find_by(id: params[:id])
       @product_order = Product.find_by(params[:id])
       @product = Product.find_by(params[:id])
+
+
     end
 
     # GET /admin/users/new
