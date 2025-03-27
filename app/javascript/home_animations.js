@@ -92,7 +92,7 @@ function initSmoothScroll() {
             
             if (targetElement) {
                 // Calcul de la position avec un décalage (offset) si nécessaire
-                const offset = 50; // Ajustez selon vos besoins
+                const offset = 275 // Ajustez selon vos besoins
                 const targetPosition = targetElement.getBoundingClientRect().top + window.pageYOffset - offset;
                 
                 // Animation de défilement fluide
