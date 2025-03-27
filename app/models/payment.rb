@@ -10,17 +10,44 @@ class Payment < ApplicationRecord
   after_update :createBookOfEntry
 
   def payment_successful?
-    puts "#{order.id}"
-    order.payments.where(status: 'success').exists?
-  end
-
-  def createBookOfEntry
-    # Vérifie si le produit acheté est un "Book of Entry"
-    product_order = self.product_orders.first # Assurez-vous que product_orders est lié correctement
-    if product_order.product.product_name == "Cotisation 10 séances"
-      BookOfEntry.create!(user_id: self.user_id, product_id: product_order.product.id, remaining: 10, total_entry: 10)
+    # Vérifier si la commande a déjà été payée
+    if order.payments.where(status: 'success').exists?
+      order.product_orders.each do |product_order|
+        puts "Product name: #{product_order.product.product_name}"
+  
+        if product_order.product.product_name == "Cotisation 10 séances"
+          puts "Matching product found"
+          BookOfEntry.create!(user_id: self.user_id, product_id: product_order.product.id, remaining: 10, total_entry: 10)
+          puts "Book of Entry created"
+        else
+          puts "Product does not match: #{product_order.product.product_name}"
+        end
+      end
     end
   end
+  
+  
+  def createBookOfEntry
+    # Vérifier si des product_orders existent pour la commande
+    if self.product_orders.empty?
+      puts "Aucun produit associé à cette commande"
+    else
+      self.product_orders.each do |product_order|
+        puts "Product name: #{product_order.product.product_name}"
+      end
+  
+      product_order = self.product_orders.first
+      puts "Product name: #{product_order.product.product_name}"
+  
+      if product_order.product.product_name == "Cotisation 10 séances"
+        BookOfEntry.create!(user_id: self.user_id, product_id: product_order.product.id, remaining: 10, total_entry: 10)
+        puts "Book of Entry created"
+      end
+    end
+  end
+  
+  
+  
 
   def update_user_membership_if_paid
     return unless payment_successful?
@@ -42,7 +69,7 @@ class Payment < ApplicationRecord
   end
 
   def determine_user_membership
-    
+
     product_names = product_orders.map { |po| po.product.product_name }.join(', ')
     circus = Membership.find_by(type_name: :Circus).id
     basic = Membership.find_by(type_name: :Basic).id
