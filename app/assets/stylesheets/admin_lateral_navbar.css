@@ -51,13 +51,13 @@
 }
 
 .sidebar-link:hover {
-  background-color: #5836a5;
+  background-color: #1F5C55;
   color: white;
 }
 
 .sidebar-link:focus {
   outline: none;
-  box-shadow: 0 0 0 2px rgba(88, 54, 165, 0.3);
+  box-shadow: 0 0 0 2px rgba(31, 92, 85, 0.3);
 }
 
 /* Structure de mise en page admin */
