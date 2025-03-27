@@ -98,6 +98,13 @@
                 </div>
                 
                 <div class="flex items-center">
+                  <span class="text-gray-500 w-32">Cotisation:</span>
+                  <span class="text-gray-900">
+                    <%= @user.orders&.last&.product_orders&.last&.product&.product_name || "Aucune cotisation" %>
+                  </span>
+                </div>
+
+                <div class="flex items-center">
                   <span class="text-gray-500 w-32">État:</span>
                   <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium 
                     <%= latest_membership.status == "active" ? 'bg-green-100 text-green-800' : 
