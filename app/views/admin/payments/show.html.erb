@@ -1,2 +1,58 @@
 <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center;">
-<%= @product_order.inspect %>
+  <%= form_with(model: [:admin, @payment], method: :patch) do |f| %>
+
+    <!-- Affichage du nom du produit -->
+    <div>
+      <% if @order.product_orders.any? %>
+        <% @order.product_orders.each do |product_order| %>
+          <p><%= product_order.product.product_name %></p>
+        <% end %>
+      <% end %>
+    </div>
+
+    <!-- Affichage de la date de création du paiement -->
+    <div>
+      <%= f.label :payment_date, "Date de création" %>
+      <%= f.text_field :payment_date, value: @payment.created_at.strftime("%d-%m-%Y %H:%M:%S") %>
+    </div>
+
+    <!-- Affichage du montant total du paiement -->
+    <div>
+      <%= f.label :payment_amount, "Montant du paiement" %>
+      <% if @order.product_orders.any? %>
+        <% # Calcul du montant total des produits dans la commande %>
+        <% total_amount = @order.product_orders.sum { |product_order| product_order.product.price_entries.order(created_at: :desc).first.price_catalog.price } %>
+        <%= f.text_field :payment_amount, value: "#{total_amount} €" %>
+      <% else %>
+        <%= f.text_field :payment_amount, value: "Non défini" %>
+      <% end %>
+    </div>
+
+    <!-- Type de paiement -->
+    <div>
+      <%= f.label :payment_type, "Type de paiement" %>
+      <%= f.select :payment_type, Payment.payment_types.keys.map { |key| [key.humanize, key] }, { selected: @payment.payment_type } %>
+    </div>
+
+    <div>
+      <%= f.label :status, @payment.status %>
+    </div>
+
+    <!-- Lien pour revenir à l'utilisateur si le paiement est validé -->
+    <% if @payment.status == 'success' %>
+      <div style="background-color: #d4edda; border-left: 5px solid #155724; padding: 10px; margin: 10px 0; border-radius: 5px; color: #155724;">
+        <p><strong>Paiement validé !</strong></p>
+        <%= link_to "Retour à l'utilisateur", admin_user_path(@payment.user_id), class: "white-button", style: "color: white; background-color: #155724; padding: 5px 10px; border-radius: 3px; text-decoration: none;" %>
+      </div>
+    <% end %>
+
+    <!-- link to user -->
+    <%= f.hidden_field :user_id, value: @payment.user_id %>
+
+    <!-- Bouton pour valider le paiement -->
+    <% if @payment.status == 'pending' %>
+      <%= f.hidden_field :status, value: "success" %>
+      <%= f.submit "Payment Validé", class: "purple-button" %>
+    <% end %>
+  <% end %>
+</div>

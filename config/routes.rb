@@ -3,7 +3,9 @@ Rails.application.routes.draw do
     resources :dashboard, only: %i[index], path: "dashboard"
     resource :opening_hours, only: %i[show edit update]
     resources :users do
-      resources :orders ,only: %i[create show index update]
+      resources :orders ,only: %i[create show index update]do
+        resources :product_orders, only: [:destroy]
+        end
       resources :user_membership, only: %i[create show update destroy]
     end 
     resources :events, only: %i[new create edit destroy index]
@@ -12,7 +14,7 @@ Rails.application.routes.draw do
     resources :attendance_lists, only: %i[new index create show edit update] do
       resources :attendances, only: %i[new index create show edit update]
     end
-    resources :product_orders, only: %i[create show update]
+    resources :product_orders, only: %i[create update]
     resources :products, only: %i[index]
     resources :payments, only: %i[show create new update index]
 

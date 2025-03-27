@@ -12,7 +12,7 @@ private
 
   def decrement_book_of_entry
 
-    return unless book_of_entry 
+    return unless book_of_entry
 
     if book_of_entry.remaining > 0
         book_of_entry.update(remaining: book_of_entry.remaining - 1)
