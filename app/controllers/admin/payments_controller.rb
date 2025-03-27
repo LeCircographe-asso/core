@@ -44,6 +44,9 @@ module Admin
       p "#"*111
       p @payment
       p "#"*111
+        puts "Order ID: #{@payment.order.id}"
+        puts "Product orders: #{@payment.order.product_orders.inspect}"
+      p "#"*111
       if @payment.update(payment_params)
         puts"#{@payment.inspect}"
         redirect_to admin_payment_path(@payment), notice: 'Mise à jour réussie'
