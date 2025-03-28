@@ -12,6 +12,8 @@ class OrdersController < BaseController
     @product_subscription= Product.where(product_type: "cotisation")
     @user = @order.user
     @product = Product.find_by(params[:id])
+    @product_orders = @order.product_orders
+    
     respond_to do |format|
       format.html
       format.turbo_stream
