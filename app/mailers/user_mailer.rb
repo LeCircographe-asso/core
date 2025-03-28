@@ -14,6 +14,13 @@ class UserMailer < ApplicationMailer
     mail(to: @user.email_address, subject: "Bienvenue au Circographe ! 🎉")
   end
 
+  def membership_expiration_reminder(user_membership)
+    @user = user_membership.user
+    @end_date = user_membership.end_date
+    @url = "https://lecircographe.fr"
+    mail(to: @user.email_address, subject: "Votre adhésion arrive à expiration !")
+  end
+
   def contact_email(name, email, message, category, recipient_email)
     @name = name
     @message = message

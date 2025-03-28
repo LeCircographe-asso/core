@@ -43,6 +43,10 @@ gem "stripe"
 
 gem "actionmailer"
 
+gem 'mailjet'
+
+gem 'whenever', require: false
+
 gem "faker"
 
 gem "dotenv-rails"
