@@ -23,8 +23,7 @@ module Admin
         product_order.product.price_entries.order(created_at: :desc).first&.price_catalog&.price.to_i
       end
       
-      @total_donation = @order.donation || 0
-      
+      @total_donation = @order.donation 
       @total_payment = @total_amount + @total_donation
 
     end 
