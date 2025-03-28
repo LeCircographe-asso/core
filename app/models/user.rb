@@ -1,7 +1,7 @@
 class User < ApplicationRecord
   attr_accessor :cgu, :privacy_policy
   # after_create :assign_membership
-  before_create :generate_unsubscribe_token
+  after_create :generate_unsubscribe_token
 
   enum :system_role, %i[ super_admin admin volunteer user_connected ]
 
@@ -32,18 +32,11 @@ class User < ApplicationRecord
   validates :cgu, acceptance: { message: "Vous devez accepter les CGU pour continuer." }
   validates :privacy_policy, acceptance: { message: "Vous devez accepter la politique de confidentialité pour continuer." }
 
-  after_create :welcome_send
+  # after_create :welcome_send
 
-  def welcome_send
-    return if user_connected?
-
-    if super_admin? || admin? || volunteer?
-      UserMailer.welcome_by_admin(self, reset_password_url).deliver_now
-    end
-    UserMailer.welcome_email(self).deliver_now
-  end
-
+  # Génère un token de réinitialisation de mot de passe et sauvegarde l'utilisateur
   def generate_password_reset_token!
+    Rails.logger.info "Utilisateur créé : #{@user.inspect}"
     self.password_reset_token = SecureRandom.urlsafe_base64
     self.password_reset_sent_at = Time.current
     save!
@@ -52,6 +45,15 @@ class User < ApplicationRecord
   def password_reset_token_valid?
     password_reset_sent_at.present? && password_reset_sent_at > 2.hours.ago
   end
+
+  # def welcome_send
+  #   return if user_connected?
+
+  #   if created_by_admin?
+  #     UserMailer.welcome_by_admin(self, reset_password_url).deliver_now
+  #   end
+  #   UserMailer.welcome_email(self).deliver_now
+  # end
 
   def formatted_registration_date
     if authenticated?
@@ -75,7 +77,8 @@ class User < ApplicationRecord
     save!
   end
 
-  def reset_password_url
+  def reset_password_url(generate_password_reset_token)
+    generate_password_reset_token! unless password_reset_token.present?
     Rails.application.routes.url_helpers.edit_password_url(token: @user.generate_password_reset_token, host: "https://lecircographe.fr")
   end
 
@@ -126,5 +129,4 @@ class User < ApplicationRecord
   #     no_member_membership = Membership.find_by(type_name: :no_member)
   #     user_memberships.create(membership: no_member_membership) if no_member_membership
   #   end
-  # end
 end

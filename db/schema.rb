@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_03_27_103151) do
+ActiveRecord::Schema[8.0].define(version: 2025_03_28_081842) do
   create_table "attendance_lists", force: :cascade do |t|
     t.datetime "start_date"
     t.datetime "end_date"
@@ -182,6 +182,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_03_27_103151) do
     t.integer "system_role", default: 3, null: false
     t.boolean "newsletter_subscribed"
     t.string "unsubscribe_token"
+    t.boolean "created_by_admin"
     t.index ["email_address"], name: "index_users_on_email_address", unique: true
   end
 
