@@ -36,9 +36,11 @@ class User < ApplicationRecord
 
   # Génère un token de réinitialisation de mot de passe et sauvegarde l'utilisateur
   def generate_password_reset_token!
+    Rails.logger.info "Génération du token pour #{self.email_address}"
     Rails.logger.info "Utilisateur créé : #{@user.inspect}"
     self.password_reset_token = SecureRandom.urlsafe_base64
     self.password_reset_sent_at = Time.current
+    Rails.logger.info "Token : #{self.password_reset_token}, Sent at : #{self.password_reset_sent_at}"
     save!
   end
 
