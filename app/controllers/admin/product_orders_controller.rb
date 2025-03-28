@@ -38,13 +38,23 @@ module Admin
     end
 
     def destroy
-      @order = Order.find(params[:order_id])
-      @product_order = @order.product_orders.find(params[:id])
+      @order = Order.find(params[:order_id])  # Trouve la commande par son ID
+      @product_order = @order.product_orders.find(params[:id])  # Trouve le ProductOrder par son ID
+    
+      @product_order.destroy  # Supprime la ligne de la table de jointure
       
-      @product_order.destroy
+      @products_membership = Product.where(product_type: "adhésion")
+      @product_subscription = Product.where(product_type: "cotisation")
+
       respond_to do |format|
-        format.html { redirect_to admin_order_path(@order) }
-        format.turbo_stream
+        format.turbo_stream do
+          render turbo_stream: [
+            turbo_stream.remove("product_order_#{@product_order.id}"), # Supprimer la ligne du produit
+            turbo_stream.replace("total_price", partial: "admin/orders/total_price", locals: { order: @order }), # Mettre à jour le total
+            turbo_stream.replace("product-container", partial: "admin/orders/product_container", locals: { order: @order, has_valid_membership: @has_valid_membership }) #Re check le panier et affiche le bon partial en fonction
+          ]
+        end
+        format.html { redirect_to admin_user_order_path(@order) }
       end
     end
     
