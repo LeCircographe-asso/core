@@ -79,9 +79,13 @@
                 <% latest_membership = @user.user_memberships.order(created_at: :desc).first %>
                 <div class="flex items-center">
                   <span class="text-gray-500 w-32">Membre depuis:</span>
-                  <span class="text-gray-900"><%= @user.user_memberships.order(:created_at).first.created_at.strftime("%d/%m/%Y") %></span>
+                  <span class="text-gray-900"><%= @user.user_memberships.order(:created_at).first.created_at.strftime("%d/%m/%Y")  %></span>
                 </div>
                 <div class="flex items-center">
+                  <span class="text-gray-500 w-32">Membre jusqu'a:</span>
+                  <span class="text-gray-900"><%= @user.user_memberships.order(:created_at).first.created_at.advance(years: 1).strftime("%d/%m/%Y") %></span>
+                </div>
+                <div class="flex items-center mb-20">
                   <span class="text-gray-500 w-32">Type:</span>
                   <span class="text-gray-900"><%= latest_membership.membership.type_name %></span>
                 </div>
