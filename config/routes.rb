@@ -1,5 +1,7 @@
 Rails.application.routes.draw do
-  resources :blogs, only: %i[show index]
+  resources :blogs, only: %i[show ]
+  get "/blog-newsletter", to: "blogs#index"
+
   #  do
   #   collection do
   #     get :article
