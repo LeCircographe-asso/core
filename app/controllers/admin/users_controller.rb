@@ -31,27 +31,30 @@ module Admin
     # POST /admin/users or /admin/users.json
     def create
       @user = User.new(user_params)
+      @user.created_by_admin = true
       @user.password = generate_secure_password
       @default_membership = Membership.find_by(type_name: :No_Member)
 
       begin
         User.transaction do
           if @user.save
+            # @user.generate_password_reset_token!
+            # UserMailer.welcome_by_admin(@user, edit_password_url(token: @user.password_reset_token)).deliver_now
             @order = @user.orders.new
             @user_membership = UserMembership.create!(user: @user, membership_id: @default_membership.id)
 
             if @order.save
-              redirect_to admin_user_order_path(id: @order, user_id: @user), 
-              notice: "User was successfully created. A mail has been sent!" 
+              redirect_to admin_user_order_path(id: @order, user_id: @user),
+              notice: "User was successfully created. A mail has been sent!"
               Rails.logger.info "Redirection vers : #{admin_user_order_path(id: @order.id, user_id: @user.id)}"
             else
               Rails.logger.info "User, Order et UserMembership créés avec succès"
-            end 
+            end
           end
         end
-        @user.generate_password_reset_token!
-        reset_password_url = @user.reset_password_url
-        UserMailer.welcome_by_admin(@user, reset_password_url).deliver_now
+      rescue => e
+        Rails.logger.error "Erreur lors de la création de l'utilisateur : #{e.message}"
+        redirect_to new_admin_user_path, alert: "Erreur lors de la création de l'utilisateur."
       end
     end
 
