@@ -11,6 +11,14 @@ module Admin
     end
 
     def create
+
+      @user = User.find(params[:user_id])
+
+      @has_valid_membership = @user.user_memberships.joins(:membership)
+      .where(user_memberships: { status: "active" })
+      .where(memberships: { type_name: ["Circus", "Basic"] })
+      .exists?
+
       attendance = Attendance.new
       attendance.attendance_list = @attendance_list
       attendance.user = User.find(params[:user_id])
