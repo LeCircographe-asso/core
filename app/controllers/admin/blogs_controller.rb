@@ -1,8 +1,8 @@
 module Admin
   class BlogsController < ApplicationController
 
-    before_action :set_blog, only: %i[ edit update destroy ]
-
+    before_action :set_blog, :has_admin?
+    
 
 
     # GET /blogs/new
@@ -74,6 +74,10 @@ module Admin
     end
 
     private
+      def has_admin?
+        redirect_to blogs_path, notice: "vous n'avez pas les droits" if !current_user.has_admin?
+      end
+
       # Use callbacks to share common setup or constraints between actions.
       def set_blog
         @blog = Blog.find(params.expect(:id))
