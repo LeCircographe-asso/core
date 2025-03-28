@@ -1,0 +1,11 @@
+.fade-in {
+    opacity: 0;
+    transform: translateY(40px); /* Décalage initial pour l’effet */
+    transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+    will-change: opacity, transform; /* Optimisation pour les performances */
+  }
+  
+  .fade-in.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
