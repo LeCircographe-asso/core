@@ -7,7 +7,8 @@
 
   <h1 class="font-bold text-4xl">Showing blog</h1>
 
-  <%= render "admin/blogs/blog", blog: @blog %>  <%@tags.each do |tag|%>
+  <%= render "admin/blogs/blog", blog: @blog %>
+    <%@tags.each do |tag|%>
     <%= tag.name %>
   <% end %>
   
