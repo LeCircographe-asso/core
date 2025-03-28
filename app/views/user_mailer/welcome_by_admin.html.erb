@@ -8,7 +8,7 @@
         votre mot de passe avant de pouvoir vous connecter :
     </p>
     <p>
-        <a href="<%= @reset_password_url %>">Cliquez ici pour réinitialiser votre mot de passe</a>.
+        <a href="<%= edit_password_url(@user.password_reset_token) %>" class="button">Reset Password</a>.
     </p>
 
     <% if @user.newsletter_subscribed %>
