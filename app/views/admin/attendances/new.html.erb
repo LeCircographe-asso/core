@@ -41,11 +41,15 @@
               <div class="flex items-center">
                 <div class="flex-shrink-0 h-10 w-10">
                   <div class="h-10 w-10 rounded-full bg-[#1F5C55]/10 flex items-center justify-center">
-                    <span class="text-[#1F5C55] font-medium"><%= "#{user.first_name.first}#{user.last_name.first}" %></span>
+                    <span class="text-[#1F5C55] font-medium">
+                      <%= "#{user.first_name&.first}#{user.last_name&.first}".strip.presence || "?" %>
+                    </span>
                   </div>
                 </div>
                 <div class="ml-4">
-                  <div class="text-sm font-medium text-gray-900"><%= "#{user.first_name} #{user.last_name}" %></div>
+                  <div class="text-sm font-medium text-gray-900">
+                    <%= [user.first_name, user.last_name].compact.join(" ") %>
+                  </div>
                   <div class="text-sm text-gray-500"><%= user.email %></div>
                 </div>
               </div>

@@ -1,59 +1,56 @@
-<% if @order.products.any? %>
+
   <!-- Récapitulatif de la commande -->
-  <div style="display: flex; flex-direction: column; align-items: center; width: 100%; margin-bottom: 20px;">
-
-    <h2>Récapitulatif de votre commande</h2>
-  
-    <table style="width: 80%; margin-bottom: 20px;">
-      <thead>
-        <tr>
-          <th>Produit</th>
-          <th>Type</th>
-          <th>Prix</th>
-        </tr>
-      </thead>
-      <tbody>
-        <% @order.products.each do |product| %>
+  <% if @order.products.any? %>
+    <div class="bg-white shadow overflow-hidden rounded-lg mb-6">
+      <div class="px-6 py-4 border-b border-gray-200">
+        <h2 class="text-lg font-medium text-gray-900">Récapitulatif de votre commande</h2>
+      </div>
+      <table class="min-w-full divide-y divide-gray-200">
+        <thead>
           <tr>
-            <td><%= product.product_name %></td>
-            <td><%= product.product_type %></td>
-            <td>
-              <% if product.price_entries.any? %>
-                <%= product.price_entries.order(created_at: :desc).first.price_catalog.price %> €
-              <% else %>
-                Prix non défini
-              <% end %>
-            </td>
+            <th class="px-6 py-3 text-left text-sm font-medium text-gray-500 uppercase">Produit</th>
+            <th class="px-6 py-3 text-left text-sm font-medium text-gray-500 uppercase">Type</th>
+            <th class="px-6 py-3 text-left text-sm font-medium text-gray-500 uppercase">Prix</th>
           </tr>
-        <% end %>
-      </tbody>
-      <tfoot>
-        <tr>
-          <td colspan="2"><strong>Total</strong></td>
-          <td>
-            <strong>
-              <%= @order.products.sum { |p| p.price_entries.order(created_at: :desc).first&.price_catalog&.price || 0 } %> €
-            </strong>
-          </td>
-        </tr>
-      </tfoot>
-    </table>
-
-    <!-- Bouton de paiement -->
-    <div style="display: flex; justify-content: center; width: 100%; margin-bottom: 20px;">
-      <%= button_to 'Payer', admin_payments_path, params: { payment: { order_id: @order, user_id: @user } }, method: :post, class: "purple-button" %>
+        </thead>
+        <tbody class="bg-white divide-y divide-gray-200">
+          <% @order.products.each do |product| %>
+            <tr>
+              <td class="px-6 py-4 text-sm text-gray-900"><%= product.product_name %></td>
+              <td class="px-6 py-4 text-sm text-gray-500"><%= product.product_type %></td>
+              <td class="px-6 py-4 text-sm text-gray-500">
+                <% if product.price_entries.any? %>
+                  <%= product.price_entries.order(created_at: :desc).first.price_catalog.price %> €
+                <% else %>
+                  Prix non défini
+                <% end %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+      <div class="px-6 py-4 text-right font-bold">Total : <%= @order.products.sum { |p| p.price_entries.order(created_at: :desc).first&.price_catalog&.price || 0 } %> €</div>
     </div>
+  <% end %>
+</div>
+</div>
 
+<% if @order.present? %>
+  <!-- Bouton de paiement -->
+  <div class="flex justify-center w-full mb-6">
+    <%= button_to 'Payer', admin_payments_path, params: { payment: { order_id: @order, user_id: @user } }, method: :post, class: "bg-[#1F5C55] text-white font-bold py-2 px-4 rounded hover:bg-[#194A45]" %>
   </div>
 <% else %>
-  <p style="text-align: center;">Aucun produit dans votre commande pour le moment.</p>
+  <p class="text-center text-gray-700">Aucun produit dans votre commande pour le moment.</p>
 <% end %>
 
 <!-- Section pour les dons -->
-<div style="display: flex; flex-direction: column; align-items: center; width: 100%; margin-bottom: 20px;">
-  <div class="donation-container" style="display: flex; align-items: center; gap: 10px; justify-content: center; margin-bottom: 20px;">
-    <label for="donation_amount">Faire un don :</label>
-    <%= number_field_tag :donation_amount, nil, min: 1, step: 1, placeholder: "Montant", style: "width: 100px;" %>
-    <%= button_to 'Donner', admin_payment_path, class: "purple-button", method: :post %>
+<div class="flex flex-col items-center w-full mb-6">
+  <div class="flex items-center gap-4 justify-center mb-6">
+    <label for="donation_amount" class="text-gray-800 font-medium">Faire un don :</label>
+    <%= number_field_tag :donation_amount, nil, min: 1, step: 1, placeholder: "Montant", class: "border-gray-300 rounded px-3 py-1 w-24 text-center" %>
+    <%= button_to 'Donner', admin_payment_path, method: :post, class: "bg-[#1F5C55] text-white font-bold py-2 px-4 rounded hover:bg-[#194A45]" %>
   </div>
+</div>
+</div>
 </div>
