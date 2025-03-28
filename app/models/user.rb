@@ -1,7 +1,7 @@
 class User < ApplicationRecord
   attr_accessor :cgu, :privacy_policy
   # after_create :assign_membership
-  before_create :generate_unsubscribe_token
+  after_create :generate_unsubscribe_token
 
   enum :system_role, %i[ super_admin admin volunteer user_connected ]
 
@@ -34,26 +34,28 @@ class User < ApplicationRecord
 
   # after_create :welcome_send
 
-  # def welcome_send
-  #   return if user_connected?
-
-  #   if super_admin? || admin? || volunteer?
-  #     # UserMailer.welcome_by_admin(self).deliver_now
-  #   end
-  #   # UserMailer.welcome_email(self).deliver_now
-  # end
-
-
-
+  # Génère un token de réinitialisation de mot de passe et sauvegarde l'utilisateur
   def generate_password_reset_token!
+    Rails.logger.info "Génération du token pour #{self.email_address}"
+    Rails.logger.info "Utilisateur créé : #{@user.inspect}"
     self.password_reset_token = SecureRandom.urlsafe_base64
     self.password_reset_sent_at = Time.current
+    Rails.logger.info "Token : #{self.password_reset_token}, Sent at : #{self.password_reset_sent_at}"
     save!
   end
 
   def password_reset_token_valid?
     password_reset_sent_at.present? && password_reset_sent_at > 2.hours.ago
   end
+
+  # def welcome_send
+  #   return if user_connected?
+
+  #   if created_by_admin?
+  #     UserMailer.welcome_by_admin(self, reset_password_url).deliver_now
+  #   end
+  #   UserMailer.welcome_email(self).deliver_now
+  # end
 
   def formatted_registration_date
     if authenticated?
@@ -75,6 +77,11 @@ class User < ApplicationRecord
     self.password_reset_token = nil
     self.password_reset_sent_at = nil
     save!
+  end
+
+  def reset_password_url(generate_password_reset_token)
+    generate_password_reset_token! unless password_reset_token.present?
+    Rails.application.routes.url_helpers.edit_password_url(token: @user.generate_password_reset_token, host: "https://lecircographe.fr")
   end
 
   scope :published, -> { where(published: true) }
@@ -110,16 +117,18 @@ class User < ApplicationRecord
     user_memberships.exists?(status: "active")
   end
 
+
   private
 
   def generate_unsubscribe_token
     self.unsubscribe_token = SecureRandom.base64(16)
   end
 
+
+
   # def assign_membership
   #   if self.memberships.empty?
   #     no_member_membership = Membership.find_by(type_name: :no_member)
   #     user_memberships.create(membership: no_member_membership) if no_member_membership
   #   end
-  # end
 end

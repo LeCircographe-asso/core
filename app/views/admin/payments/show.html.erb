@@ -1,2 +1,56 @@
-<div style="display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center;">
-<%= @product_order.inspect %>
+<div class="flex flex-col items-center justify-center text-center min-h-screen p-6">
+  <%= form_with(model: [:admin, @payment], method: :patch, class: "w-full max-w-lg bg-white p-6 rounded-lg shadow-md") do |f| %>
+    
+    <!-- Affichage du nom du produit -->
+    <div class="mb-4">
+      <% if @order.product_orders.any? %>
+        <% @order.product_orders.each do |product_order| %>
+          <p class="text-lg font-semibold"><%= product_order.product.product_name %></p>
+        <% end %>
+      <% end %>
+    </div>
+
+    <!-- Date de création du paiement -->
+    <div class="mb-4">
+      <%= f.label :payment_date, "Date de création", class: "block text-gray-700" %>
+      <%= f.text_field :payment_date, value: @payment.created_at.strftime("%d-%m-%Y %H:%M:%S"), class: "w-full p-2 border rounded" %>
+    </div>
+
+    <!-- Montant du paiement -->
+    <div class="mb-4">
+      <%= f.label :payment_amount, "Montant du paiement", class: "block text-gray-700" %>
+      <% if @order.product_orders.any? %>
+        <% total_amount = @order.product_orders.sum { |product_order| product_order.product.price_entries.order(created_at: :desc).first.price_catalog.price } %>
+        <%= f.text_field :payment_amount, value: "#{total_amount} €", class: "w-full p-2 border rounded" %>
+      <% else %>
+        <%= f.text_field :payment_amount, value: "Non défini", class: "w-full p-2 border rounded" %>
+      <% end %>
+    </div>
+
+    <!-- Type de paiement -->
+    <div class="mb-4">
+      <%= f.label :payment_type, "Type de paiement", class: "block text-gray-700" %>
+      <%= f.select :payment_type, Payment.payment_types.keys.map { |key| [key.humanize, key] }, { selected: @payment.payment_type }, class: "w-full p-2 border rounded" %>
+    </div>
+
+    <div class="mb-4">
+      <%= f.label :status, @payment.status, class: "block text-gray-700 font-semibold" %>
+    </div>
+
+    <!-- Message de validation du paiement -->
+    <% if @payment.status == 'success' %>
+      <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 rounded mb-4">
+        <p class="font-semibold">Paiement validé !</p>
+        <%= link_to "Retour à l'utilisateur", admin_user_path(@payment.user_id), class: "block bg-[#1F5C55] hover:bg-[#194A45] text-white py-2 px-4 rounded mt-2" %>
+      </div>
+    <% end %>
+
+    <%= f.hidden_field :user_id, value: @payment.user_id %>
+
+    <!-- Bouton de validation du paiement -->
+    <% if @payment.status == 'pending' %>
+      <%= f.hidden_field :status, value: "success" %>
+      <%= f.submit "Valider le paiement", class: "w-full bg-[#1F5C55] hover:bg-[#194A45] text-white py-2 px-4 rounded shadow-sm" %>
+    <% end %>
+  <% end %>
+</div>

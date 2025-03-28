@@ -4,15 +4,15 @@
   <div class="max-w-7xl mx-auto">
     <!-- En-tête -->
     <div class="bg-white shadow-lg rounded-lg overflow-hidden mb-6">
-      <div class="bg-gradient-to-r from-purple-600 to-indigo-600 px-6 py-4">
+      <div class="bg-gradient-to-r from-[#1F5C55] to-[#194A45] px-6 py-4">
         <h1 class="text-2xl font-bold text-white">Gestion des utilisateurs</h1>
         <p class="text-white/80 mt-1">Voir et gérer tous les utilisateurs</p>
       </div>
 
       <div class="p-6">
         <!-- Statistiques -->
-        <div class="mb-6 bg-purple-50 p-4 rounded-lg">
-          <p class="text-purple-800 font-medium">
+        <div class="mb-6 bg-green-50 p-4 rounded-lg">
+          <p class="text-green-800 font-medium">
             <span class="font-bold">Nombre d'utilisateurs :</span> <%= @users.count %>
           </p>
         </div>
@@ -20,10 +20,10 @@
         <!-- Actions -->
         <div class="flex flex-wrap gap-3 mb-8">
           <%= link_to "Modifier les horaires", edit_admin_opening_hours_path, 
-              class: "inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-purple-600 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500" %>
+              class: "inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#1F5C55] hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500" %>
           
           <%= link_to "Créer un Adhérent", new_admin_user_path, 
-              class: "inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-purple-600 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500" %>
+              class: "inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#1F5C55] hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500" %>
         </div>
 
         <!-- Titre section -->
@@ -64,7 +64,7 @@
                   </td>
                   <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                     <%= link_to "Voir", admin_user_path(user), 
-                        class: "text-purple-600 hover:text-purple-900 mr-3", 
+                        class: "text-grey-600 hover:text-purple-900 mr-3", 
                         data: { turbo: false } %>
                     <%= link_to "Modifier", edit_admin_user_path(user), 
                         class: "text-blue-600 hover:text-blue-900" %>
