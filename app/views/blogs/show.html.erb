@@ -7,17 +7,10 @@
 
   <h1 class="font-bold text-4xl">Showing blog</h1>
 
-  <%= render @blog %>
-  <%@tags.each do |tag|%>
-  <%= tag.name %>
-<% end %>
-  <% if current_user.has_admin? %>
-  <%= link_to "Edit this blog", edit_admin_blog_path(@blog), class: "w-full sm:w-auto text-center rounded-md px-3.5 py-2.5 bg-gray-100 hover:bg-gray-50 inline-block font-medium"%>
+  <%= render "admin/blogs/blog", blog: @blog %>  <%@tags.each do |tag|%>
+    <%= tag.name %>
   <% end %>
+  
   <%= link_to "Back to blogs", blogs_path, class: "w-full sm:w-auto text-center mt-2 sm:mt-0 sm:ml-2 rounded-md px-3.5 py-2.5 bg-gray-100 hover:bg-gray-50 inline-block font-medium" %>
-  <% if current_user.has_admin? %>
-    <div class="sm:inline-block mt-2 sm:mt-0 sm:ml-2">
-      <%= button_to "suprimer cette actualité", admin_blog_path(@blog), method: :delete, class: "w-full rounded-md px-3.5 py-2.5 text-white bg-red-600 hover:bg-red-500 font-medium cursor-pointer", data: { turbo_confirm: "etes vous sur?" } %>
-  </div>
-  <% end %>
+  
 </div>

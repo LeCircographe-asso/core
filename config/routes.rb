@@ -1,14 +1,15 @@
 Rails.application.routes.draw do
-  resources :blogs, only: %i[show] do
-    collection do
-      get :article
-      get :newsletter
-    end
-  end
+  resources :blogs, only: %i[show index]
+  #  do
+  #   collection do
+  #     get :article
+  #     get :blog_newsletter
+  #   end
+  # end
   
 
   namespace :admin do
-    resources :blogs, only: %i[new create edit update destroy]
+    resources :blogs
     resources :dashboard, only: %i[index], path: "dashboard"
     resource :opening_hours, only: %i[show edit update]
     resources :users do

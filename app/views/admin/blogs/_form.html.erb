@@ -1,5 +1,6 @@
 <%= form_with model: blog, url: (blog.new_record? ? admin_blogs_path : admin_blog_path(blog)), method: (blog.new_record? ? :post : :patch), local: true, class: "contents" do |form| %>
 
+
   <% if blog.errors.any? %>
     <div id="error_explanation" class="bg-red-50 text-red-500 px-3 py-2 font-medium rounded-md mt-3">
       <h2><%= pluralize(blog.errors.count, "error") %> prohibited this blog from being saved:</h2>
@@ -28,10 +29,8 @@
   <%= label_tag "tag_#{tag.id}", tag.name %>
 <% end %>
 
-
-
-
   <div class="inline">
-    <%= form.submit class: "w-full sm:w-auto rounded-md px-3.5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white inline-block font-medium cursor-pointer" %>
+    <%= form.submit "Enregistrer", class: "w-full sm:w-auto rounded-md px-3.5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white inline-block font-medium cursor-pointer" %>
   </div>
 <% end %>
+ /

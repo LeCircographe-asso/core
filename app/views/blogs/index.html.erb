@@ -7,7 +7,6 @@
 
   <div class="flex justify-between items-center">
     <h1 class="font-bold text-4xl">Blogs</h1>
-    <%= link_to "New blog", new_admin_blog_path	, class: "rounded-md px-3.5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white block font-medium" %>
   </div>
 
   <div id="blogs" class="min-w-full divide-y divide-gray-200 space-y-5">
@@ -17,12 +16,6 @@
           <%= render blog %>
           <div class="w-full sm:w-auto flex flex-col sm:flex-row space-x-2 space-y-2">
             <%= link_to "voir", blog, class: "w-full sm:w-auto text-center rounded-md px-3.5 py-2.5 bg-gray-100 hover:bg-gray-50 inline-block font-medium" %>
-            <% if current_user.has_admin? %>
-              <%= link_to "modifier", edit_admin_blog_path(blog), class: "w-full sm:w-auto text-center rounded-md px-3.5 py-2.5 bg-gray-100 hover:bg-gray-50 inline-block font-medium" %>
-              <div class="sm:inline-block">
-                <%= button_to "suprimer", admin_blog_path(blog), method: :delete, class: "w-full sm:w-auto rounded-md px-3.5 py-2.5 text-white bg-red-600 hover:bg-red-500 font-medium cursor-pointer", data: { turbo_confirm: "Vous est sur de vouloir suprimer definitivement cette actualité?" } %>
-              </div>
-            <% end %>
           </div>
         </div>
       <% end %>
