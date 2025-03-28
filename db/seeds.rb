@@ -137,8 +137,7 @@ products = [
   { product_name: "Pass journée", product_type: "cotisation" },
   { product_name: "Cotisation 10 séances", product_type: "cotisation" },
   { product_name: "Cotisation trimestrielle", product_type: "cotisation" },
-  { product_name: "Cotisation annuelle", product_type: "cotisation" },
-  { product_name: "Donation", product_type: "cotisation" }
+  { product_name: "Cotisation annuelle", product_type: "cotisation" }
 ]
 puts "Création des produits..."
 

@@ -5,7 +5,8 @@ module Admin
       @payments=Payment.all
       @payment= Payment.find_by(params[:id])
       @user = User.find_by(id: params[:user_id])
-      
+      @order = Order.find_by(id: @payment.order_id)
+      @total_donation = @order.donation
 
     end 
 
@@ -18,6 +19,9 @@ module Admin
       @payment = Payment.find(params[:id])
       @order = Order.find_by(id: @payment.order_id)
       
+      @total_amount = @order.product_orders.sum { |product_order| product_order.product.price_entries.order(created_at: :desc).first.price_catalog.price } 
+      @total_donation = @order.donation
+      @total_payment = @total_amount + @total_donation 
 
     end 
     
@@ -58,7 +62,7 @@ module Admin
     private 
 
     def payment_params
-      params.require(:payment).permit(:payment_id ,:payment_date, :payment_amount, :payment_type, :status, :user_id, :order_id)
+      params.require(:payment).permit(:payment_id ,:payment_date, :payment_amount, :payment_type, :status, :user_id, :order_id, :donation, :total_payment)
     end
   end 
 end 
