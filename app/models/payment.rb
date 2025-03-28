@@ -1,13 +1,18 @@
 class Payment < ApplicationRecord
+
   belongs_to :user
   belongs_to :order
   has_many :product_orders, through: :order # Ajout de la relation product_order
-
+  
   enum :status, %i[success pending cancel], default: :pending
   enum :payment_type, %i[cash credit_card check]
 
   after_update :update_user_membership_if_paid
   after_update :createBookOfEntry
+
+
+
+
 
   def payment_successful?
     # Vérifier si la commande a déjà été payée

@@ -1,40 +1,74 @@
-<div align="center">
-  <h1>Historique des paiements de <%= @user.email %></h1>
+<% content_for :title, "Historique des paiements" %>
 
-  <table>
-    <thead>
-      <tr>
-          <th>Montant</th>
-          <th>Date</th>
-          <th>Statut</th>
-          <th>Cotisation</th>    
-      </tr>
-    </thead>
-    <tbody>
-      <% @user.payments.each do |payment| %>
-        <tr>
-          <td><%= payment.payment_amount.to_s + " €" %> </td>
-          <td>
-              <% if payment.payment_date.present? %>
-              <%= payment.payment_date.strftime("%d/%m/%Y") %>
-              <% else %>
-              <%= "Date non disponible" %> 
-              <% end %>
-          </td>
-          <td><%= payment.status %> </td>
-          <td>
-            <% if payment.product_orders.any? %>
-              <% payment.product_orders.each do |product_order| %>
-                <p><%= product_order.product.product_name if product_order.product %></p>
-              <% end %>
-            <% else %>
-              <%= "Aucune cotisation" %>
-            <% end %>
-          </td>
-        </tr>
-      <% end %>
-    </tbody>
-  </table>
+<div class="min-h-screen py-6">
+  <div class="max-w-7xl mx-auto">
+    <!-- En-tête -->
+    <div class="bg-white shadow-lg rounded-lg overflow-hidden mb-6">
+      <div class="bg-gradient-to-r from-[#1F5C55] to-[#194A45] px-6 py-4">
+        <h1 class="text-2xl font-bold text-white">Historique des paiements de <%= @user.email %></h1>
+        <p class="text-white/80 mt-1">Détails des paiements réalisés par cet utilisateur</p>
+      </div>
 
-  <%= link_to 'Retour', admin_user_path(@user), class: "btn" %>
+      <div class="p-6">
+        <!-- Tableau -->
+        <div class="overflow-x-auto">
+          <table class="min-w-full bg-white border border-gray-200 rounded-lg">
+            <thead class="bg-gray-50">
+              <tr>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Statut</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Cotisation</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Montant</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Donation</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-200">
+              <% @user.payments.each do |payment| %>
+                <tr class="hover:bg-gray-50">
+                  <!-- Date -->
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <% if payment.payment_date.present? %>
+                      <%= payment.payment_date.strftime("%d/%m/%Y") %>
+                    <% else %>
+                      <%= "Date non disponible" %> 
+                    <% end %>
+                  </td>
+
+                  <!-- Statut -->
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <%= payment.status %>
+                  </td>
+
+                  <!-- Cotisation -->
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <% if payment.product_orders.any? %>
+                      <%= payment.product_orders.map { |po| po.product.product_name if po.product }.compact.join(', ') %>
+                    <% else %>
+                      Aucune cotisation
+                    <% end %>
+                  </td>
+
+                  <!-- Montant -->
+                  <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                    <%= payment.payment_amount.to_s + " €" %>
+                  </td>
+
+                  <!-- Donation -->
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <% if payment.donation.present? %>
+                      <%= payment.donation.to_s + " €" %>
+                    <% else %>
+                      Aucune donation
+                    <% end %>
+                  </td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
+
+<%= link_to 'Retour', admin_user_path(@user), class: "inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#1F5C55] hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500" %>
