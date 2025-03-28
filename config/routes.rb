@@ -3,11 +3,11 @@ Rails.application.routes.draw do
     resources :dashboard, only: %i[index], path: "dashboard"
     resource :opening_hours, only: %i[show edit update]
     resources :users do
-      resources :orders ,only: %i[create show index update]do
+      resources :orders, only: %i[create show index update]do
         resources :product_orders, only: [:destroy]
         end
       resources :user_membership, only: %i[create show update destroy]
-    end 
+    end
     resources :events, only: %i[new create edit destroy index]
     resource :session, only: %i[new create destroy]
     resource :notepad, only: %i[show edit update]
