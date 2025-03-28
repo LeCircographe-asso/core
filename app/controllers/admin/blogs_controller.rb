@@ -1,7 +1,8 @@
 module Admin
   class BlogsController < ApplicationController
 
-    before_action :set_blog, :has_admin?
+    before_action :set_blog, only: %i[ edit update destroy ]
+    before_action :has_admin?
     
 
 

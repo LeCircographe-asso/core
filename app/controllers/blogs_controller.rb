@@ -2,6 +2,13 @@ class BlogsController < ApplicationController
 
   before_action :set_blog, only: %i[show ]
 
+  def article
+  end
+
+  def newsletter
+  end
+
+
   # GET /blogs or /blogs.json
   def index
     @blogs = Blog.all
