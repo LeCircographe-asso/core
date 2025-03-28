@@ -1,32 +1,36 @@
-
-<div style="display: flex; flex-direction: column; align-items: center; text-align: center; width: 100%;">
-  <h1>Liste des Cotisations</h1>
-  <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; align-items: center; width: 100%;">
-    <table style="width: 80%; margin: 0 auto; border-collapse: collapse; text-align: left;">
-      <thead>
-        <tr>
-          <th>Cotisations</th>
-          <th>Prix</th>
-          <th>Cotiser</th>
-        </tr>
-      </thead>
-      <tbody>
-        <% @product_subscription.each do |product| %>
-          <tr>
-            <td><%= product.product_name %></td>
-            <td>
-              <% if product.price_entries.any? %>
-                <% latest_price = product.price_entries.order(created_at: :desc).first %>
-                <%= latest_price.price_catalog.price %> €
-              <% else %>
-                Non défini
-              <% end %>
-            </td>
-            <td>
-              <%= button_to 'Ajouter', admin_product_orders_path, params: { product_order: { order_id: @order, product_id: product, user_id: @user } }, method: :post, class: "purple-button", data: { turbo_stream: true } %>
-          </tr>
-        <% end %>
-      </tbody>
-    </table>
-</div>
-</div>
+    <!-- Liste des Cotisations -->
+    <div class="bg-white shadow overflow-hidden rounded-lg mb-6">
+      <div class="px-6 py-4 border-b border-gray-200">
+        <h2 class="text-lg font-medium text-gray-900">Liste des Cotisations</h2>
+      </div>
+      <% if @product_subscription.any? %>
+        <table class="min-w-full divide-y divide-gray-200">
+          <thead>
+            <tr>
+              <th class="px-6 py-3 text-left text-sm font-medium text-gray-500 uppercase">Cotisation</th>
+              <th class="px-6 py-3 text-left text-sm font-medium text-gray-500 uppercase">Prix</th>
+              <th class="px-6 py-3 text-left text-sm font-medium text-gray-500 uppercase">Action</th>
+            </tr>
+          </thead>
+          <tbody class="bg-white divide-y divide-gray-200">
+            <% @product_subscription.each do |product| %>
+              <tr>
+                <td class="px-6 py-4 text-sm text-gray-900"><%= product.product_name %></td>
+                <td class="px-6 py-4 text-sm text-gray-500">
+                  <% if product.price_entries.any? %>
+                    <%= product.price_entries.order(created_at: :desc).first.price_catalog.price %> €
+                  <% else %>
+                    Non défini
+                  <% end %>
+                </td>
+                <td class="px-6 py-4">
+                  <%= button_to 'Ajouter', admin_product_orders_path, params: { product_order: { order_id: @order, product_id: product, user_id: @user } }, method: :post, class: "px-4 py-2 bg-[#1F5C55] hover:bg-[#194A45] text-white text-sm font-medium rounded-md shadow-sm" %>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      <% else %>
+        <div class="p-6 text-center text-gray-500">Aucune cotisation disponible</div>
+      <% end %>
+    </div>

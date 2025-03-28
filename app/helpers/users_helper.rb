@@ -11,6 +11,7 @@ module UsersHelper
 
     if result[:redirect_to]
       redirect_to new_registration_path
+      session[:newsletter_email] = email
     elsif result[:success]
       flash[:notice] = result[:message]
       redirect_back fallback_location: root_path

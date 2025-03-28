@@ -13,6 +13,8 @@ module Admin
       @user = User.find_by(id: params[:id])
       @product_order = Product.find_by(params[:id])
       @product = Product.find_by(params[:id])
+
+
     end
 
     # GET /admin/users/new
@@ -29,43 +31,33 @@ module Admin
     # POST /admin/users or /admin/users.json
     def create
       @user = User.new(user_params)
+      @user.created_by_admin = true
       @user.password = generate_secure_password
       @default_membership = Membership.find_by(type_name: :No_Member)
-    
+
       begin
         User.transaction do
           if @user.save
-            @order = @user.orders.create!
+            # @user.generate_password_reset_token!
+            # UserMailer.welcome_by_admin(@user, edit_password_url(token: @user.password_reset_token)).deliver_now
+            @order = @user.orders.new
             @user_membership = UserMembership.create!(user: @user, membership_id: @default_membership.id)
-        #   if newsletter_subscribed == true
-        #     UserMailer.welcome_by_admin(@user).deliver_now
-        #   end
+
+            if @order.save
+              redirect_to admin_user_order_path(id: @order, user_id: @user),
+              notice: "User was successfully created. A mail has been sent!"
+              Rails.logger.info "Redirection vers : #{admin_user_order_path(id: @order.id, user_id: @user.id)}"
+            else
+              Rails.logger.info "User, Order et UserMembership créés avec succès"
+            end
           end
         end
-    
-        # Si la transaction réussit
-        respond_to do |format|
-          Rails.logger.info "User, Order et UserMembership créés avec succès"
-          @user.generate_password_reset_token!
-          
-          format.html { 
-            redirect_to admin_user_order_path(id: @order.id, user_id: @user.id), 
-            notice: "User was successfully created. A mail has been sent!" 
-          }
-          format.json { render :show, status: :created, location: @user }
-        end
-    
-      rescue ActiveRecord::RecordInvalid => e
-        # Gestion centralisée des erreurs
-        Rails.logger.error "Erreur de création : #{e.record.errors.full_messages.join(', ')}"
-        
-        respond_to do |format|
-          format.html { render :new, status: :unprocessable_entity }
-          format.json { render json: e.record.errors, status: :unprocessable_entity }
-        end
+      rescue => e
+        Rails.logger.error "Erreur lors de la création de l'utilisateur : #{e.message}"
+        redirect_to new_admin_user_path, alert: "Erreur lors de la création de l'utilisateur."
       end
     end
-    
+
 
 
     # PATCH/PUT /admin/users/1 or /admin/users/1.json
@@ -99,7 +91,7 @@ module Admin
 
     # Only allow a list of trusted parameters through.
     def user_params
-      params.require(:user).permit(:email_address, :first_name, :last_name, :password, :payments, :system_role, :newsletter_subscribed)
+      params.require(:user).permit(:email_address, :first_name, :last_name, :password, :payments, :system_role, :newsletter_subscribed, :reset_password_url)
     end
 
     def generate_secure_password
