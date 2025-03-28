@@ -19,7 +19,7 @@
   <!-- Donation -->
     <div class="mb-4">
       <%= f.label :donation, "Montant de la Donation", class: "block text-gray-700" %>
-      <%= f.text_field :donation, value: @payment.donation, class: "w-full p-2 border rounded" %>
+      <%= f.text_field :donation, value: "#{@total_donation}", class: "w-full p-2 border rounded" %>
     </div>
 
     <!-- Montant du paiement -->
