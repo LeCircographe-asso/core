@@ -16,25 +16,34 @@
       <%= f.text_field :payment_date, value: @payment.created_at.strftime("%d-%m-%Y %H:%M:%S"), class: "w-full p-2 border rounded" %>
     </div>
 
+  <!-- Donation -->
+    <div class="mb-4">
+      <%= f.label :donation, "Montant de la Donation", class: "block text-gray-700" %>
+      <%= f.text_field :donation, value: "#{@total_donation}", class: "w-full p-2 border rounded" %>
+    </div>
+
     <!-- Montant du paiement -->
     <div class="mb-4">
       <%= f.label :payment_amount, "Montant du paiement", class: "block text-gray-700" %>
       <% if @order.product_orders.any? %>
-        <% total_amount = @order.product_orders.sum { |product_order| product_order.product.price_entries.order(created_at: :desc).first.price_catalog.price } %>
-        <%= f.text_field :payment_amount, value: "#{total_amount} €", class: "w-full p-2 border rounded" %>
+        <%= f.text_field :payment_amount, value: "#{@total_amount} €", class: "w-full p-2 border rounded" %>
       <% else %>
         <%= f.text_field :payment_amount, value: "Non défini", class: "w-full p-2 border rounded" %>
       <% end %>
     </div>
 
+
+    <!-- Total -->
+    <div class="mb-4">
+      <%= f.label :total_payment, "Montant Total", class: "block text-gray-700" %>
+      <%= f.text_field :total_payment, value: "#{@total_payment} €", class: "w-full p-2 border rounded" %>
+    </div>
+
     <!-- Type de paiement -->
+
     <div class="mb-4">
       <%= f.label :payment_type, "Type de paiement", class: "block text-gray-700" %>
       <%= f.select :payment_type, Payment.payment_types.keys.map { |key| [key.humanize, key] }, { selected: @payment.payment_type }, class: "w-full p-2 border rounded" %>
-    </div>
-
-    <div class="mb-4">
-      <%= f.label :status, @payment.status, class: "block text-gray-700 font-semibold" %>
     </div>
 
     <!-- Message de validation du paiement -->

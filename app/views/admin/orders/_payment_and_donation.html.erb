@@ -35,6 +35,10 @@
     <div id="total_price" class="px-6 py-4 text-right font-bold">
       Total : 
       <%= @order.product_orders.sum { |product_order| product_order.product.price_entries.order(created_at: :desc).first&.price_catalog&.price || 0 } %> €
+      </div>
+    <div id="total-donation" class="px-6 py-4 text-right font-bold">
+      Total don :
+      <%= @total_donation %> €
     </div>
   </div>
 <% end %>
@@ -48,13 +52,15 @@
   <p class="text-center text-gray-700">Aucun produit dans votre commande pour le moment.</p>
 <% end %>
 
-<!-- Section pour les dons -->
-<div class="flex flex-col items-center w-full mb-6">
-  <div class="flex items-center gap-4 justify-center mb-6">
-    <label for="donation_amount" class="text-gray-800 font-medium">Faire un don :</label>
-    <%= number_field_tag :donation_amount, nil, min: 1, step: 1, placeholder: "Montant", class: "border-gray-300 rounded px-3 py-1 w-24 text-center" %>
-    <%= button_to 'Donner', admin_payment_path, method: :post, class: "bg-[#1F5C55] text-white font-bold py-2 px-4 rounded hover:bg-[#194A45]" %>
+<%= form_with(model: @order, url: admin_user_order_path(@order.user, @order), method: :patch,data: {turbo: true} ,local: true) do |form| %>
+  <!-- Section pour les dons -->
+  <div class="flex flex-col items-center w-full mb-6">
+    <div class="flex items-center gap-4 justify-center mb-6">
+      <%= form.label :donation, "Faire un don :", class: "text-gray-800 font-medium" %>
+      <%= form.number_field :donation, min: 0, step: 1, placeholder: "Montant", class: "border-gray-300 rounded px-3 py-1 w-24 text-center" %>
+      <div class="actions">
+        <%= form.submit "Ajouter le don", class: "bg-[#1F5C55] text-white font-bold py-2 px-4 rounded hover:bg-[#194A45]" %>
+      </div>
+    </div>
   </div>
-</div>
-</div>
-</div>
+<% end %>
