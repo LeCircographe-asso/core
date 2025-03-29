@@ -1,25 +1,29 @@
 <% content_for :title, "Le Circographe - L'association" %>
 
 <!-- Conteneur pour "L'association" et la deuxième section -->
-    <section class="text-center mb-12 bg-white/70 py-6 rounded-lg shadow-md">
+    <section class="text-center mb-12 bg-white/70 py-6 rounded-lg shadow-md fade-in">
         <h1 class="text-3xl sm:text-4xl lg:text-5xl font-bold text-black">Bienvenue au Circographe</h1>
     </section>
 
-    <section class="py-6 sm:py-8 lg:py-10 bg-white/70 rounded-lg backdrop-blur-none sm:backdrop-blur-sm px-4 sm:px-6 lg:px-8">
+    <section class="py-6 sm:py-8 lg:py-10 bg-white/70 rounded-lg backdrop-blur-none sm:backdrop-blur-sm px-4 sm:px-6 lg:px-8 fade-in">
         <h2 class="text-2xl sm:text-3xl font-bold text-black mb-8 text-center">Le lieu</h2>
         
-        <div class="max-w-3xl mx-auto space-y-6">
+        <div class="max-w-3xl mx-auto space-y-6 fade-in">
             <div class="text-base sm:text-lg text-gray-800">
                 Le Circographe est un lieu unique où se rencontrent les arts du cirque et les arts graphiques. Situé au cœur de la ville, notre espace est dédié à la création, l'apprentissage et le partage artistique.
             </div>
 
-            <div class="text-base sm:text-lg text-gray-800">
+            <div class="text-base sm:text-lg text-gray-800 fade-in">
                 Notre association s'engage à promouvoir ces disciplines artistiques à travers des cours, des stages, des événements et des expositions. Nous créons un environnement propice à l'épanouissement créatif et au développement personnel de chacun.
             </div>
         </div>
     </section>
 
 <!-- Cards restent en dessous -->
+<div class= "fade-in">
 <%= render 'shared/card_reverse', title: "Le cirque", description: "Rediviva urbem post aeternam forte quas in Bellona clades motus ex et et minimis in supra et aeternam anno eo insperatos utinam eois diutius primordiis diutius iuge narravimus temptentur et bella anno consurgunt generalibus decimo sexto quas motus narravimus insperatos generalibus post sexto sexto utinam in Bellona perfidia primordiis obliterasset.", image: "home2.webp", alt_text: "hello", link: "/pages/le_cirque", button_text: "Le cirque" %>
+</div>
 
+<div class= "fade-in">
 <%= render 'shared/card', title: "Les arts graphiques", description: "Supercilia tardius enim ac semitas adulta adcursu quaeque sui sed adcursu rumores sui circumfusus gravissimos pertulere circumfusus sui superatis tuetur circumfusus venissent fluvii ad accolas adcursu adulta venissent properantes labores ut arbitrabantur enim evadebant vastare gravissimos paulisper tuetur pro nocte vastare accolas supercilia verticosi summitates venissent evadebant vigore pro nimia.", image: "home3.webp", alt_text: "hello", link: "/pages/le_graff", button_text: "Les arts graphiques" %>
+</div>
