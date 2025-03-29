@@ -28,8 +28,6 @@ module Admin
 
         @payment = Payment.new(payment_params)
         
-        
-
         if @payment.save
           puts"#{@payment.id}"
           puts"#{@payment.inspect}"
