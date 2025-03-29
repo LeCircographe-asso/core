@@ -1,11 +1,11 @@
 
 <% content_for :title, "Le Circographe - Contact" %>
 
-<section class="min-h-screen">
-    <div class="flex flex-col min-h-screen bg-black/60 rounded-lg mb-12">
-        <div class="container flex flex-col flex-1 px-6 py-12 mx-auto">
-            <div class="flex-1 lg:flex lg:items-center lg:-mx-6">
-                <div class="text-white lg:w-1/2 lg:mx-6">
+<section class="min-h-screen fade-in">
+    <div class="flex flex-col min-h-screen bg-black/60 rounded-lg mb-12 fade-in">
+        <div class="container flex flex-col flex-1 px-6 py-12 mx-auto fade-in">
+            <div class="flex-1 lg:flex lg:items-center lg:-mx-6 fade-in">
+                <div class="text-white lg:w-1/2 lg:mx-6 fade-in">
                     <h1 class="text-2xl font-semibold capitalize lg:text-3xl">Contactez-nous</h1>
 
                     <p class="max-w-xl mt-6">
@@ -18,10 +18,10 @@
 
                     <%= link_to "FAQ", page_path('faq'), class: "px-6 py-3 mt-6 tracking-wide text-white font-bold bg-[#1F5C55] border-2 border-[#1F5C55] rounded-lg shadow-lg hover:bg-gray-100 hover:text-[#1F5C55] hover:border-[#1F5C55] transition-colors duration-300 inline-block" %>
 
-                    <div class="mt-6 md:mt-8">
+                    <div class="mt-6 md:mt-8 fade-in">
                         <h3 class="text-gray-300 ">Suivez-nous</h3>
 
-                        <div class="flex mt-4 -mx-1.5 ">
+                        <div class="flex mt-4 -mx-1.5 fade-in">
                             <%= link_to "https://www.facebook.com/lecircographe/?locale=fr_FR", target: "_blank" do %>
                             <svg class="w-8 h-8 mx-2" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <path d="M7 10.2222V13.7778H9.66667V20H13.2222V13.7778H15.8889L16.7778 10.2222H13.2222V8.44444C13.2222 8.2087 13.3159 7.9826 13.4826 7.81591C13.6493 7.64921 13.8754 7.55556 14.1111 7.55556H16.7778V4H14.1111C12.9324 4 11.8019 4.46825 10.9684 5.30175C10.1349 6.13524 9.66667 7.2657 9.66667 8.44444V10.2222H7Z" fill="currentColor" />
@@ -41,8 +41,8 @@
                     </div>
                 </div>
 
-                <div class="mt-8 lg:w-1/2 lg:mx-6">
-                    <div class="w-full px-8 py-10 mx-auto overflow-hidden bg-white/95 shadow-2xl rounded-xl lg:max-w-xl">
+                <div class="mt-8 lg:w-1/2 lg:mx-6 fade-in">
+                    <div class="w-full px-8 py-10 mx-auto overflow-hidden bg-white/95 shadow-2xl rounded-xl lg:max-w-xl fade-in">
                         <h1 class="text-xl font-medium text-gray-700">Formulaire de contact</h1>
 
                         <p class="mt-2 text-gray-500">
@@ -50,19 +50,19 @@
                             Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quos.
                         </p>
 
-                        <form class="mt-6" action="/submit_contact" method="post">
+                        <form class="mt-6 fade-in" action="/submit_contact" method="post">
                             <%= hidden_field_tag :authenticity_token, form_authenticity_token %>
-                            <div class="flex-1">
+                            <div class="flex-1 fade-in">
                                 <label class="block mb-2 text-sm text-gray-600">Nom complet</label>
                                 <input type="text" name="contact[name]" placeholder="Nom Prénom" class="block w-full px-5 py-3 mt-2 text-gray-700 bg-white border border-gray-200 rounded-md focus:border-blue-400 focus:ring-blue-300 focus:ring-opacity-40 focus:outline-none focus:ring" required />
                             </div>
 
-                            <div class="flex-1 mt-6">
+                            <div class="flex-1 mt-6 fade-in">
                                 <label class="block mb-2 text-sm text-gray-600">Adresse email</label>
                                 <input type="email" name="contact[email]" placeholder="adresse@example.com" class="block w-full px-5 py-3 mt-2 text-gray-700 bg-white border border-gray-200 rounded-md focus:border-blue-400 focus:ring-blue-300 focus:ring-opacity-40 focus:outline-none focus:ring" required />
                             </div>
 
-                            <div class="flex-1 mt-6">
+                            <div class="flex-1 mt-6 fade-in">
                                 <label class="block mb-2 text-sm text-gray-600">Catégorie</label>
                                 <select name="contact[category]" class="block w-full px-5 py-3 mt-2 text-gray-700 bg-white border border-gray-200 rounded-md focus:border-blue-400 focus:ring-blue-300 focus:ring-opacity-40 focus:outline-none focus:ring" required>
                                     <option value="" disabled selected>Sélectionnez une catégorie</option>
@@ -73,12 +73,12 @@
                                 </select>
                             </div>
 
-                            <div class="w-full mt-6">
+                            <div class="w-full mt-6 fade-in">
                                 <label class="block mb-2 text-sm text-gray-600">Message</label>
                                 <textarea name="contact[message]" class="block w-full h-32 px-5 py-3 mt-2 text-gray-700 placeholder-gray-400 bg-white border border-gray-200 rounded-md md:h-48 focus:border-blue-400 focus:ring-blue-300 focus:ring-opacity-40 focus:outline-none focus:ring" placeholder="Votre message" required></textarea>
                             </div>
 
-                            <div class="form-group mt-6">
+                            <div class="form-group mt-6 fade-in">
                                 <button type="submit" class="px-6 py-2 tracking-wide text-white font-bold bg-[#1F5C55] border-2 border-[#1F5C55] rounded-lg shadow-lg hover:bg-gray-100 hover:text-[#1F5C55] hover:border-[#1F5C55] transition-colors duration-300 cursor-pointer">Envoyer</button>
                             </div>
                         </form>
