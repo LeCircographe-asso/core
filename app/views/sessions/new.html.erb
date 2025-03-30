@@ -26,13 +26,13 @@
             </div>
 
             <!-- Champ Mot de passe -->
-            <div class="relative">
+            <div class="relative" data-controller="password">
                 <div class="flex justify-between mb-2">
                     <label for="password" class="text-sm text-gray-800">Mot de passe</label>
                     <%= link_to "Mot de passe oublié ?", new_password_path, class: "text-sm text-gray-400 hover:text-[#5836a5] hover:underline focus:outline-[#5836a5] outline-offset-1" %>
                 </div>
                 <%= form.password_field :password, required: true, placeholder: "Mot de passe", maxlength: 72, id: "password", class: "block w-full px-4 py-2 text-black placeholder-gray-400 bg-white border border-gray-200 rounded-lg focus:border-[#5836a5] focus:ring-[#5836a5] focus:outline-none focus:ring focus:ring-opacity-40 password-field", style: "background-color: white;" %>
-                <span class="toggle-password absolute inset-y-0 right-0 flex items-center pr-3 mt-8" onclick="togglePassword('password', 'password-icon')">
+                <span class="toggle-password absolute inset-y-0 right-0 flex items-center pr-3 mt-7" data-action="click->password#toggle">
                     <i class="fa fa-eye text-gray-500" id="password-icon"></i>
                 </span>
             </div>
@@ -51,20 +51,3 @@
     </div>
 </div>
 
-<!-- Script pour toggle mot de passe -->
-<script>
-    function togglePassword(fieldId, iconId) {
-        const field = document.getElementById(fieldId);
-        const icon = document.getElementById(iconId);
-
-        if (field.type === "password") {
-            field.type = "text";
-            icon.classList.remove("fa-eye");
-            icon.classList.add("fa-eye-slash");
-        } else {
-            field.type = "password";
-            icon.classList.remove("fa-eye-slash");
-            icon.classList.add("fa-eye");
-        }
-    }
-</script>
