@@ -24,7 +24,8 @@ module Admin
       end
       
       @total_donation = @order.donation 
-      @total_payment = @total_amount + @total_donation
+      @total_payment = (@total_amount || 0) + (@total_donation || 0)
+
 
     end 
     
