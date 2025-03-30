@@ -2,6 +2,7 @@ class User < ApplicationRecord
   attr_accessor :cgu, :privacy_policy
   # after_create :assign_membership
   after_create :generate_unsubscribe_token
+  after_create :welcome_send
 
   enum :system_role, %i[ super_admin admin volunteer user_connected ]
 
@@ -32,7 +33,7 @@ class User < ApplicationRecord
   validates :cgu, acceptance: { message: "Vous devez accepter les CGU pour continuer." }
   validates :privacy_policy, acceptance: { message: "Vous devez accepter la politique de confidentialité pour continuer." }
 
-  after_create :welcome_send
+
 
   # Génère un token de réinitialisation de mot de passe et sauvegarde l'utilisateur
   def generate_password_reset_token!
