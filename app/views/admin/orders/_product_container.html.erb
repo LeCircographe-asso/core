@@ -1,0 +1,9 @@
+<div id="product-container" data-controller="product-container">
+  <div id="product-container">
+    <% if @order.products.any? { |product| product.product_type == "adhesion" } || @has_valid_membership %>
+      <%= render "admin/orders/product_subscription" %>
+    <% else %>
+      <%= render "admin/orders/product_membership" %>
+    <% end %>
+  </div>
+</div>

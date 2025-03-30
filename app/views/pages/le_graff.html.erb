@@ -1,11 +1,11 @@
 <% content_for :title, "Le Circographe - Les Arts Graphiques" %>
 
-    <section class="text-center mb-12 bg-white/70 py-6 rounded-lg shadow-md">
+    <section class="text-center mb-12 bg-white/70 py-6 rounded-lg shadow-md fade-in">
         <h1 class="text-4xl font-bold text-black">Les Arts Graphiques</h1>
     </section>
 
-    <div class="flex justify-center mb-8">
-        <div class="bg-white/70 shadow-md rounded-lg p-6 w-3/4">
+    <div class="flex justify-center mb-8 fade-in">
+        <div class="bg-white/70 shadow-md rounded-lg p-6 w-3/4 fade-in">
             <p class="text-gray-600 text-center">
                 Sic de isto et tuius peruchti ad actum ipsum, ut si dico "Ego autem vadam lavari, ut mens mea in statu naturae conformiter."
                 Cum igitur impediantur turbulentur aut dolore videamus.
@@ -13,10 +13,10 @@
         </div>
     </div>
 
-    <div class="flex justify-center mb-8">
+    <div class="flex justify-center mb-8 fade-in">
         <%= link_to "Devenir Membre", page_path('become_member'), class: "px-4 py-2 tracking-wide text-white font-bold bg-[#1F5C55] border-2 border-[#1F5C55] rounded-lg shadow-lg hover:bg-gray-100 hover:text-[#1F5C55] hover:border-[#1F5C55] hover:shadow-lg transition-colors duration-300" %>
     </div>
 
-    <div class="bg-white/70 rounded-lg shadow-md mb-12 p-6">
+    <div class="bg-white/70 rounded-lg shadow-md mb-12 p-6 fade-in">
         <%= render "shared/carousel_image", images: ["graff-img1.webp", "graff.jpg", "home3.webp", "home1.webp"] %>
     </div>
