@@ -7,7 +7,8 @@
     <% end %>
   </div>
 </div>
-
+<%= turbo_frame_tag "product_container" %>
+ <% if @order.products.any? { |product| product.product_type == "adhesion" } || @has_valid_membership %>
 <%= render "payment_and_donation" %>
 
-<%= turbo_frame_tag "product_container" %>
+<% end %>
