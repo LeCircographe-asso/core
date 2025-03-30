@@ -13,8 +13,10 @@
     <!-- Date de création du paiement -->
     <div class="mb-4">
       <%= f.label :payment_date, "Date de création", class: "block text-gray-700" %>
-      <%= f.text_field :payment_date, value: @payment.created_at.strftime("%d-%m-%Y %H:%M:%S"), class: "w-full p-2 border rounded" %>
+      <p class="text-gray-900"><%= @payment.created_at.strftime("%d-%m-%Y %H:%M:%S") %></p>
+      <%= f.hidden_field :payment_date, value: @payment.created_at.strftime("%Y-%m-%d %H:%M:%S") %>
     </div>
+
 
   <!-- Donation -->
     <div class="mb-4">
@@ -36,7 +38,8 @@
     <!-- Total -->
     <div class="mb-4">
       <%= f.label :total_payment, "Montant Total", class: "block text-gray-700" %>
-      <%= f.text_field :total_payment, value: "#{@total_payment} €", class: "w-full p-2 border rounded" %>
+      <p class="text-gray-900"><%= @total_payment %> €</p>
+      <%= f.hidden_field :total_payment, value: @total_payment %>
     </div>
 
     <!-- Type de paiement -->
