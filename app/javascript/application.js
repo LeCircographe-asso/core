@@ -26,3 +26,5 @@ if (typeof window.initFlowbite !== 'function') {
 document.addEventListener("turbo:load", () => {
     window.initFlowbite();
 });
+import "trix"
+import "@rails/actiontext"
