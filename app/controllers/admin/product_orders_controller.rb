@@ -13,13 +13,18 @@ module Admin
 
       @products_membership = Product.where(product_type: "adhésion")
       @product_subscription = Product.where(product_type: "cotisation")
+      
         if @product_order.save
           respond_to do |format|
             format.html { redirect_to admin_user_orders_path(@user), notice: "Produit ajouté à la commande avec succès." }
             format.turbo_stream {
-              render turbo_stream:
-                turbo_stream.replace("product-container", partial: determine_product_partial, locals: { order: @order, user: @user })
-            }
+              render turbo_stream:[
+                turbo_stream.replace("product-container", partial: determine_product_partial, locals: { order: @order, user: @user }),
+                turbo_stream.replace("total_price", partial: "admin/orders/total_price", locals: { order: @order }), # Mettre à jour le total
+                turbo_stream.replace("total-donation",partial: "admin/orders/total_donation",locals: { order: @order, user: @user })
+            ]
+          }
+            
           end
         else
           respond_to do |format|

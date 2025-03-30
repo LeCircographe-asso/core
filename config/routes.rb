@@ -14,6 +14,7 @@ Rails.application.routes.draw do
     resources :blogs
     resources :dashboard, only: %i[index], path: "dashboard"
     resource :opening_hours, only: %i[show edit update]
+    resources :donations ,only: %i[create]
     resources :users do
       resources :orders, only: %i[create show index update]do
         resources :product_orders, only: [:destroy]
@@ -29,7 +30,6 @@ Rails.application.routes.draw do
     resources :product_orders, only: %i[create update]
     resources :products, only: %i[index]
     resources :payments, only: %i[show create new update index]
-
     resources :exports, only: %i[index] do
       get :newsletter_subscribed, on: :collection
     end
