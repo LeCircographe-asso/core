@@ -9,3 +9,5 @@ pin_all_from "app/javascript/controllers", under: "controllers"
 pin "home_animations", to: "home_animations.js"
 pin "trix"
 pin "@rails/actiontext", to: "actiontext.esm.js"
+pin "global_animations", to: "global_animations.js"
+
