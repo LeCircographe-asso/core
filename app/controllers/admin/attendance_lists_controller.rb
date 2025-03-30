@@ -1,6 +1,6 @@
 module Admin
   class AttendanceListsController < BaseController
-    before_action :set_attendance_list, only: [ :show, :edit, :update ]
+    before_action :set_attendance_list, only: [ :show, :edit, :update, :destroy ]
 
     def index
       @attendance_list = AttendanceList.all.order(created_at: :desc)
@@ -36,6 +36,11 @@ module Admin
       end
     end
 
+    def destroy
+      @attendance_list.destroy
+      redirect_to admin_attendance_lists_path, notice: 'La liste a été supprimée avec succès.'
+    end
+
     private
 
     def set_attendance_list
@@ -43,7 +48,7 @@ module Admin
     end
 
     def attendance_list_params
-      params.require(:attendance_list).permit(:list_type, :start_date, :status)
+      params.require(:attendance_list).permit(:status, :list_type, :start_date, :status)
     end
   end
 end
