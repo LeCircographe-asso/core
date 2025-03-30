@@ -24,6 +24,7 @@ class PasswordsController < ApplicationController
 
 
   def edit
+    @user = User.find_by(password_reset_token: params[:token])
     render :edit
   end
 

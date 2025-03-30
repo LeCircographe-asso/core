@@ -1,4 +1,4 @@
 class ApplicationMailer < ActionMailer::Base
-  default from: "no-reply@lecircographe.fr"
+  default from: "circographe.mail@gmail.com"
   layout "mailer"
 end

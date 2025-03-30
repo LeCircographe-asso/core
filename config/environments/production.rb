@@ -52,26 +52,25 @@ Rails.application.configure do
   config.active_job.queue_adapter = :solid_queue
   config.solid_queue.connects_to = { database: { writing: :queue } }
 
-
   # Ignore bad email addresses and do not raise email delivery errors.
   # Set this to true and configure the email server for immediate delivery to raise delivery errors.
-  # config.action_mailer.raise_delivery_errors = false
+  config.action_mailer.raise_delivery_errors = true
+  config.action_mailer.delivery_method = :mailjet
+  config.action_mailer.default_options = { from: "circographe.mail@gmail.com" }
 
   # Set host to be used by links generated in mailer templates.
-  config.action_mailer.default_url_options = { host: "htttps://lecircographe.fr" }
+  config.action_mailer.default_url_options = { host: "http://87.106.173.45:3001" }
+  Rails.application.routes.default_url_options[:host] = "http://87.106.173.45:3001"
 
-  # Specify outgoing SMTP server. Remember to add smtp/* credentials via rails credentials:edit.
-  config.action_mailer.delivery_method = :smtp
-  config.action_mailer.smtp_settings = {
-  user_name => ENV['MAILJET_LOGIN'],
-  password => ENV['MAILJET_PWD'],
-  domain => 'monsite.fr',
-  address => 'in-v3.mailjet.com',
-  port => 587,
-  authentication => :plain,
-  enable_starttls_auto: true
+  config.action_mailer.delivery_method = :mailjet
+  config.action_mailer.mailjet_settings = {
+  api_key: ENV['MAILJET_API_PUBLIC'],
+  secret_key: ENV['MAILJET_API_SECRET']
   }
-  # Enable locale fallbacks for I18n (makes lookups for any locale fall back to
+
+
+
+  # # Enable locale fallbacks for I18n (makes lookups for any locale fall back to
   # the I18n.default_locale when a translation cannot be found).
   config.i18n.fallbacks = true
 

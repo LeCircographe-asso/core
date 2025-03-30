@@ -45,6 +45,8 @@ gem "actionmailer"
 
 gem 'mailjet'
 
+gem 'letter_opener'
+
 gem 'whenever', require: false
 
 gem "faker"

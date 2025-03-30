@@ -38,8 +38,8 @@ module Admin
       begin
         User.transaction do
           if @user.save
-            # @user.generate_password_reset_token!
-            # UserMailer.welcome_by_admin(@user, edit_password_url(token: @user.password_reset_token)).deliver_now
+            @user.generate_password_reset_token!
+            UserMailer.welcome_by_admin(@user, edit_password_url(token: @user.password_reset_token))
             @order = @user.orders.new
             @user_membership = UserMembership.create!(user: @user, membership_id: @default_membership.id)
 

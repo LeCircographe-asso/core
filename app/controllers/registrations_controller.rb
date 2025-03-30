@@ -11,8 +11,8 @@ class RegistrationsController < ApplicationController
   def create
     @user = User.new(user_params)
     if @user.save
-      # UserMailer.welcome_email(@user).deliver_now
-      # redirect_to @user, notice: "Utilisateur créé avec succès."
+      UserMailer.welcome_email(@user).deliver_now
+      redirect_to @user, notice: "Utilisateur créé avec succès."
       start_new_session_for @user
       redirect_to root_path, notice: "Inscription réussie !"
     else
