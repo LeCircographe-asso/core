@@ -37,21 +37,26 @@ Rails.application.configure do
   # Make template changes take effect immediately.
   config.action_mailer.perform_caching = false
   config.action_mailer.perform_deliveries = true
+
   config.action_mailer.raise_delivery_errors = true
+  config.action_mailer.deliver_later_queue_name = "default"
+  config.active_job.queue_adapter = :async
+
   # Set localhost to be used by links generated in mailer templates.
-  config.action_mailer.default_url_options = { host: '127.0.0.1:3000' }
+config.action_mailer.default_options = { from: "no-reply@example.com" }
 
-  config.action_mailer.delivery_method = :smtp
-  config.action_mailer.smtp_settings = {
-    address: 'in-v3.mailjet.com',
-    port: 587,
-    domain: 'gmail.com',
-    user_name: ENV['GMAIL_LOGIN'], 
-    password: ENV['GMAIL_PWD'],  
-    authentication: 'plain',
-    enable_starttls_auto: true
-  }
+config.action_mailer.delivery_method = :mailjet
+config.action_mailer.mailjet_settings = {
+  api_key: ENV['MAILJET_API_KEY'],
+  secret_key: ENV['MAILJET_API_SECRET']
+}
 
+
+  config.action_mailer.logger = ActiveSupport::Logger.new(STDOUT)
+
+  # Désactiver temporairement la vérification SSL pour tester
+
+  # Nom de la file d'attente pour MailDeliveryJob
   Rails.application.routes.default_url_options[:host] = "localhost:3000"
 
   # Print deprecation notices to the Rails logger.

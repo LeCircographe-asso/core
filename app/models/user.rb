@@ -32,38 +32,28 @@ class User < ApplicationRecord
   validates :email_address, presence: true, uniqueness: true
   validates :cgu, acceptance: { message: "Vous devez accepter les CGU pour continuer." }
   validates :privacy_policy, acceptance: { message: "Vous devez accepter la politique de confidentialité pour continuer." }
-
+  validates :password_reset_token, presence: true, if: -> { password_reset_sent_at.present? }
 
 
   # Génère un token de réinitialisation de mot de passe et sauvegarde l'utilisateur
   def generate_password_reset_token!
-    Rails.logger.info "Génération du token pour #{self.email_address}"
-    Rails.logger.info "Utilisateur créé : #{@user.inspect}"
+    Rails.logger.info "----- Génération du token -----"
+    Rails.logger.info "Email de l'utilisateur : #{self.email_address}"
+  
+    # Génération du token et mise à jour de l'horodatage
     self.password_reset_token = SecureRandom.urlsafe_base64
     self.password_reset_sent_at = Time.current
-    Rails.logger.info "Token : #{self.password_reset_token}, Sent at : #{self.password_reset_sent_at}"
+  
+    # Journaliser les valeurs pour identifier les problèmes potentiels
+    Rails.logger.info "Token généré : #{self.password_reset_token}"
+    Rails.logger.info "Horodatage de l'envoi : #{self.password_reset_sent_at}"
+  
     save!
+    Rails.logger.info "Reset token et timestamp enregistrés avec succès pour l'utilisateur #{self.email_address}."
   end
 
   def password_reset_token_valid?
     password_reset_sent_at.present? && password_reset_sent_at > 2.hours.ago
-  end
-
-  def welcome_send
-    return if user_connected?
-
-    if created_by_admin?
-      UserMailer.welcome_by_admin(self, reset_password_url).deliver_now
-    end
-    UserMailer.welcome_email(self).deliver_now
-  end
-
-  def formatted_registration_date
-    if authenticated?
-      user_memberships.order(:created_at).last.created_at.strftime("%d/%m/%Y")
-    else
-      "Pas encore membre"
-    end
   end
 
   def reset_password!(password, password_confirmation)
@@ -72,6 +62,23 @@ class User < ApplicationRecord
     self.password = password
     self.password_confirmation = password_confirmation
     save!
+  end
+
+  def welcome_send
+    return if user_connected?
+
+    if created_by_admin?
+      UserMailer.welcome_by_admin(self, reset_password_url).deliver_later
+    end
+    UserMailer.welcome_email(self).deliver_later
+  end
+
+  def formatted_registration_date
+    if authenticated?
+      user_memberships.order(:created_at).last.created_at.strftime("%d/%m/%Y")
+    else
+      "Pas encore membre"
+    end
   end
 
   def clear_password_reset_token!

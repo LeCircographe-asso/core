@@ -23,6 +23,8 @@ module Circographe
     #
     # config.time_zone = "Central Time (US & Canada)"
     # config.eager_load_paths << Rails.root.join("extras")
-    # config.action_mailer.default_url_options = { host: "circographe.com" }
+    config.action_mailer.default_url_options = { host: "127.0.0.1:3000" }
+
+    Rails.application.config.active_job.queue_adapter = :async
   end
 end

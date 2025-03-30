@@ -22,10 +22,10 @@ class PasswordsController < ApplicationController
       # Si l'utilisateur a été créé par un administrateur
       if user.created_by_admin?
         Rails.logger.debug "SENDING welcome_by_admin EMAIL to USER: #{user.email_address}"
-        PasswordsMailer.welcome_by_admin(user).deliver_now
+        PasswordsMailer.welcome_by_admin(user).deliver_later
       else
         Rails.logger.debug "SENDING reset_password EMAIL to USER: #{user.email_address}"
-        PasswordsMailer.reset_password(user).deliver_now
+        PasswordsMailer.reset_password(user).deliver_later
       end
   
       # Redirection en cas de succès
