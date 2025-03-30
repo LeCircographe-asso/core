@@ -10,6 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
+
 ActiveRecord::Schema[8.0].define(version: 2025_03_27_153325) do
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.string "name", null: false
@@ -135,6 +136,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_03_27_153325) do
     t.integer "user_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.decimal "donation"
     t.index ["user_id"], name: "index_orders_on_user_id"
   end
 
@@ -147,6 +149,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_03_27_153325) do
     t.datetime "updated_at", null: false
     t.integer "user_id", null: false
     t.integer "order_id"
+    t.decimal "donation"
+    t.decimal "total_payment"
     t.index ["user_id"], name: "index_payments_on_user_id"
   end
 
