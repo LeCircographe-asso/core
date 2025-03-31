@@ -21,9 +21,6 @@ module Admin
     end
     def edit
       @event = Event.find params[:id]
-      if !Current.user.has_privileges?
-        redirect_to root_path, alert: "Réservé aux administrateurs"
-      end
     end
     def update
       @event = Event.find params[:id]

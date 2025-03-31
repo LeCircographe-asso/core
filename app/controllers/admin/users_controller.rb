@@ -38,14 +38,12 @@ module Admin
       begin
         User.transaction do
           if @user.save
-            # @user.generate_password_reset_token!
-            # UserMailer.welcome_by_admin(@user, edit_password_url(token: @user.password_reset_token)).deliver_now
             @order = @user.orders.new
             @user_membership = UserMembership.create!(user: @user, membership_id: @default_membership.id)
 
             if @order.save
               redirect_to admin_user_order_path(id: @order, user_id: @user),
-              notice: "User was successfully created. A mail has been sent!"
+              notice: "Utilisateur créé avec succès. Un mail a été envoyé !"
               Rails.logger.info "Redirection vers : #{admin_user_order_path(id: @order.id, user_id: @user.id)}"
             else
               Rails.logger.info "User, Order et UserMembership créés avec succès"
