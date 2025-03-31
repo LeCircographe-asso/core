@@ -3,11 +3,11 @@ ActiveRecord::Base.connection.disable_referential_integrity do
   PriceEntry.destroy_all
   PriceCatalog.destroy_all
   Product.destroy_all
+  Membership.destroy_all
   User.destroy_all
-  
+  Tag.destroy_all
+  Tag.destroy_all
 end
-
-puts "Suppression des données existantes... OK"
 
 # Le Circographe ASCII Art Logo
 puts %(
@@ -109,6 +109,8 @@ puts "All passwords are set to: 123456"
 
 
 
+puts "Suppression des données existantes... OK"
+
 price_catalogs = [
   { active: true, price: 1.0 },
   { active: true, price: 10.0 },
@@ -137,8 +139,7 @@ products = [
   { product_name: "Pass journée", product_type: "cotisation" },
   { product_name: "Cotisation 10 séances", product_type: "cotisation" },
   { product_name: "Cotisation trimestrielle", product_type: "cotisation" },
-  { product_name: "Cotisation annuelle", product_type: "cotisation" },
-  { product_name: "Donation", product_type: "cotisation" }
+  { product_name: "Cotisation annuelle", product_type: "cotisation" }
 ]
 puts "Création des produits..."
 
@@ -227,3 +228,12 @@ puts "Seeds completed! Created:"
 puts "- #{Product.count} products"
 puts "- #{PriceEntry.count} price entries"
 puts "- #{Event.count} events"
+
+tags = %i[ evenement article newslister]
+tags.each do |tag|
+  Tag.create(name: tag.to_s)
+end
+
+# pour pouvoir afficher les images executer en consol :
+# sudo apt install libvips
+# pour modifier comment l'image qui s affiche pour les fronteux, c'est dans app/views/active_storage/blobs/_blob.html.erb

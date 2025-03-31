@@ -2,7 +2,7 @@
   <div class="max-w-4xl mx-auto">
     <!-- En-tête -->
     <div class="bg-white shadow-lg rounded-lg overflow-hidden mb-6">
-      <div class="bg-gradient-to-r from-purple-600 to-indigo-600 px-6 py-4">
+      <div class="bg-gradient-to-r from-[#1F5C55] to-[#194A45] px-6 py-4">
         <h1 class="text-2xl font-bold text-white flex items-center gap-2">
           Profil #<%= @user.id %>
           <span class="text-sm bg-white/20 px-2 py-1 rounded-full"><%= @user.system_role.humanize %></span>
@@ -16,23 +16,19 @@
           <!-- Colonne gauche -->
           <div class="space-y-4">
             <h2 class="text-lg font-semibold text-gray-900 border-b pb-2">Informations personnelles</h2>
-            
             <div class="space-y-3">
               <div class="flex items-center">
                 <span class="text-gray-500 w-32">Email:</span>
                 <span class="text-gray-900"><%= @user.email_address %></span>
               </div>
-              
               <div class="flex items-center">
                 <span class="text-gray-500 w-32">Date de naissance:</span>
                 <span class="text-gray-900"><%= @user.birthdate&.strftime("%d/%m/%Y") || "Non renseigné" %></span>
               </div>
-
               <div class="flex items-center">
                 <span class="text-gray-500 w-32">Téléphone:</span>
                 <span class="text-gray-900"><%= @user.phone_number || "Non renseigné" %></span>
               </div>
-
               <div class="flex items-start">
                 <span class="text-gray-500 w-32">Adresse:</span>
                 <div class="text-gray-900">
@@ -41,24 +37,20 @@
                   <%= @user.country %>
                 </div>
               </div>
-              
               <div class="flex items-start">
                 <span class="text-gray-500 w-32">Profession:</span>
                 <span class="text-gray-900"><%= @user.occupation || "Non renseignée" %></span>
               </div>
-              
               <div class="flex items-start">
                 <span class="text-gray-500 w-32">Disciplines:</span>
                 <span class="text-gray-900"><%= @user.specialty || "Non renseignées" %></span>
               </div>
-              
               <div class="flex items-center">
                 <span class="text-gray-500 w-32">Newsletter:</span>
                 <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium <%= @user.newsletter_subscribed ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800' %>">
                   <%= @user.newsletter_subscribed ? "Inscrit" : "Non inscrit" %>
                 </span>
               </div>
-              
               <div class="flex items-start">
                 <span class="text-gray-500 w-32">Implication:</span>
                 <span class="text-gray-900"><%= @user.get_involved || "Non renseignée" %></span>
@@ -69,7 +61,6 @@
           <!-- Colonne droite -->
           <div class="space-y-4">
             <h2 class="text-lg font-semibold text-gray-900 border-b pb-2">Adhésion & Activités</h2>
-            
             <div class="space-y-3">
               <div class="flex items-center">
                 <span class="text-gray-500 w-32">Statut:</span>
@@ -86,24 +77,24 @@
 
               <% if @user.user_memberships.exists? %>
                 <% latest_membership = @user.user_memberships.order(created_at: :desc).first %>
-                
                 <div class="flex items-center">
                   <span class="text-gray-500 w-32">Membre depuis:</span>
-                  <span class="text-gray-900"><%= @user.user_memberships.order(:created_at).first.created_at.strftime("%d/%m/%Y") %></span>
+                  <span class="text-gray-900"><%= @user.user_memberships.order(:created_at).first.created_at.strftime("%d/%m/%Y")  %></span>
                 </div>
-                
                 <div class="flex items-center">
+                  <span class="text-gray-500 w-32">Membre jusqu'a:</span>
+                  <span class="text-gray-900"><%= @user.user_memberships.order(:created_at).first.created_at.advance(years: 1).strftime("%d/%m/%Y") %></span>
+                </div>
+                <div class="flex items-center mb-20">
                   <span class="text-gray-500 w-32">Type:</span>
                   <span class="text-gray-900"><%= latest_membership.membership.type_name %></span>
                 </div>
-                
                 <div class="flex items-center">
                   <span class="text-gray-500 w-32">Cotisation:</span>
                   <span class="text-gray-900">
                     <%= @user.orders&.last&.product_orders&.last&.product&.product_name || "Aucune cotisation" %>
                   </span>
                 </div>
-
                 <div class="flex items-center">
                   <span class="text-gray-500 w-32">État:</span>
                   <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium 
@@ -113,7 +104,6 @@
                     <%= latest_membership.status == "active" ? "Actif" : latest_membership.status.capitalize %>
                   </span>
                 </div>
-                
                 <% if latest_membership.end_date.present? %>
                   <div class="flex items-center">
                     <span class="text-gray-500 w-32">Expire le:</span>
@@ -137,24 +127,39 @@
           <%= button_to "Souscrire à une adhésion", admin_user_orders_path(@user), 
               method: :post, 
               params: {order: { user_id: @user.id}}, 
-              class: "inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-purple-600 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500",
+              class: "inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#1F5C55] hover:bg-[#194A45] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1F5C55]",
               form: { data: { turbo: false } } %>
           
           <%= button_to "Souscrire à un abonnement", admin_user_orders_path(@user), 
               method: :post, 
               params: {order: { user_id: @user.id}}, 
-              class: "inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-purple-600 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500",
+              class: "inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#1F5C55] hover:bg-[#194A45] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1F5C55]",
               form: { data: { turbo: false } } %>
           
           <%= link_to "Modifier", edit_admin_user_path, 
-              class: "inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500" %>
+              class: "inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1F5C55]" %>
           
           <%= link_to "Historique des paiements", admin_payments_path(user_id: @user.id),
-              class: "inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500" %>
+              class: "inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1F5C55]" %>
+
+          <%= button_to "Faire un don", admin_donations_path(user_id: @user.id), method: :post, 
+                        params: { 
+                          payment: { 
+                            payment_amount: 0, 
+                            payment_date: Time.now.to_s, # Date de la donation
+                            payment_type: "credit_card", # Type de paiement
+                            status: "pending", # Statut du paiement
+                            donation: 0, # Indiquer qu'il s'agit d'une donation
+                            total_payment: 0, # Montant total de la donation
+                            user_id: @user.id # L'id de l'utilisateur
+                          }
+                        }, 
+              class: "inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1F5C59]" %>
+
           
-          <%= link_to "Retour à la liste", admin_users_path,
-              class: "inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500" %>
-          
+          <%= link_to "Retour à la liste", admin_users_path, 
+              class: "inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1F5C55]" %>
+
           <%= button_to "Supprimer", [:admin, @user], 
               method: :delete,
               class: "inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500",

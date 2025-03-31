@@ -1,0 +1,21 @@
+<h1>Edit Attendance List</h1>
+
+<%= form_with model: @attendance_list, url: admin_attendance_list_path(@attendance_list), local: true do |form| %>
+  <div>
+    <%= form.label :list_type, "Type of List" %>
+    <%= form.select :list_type, AttendanceList.list_types.keys.map { |type| [type.humanize, type] } %>
+  </div>
+
+  <div>
+    <%= form.label :status, "Status" %>
+    <%= form.select :status, AttendanceList.statuses.keys.map { |status| [status.humanize, status] } %>
+  </div>
+
+  <div>
+  <%= form.submit "Mettre à jour", class: "w-full sm:w-auto rounded-md px-3.5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white inline-block font-medium" %>
+  </div>
+<% end %>
+  <%= button_to 'Supprimer la liste', admin_attendance_list_path(@attendance_list), method: :delete, data: { confirm: 'Êtes-vous sûr de vouloir supprimer cette liste ? Cette action est irréversible.' }, class: 'bg-red-500 text-white px-4 py-2 rounded' %>
+
+<%= link_to "Back", admin_attendance_lists_path(@attendance_list) %>
+

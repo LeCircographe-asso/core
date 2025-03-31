@@ -36,28 +36,47 @@
 
       <% if @users_not_in_list.present? %>
         <ul class="divide-y divide-gray-200">
-          <% @users_not_in_list.each do |user| %>
+          <% @users_not_in_list.each do |user| %> <!-- Boucle correcte sur les utilisateurs non ajoutés -->
             <li class="flex items-center justify-between hover:bg-gray-50 px-6 py-4">
               <div class="flex items-center">
+                <!-- Avatar utilisateur -->
                 <div class="flex-shrink-0 h-10 w-10">
                   <div class="h-10 w-10 rounded-full bg-[#1F5C55]/10 flex items-center justify-center">
-                    <span class="text-[#1F5C55] font-medium"><%= "#{user.first_name.first}#{user.last_name.first}" %></span>
+                    <span class="text-[#1F5C55] font-medium">
+                      <%= "#{user.first_name&.first}#{user.last_name&.first}".strip.presence || "?" %>
+                    </span>
                   </div>
                 </div>
+
+                <!-- Informations utilisateur -->
                 <div class="ml-4">
-                  <div class="text-sm font-medium text-gray-900"><%= "#{user.first_name} #{user.last_name}" %></div>
+                  <div class="text-sm font-medium text-gray-900">
+                    <%= [user.first_name, user.last_name].compact.join(" ") %>
+                  </div>
                   <div class="text-sm text-gray-500"><%= user.email %></div>
                 </div>
               </div>
-              <%= button_to admin_attendance_list_attendances_path(attendance_list_id: @attendance_list.id, user_id: user.id), 
-                  method: :post, 
-                  class: "px-3 py-1.5 bg-[#1F5C55] hover:bg-[#194A45] text-white text-sm font-medium rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1F5C55] flex items-center" do %>
-                <i class="fas fa-plus mr-1.5"></i> Ajouter
+
+              <!-- Bouton ou message selon l'adhésion -->
+              <% if user.user_memberships.joins(:membership)
+                      .where(user_memberships: { status: "active" })
+                      .where(memberships: { type_name: ["Circus", "Basic"] })
+                      .exists? %>
+                <!-- L'utilisateur est membre, afficher le bouton "Ajouter" -->
+                <%= button_to admin_attendance_list_attendances_path(attendance_list_id: @attendance_list.id, user_id: user.id), 
+                    method: :post, 
+                    class: "px-3 py-1.5 bg-[#1F5C55] hover:bg-[#194A45] text-white text-sm font-medium rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1F5C55] flex items-center" do %>
+                  <i class="fas fa-plus mr-1.5"></i> Ajouter
+                <% end %>
+              <% else %>
+                <!-- L'utilisateur n'est pas membre, afficher un message -->
+                <span class="text-sm text-gray-500">Non membre</span>
               <% end %>
             </li>
-          <% end %>
+          <% end %> <!-- Fin de la boucle sur les utilisateurs non ajoutés -->
         </ul>
       <% else %>
+        <!-- Message si aucun utilisateur disponible -->
         <div class="p-6 text-center">
           <div class="flex flex-col items-center py-6">
             <i class="fas fa-check-circle text-green-500 text-3xl mb-3"></i>
@@ -67,7 +86,7 @@
             </p>
           </div>
         </div>
-      <% end %>
+      <% end %> <!-- Fin de la condition pour afficher les utilisateurs disponibles -->
     </div>
   </div>
 </div>
