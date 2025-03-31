@@ -7,7 +7,7 @@ class MembershipExpirationReminderJob < ApplicationJob
 
     # send email for each memberships
     user_memberships.each do |user_membership|
-      UserMailer.membership_expiration_reminder(user_membership).deliver_now
+      UserMailer.membership_expiration_reminder(user_membership).deliver_later
     end
   end
 end

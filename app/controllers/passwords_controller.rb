@@ -14,6 +14,9 @@ class PasswordsController < ApplicationController
   end
 
   def edit
+
+    PasswordsMailer.reset(current_user).deliver_later
+    redirect_to user_path(current_user), notice: "Instructions de réinitialisation du mot de passe envoyées à #{@user.email_address}."
   end
 
   def update
