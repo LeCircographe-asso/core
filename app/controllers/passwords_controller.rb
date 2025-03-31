@@ -27,7 +27,6 @@ class PasswordsController < ApplicationController
   private
     def set_user_by_token
       @user = User.find_by_token_for(:password_reset, params[:token])
-    rescue ActiveSupport::MessageVerifier::InvalidSignature
-      redirect_to new_password_path, alert: "Le lien de réinitialisation du mot de passe est invalide ou a expiré."
+      redirect_to new_password_path, alert: "Le lien de réinitialisation du mot de passe est invalide ou a expiré." unless @user
     end
 end
