@@ -1,7 +1,20 @@
 Rails.application.routes.draw do
+  resources :blogs, only: %i[show ]
+  get "/blog-newsletter", to: "blogs#index"
+
+  #  do
+  #   collection do
+  #     get :article
+  #     get :blog_newsletter
+  #   end
+  # end
+  
+
   namespace :admin do
+    resources :blogs
     resources :dashboard, only: %i[index], path: "dashboard"
     resource :opening_hours, only: %i[show edit update]
+    resources :donations ,only: %i[create]
     resources :users do
       resources :orders, only: %i[create show index update]do
         resources :product_orders, only: [:destroy]
@@ -11,13 +24,12 @@ Rails.application.routes.draw do
     resources :events, only: %i[new create edit destroy index]
     resource :session, only: %i[new create destroy]
     resource :notepad, only: %i[show edit update]
-    resources :attendance_lists, only: %i[new index create show edit update] do
+    resources :attendance_lists do
       resources :attendances, only: %i[new index create show edit update]
     end
     resources :product_orders, only: %i[create update]
     resources :products, only: %i[index]
     resources :payments, only: %i[show create new update index]
-
     resources :exports, only: %i[index] do
       get :newsletter_subscribed, on: :collection
     end

@@ -38,17 +38,17 @@ class CheckoutController < ApplicationController
 
     if @payment_intent.status == "succeeded"
 
-      payment = Payment.create!(
-        amount: 10,
-        payment_method: "card",
-        status: true,
-        user_id: Current.user.id
-      )
+      # payment = Payment.create!(
+      #   amount: 10,
+      #   payment_method: "card",
+      #   status: true,
+      #   user_id: Current.user.id
+      # )
 
       EventAttendee.create!(
         user_id: Current.user.id,
         event_id: @event.id,
-        payment_id: payment.id,
+        # payment_id: payment.id,
         interested: true
       )
 
