@@ -9,6 +9,7 @@ class User < ApplicationRecord
     # On utilise le salt du mot de passe pour invalider le token si le mot de passe change
     password_salt&.last(10)
   end
+
   has_secure_password
 
   enum :system_role, %i[ super_admin admin volunteer user_connected ]
@@ -40,9 +41,9 @@ class User < ApplicationRecord
     return if user_connected?
 
     if created_by_admin?
-      # UserMailer.welcome_by_admin(self, reset_password_url).deliver_now
+      UserMailer.welcome_by_admin(self, reset_password_url).deliver_later
     else
-      # UserMailer.welcome_email(self).deliver_now
+      UserMailer.welcome_email(self).deliver_later
     end
   end
 

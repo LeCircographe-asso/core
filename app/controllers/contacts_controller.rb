@@ -25,7 +25,7 @@ class ContactsController < ApplicationController
         @contact[:message],
         @contact[:category],
         recipient_email
-      ).deliver_now
+      ).deliver_later
 
       flash[:notice] = "Votre message a été envoyé avec succès! Nous vous répondrons dans les plus brefs délais."
       redirect_to page_path("contact")
