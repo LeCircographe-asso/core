@@ -39,7 +39,6 @@
                         </p>
                     </div>
 
-                    <% if authenticated? %>
                     <div class="mt-6 space-y-2">
                         <%= turbo_frame_tag "interest_button", class: "block w-full" do %>
                           <% if !current_user.is_interested_in? @event.id %>
@@ -56,7 +55,6 @@
                         <% end %>
                         <%= button_to "Payer 10€", checkout_create_path(event_id: @event.id), method: :post, data: { turbo: "false" }, class: "w-full px-4 py-2 tracking-wide text-white font-bold bg-[#1F5C55] border-2 border-[#1F5C55] rounded-lg shadow-lg hover:bg-gray-100 hover:text-[#1F5C55] hover:border-[#1F5C55] hover:shadow-lg transition-colors duration-300 cursor-pointer" %>
                     </div>
-                    <% end %>
                 </div>
             </div>
         </div>
