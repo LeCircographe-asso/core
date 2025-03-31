@@ -1,71 +1,186 @@
-<aside class="admin-sidebar">
+<aside class="admin-sidebar" id="admin-sidebar">
   <div class="sidebar-logo p-4">
     <%= link_to admin_dashboard_index_path do %>
       <%= image_tag "circo-admin.webp", class: "image-main" %>
     <% end %>
   </div>
-
-  <div class="px-4 py-2">
-    <div class="text-sm font-medium text-gray-600 mb-1">
+  
+  <div class="px-4 py-2 sidebar-section">
+    <button type="button" id="sidebar-toggle" class="sidebar-link flex items-center mb-3 w-full">
+      <i class="fas fa-bars mr-2 sidebar-icon"></i> <span class="sidebar-text">Menu</span>
+    </button>
+    
+    <div class="text-sm font-medium text-gray-600 mb-1 sidebar-text">
       Administration
     </div>
     <ul class="sidebar-menu">
       <li><%= link_to admin_dashboard_index_path, class: "sidebar-link flex items-center" do %>
-            <i class="fas fa-home mr-2"></i> Accueil
+            <i class="fas fa-home mr-2 sidebar-icon"></i> <span class="sidebar-text">Accueil</span>
           <% end %>
       </li>
       <li><%= link_to admin_users_path, class: "sidebar-link flex items-center" do %>
-            <i class="fas fa-users mr-2"></i> Liste d'adhérents
+            <i class="fas fa-users mr-2 sidebar-icon"></i> <span class="sidebar-text">Liste d'adhérents</span>
           <% end %>
       </li>
       <li><%= link_to admin_events_path, class: "sidebar-link flex items-center" do %>
-            <i class="fas fa-calendar-alt mr-2"></i> Événements
+            <i class="fas fa-calendar-alt mr-2 sidebar-icon"></i> <span class="sidebar-text">Événements</span>
           <% end %>
       </li>
       <li><%= link_to edit_admin_opening_hours_path, class: "sidebar-link flex items-center" do %>
-            <i class="fas fa-clock mr-2"></i> Modifier les horaires
+            <i class="fas fa-clock mr-2 sidebar-icon"></i> <span class="sidebar-text">Modifier les horaires</span>
           <% end %>
       </li>
       <li><%= link_to new_admin_user_path, class: "sidebar-link flex items-center" do %>
-            <i class="fas fa-user-plus mr-2"></i> Créer un Adhérent
+            <i class="fas fa-user-plus mr-2 sidebar-icon"></i> <span class="sidebar-text">Créer un Adhérent</span>
           <% end %>
       </li>
       <li><%= link_to edit_admin_notepad_path, class: "sidebar-link flex items-center" do %>
-            <i class="fas fa-sticky-note mr-2"></i> Bloc notes
+            <i class="fas fa-sticky-note mr-2 sidebar-icon"></i> <span class="sidebar-text">Bloc notes</span>
           <% end %>
       </li>
       <li><%= link_to admin_attendance_lists_path, class: "sidebar-link flex items-center" do %>
-            <i class="fas fa-clipboard-list mr-2"></i> Liste de présence
+            <i class="fas fa-clipboard-list mr-2 sidebar-icon"></i> <span class="sidebar-text">Liste de présence</span>
           <% end %>
       </li>
       <li><%= link_to admin_exports_path, class: "sidebar-link flex items-center" do %>
-            <i class="fas fa-file-export mr-2"></i> Export
+            <i class="fas fa-file-export mr-2 sidebar-icon"></i> <span class="sidebar-text">Export</span>
           <% end %>
       </li>
       <li><%= link_to admin_blogs_path, class: "sidebar-link flex items-center" do %>
-            <i class="fas fa-file-export mr-2"></i> Blog
+            <i class="fas fa-blog mr-2 sidebar-icon"></i> <span class="sidebar-text">Blog</span>
           <% end %>
       </li>
     </ul>
   </div>
 
-  <div class="border-t border-gray-200 mt-2 pt-2 px-4">
-    <div class="text-sm font-medium text-gray-600 mb-1">
+  <div class="border-t border-gray-200 mt-2 pt-2 px-4 sidebar-section">
+    <div class="text-sm font-medium text-gray-600 mb-1 sidebar-text">
       Navigation
     </div>
     <ul class="sidebar-menu">
       <li><%= link_to root_path, class: "sidebar-link flex items-center" do %>
-            <i class="fas fa-arrow-left mr-2"></i> Retour au site
+            <i class="fas fa-arrow-left mr-2 sidebar-icon"></i> <span class="sidebar-text">Retour au site</span>
           <% end %>
       </li>
       <li><%= link_to user_path(current_user), class: "sidebar-link flex items-center" do %>
-            <i class="fas fa-user mr-2"></i> Votre Profil
+            <i class="fas fa-user mr-2 sidebar-icon"></i> <span class="sidebar-text">Votre Profil</span>
           <% end %>
       </li>
       <li><%= button_to admin_session_path, method: :delete, class: "sidebar-link w-full text-left flex items-center cursor-pointer" do %>
-            <i class="fas fa-sign-out-alt mr-2"></i> Se déconnecter
+            <i class="fas fa-sign-out-alt mr-2 sidebar-icon"></i> <span class="sidebar-text">Se déconnecter</span>
           <% end %>
       </li>
     </ul>
   </div>
 </aside>
+
+<style>
+  .admin-sidebar {
+    position: fixed;
+    width: 260px;
+    height: 100vh;
+    background: white;
+    transition: all 0.3s ease;
+    overflow-x: hidden;
+    z-index: 100;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  .admin-sidebar.collapsed {
+    width: 70px;
+  }
+  
+  .sidebar-text {
+    transition: opacity 0.3s;
+  }
+  
+  .admin-sidebar.collapsed .sidebar-text {
+    opacity: 0;
+    display: none;
+  }
+  
+  #sidebar-toggle {
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+    text-align: left;
+    transition: background-color 0.2s ease;
+    padding: 8px 12px;
+  }
+  
+  #sidebar-toggle:hover {
+    background-color: #1F5C55;
+    color: white;
+  }
+  
+  .admin-sidebar.collapsed #sidebar-toggle {
+    justify-content: center;
+    padding-left: 0;
+    padding-right: 0;
+  }
+  
+  .main-content {
+    margin-left: 260px;
+    transition: margin-left 0.3s;
+  }
+  
+  .main-content.expanded {
+    margin-left: 70px;
+  }
+  
+  @media (max-width: 768px) {
+    .main-content {
+      margin-left: 70px;
+      width: calc(100% - 70px);
+    }
+  }
+</style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const toggleBtn = document.getElementById('sidebar-toggle');
+    const sidebar = document.getElementById('admin-sidebar');
+    const content = document.querySelector('.main-content') || document.querySelector('.container');
+    const sidebarTexts = document.querySelectorAll('.sidebar-text');
+    
+    if (window.innerWidth <= 768 || localStorage.getItem('sidebarCollapsed') === 'true') {
+      sidebar.classList.add('collapsed');
+      if (content) content.classList.add('expanded');
+      sidebarTexts.forEach(text => text.classList.add('hidden'));
+    }
+    
+    if (toggleBtn) {
+      toggleBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        toggleSidebar();
+      });
+    }
+    
+    function toggleSidebar() {
+      sidebar.classList.toggle('collapsed');
+      
+      if (content) {
+        content.classList.toggle('expanded');
+      }
+      
+      if (sidebar.classList.contains('collapsed')) {
+        sidebarTexts.forEach(text => text.classList.add('hidden'));
+      } else {
+        sidebarTexts.forEach(text => text.classList.remove('hidden'));
+      }
+      
+      if (window.innerWidth > 768) {
+        localStorage.setItem('sidebarCollapsed', sidebar.classList.contains('collapsed'));
+      }
+    }
+    
+    window.addEventListener('resize', function() {
+      if (window.innerWidth <= 768 && !sidebar.classList.contains('collapsed')) {
+        sidebar.classList.add('collapsed');
+        if (content) content.classList.add('expanded');
+        sidebarTexts.forEach(text => text.classList.add('hidden'));
+      }
+    });
+  });
+</script>
