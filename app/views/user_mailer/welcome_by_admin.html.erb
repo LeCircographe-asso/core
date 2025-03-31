@@ -2,22 +2,21 @@
 <html>
 
 <body>
-    <h1>Bienvenue au Circographe, <%= @user.first_name %> <%= @user.last_name %></h1> !</h1>
+    <h1>Bienvenue au Circographe, <%= @user.first_name %> <%= @user.last_name %></h1>
     <p>
         Un compte a été créé pour vous par notre équipe. Vous devez réinitialiser
         votre mot de passe avant de pouvoir vous connecter :
     </p>
     <p>
-        <a href="<%= edit_password_url(@user.password_reset_token) %>" class="button">Reset Password</a>.
+        <a href="<%= @reset_password_url %>" class="button">Réinitialiser mon mot de passe</a>
     </p>
 
     <% if @user.newsletter_subscribed %>
     <p>
-        Vous vous êtes également inscrit à notre newsletter ! 🎉 Vous recevrez toutes nos dernières actualités et recommandations directement dans votre boîte mail.
+        Vous vous êtes également inscrit à notre newsletter ! 🎉 Vous recevrez toutes nos dernières actualités et recommandations directement dans votre boîte mail.
     </p>
     <a href="<%= Rails.application.routes.url_helpers.change_newsletter_status_user_url(@user, host: 'https://lecircographe.fr') %>">Se désinscrire de la newsletter</a>
     <% end %>
-
 
     <p>À bientôt,</p>
     <p>L'équipe du Circographe</p>
