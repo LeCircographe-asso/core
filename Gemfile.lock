@@ -432,7 +432,6 @@ PLATFORMS
   x86_64-linux-musl
 
 DEPENDENCIES
-  actionmailer
   bcrypt (~> 3.1.7)
   bootsnap
   brakeman

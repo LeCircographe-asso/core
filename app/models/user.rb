@@ -1,9 +1,15 @@
 class User < ApplicationRecord
   attr_accessor :cgu, :privacy_policy
   # after_create :assign_membership
-  after_create :generate_unsubscribe_token
+  after_create :generate_password_reset_token
   after_create :welcome_send
 
+  # Configuration du token de réinitialisation de mot de passe
+  generates_token_for :password_reset, expires_in: 15.minutes do
+    # On utilise le salt du mot de passe pour invalider le token si le mot de passe change
+    password_salt&.last(10)
+  end
+  has_secure_password
 
   enum :system_role, %i[ super_admin admin volunteer user_connected ]
 
@@ -26,7 +32,6 @@ class User < ApplicationRecord
 
   normalizes :email_address, with: ->(e) { e.strip.downcase }
 
-  has_secure_password
   validates :email_address, presence: true, uniqueness: true
   validates :cgu, acceptance: { message: "Vous devez accepter les CGU pour continuer." }
   validates :privacy_policy, acceptance: { message: "Vous devez accepter la politique de confidentialité pour continuer." }
@@ -35,9 +40,9 @@ class User < ApplicationRecord
     return if user_connected?
 
     if created_by_admin?
-      UserMailer.welcome_by_admin(self, reset_password_url).deliver_now
+      # UserMailer.welcome_by_admin(self, reset_password_url).deliver_now
     else
-      UserMailer.welcome_email(self).deliver_now
+      # UserMailer.welcome_email(self).deliver_now
     end
   end
 
@@ -80,12 +85,14 @@ class User < ApplicationRecord
     user_memberships.exists?(status: "active")
   end
 
-  def password_reset_token
-    Rails.application.message_verifier(:password_reset).generate(id, expires_in: 15.minutes)
-  end
-
   def self.find_by_password_reset_token!(token)
     id = Rails.application.message_verifier(:password_reset).verify(token)
     find(id)
+  end
+
+  private
+
+  def generate_password_reset_token
+    generate_token_for(:password_reset)
   end
 end
