@@ -1,5 +1,5 @@
 class CheckoutController < ApplicationController
-  before_action :authenticated?
+  before_action :require_authentication
   def create
     @event = Event.find(params[:event_id])
 

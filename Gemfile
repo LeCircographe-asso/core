@@ -2,82 +2,59 @@ source "https://rubygems.org"
 
 ruby "3.2.5"
 
-# Bundle edge Rails instead: gem "rails", github: "rails/rails", branch: "main"
+# Core Rails gems
 gem "rails", "~> 8.0.2"
-# The modern asset pipeline for Rails [https://github.com/rails/propshaft]
-gem "propshaft"
-# Use sqlite3 as the database for Active Record
+gem "stringio", "~> 3.1.2"
+gem "bootsnap", require: false  # Reduces boot times through caching
+
+# Database and ORM
 gem "sqlite3", ">= 2.1"
-# Use the Puma web server [https://github.com/puma/puma]
-gem "puma", ">= 5.0"
-# Use JavaScript with ESM import maps [https://github.com/rails/importmap-rails]
-gem "importmap-rails"
-# Hotwire's SPA-like page accelerator [https://turbo.hotwired.dev]
-gem "turbo-rails"
-# Hotwire's modest JavaScript framework [https://stimulus.hotwired.dev]
-gem "stimulus-rails"
-# Build JSON APIs with ease [https://github.com/rails/jbuilder]
-gem "jbuilder"
+gem "bcrypt", "~> 3.1.7"  # For password hashing
+gem "tzinfo-data", platforms: %i[ windows jruby ]  # Timezone data
 
-# Use Active Model has_secure_password [https://guides.rubyonrails.org/active_model_basics.html#securepassword]
-gem "bcrypt", "~> 3.1.7"
+# Asset Pipeline and Frontend
+gem "propshaft"  # Modern asset pipeline
+gem "importmap-rails"  # JavaScript module imports
+gem "turbo-rails"  # Hotwire's SPA accelerator
+gem "stimulus-rails"  # Hotwire's JavaScript framework
+gem "tailwindcss-rails", "~> 4.2"  # CSS framework
+gem "image_processing", "~> 1.2"  # For Active Storage image processing
 
-# Windows does not include zoneinfo files, so bundle the tzinfo-data gem
-gem "tzinfo-data", platforms: %i[ windows jruby ]
+# Server and Performance
+gem "puma", ">= 5.0"  # Web server
+gem "thruster", require: false  # HTTP asset caching for Puma
 
-# Use the database-backed adapters for Rails.cache, Active Job, and Action Cable
-gem "solid_cache"
-gem "solid_queue"
-gem "solid_cable"
-gem 'rubocop'
-# Reduces boot times through caching; required in config/boot.rb
-gem "bootsnap", require: false
+# Background Jobs and Caching
+gem "solid_queue"  # Database-backed job queue
+gem "solid_cache"  # Database-backed cache
+gem "solid_cable"  # Database-backed Action Cable
+gem "whenever", require: false  # Cron jobs
 
-# Deploy this application anywhere as a Docker container [https://kamal-deploy.org]
-gem "kamal", require: false
+# API and External Services
+gem "stripe"  # Payment processing
+gem "mailjet"  # Email service
+gem "jbuilder"  # JSON API builder
 
-# Add HTTP asset caching/compression and X-Sendfile acceleration to Puma [https://github.com/basecamp/thruster/]
-gem "thruster", require: false
-
-gem "stripe"
-
-gem "actionmailer"
-
-gem "faker"
-
-gem "dotenv-rails"
-
-gem "tailwindcss-rails", "~> 4.2"
-
-
-
-
-
-
-# Use Active Storage variants [https://guides.rubyonrails.org/active_storage_overview.html#transforming-images]
-gem "image_processing", "~> 1.2"
-
+# Development and Testing
 group :development, :test do
-  # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
   gem "debug", platforms: %i[ mri windows ], require: "debug/prelude"
-
-  # Static analysis for security vulnerabilities [https://brakemanscanner.org/]
-  gem "brakeman", require: false
-
-  # Omakase Ruby styling [https://github.com/rails/rubocop-rails-omakase/]
-  gem "rubocop-rails-omakase", require: false
+  gem "brakeman", require: false  # Security scanner
+  gem "rubocop"  # Code linter
+  gem "rubocop-rails-omakase", require: false  # Rails-specific linting
+  gem "faker"  # Generate fake data
+  gem "dotenv-rails"  # Environment variables
 end
 
 group :development do
-  # Use console on exceptions pages [https://github.com/rails/web-console]
-  gem "web-console"
+  gem "web-console"  # Interactive console
+  gem "letter_opener"  # Preview emails in development
+  gem "letter_opener_web"  # Web interface for letter_opener
 end
 
 group :test do
-  # Use system testing [https://guides.rubyonrails.org/testing.html#system-testing]
-  gem "capybara"
-  gem "selenium-webdriver"
+  gem "capybara"  # System testing
+  gem "selenium-webdriver"  # Browser automation
 end
 
-
-
+# Deployment
+gem "kamal", require: false  # Docker deployment

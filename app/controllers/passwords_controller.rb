@@ -1,48 +1,35 @@
 class PasswordsController < ApplicationController
   allow_unauthenticated_access
-  before_action :set_user_by_token, only: %i[edit update]
+  before_action :set_user_by_token, only: %i[ edit update ]
 
   def new
   end
 
   def create
-    user = User.find_by(email_address: params[:email_address])
-    if user
-      user.generate_password_reset_token!
-      if user.created_by_admin?
-        PasswordsMailer.welcome_by_admin(user).deliver_now
-      else
-        PasswordsMailer.reset_password(user).deliver_now
-      end
-      redirect_to new_session_path, notice: "Instructions de réinitialisation envoyées si l'email existe."
-      return
+    if user = User.find_by(email_address: params[:email_address])
+      PasswordsMailer.reset(user).deliver_later
     end
 
-    flash.now[:alert] = "Cette adresse email n'existe pas dans notre système."
-    render :new
+    redirect_to new_session_path, notice: "Instructions de réinitialisation du mot de passe envoyées (si un utilisateur avec cette adresse e-mail existe)."
   end
 
-
   def edit
-    render :edit
+
+    PasswordsMailer.reset(current_user).deliver_later
+    redirect_to user_path(current_user), notice: "Instructions de réinitialisation du mot de passe envoyées à #{@user.email_address}."
   end
 
   def update
     if @user.update(params.permit(:password, :password_confirmation))
-      @user.clear_password_reset_token!
-      redirect_to new_session_path, notice: "Mot de passe réinitialisé avec succès."
+      redirect_to new_session_path, notice: "Le mot de passe a été réinitialisé."
     else
-      flash.now[:alert] = "Les mots de passe ne correspondent pas."
-      render :edit, status: :unprocessable_entity
+      redirect_to edit_password_path(params[:token]), alert: "Les mots de passe ne correspondent pas."
     end
   end
 
   private
-
-  def set_user_by_token
-    @user = User.find_by(password_reset_token: params[:token])
-    unless @user&.password_reset_token_valid?
-      redirect_to new_password_path, alert: "Le lien de réinitialisation est invalide ou expiré."
+    def set_user_by_token
+      @user = User.find_by_token_for(:password_reset, params[:token])
+      redirect_to new_password_path, alert: "Le lien de réinitialisation du mot de passe est invalide ou a expiré." unless @user
     end
-  end
 end
