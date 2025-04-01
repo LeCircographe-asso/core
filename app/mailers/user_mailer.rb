@@ -5,20 +5,20 @@ class UserMailer < ApplicationMailer
     @user = user
     @reset_password_url = reset_password_url
     @url = "https://lecircographe.fr/"
-    mail(from: "circographe.mail@gmail.com", to: @user.email_address, subject: "Bienvenue au Circographe ! ")
+    mail(to: @user.email_address, subject: "Bienvenue au Circographe ! ")
   end
 
   def welcome_email(user)
     @user = user
     @url = "https://lecircographe.fr/"
-    mail(from: "circographe.mail@gmail.com", to: @user.email_address, subject: "Bienvenue au Circographe ! ")
+    mail(to: @user.email_address, subject: "Bienvenue au Circographe ! ")
   end
 
   def membership_expiration_reminder(user_membership)
     @user = user_membership.user
     @end_date = user_membership.end_date
     @url = "https://lecircographe.fr/"
-    mail(from: "circographe.mail@gmail.com", to: @user.email_address, subject: "Votre adhésion arrive à expiration !")
+    mail(to: @user.email_address, subject: "Votre adhésion arrive à expiration !")
   end
 
   def contact_email(name, email, message, category, recipient_email)
@@ -26,6 +26,6 @@ class UserMailer < ApplicationMailer
     @message = message
     @category = category
     @submitted_at = Time.now
-    mail(from: "circographe.mail@gmail.com", to: recipient_email, subject: "Nouveau message : #{category.capitalize}", reply_to: email)
+    mail(to: recipient_email, subject: "Nouveau message : #{category.capitalize}", reply_to: email)
   end
 end

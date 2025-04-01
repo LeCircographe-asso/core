@@ -3,10 +3,10 @@ Rails.application.routes.draw do
     resources :blogs
     resources :dashboard, only: %i[index], path: "dashboard"
     resource :opening_hours, only: %i[show edit update]
-    resources :donations ,only: %i[create]
+    resources :donations, only: %i[create]
     resources :users do
-      resources :orders, only: %i[create show index update]do
-        resources :product_orders, only: [:destroy]
+      resources :orders, only: %i[create show index update] do
+        resources :product_orders, only: %i[destroy]
         end
       resources :user_membership, only: %i[create show update destroy]
     end
@@ -65,4 +65,10 @@ Rails.application.routes.draw do
   if Rails.env.development?
     mount LetterOpenerWeb::Engine, at: "/letter_opener"
   end
+
+  resource :password, only: [ :new, :create, :edit, :update ] do
+    get :request_reset, on: :collection
+  end
+
+  resource :settings, only: [ :show, :update ], controller: "settings"
 end
