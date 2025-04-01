@@ -1,14 +1,14 @@
-<div class="bg-white rounded-xl shadow-lg overflow-hidden max-w-md mx-auto">
+<div class="bg-white rounded-xl shadow-lg overflow-hidden max-w-2xl mx-auto mb-12 w-full px-4 sm:px-0">
     <!-- En-tête avec gradient -->
     <div class="relative">
-        <div class="h-32 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500">
+        <div class="h-24 bg-gradient-to-r from-[#1F5C55] to-teal-600">
             <!-- Badge du type de membre -->
             <div class="absolute top-4 right-4 px-3 py-1 text-xs font-semibold text-white rounded-full 
             <%= case @user.system_role
-              when 'super_admin' then 'bg-purple-700'
-              when 'admin' then 'bg-indigo-700'
-              when 'volunteer' then 'bg-blue-700'
-              when 'user_connected' then 'bg-gray-700'
+              when 'super_admin' then 'bg-[#1F5C55]'
+              when 'admin' then 'bg-[#1F5C55]/90'
+              when 'volunteer' then 'bg-[#1F5C55]/80'
+              when 'user_connected' then 'bg-[#1F5C55]/70'
               end %>">
                 <%= @user.system_role.humanize %>
             </div>
@@ -34,10 +34,10 @@
     </div>
 
     <!-- Contenu principal -->
-    <div class="pt-16 px-6 pb-6">
+    <div class="pt-16 px-4 sm:px-6 pb-6">
         <!-- Informations de l'utilisateur -->
-        <div class="text-center mb-6">
-            <h2 class="text-xl font-bold text-gray-800">
+        <div class="text-center mb-4 sm:mb-6">
+            <h2 class="text-lg sm:text-xl font-bold text-gray-800">
                 <% if @user.first_name.present? || @user.last_name.present? %>
                 <%= [(@user.first_name || ""), (@user.last_name || "")].join(" ").strip %>
                 <% else %>
@@ -60,12 +60,13 @@
         </div>
 
         <!-- Détails de l'adhésion -->
-        <div class="space-y-3 border-t border-b border-gray-200 py-4 mb-6">
+        <div class="space-y-3 border-t border-b border-gray-200 py-3 sm:py-4 mb-4 sm:mb-6">
             <% if @user.user_memberships.exists? %>
             <div class="flex justify-between items-center">
-                <span class="text-sm text-gray-500">Date d'inscription :</span>
-                <span class="text-sm font-medium text-gray-800">
-                    <%= @user.user_memberships.order(:created_at).last.created_at.strftime("%d/%m/%Y") %>
+                <span class="text-sm text-gray-500">Adhésion valable jusqu'au :</span>
+                <% end_date = @user.user_memberships.last.start_date + 1.year %>
+                <span class="text-sm font-medium <%= Date.today > end_date ? 'text-red-600' : 'text-gray-800' %>">
+                    <%= end_date.strftime("%d/%m/%Y") %>
                 </span>
             </div>
 
@@ -75,6 +76,97 @@
                     <%= @user.user_memberships.last.membership.type_name.humanize %>
                 </span>
             </div>
+
+            <% if @user.user_memberships.last.membership.type_name == 'Basic' %>
+                <div class="flex flex-col space-y-2">
+                    <div class="flex justify-between items-center">
+                        <span class="text-sm text-gray-500">Carnet de 10 entrées :</span>
+                        <% active_booklet = @user.book_of_entries.joins(:product)
+                                          .where(products: { product_name: "Carnet de 10 entrées" })
+                                          .where(status: :active)
+                                          .last %>
+                        <% if active_booklet %>
+                            <div class="flex items-center">
+                                <span class="text-sm font-medium <%= active_booklet.remaining.to_i > 3 ? 'text-green-600' : 
+                                    (active_booklet.remaining.to_i > 0 ? 'text-yellow-600' : 'text-red-600') %>">
+                                    <%= active_booklet.remaining %> séances restantes
+                                </span>
+                                <% if active_booklet.remaining.to_i <= 3 && active_booklet.remaining.to_i > 0 %>
+                                    <span class="ml-2 px-2 py-0.5 text-xs bg-yellow-100 text-yellow-800 rounded-full">Bientôt épuisé</span>
+                                <% end %>
+                            </div>
+                        <% else %>
+                            <span class="text-sm font-medium text-gray-800">
+                                Aucun carnet actif
+                            </span>
+                        <% end %>
+                    </div>
+                </div>
+            <% elsif @user.user_memberships.last.membership.type_name == 'Circus' %>
+                <div class="flex flex-col space-y-2">
+                    <div class="flex justify-between items-center">
+                        <span class="text-sm text-gray-500">Type de cotisation :</span>
+                        <% latest_subscription = @user.orders.joins(product_orders: :product)
+                                               .where(products: { product_type: 'cotisation' })
+                                               .last&.product_orders&.last&.product %>
+                        <% if latest_subscription %>
+                            <div class="flex items-center">
+                                <span class="text-sm font-medium text-gray-800">
+                                    <%= latest_subscription.product_name %>
+                                </span>
+                                <% if latest_subscription.product_name.include?("10 séances") %>
+                                    <% active_subscription = @user.book_of_entries.joins(:product)
+                                                          .where(products: { product_name: latest_subscription.product_name })
+                                                          .where(status: :active)
+                                                          .last %>
+                                    <% if active_subscription %>
+                                        <span class="ml-2 text-sm font-medium <%= active_subscription.remaining.to_i > 3 ? 'text-green-600' : 
+                                            (active_subscription.remaining.to_i > 0 ? 'text-yellow-600' : 'text-red-600') %>">
+                                            (<%= active_subscription.remaining %> séances restantes)
+                                        </span>
+                                    <% end %>
+                                <% end %>
+                            </div>
+                        <% else %>
+                            <span class="text-sm font-medium text-gray-800">
+                                Aucune cotisation active
+                            </span>
+                        <% end %>
+                    </div>
+
+                    <% if latest_subscription %>
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm text-gray-500">Date d'expiration :</span>
+                            <div class="flex items-center">
+                                <% expiration_date = case latest_subscription.product_name
+                                    when /journée/i
+                                        @user.orders.joins(product_orders: :product)
+                                             .where(products: { id: latest_subscription.id })
+                                             .last&.created_at&.end_of_day
+                                    when /trimestriel/i
+                                        @user.orders.joins(product_orders: :product)
+                                             .where(products: { id: latest_subscription.id })
+                                             .last&.created_at&.advance(months: 3)
+                                    when /annuel/i
+                                        @user.orders.joins(product_orders: :product)
+                                             .where(products: { id: latest_subscription.id })
+                                             .last&.created_at&.advance(years: 1)
+                                    end %>
+                                <% if expiration_date %>
+                                    <span class="text-sm font-medium <%= Date.today > expiration_date ? 'text-red-600' : 'text-gray-800' %>">
+                                        <%= expiration_date.strftime("%d/%m/%Y") %>
+                                    </span>
+                                    <% if Date.today > expiration_date %>
+                                        <span class="ml-2 px-2 py-0.5 text-xs bg-red-100 text-red-800 rounded-full">Expirée</span>
+                                    <% elsif expiration_date < Date.today + 30.days %>
+                                        <span class="ml-2 px-2 py-0.5 text-xs bg-yellow-100 text-yellow-800 rounded-full">Expire bientôt</span>
+                                    <% end %>
+                                <% end %>
+                            </div>
+                        </div>
+                    <% end %>
+                </div>
+            <% end %>
             <% else %>
             <div class="flex justify-between items-center">
                 <span class="text-sm text-gray-500">Statut :</span>
@@ -90,25 +182,12 @@
         </div>
 
         <!-- Actions -->
-        <div class="space-y-3">
+        <div class="space-y-2 sm:space-y-3">
             <% if defined?(form) && form.present? %>
-            <%= form.submit "Enregistrer les modifications", class: "w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" %>
+            <%= form.submit "Enregistrer les modifications", class: "w-full flex justify-center py-2 sm:py-2.5 px-3 sm:px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500" %>
             <% else %>
-            <%= link_to "Modifier mon email", edit_user_path(@user), class: "block w-full text-center py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" %>
-
-            <%= link_to "Modifier le mot de passe", edit_password_path(@user.password_reset_token), class: "block w-full text-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 mt-3" %>
-
-            <%= button_to (@user.newsletter_subscribed ? "Se désinscrire de la newsletter" : "S'inscrire à la newsletter"),
-              change_newsletter_status_user_path(@user), 
-              method: :post,
-              class: "w-full py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 mt-3" %>
-
-            <%= button_to "Supprimer mon compte", @user, method: :delete, 
-              class: "w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 mt-3", 
-              data: { confirm: "Êtes-vous sûr de vouloir supprimer votre compte ? Cette action est irréversible." } %>
+            <%= link_to "Paramètres du compte et notifications", settings_path, class: "block w-full text-center py-2 sm:py-2.5 px-3 sm:px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500" %>
             <% end %>
-
-
         </div>
     </div>
 </div>

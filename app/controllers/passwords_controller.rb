@@ -14,16 +14,22 @@ class PasswordsController < ApplicationController
   end
 
   def edit
-
-    PasswordsMailer.reset(current_user).deliver_later
-    redirect_to user_path(current_user), notice: "Instructions de réinitialisation du mot de passe envoyées à #{@user.email_address}."
   end
 
   def update
     if @user.update(params.permit(:password, :password_confirmation))
       redirect_to new_session_path, notice: "Le mot de passe a été réinitialisé."
     else
-      redirect_to edit_password_path(params[:token]), alert: "Les mots de passe ne correspondent pas."
+      render :edit, status: :unprocessable_entity
+    end
+  end
+
+  def request_reset
+    if authenticated?
+      PasswordsMailer.reset(current_user).deliver_later
+      redirect_to user_path(current_user), notice: "Instructions de réinitialisation du mot de passe envoyées à #{current_user.email_address}."
+    else
+      redirect_to new_session_path, alert: "Vous devez être connecté pour effectuer cette action."
     end
   end
 
