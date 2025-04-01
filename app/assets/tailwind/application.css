@@ -1,1 +1,33 @@
 @import "tailwindcss";
+
+@layer base {
+    /* Appliquer la hauteur pleine et la scrollbar uniquement à html */
+
+    html {
+      @apply h-full;
+      overflow-y: auto; /* Scrollbar uniquement ici */
+    }
+  
+    /* Pour Chrome, Edge, et Safari */
+    html::-webkit-scrollbar {
+      width: 4px; /* largeur de la scrollbar */
+    }
+
+    html::-webkit-scrollbar-thumb {
+      background: #1f5c55; /* Couleur exacte #1f5c55 */
+      border-radius: 9999px; /* Arrondi complet (équivalent à rounded-full) */
+    }
+  
+    html::-webkit-scrollbar-thumb:hover {
+      background: #174743; /* Légère variation pour le hover (assombrissement de #1f5c55) */
+    }
+  
+    /* Supprimer les flèches (boutons) sur Webkit */
+    html::-webkit-scrollbar-button {
+      display: none; /* Masquer les flèches */
+    }
+  }
+  html::-webkit-scrollbar-track {
+    background-color: #fff8f8; /* Exemple: couleur gray-200 de Tailwind */
+    opacity: 0.2; /* Rend ce gris semi-transparent */
+  }
