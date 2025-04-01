@@ -195,7 +195,7 @@
   
   .main-content {
     margin-left: 260px;
-    transition: margin-left 0.3s;
+    transition: margin-left 0.3s; 
   }
   
   .main-content.expanded {
@@ -219,3 +219,37 @@
       overflow-x: hidden;
     }
   }
+
+/* Ajoutez ces règles à la fin du fichier */
+.admin-sidebar.collapsed .sidebar-link {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 10px 0;
+}
+
+.admin-sidebar.collapsed .sidebar-icon,
+.admin-sidebar.collapsed .fas {
+  margin-right: 0;
+  margin-left: 0;
+  font-size: 1.2rem;
+}
+
+.admin-sidebar.collapsed .sidebar-menu li a,
+.admin-sidebar.collapsed .sidebar-menu li button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 10px 0;
+}
+
+/* Assurez-vous que les icônes sont bien centrées sans marges */
+.admin-sidebar.collapsed .sidebar-menu li a i,
+.admin-sidebar.collapsed .sidebar-menu li button i {
+  margin: 0;
+}
+
+/* Styles de responsive globaux - ajoutez à la fin du fichier */
+
+
+/* Assurez-vous que les tables peuvent scroller horizontalement sur mobile */
