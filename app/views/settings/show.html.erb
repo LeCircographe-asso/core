@@ -1,0 +1,77 @@
+<div class="min-h-screen py-6 mb-8">
+  <div class="max-w-xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="bg-white/70 backdrop-blur-sm shadow-lg rounded-xl transition-all duration-300 hover:shadow-xl">
+      <div class="px-6 py-8 sm:p-8">
+        <h1 class="text-2xl font-bold text-gray-900 mb-8 text-center">Paramètres du compte</h1>
+
+        <%= form_with(model: @user, url: settings_path, method: :patch, class: "space-y-6") do |f| %>
+          <% if @user.errors.any? %>
+            <div class="bg-red-50 p-4 rounded-md">
+              <div class="flex">
+                <div class="flex-shrink-0">
+                  <svg class="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+                  </svg>
+                </div>
+                <div class="ml-3">
+                  <h3 class="text-sm font-medium text-red-800">
+                    <%= pluralize(@user.errors.count, "erreur") %> à corriger :
+                  </h3>
+                  <div class="mt-2 text-sm text-red-700">
+                    <ul class="list-disc pl-5 space-y-1">
+                      <% @user.errors.full_messages.each do |message| %>
+                        <li><%= message %></li>
+                      <% end %>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+          <% end %>
+
+          <div class="space-y-6">
+            <div class="transition-all duration-200 hover:transform hover:scale-[1.02]">
+              <%= f.label :email_address, "Adresse email", class: "block text-sm font-medium text-gray-700 mb-1" %>
+              <%= f.email_field :email_address, class: "block w-full rounded-lg border-gray-300 shadow-sm focus:border-[#6D28D9] focus:ring-[#6D28D9] sm:text-sm transition-colors duration-200" %>
+            </div>
+            
+            <div class="flex items-center space-x-3 transition-all duration-200 hover:transform hover:scale-[1.02]">
+              <%= f.check_box :image_rights, class: "h-4 w-4 rounded border-gray-300 text-[#1F5C55] focus:ring-[#1F5C55] cursor-pointer" %>
+              <%= f.label :image_rights, "Droit à l'image", class: "text-sm font-medium text-gray-700 cursor-pointer" %>
+            </div>
+
+            <div class="flex items-center space-x-3 transition-all duration-200 hover:transform hover:scale-[1.02]">
+              <%= f.check_box :newsletter_subscribed, class: "h-4 w-4 rounded border-gray-300 text-[#1F5C55] focus:ring-[#1F5C55] cursor-pointer" %>
+              <%= f.label :newsletter_subscribed, "S'inscrire à la newsletter", class: "text-sm font-medium text-gray-700 cursor-pointer" %>
+            </div>
+
+            <div class="flex items-center space-x-3 transition-all duration-200 hover:transform hover:scale-[1.02]">
+              <%= f.check_box :get_involved, class: "h-4 w-4 rounded border-gray-300 text-[#1F5C55] focus:ring-[#1F5C55] cursor-pointer" %>
+              <%= f.label :get_involved, "S'investir dans le projet", class: "text-sm font-medium text-gray-700 cursor-pointer" %>
+            </div>
+          </div>
+
+          <div class="pt-6">
+            <%= f.submit "Enregistrer les modifications", class: "mx-auto max-w-xs w-full flex justify-center py-2.5 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-[#1F5C55] hover:bg-[#1F5C55]/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1F5C55] transition-all duration-200 hover:transform hover:scale-[1.02]" %>
+          </div>
+        <% end %>
+
+        <div class="mt-10 pt-8 border-t border-gray-200">
+          <h2 class="text-lg font-medium text-gray-900 mb-4 text-center">Sécurité</h2>
+          <%= button_to "Modifier le mot de passe", request_reset_password_path,
+              method: :get,
+              class: "mx-auto max-w-xs w-full flex justify-center py-2.5 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-[#1F5C55] hover:bg-[#1F5C55]/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1F5C55] transition-all duration-200 hover:transform hover:scale-[1.02]",
+              data: { turbo_confirm: "Un email de réinitialisation sera envoyé à #{@user.email_address}. Continuer ?" } %>
+        </div>
+
+        <div class="mt-10 pt-8 border-t border-gray-200">
+          <h2 class="text-lg font-medium text-red-900 mb-4 text-center">Zone de danger</h2>
+          <%= button_to "Supprimer mon compte", @user, 
+              method: :delete,
+              class: "mx-auto max-w-xs w-full flex justify-center py-2.5 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-all duration-200 hover:transform hover:scale-[1.02]",
+              data: { turbo_confirm: "Êtes-vous sûr de vouloir supprimer votre compte ? Cette action est irréversible." } %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div> 
