@@ -1,7 +1,7 @@
 <div class="bg-white rounded-lg shadow-md p-4">
   <h3 class="text-lg font-semibold mb-4 text-[#1F5C55] text-center">Horaires d'ouverture cette semaine</h3>
   <% 
-    # Accepte les horaires passés en paramètre ou utilise @horaires
+    # Accepts schedules passed as parameters or uses @schedules
     schedule = local_assigns[:horaires] || @horaires
   %>
   <% if schedule.present? %>

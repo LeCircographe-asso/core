@@ -1,13 +1,13 @@
 <nav class="bg-white border-gray-200 sticky top-0 z-50">
     <div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto">
-        <!-- Logo et profil regroupés pour mobile -->
+        <!-- Logo and profile combined for mobile -->
         <div class="flex items-center justify-between w-full md:w-auto">
             <!-- Logo -->
             <%= link_to root_path, class: "flex items-center space-x-3 rtl:space-x-reverse" do %>
             <%= image_tag("Le-Circographe-crop.webp", alt: "le-circographe Logo", class: "w-40 h-auto") %>
             <% end %>
 
-            <!-- Elements regroupés à droite pour mobile -->
+            <!-- Elements grouped on the right for mobile -->
             <div class="flex items-center md:hidden">
                 <% if authenticated? %>
                 <%= link_to user_path(Current.user), class: "flex mr-3" do %>
@@ -15,7 +15,7 @@
                 <% end %>
                 <% end %>
 
-                <!-- Bouton hamburger (mobile et tablette) -->
+                <!-- Hamburger button (mobile and tablet) -->
                 <button data-collapse-toggle="navbar-mobile" type="button" class="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200" aria-controls="navbar-mobile" aria-expanded="false">
                     <span class="sr-only">Ouvrir le menu</span>
                     <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 17 14">
@@ -25,10 +25,10 @@
             </div>
         </div>
 
-        <!-- Menu principal (desktop) -->
+        <!-- Main menu (desktop) -->
         <div class="hidden md:flex flex-grow justify-center items-center mx-4">
             <ul class="flex flex-row space-x-8 font-medium">
-                <!-- L'association -->
+                <!-- The association -->
                 <li class="group relative">
                     <%= link_to page_path('association'), class: "block py-2 text-gray-900 hover:text-indigo-700 group-hover:text-indigo-700" do %>
                     Le Lieu
@@ -45,7 +45,7 @@
                     </div>
                 </li>
 
-                <!-- Nos actualités -->
+                <!-- Our news -->
                 <li class="group relative">
                     <%= link_to page_path("nos_actualites"), class: "block py-2 text-gray-900 hover:text-indigo-700 group-hover:text-indigo-700" do %>
                     Nos actualités
@@ -62,17 +62,17 @@
                     </div>
                 </li>
 
-                <!-- Nos événements -->
+                <!-- Our events -->
                 <li>
                     <%= link_to "Nos Événements", events_path, class: "block py-2 text-gray-900 hover:text-indigo-700" %>
                 </li>
 
-                <!-- Devenir Membre -->
+                <!-- Become a Member -->
                 <li>
                     <%= link_to "Devenir Membre", page_path("become_member"), class: "block py-2 text-gray-900 hover:text-indigo-700" %>
                 </li>
 
-                <!-- À propos -->
+                <!-- About -->
                 <li class="group relative">
                     <%= link_to page_path('about'), class: "block py-2 text-gray-900 hover:text-indigo-700 group-hover:text-indigo-700" do %>
                     À Propos
@@ -96,22 +96,22 @@
             </ul>
         </div>
 
-        <!-- Boutons utilisateur (desktop seulement) -->
+        <!-- User buttons (desktop only) -->
         <div class="hidden md:flex items-center md:space-x-3">
             <% if authenticated? %>
-            <!-- Photo de profil cliquable -->
+            <!-- Clickable profile picture -->
             <%= link_to user_path(Current.user), class: "flex mr-3" do %>
             <%= image_tag("users.png", alt: "photo de profil", class: "w-8 h-8 rounded-full hover:ring-2 hover:ring-indigo-300") %>
             <% end %>
 
-            <!-- Bouton Mon Espace avec dropdown -->
+            <!-- My Space button with dropdown -->
             <div class="relative">
                 <button id="dropdownUserButton" data-dropdown-toggle="dropdownUser" class="relative inline-flex items-center px-5 py-2.5 text-sm font-medium text-center text-white bg-[#1F5C55] rounded-lg hover:bg-gray-100 hover:text-[#1F5C55] hover:border-[#1F5C55] hover:border-2 focus:ring-4 focus:outline-none focus:ring-gray-300 transition-colors duration-300 border-2 border-transparent cursor-pointer">
                     Mon Espace
                     <svg class="w-2.5 h-2.5 ms-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
                         <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4" />
                     </svg>
-                    <% if false # à remplacer par une condition réelle, comme des notifications non lues %>
+                    <% if false # to be replaced with an actual condition, such as unread notifications %>
                     <div class="absolute inline-flex items-center justify-center w-6 h-6 text-xs font-bold text-white bg-red-500 border-2 border-white rounded-full -top-2 -end-2">8</div>
                     <% end %>
                 </button>
@@ -147,7 +147,7 @@
                 </div>
             </div>
             <% else %>
-            <!-- Boutons pour visiteurs -->
+            <!-- Visitor buttons -->
             <div class="flex items-center space-x-2">
                 <%= link_to new_session_path, class: "text-gray-900 hover:text-indigo-700 font-medium rounded-lg text-sm px-4 py-2 text-center" do %>
                 Se connecter
@@ -160,12 +160,12 @@
         </div>
     </div>
 
-    <!-- Menu mobile -->
+    <!-- Mobile menu -->
     <div class="hidden w-full md:hidden" id="navbar-mobile" data-controller="accordion">
         <div class="flex flex-col items-start w-full p-4 bg-white">
-            <!-- Accordions pour mobile -->
+            <!-- Accordions for mobile -->
             <div id="accordion-menu" class="w-full">
-                <!-- Le Lieu accordion -->
+                <!-- The Accordion Place -->
                 <div class="border-b border-gray-200">
                     <h2 id="accordion-lieu-heading">
                         <button type="button" class="flex items-center justify-between w-full py-4 font-medium text-left text-gray-900" data-accordion-target="#accordion-lieu-body" aria-expanded="false" aria-controls="accordion-lieu-body">
@@ -192,7 +192,7 @@
                     </div>
                 </div>
 
-                <!-- Nos actualités accordion -->
+                <!-- Our accordion news -->
                 <div class="border-b border-gray-200">
                     <h2 id="accordion-actualites-heading">
                         <button type="button" class="flex items-center justify-between w-full py-4 font-medium text-left text-gray-900" data-accordion-target="#accordion-actualites-body" aria-expanded="false" aria-controls="accordion-actualites-body">
@@ -219,17 +219,17 @@
                     </div>
                 </div>
 
-                <!-- Nos événements (lien simple) -->
+                <!-- Our events (simple link) -->
                 <div class="border-b border-gray-200">
                     <%= link_to "Nos Événements", events_path, class: "flex items-center w-full py-4 font-medium text-left text-gray-900" %>
                 </div>
 
-                <!-- Devenir Membre (lien simple) -->
+                <!-- Become a Member (simple link) -->
                 <div class="border-b border-gray-200">
                     <%= link_to "Devenir Membre", page_path("become_member"), class: "flex items-center w-full py-4 font-medium text-left text-gray-900" %>
                 </div>
 
-                <!-- À propos accordion -->
+                <!-- About accordion -->
                 <div class="border-b border-gray-200">
                     <h2 id="accordion-apropos-heading">
                         <button type="button" class="flex items-center justify-between w-full py-4 font-medium text-left text-gray-900" data-accordion-target="#accordion-apropos-body" aria-expanded="false" aria-controls="accordion-apropos-body">
@@ -256,13 +256,13 @@
                     </div>
                 </div>
 
-                <!-- F.A.Q (lien simple) -->
+                <!-- F.A.Q (link simple) -->
                 <div class="border-b border-gray-200">
                     <%= link_to "F.A.Q", page_path("faq"), class: "flex items-center w-full py-4 font-medium text-left text-gray-900" %>
                 </div>
             </div>
 
-            <!-- Boutons utilisateur (mobile) -->
+            <!-- User buttons (mobile) -->
             <div class="flex flex-col w-full mt-4 space-y-3">
                 <% if authenticated? %>
                 <div class="flex items-center space-x-3 p-4 bg-gray-50 rounded-lg">
@@ -279,7 +279,7 @@
                     </div>
                 </div>
                 <% if Current.user.has_privileges? %>
-                <!-- Pour les utilisateurs avec privilèges : afficher 4 boutons en grille 2x2 -->
+                <!-- For privileged users: display 4 buttons in a 2x2 grid -->
                 <div class="grid grid-cols-2 gap-3">
                     <%= link_to "Profil", user_path(Current.user), class: "text-center py-2 px-4 bg-gray-100 rounded-lg hover:bg-gray-200" %>
                     <%= link_to "Tableau de bord", admin_dashboard_index_path, class: "text-center py-2 px-4 bg-gray-100 rounded-lg hover:bg-gray-200" %>
@@ -287,7 +287,7 @@
                     <%= button_to "Déconnexion", session_path, method: :delete, class: "text-center py-2 px-4 bg-red-100 text-red-700 rounded-lg hover:bg-red-200 cursor-pointer" %>
                 </div>
                 <% else %>
-                <!-- Pour les utilisateurs sans privilèges : afficher 3 boutons -->
+                <!-- For unprivileged users: show 3 buttons -->
                 <div class="grid grid-cols-2 gap-3">
                     <%= link_to "Profil", user_path(Current.user), class: "text-center py-2 px-4 bg-gray-100 rounded-lg hover:bg-gray-200" %>
                     <%= link_to "Paramètres", "#", class: "text-center py-2 px-4 bg-gray-100 rounded-lg hover:bg-gray-200" %>

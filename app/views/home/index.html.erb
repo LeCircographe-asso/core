@@ -1,27 +1,27 @@
 <% content_for :title, "Le Circographe - Accueil" %>
 
-<!-- Conteneur principal - retiré min-h-screen pour permettre au footer de s'afficher -->
+<!-- Main container - removed min-h-screen to allow the footer to display -->
 <div class="relative overflow-auto">
 
-    <!-- Le contenu principal -->
+    <!-- The main content -->
     <div id="content" class="relative w-full flex flex-col items-center justify-start text-center">
 
-        <!-- Grand espace vide en haut -->
+        <!-- Large empty space at the top -->
         <div class="h-72"></div>
 
-        <!-- Titre principal - avec beaucoup d'espace au-dessus -->
+        <!-- Main title - with plenty of space above -->
         <h1 id="title" class="text-5xl font-bold text-black opacity-0 transition-opacity duration-500">Le Circographe</h1>
 
-        <!-- Grand espace entre le titre et le bouton -->
+        <!-- Large space between title and button -->
         <div class="h-64"></div>
 
-        <!-- Bouton avec grand espace après le titre -->
+        <!-- Button with large space after the title -->
         <div class="main-button opacity-0 transition-opacity duration-500">
             <%= link_to "Découvrir l'association", page_path('association'),
                 class: "px-8 py-4 text-xl font-semibold text-gray-800 bg-white border border-gray-300 rounded-full hover:bg-gray-100 shadow-md" %>
         </div>
 
-        <!-- Flèche animée qui défile vers le contenu principal -->
+        <!-- Animated arrow scrolling to main content -->
         <div class="mt-20 opacity-0 transition-opacity duration-500 scroll-arrow-container">
             <a href="#main-content" class="scroll-arrow">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-10 h-10 text-white">
@@ -30,18 +30,18 @@
             </a>
         </div>
 
-        <!-- Très grand espace avant les cartes, mais pas excessif -->
+        <!-- Very large space before the cards, but not excessive -->
         <div class="h-64"></div>
 
-        <!-- Section des contenus (très bas sur la page) -->
+        <!-- Contents section (very low on the page) -->
         <div id="main-content" class="grid grid-cols-1 md:grid-cols-2 gap-32 max-w-4xl mb-24 opacity-0 transition-opacity duration-500">
 
-            <!-- Article (sans background blanc) -->
+            <!-- Article (without white background) -->
             <div class="p-4 flex flex-col">
                 <%= render "shared/event_card", event: @events.last if @events.present? %>
             </div>
 
-            <!-- Horaires -->
+            <!-- Schedules -->
             <div>
                 <% @horaires = begin
                     Rails.cache.fetch("opening_hours") || 
@@ -57,7 +57,7 @@
             </div>
         </div>
         
-        <!-- Espace supplémentaire avant le footer pour s'assurer qu'il y a une marge -->
+        <!-- Extra space before the footer to ensure there is a margin -->
         <div class="h-24"></div>
     </div>
 </div>
