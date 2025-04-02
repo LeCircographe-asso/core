@@ -1,18 +1,16 @@
 class EventAttendeesController < ApplicationController
+  before_action :require_authentication
+
   def create
     event_id = params[:id]
-    if authenticated?
-      EventAttendee.create!(user_id: Current.user.id, event_id: event_id)
-    end
+    EventAttendee.create!(user_id: Current.user.id, event_id: event_id)
     redirect_to event_path(event_id)
   end
 
   def destroy
-    if authenticated?
-      event_id = params[:id]
-      attendee = EventAttendee.where("user_id = #{Current.user.id} AND event_id = #{event_id}")
-      EventAttendee.destroy attendee
-    end
+    event_id = params[:id]
+    attendee = EventAttendee.find_by(user_id: Current.user.id, event_id: event_id)
+    attendee&.destroy
     redirect_to event_path(event_id)
   end
 end

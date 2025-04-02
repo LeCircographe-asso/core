@@ -1,0 +1,12 @@
+Réinitialisation de votre mot de passe
+
+Bonjour <%= @user.email_address %>,
+
+Vous avez demandé la réinitialisation de votre mot de passe. Vous pouvez le réinitialiser dans les 15 prochaines minutes en cliquant sur le lien ci-dessous :
+
+<%= edit_password_url(@user.generate_token_for(:password_reset)) %>
+
+Si vous n'avez pas demandé cette réinitialisation, veuillez ignorer cet email.
+
+Cordialement,
+L'équipe Le Circographe 

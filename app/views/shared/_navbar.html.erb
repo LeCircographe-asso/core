@@ -138,7 +138,7 @@
                         </li>
                         <% end %>
                         <li>
-                            <%= link_to "Paramètres", "#", class: "block px-4 py-2 hover:bg-gray-100" %>
+                            <%= link_to "Paramètres", settings_path, class: "block px-4 py-2 hover:bg-gray-100" %>
                         </li>
                     </ul>
                     <div class="py-1">
@@ -178,6 +178,9 @@
                     <div id="accordion-lieu-body" class="hidden" aria-labelledby="accordion-lieu-heading">
                         <div class="pb-4 pl-4">
                             <ul class="space-y-2">
+                                <li>
+                                    <%= link_to "L'Association", page_path('association'), class: "block" %>
+                                </li>
                                 <li>
                                     <%= link_to "Le Cirque", page_path('le_cirque'), class: "block" %>
                                 </li>

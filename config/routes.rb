@@ -1,23 +1,12 @@
 Rails.application.routes.draw do
-  resources :blogs, only: %i[show ]
-  get "/blog-newsletter", to: "blogs#index"
-
-  #  do
-  #   collection do
-  #     get :article
-  #     get :blog_newsletter
-  #   end
-  # end
-  
-
   namespace :admin do
     resources :blogs
     resources :dashboard, only: %i[index], path: "dashboard"
     resource :opening_hours, only: %i[show edit update]
-    resources :donations ,only: %i[create]
+    resources :donations, only: %i[create]
     resources :users do
-      resources :orders, only: %i[create show index update]do
-        resources :product_orders, only: [:destroy]
+      resources :orders, only: %i[create show index update] do
+        resources :product_orders, only: %i[destroy]
         end
       resources :user_membership, only: %i[create show update destroy]
     end
@@ -35,14 +24,14 @@ Rails.application.routes.draw do
     end
   end
 
-
-
   resources :events, only: %i[show index]
   resources :pages, only: %i[show]
   resource :session, only: %i[new create destroy]
   resources :passwords, only: %i[new create edit update], param: :token
   resource :registration, only: %i[new create]
   resources :event_attendees, only: %i[create destroy]
+  resources :blogs, only: %i[show ]
+  get "/blog-newsletter", to: "blogs#index"
   resources :users do
     post "change_newsletter_status", on: :member
     get "change_newsletter_status", on: :member
@@ -72,4 +61,14 @@ Rails.application.routes.draw do
 
   # Route pour le formulaire de contact
   post "/submit_contact", to: "contacts#create"
+
+  if Rails.env.development?
+    mount LetterOpenerWeb::Engine, at: "/letter_opener"
+  end
+
+  resource :password, only: [ :new, :create, :edit, :update ] do
+    get :request_reset, on: :collection
+  end
+
+  resource :settings, only: [ :show, :update ], controller: "settings"
 end
