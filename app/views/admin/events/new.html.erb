@@ -5,40 +5,40 @@
 
     <%= form_with model: @event, url: admin_events_path, method: "post" do |form| %>
       <div class="space-y-4">
-        <!-- Champ Titre -->
+        <!-- Title Field -->
         <div class="form-group">
           <%= form.text_field :title, required: true, placeholder: "ex.: Concert Super Cool", maxlength: 72, class: "w-full p-3 border border-gray-300 rounded-md bg-gray-50 focus:ring-[#1F5C55] focus:border-[#1F5C55]" %>
         </div>
 
-        <!-- Champ Description Haute -->
+        <!-- Field Description High -->
         <div class="form-group">
           <%= form.text_area :upper_description, required: false, placeholder: "Description haute", maxlength: 72, class: "w-full p-3 border border-gray-300 rounded-md bg-gray-50 focus:ring-[#1F5C55] focus:border-[#1F5C55]" %>
         </div>
 
-        <!-- Champ Description Milieu -->
+        <!-- Field Description Middle -->
         <div class="form-group">
           <%= form.text_area :middle_description, required: true, placeholder: "Description milieu", maxlength: 72, class: "w-full p-3 border border-gray-300 rounded-md bg-gray-50 focus:ring-[#1F5C55] focus:border-[#1F5C55]" %>
         </div>
 
-        <!-- Champ Description Basse -->
+        <!-- Field Description Low -->
         <div class="form-group">
           <%= form.text_area :bottom_description, required: false, placeholder: "Description basse", maxlength: 72, class: "w-full p-3 border border-gray-300 rounded-md bg-gray-50 focus:ring-[#1F5C55] focus:border-[#1F5C55]" %>
         </div>
 
-        <!-- Champ Lieu -->
+        <!-- Field Location -->
         <div class="form-group">
           <%= form.text_field :location, required: true, placeholder: "ex.: Toulouse", maxlength: 72, class: "w-full p-3 border border-gray-300 rounded-md bg-gray-50 focus:ring-[#1F5C55] focus:border-[#1F5C55]" %>
         </div>
 
-        <!-- Champ Date -->
+        <!-- Date Field -->
         <div class="form-group">
           <%= form.date_field :date, required: true, maxlength: 72, class: "w-full p-3 border border-gray-300 rounded-md bg-gray-50 focus:ring-[#1F5C55] focus:border-[#1F5C55]" %>
         </div>
 
-        <!-- Champ Hidden (Creator) -->
+        <!-- Hidden Field (Creator) -->
         <%= form.hidden_field :creator, value: current_user %>
 
-        <!-- Bouton de soumission -->
+        <!-- Submit button -->
         <div class="mt-6">
           <%= form.submit "Créer l'événement", class: "inline-flex items-center px-6 py-3 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#1F5C55] hover:bg-[#194A45] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1F5C55]" %>
         </div>
