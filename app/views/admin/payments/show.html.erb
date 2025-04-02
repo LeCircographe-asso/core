@@ -1,7 +1,7 @@
 <div class="flex flex-col items-center justify-center text-center min-h-screen p-6">
   <%= form_with(model: [:admin, @payment], method: :patch, class: "w-full max-w-lg bg-white p-6 rounded-lg shadow-md") do |f| %>
     
-    <!-- Affichage du nom du produit -->
+    <!-- Displaying the product name -->
     <div class="mb-4">
       <% if @order.product_orders.any? %>
         <% @order.product_orders.each do |product_order| %>
@@ -10,7 +10,7 @@
       <% end %>
     </div>
 
-    <!-- Date de création du paiement -->
+    <!-- Payment creation date -->
     <div class="mb-4">
       <%= f.label :payment_date, "Date de création", class: "block text-gray-700" %>
       <p class="text-gray-900"><%= @payment.created_at.strftime("%d-%m-%Y %H:%M:%S") %></p>
@@ -24,7 +24,7 @@
       <%= f.text_field :donation, value: "#{@total_donation}", class: "w-full p-2 border rounded" %>
     </div>
 
-    <!-- Montant du paiement -->
+    <!-- Payment amount -->
     <div class="mb-4">
       <%= f.label :payment_amount, "Montant du paiement", class: "block text-gray-700" %>
       <% if @order.product_orders.any? %>
@@ -42,14 +42,14 @@
       <%= f.hidden_field :total_payment, value: @total_payment %>
     </div>
 
-    <!-- Type de paiement -->
+    <!-- Payment type -->
 
     <div class="mb-4">
       <%= f.label :payment_type, "Type de paiement", class: "block text-gray-700" %>
       <%= f.select :payment_type, Payment.payment_types.keys.map { |key| [key.humanize, key] }, { selected: @payment.payment_type }, class: "w-full p-2 border rounded" %>
     </div>
 
-    <!-- Message de validation du paiement -->
+    <!-- Payment validation message -->
     <% if @payment.status == 'success' %>
       <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 rounded mb-4">
         <p class="font-semibold">Paiement validé !</p>
@@ -59,7 +59,7 @@
 
     <%= f.hidden_field :user_id, value: @payment.user_id %>
 
-    <!-- Bouton de validation du paiement -->
+    <!-- Payment validation button -->
     <% if @payment.status == 'pending' %>
       <%= f.hidden_field :status, value: "success" %>
       <%= f.submit "Valider le paiement", class: "w-full bg-[#1F5C55] hover:bg-[#194A45] text-white py-2 px-4 rounded shadow-sm" %>
