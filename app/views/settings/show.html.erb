@@ -46,6 +46,11 @@
             </div>
 
             <div class="flex items-center space-x-3 transition-all duration-200 hover:transform hover:scale-[1.02]">
+              <%= f.check_box :dyslexic_font, class: "h-4 w-4 rounded border-gray-300 text-[#1F5C55] focus:ring-[#1F5C55] cursor-pointer" %>
+              <%= f.label :dyslexic_font, "Utiliser la police pour dyslexiques", class: "text-sm font-medium text-gray-700 cursor-pointer" %>
+            </div>
+
+            <div class="flex items-center space-x-3 transition-all duration-200 hover:transform hover:scale-[1.02]">
               <%= f.check_box :get_involved, class: "h-4 w-4 rounded border-gray-300 text-[#1F5C55] focus:ring-[#1F5C55] cursor-pointer" %>
               <%= f.label :get_involved, "S'investir dans le projet", class: "text-sm font-medium text-gray-700 cursor-pointer" %>
             </div>

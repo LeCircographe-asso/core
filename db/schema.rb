@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_03_28_154225) do
+ActiveRecord::Schema[8.0].define(version: 2025_04_02_172123) do
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.string "name", null: false
     t.text "body"
@@ -246,6 +246,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_03_28_154225) do
     t.boolean "newsletter_subscribed"
     t.string "unsubscribe_token"
     t.boolean "created_by_admin"
+    t.boolean "dyslexic_font"
     t.index ["email_address"], name: "index_users_on_email_address", unique: true
   end
 
