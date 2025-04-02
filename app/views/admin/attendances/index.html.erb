@@ -2,7 +2,7 @@
 
 <div class="min-h-screen py-6">
   <div class="max-w-5xl mx-auto px-4 sm:px-6">
-    <!-- En-tête -->
+    <!-- Header -->
     <div class="mb-6">
       <div class="flex items-center">
         <%= link_to admin_attendance_lists_path, class: "mr-4 text-gray-500 hover:text-[#1F5C55]" do %>
@@ -20,7 +20,7 @@
       </div>
     </div>
 
-    <!-- Liste des participants -->
+    <!-- List of participants -->
     <div class="bg-white shadow overflow-hidden rounded-lg">
       <% if @users.present? %>
         <ul class="divide-y divide-gray-200">

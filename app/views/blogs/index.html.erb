@@ -5,7 +5,7 @@
     <section class="text-center mb-12 bg-white/70 py-6 rounded-lg shadow-md">
         <h1 class="text-4xl font-bold text-center text-black rounded-lg ">Blog & Newsletter</h1>
     </section>
-<!-- les blogs -->
+<!-- Blog -->
         <div id="blogs" class="min-w-full divide-y divide-gray-200 space-y-5">
             <% if @blogs.any? %>
                 <% @blogs.each do |blog| %>
@@ -17,10 +17,10 @@
                     </div>
                 <% end %>
             <% else %>
-            <p class="text-center my-10">No blogs found.</p>
+            <p class="text-center my-10">Aucun Blog trouvé.</p>
             <% end %>
         </div>
-<!-- fin des blogs -->
+<!-- End of Blog -->
         <%= render 'shared/blog_card' %>
         
     </div>
