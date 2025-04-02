@@ -2,7 +2,7 @@
 
 <div class="min-h-screen py-3">
   <div class="max-w-6xl mx-auto px-4">
-    <!-- En-tête -->
+    <!-- Header -->
     <div class="bg-white shadow-lg rounded-lg overflow-hidden mb-4 ">
       <div class="bg-gradient-to-r from-[#1F5C55] to-teal-600 px-6 py-2.5">
         <div class="flex flex-col sm:flex-row justify-between items-center gap-4">
@@ -20,9 +20,9 @@
       </div>
     </div>
 
-    <!-- Contenu principal en deux colonnes -->
+    <!-- Main content in two columns -->
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
-      <!-- Colonne de gauche - Formulaire -->
+      <!-- Left column - Form -->
       <div class="bg-white shadow-lg rounded-lg overflow-hidden">
         <div class="px-4 py-2 border-b border-gray-200 flex items-center justify-between">
           <h2 class="text-base font-medium text-gray-900">Formulaire de modification</h2>
@@ -34,7 +34,7 @@
         </div>
         
         <div class="p-3">
-          <!-- Formulaire -->
+          <!-- Form -->
           <%= form_with url: admin_opening_hours_path, method: :patch, id: "opening-hours-form" do |form| %>
             <div class="overflow-hidden rounded-lg border border-gray-200">
               <table class="min-w-full divide-y divide-gray-200">
@@ -79,7 +79,7 @@
         </div>
       </div>
       
-      <!-- Colonne de droite - Aperçu -->
+      <!-- Right Column - Preview -->
       <div class="bg-white shadow-lg rounded-lg overflow-hidden">
         <div class="px-4 py-2 border-b border-gray-200">
           <h2 class="text-base font-medium text-gray-900">Aperçu des horaires</h2>
@@ -150,7 +150,7 @@ document.addEventListener("DOMContentLoaded", function() {
   const previewHours = document.querySelectorAll('.preview-hours');
   const form = document.getElementById('opening-hours-form');
   
-  // Mise à jour de l'aperçu en temps réel
+  // Real-time preview update
   timeInputs.forEach(input => {
     input.addEventListener('input', function() {
       const day = this.dataset.day;
@@ -174,7 +174,7 @@ document.addEventListener("DOMContentLoaded", function() {
     });
   });
   
-  // Validation du formulaire
+  // Form validation
   form.addEventListener('submit', function(event) {
     let isValid = true;
     const timeFormat = /^(([0-1]?[0-9]|2[0-3]):[0-5][0-9] - ([0-1]?[0-9]|2[0-3]):[0-5][0-9]|Fermé)$/i;
