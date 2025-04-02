@@ -12,6 +12,7 @@
   border-right: 1px solid #f0f0f0;
   display: flex;
   flex-direction: column;
+  transition: transform 0.3s ease, width 0.3s ease;
 }
 
 .sidebar-logo {
@@ -67,8 +68,8 @@
 }
 
 .admin-content {
+  margin-left: 70px; /* Coller à la sidebar fermée */
   flex: 1;
-  margin-left: 260px; /* Même largeur que .admin-sidebar */
   display: flex;
   flex-direction: column;
   min-height: 100vh;
@@ -80,3 +81,175 @@
   padding: 25px;
   overflow-y: auto;
 }
+
+.admin-sidebar.collapsed {
+  width: 70px;
+}
+
+.admin-sidebar.collapsed .sidebar-logo {
+  display: flex;
+  justify-content: center;
+  padding: 1rem 0;
+}
+
+.admin-sidebar.collapsed .sidebar-logo img {
+  width: 40px;
+  height: 40px;
+}
+
+.admin-sidebar.collapsed .fas {
+  margin-right: 0;
+  font-size: 1.2rem;
+}
+
+.admin-sidebar.collapsed .sidebar-link {
+  justify-content: center;
+  padding: 0.75rem 0;
+}
+
+.toggle-indicator {
+  position: absolute;
+  right: -20px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background-color: white;
+  border: 1px solid #e2e8f0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #4a5568;
+  font-size: 0.9rem;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  z-index: 20;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.admin-sidebar {
+  position: relative;
+  overflow: visible;
+}
+
+.admin-sidebar.collapsed .toggle-indicator {
+  right: -20px;
+}
+
+.toggle-icon {
+  transition: transform 0.3s ease;
+}
+
+/* Animation lors du survol */
+.toggle-indicator:hover {
+  transform: translateY(-50%) scale(1.1);
+  box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+  color: #2d3748;
+}
+
+ .admin-sidebar {
+    position: fixed;
+    width: 260px;
+    height: 100vh;
+    background: white;
+    transition: all 0.3s ease;
+    overflow-x: hidden;
+    z-index: 100;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  .admin-sidebar.collapsed {
+    width: 70px;
+  }
+  
+  .sidebar-text {
+    transition: opacity 0.3s;
+  }
+  
+  .admin-sidebar.collapsed .sidebar-text {
+    opacity: 0;
+    display: none;
+  }
+  
+  #sidebar-toggle {
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+    text-align: left;
+    transition: background-color 0.2s ease;
+    padding: 8px 12px;
+  }
+  
+  #sidebar-toggle:hover {
+    background-color: #1F5C55;
+    color: white;
+  }
+  
+  .admin-sidebar.collapsed #sidebar-toggle {
+    justify-content: center;
+    padding-left: 0;
+    padding-right: 0;
+  }
+  
+  .main-content {
+    margin-left: 260px;
+    transition: margin-left 0.3s; 
+  }
+  
+  .main-content.expanded {
+    margin-left: 70px;
+  }
+  
+  @media (max-width: 768px) {
+    .main-content {
+      margin-left: 70px;
+      width: calc(100% - 70px);
+      max-width: 100%;
+      overflow-x: hidden;
+    }
+    
+    body {
+      overflow-x: hidden;
+      width: 100%;
+    }
+    
+    html {
+      overflow-x: hidden;
+    }
+  }
+
+/* Ajoutez ces règles à la fin du fichier */
+.admin-sidebar.collapsed .sidebar-link {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 10px 0;
+}
+
+.admin-sidebar.collapsed .sidebar-icon,
+.admin-sidebar.collapsed .fas {
+  margin-right: 0;
+  margin-left: 0;
+  font-size: 1.2rem;
+}
+
+.admin-sidebar.collapsed .sidebar-menu li a,
+.admin-sidebar.collapsed .sidebar-menu li button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 10px 0;
+}
+
+/* Assurez-vous que les icônes sont bien centrées sans marges */
+.admin-sidebar.collapsed .sidebar-menu li a i,
+.admin-sidebar.collapsed .sidebar-menu li button i {
+  margin: 0;
+}
+
+/* Styles de responsive globaux - ajoutez à la fin du fichier */
+
+
+/* Assurez-vous que les tables peuvent scroller horizontalement sur mobile */
