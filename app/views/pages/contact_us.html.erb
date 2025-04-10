@@ -1,0 +1,90 @@
+
+<% content_for :title, "Le Circographe - Contact" %>
+
+<section class="min-h-screen fade-in">
+    <div class="flex flex-col min-h-screen bg-black/60 rounded-lg mb-12 fade-in">
+        <div class="container flex flex-col flex-1 px-6 py-12 mx-auto fade-in">
+            <div class="flex-1 lg:flex lg:items-center lg:-mx-6 fade-in">
+                <div class="text-white lg:w-1/2 lg:mx-6 fade-in">
+                    <h1 class="text-2xl font-semibold capitalize lg:text-3xl">Contactez-nous</h1>
+
+                    <p class="max-w-xl mt-6">
+                        Pour toute question ou demande, veuillez nous contacter via le formulaire ci-contre.
+                        Nous répondrons à votre message dans les plus brefs délais.
+                    </p>
+                    <p class="max-w-xl mt-6">
+                        Pensez à la FAQ pour trouver des réponses à vos questions.
+                    </p>
+
+                    <%= link_to "FAQ", page_path('faq'), class: "px-6 py-3 mt-6 tracking-wide text-white font-bold bg-[#1F5C55] border-2 border-[#1F5C55] rounded-lg shadow-lg hover:bg-gray-100 hover:text-[#1F5C55] hover:border-[#1F5C55] transition-colors duration-300 inline-block" %>
+
+                    <div class="mt-6 md:mt-8 fade-in">
+                        <h3 class="text-gray-300 ">Suivez-nous</h3>
+
+                        <div class="flex mt-4 -mx-1.5 fade-in">
+                            <%= link_to "https://www.facebook.com/lecircographe/?locale=fr_FR", target: "_blank" do %>
+                            <svg class="w-8 h-8 mx-2" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M7 10.2222V13.7778H9.66667V20H13.2222V13.7778H15.8889L16.7778 10.2222H13.2222V8.44444C13.2222 8.2087 13.3159 7.9826 13.4826 7.81591C13.6493 7.64921 13.8754 7.55556 14.1111 7.55556H16.7778V4H14.1111C12.9324 4 11.8019 4.46825 10.9684 5.30175C10.1349 6.13524 9.66667 7.2657 9.66667 8.44444V10.2222H7Z" fill="currentColor" />
+                            </svg>
+                            <% end %>
+                            <%= link_to "https://www.instagram.com/lecircographe/", target: "_blank" do %>
+                            <svg class="w-8 h-8 mx-2" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M11.9294 7.72275C9.65868 7.72275 7.82715 9.55428 7.82715 11.825C7.82715 14.0956 9.65868 15.9271 11.9294 15.9271C14.2 15.9271 16.0316 14.0956 16.0316 11.825C16.0316 9.55428 14.2 7.72275 11.9294 7.72275ZM11.9294 14.4919C10.462 14.4919 9.26239 13.2959 9.26239 11.825C9.26239 10.354 10.4584 9.15799 11.9294 9.15799C13.4003 9.15799 14.5963 10.354 14.5963 11.825C14.5963 13.2959 13.3967 14.4919 11.9294 14.4919ZM17.1562 7.55495C17.1562 8.08692 16.7277 8.51178 16.1994 8.51178C15.6674 8.51178 15.2425 8.08335 15.2425 7.55495C15.2425 7.02656 15.671 6.59813 16.1994 6.59813C16.7277 6.59813 17.1562 7.02656 17.1562 7.55495ZM19.8731 8.52606C19.8124 7.24434 19.5197 6.10901 18.5807 5.17361C17.6453 4.23821 16.51 3.94545 15.2282 3.88118C13.9073 3.80621 9.94787 3.80621 8.62689 3.88118C7.34874 3.94188 6.21341 4.23464 5.27444 5.17004C4.33547 6.10544 4.04628 7.24077 3.98201 8.52249C3.90704 9.84347 3.90704 13.8029 3.98201 15.1238C4.04271 16.4056 4.33547 17.5409 5.27444 18.4763C6.21341 19.4117 7.34517 19.7045 8.62689 19.7687C9.94787 19.8437 13.9073 19.8437 15.2282 19.7687C16.51 19.708 17.6453 19.4153 18.5807 18.4763C19.5161 17.5409 19.8089 16.4056 19.8731 15.1238C19.9481 13.8029 19.9481 9.84704 19.8731 8.52606ZM18.1665 16.5412C17.8881 17.241 17.349 17.7801 16.6456 18.0621C15.5924 18.4799 13.0932 18.3835 11.9294 18.3835C10.7655 18.3835 8.26272 18.4763 7.21307 18.0621C6.51331 17.7837 5.9742 17.2446 5.69215 16.5412C5.27444 15.488 5.37083 12.9888 5.37083 11.825C5.37083 10.6611 5.27801 8.15832 5.69215 7.10867C5.97063 6.40891 6.50974 5.8698 7.21307 5.58775C8.26629 5.17004 10.7655 5.26643 11.9294 5.26643C13.0932 5.26643 15.596 5.17361 16.6456 5.58775C17.3454 5.86623 17.8845 6.40534 18.1665 7.10867C18.5843 8.16189 18.4879 10.6611 18.4879 11.825C18.4879 12.9888 18.5843 15.4916 18.1665 16.5412Z" fill="currentColor" />
+                            </svg>
+                            <% end %>
+                            <%= link_to "https://wa.me/33612345678", target: "_blank" do %>
+                            <svg class="w-8 h-8 mx-2" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M18.403 5.633A8.919 8.919 0 0 0 12.053 3c-4.948 0-8.976 4.027-8.978 8.977 0 1.582.413 3.126 1.198 4.488L3 21.116l4.759-1.249a8.981 8.981 0 0 0 4.29 1.093h.004c4.947 0 8.975-4.027 8.977-8.977a8.926 8.926 0 0 0-2.627-6.35m-6.35 13.812h-.003a7.446 7.446 0 0 1-3.798-1.041l-.272-.162-2.824.741.753-2.753-.177-.282a7.448 7.448 0 0 1-1.141-3.971c.002-4.114 3.349-7.461 7.465-7.461a7.413 7.413 0 0 1 5.275 2.188 7.42 7.42 0 0 1 2.183 5.279c-.002 4.114-3.349 7.462-7.461 7.462m4.093-5.589c-.225-.113-1.327-.655-1.533-.73-.205-.075-.354-.112-.504.112s-.58.729-.711.879-.262.168-.486.056-.947-.349-1.804-1.113c-.667-.595-1.117-1.329-1.248-1.554s-.014-.346.099-.458c.101-.1.224-.262.336-.393.112-.131.149-.224.224-.374s.038-.281-.019-.393c-.056-.113-.505-1.217-.692-1.666-.181-.435-.366-.377-.504-.383a9.65 9.65 0 0 0-.429-.008.826.826 0 0 0-.599.28c-.206.225-.785.767-.785 1.871s.804 2.171.916 2.321c.112.15 1.582 2.415 3.832 3.387.536.231.954.369 1.279.473.537.171 1.026.146 1.413.089.431-.064 1.327-.542 1.514-1.066.187-.524.187-.973.131-1.067-.056-.094-.207-.151-.43-.263" fill="currentColor" />
+                            </svg>
+                            <% end %>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-8 lg:w-1/2 lg:mx-6 fade-in">
+                    <div class="w-full px-8 py-10 mx-auto overflow-hidden bg-white/95 shadow-2xl rounded-xl lg:max-w-xl fade-in">
+                        <h1 class="text-xl font-medium text-gray-700">Formulaire de contact</h1>
+
+                        <p class="mt-2 text-gray-500">
+                            Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quos.
+                            Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quos.
+                        </p>
+
+                        <form class="mt-6 fade-in" action="/submit_contact" method="post">
+                            <%= hidden_field_tag :authenticity_token, form_authenticity_token %>
+                            <div class="flex-1 fade-in">
+                                <label class="block mb-2 text-sm text-gray-600">Nom complet</label>
+                                <input type="text" name="contact[name]" placeholder="Nom Prénom" class="block w-full px-5 py-3 mt-2 text-gray-700 bg-white border border-gray-200 rounded-md focus:border-blue-400 focus:ring-blue-300 focus:ring-opacity-40 focus:outline-none focus:ring" required />
+                            </div>
+
+                            <div class="flex-1 mt-6 fade-in">
+                                <label class="block mb-2 text-sm text-gray-600">Adresse email</label>
+                                <input type="email" name="contact[email]" placeholder="adresse@example.com" class="block w-full px-5 py-3 mt-2 text-gray-700 bg-white border border-gray-200 rounded-md focus:border-blue-400 focus:ring-blue-300 focus:ring-opacity-40 focus:outline-none focus:ring" required />
+                            </div>
+
+                            <div class="flex-1 mt-6 fade-in">
+                                <label class="block mb-2 text-sm text-gray-600">Catégorie</label>
+                                <select name="contact[category]" class="block w-full px-5 py-3 mt-2 text-gray-700 bg-white border border-gray-200 rounded-md focus:border-blue-400 focus:ring-blue-300 focus:ring-opacity-40 focus:outline-none focus:ring" required>
+                                    <option value="" disabled selected>Sélectionnez une catégorie</option>
+                                    <option value="general">Question générale</option>
+                                    <option value="technical">Support technique</option>
+                                    <option value="residence">Résidences</option>
+                                    <option value="partnership">Partenariat</option>
+                                </select>
+                            </div>
+
+                            <div class="w-full mt-6 fade-in">
+                                <label class="block mb-2 text-sm text-gray-600">Message</label>
+                                <textarea name="contact[message]" class="block w-full h-32 px-5 py-3 mt-2 text-gray-700 placeholder-gray-400 bg-white border border-gray-200 rounded-md md:h-48 focus:border-blue-400 focus:ring-blue-300 focus:ring-opacity-40 focus:outline-none focus:ring" placeholder="Votre message" required></textarea>
+                            </div>
+
+                            <div class="form-group mt-6 fade-in">
+                                <button type="submit" class="px-6 py-2 tracking-wide text-white font-bold bg-[#1F5C55] border-2 border-[#1F5C55] rounded-lg shadow-lg hover:bg-gray-100 hover:text-[#1F5C55] hover:border-[#1F5C55] transition-colors duration-300 cursor-pointer">Envoyer</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
