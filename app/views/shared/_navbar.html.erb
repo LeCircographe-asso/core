@@ -36,10 +36,10 @@
                     <div class="hidden group-hover:block absolute left-0 top-full z-10 w-48 bg-white rounded-lg shadow-lg">
                         <ul class="py-2 text-sm text-gray-700">
                             <li>
-                                <%= link_to "Le Cirque", page_path('le_cirque'), class: "block px-4 py-2 hover:bg-gray-100" %>
+                                <%= link_to "Le Cirque", page_path('circus_details'), class: "block px-4 py-2 hover:bg-gray-100" %>
                             </li>
                             <li>
-                                <%= link_to "Les Arts Graphiques", page_path('le_graff'), class: "block px-4 py-2 hover:bg-gray-100" %>
+                                <%= link_to "Les Arts Graphiques", page_path('graphic_arts_details'), class: "block px-4 py-2 hover:bg-gray-100" %>
                             </li>
                         </ul>
                     </div>
@@ -47,13 +47,13 @@
 
                 <!-- Our news -->
                 <li class="group relative">
-                    <%= link_to page_path("nos_actualites"), class: "block py-2 text-gray-900 hover:text-indigo-700 group-hover:text-indigo-700" do %>
+                    <%= link_to page_path("news"), class: "block py-2 text-gray-900 hover:text-indigo-700 group-hover:text-indigo-700" do %>
                     Nos actualités
                     <% end %>
                     <div class="hidden group-hover:block absolute left-0 top-full z-10 w-48 bg-white rounded-lg shadow-lg">
                         <ul class="py-2 text-sm text-gray-700">
                             <li>
-                                <%= link_to "Blog & Newsletters", "/blog-newsletter", class: "block px-4 py-2 hover:bg-gray-100" %>
+                                <%= link_to "Blog & Newsletters", page_path("blog_newsletter"), class: "block px-4 py-2 hover:bg-gray-100" %>
                             </li>
                             <li>
                                 <%= link_to "Galerie Photos", page_path("gallery"), class: "block px-4 py-2 hover:bg-gray-100" %>
@@ -80,10 +80,10 @@
                     <div class="hidden group-hover:block absolute left-0 top-full z-10 w-48 bg-white rounded-lg shadow-lg">
                         <ul class="py-2 text-sm text-gray-700">
                             <li>
-                                <%= link_to "Informations Utiles", page_path("useful_information"), class: "block px-4 py-2 hover:bg-gray-100" %>
+                                <%= link_to "Informations Utiles", page_path("practical_info"), class: "block px-4 py-2 hover:bg-gray-100" %>
                             </li>
                             <li>
-                                <%= link_to "Nous contacter", page_path('contact'), class: "block px-4 py-2 hover:bg-gray-100" %>
+                                <%= link_to "Nous contacter", page_path("contact_us"), class: "block px-4 py-2 hover:bg-gray-100" %>
                             </li>
                         </ul>
                     </div>
@@ -182,10 +182,10 @@
                                     <%= link_to "L'Association", page_path('association'), class: "block" %>
                                 </li>
                                 <li>
-                                    <%= link_to "Le Cirque", page_path('le_cirque'), class: "block" %>
+                                    <%= link_to "Le Cirque", page_path('circus_details'), class: "block" %>
                                 </li>
                                 <li>
-                                    <%= link_to "Les Arts Graphiques", page_path('le_graff'), class: "block" %>
+                                    <%= link_to "Les Arts Graphiques", page_path('graphic_arts_details'), class: "block" %>
                                 </li>
                             </ul>
                         </div>
@@ -206,7 +206,7 @@
                         <div class="pb-4 pl-4">
                             <ul class="space-y-2">
                                 <li>
-                                    <%= link_to "Nos Actualités", page_path("nos_actualites"), class: "block text-indigo-700 font-medium" %>
+                                    <%= link_to "Nos Actualités", page_path("news"), class: "block text-indigo-700 font-medium" %>
                                 </li>
                                 <li>
                                     <%= link_to "Blog & Newsletters", page_path("blog_newsletter"), class: "block" %>
@@ -246,10 +246,10 @@
                                     <%= link_to "À Propos", page_path('about'), class: "block text-indigo-700 font-medium" %>
                                 </li>
                                 <li>
-                                    <%= link_to "Informations Utiles", page_path("useful_information"), class: "block" %>
+                                    <%= link_to "Informations Utiles", page_path("practical_info"), class: "block" %>
                                 </li>
                                 <li>
-                                    <%= link_to "Nous contacter", page_path('contact'), class: "block" %>
+                                    <%= link_to "Nous contacter", page_path("contact_us"), class: "block" %>
                                 </li>
                             </ul>
                         </div>
@@ -283,14 +283,14 @@
                 <div class="grid grid-cols-2 gap-3">
                     <%= link_to "Profil", user_path(Current.user), class: "text-center py-2 px-4 bg-gray-100 rounded-lg hover:bg-gray-200" %>
                     <%= link_to "Tableau de bord", admin_dashboard_index_path, class: "text-center py-2 px-4 bg-gray-100 rounded-lg hover:bg-gray-200" %>
-                    <%= link_to "Paramètres", "#", class: "text-center py-2 px-4 bg-gray-100 rounded-lg hover:bg-gray-200" %>
+                    <%= link_to "Paramètres", settings_path, class: "text-center py-2 px-4 bg-gray-100 rounded-lg hover:bg-gray-200" %>
                     <%= button_to "Déconnexion", session_path, method: :delete, class: "text-center py-2 px-4 bg-red-100 text-red-700 rounded-lg hover:bg-red-200 cursor-pointer" %>
                 </div>
                 <% else %>
                 <!-- For unprivileged users: show 3 buttons -->
                 <div class="grid grid-cols-2 gap-3">
                     <%= link_to "Profil", user_path(Current.user), class: "text-center py-2 px-4 bg-gray-100 rounded-lg hover:bg-gray-200" %>
-                    <%= link_to "Paramètres", "#", class: "text-center py-2 px-4 bg-gray-100 rounded-lg hover:bg-gray-200" %>
+                    <%= link_to "Paramètres", settings_path, class: "text-center py-2 px-4 bg-gray-100 rounded-lg hover:bg-gray-200" %>
                     <%= button_to "Déconnexion", session_path, method: :delete, class: "text-center py-2 px-4 bg-red-100 text-red-700 rounded-lg hover:bg-red-200 col-span-2 cursor-pointer" %>
                 </div>
                 <% end %>

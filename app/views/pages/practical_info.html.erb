@@ -1,0 +1,65 @@
+<% content_for :title, "Le Circographe - Informations Utiles" %>
+
+<section>
+    <div class="text-center mb-12 bg-white/70 py-6 rounded-lg shadow-md fade-in">
+        <!-- Main title -->
+        <h1 class="text-3xl sm:text-4xl lg:text-5xl font-bold text-black">Informations Utiles</h1>
+    </div>
+    
+        <hr class="my-6" />
+
+        <!-- Main section -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8 fade-in">
+            <!-- Left column -->
+            <div class="bg-white/70 shadow-md p-6 rounded-lg fade-in">
+                <h2 class="text-lg font-semibold mb-4">Modalité</h2>
+                <p class="text-gray-600 mb-4">Quando ambulabat agendas adnomen te quasi actio. Sic ad corpus, quae planumque.</p>
+
+                <h2 class="text-lg font-semibold mb-4">Tarifs</h2>
+                <p class="text-gray-600 mb-4">Quando ambulabat agendas adnomen te quasi actio. Sic ad corpus, quae planumque.</p>
+
+                <h2 class="text-lg font-semibold mb-4">Horaires</h2>
+                <p class="text-gray-600">Aujourd'hui</p>
+            </div>
+
+            <!-- Right column -->
+            <div class="bg-white/70 shadow-md p-6 rounded-lg fade-in">
+                <h2 class="text-lg font-semibold mb-4">Type d'adhésion</h2>
+                <p class="text-gray-600 mb-4">Praeterea, ex culpa non invenies unum aut non accuratis unum.</p>
+
+                <h2 class="text-lg font-semibold mb-4">Tarif = Cotisation</h2>
+                <p class="text-gray-600">Ponam in culpa idotia aliis pravitatis. Principium ponere culpam in se justum praecipuum.</p>
+            </div>
+        </div>
+
+        <hr class="my-6" />
+
+        <!-- FAQ button -->
+        <div class="mt-6 text-center fade-in">
+            <%= link_to "FAQ", page_path('faq'), class: "px-6 py-3 tracking-wide text-white font-bold bg-[#1F5C55] border-2 border-[#1F5C55] rounded-lg shadow-lg hover:bg-gray-100 hover:text-[#1F5C55] hover:border-[#1F5C55] transition-colors duration-300" %>
+        </div>
+
+        <hr class="my-6" />
+
+        <!-- Address and Hours Section -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12 fade-in">
+            <!-- Address -->
+            <div class="bg-white/70 shadow-md p-6 rounded-lg text-center fade-in">
+                <h2 class="text-lg font-semibold mb-4">Adresse</h2>
+                <p class="text-gray-600 mb-4">Moyen de transport : Bus Arrêt Le Matisse</p>
+                <div class="relative overflow-hidden fade-in" style="padding-bottom: 75%;">
+                    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2888.3717857836123!2d1.4173841909633822!3d43.61962028010457!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x12aebb1b7b5096ef%3A0x710f3096ea206f0!2sLe%20Circographe!5e0!3m2!1sfr!2sfr!4v1742812255067!5m2!1sfr!2sfr" width="100%" height="100%" style="border:0; position: absolute; top: 0; left: 0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade">
+                    </iframe>
+                </div>
+            </div>
+
+            <!-- Hours of operation -->
+            <div class="md:col-span-2 bg-white/70 shadow-md p-6 rounded-lg fade-in">
+                <h2 class="text-lg font-semibold mb-4 text-center">Semaine du 10 au 16 Mars - Horaires d'ouverture</h2>
+                <!-- Timetable -->
+                <%= render 'shared/table' %>
+            </div>
+        </div>
+
+    </div>
+</section>
