@@ -1,8 +1,32 @@
 require 'rails_helper'
 
 RSpec.describe User, type: :model do
+  describe 'factory' do
+    it 'has a valid factory' do
+      expect(build(:user)).to be_valid
+    end
+
+    it 'has a valid admin factory' do
+      expect(build(:user, :admin)).to be_valid
+    end
+
+    it 'has a valid super_admin factory' do
+      expect(build(:user, :super_admin)).to be_valid
+    end
+
+    it 'has a valid volunteer factory' do
+      expect(build(:user, :volunteer)).to be_valid
+    end
+  end
+
   describe 'validations' do
     it { should validate_presence_of(:email_address) }
+    it { should validate_presence_of(:password) }
+    it { should validate_presence_of(:first_name) }
+    it { should validate_presence_of(:last_name) }
+    it { should validate_presence_of(:system_role) }
+    it { should validate_presence_of(:cgu) }
+    it { should validate_presence_of(:privacy_policy) }
     
     describe 'uniqueness' do
       subject { create(:user) }
@@ -22,10 +46,63 @@ RSpec.describe User, type: :model do
     it { should have_many(:memberships).through(:user_memberships) }
     it { should have_many(:payments) }
     it { should have_many(:orders) }
+    it { should have_many(:attendances) }
   end
 
-  describe 'enum' do
-    it { should define_enum_for(:system_role).with_values([:super_admin, :admin, :volunteer, :user_connected]) }
+  describe 'enums' do
+    it { should define_enum_for(:system_role).with_values([:user_connected, :admin, :super_admin, :volunteer]) }
+  end
+
+  describe '#full_name' do
+    let(:user) { create(:user, first_name: 'John', last_name: 'Doe') }
+
+    it 'returns the full name of the user' do
+      expect(user.full_name).to eq('John Doe')
+    end
+  end
+
+  describe 'scopes' do
+    let!(:admin) { create(:user, :admin) }
+    let!(:regular_user) { create(:user) }
+    let!(:super_admin) { create(:user, :super_admin) }
+    let!(:volunteer) { create(:user, :volunteer) }
+
+    describe '.admins' do
+      it 'returns only admin users' do
+        expect(User.admins).to include(admin)
+        expect(User.admins).not_to include(regular_user, super_admin, volunteer)
+      end
+    end
+
+    describe '.super_admins' do
+      it 'returns only super admin users' do
+        expect(User.super_admins).to include(super_admin)
+        expect(User.super_admins).not_to include(regular_user, admin, volunteer)
+      end
+    end
+  end
+
+  describe 'password validation' do
+    let(:user) { build(:user, password: password, password_confirmation: password_confirmation) }
+
+    context 'when password and confirmation match' do
+      let(:password) { 'valid_password' }
+      let(:password_confirmation) { 'valid_password' }
+
+      it 'is valid' do
+        expect(user).to be_valid
+      end
+    end
+
+    context 'when password and confirmation do not match' do
+      let(:password) { 'valid_password' }
+      let(:password_confirmation) { 'different_password' }
+
+      it 'is invalid' do
+        expect(user).not_to be_valid
+        expect(user.errors[:password_confirmation]).to include("doesn't match Password")
+      end
+    end
   end
 
   describe '#has_privileges?' do
