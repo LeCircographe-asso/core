@@ -38,8 +38,8 @@
         <!-- User Information -->
         <div class="text-center mb-4 sm:mb-6">
             <h2 class="text-lg sm:text-xl font-bold text-gray-800">
-                <% if @user.first_name.present? || @user.last_name.present? %>
-                <%= [(@user.first_name || ""), (@user.last_name || "")].join(" ").strip %>
+                <% if @user.full_name.present? %>
+                <%= @user.full_name %>
                 <% else %>
                 <%= "Membre #{@user.id}" %>
                 <% end %>

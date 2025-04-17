@@ -3,6 +3,8 @@ class User < ApplicationRecord
   # after_create :assign_membership
   after_create :generate_password_reset_token
   after_create :welcome_send
+  before_validation :capitalize_names
+  before_validation :set_full_name
 
   # Configuration du token de réinitialisation de mot de passe
   generates_token_for :password_reset, expires_in: 15.minutes do
@@ -91,9 +93,54 @@ class User < ApplicationRecord
     find(id)
   end
 
+  # Method for backward compatibility
+  def full_name
+    self[:full_name] || begin
+      first = first_name.to_s.strip
+      last = last_name.to_s.strip
+      
+      if first.present? && last.present?
+        "#{first} #{last}"
+      elsif first.present?
+        first
+      elsif last.present?
+        last
+      else
+        nil
+      end
+    end
+  end
+
   private
 
   def generate_password_reset_token
     generate_token_for(:password_reset)
+  end
+
+  def capitalize_names
+    # Capitalize first letter of first_name only
+    self.first_name = first_name.to_s.strip.capitalize if first_name.present?
+    
+    # Capitalize the entire last name if present
+    if last_name.present?
+      self.last_name = last_name.to_s.strip.upcase
+    end
+  end
+
+  def set_full_name
+    # Handle nil values and trim whitespace
+    first = first_name.to_s.strip
+    last = last_name.to_s.strip
+    
+    # Set full_name only if both first and last are present
+    self.full_name = if first.present? && last.present?
+                       "#{first.capitalize} #{last.upcase}"
+                     elsif first.present?
+                       first.capitalize
+                     elsif last.present?
+                       last.upcase
+                     else
+                       nil
+                     end
   end
 end

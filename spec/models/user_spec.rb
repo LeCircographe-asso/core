@@ -194,4 +194,64 @@ RSpec.describe User, type: :model do
       expect(admin1.has_higher_permissions?(admin2)).to be false
     end
   end
+
+  describe "callbacks" do
+    it "sets full_name before validation" do
+      user = build(:user, first_name: "John", last_name: "Doe")
+      user.valid?
+      expect(user.full_name).to eq("John Doe")
+    end
+    
+    it "updates full_name when first_name changes" do
+      user = create(:user, first_name: "John", last_name: "Doe")
+      user.first_name = "Jane"
+      user.save
+      expect(user.full_name).to eq("Jane Doe")
+    end
+    
+    it "updates full_name when last_name changes" do
+      user = create(:user, first_name: "John", last_name: "Doe")
+      user.last_name = "Smith"
+      user.save
+      expect(user.full_name).to eq("John Smith")
+    end
+    
+    it "handles nil values correctly" do
+      user = build(:user, first_name: nil, last_name: "Doe")
+      user.valid?
+      expect(user.full_name).to eq("Doe")
+      
+      user = build(:user, first_name: "John", last_name: nil)
+      user.valid?
+      expect(user.full_name).to eq("John")
+      
+      user = build(:user, first_name: nil, last_name: nil)
+      user.valid?
+      expect(user.full_name).to be_nil
+    end
+    
+    it "capitalizes first letter of first_name" do
+      user = build(:user, first_name: "john", last_name: "Doe")
+      user.valid?
+      expect(user.first_name).to eq("John")
+    end
+    
+    it "capitalizes first letter of last_name" do
+      user = build(:user, first_name: "John", last_name: "doe")
+      user.valid?
+      expect(user.last_name).to eq("Doe")
+    end
+    
+    it "handles whitespace in names" do
+      user = build(:user, first_name: " john ", last_name: " doe ")
+      user.valid?
+      expect(user.first_name).to eq("John")
+      expect(user.last_name).to eq("Doe")
+    end
+    
+    it "handles nil values in capitalize_names" do
+      user = build(:user, first_name: nil, last_name: nil)
+      expect { user.valid? }.not_to raise_error
+    end
+  end
 end

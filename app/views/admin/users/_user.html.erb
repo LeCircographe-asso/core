@@ -3,6 +3,7 @@
     <h2 class="profile-section-title">Informations</h2>
     <div class="profile-info">
         <div class="info-group">
+            <p><strong>Nom complet:</strong> <%= @user.full_name.present? ? @user.full_name : "Non renseigné" %></p>
             <p><strong>Email:</strong> <%= @user.email_address %></p>
             <p><strong>Date de naissance:</strong> <%= @user.birthdate %></p>
             <p><strong>Adresse:</strong> <%= @user.address %></p>

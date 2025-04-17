@@ -36,6 +36,7 @@
               <thead class="bg-gray-50">
                 <tr>
                   <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Id</th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nom</th>
                   <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
                   <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Rôle</th>
                   <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Abonnement</th>
@@ -46,6 +47,7 @@
                 <% @users.each do |user| %>
                   <tr class="hover:bg-gray-50">
                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900"><%= user.id %></td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500"><%= user.full_name.present? ? user.full_name : "Non renseigné" %></td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500"><%= user.email_address %></td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                       <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-purple-100 text-purple-800">
