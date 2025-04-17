@@ -1,4 +1,4 @@
-<p>Bonjour <%= @user.first_name %>,</p>
+<p>Bonjour <%= @user.full_name.present? ? @user.full_name : @user.first_name %>,</p>
 <p>Votre adhésion expire le <%= @end_date.strftime('%d/%m/%Y') %>.</p>
 <p>Pour continuer à profiter de nos services, veuillez renouveler votre adhésion.</p>
 <p>Cordialement,</p>
