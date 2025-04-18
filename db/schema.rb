@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_03_28_154225) do
+ActiveRecord::Schema[8.0].define(version: 2025_04_18_122124) do
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.string "name", null: false
     t.text "body"
@@ -56,6 +56,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_03_28_154225) do
     t.integer "status"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "name"
   end
 
   create_table "attendances", force: :cascade do |t|
@@ -246,6 +247,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_03_28_154225) do
     t.boolean "newsletter_subscribed"
     t.string "unsubscribe_token"
     t.boolean "created_by_admin"
+    t.boolean "dyslexic_font"
+    t.string "full_name"
     t.index ["email_address"], name: "index_users_on_email_address", unique: true
   end
 

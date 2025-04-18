@@ -43,6 +43,12 @@ group :development, :test do
   gem "rubocop-rails-omakase", require: false  # Rails-specific linting
   gem "faker"  # Generate fake data
   gem "dotenv-rails"  # Environment variables
+
+  # RSpec testing framework
+  gem "rspec-rails", "~> 6.1.0"
+  gem "factory_bot_rails"
+  gem "shoulda-matchers"
+  gem "database_cleaner-active_record"
 end
 
 group :development do
@@ -54,6 +60,8 @@ end
 group :test do
   gem "capybara"  # System testing
   gem "selenium-webdriver"  # Browser automation
+  gem "rspec_junit_formatter"  # JUnit XML output for CI/CD integration
+  gem "simplecov", require: false  # Code coverage analysis
 end
 
 # Deployment

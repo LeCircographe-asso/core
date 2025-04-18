@@ -19,7 +19,8 @@ class SettingsController < ApplicationController
   def user_params
     params.require(:user).permit(
       :email_address, :image_rights,
-      :newsletter_subscribed, :get_involved
+      :newsletter_subscribed, :get_involved,
+      :dyslexic_font 
     )
   end
 end
