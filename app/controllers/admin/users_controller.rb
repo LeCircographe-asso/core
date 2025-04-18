@@ -1,5 +1,6 @@
 module Admin
   class UsersController < BaseController
+    include RoleHelper
     before_action :set_user, only: %i[ show edit update destroy ]
     before_action :set_breadcrumbs
 
@@ -9,18 +10,18 @@ module Admin
       
       # Statistiques pour le dashboard
       @total_users = User.count
-      @new_users_yesterday = User.where("created_at >= ? AND created_at <= ?", 1.day.ago.beginning_of_day, 1.day.ago.end_of_day).count
-      @basic_memberships = UserMembership.joins(:membership).where(memberships: { type_name: 'Basic' }, status: 'active').count
-      @circus_memberships = UserMembership.joins(:membership).where(memberships: { type_name: 'Circus' }, status: 'active').count
-      @active_memberships = UserMembership.where(status: 'active').count
-      @users_this_month = User.where(created_at: Time.current.beginning_of_month..Time.current).count
+      @new_users_yesterday = UserService.new_users_count
+      @basic_memberships = MembershipService.membership_type_count(:Basic)
+      @circus_memberships = MembershipService.membership_type_count(:Circus)
+      @active_memberships = MembershipService.active_memberships_count
+      @users_this_month = UserService.users_this_month
       
       add_breadcrumb "Liste d'adhérents", nil
     end
 
     # GET /admin/users/1 or /admin/users/1.json
     def show
-      @array_right = current_user.has_higher_permissions?(@user) ? current_user.inferior_rights : [@user.system_role]
+      @array_right = available_roles_for_user(@user)
 
       add_breadcrumb "Liste d'adhérents", admin_users_path
       add_breadcrumb @user.full_name.present? ? @user.full_name : "Utilisateur ##{@user.id}", nil
@@ -51,7 +52,7 @@ module Admin
       end
       
       begin
-        @array_right = current_user.has_higher_permissions?(@user) ? current_user.inferior_rights : [@user.system_role]
+        @array_right = available_roles_for_user(@user)
         Rails.logger.debug "@array_right: #{@array_right.inspect}"
         @default_role = @user.system_role
         Rails.logger.debug "@default_role: #{@default_role.inspect}"
@@ -69,29 +70,15 @@ module Admin
 
     # POST /admin/users or /admin/users.json
     def create
-      @user = User.new(user_params)
-      @user.created_by_admin = true
-      @user.password = generate_secure_password
-      @default_membership = Membership.find_by(type_name: :No_Member)
-
-      begin
-        User.transaction do
-          if @user.save
-            @order = @user.orders.new
-            @user_membership = UserMembership.create!(user: @user, membership_id: @default_membership.id)
-
-            if @order.save
-              redirect_to admin_user_order_path(id: @order, user_id: @user),
-              notice: "Utilisateur créé avec succès. Un mail a été envoyé !"
-              Rails.logger.info "Redirection vers : #{admin_user_order_path(id: @order.id, user_id: @user.id)}"
-            else
-              Rails.logger.info "User, Order et UserMembership créés avec succès"
-            end
-          end
-        end
-      rescue => e
-        Rails.logger.error "Erreur lors de la création de l'utilisateur : #{e.message}"
-        redirect_to new_admin_user_path, alert: "Erreur lors de la création de l'utilisateur."
+      result = UserService.create_user_with_membership(user_params, true)
+      
+      if result[:success]
+        redirect_to admin_user_order_path(id: result[:order], user_id: result[:user]),
+                    notice: "Utilisateur créé avec succès. Un mail a été envoyé !"
+      else
+        @user = User.new(user_params)
+        flash.now[:alert] = "Erreur lors de la création de l'utilisateur: #{result[:errors].join(', ')}"
+        render :new, status: :unprocessable_entity
       end
     end
 
@@ -162,10 +149,6 @@ module Admin
         :newsletter_subscribed,
         :dyslexic_font
       )
-    end
-
-    def generate_secure_password
-      SecureRandom.hex(10)
     end
   end
 end
