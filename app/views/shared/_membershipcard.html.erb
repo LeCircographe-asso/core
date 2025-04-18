@@ -47,15 +47,21 @@
             <p class="text-gray-500 text-sm mt-1"><%= @user.email_address %></p>
 
             <!-- Membership Status -->
-            <% if @user.user_memberships.exists? %>
-            <% latest_membership = @user.user_memberships.order(created_at: :desc).first %>
-            <span class="inline-flex items-center mt-3 px-3 py-1 rounded-full text-xs font-medium <%= latest_membership.status ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' %>">
-                <%= latest_membership.status ? "Adhésion Active" : "Adhésion Inactive" %>
-            </span>
-            <% else %>
-            <span class="inline-flex items-center mt-3 px-3 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
-                Non adhérent
-            </span>
+            <% begin %>
+              <% if @user.user_memberships.exists? %>
+                <% latest_membership = @user.user_memberships.order(created_at: :desc).first %>
+                <span class="inline-flex items-center mt-3 px-3 py-1 rounded-full text-xs font-medium <%= latest_membership.status ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' %>">
+                    <%= latest_membership.status ? "Adhésion Active" : "Adhésion Inactive" %>
+                </span>
+              <% else %>
+                <span class="inline-flex items-center mt-3 px-3 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                    Non adhérent
+                </span>
+              <% end %>
+            <% rescue => e %>
+              <span class="inline-flex items-center mt-3 px-3 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                  Non adhérent
+              </span>
             <% end %>
         </div>
 

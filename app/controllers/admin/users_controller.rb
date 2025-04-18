@@ -20,12 +20,15 @@ module Admin
 
     # GET /admin/users/1 or /admin/users/1.json
     def show
-      @user = User.find_by(id: params[:id])
-      @product_order = Product.find_by(params[:id])
-      @product = Product.find_by(params[:id])
+      @array_right = current_user.has_higher_permissions?(@user) ? current_user.inferior_rights : [@user.system_role]
 
       add_breadcrumb "Liste d'adhérents", admin_users_path
       add_breadcrumb @user.full_name.present? ? @user.full_name : "Utilisateur ##{@user.id}", nil
+
+      respond_to do |format|
+        format.html
+        format.json { render json: @user }
+      end
     end
 
     # GET /admin/users/new
@@ -37,8 +40,27 @@ module Admin
 
     # GET /admin/users/1/edit
     def edit
-      @array_right = current_user.has_higher_permissions?(User.find(params[:id])) ? current_user.inferior_rights : [ User.find(params[:id]).system_role ]
-      @default_role = User.find(params[:id]).system_role
+      Rails.logger.debug "Edit action called for user ID: #{params[:id]}"
+      Rails.logger.debug "@user: #{@user.inspect}"
+      Rails.logger.debug "current_user: #{current_user.inspect}"
+      
+      if @user.nil?
+        Rails.logger.debug "User is nil, redirecting to users list"
+        redirect_to admin_users_path, alert: "Utilisateur non trouvé."
+        return
+      end
+      
+      begin
+        @array_right = current_user.has_higher_permissions?(@user) ? current_user.inferior_rights : [@user.system_role]
+        Rails.logger.debug "@array_right: #{@array_right.inspect}"
+        @default_role = @user.system_role
+        Rails.logger.debug "@default_role: #{@default_role.inspect}"
+      rescue => e
+        Rails.logger.error "Error in edit action: #{e.message}"
+        Rails.logger.error e.backtrace.join("\n")
+        redirect_to admin_users_path, alert: "Une erreur est survenue lors de l'édition de l'utilisateur."
+        return
+      end
 
       add_breadcrumb "Liste d'adhérents", admin_users_path
       add_breadcrumb @user.full_name.present? ? @user.full_name : "Utilisateur ##{@user.id}", admin_user_path(@user)
@@ -73,18 +95,30 @@ module Admin
       end
     end
 
-
-
     # PATCH/PUT /admin/users/1 or /admin/users/1.json
     def update
-      if current_user.inferior_rights.include?(params[:user][:system_role])
+      respond_to do |format|
         if @user.update(user_params)
-          redirect_to admin_user_path(@user), notice: "Utilisateur mis à jour avec succès."
+          format.html { redirect_to admin_user_path(@user), notice: "Utilisateur mis à jour avec succès." }
+          format.json { render json: @user }
+          format.turbo_stream { 
+            flash.now[:notice] = "Utilisateur mis à jour avec succès."
+            render turbo_stream: [
+              turbo_stream.replace(@user),
+              turbo_stream.replace("flash", partial: "shared/flash")
+            ]
+          }
         else
-          redirect_to admin_user_path(@user), alert: "Échec de la mise à jour de l'utilisateur."
+          format.html { render :show, status: :unprocessable_entity }
+          format.json { render json: @user.errors, status: :unprocessable_entity }
+          format.turbo_stream { 
+            render turbo_stream: turbo_stream.replace(
+              "error_explanation",
+              partial: "shared/error_messages",
+              locals: { resource: @user }
+            )
+          }
         end
-      else
-        redirect_to admin_user_path(@user), alert: "Vous n'avez pas les droits pour effectuer cette modification."
       end
     end
 
@@ -101,16 +135,33 @@ module Admin
     private
     # Use callbacks to share common setup or constraints between actions.
     def set_user
-      @user = User.find(params[:id])
+      @user = User.find_by(id: params[:id])
     end
 
     def set_breadcrumbs
-      # No need to add dashboard breadcrumb as it's already in the partial
+      add_breadcrumb "Dashboard", admin_dashboard_index_path
     end
 
     # Only allow a list of trusted parameters through.
     def user_params
-      params.require(:user).permit(:email_address, :first_name, :last_name, :password, :payments, :system_role, :newsletter_subscribed, :reset_password_url)
+      params.require(:user).permit(
+        :email_address,
+        :first_name,
+        :last_name,
+        :birthdate,
+        :address,
+        :zip_code,
+        :town,
+        :country,
+        :phone_number,
+        :occupation,
+        :specialty,
+        :image_rights,
+        :get_involved,
+        :system_role,
+        :newsletter_subscribed,
+        :dyslexic_font
+      )
     end
 
     def generate_secure_password
