@@ -1,14 +1,25 @@
-<div id="product-container" data-controller="product-container">
-  <div id="product-container">
+<% content_for :title, "Détails de la commande" %>
+
+<div class="min-h-screen py-6">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6">
+    <!-- Breadcrumbs -->
+    <%= render 'shared/breadcrumbs' %>
+    
+    <!-- Main content -->
+    <div id="product-container" data-controller="product-container">
+      <div id="product-container">
+        <% if @order.products.any? { |product| product.product_type == "adhesion" } || @has_valid_membership %>
+          <%= render "product_subscription" %>
+        <% else %>
+          <%= render "product_membership" %>
+        <% end %>
+      </div>
+    </div>
+    
+    <%= turbo_frame_tag "product_container" %>
+    
     <% if @order.products.any? { |product| product.product_type == "adhesion" } || @has_valid_membership %>
-      <%= render "product_subscription" %>
-    <% else %>
-      <%= render "product_membership" %>
+      <%= render "payment_and_donation" %>
     <% end %>
   </div>
 </div>
-<%= turbo_frame_tag "product_container" %>
- <% if @order.products.any? { |product| product.product_type == "adhesion" } || @has_valid_membership %>
-<%= render "payment_and_donation" %>
-
-<% end %>

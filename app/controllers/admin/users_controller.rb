@@ -6,7 +6,15 @@ module Admin
     # GET /admin/users or /admin/users.json
     def index
       @users = User.all
-      @total_user_memberships = UserMembership.where(status: "active").count
+      
+      # Statistiques pour le dashboard
+      @total_users = User.count
+      @new_users_yesterday = User.where("created_at >= ? AND created_at <= ?", 1.day.ago.beginning_of_day, 1.day.ago.end_of_day).count
+      @basic_memberships = UserMembership.joins(:membership).where(memberships: { type_name: 'Basic' }, status: 'active').count
+      @circus_memberships = UserMembership.joins(:membership).where(memberships: { type_name: 'Circus' }, status: 'active').count
+      @active_memberships = UserMembership.where(status: 'active').count
+      @users_this_month = User.where(created_at: Time.current.beginning_of_month..Time.current).count
+      
       add_breadcrumb "Liste d'adhérents", nil
     end
 

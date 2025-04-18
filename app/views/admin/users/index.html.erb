@@ -14,10 +14,45 @@
 
       <div class="p-6">
         <!-- Statistics -->
-        <div class="mb-6 bg-green-50 p-4 rounded-lg">
-          <p class="text-green-800 font-medium">
-            <span class="font-bold">Nombre d'utilisateurs :</span> <%= @users.count %>
-          </p>
+        <div class="mb-6">
+          <h2 class="text-lg font-semibold text-gray-900 mb-3">Statistiques</h2>
+          <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4">
+            <!-- Total utilisateurs -->
+            <div class="bg-blue-50 rounded-lg p-4">
+              <p class="text-sm text-blue-500">Total utilisateurs</p>
+              <p class="text-2xl font-bold text-blue-800"><%= User.count %></p>
+            </div>
+            
+            <!-- Nouveaux d'hier -->
+            <div class="bg-teal-50 rounded-lg p-4">
+              <p class="text-sm text-teal-500">Nouveaux (hier)</p>
+              <p class="text-2xl font-bold text-teal-800"><%= User.where("created_at >= ?", 1.day.ago.beginning_of_day).count %></p>
+            </div>
+            
+            <!-- Adhésions Basic -->
+            <div class="bg-green-50 rounded-lg p-4">
+              <p class="text-sm text-green-500">Adhésions Basic</p>
+              <p class="text-2xl font-bold text-green-800"><%= UserMembership.joins(:membership).where(memberships: { type_name: 'Basic' }, status: 'active').count %></p>
+            </div>
+            
+            <!-- Adhésions Circus -->
+            <div class="bg-indigo-50 rounded-lg p-4">
+              <p class="text-sm text-indigo-500">Adhésions Circus</p>
+              <p class="text-2xl font-bold text-indigo-800"><%= UserMembership.joins(:membership).where(memberships: { type_name: 'Circus' }, status: 'active').count %></p>
+            </div>
+            
+            <!-- Adhésions actives totales -->
+            <div class="bg-purple-50 rounded-lg p-4">
+              <p class="text-sm text-purple-500">Adhésions actives</p>
+              <p class="text-2xl font-bold text-purple-800"><%= UserMembership.where(status: 'active').count %></p>
+            </div>
+            
+            <!-- Inscrits ce mois -->
+            <div class="bg-amber-50 rounded-lg p-4">
+              <p class="text-sm text-amber-500">Inscrits (ce mois)</p>
+              <p class="text-2xl font-bold text-amber-800"><%= User.where(created_at: Time.current.beginning_of_month..Time.current).count %></p>
+            </div>
+          </div>
         </div>
 
         <!-- Actions -->
