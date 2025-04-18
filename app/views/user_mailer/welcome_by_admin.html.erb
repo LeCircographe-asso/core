@@ -2,7 +2,7 @@
 <html>
 
 <body>
-    <h1>Bienvenue au Circographe, <%= @user.first_name %> <%= @user.last_name %></h1>
+    <h1>Bienvenue au Circographe, <%= @user.full_name.present? ? @user.full_name : "nouveau membre" %></h1>
     <p>
         Un compte a été créé pour vous par notre équipe. Vous devez réinitialiser
         votre mot de passe avant de pouvoir vous connecter :

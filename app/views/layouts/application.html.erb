@@ -23,25 +23,20 @@
     <link rel="apple-touch-icon" href="/icon.png">
     <%= stylesheet_link_tag "flowbite", "data-turbo-track": "reload" %>
     <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
-    
-    
-
-
     <%= javascript_importmap_tags %>
 
     <script src="https://js.stripe.com/v3/"></script>
 </head>
 
-<body class="<%= controller_name %>-<%= action_name %> flex flex-col min-h-screen">
+<body class="<%= 'dyslexic-font-enabled' if current_user&.dyslexic_font %> <%= controller_name %>-<%= action_name %> flex flex-col min-h-screen">
 
 
     <% if controller_path.start_with?('admin/') %>
-
-    <div class=" flex admin-layout">
+    <div class="flex h-screen overflow-hidden">
         <%= render 'admin/dashboard/admin_lateral_navbar' %>
-        <div class="admin-content">
+        <div class="flex-1 overflow-x-auto">
             <%= render 'shared/flash' %>
-            <main class="admin-main">
+            <main class="p-6">
                 <%= yield %>
             </main>
         </div>
@@ -50,17 +45,21 @@
     <% elsif controller_name == 'sessions' && action_name == 'new' || controller_name == 'registrations' && action_name == 'new' || controller_name == 'pages' && action_name == 'cgu' || controller_name == 'pages' && action_name == 'privacy-policy' %>
     
     <div class="flex flex-col min-h-screen w-full overflow-x-hidden">
-        <%= render 'shared/navbar' %>
+        <header>
+            <%= render 'shared/navbar' %>
+        </header>
         <%= render 'shared/flash' %>
         <%= yield %>
     </div>
     
     <% else %>
 
-    <%= render 'shared/navbar' %>
+    <header>
+        <%= render 'shared/navbar' %>
+    </header>
     <div class="flex-grow bg-no-repeat bg-cover bg-center" style="background-image: url('<%= asset_path(content_for(:background_image) || 'background_temp.webp') %>')">
         <%= render 'shared/flash' %>
-        <main class="w-full max-w-7xl mx-auto space-y-6 px-4 sm:px-6 lg:px-8 pt-8">
+        <main class="w-full mx-auto space-y-6 px-4 sm:px-6 lg:px-8 pt-8">
         <div class= "">
             <%= yield %>
         </div>

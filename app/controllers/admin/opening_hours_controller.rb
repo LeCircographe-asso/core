@@ -2,21 +2,24 @@ module Admin
 class OpeningHoursController < BaseController
   before_action :require_admin_or_super_admin, only: %i[ edit update ]
   before_action :set_opening_hours, only: %i[ show edit ]
+  before_action :set_breadcrumbs
   include OpeningHoursHelper
 
   def show
+    add_breadcrumb "Horaires d'ouverture", nil
   end
 
   def edit
+    add_breadcrumb "Horaires d'ouverture", admin_opening_hours_path
+    add_breadcrumb "Modifier", nil
   end
 
   def update
-    # updated_hours = params[:opening_hours].to_unsafe_h
     updated_hours = params.require(:opening_hours).permit(:lundi, :mardi, :mercredi, :jeudi, :vendredi, :samedi, :dimanche).to_h # xss vulnerability resolved
     if valid_hours?(updated_hours)
       Rails.cache.write("opening_hours", updated_hours)
       flash[:success] = "Les horaires d'ouverture ont été mis à jour avec succès !"
-      redirect_to admin_dashboard_index_path
+      redirect_to admin_opening_hours_path, notice: "Les horaires ont été mis à jour avec succès."
     else
       flash[:error] = "Le format des horaires est invalide. Veuillez utiliser le format HH:MM - HH:MM ou 'Fermé'."
       @opening_hours = updated_hours
@@ -35,6 +38,10 @@ class OpeningHoursController < BaseController
 
   def set_opening_hours
     @opening_hours = Rails.cache.fetch("opening_hours") || default_opening_hours
+  end
+
+  def set_breadcrumbs
+    # No need to add dashboard breadcrumb as it's already in the partial
   end
 
   def valid_hours?(hours)

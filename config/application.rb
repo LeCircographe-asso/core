@@ -24,5 +24,13 @@ module Circographe
     # config.time_zone = "Central Time (US & Canada)"
     # config.eager_load_paths << Rails.root.join("extras")
     # config.action_mailer.default_url_options = { host: "circographe.com" }
+
+    # Use classic autoloader for RSpec compatibility with Rails 8.0
+    config.autoloader = :classic
+
+    config.generators do |g|
+      g.test_framework :rspec
+      g.fixture_replacement :factory_bot, dir: "spec/factories"
+    end
   end
 end

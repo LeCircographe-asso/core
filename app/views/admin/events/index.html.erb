@@ -2,7 +2,10 @@
 
 <div class="min-h-screen py-6">
   <div class="max-w-7xl mx-auto">
-    <!-- En-tête -->
+    <!-- Breadcrumbs -->
+    <%= render 'shared/breadcrumbs' %>
+    
+    <!-- Header -->
     <div class="bg-white shadow-lg rounded-lg overflow-hidden mb-6">
       <div class="bg-gradient-to-r from-[#1F5C55] to-[#194A45] px-6 py-4">
         <h1 class="text-2xl font-bold text-white">Gestion des événements</h1>
@@ -10,7 +13,7 @@
       </div>
 
       <div class="p-6">
-        <!-- Statistiques -->
+        <!-- Statistics -->
         <div class="mb-6 bg-green-50 p-4 rounded-lg">
           <div class="flex flex-col sm:flex-row justify-between items-center gap-4">
             <p class="text-green-800 font-medium">
@@ -22,10 +25,10 @@
           </div>
         </div>
 
-        <!-- Titre section -->
+        <!-- Title section -->
         <h2 class="text-lg font-semibold text-gray-900 border-b pb-2 mb-4">Liste des événements</h2>
 
-        <!-- Grille d'événements -->
+        <!-- Events grid -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           <% @events.each do |event| %>
             <div class="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-shadow">

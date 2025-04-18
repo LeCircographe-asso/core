@@ -1,73 +1,111 @@
 module Admin
   class UsersController < BaseController
+    include RoleHelper
     before_action :set_user, only: %i[ show edit update destroy ]
+    before_action :set_breadcrumbs
 
     # GET /admin/users or /admin/users.json
     def index
       @users = User.all
-      @total_user_memberships = UserMembership.where(status: "active").count
+      
+      # Statistiques pour le dashboard
+      @total_users = User.count
+      @new_users_yesterday = UserService.new_users_count
+      @basic_memberships = MembershipService.membership_type_count(:Basic)
+      @circus_memberships = MembershipService.membership_type_count(:Circus)
+      @active_memberships = MembershipService.active_memberships_count
+      @users_this_month = UserService.users_this_month
+      
+      add_breadcrumb "Liste d'adhérents", nil
     end
 
     # GET /admin/users/1 or /admin/users/1.json
     def show
-      @user = User.find_by(id: params[:id])
-      @product_order = Product.find_by(params[:id])
-      @product = Product.find_by(params[:id])
+      @array_right = available_roles_for_user(@user)
 
+      add_breadcrumb "Liste d'adhérents", admin_users_path
+      add_breadcrumb @user.full_name.present? ? @user.full_name : "Utilisateur ##{@user.id}", nil
 
+      respond_to do |format|
+        format.html
+        format.json { render json: @user }
+      end
     end
 
     # GET /admin/users/new
     def new
       @user = User.new
+      add_breadcrumb "Liste d'adhérents", admin_users_path
+      add_breadcrumb "Nouvel adhérent", nil
     end
 
     # GET /admin/users/1/edit
     def edit
-      @array_right = current_user.has_higher_permissions?(User.find(params[:id])) ? current_user.inferior_rights : [User.find(params[:id]).system_role]
-      @default_role = User.find(params[:id]).system_role
+      Rails.logger.debug "Edit action called for user ID: #{params[:id]}"
+      Rails.logger.debug "@user: #{@user.inspect}"
+      Rails.logger.debug "current_user: #{current_user.inspect}"
+      
+      if @user.nil?
+        Rails.logger.debug "User is nil, redirecting to users list"
+        redirect_to admin_users_path, alert: "Utilisateur non trouvé."
+        return
+      end
+      
+      begin
+        @array_right = available_roles_for_user(@user)
+        Rails.logger.debug "@array_right: #{@array_right.inspect}"
+        @default_role = @user.system_role
+        Rails.logger.debug "@default_role: #{@default_role.inspect}"
+      rescue => e
+        Rails.logger.error "Error in edit action: #{e.message}"
+        Rails.logger.error e.backtrace.join("\n")
+        redirect_to admin_users_path, alert: "Une erreur est survenue lors de l'édition de l'utilisateur."
+        return
+      end
+
+      add_breadcrumb "Liste d'adhérents", admin_users_path
+      add_breadcrumb @user.full_name.present? ? @user.full_name : "Utilisateur ##{@user.id}", admin_user_path(@user)
+      add_breadcrumb "Modifier", nil
     end
 
     # POST /admin/users or /admin/users.json
     def create
-      @user = User.new(user_params)
-      @user.created_by_admin = true
-      @user.password = generate_secure_password
-      @default_membership = Membership.find_by(type_name: :No_Member)
-
-      begin
-        User.transaction do
-          if @user.save
-            @order = @user.orders.new
-            @user_membership = UserMembership.create!(user: @user, membership_id: @default_membership.id)
-
-            if @order.save
-              redirect_to admin_user_order_path(id: @order, user_id: @user),
-              notice: "Utilisateur créé avec succès. Un mail a été envoyé !"
-              Rails.logger.info "Redirection vers : #{admin_user_order_path(id: @order.id, user_id: @user.id)}"
-            else
-              Rails.logger.info "User, Order et UserMembership créés avec succès"
-            end
-          end
-        end
-      rescue => e
-        Rails.logger.error "Erreur lors de la création de l'utilisateur : #{e.message}"
-        redirect_to new_admin_user_path, alert: "Erreur lors de la création de l'utilisateur."
+      result = UserService.create_user_with_membership(user_params, true)
+      
+      if result[:success]
+        redirect_to admin_user_order_path(id: result[:order], user_id: result[:user]),
+                    notice: "Utilisateur créé avec succès. Un mail a été envoyé !"
+      else
+        @user = User.new(user_params)
+        flash.now[:alert] = "Erreur lors de la création de l'utilisateur: #{result[:errors].join(', ')}"
+        render :new, status: :unprocessable_entity
       end
     end
 
-
-
     # PATCH/PUT /admin/users/1 or /admin/users/1.json
     def update
-      if current_user.inferior_rights.include?(params[:user][:system_role])
+      respond_to do |format|
         if @user.update(user_params)
-          redirect_to admin_user_path(@user), notice: "Utilisateur mis à jour avec succès."
+          format.html { redirect_to admin_user_path(@user), notice: "Utilisateur mis à jour avec succès." }
+          format.json { render json: @user }
+          format.turbo_stream { 
+            flash.now[:notice] = "Utilisateur mis à jour avec succès."
+            render turbo_stream: [
+              turbo_stream.replace(@user),
+              turbo_stream.replace("flash", partial: "shared/flash")
+            ]
+          }
         else
-          redirect_to admin_user_path(@user), alert: "Échec de la mise à jour de l'utilisateur."
+          format.html { render :show, status: :unprocessable_entity }
+          format.json { render json: @user.errors, status: :unprocessable_entity }
+          format.turbo_stream { 
+            render turbo_stream: turbo_stream.replace(
+              "error_explanation",
+              partial: "shared/error_messages",
+              locals: { resource: @user }
+            )
+          }
         end
-      else
-        redirect_to admin_user_path(@user), alert: "Vous n'avez pas les droits pour effectuer cette modification."
       end
     end
 
@@ -84,16 +122,33 @@ module Admin
     private
     # Use callbacks to share common setup or constraints between actions.
     def set_user
-      @user = User.find(params.expect(:id))
+      @user = User.find_by(id: params[:id])
+    end
+
+    def set_breadcrumbs
+      add_breadcrumb "Dashboard", admin_dashboard_index_path
     end
 
     # Only allow a list of trusted parameters through.
     def user_params
-      params.require(:user).permit(:email_address, :first_name, :last_name, :password, :payments, :system_role, :newsletter_subscribed, :reset_password_url)
-    end
-
-    def generate_secure_password
-      SecureRandom.hex(10)
+      params.require(:user).permit(
+        :email_address,
+        :first_name,
+        :last_name,
+        :birthdate,
+        :address,
+        :zip_code,
+        :town,
+        :country,
+        :phone_number,
+        :occupation,
+        :specialty,
+        :image_rights,
+        :get_involved,
+        :system_role,
+        :newsletter_subscribed,
+        :dyslexic_font
+      )
     end
   end
 end

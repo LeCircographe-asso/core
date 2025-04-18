@@ -1,17 +1,17 @@
 <div class="bg-white w-full max-w-full flex flex-col lg:flex-row overflow-hidden" style="height: calc(100vh - 4rem);">
-    <!-- Image de fond en version mobile -->
+    <!-- background image in mobile version -->
     <div class="lg:hidden absolute inset-0 z-0 opacity-20">
         <%= image_tag("about.jpg", alt: "", class: "w-full h-full object-cover") %>
     </div>
     
-    <!-- Partie Image (à gauche) - visible uniquement sur desktop -->
+    <!-- Image section (left) - visible only on desktop -->
     <div class="hidden lg:block lg:w-1/2 overflow-hidden">
         <div class="h-full w-full">
             <%= image_tag("about.jpg", alt: "Circographe Image", class: "w-full h-full object-cover") %>
         </div>
     </div>
 
-    <!-- Partie Formulaire (à droite) -->
+    <!-- Form section (right) -->
     <div class="flex items-center justify-center w-full lg:w-1/2 p-4 overflow-y-auto overflow-x-hidden relative z-10">
         <div class="w-full max-w-md bg-white bg-opacity-95 p-5 rounded-lg shadow-sm">
             <div class="text-center mb-4">
@@ -19,13 +19,13 @@
             </div>
 
             <%= form_with model: @user, url: registration_path, method: "post", class: "signup-form space-y-3" do |form| %>
-            <!-- Champ Email -->
+            <!-- Email field -->
             <div>
                 <label for="signup_email_address" class="block mb-1 text-sm text-gray-800">Adresse Email</label>
                 <%= form.email_field :email_address, required: true, placeholder: "example@example.com", maxlength: 72, id: "signup_email_address", class: "block w-full px-4 py-2 text-black placeholder-gray-400 bg-white border border-gray-200 rounded-lg focus:border-[#5836a5] focus:ring-[#5836a5] focus:outline-none focus:ring focus:ring-opacity-40", style: "background-color: white;" %>
             </div>
 
-            <!-- Champ Mot de passe -->
+            <!-- Password Field -->
             <div class="relative" data-controller="password">
                 <label for="password" class="block mb-1 text-sm text-gray-800">Mot de passe</label>
                 <%= form.password_field :password, required: true, placeholder: "Votre mot de passe", maxlength: 72, id: "password", class: "block w-full px-4 py-2 text-black placeholder-gray-400 bg-white border border-gray-200 rounded-lg focus:border-[#5836a5] focus:ring-[#5836a5] focus:outline-none focus:ring focus:ring-opacity-40 password-field", style: "background-color: white;" %>
@@ -34,7 +34,7 @@
                 </span>
             </div>
 
-            <!-- Confirmation Mot de passe -->
+            <!-- Password Confirmation -->
             <div class="relative" data-controller="password">
                 <label for="password_confirmation" class="block mb-1 text-sm text-gray-800">Confirmer votre mot de passe</label>
                 <%= form.password_field :password_confirmation, required: true, placeholder: "Confirmer votre mot de passe", maxlength: 72, id: "password_confirmation", class: "block w-full px-4 py-2 text-black placeholder-gray-400 bg-white border border-gray-200 rounded-lg focus:border-[#5836a5] focus:ring-[#5836a5] focus:outline-none focus:ring focus:ring-opacity-40 password-field", style: "background-color: white;" %>
@@ -44,7 +44,7 @@
             </div>
 
             <div class="space-y-3 mt-2">
-                <!-- Checkbox CGU et Politique de Confidentialité combinés -->
+                <!--Combined Checkbox Terms of Service and Privacy Policy -->
                 <div class="flex items-start">
                     <div class="flex items-center h-5">
                         <%= form.check_box :cgu, id: "cgu", class: "h-4 w-4 text-[#1F5C55] border-gray-300 rounded focus:ring-[#1F5C55] focus:ring-opacity-25 focus:ring-offset-0" %>
@@ -69,7 +69,7 @@
                 </div>
             </div>
 
-            <!-- Bouton Soumettre -->
+            <!-- Submit button -->
             <div class="mt-4">
                 <%= form.submit "S'inscrire", class: "w-full px-4 py-2 tracking-wide text-white font-bold bg-[#1F5C55] border-2 border-[#1F5C55] rounded-lg shadow-lg hover:bg-gray-100 hover:text-[#1F5C55] hover:border-[#1F5C55] hover:shadow-lg transition-colors duration-300 cursor-pointer" %>
             </div>

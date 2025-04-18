@@ -1,0 +1,174 @@
+<% content_for :title, "Détails de la liste de présence" %>
+
+<div class="min-h-screen py-6">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6">
+    <!-- Breadcrumbs -->
+    <%= render 'shared/breadcrumbs' %>
+    
+    <!-- Header -->
+    <div class="mb-6">
+      <div class="flex justify-between items-center">
+        <h1 class="text-2xl font-bold text-gray-900"><%= @attendance_list.name %></h1>
+        <div class="flex space-x-2">
+          <%= link_to edit_admin_attendance_list_path(@attendance_list), class: "px-4 py-2 bg-[#1F5C55] hover:bg-[#194A45] text-white text-sm font-medium rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1F5C55] flex items-center" do %>
+            <i class="fas fa-edit mr-2"></i> Modifier la liste
+          <% end %>
+          <%= link_to new_admin_attendance_list_attendance_path(@attendance_list), class: "px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 flex items-center" do %>
+            <i class="fas fa-user-plus mr-2"></i> Ajouter un participant
+          <% end %>
+        </div>
+      </div>
+      <p class="mt-2 text-sm text-gray-500">Consultez les détails et les participants de cette liste de présence</p>
+    </div>
+    
+    <!-- List details card -->
+    <div class="bg-white shadow overflow-hidden rounded-lg mb-6">
+      <div class="border-b border-gray-200 px-6 py-4">
+        <h2 class="text-lg font-medium text-gray-900">Informations</h2>
+      </div>
+      <div class="px-6 py-4">
+        <dl class="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-6">
+          <div>
+            <dt class="text-sm font-medium text-gray-500">Type</dt>
+            <% 
+              icon_class = case @attendance_list.list_type 
+                when "training" then "fas fa-graduation-cap text-blue-500"
+                when "event" then "fas fa-calendar-check text-purple-500"
+                when "meeting" then "fas fa-users text-green-500"
+                else "fas fa-list text-gray-500"
+              end
+            %>
+            <dd class="mt-1 text-sm text-gray-900 flex items-center">
+              <i class="<%= icon_class %> mr-2"></i>
+              <%= @attendance_list.list_type.humanize %>
+            </dd>
+          </div>
+          
+          <div>
+            <dt class="text-sm font-medium text-gray-500">Statut</dt>
+            <% 
+              status_class = case @attendance_list.status 
+                when "open" then "bg-green-100 text-green-800"
+                when "close" then "bg-amber-100 text-amber-800"
+                when "archived" then "bg-gray-100 text-gray-800"
+                else "bg-gray-100 text-gray-800"
+              end
+              
+              status_icon = case @attendance_list.status
+                when "open" then "fas fa-lock-open"
+                when "close" then "fas fa-lock"
+                when "archived" then "fas fa-archive"
+                else "fas fa-question"
+              end
+            %>
+            <dd class="mt-1 text-sm text-gray-900">
+              <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full <%= status_class %>">
+                <i class="<%= status_icon %> mr-1"></i>
+                <%= @attendance_list.status.humanize %>
+              </span>
+            </dd>
+          </div>
+          
+          <div>
+            <dt class="text-sm font-medium text-gray-500">Date de début</dt>
+            <dd class="mt-1 text-sm text-gray-900">
+              <i class="fas fa-calendar-day text-gray-400 mr-2"></i>
+              <%= @attendance_list.start_date.strftime("%d/%m/%Y %H:%M") %>
+            </dd>
+          </div>
+          
+          <div>
+            <dt class="text-sm font-medium text-gray-500">Date de fin</dt>
+            <dd class="mt-1 text-sm text-gray-900">
+              <i class="fas fa-calendar-day text-gray-400 mr-2"></i>
+              <%= @attendance_list.end_date.strftime("%d/%m/%Y %H:%M") %>
+            </dd>
+          </div>
+          
+          <div>
+            <dt class="text-sm font-medium text-gray-500">Date de création</dt>
+            <dd class="mt-1 text-sm text-gray-900">
+              <i class="fas fa-clock text-gray-400 mr-2"></i>
+              <%= @attendance_list.created_at.strftime("%d/%m/%Y %H:%M") %>
+            </dd>
+          </div>
+          
+          <div>
+            <dt class="text-sm font-medium text-gray-500">Dernière modification</dt>
+            <dd class="mt-1 text-sm text-gray-900">
+              <i class="fas fa-clock text-gray-400 mr-2"></i>
+              <%= @attendance_list.updated_at.strftime("%d/%m/%Y %H:%M") %>
+            </dd>
+          </div>
+        </dl>
+      </div>
+    </div>
+    
+    <!-- Participant list -->
+    <div class="bg-white shadow overflow-hidden rounded-lg">
+      <div class="border-b border-gray-200 px-6 py-4 flex justify-between items-center">
+        <h2 class="text-lg font-medium text-gray-900">Participants</h2>
+        <%= link_to new_admin_attendance_list_attendance_path(@attendance_list), class: "text-[#1F5C55] hover:text-[#194A45] flex items-center text-sm" do %>
+          <i class="fas fa-plus-circle mr-1"></i> Ajouter
+        <% end %>
+      </div>
+      <div class="overflow-x-auto">
+        <% if @attendance_list.attendances.present? %>
+          <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">
+              <tr>
+                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nom</th>
+                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
+                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Présent</th>
+                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+              </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200">
+              <% @attendance_list.attendances.each do |attendance| %>
+                <tr class="hover:bg-gray-50">
+                  <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                    <%= attendance.user.present? ? attendance.user.full_name : attendance.name %>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <%= attendance.user.present? ? attendance.user.email_address : attendance.email %>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <% if attendance.present? %>
+                      <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                        <i class="fas fa-check mr-1"></i> Présent
+                      </span>
+                    <% else %>
+                      <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">
+                        <i class="fas fa-times mr-1"></i> Absent
+                      </span>
+                    <% end %>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                    <div class="flex space-x-2">
+                      <%= link_to edit_admin_attendance_list_attendance_path(@attendance_list, attendance), class: "text-blue-600 hover:text-blue-900", title: "Modifier" do %>
+                        <i class="fas fa-edit"></i>
+                      <% end %>
+                      <%= button_to admin_attendance_list_attendance_path(@attendance_list, attendance), method: :delete, form: { data: { turbo_confirm: 'Êtes-vous sûr de vouloir retirer ce participant de la liste ?' } }, class: "text-red-600 hover:text-red-900 bg-transparent border-0 p-0", title: "Retirer" do %>
+                        <i class="fas fa-trash"></i>
+                      <% end %>
+                    </div>
+                  </td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        <% else %>
+          <div class="py-10 text-center">
+            <i class="fas fa-users text-gray-300 text-5xl mb-3"></i>
+            <p class="text-gray-500">Aucun participant n'a encore été ajouté à cette liste.</p>
+            <div class="mt-4">
+              <%= link_to new_admin_attendance_list_attendance_path(@attendance_list), class: "inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-[#1F5C55] hover:bg-[#194A45]" do %>
+                <i class="fas fa-user-plus mr-2"></i> Ajouter un participant
+              <% end %>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div> 

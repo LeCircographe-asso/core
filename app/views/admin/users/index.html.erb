@@ -2,7 +2,10 @@
 
 <div class="min-h-screen py-6">
   <div class="max-w-7xl mx-auto">
-    <!-- En-tête -->
+    <!-- Breadcrumbs -->
+    <%= render 'shared/breadcrumbs' %>
+    
+    <!-- Header -->
     <div class="bg-white shadow-lg rounded-lg overflow-hidden mb-6">
       <div class="bg-gradient-to-r from-[#1F5C55] to-[#194A45] px-6 py-4">
         <h1 class="text-2xl font-bold text-white">Gestion des utilisateurs</h1>
@@ -10,11 +13,46 @@
       </div>
 
       <div class="p-6">
-        <!-- Statistiques -->
-        <div class="mb-6 bg-green-50 p-4 rounded-lg">
-          <p class="text-green-800 font-medium">
-            <span class="font-bold">Nombre d'utilisateurs :</span> <%= @users.count %>
-          </p>
+        <!-- Statistics -->
+        <div class="mb-6">
+          <h2 class="text-lg font-semibold text-gray-900 mb-3">Statistiques</h2>
+          <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4">
+            <!-- Total utilisateurs -->
+            <div class="bg-blue-50 rounded-lg p-4">
+              <p class="text-sm text-blue-500">Total utilisateurs</p>
+              <p class="text-2xl font-bold text-blue-800"><%= User.count %></p>
+            </div>
+            
+            <!-- Nouveaux d'hier -->
+            <div class="bg-teal-50 rounded-lg p-4">
+              <p class="text-sm text-teal-500">Nouveaux (hier)</p>
+              <p class="text-2xl font-bold text-teal-800"><%= User.where("created_at >= ?", 1.day.ago.beginning_of_day).count %></p>
+            </div>
+            
+            <!-- Adhésions Basic -->
+            <div class="bg-green-50 rounded-lg p-4">
+              <p class="text-sm text-green-500">Adhésions Basic</p>
+              <p class="text-2xl font-bold text-green-800"><%= UserMembership.joins(:membership).where(memberships: { type_name: 'Basic' }, status: 'active').count %></p>
+            </div>
+            
+            <!-- Adhésions Circus -->
+            <div class="bg-indigo-50 rounded-lg p-4">
+              <p class="text-sm text-indigo-500">Adhésions Circus</p>
+              <p class="text-2xl font-bold text-indigo-800"><%= UserMembership.joins(:membership).where(memberships: { type_name: 'Circus' }, status: 'active').count %></p>
+            </div>
+            
+            <!-- Adhésions actives totales -->
+            <div class="bg-purple-50 rounded-lg p-4">
+              <p class="text-sm text-purple-500">Adhésions actives</p>
+              <p class="text-2xl font-bold text-purple-800"><%= UserMembership.where(status: 'active').count %></p>
+            </div>
+            
+            <!-- Inscrits ce mois -->
+            <div class="bg-amber-50 rounded-lg p-4">
+              <p class="text-sm text-amber-500">Inscrits (ce mois)</p>
+              <p class="text-2xl font-bold text-amber-800"><%= User.where(created_at: Time.current.beginning_of_month..Time.current).count %></p>
+            </div>
+          </div>
         </div>
 
         <!-- Actions -->
@@ -26,16 +64,17 @@
               class: "inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#1F5C55] hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500" %>
         </div>
 
-        <!-- Titre section -->
+        <!-- Section Title -->
         <h2 class="text-lg font-semibold text-gray-900 border-b pb-2 mb-4">Liste des utilisateurs</h2>
 
-        <!-- Wrapper explicite pour le tableau -->
+        <!-- Explicit wrapper for the array -->
         <div class="user-table-container" style="overflow-x: auto !important;">
           <div class="user-table">
             <table class="min-w-full bg-white border border-gray-200 rounded-lg">
               <thead class="bg-gray-50">
                 <tr>
                   <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Id</th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nom</th>
                   <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
                   <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Rôle</th>
                   <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Abonnement</th>
@@ -46,6 +85,7 @@
                 <% @users.each do |user| %>
                   <tr class="hover:bg-gray-50">
                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900"><%= user.id %></td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500"><%= user.full_name.present? ? user.full_name : "Non renseigné" %></td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500"><%= user.email_address %></td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                       <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-purple-100 text-purple-800">

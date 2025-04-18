@@ -1,8 +1,8 @@
-<div class="bg-white rounded-xl shadow-lg overflow-hidden max-w-2xl mx-auto mb-12 w-full px-4 sm:px-0">
-    <!-- En-tête avec gradient -->
-    <div class="relative">
-        <div class="h-24 bg-gradient-to-r from-[#1F5C55] to-teal-600">
-            <!-- Badge du type de membre -->
+<div class="bg-white rounded-xl shadow-lg overflow-hidden max-w-2xl mx-auto mb-12 w-full px-0">
+    <!-- Header with gradient -->
+    <div class="relative w-full">
+        <div class="h-24 w-full bg-gradient-to-r from-[#1F5C55] to-[#194A45] rounded-t-xl">
+            <!-- Member Type Badge -->
             <div class="absolute top-4 right-4 px-3 py-1 text-xs font-semibold text-white rounded-full 
             <%= case @user.system_role
               when 'super_admin' then 'bg-[#1F5C55]'
@@ -33,33 +33,39 @@
         </div>
     </div>
 
-    <!-- Contenu principal -->
+    <!-- Main content -->
     <div class="pt-16 px-4 sm:px-6 pb-6">
-        <!-- Informations de l'utilisateur -->
+        <!-- User Information -->
         <div class="text-center mb-4 sm:mb-6">
             <h2 class="text-lg sm:text-xl font-bold text-gray-800">
-                <% if @user.first_name.present? || @user.last_name.present? %>
-                <%= [(@user.first_name || ""), (@user.last_name || "")].join(" ").strip %>
+                <% if @user.full_name.present? %>
+                <%= @user.full_name %>
                 <% else %>
                 <%= "Membre #{@user.id}" %>
                 <% end %>
             </h2>
             <p class="text-gray-500 text-sm mt-1"><%= @user.email_address %></p>
 
-            <!-- Statut d'adhésion -->
-            <% if @user.user_memberships.exists? %>
-            <% latest_membership = @user.user_memberships.order(created_at: :desc).first %>
-            <span class="inline-flex items-center mt-3 px-3 py-1 rounded-full text-xs font-medium <%= latest_membership.status ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' %>">
-                <%= latest_membership.status ? "Adhésion Active" : "Adhésion Inactive" %>
-            </span>
-            <% else %>
-            <span class="inline-flex items-center mt-3 px-3 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
-                Non adhérent
-            </span>
+            <!-- Membership Status -->
+            <% begin %>
+              <% if @user.user_memberships.exists? %>
+                <% latest_membership = @user.user_memberships.order(created_at: :desc).first %>
+                <span class="inline-flex items-center mt-3 px-3 py-1 rounded-full text-xs font-medium <%= latest_membership.status ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' %>">
+                    <%= latest_membership.status ? "Adhésion Active" : "Adhésion Inactive" %>
+                </span>
+              <% else %>
+                <span class="inline-flex items-center mt-3 px-3 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                    Non adhérent
+                </span>
+              <% end %>
+            <% rescue => e %>
+              <span class="inline-flex items-center mt-3 px-3 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                  Non adhérent
+              </span>
             <% end %>
         </div>
 
-        <!-- Détails de l'adhésion -->
+        <!-- Membership Details -->
         <div class="space-y-3 border-t border-b border-gray-200 py-3 sm:py-4 mb-4 sm:mb-6">
             <% if @user.user_memberships.exists? %>
             <div class="flex justify-between items-center">

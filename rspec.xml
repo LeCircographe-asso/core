@@ -1,0 +1,376 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="rspec" tests="54" skipped="2" failures="14" errors="0" time="0.403172" timestamp="2025-04-17T14:59:33+02:00" hostname="DESKTOP-AKA">
+<properties>
+<property name="seed" value="35325"/>
+</properties>
+<testcase classname="spec.models.membership_spec" name="Membership associations is expected to have many user_memberships" file="./spec/models/membership_spec.rb" time="0.015241"></testcase>
+<testcase classname="spec.models.membership_spec" name="Membership associations is expected to have many user through user_memberships" file="./spec/models/membership_spec.rb" time="0.000798"></testcase>
+<testcase classname="spec.models.membership_spec" name="Membership enum is expected to define :type_name as an enum backed by an integer with values ‹[:No_Member, :Basic, :Circus]›" file="./spec/models/membership_spec.rb" time="0.001181"></testcase>
+<testcase classname="spec.models.membership_spec" name="Membership default values has No_Member as default type" file="./spec/models/membership_spec.rb" time="0.000627"></testcase>
+<testcase classname="spec.models.payment_spec" name="Payment associations is expected to belong to user required: true" file="./spec/models/payment_spec.rb" time="0.171968"></testcase>
+<testcase classname="spec.models.payment_spec" name="Payment associations is expected to belong to order required: true" file="./spec/models/payment_spec.rb" time="0.001327"></testcase>
+<testcase classname="spec.models.payment_spec" name="Payment associations is expected to have many product_orders through order" file="./spec/models/payment_spec.rb" time="0.002086"></testcase>
+<testcase classname="spec.models.payment_spec" name="Payment enums is expected to define :status as an enum backed by an integer with values ‹[:success, :pending, :cancel]›" file="./spec/models/payment_spec.rb" time="0.001239"></testcase>
+<testcase classname="spec.models.payment_spec" name="Payment enums is expected to define :payment_type as an enum backed by an integer with values ‹[:cash, :credit_card, :check]›" file="./spec/models/payment_spec.rb" time="0.001034"></testcase>
+<testcase classname="spec.models.payment_spec" name="Payment callbacks calls update_user_membership_if_paid after update" file="./spec/models/payment_spec.rb" time="0.018572"><failure message="undefined method `total_amount=&apos; for #&lt;Order id: nil, sum: nil, date: nil, user_id: nil, created_at: nil, updated_at: nil, donation: nil&gt;" type="NoMethodError">Failure/Error: payment = build(:payment)
+
+NoMethodError:
+  undefined method `total_amount=&apos; for #&lt;Order id: nil, sum: nil, date: nil, user_id: nil, created_at: nil, updated_at: nil, donation: nil&gt;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/attribute_assigner.rb:16:in `public_send&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/attribute_assigner.rb:16:in `block (2 levels) in object&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/attribute_assigner.rb:15:in `each&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/attribute_assigner.rb:15:in `block in object&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/attribute_assigner.rb:14:in `object&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/evaluation.rb:10:in `object&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/strategy/build.rb:9:in `result&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/factory.rb:46:in `run&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/factory_runner.rb:29:in `block in run&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/factory_runner.rb:28:in `run&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/strategy/build.rb:5:in `association&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/evaluator.rb:33:in `association&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/attribute/association.rb:19:in `block in to_proc&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/evaluator.rb:75:in `instance_exec&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/evaluator.rb:75:in `block in define_attribute&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/attribute_assigner.rb:59:in `get&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/attribute_assigner.rb:16:in `block (2 levels) in object&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/attribute_assigner.rb:15:in `each&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/attribute_assigner.rb:15:in `block in object&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/attribute_assigner.rb:14:in `object&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/evaluation.rb:10:in `object&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/strategy/build.rb:9:in `result&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/factory.rb:46:in `run&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/factory_runner.rb:29:in `block in run&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/factory_runner.rb:28:in `run&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/strategy_syntax_method_registrar.rb:28:in `block in define_singular_strategy_method&apos;
+./spec/models/payment_spec.rb:17:in `block (3 levels) in &lt;top (required)&gt;&apos;</failure></testcase>
+<testcase classname="spec.models.payment_spec" name="Payment callbacks calls createBookOfEntry after update" file="./spec/models/payment_spec.rb" time="0.002963"><failure message="undefined method `total_amount=&apos; for #&lt;Order id: nil, sum: nil, date: nil, user_id: nil, created_at: nil, updated_at: nil, donation: nil&gt;" type="NoMethodError">Failure/Error: payment = build(:payment)
+
+NoMethodError:
+  undefined method `total_amount=&apos; for #&lt;Order id: nil, sum: nil, date: nil, user_id: nil, created_at: nil, updated_at: nil, donation: nil&gt;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/attribute_assigner.rb:16:in `public_send&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/attribute_assigner.rb:16:in `block (2 levels) in object&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/attribute_assigner.rb:15:in `each&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/attribute_assigner.rb:15:in `block in object&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/attribute_assigner.rb:14:in `object&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/evaluation.rb:10:in `object&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/strategy/build.rb:9:in `result&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/factory.rb:46:in `run&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/factory_runner.rb:29:in `block in run&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/factory_runner.rb:28:in `run&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/strategy/build.rb:5:in `association&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/evaluator.rb:33:in `association&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/attribute/association.rb:19:in `block in to_proc&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/evaluator.rb:75:in `instance_exec&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/evaluator.rb:75:in `block in define_attribute&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/attribute_assigner.rb:59:in `get&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/attribute_assigner.rb:16:in `block (2 levels) in object&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/attribute_assigner.rb:15:in `each&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/attribute_assigner.rb:15:in `block in object&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/attribute_assigner.rb:14:in `object&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/evaluation.rb:10:in `object&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/strategy/build.rb:9:in `result&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/factory.rb:46:in `run&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/factory_runner.rb:29:in `block in run&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/factory_runner.rb:28:in `run&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/strategy_syntax_method_registrar.rb:28:in `block in define_singular_strategy_method&apos;
+./spec/models/payment_spec.rb:23:in `block (3 levels) in &lt;top (required)&gt;&apos;</failure></testcase>
+<testcase classname="spec.models.payment_spec" name="Payment#determine_user_membership with circus products returns circus membership id for circus products" file="./spec/models/payment_spec.rb" time="0.010869"><failure message="undefined method `price=&apos; for #&lt;Product id: nil, product_name: &quot;Adhésion Cirque - Tarif Plein&quot;, created_at: nil, updated_at: nil, product_type: nil&gt;" type="NoMethodError">Failure/Error: product = create(:product, product_name: product_name)
+
+NoMethodError:
+  undefined method `price=&apos; for #&lt;Product id: nil, product_name: &quot;Adhésion Cirque - Tarif Plein&quot;, created_at: nil, updated_at: nil, product_type: nil&gt;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/attribute_assigner.rb:16:in `public_send&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/attribute_assigner.rb:16:in `block (2 levels) in object&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/attribute_assigner.rb:15:in `each&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/attribute_assigner.rb:15:in `block in object&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/attribute_assigner.rb:14:in `object&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/evaluation.rb:10:in `object&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/strategy/create.rb:9:in `result&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/factory.rb:46:in `run&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/factory_runner.rb:29:in `block in run&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/factory_runner.rb:28:in `run&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/strategy_syntax_method_registrar.rb:28:in `block in define_singular_strategy_method&apos;
+./spec/models/payment_spec.rb:49:in `block (5 levels) in &lt;top (required)&gt;&apos;
+./spec/models/payment_spec.rb:48:in `each&apos;
+./spec/models/payment_spec.rb:48:in `block (4 levels) in &lt;top (required)&gt;&apos;</failure></testcase>
+<testcase classname="spec.models.payment_spec" name="Payment#determine_user_membership with basic membership product returns basic membership id for basic membership product" file="./spec/models/payment_spec.rb" time="0.005455"><failure message="undefined method `price=&apos; for #&lt;Product id: nil, product_name: &quot;Adhésion simple&quot;, created_at: nil, updated_at: nil, product_type: nil&gt;" type="NoMethodError">Failure/Error: product = create(:product, product_name: &quot;Adhésion simple&quot;)
+
+NoMethodError:
+  undefined method `price=&apos; for #&lt;Product id: nil, product_name: &quot;Adhésion simple&quot;, created_at: nil, updated_at: nil, product_type: nil&gt;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/attribute_assigner.rb:16:in `public_send&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/attribute_assigner.rb:16:in `block (2 levels) in object&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/attribute_assigner.rb:15:in `each&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/attribute_assigner.rb:15:in `block in object&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/attribute_assigner.rb:14:in `object&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/evaluation.rb:10:in `object&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/strategy/create.rb:9:in `result&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/factory.rb:46:in `run&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/factory_runner.rb:29:in `block in run&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/factory_runner.rb:28:in `run&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/strategy_syntax_method_registrar.rb:28:in `block in define_singular_strategy_method&apos;
+./spec/models/payment_spec.rb:62:in `block (4 levels) in &lt;top (required)&gt;&apos;</failure></testcase>
+<testcase classname="spec.models.payment_spec" name="Payment#determine_user_membership with donation product returns no member id for donation product" file="./spec/models/payment_spec.rb" time="0.004267"><failure message="undefined method `price=&apos; for #&lt;Product id: nil, product_name: &quot;Donation&quot;, created_at: nil, updated_at: nil, product_type: nil&gt;" type="NoMethodError">Failure/Error: product = create(:product, product_name: &quot;Donation&quot;)
+
+NoMethodError:
+  undefined method `price=&apos; for #&lt;Product id: nil, product_name: &quot;Donation&quot;, created_at: nil, updated_at: nil, product_type: nil&gt;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/attribute_assigner.rb:16:in `public_send&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/attribute_assigner.rb:16:in `block (2 levels) in object&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/attribute_assigner.rb:15:in `each&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/attribute_assigner.rb:15:in `block in object&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/attribute_assigner.rb:14:in `object&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/evaluation.rb:10:in `object&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/strategy/create.rb:9:in `result&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/factory.rb:46:in `run&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/factory_runner.rb:29:in `block in run&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/factory_runner.rb:28:in `run&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/strategy_syntax_method_registrar.rb:28:in `block in define_singular_strategy_method&apos;
+./spec/models/payment_spec.rb:74:in `block (4 levels) in &lt;top (required)&gt;&apos;</failure></testcase>
+<testcase classname="spec.models.payment_spec" name="Payment#determine_end_date returns 3 months from now for quarterly subscription" file="./spec/models/payment_spec.rb" time="0.002535"><failure message="undefined method `total_amount=&apos; for #&lt;Order id: nil, sum: nil, date: nil, user_id: nil, created_at: nil, updated_at: nil, donation: nil&gt;" type="NoMethodError">Failure/Error: let(:payment) { build(:payment) }
+
+NoMethodError:
+  undefined method `total_amount=&apos; for #&lt;Order id: nil, sum: nil, date: nil, user_id: nil, created_at: nil, updated_at: nil, donation: nil&gt;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/attribute_assigner.rb:16:in `public_send&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/attribute_assigner.rb:16:in `block (2 levels) in object&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/attribute_assigner.rb:15:in `each&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/attribute_assigner.rb:15:in `block in object&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/attribute_assigner.rb:14:in `object&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/evaluation.rb:10:in `object&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/strategy/build.rb:9:in `result&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/factory.rb:46:in `run&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/factory_runner.rb:29:in `block in run&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/factory_runner.rb:28:in `run&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/strategy/build.rb:5:in `association&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/evaluator.rb:33:in `association&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/attribute/association.rb:19:in `block in to_proc&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/evaluator.rb:75:in `instance_exec&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/evaluator.rb:75:in `block in define_attribute&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/attribute_assigner.rb:59:in `get&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/attribute_assigner.rb:16:in `block (2 levels) in object&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/attribute_assigner.rb:15:in `each&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/attribute_assigner.rb:15:in `block in object&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/attribute_assigner.rb:14:in `object&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/evaluation.rb:10:in `object&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/strategy/build.rb:9:in `result&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/factory.rb:46:in `run&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/factory_runner.rb:29:in `block in run&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/factory_runner.rb:28:in `run&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/strategy_syntax_method_registrar.rb:28:in `block in define_singular_strategy_method&apos;
+./spec/models/payment_spec.rb:86:in `block (3 levels) in &lt;top (required)&gt;&apos;
+./spec/models/payment_spec.rb:89:in `block (3 levels) in &lt;top (required)&gt;&apos;</failure></testcase>
+<testcase classname="spec.models.payment_spec" name="Payment#determine_end_date returns 1 day from now for day pass" file="./spec/models/payment_spec.rb" time="0.002579"><failure message="undefined method `total_amount=&apos; for #&lt;Order id: nil, sum: nil, date: nil, user_id: nil, created_at: nil, updated_at: nil, donation: nil&gt;" type="NoMethodError">Failure/Error: let(:payment) { build(:payment) }
+
+NoMethodError:
+  undefined method `total_amount=&apos; for #&lt;Order id: nil, sum: nil, date: nil, user_id: nil, created_at: nil, updated_at: nil, donation: nil&gt;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/attribute_assigner.rb:16:in `public_send&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/attribute_assigner.rb:16:in `block (2 levels) in object&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/attribute_assigner.rb:15:in `each&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/attribute_assigner.rb:15:in `block in object&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/attribute_assigner.rb:14:in `object&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/evaluation.rb:10:in `object&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/strategy/build.rb:9:in `result&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/factory.rb:46:in `run&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/factory_runner.rb:29:in `block in run&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/factory_runner.rb:28:in `run&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/strategy/build.rb:5:in `association&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/evaluator.rb:33:in `association&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/attribute/association.rb:19:in `block in to_proc&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/evaluator.rb:75:in `instance_exec&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/evaluator.rb:75:in `block in define_attribute&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/attribute_assigner.rb:59:in `get&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/attribute_assigner.rb:16:in `block (2 levels) in object&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/attribute_assigner.rb:15:in `each&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/attribute_assigner.rb:15:in `block in object&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/attribute_assigner.rb:14:in `object&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/evaluation.rb:10:in `object&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/strategy/build.rb:9:in `result&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/factory.rb:46:in `run&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/factory_runner.rb:29:in `block in run&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/factory_runner.rb:28:in `run&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/strategy_syntax_method_registrar.rb:28:in `block in define_singular_strategy_method&apos;
+./spec/models/payment_spec.rb:86:in `block (3 levels) in &lt;top (required)&gt;&apos;
+./spec/models/payment_spec.rb:94:in `block (3 levels) in &lt;top (required)&gt;&apos;</failure></testcase>
+<testcase classname="spec.models.payment_spec" name="Payment#determine_end_date returns nil for donation" file="./spec/models/payment_spec.rb" time="0.002492"><failure message="undefined method `total_amount=&apos; for #&lt;Order id: nil, sum: nil, date: nil, user_id: nil, created_at: nil, updated_at: nil, donation: nil&gt;" type="NoMethodError">Failure/Error: let(:payment) { build(:payment) }
+
+NoMethodError:
+  undefined method `total_amount=&apos; for #&lt;Order id: nil, sum: nil, date: nil, user_id: nil, created_at: nil, updated_at: nil, donation: nil&gt;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/attribute_assigner.rb:16:in `public_send&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/attribute_assigner.rb:16:in `block (2 levels) in object&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/attribute_assigner.rb:15:in `each&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/attribute_assigner.rb:15:in `block in object&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/attribute_assigner.rb:14:in `object&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/evaluation.rb:10:in `object&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/strategy/build.rb:9:in `result&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/factory.rb:46:in `run&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/factory_runner.rb:29:in `block in run&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/factory_runner.rb:28:in `run&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/strategy/build.rb:5:in `association&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/evaluator.rb:33:in `association&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/attribute/association.rb:19:in `block in to_proc&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/evaluator.rb:75:in `instance_exec&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/evaluator.rb:75:in `block in define_attribute&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/attribute_assigner.rb:59:in `get&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/attribute_assigner.rb:16:in `block (2 levels) in object&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/attribute_assigner.rb:15:in `each&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/attribute_assigner.rb:15:in `block in object&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/attribute_assigner.rb:14:in `object&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/evaluation.rb:10:in `object&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/strategy/build.rb:9:in `result&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/factory.rb:46:in `run&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/factory_runner.rb:29:in `block in run&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/factory_runner.rb:28:in `run&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/strategy_syntax_method_registrar.rb:28:in `block in define_singular_strategy_method&apos;
+./spec/models/payment_spec.rb:86:in `block (3 levels) in &lt;top (required)&gt;&apos;
+./spec/models/payment_spec.rb:99:in `block (3 levels) in &lt;top (required)&gt;&apos;</failure></testcase>
+<testcase classname="spec.models.payment_spec" name="Payment#determine_end_date returns 1 year from now for other products" file="./spec/models/payment_spec.rb" time="0.002578"><failure message="undefined method `total_amount=&apos; for #&lt;Order id: nil, sum: nil, date: nil, user_id: nil, created_at: nil, updated_at: nil, donation: nil&gt;" type="NoMethodError">Failure/Error: let(:payment) { build(:payment) }
+
+NoMethodError:
+  undefined method `total_amount=&apos; for #&lt;Order id: nil, sum: nil, date: nil, user_id: nil, created_at: nil, updated_at: nil, donation: nil&gt;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/attribute_assigner.rb:16:in `public_send&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/attribute_assigner.rb:16:in `block (2 levels) in object&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/attribute_assigner.rb:15:in `each&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/attribute_assigner.rb:15:in `block in object&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/attribute_assigner.rb:14:in `object&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/evaluation.rb:10:in `object&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/strategy/build.rb:9:in `result&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/factory.rb:46:in `run&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/factory_runner.rb:29:in `block in run&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/factory_runner.rb:28:in `run&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/strategy/build.rb:5:in `association&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/evaluator.rb:33:in `association&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/attribute/association.rb:19:in `block in to_proc&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/evaluator.rb:75:in `instance_exec&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/evaluator.rb:75:in `block in define_attribute&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/attribute_assigner.rb:59:in `get&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/attribute_assigner.rb:16:in `block (2 levels) in object&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/attribute_assigner.rb:15:in `each&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/attribute_assigner.rb:15:in `block in object&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/attribute_assigner.rb:14:in `object&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/evaluation.rb:10:in `object&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/strategy/build.rb:9:in `result&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/factory.rb:46:in `run&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/factory_runner.rb:29:in `block in run&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/factory_runner.rb:28:in `run&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/strategy_syntax_method_registrar.rb:28:in `block in define_singular_strategy_method&apos;
+./spec/models/payment_spec.rb:86:in `block (3 levels) in &lt;top (required)&gt;&apos;
+./spec/models/payment_spec.rb:104:in `block (3 levels) in &lt;top (required)&gt;&apos;</failure></testcase>
+<testcase classname="spec.models.payment_spec" name="Payment#update_user_membership_end_date updates user membership end date based on product" file="./spec/models/payment_spec.rb" time="0.008083"><failure message="undefined method `total_amount=&apos; for #&lt;Order id: nil, sum: nil, date: nil, user_id: 1, created_at: nil, updated_at: nil, donation: nil&gt;" type="NoMethodError">Failure/Error: let(:order) { create(:order, user: user) }
+
+NoMethodError:
+  undefined method `total_amount=&apos; for #&lt;Order id: nil, sum: nil, date: nil, user_id: 1, created_at: nil, updated_at: nil, donation: nil&gt;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/attribute_assigner.rb:16:in `public_send&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/attribute_assigner.rb:16:in `block (2 levels) in object&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/attribute_assigner.rb:15:in `each&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/attribute_assigner.rb:15:in `block in object&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/attribute_assigner.rb:14:in `object&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/evaluation.rb:10:in `object&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/strategy/create.rb:9:in `result&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/factory.rb:46:in `run&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/factory_runner.rb:29:in `block in run&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/factory_runner.rb:28:in `run&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/strategy_syntax_method_registrar.rb:28:in `block in define_singular_strategy_method&apos;
+./spec/models/payment_spec.rb:114:in `block (3 levels) in &lt;top (required)&gt;&apos;
+./spec/models/payment_spec.rb:116:in `block (3 levels) in &lt;top (required)&gt;&apos;
+./spec/models/payment_spec.rb:119:in `block (3 levels) in &lt;top (required)&gt;&apos;</failure></testcase>
+<testcase classname="spec.models.payment_spec" name="Payment#createBookOfEntry with 10 sessions product creates a book of entry with 10 remaining entries" file="./spec/models/payment_spec.rb" time="0.004312"><failure message="undefined method `total_amount=&apos; for #&lt;Order id: nil, sum: nil, date: nil, user_id: 1, created_at: nil, updated_at: nil, donation: nil&gt;" type="NoMethodError">Failure/Error: let(:order) { create(:order, user: user) }
+
+NoMethodError:
+  undefined method `total_amount=&apos; for #&lt;Order id: nil, sum: nil, date: nil, user_id: 1, created_at: nil, updated_at: nil, donation: nil&gt;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/attribute_assigner.rb:16:in `public_send&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/attribute_assigner.rb:16:in `block (2 levels) in object&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/attribute_assigner.rb:15:in `each&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/attribute_assigner.rb:15:in `block in object&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/attribute_assigner.rb:14:in `object&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/evaluation.rb:10:in `object&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/strategy/create.rb:9:in `result&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/factory.rb:46:in `run&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/factory_runner.rb:29:in `block in run&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/factory_runner.rb:28:in `run&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/strategy_syntax_method_registrar.rb:28:in `block in define_singular_strategy_method&apos;
+./spec/models/payment_spec.rb:130:in `block (3 levels) in &lt;top (required)&gt;&apos;
+./spec/models/payment_spec.rb:131:in `block (3 levels) in &lt;top (required)&gt;&apos;
+./spec/models/payment_spec.rb:138:in `block (4 levels) in &lt;top (required)&gt;&apos;</failure></testcase>
+<testcase classname="spec.models.payment_spec" name="Payment#createBookOfEntry with other products does not create a book of entry" file="./spec/models/payment_spec.rb" time="0.005191"><failure message="undefined method `total_amount=&apos; for #&lt;Order id: nil, sum: nil, date: nil, user_id: 1, created_at: nil, updated_at: nil, donation: nil&gt;" type="NoMethodError">Failure/Error: let(:order) { create(:order, user: user) }
+
+NoMethodError:
+  undefined method `total_amount=&apos; for #&lt;Order id: nil, sum: nil, date: nil, user_id: 1, created_at: nil, updated_at: nil, donation: nil&gt;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/attribute_assigner.rb:16:in `public_send&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/attribute_assigner.rb:16:in `block (2 levels) in object&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/attribute_assigner.rb:15:in `each&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/attribute_assigner.rb:15:in `block in object&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/attribute_assigner.rb:14:in `object&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/evaluation.rb:10:in `object&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/strategy/create.rb:9:in `result&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/factory.rb:46:in `run&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/factory_runner.rb:29:in `block in run&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/factory_runner.rb:28:in `run&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/strategy_syntax_method_registrar.rb:28:in `block in define_singular_strategy_method&apos;
+./spec/models/payment_spec.rb:130:in `block (3 levels) in &lt;top (required)&gt;&apos;
+./spec/models/payment_spec.rb:131:in `block (3 levels) in &lt;top (required)&gt;&apos;
+./spec/models/payment_spec.rb:159:in `block (4 levels) in &lt;top (required)&gt;&apos;</failure></testcase>
+<testcase classname="spec.models.payment_spec" name="Payment#update_user_membership_if_paid when user has no active membership creates a new user membership" file="./spec/models/payment_spec.rb" time="0.004603"><failure message="undefined method `total_amount=&apos; for #&lt;Order id: nil, sum: nil, date: nil, user_id: 1, created_at: nil, updated_at: nil, donation: nil&gt;" type="NoMethodError">Failure/Error: let(:order) { create(:order, user: user) }
+
+NoMethodError:
+  undefined method `total_amount=&apos; for #&lt;Order id: nil, sum: nil, date: nil, user_id: 1, created_at: nil, updated_at: nil, donation: nil&gt;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/attribute_assigner.rb:16:in `public_send&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/attribute_assigner.rb:16:in `block (2 levels) in object&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/attribute_assigner.rb:15:in `each&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/attribute_assigner.rb:15:in `block in object&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/attribute_assigner.rb:14:in `object&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/evaluation.rb:10:in `object&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/strategy/create.rb:9:in `result&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/factory.rb:46:in `run&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/factory_runner.rb:29:in `block in run&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/factory_runner.rb:28:in `run&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/strategy_syntax_method_registrar.rb:28:in `block in define_singular_strategy_method&apos;
+./spec/models/payment_spec.rb:172:in `block (3 levels) in &lt;top (required)&gt;&apos;
+./spec/models/payment_spec.rb:173:in `block (3 levels) in &lt;top (required)&gt;&apos;
+./spec/models/payment_spec.rb:177:in `block (3 levels) in &lt;top (required)&gt;&apos;</failure></testcase>
+<testcase classname="spec.models.payment_spec" name="Payment#update_user_membership_if_paid when user has an active membership updates the existing user membership" file="./spec/models/payment_spec.rb" time="0.004247"><failure message="undefined method `total_amount=&apos; for #&lt;Order id: nil, sum: nil, date: nil, user_id: 1, created_at: nil, updated_at: nil, donation: nil&gt;" type="NoMethodError">Failure/Error: let(:order) { create(:order, user: user) }
+
+NoMethodError:
+  undefined method `total_amount=&apos; for #&lt;Order id: nil, sum: nil, date: nil, user_id: 1, created_at: nil, updated_at: nil, donation: nil&gt;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/attribute_assigner.rb:16:in `public_send&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/attribute_assigner.rb:16:in `block (2 levels) in object&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/attribute_assigner.rb:15:in `each&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/attribute_assigner.rb:15:in `block in object&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/attribute_assigner.rb:14:in `object&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/evaluation.rb:10:in `object&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/strategy/create.rb:9:in `result&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/factory.rb:46:in `run&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/factory_runner.rb:29:in `block in run&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/factory_runner.rb:28:in `run&apos;
+/home/aka/.rvm/gems/ruby-3.2.5/gems/factory_bot-6.5.1/lib/factory_bot/strategy_syntax_method_registrar.rb:28:in `block in define_singular_strategy_method&apos;
+./spec/models/payment_spec.rb:172:in `block (3 levels) in &lt;top (required)&gt;&apos;
+./spec/models/payment_spec.rb:173:in `block (3 levels) in &lt;top (required)&gt;&apos;
+./spec/models/payment_spec.rb:177:in `block (3 levels) in &lt;top (required)&gt;&apos;</failure></testcase>
+<testcase classname="spec.models.user_membership_spec" name="UserMembership associations is expected to belong to membership required: true" file="./spec/models/user_membership_spec.rb" time="0.005150"></testcase>
+<testcase classname="spec.models.user_membership_spec" name="UserMembership associations is expected to belong to user required: true" file="./spec/models/user_membership_spec.rb" time="0.001167"></testcase>
+<testcase classname="spec.models.user_membership_spec" name="UserMembership associations optional associations " file="./spec/models/user_membership_spec.rb" time="0.000011"><skipped/></testcase>
+<testcase classname="spec.models.user_membership_spec" name="UserMembership associations optional associations " file="./spec/models/user_membership_spec.rb" time="0.000003"><skipped/></testcase>
+<testcase classname="spec.models.user_membership_spec" name="UserMembership enum is expected to define :status as an enum backed by an integer with values ‹[:active, :pending, :expired, :canceled]›" file="./spec/models/user_membership_spec.rb" time="0.001675"></testcase>
+<testcase classname="spec.models.user_membership_spec" name="UserMembership default values has pending as default status" file="./spec/models/user_membership_spec.rb" time="0.000523"></testcase>
+<testcase classname="spec.models.user_membership_spec" name="UserMembership callbacks #expire_previous_memberships tests the behavior of expire_previous_memberships" file="./spec/models/user_membership_spec.rb" time="0.018867"></testcase>
+<testcase classname="spec.models.user_spec" name="User validations is expected to validate that :email_address cannot be empty/falsy" file="./spec/models/user_spec.rb" time="0.004751"></testcase>
+<testcase classname="spec.models.user_spec" name="User validations is expected to validate that :cgu has been set to &quot;1&quot;, producing a custom validation error on failure" file="./spec/models/user_spec.rb" time="0.001543"></testcase>
+<testcase classname="spec.models.user_spec" name="User validations is expected to validate that :privacy_policy has been set to &quot;1&quot;, producing a custom validation error on failure" file="./spec/models/user_spec.rb" time="0.001580"></testcase>
+<testcase classname="spec.models.user_spec" name="User validations uniqueness is expected to validate that :email_address is unique" file="./spec/models/user_spec.rb" time="0.005920"></testcase>
+<testcase classname="spec.models.user_spec" name="User associations is expected to have many sessions dependent =&gt; destroy" file="./spec/models/user_spec.rb" time="0.002883"></testcase>
+<testcase classname="spec.models.user_spec" name="User associations is expected to have many event_attendees dependent =&gt; destroy" file="./spec/models/user_spec.rb" time="0.002893"></testcase>
+<testcase classname="spec.models.user_spec" name="User associations is expected to have many events through event_attendees" file="./spec/models/user_spec.rb" time="0.002419"></testcase>
+<testcase classname="spec.models.user_spec" name="User associations is expected to have many user_memberships dependent =&gt; destroy" file="./spec/models/user_spec.rb" time="0.000625"></testcase>
+<testcase classname="spec.models.user_spec" name="User associations is expected to have many memberships through user_memberships" file="./spec/models/user_spec.rb" time="0.000791"></testcase>
+<testcase classname="spec.models.user_spec" name="User associations is expected to have many payments" file="./spec/models/user_spec.rb" time="0.000610"></testcase>
+<testcase classname="spec.models.user_spec" name="User associations is expected to have many orders" file="./spec/models/user_spec.rb" time="0.000571"></testcase>
+<testcase classname="spec.models.user_spec" name="User enum is expected to define :system_role as an enum backed by an integer with values ‹[:super_admin, :admin, :volunteer, :user_connected]›" file="./spec/models/user_spec.rb" time="0.001798"></testcase>
+<testcase classname="spec.models.user_spec" name="User#has_privileges? returns true for super_admin" file="./spec/models/user_spec.rb" time="0.002366"></testcase>
+<testcase classname="spec.models.user_spec" name="User#has_privileges? returns true for admin" file="./spec/models/user_spec.rb" time="0.001647"></testcase>
+<testcase classname="spec.models.user_spec" name="User#has_privileges? returns true for volunteer" file="./spec/models/user_spec.rb" time="0.001743"></testcase>
+<testcase classname="spec.models.user_spec" name="User#has_privileges? returns false for user_connected" file="./spec/models/user_spec.rb" time="0.001952"></testcase>
+<testcase classname="spec.models.user_spec" name="User#has_admin? returns true for super_admin" file="./spec/models/user_spec.rb" time="0.001763"></testcase>
+<testcase classname="spec.models.user_spec" name="User#has_admin? returns true for admin" file="./spec/models/user_spec.rb" time="0.001660"></testcase>
+<testcase classname="spec.models.user_spec" name="User#has_admin? returns false for volunteer" file="./spec/models/user_spec.rb" time="0.001795"></testcase>
+<testcase classname="spec.models.user_spec" name="User#has_admin? returns false for user_connected" file="./spec/models/user_spec.rb" time="0.001757"></testcase>
+<testcase classname="spec.models.user_spec" name="User#active_subscription? returns true when user has active membership" file="./spec/models/user_spec.rb" time="0.009464"></testcase>
+<testcase classname="spec.models.user_spec" name="User#active_subscription? returns false when user has no active membership" file="./spec/models/user_spec.rb" time="0.009772"></testcase>
+<testcase classname="spec.models.user_spec" name="User#has_higher_permissions? checks relative permission levels" file="./spec/models/user_spec.rb" time="0.006819"></testcase>
+<testcase classname="spec.models.user_spec" name="User#has_higher_permissions? returns false when comparing same roles" file="./spec/models/user_spec.rb" time="0.003809"></testcase>
+</testsuite>

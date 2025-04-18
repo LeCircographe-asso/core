@@ -1,0 +1,50 @@
+name: CI Pipeline
+
+on:
+  push:
+    branches: [ main, master, develop ]
+  pull_request:
+    branches: [ main, master, develop ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    services:
+      sqlite3:
+        image: cimg/sqlite:3.41.2
+        ports:
+          - 5432:5432
+
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Ruby
+      uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: 3.2.5
+        bundler-cache: true
+    
+    - name: Install dependencies
+      run: |
+        gem install bundler
+        bundle install --jobs 4 --retry 3
+    
+    - name: Set up database
+      run: |
+        bundle exec rails db:create
+        bundle exec rails db:schema:load
+    
+    - name: Run CI suite
+      run: bundle exec rake ci
+    
+    - name: Upload test results
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: test-reports
+        path: |
+          rspec.xml
+          coverage/**/*
+          rubocop.json
+          brakeman.json 
