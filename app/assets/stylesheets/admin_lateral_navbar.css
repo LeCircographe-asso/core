@@ -3,16 +3,15 @@
   top: 0;
   left: 0;
   width: 260px;
+  height: 100vh;
   background-color: #fff;
   overflow-y: auto;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
-  min-height: 100vh;
-  height: 100%;
   z-index: 100;
   border-right: 1px solid #f0f0f0;
   display: flex;
   flex-direction: column;
-  transition: transform 0.3s ease, width 0.3s ease;
+  transition: all 0.3s ease-in-out;
 }
 
 .sidebar-logo {
@@ -64,26 +63,35 @@
 /* Structure de mise en page admin */
 .admin-layout {
   display: flex;
-  min-height: 100vh;
+  height: 100vh;
+  overflow: hidden;
 }
 
 .admin-content {
-  margin-left: 70px; /* Coller à la sidebar fermée */
+  margin-left: 260px;
   flex: 1;
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
+  overflow-x: auto;
   background-color: #f9fafb;
 }
 
+.admin-content.expanded {
+  margin-left: 70px;
+}
+
 .admin-main {
-  flex: 1;
   padding: 25px;
-  overflow-y: auto;
 }
 
 .admin-sidebar.collapsed {
   width: 70px;
+}
+
+.admin-sidebar.collapsed .sidebar-text {
+  display: none;
+}
+
+.admin-sidebar.collapsed .sidebar-icon {
+  margin-right: 0;
 }
 
 .admin-sidebar.collapsed .sidebar-logo {
@@ -148,79 +156,6 @@
   color: #2d3748;
 }
 
- .admin-sidebar {
-    position: fixed;
-    width: 260px;
-    height: 100vh;
-    background: white;
-    transition: all 0.3s ease;
-    overflow-x: hidden;
-    z-index: 100;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  }
-  
-  .admin-sidebar.collapsed {
-    width: 70px;
-  }
-  
-  .sidebar-text {
-    transition: opacity 0.3s;
-  }
-  
-  .admin-sidebar.collapsed .sidebar-text {
-    opacity: 0;
-    display: none;
-  }
-  
-  #sidebar-toggle {
-    background-color: transparent;
-    border: none;
-    cursor: pointer;
-    border-radius: 5px;
-    text-align: left;
-    transition: background-color 0.2s ease;
-    padding: 8px 12px;
-  }
-  
-  #sidebar-toggle:hover {
-    background-color: #1F5C55;
-    color: white;
-  }
-  
-  .admin-sidebar.collapsed #sidebar-toggle {
-    justify-content: center;
-    padding-left: 0;
-    padding-right: 0;
-  }
-  
-  .main-content {
-    margin-left: 260px;
-    transition: margin-left 0.3s; 
-  }
-  
-  .main-content.expanded {
-    margin-left: 70px;
-  }
-  
-  @media (max-width: 768px) {
-    .main-content {
-      margin-left: 70px;
-      width: calc(100% - 70px);
-      max-width: 100%;
-      overflow-x: hidden;
-    }
-    
-    body {
-      overflow-x: hidden;
-      width: 100%;
-    }
-    
-    html {
-      overflow-x: hidden;
-    }
-  }
-
-/* Ajoutez ces règles à la fin du fichier */
 .admin-sidebar.collapsed .sidebar-link {
   display: flex;
   justify-content: center;
