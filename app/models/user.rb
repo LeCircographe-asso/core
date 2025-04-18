@@ -50,7 +50,7 @@ class User < ApplicationRecord
   end
 
   def formatted_registration_date
-    if authenticated?
+    if active_subscription?
       user_memberships.order(:created_at).last.created_at.strftime("%d/%m/%Y")
     else
       "Pas encore membre"
@@ -76,12 +76,31 @@ class User < ApplicationRecord
   end
 
   def has_higher_permissions?(other_user)
-    self.system_role_before_type_cast < other_user.system_role_before_type_cast
+    Rails.logger.debug "has_higher_permissions? called with other_user: #{other_user.inspect}"
+    return false if other_user.nil?
+    
+    # Get the integer values of the roles
+    self_role_value = User.system_roles[self.system_role]
+    other_role_value = User.system_roles[other_user.system_role]
+    
+    Rails.logger.debug "self_role_value: #{self_role_value}, other_role_value: #{other_role_value}"
+    
+    # Lower number means higher permissions in the enum
+    self_role_value < other_role_value
   end
 
   def inferior_rights
-    levels_of_right = self.system_role_before_type_cast
-    ((levels_of_right + 1)..3).map { |level| User.system_roles.key(level) }
+    Rails.logger.debug "inferior_rights called"
+    current_role_value = User.system_roles[system_role]
+    Rails.logger.debug "current_role_value: #{current_role_value.inspect}"
+    
+    return [] if current_role_value.nil?
+    
+    # Get all roles with higher values (lower permissions) than current role
+    result = User.system_roles.select { |_, value| value > current_role_value }.keys
+    Rails.logger.debug "inferior_rights result: #{result.inspect}"
+    
+    result
   end
 
   def active_subscription?
@@ -109,6 +128,15 @@ class User < ApplicationRecord
         nil
       end
     end
+  end
+
+  def system_role_before_type_cast
+    Rails.logger.debug "system_role_before_type_cast called"
+    Rails.logger.debug "self: #{self.inspect}"
+    Rails.logger.debug "self.system_role: #{self.system_role.inspect}"
+    
+    # Return the raw value from the database
+    self[:system_role]
   end
 
   private

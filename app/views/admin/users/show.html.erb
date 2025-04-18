@@ -1,174 +1,222 @@
-<div class="min-h-screen bg-gray-100 py-6 px-4 sm:px-6 lg:px-8">
-  <div class="max-w-4xl mx-auto">
-    <!-- Breadcrumbs -->
-    <%= render 'shared/breadcrumbs' %>
-    
-    <!-- Header -->
-    <div class="bg-white shadow-lg rounded-lg overflow-hidden mb-6">
-      <div class="bg-gradient-to-r from-[#1F5C55] to-[#194A45] px-6 py-4">
-        <h1 class="text-2xl font-bold text-white flex items-center gap-2">
-          Profil #<%= @user.id %>
-          <span class="text-sm bg-white/20 px-2 py-1 rounded-full"><%= @user.system_role.humanize %></span>
-        </h1>
-        <p class="text-white/80 mt-1"><%= @user.first_name %> <%= @user.last_name %></p>
+<div class="max-w-4xl mx-auto">
+  <!-- Breadcrumbs -->
+  <%= render 'shared/breadcrumbs' %>
+  
+  <div class="bg-white shadow-lg rounded-lg overflow-hidden" id="<%= dom_id(@user) %>">
+    <!-- Header with gradient -->
+    <div class="relative">
+      <div class="h-24 w-full bg-gradient-to-r from-[#1F5C55] to-[#194A45] rounded-t-lg">
+        <!-- User Role Badge -->
+        <div class="absolute top-4 right-4 px-3 py-1 text-xs font-semibold text-white rounded-full 
+          <%= case @user.system_role
+            when 'super_admin' then 'bg-[#1F5C55]'
+            when 'admin' then 'bg-[#1F5C55]/90'
+            when 'volunteer' then 'bg-[#1F5C55]/80'
+            when 'user_connected' then 'bg-[#1F5C55]/70'
+            end %>">
+          <%= @user.system_role.humanize %>
+        </div>
+        
+        <!-- Edit Button -->
+        <div class="absolute top-4 left-4">
+          <%= link_to edit_admin_user_path(@user), class: "inline-flex items-center px-3 py-1 text-xs font-semibold text-white rounded-full bg-[#1F5C55]/80 hover:bg-[#1F5C55] transition-colors duration-200" do %>
+            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+            </svg>
+            Modifier
+          <% end %>
+        </div>
       </div>
-
-      <!-- Main information -->
-      <div class="p-6">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <!-- Left column -->
-          <div class="space-y-4">
-            <h2 class="text-lg font-semibold text-gray-900 border-b pb-2">Informations personnelles</h2>
-            <div class="space-y-3">
-              <div class="flex items-center">
-                <span class="text-gray-500 w-32">Email:</span>
-                <span class="text-gray-900"><%= @user.email_address %></span>
-              </div>
-              <div class="flex items-center">
-                <span class="text-gray-500 w-32">Date de naissance:</span>
-                <span class="text-gray-900"><%= @user.birthdate&.strftime("%d/%m/%Y") || "Non renseigné" %></span>
-              </div>
-              <div class="flex items-center">
-                <span class="text-gray-500 w-32">Téléphone:</span>
-                <span class="text-gray-900"><%= @user.phone_number || "Non renseigné" %></span>
-              </div>
-              <div class="flex items-start">
-                <span class="text-gray-500 w-32">Adresse:</span>
-                <div class="text-gray-900">
-                  <%= @user.address || "Non renseignée" %><br>
-                  <%= @user.zip_code %> <%= @user.town %><br>
-                  <%= @user.country %>
-                </div>
-              </div>
-              <div class="flex items-start">
-                <span class="text-gray-500 w-32">Profession:</span>
-                <span class="text-gray-900"><%= @user.occupation || "Non renseignée" %></span>
-              </div>
-              <div class="flex items-start">
-                <span class="text-gray-500 w-32">Disciplines:</span>
-                <span class="text-gray-900"><%= @user.specialty || "Non renseignées" %></span>
-              </div>
-              <div class="flex items-center">
-                <span class="text-gray-500 w-32">Newsletter:</span>
-                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium <%= @user.newsletter_subscribed ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800' %>">
-                  <%= @user.newsletter_subscribed ? "Inscrit" : "Non inscrit" %>
-                </span>
-              </div>
-              <div class="flex items-start">
-                <span class="text-gray-500 w-32">Implication:</span>
-                <span class="text-gray-900"><%= @user.get_involved || "Non renseignée" %></span>
-              </div>
-            </div>
+      
+      <!-- Avatar -->
+      <div class="absolute -bottom-12 left-1/2 transform -translate-x-1/2">
+        <div class="h-24 w-24 rounded-full border-4 border-white overflow-hidden bg-white shadow-lg">
+          <% case @user.system_role %>
+          <% when 'super_admin' %>
+            <%= image_tag "super_admin.webp", alt: "Avatar Super Admin", class: "h-full w-full object-cover" %>
+          <% when 'admin' %>
+            <%= image_tag "admin.webp", alt: "Avatar Admin", class: "h-full w-full object-cover" %>
+          <% when 'volunteer' %>
+            <%= image_tag "volunteer.webp", alt: "Avatar Bénévole", class: "h-full w-full object-cover" %>
+          <% when 'user_connected' %>
+            <%= image_tag "users.png", alt: "Avatar Utilisateur", class: "h-full w-full object-cover" %>
+          <% else %>
+            <%= image_tag "users.png", alt: "Avatar", class: "h-full w-full object-cover" %>
+          <% end %>
+        </div>
+      </div>
+    </div>
+    
+    <!-- User Info -->
+    <div class="pt-16 px-6 pb-6">
+      <div class="text-center mb-6">
+        <h1 class="text-xl font-bold text-gray-800">
+          <%= @user.full_name.present? ? @user.full_name : "Utilisateur ##{@user.id}" %>
+        </h1>
+        <p class="text-gray-500 text-sm mt-1"><%= @user.email_address %></p>
+      </div>
+      
+      <!-- Tabs Navigation -->
+      <div class="border-b border-gray-200 mb-6">
+        <nav class="flex -mb-px" aria-label="Tabs">
+          <button type="button" class="tab-button active w-1/2 py-4 px-1 text-center border-b-2 font-medium text-sm" data-tab="personal">
+            Informations personnelles
+          </button>
+          <button type="button" class="tab-button w-1/2 py-4 px-1 text-center border-b-2 font-medium text-sm" data-tab="additional">
+            Informations additionnelles
+          </button>
+        </nav>
+      </div>
+      
+      <!-- Tab Content -->
+      <div class="tab-content" id="personal-tab">
+        <div class="space-y-4">
+          <!-- Email -->
+          <div class="grid grid-cols-3 gap-4 py-2 border-b">
+            <div class="text-sm font-medium text-gray-500">Email</div>
+            <div class="col-span-2 text-sm text-gray-900"><%= @user.email_address %></div>
           </div>
 
-          <!-- Right column -->
-          <div class="space-y-4">
-            <h2 class="text-lg font-semibold text-gray-900 border-b pb-2">Adhésion & Activités</h2>
-            <div class="space-y-3">
-              <div class="flex items-center">
-                <span class="text-gray-500 w-32">Statut:</span>
-                <% if @user.user_memberships.exists? %>
-                  <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium <%= @user.user_memberships.exists?(status: "active") ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800' %>">
-                    <%= @user.user_memberships.exists?(status: "active") ? "Membre actif" : "Inscription en attente" %>
-                  </span>
-                <% else %>
-                  <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
-                    Non adhérent
-                  </span>
-                <% end %>
-              </div>
+          <!-- First Name -->
+          <div class="grid grid-cols-3 gap-4 py-2 border-b">
+            <div class="text-sm font-medium text-gray-500">Prénom</div>
+            <div class="col-span-2 text-sm text-gray-900"><%= @user.first_name %></div>
+          </div>
 
-              <% if @user.user_memberships.exists? %>
-                <% latest_membership = @user.user_memberships.order(created_at: :desc).first %>
-                <div class="flex items-center">
-                  <span class="text-gray-500 w-32">Membre depuis:</span>
-                  <span class="text-gray-900"><%= @user.user_memberships.order(:created_at).first.created_at.strftime("%d/%m/%Y")  %></span>
-                </div>
-                <div class="flex items-center">
-                  <span class="text-gray-500 w-32">Membre jusqu'a:</span>
-                  <span class="text-gray-900"><%= @user.user_memberships.order(:created_at).first.created_at.advance(years: 1).strftime("%d/%m/%Y") %></span>
-                </div>
-                <div class="flex items-center mb-20">
-                  <span class="text-gray-500 w-32">Type:</span>
-                  <span class="text-gray-900"><%= latest_membership.membership.type_name.humanize %></span>
-                </div>
-                <div class="flex items-center">
-                  <span class="text-gray-500 w-32">Cotisation:</span>
-                  <span class="text-gray-900">
-                    <%= @user.orders&.last&.product_orders&.last&.product&.product_name || "Aucune cotisation" %>
-                  </span>
-                </div>
-                <div class="flex items-center">
-                  <span class="text-gray-500 w-32">État:</span>
-                  <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium 
-                    <%= latest_membership.status == "active" ? 'bg-green-100 text-green-800' : 
-                       (latest_membership.status == "pending" ? 'bg-yellow-100 text-yellow-800' : 
-                        'bg-red-100 text-red-800') %>">
-                    <%= latest_membership.status == "active" ? "Actif" : latest_membership.status.capitalize %>
-                  </span>
-                </div>
-                <% if latest_membership.end_date.present? %>
-                  <div class="flex items-center">
-                    <span class="text-gray-500 w-32">Expire le:</span>
-                    <span class="text-gray-900"><%= latest_membership.end_date.strftime("%d/%m/%Y") %></span>
-                  </div>
-                <% end %>
-              <% end %>
-            </div>
+          <!-- Last Name -->
+          <div class="grid grid-cols-3 gap-4 py-2 border-b">
+            <div class="text-sm font-medium text-gray-500">Nom</div>
+            <div class="col-span-2 text-sm text-gray-900"><%= @user.last_name %></div>
+          </div>
 
-            <div class="flex items-center">
-              <span class="text-gray-500 w-32">Droit à l'image:</span>
-              <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium <%= @user.image_rights ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' %>">
-                <%= @user.image_rights ? "Accordé" : "Non accordé" %>
-              </span>
-            </div>
+          <!-- System Role -->
+          <div class="grid grid-cols-3 gap-4 py-2 border-b">
+            <div class="text-sm font-medium text-gray-500">Rôle système</div>
+            <div class="col-span-2 text-sm text-gray-900"><%= @user.system_role.humanize %></div>
+          </div>
+
+          <!-- Occupation -->
+          <div class="grid grid-cols-3 gap-4 py-2 border-b">
+            <div class="text-sm font-medium text-gray-500">Profession</div>
+            <div class="col-span-2 text-sm text-gray-900"><%= @user.occupation %></div>
+          </div>
+
+          <!-- Specialty -->
+          <div class="grid grid-cols-3 gap-4 py-2 border-b">
+            <div class="text-sm font-medium text-gray-500">Spécialité</div>
+            <div class="col-span-2 text-sm text-gray-900"><%= @user.specialty %></div>
           </div>
         </div>
+      </div>
+      
+      <div class="tab-content hidden" id="additional-tab">
+        <div class="space-y-4">
+          <!-- Birth Date -->
+          <div class="grid grid-cols-3 gap-4 py-2 border-b">
+            <div class="text-sm font-medium text-gray-500">Date de naissance</div>
+            <div class="col-span-2 text-sm text-gray-900"><%= @user.birthdate&.strftime("%d/%m/%Y") %></div>
+          </div>
 
-        <!-- Actions -->
-        <div class="mt-8 border-t pt-6 flex flex-wrap gap-4">
-          <%= button_to "Souscrire à une adhésion", admin_user_orders_path(@user), 
-              method: :post, 
-              params: {order: { user_id: @user.id}}, 
-              class: "inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#1F5C55] hover:bg-[#194A45] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1F5C55]",
-              form: { data: { turbo: false } } %>
-          
-          <%= button_to "Souscrire à un abonnement", admin_user_orders_path(@user), 
-              method: :post, 
-              params: {order: { user_id: @user.id}}, 
-              class: "inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#1F5C55] hover:bg-[#194A45] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1F5C55]",
-              form: { data: { turbo: false } } %>
-          
-          <%= link_to "Modifier", edit_admin_user_path, 
-              class: "inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1F5C55]" %>
-          
-          <%= link_to "Historique des paiements", admin_payments_path(user_id: @user.id),
-              class: "inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1F5C55]" %>
+          <!-- Phone -->
+          <div class="grid grid-cols-3 gap-4 py-2 border-b">
+            <div class="text-sm font-medium text-gray-500">Téléphone</div>
+            <div class="col-span-2 text-sm text-gray-900"><%= @user.phone_number %></div>
+          </div>
 
-          <%= button_to "Faire un don", admin_donations_path(user_id: @user.id), method: :post, 
-                        params: { 
-                          payment: { 
-                            payment_amount: 0, 
-                            payment_date: Time.now.to_s, # Date of donation
-                            payment_type: "credit_card", # Payment type
-                            status: "pending", # Payment Status
-                            donation: 0, # Indicate that this is a donation
-                            total_payment: 0, # Total amount of the donation
-                            user_id: @user.id # The user ID
-                          }
-                        }, 
-              class: "inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1F5C59]" %>
+          <!-- Address -->
+          <div class="grid grid-cols-3 gap-4 py-2 border-b">
+            <div class="text-sm font-medium text-gray-500">Adresse</div>
+            <div class="col-span-2 text-sm text-gray-900">
+              <%= @user.address %><br>
+              <%= @user.zip_code %> <%= @user.town %><br>
+              <%= @user.country %>
+            </div>
+          </div>
 
-          
-          <%= link_to "Retour à la liste", admin_users_path, 
-              class: "inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1F5C55]" %>
+          <!-- Preferences -->
+          <div class="space-y-4 mt-4">
+            <h3 class="text-sm font-medium text-gray-700">Préférences</h3>
+            
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div class="flex items-start">
+                <div class="flex items-center h-5">
+                  <div class="h-4 w-4 rounded-full <%= @user.newsletter_subscribed ? 'bg-[#1F5C55]' : 'bg-gray-200' %>"></div>
+                </div>
+                <div class="ml-3 text-sm">
+                  <div class="font-medium text-gray-700">Newsletter</div>
+                  <p class="text-gray-500">Reçoit les communications par email</p>
+                </div>
+              </div>
 
-          <%= button_to "Supprimer", [:admin, @user], 
-              method: :delete,
-              class: "inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500",
-              data: { confirm: "Êtes-vous sûr de vouloir supprimer cet utilisateur ?" } %>
+              <div class="flex items-start">
+                <div class="flex items-center h-5">
+                  <div class="h-4 w-4 rounded-full <%= @user.image_rights ? 'bg-[#1F5C55]' : 'bg-gray-200' %>"></div>
+                </div>
+                <div class="ml-3 text-sm">
+                  <div class="font-medium text-gray-700">Droits à l'image</div>
+                  <p class="text-gray-500">Autorise l'utilisation de son image</p>
+                </div>
+              </div>
+
+              <div class="flex items-start">
+                <div class="flex items-center h-5">
+                  <div class="h-4 w-4 rounded-full <%= @user.get_involved ? 'bg-[#1F5C55]' : 'bg-gray-200' %>"></div>
+                </div>
+                <div class="ml-3 text-sm">
+                  <div class="font-medium text-gray-700">Souhaite s'impliquer</div>
+                  <p class="text-gray-500">Intéressé(e) pour participer aux activités</p>
+                </div>
+              </div>
+
+              <div class="flex items-start">
+                <div class="flex items-center h-5">
+                  <div class="h-4 w-4 rounded-full <%= @user.dyslexic_font ? 'bg-[#1F5C55]' : 'bg-gray-200' %>"></div>
+                </div>
+                <div class="ml-3 text-sm">
+                  <div class="font-medium text-gray-700">Police dyslexique</div>
+                  <p class="text-gray-500">Utilise la police adaptée aux dyslexiques</p>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
   </div>
 </div>
+
+<script>
+  document.addEventListener('turbo:load', function() {
+    // Tab functionality
+    const tabButtons = document.querySelectorAll('.tab-button');
+    const tabContents = document.querySelectorAll('.tab-content');
+    
+    tabButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        // Remove active class from all buttons
+        tabButtons.forEach(btn => {
+          btn.classList.remove('border-[#1F5C55]', 'text-[#1F5C55]');
+          btn.classList.add('border-transparent', 'text-gray-500', 'hover:text-gray-700', 'hover:border-gray-300');
+        });
+        
+        // Add active class to clicked button
+        button.classList.remove('border-transparent', 'text-gray-500', 'hover:text-gray-700', 'hover:border-gray-300');
+        button.classList.add('border-[#1F5C55]', 'text-[#1F5C55]');
+        
+        // Hide all tab contents
+        tabContents.forEach(content => {
+          content.classList.add('hidden');
+        });
+        
+        // Show the selected tab content
+        const tabId = button.getAttribute('data-tab') + '-tab';
+        document.getElementById(tabId).classList.remove('hidden');
+      });
+    });
+    
+    // Set the first tab as active by default
+    tabButtons[0].classList.add('border-[#1F5C55]', 'text-[#1F5C55]');
+    tabButtons[0].classList.remove('border-transparent', 'text-gray-500', 'hover:text-gray-700', 'hover:border-gray-300');
+  });
+</script>
+
