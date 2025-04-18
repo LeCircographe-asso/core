@@ -20,6 +20,7 @@
                 <div>
                     <p class="text-sm text-gray-500">Utilisateurs</p>
                     <p class="text-2xl font-bold text-gray-800"><%= User.count %></p>
+                    <p class="text-xs text-gray-500">Nouveaux hier: <%= User.where("created_at >= ? AND created_at <= ?", 1.day.ago.beginning_of_day, 1.day.ago.end_of_day).count %></p>
                 </div>
             </div>
         </div>
@@ -27,11 +28,11 @@
         <div class="bg-white rounded-lg shadow-md p-4 border-l-4 border-green-500">
             <div class="flex items-center">
                 <div class="p-3 rounded-full bg-green-100 mr-4">
-                    <i class="fas fa-calendar-check text-green-500 text-xl"></i>
+                    <i class="fas fa-ticket-alt text-green-500 text-xl"></i>
                 </div>
                 <div>
-                    <p class="text-sm text-gray-500">Événements</p>
-                    <p class="text-2xl font-bold text-gray-800"><%= Event.count %></p>
+                    <p class="text-sm text-gray-500">Adhésions Basic</p>
+                    <p class="text-2xl font-bold text-gray-800"><%= UserMembership.joins(:membership).where(memberships: { type_name: 'Basic' }, status: 'active').count %></p>
                 </div>
             </div>
         </div>
@@ -42,8 +43,8 @@
                     <i class="fas fa-id-card text-purple-500 text-xl"></i>
                 </div>
                 <div>
-                    <p class="text-sm text-gray-500">Adhésions actives</p>
-                    <p class="text-2xl font-bold text-gray-800"><%= UserMembership.where(status: "active").count %></p>
+                    <p class="text-sm text-gray-500">Adhésions Circus</p>
+                    <p class="text-2xl font-bold text-gray-800"><%= UserMembership.joins(:membership).where(memberships: { type_name: 'Circus' }, status: 'active').count %></p>
                 </div>
             </div>
         </div>
@@ -51,11 +52,11 @@
         <div class="bg-white rounded-lg shadow-md p-4 border-l-4 border-amber-500">
             <div class="flex items-center">
                 <div class="p-3 rounded-full bg-amber-100 mr-4">
-                    <i class="fas fa-shopping-cart text-amber-500 text-xl"></i>
+                    <i class="fas fa-id-badge text-amber-500 text-xl"></i>
                 </div>
                 <div>
-                    <p class="text-sm text-gray-500">Commandes du mois</p>
-                    <p class="text-2xl font-bold text-gray-800"><%= Order.where(created_at: Time.current.beginning_of_month..Time.current.end_of_month).count %></p>
+                    <p class="text-sm text-gray-500">Adhésions actives</p>
+                    <p class="text-2xl font-bold text-gray-800"><%= UserMembership.where(status: "active").count %></p>
                 </div>
             </div>
         </div>
@@ -81,10 +82,10 @@
     </div>
 
     <!-- Main content -->
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <!-- Section Timetable wireframe style -->
-        <div class="lg:col-span-1">
-            <div class="bg-white rounded-lg shadow-md overflow-hidden">
+    <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3 gap-6">
+        <!-- Section Timetable with improved display -->
+        <div class="col-span-1">
+            <div class="bg-white rounded-lg shadow-md overflow-hidden h-full">
                 <div class="border-b border-gray-200 px-6 py-4 flex justify-between items-center">
                     <h3 class="text-lg font-semibold text-gray-800">Horaires d'ouverture</h3>
                     <%= link_to edit_admin_opening_hours_path, class: "text-[#1F5C55] hover:text-[#194A45]", title: "Modifier les horaires" do %>
@@ -92,38 +93,14 @@
                     <% end %>
                 </div>
                 <div class="p-4">
-                    <% opening_hours = Rails.cache.fetch("opening_hours") || OpeningHoursHelper.default_opening_hours %>
-                    
-                    <% if opening_hours.present? %>
-                        <div class="mb-2 text-center">
-                            <h4 class="font-medium">Cette semaine :<br>Les horaires d'ouverture :</h4>
-                        </div>
-                        <div class="space-y-1">
-                            <% opening_hours.each do |day, hours| %>
-                                <div class="flex justify-between items-center py-1 <%= Time.zone.now.strftime('%A').downcase == day.to_s ? 'font-bold' : '' %>">
-                                    <span><%= day.to_s.capitalize %> :</span>
-                                    <span><%= hours %></span>
-                                </div>
-                            <% end %>
-                        </div>
-                        <div class="mt-4 text-center">
-                            <%= link_to "Modifier", edit_admin_opening_hours_path, class: "px-4 py-1.5 bg-[#1F5C55] hover:bg-[#194A45] text-white text-sm rounded-md" %>
-                        </div>
-                    <% else %>
-                        <div class="text-center py-4 text-gray-500">
-                            <i class="fas fa-clock text-[#1F5C55] text-2xl mb-2"></i>
-                            <p>Aucun horaire n'est disponible.</p>
-                            <div class="mt-3">
-                                <%= link_to "Définir les horaires", edit_admin_opening_hours_path, class: "px-4 py-1.5 bg-[#1F5C55] hover:bg-[#194A45] text-white text-sm rounded-md" %>
-                            </div>
-                        </div>
-                    <% end %>
+                    <% @horaires = Rails.cache.fetch("opening_hours") || OpeningHoursHelper.default_opening_hours %>
+                    <%= render 'shared/opening_hours' %>
                 </div>
             </div>
         </div>
 
         <!-- Notepad Section -->
-        <div class="lg:col-span-1">
+        <div class="col-span-1">
             <div class="bg-white rounded-lg shadow-md overflow-hidden h-full">
                 <div class="border-b border-gray-200 px-6 py-4 flex justify-between items-center">
                     <h3 class="text-lg font-semibold text-gray-800">Bloc-note</h3>
@@ -132,7 +109,7 @@
                     <% end %>
                 </div>
                 <div class="p-4">
-                    <div class="bg-gray-50 rounded-lg p-4 mb-4 min-h-[200px] max-h-[250px] overflow-y-auto prose">
+                    <div class="bg-gray-50 rounded-lg p-4 mb-4 min-h-[200px] max-h-[250px] overflow-y-auto">
                         <%= render "shared/notepad" %>
                     </div>
                 </div>
@@ -140,7 +117,7 @@
         </div>
 
         <!-- Recent Activity Section -->
-        <div class="lg:col-span-1">
+        <div class="col-span-1">
             <div class="bg-white rounded-lg shadow-md overflow-hidden h-full">
                 <div class="border-b border-gray-200 px-6 py-4">
                     <h3 class="text-lg font-semibold text-gray-800">Activité récente</h3>

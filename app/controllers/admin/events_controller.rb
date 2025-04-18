@@ -26,7 +26,7 @@ module Admin
     def edit
       @event = Event.find params[:id]
       add_breadcrumb "Événements", admin_events_path
-      add_breadcrumb @event.title, nil
+      add_breadcrumb @event.title, event_path(@event)
       add_breadcrumb "Modifier", nil
     end
     def update
