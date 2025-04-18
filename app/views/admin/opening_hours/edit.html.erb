@@ -2,6 +2,9 @@
 
 <div class="min-h-screen py-3">
   <div class="max-w-6xl mx-auto px-4">
+    <!-- Breadcrumbs -->
+    <%= render 'shared/breadcrumbs' %>
+    
     <!-- Header -->
     <div class="bg-white shadow-lg rounded-lg overflow-hidden mb-4 ">
       <div class="bg-gradient-to-r from-[#1F5C55] to-teal-600 px-6 py-2.5">
@@ -27,7 +30,7 @@
         <div class="px-4 py-2 border-b border-gray-200 flex items-center justify-between">
           <h2 class="text-base font-medium text-gray-900">Formulaire de modification</h2>
           <div class="flex gap-2">
-            <%= link_to admin_dashboard_index_path, class: "text-gray-500 hover:text-gray-700" do %>
+            <%= link_to admin_opening_hours_path, class: "text-gray-500 hover:text-gray-700" do %>
               <i class="fas fa-arrow-left"></i> Retour
             <% end %>
           </div>
@@ -85,58 +88,8 @@
           <h2 class="text-base font-medium text-gray-900">Aperçu des horaires</h2>
         </div>
         <div class="p-3">
-          <div class="bg-white rounded-lg shadow-sm p-3">
-            <h3 class="text-base font-semibold mb-2 text-[#1F5C55] text-center">Horaires d'ouverture</h3>
-            <table class="w-full border-collapse preview-table text-sm">
-              <thead>
-                <tr>
-                  <th class="border-b border-[#1F5C55]/20 py-1.5 text-center font-medium text-gray-600">Jour</th>
-                  <th class="border-b border-[#1F5C55]/20 py-1.5 text-center font-medium text-gray-600">Horaires</th>
-                </tr>
-              </thead>
-              <tbody>
-                <% @opening_hours.each do |day, hours| %>
-                  <tr class="border-b border-gray-100">
-                    <% 
-                      is_weekend = ["samedi", "dimanche"].include?(day)
-                      is_today = Time.zone.now.strftime('%A').downcase == day
-                      row_classes = "hover:bg-gray-50"
-                      row_classes += " bg-[#1F5C55]/5" if is_today
-                    %>
-                    <td class="<%= row_classes %> py-1.5 text-center">
-                      <div class="flex items-center justify-center">
-                        <% 
-                          icon_class = case day 
-                          when "lundi", "mardi", "mercredi", "jeudi", "vendredi" then "fas fa-briefcase"
-                          when "samedi", "dimanche" then "fas fa-umbrella-beach"
-                          end
-                        %>
-                        <i class="<%= icon_class %> text-gray-500 mr-1.5 text-xs"></i>
-                        <span class="<%= is_weekend ? 'font-medium text-[#1F5C55]' : '' %> <%= is_today ? 'font-bold' : '' %>">
-                          <%= day.capitalize %>
-                          <% if is_today %>
-                            <span class="ml-1 text-xs bg-[#1F5C55] text-white px-1 py-0.5 rounded-full text-[10px]">Aujourd'hui</span>
-                          <% end %>
-                        </span>
-                      </div>
-                    </td>
-                    <td class="<%= row_classes %> py-1.5 text-center preview-hours" data-preview-for="<%= day %>">
-                      <% if hours.downcase == "fermé" %>
-                        <span class="inline-flex items-center px-1.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
-                          <i class="fas fa-times-circle mr-1 text-xs"></i>
-                          Fermé
-                        </span>
-                      <% else %>
-                        <span class="text-gray-800">
-                          <i class="far fa-clock text-[#1F5C55] mr-1 text-xs"></i>
-                          <%= hours %>
-                        </span>
-                      <% end %>
-                    </td>
-                  </tr>
-                <% end %>
-              </tbody>
-            </table>
+          <div id="preview-container">
+            <%= render 'shared/opening_hours', horaires: @opening_hours %>
           </div>
         </div>
       </div>
@@ -147,32 +100,7 @@
 <script>
 document.addEventListener("DOMContentLoaded", function() {
   const timeInputs = document.querySelectorAll('.time-input');
-  const previewHours = document.querySelectorAll('.preview-hours');
   const form = document.getElementById('opening-hours-form');
-  
-  // Real-time preview update
-  timeInputs.forEach(input => {
-    input.addEventListener('input', function() {
-      const day = this.dataset.day;
-      const previewElement = document.querySelector(`[data-preview-for="${day}"]`);
-      
-      if (this.value.toLowerCase() === "fermé") {
-        previewElement.innerHTML = `
-          <span class="inline-flex items-center px-1.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
-            <i class="fas fa-times-circle mr-1 text-xs"></i>
-            Fermé
-          </span>
-        `;
-      } else {
-        previewElement.innerHTML = `
-          <span class="text-gray-800">
-            <i class="far fa-clock text-[#1F5C55] mr-1 text-xs"></i>
-            ${this.value}
-          </span>
-        `;
-      }
-    });
-  });
   
   // Form validation
   form.addEventListener('submit', function(event) {
@@ -197,6 +125,44 @@ document.addEventListener("DOMContentLoaded", function() {
     if (!isValid) {
       event.preventDefault();
     }
+  });
+  
+  // Create a simple preview update by reapplying form values
+  timeInputs.forEach(input => {
+    input.addEventListener('input', function() {
+      const day = this.dataset.day;
+      const value = this.value;
+      
+      // Find all table rows in the preview
+      const rows = document.querySelectorAll('#preview-container tr');
+      
+      // Loop through rows to find the one for the current day
+      rows.forEach(row => {
+        const text = row.textContent.toLowerCase();
+        // If this row contains the day name
+        if (text.includes(day.toLowerCase())) {
+          const hourCell = row.querySelector('td:nth-child(2)'); // Second column
+          
+          if (hourCell) {
+            if (value.toLowerCase() === "fermé") {
+              hourCell.innerHTML = `
+                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                  <i class="fas fa-times-circle mr-1"></i>
+                  Fermé
+                </span>
+              `;
+            } else {
+              hourCell.innerHTML = `
+                <span class="text-gray-800">
+                  <i class="far fa-clock text-[#1F5C55] mr-1 hidden sm:inline"></i>
+                  ${value}
+                </span>
+              `;
+            }
+          }
+        }
+      });
+    });
   });
 });
 </script>

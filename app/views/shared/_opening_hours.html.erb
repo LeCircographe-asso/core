@@ -1,0 +1,64 @@
+<div class="bg-white rounded-lg shadow-md p-4">
+  <h3 class="text-lg font-semibold mb-4 text-[#1F5C55] text-center">Horaires d'ouverture cette semaine</h3>
+  <% 
+    # Accepts schedules passed as parameters or uses @schedules
+    schedule = local_assigns[:horaires] || @horaires
+  %>
+  <% if schedule.present? %>
+    <table class="w-full border-collapse">
+      <thead>
+        <tr>
+          <th class="border-b-2 border-[#1F5C55]/20 py-2 text-center font-medium text-gray-600">Jour</th>
+          <th class="border-b-2 border-[#1F5C55]/20 py-2 text-center font-medium text-gray-600">Horaires</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% schedule.each do |day, hours| %>
+          <tr class="border-b border-gray-100">
+            <% 
+              is_weekend = ["samedi", "dimanche"].include?(day.to_s)
+              is_today = Time.zone.now.strftime('%A').downcase == day.to_s
+              row_classes = "hover:bg-gray-50"
+              row_classes += " bg-[#1F5C55]/5" if is_today
+            %>
+            <td class="<%= row_classes %> py-3 text-center">
+              <div class="flex items-center justify-center">
+                <% 
+                  icon_class = case day.to_s
+                  when "lundi", "mardi", "mercredi", "jeudi", "vendredi" then "fas fa-briefcase"
+                  when "samedi", "dimanche" then "fas fa-umbrella-beach"
+                  end
+                %>
+                <i class="<%= icon_class %> text-gray-500 mr-2 hidden sm:inline"></i>
+                <span class="<%= is_weekend ? 'font-medium text-[#1F5C55]' : '' %> <%= is_today ? 'font-bold' : '' %>">
+                  <%= day.to_s.capitalize %>
+                  <% if is_today %>
+                    <span class="ml-1 text-xs bg-[#1F5C55] text-white px-1.5 py-0.5 rounded-full">Aujourd'hui</span>
+                  <% end %>
+                </span>
+              </div>
+            </td>
+            <td class="<%= row_classes %> py-3 text-center">
+              <% if hours.to_s.downcase == "fermé" %>
+                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                  <i class="fas fa-times-circle mr-1"></i>
+                  Fermé
+                </span>
+              <% else %>
+                <span class="text-gray-800">
+                  <i class="far fa-clock text-[#1F5C55] mr-1 hidden sm:inline"></i>
+                  <%= hours %>
+                </span>
+              <% end %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  <% else %>
+    <div class="text-center py-4 text-gray-500">
+      <i class="fas fa-clock text-[#1F5C55] text-4xl mb-2"></i>
+      <p>Aucun horaire n'est disponible pour le moment.</p>
+    </div>
+  <% end %>
+</div> 

@@ -77,7 +77,7 @@ User.create!(
 )
 
 # Création de plusieurs guests
-15.times do |i|
+650.times do |i|
   User.create!(
     email_address: "guest#{i+1}@rails.com",
     password: "123456",
@@ -91,7 +91,7 @@ User.create!(
     town: "Paris",
     country: "France",
     phone_number: "+3312345679#{i}",
-    newsletter_subscribed: i < 7  # Les 7 premiers guests sont inscrits à la newsletter
+    newsletter_subscribed: i < 70  # Les 7 premiers guests sont inscrits à la newsletter
   )
 end
 

@@ -1,11 +1,13 @@
 module Admin
   class UsersController < BaseController
     before_action :set_user, only: %i[ show edit update destroy ]
+    before_action :set_breadcrumbs
 
     # GET /admin/users or /admin/users.json
     def index
       @users = User.all
       @total_user_memberships = UserMembership.where(status: "active").count
+      add_breadcrumb "Liste d'adhérents", nil
     end
 
     # GET /admin/users/1 or /admin/users/1.json
@@ -14,18 +16,25 @@ module Admin
       @product_order = Product.find_by(params[:id])
       @product = Product.find_by(params[:id])
 
-
+      add_breadcrumb "Liste d'adhérents", admin_users_path
+      add_breadcrumb @user.full_name.present? ? @user.full_name : "Utilisateur ##{@user.id}", nil
     end
 
     # GET /admin/users/new
     def new
       @user = User.new
+      add_breadcrumb "Liste d'adhérents", admin_users_path
+      add_breadcrumb "Nouvel adhérent", nil
     end
 
     # GET /admin/users/1/edit
     def edit
-      @array_right = current_user.has_higher_permissions?(User.find(params[:id])) ? current_user.inferior_rights : [User.find(params[:id]).system_role]
+      @array_right = current_user.has_higher_permissions?(User.find(params[:id])) ? current_user.inferior_rights : [ User.find(params[:id]).system_role ]
       @default_role = User.find(params[:id]).system_role
+
+      add_breadcrumb "Liste d'adhérents", admin_users_path
+      add_breadcrumb @user.full_name.present? ? @user.full_name : "Utilisateur ##{@user.id}", admin_user_path(@user)
+      add_breadcrumb "Modifier", nil
     end
 
     # POST /admin/users or /admin/users.json
@@ -84,7 +93,11 @@ module Admin
     private
     # Use callbacks to share common setup or constraints between actions.
     def set_user
-      @user = User.find(params.expect(:id))
+      @user = User.find(params[:id])
+    end
+
+    def set_breadcrumbs
+      # No need to add dashboard breadcrumb as it's already in the partial
     end
 
     # Only allow a list of trusted parameters through.
