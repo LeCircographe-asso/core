@@ -7,7 +7,7 @@ module Admin
     # GET /admin/users or /admin/users.json
     def index
       @users = User.all
-      
+
       # Statistiques pour le dashboard
       @total_users = User.count
       @new_users_yesterday = UserService.new_users_count
@@ -15,7 +15,7 @@ module Admin
       @circus_memberships = MembershipService.membership_type_count(:Circus)
       @active_memberships = MembershipService.active_memberships_count
       @users_this_month = UserService.users_this_month
-      
+
       add_breadcrumb "Liste d'adhérents", nil
     end
 
@@ -44,13 +44,13 @@ module Admin
       Rails.logger.debug "Edit action called for user ID: #{params[:id]}"
       Rails.logger.debug "@user: #{@user.inspect}"
       Rails.logger.debug "current_user: #{current_user.inspect}"
-      
+
       if @user.nil?
         Rails.logger.debug "User is nil, redirecting to users list"
         redirect_to admin_users_path, alert: "Utilisateur non trouvé."
         return
       end
-      
+
       begin
         @array_right = available_roles_for_user(@user)
         Rails.logger.debug "@array_right: #{@array_right.inspect}"
@@ -71,7 +71,7 @@ module Admin
     # POST /admin/users or /admin/users.json
     def create
       result = UserService.create_user_with_membership(user_params, true)
-      
+
       if result[:success]
         redirect_to admin_user_order_path(id: result[:order], user_id: result[:user]),
                     notice: "Utilisateur créé avec succès. Un mail a été envoyé !"
@@ -88,7 +88,7 @@ module Admin
         if @user.update(user_params)
           format.html { redirect_to admin_user_path(@user), notice: "Utilisateur mis à jour avec succès." }
           format.json { render json: @user }
-          format.turbo_stream { 
+          format.turbo_stream {
             flash.now[:notice] = "Utilisateur mis à jour avec succès."
             render turbo_stream: [
               turbo_stream.replace(@user),
@@ -98,7 +98,7 @@ module Admin
         else
           format.html { render :show, status: :unprocessable_entity }
           format.json { render json: @user.errors, status: :unprocessable_entity }
-          format.turbo_stream { 
+          format.turbo_stream {
             render turbo_stream: turbo_stream.replace(
               "error_explanation",
               partial: "shared/error_messages",

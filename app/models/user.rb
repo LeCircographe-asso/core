@@ -58,7 +58,7 @@ class User < ApplicationRecord
   end
 
   def has_privileges?
-    %w[admin super_admin volunteer].include?(self.system_role)
+    %w[admin super_admin volunteer].include?(self.system_role) # TODO: Think about how super_admin should be handled
   end
 
   def has_admin?
@@ -78,13 +78,13 @@ class User < ApplicationRecord
   def has_higher_permissions?(other_user)
     Rails.logger.debug "has_higher_permissions? called with other_user: #{other_user.inspect}"
     return false if other_user.nil?
-    
+
     # Get the integer values of the roles
     self_role_value = User.system_roles[self.system_role]
     other_role_value = User.system_roles[other_user.system_role]
-    
+
     Rails.logger.debug "self_role_value: #{self_role_value}, other_role_value: #{other_role_value}"
-    
+
     # Lower number means higher permissions in the enum
     self_role_value < other_role_value
   end
@@ -93,13 +93,13 @@ class User < ApplicationRecord
     Rails.logger.debug "inferior_rights called"
     current_role_value = User.system_roles[system_role]
     Rails.logger.debug "current_role_value: #{current_role_value.inspect}"
-    
+
     return [] if current_role_value.nil?
-    
+
     # Get all roles with higher values (lower permissions) than current role
     result = User.system_roles.select { |_, value| value > current_role_value }.keys
     Rails.logger.debug "inferior_rights result: #{result.inspect}"
-    
+
     result
   end
 
@@ -117,7 +117,7 @@ class User < ApplicationRecord
     self[:full_name] || begin
       first = first_name.to_s.strip
       last = last_name.to_s.strip
-      
+
       if first.present? && last.present?
         "#{first} #{last}"
       elsif first.present?
@@ -134,7 +134,7 @@ class User < ApplicationRecord
     Rails.logger.debug "system_role_before_type_cast called"
     Rails.logger.debug "self: #{self.inspect}"
     Rails.logger.debug "self.system_role: #{self.system_role.inspect}"
-    
+
     # Return the raw value from the database
     self[:system_role]
   end
@@ -148,7 +148,7 @@ class User < ApplicationRecord
   def capitalize_names
     # Capitalize first letter of first_name only
     self.first_name = first_name.to_s.strip.capitalize if first_name.present?
-    
+
     # Capitalize the entire last name if present
     if last_name.present?
       self.last_name = last_name.to_s.strip.upcase
@@ -159,16 +159,16 @@ class User < ApplicationRecord
     # Handle nil values and trim whitespace
     first = first_name.to_s.strip
     last = last_name.to_s.strip
-    
+
     # Set full_name only if both first and last are present
     self.full_name = if first.present? && last.present?
                        "#{first.capitalize} #{last.upcase}"
-                     elsif first.present?
+    elsif first.present?
                        first.capitalize
-                     elsif last.present?
+    elsif last.present?
                        last.upcase
-                     else
+    else
                        nil
-                     end
+    end
   end
 end
