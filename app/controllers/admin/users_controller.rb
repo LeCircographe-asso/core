@@ -3,13 +3,23 @@ module Admin
     include RoleHelper
     before_action :set_user, only: %i[ show edit update destroy ]
     before_action :set_breadcrumbs
+    before_action :check_deletion_permissions, only: [ :destroy ]
 
     # GET /admin/users or /admin/users.json
     def index
-      @users = User.all
+      # Filter for deleted users if requested
+      if params[:show_deleted] == "true"
+        @users = User.unscoped.where(deleted: true)
+        @showing_deleted = true
+      else
+        @users = User.unscoped.where(deleted: false)
+        @showing_deleted = false
+      end
 
       # Statistiques pour le dashboard
-      @total_users = User.count
+      @total_users = User.unscoped.count
+      @active_users = User.unscoped.where(deleted: false).count
+      @deleted_users = User.unscoped.where(deleted: true).count
       @new_users_yesterday = UserService.new_users_count
       @basic_memberships = MembershipService.membership_type_count(:Basic)
       @circus_memberships = MembershipService.membership_type_count(:Circus)
@@ -119,6 +129,21 @@ module Admin
       end
     end
 
+    # POST /admin/users/1/restore
+    def restore
+      @user = User.unscoped.find(params[:id])
+
+      if @user.update(
+        deleted: false,
+        deleted_at: nil,
+        email_address: params[:email_address]
+      )
+        redirect_to admin_users_path, notice: "Utilisateur restauré avec succès."
+      else
+        redirect_to admin_users_path, alert: "Impossible de restaurer cet utilisateur."
+      end
+    end
+
     private
     # Use callbacks to share common setup or constraints between actions.
     def set_user
@@ -127,6 +152,16 @@ module Admin
 
     def set_breadcrumbs
       add_breadcrumb "Dashboard", admin_dashboard_index_path
+    end
+
+    # Check if current user has permission to delete the target user
+    def check_deletion_permissions
+      return if @user.nil?
+
+      # Prevent deleting users with equal or higher privileges
+      unless current_user.has_higher_permissions?(@user)
+        redirect_to admin_users_path, alert: "Impossible de supprimer un utilisateur avec des privilèges égaux ou supérieurs."
+      end
     end
 
     # Only allow a list of trusted parameters through.
