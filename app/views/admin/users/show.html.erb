@@ -15,16 +15,21 @@
             when 'user_connected' then 'bg-[#1F5C55]/70'
             end %>">
           <%= @user.system_role.humanize %>
+          <% if @is_deleted %>
+            <span class="ml-1 px-2 py-0.5 text-xs rounded-full bg-red-500 text-white">Supprimé</span>
+          <% end %>
         </div>
         
         <!-- Action Buttons -->
         <div class="absolute top-4 left-4 flex space-x-2">
-          <!-- Edit Button -->
-          <%= link_to edit_admin_user_path(@user), class: "inline-flex items-center px-3 py-1 text-xs font-semibold text-white rounded-full bg-[#1F5C55]/80 hover:bg-[#1F5C55] transition-colors duration-200" do %>
-            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
-            </svg>
-            Modifier
+          <% unless @is_deleted %>
+            <!-- Edit Button -->
+            <%= link_to edit_admin_user_path(@user), class: "inline-flex items-center px-3 py-1 text-xs font-semibold text-white rounded-full bg-[#1F5C55]/80 hover:bg-[#1F5C55] transition-colors duration-200" do %>
+              <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+              </svg>
+              Modifier
+            <% end %>
           <% end %>
           
           <!-- Payment History Button -->
@@ -39,7 +44,7 @@
       
       <!-- Avatar -->
       <div class="absolute -bottom-12 left-1/2 transform -translate-x-1/2">
-        <div class="h-24 w-24 rounded-full border-4 border-white overflow-hidden bg-white shadow-lg">
+        <div class="h-24 w-24 rounded-full border-4 border-white overflow-hidden bg-white shadow-lg <%= @is_deleted ? 'grayscale' : '' %>">
           <% case @user.system_role %>
           <% when 'super_admin' %>
             <%= image_tag "super_admin.webp", alt: "Avatar Super Admin", class: "h-full w-full object-cover" %>
@@ -63,16 +68,24 @@
           <%= @user.full_name.present? ? @user.full_name : "Utilisateur ##{@user.id}" %>
         </h1>
         <p class="text-gray-500 text-sm mt-1"><%= @user.email_address %></p>
+        <% if @is_deleted %>
+          <p class="text-red-500 text-sm mt-1">
+            Compte supprimé le <%= @user.deleted_at.strftime("%d/%m/%Y à %H:%M") %>
+          </p>
+        <% end %>
       </div>
       
       <!-- Tabs Navigation -->
       <div class="border-b border-gray-200 mb-6">
         <nav class="flex -mb-px" aria-label="Tabs">
-          <button type="button" class="tab-button active w-1/2 py-4 px-1 text-center border-b-2 font-medium text-sm" data-tab="personal">
+          <button type="button" class="tab-button active w-1/3 py-4 px-1 text-center border-b-2 font-medium text-sm" data-tab="personal">
             Informations personnelles
           </button>
-          <button type="button" class="tab-button w-1/2 py-4 px-1 text-center border-b-2 font-medium text-sm" data-tab="additional">
+          <button type="button" class="tab-button w-1/3 py-4 px-1 text-center border-b-2 font-medium text-sm" data-tab="additional">
             Informations additionnelles
+          </button>
+          <button type="button" class="tab-button w-1/3 py-4 px-1 text-center border-b-2 font-medium text-sm" data-tab="payments">
+            Paiements récents
           </button>
         </nav>
       </div>
@@ -191,48 +204,128 @@
         </div>
       </div>
       
+      <!-- Payments Tab -->
+      <div class="tab-content hidden" id="payments-tab">
+        <div class="space-y-4">
+          <h3 class="text-sm font-medium text-gray-700 mb-4">Paiements récents</h3>
+          
+          <% recent_payments = @user.payments.order(created_at: :desc).limit(5) %>
+          
+          <% if recent_payments.any? %>
+            <div class="overflow-x-auto">
+              <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                  <tr>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Montant</th>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Statut</th>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                  </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                  <% recent_payments.each do |payment| %>
+                    <tr class="hover:bg-gray-50">
+                      <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        <%= payment.payment_date&.strftime("%d/%m/%Y") || payment.created_at.strftime("%d/%m/%Y") %>
+                      </td>
+                      <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                        <%= number_to_currency(payment.payment_amount, unit: "€", format: "%n %u") %>
+                      </td>
+                      <td class="px-6 py-4 whitespace-nowrap text-sm">
+                        <% status_class = case payment.status 
+                                        when "success" then "bg-green-100 text-green-800" 
+                                        when "pending" then "bg-yellow-100 text-yellow-800"
+                                        when "cancel" then "bg-red-100 text-red-800"
+                                        else "bg-gray-100 text-gray-800"
+                                        end %>
+                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full <%= status_class %>">
+                          <%= payment.status.humanize %>
+                        </span>
+                      </td>
+                      <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        <%= payment.payment_type.try(:humanize) %>
+                      </td>
+                      <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        <%= link_to admin_payment_path(payment), class: "text-[#1F5C55] hover:text-[#194A45]" do %>
+                          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                          </svg>
+                        <% end %>
+                      </td>
+                    </tr>
+                  <% end %>
+                </tbody>
+              </table>
+            </div>
+            
+            <div class="mt-4 text-right">
+              <%= link_to "Voir tout l'historique", admin_payments_path(user_id: @user.id), class: "text-[#1F5C55] hover:underline text-sm font-medium" %>
+            </div>
+          <% else %>
+            <div class="bg-gray-50 p-4 rounded-md text-center">
+              <p class="text-gray-700">Aucun paiement enregistré pour cet utilisateur.</p>
+            </div>
+          <% end %>
+        </div>
+      </div>
+      
       <!-- Actions -->
       <div class="mt-8 border-t pt-6 flex flex-wrap gap-4">
-        <%= button_to "Souscrire à une adhésion", admin_user_orders_path(@user), 
-            method: :post, 
-            params: {order: { user_id: @user.id}}, 
-            class: "inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#1F5C55] hover:bg-[#194A45] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1F5C55]",
-            form: { data: { turbo: false } } %>
-        
-        <%= button_to "Souscrire à un abonnement", admin_user_orders_path(@user), 
-            method: :post, 
-            params: {order: { user_id: @user.id}}, 
-            class: "inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#1F5C55] hover:bg-[#194A45] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1F5C55]",
-            form: { data: { turbo: false } } %>
-        
-        <%= link_to "Modifier", edit_admin_user_path(@user), 
-            class: "inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1F5C55]" %>
-        
-        <%= link_to "Historique des paiements", admin_payments_path(user_id: @user.id),
-            class: "inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1F5C55]" %>
+        <% unless @is_deleted %>
+          <%= button_to "Souscrire à une adhésion", admin_user_orders_path(@user), 
+              method: :post, 
+              params: {order: { user_id: @user.id}}, 
+              class: "inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#1F5C55] hover:bg-[#194A45] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1F5C55]",
+              form: { data: { turbo: false } } %>
+          
+          <%= button_to "Souscrire à un abonnement", admin_user_orders_path(@user), 
+              method: :post, 
+              params: {order: { user_id: @user.id}}, 
+              class: "inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#1F5C55] hover:bg-[#194A45] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1F5C55]",
+              form: { data: { turbo: false } } %>
+          
+          <%= link_to "Modifier", edit_admin_user_path(@user), 
+              class: "inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1F5C55]" %>
+          
+          <%= link_to "Historique des paiements", admin_payments_path(user_id: @user.id),
+              class: "inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1F5C55]" %>
 
-        <%= button_to "Faire un don", admin_donations_path(user_id: @user.id), method: :post, 
-                      params: { 
-                        payment: { 
-                          payment_amount: 0, 
-                          payment_date: Time.now.to_s, # Date of donation
-                          payment_type: "credit_card", # Payment type
-                          status: "pending", # Payment Status
-                          donation: 0, # Indicate that this is a donation
-                          total_payment: 0, # Total amount of the donation
-                          user_id: @user.id # The user ID
-                        }
-                      }, 
-            class: "inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1F5C59]" %>
-
+          <%= button_to "Faire un don", admin_donations_path(user_id: @user.id), method: :post, 
+                        params: { 
+                          payment: { 
+                            payment_amount: 0, 
+                            payment_date: Time.now.to_s, # Date of donation
+                            payment_type: "credit_card", # Payment type
+                            status: "pending", # Payment Status
+                            donation: 0, # Indicate that this is a donation
+                            total_payment: 0, # Total amount of the donation
+                            user_id: @user.id # The user ID
+                          }
+                        }, 
+              class: "inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1F5C59]" %>
+        <% else %>
+          <!-- Restore user form -->
+          <%= form_tag restore_admin_user_path(@user), method: :post, class: "flex items-center" do %>
+            <%= email_field_tag :email_address, "", placeholder: "Nouvel email", required: true, class: "border border-gray-300 rounded-md px-3 py-2 shadow-sm focus:outline-none focus:ring-[#1F5C55] focus:border-[#1F5C55] sm:text-sm mr-2" %>
+            <%= submit_tag "Restaurer l'utilisateur", class: "inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500" %>
+          <% end %>
+        <% end %>
         
         <%= link_to "Retour à la liste", admin_users_path, 
             class: "inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1F5C55]" %>
 
-        <%= button_to "Supprimer", [:admin, @user], 
-            method: :delete,
-            class: "inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500",
-            data: { confirm: "Êtes-vous sûr de vouloir supprimer cet utilisateur ?" } %>
+        <% if !@is_deleted && current_user.has_higher_permissions?(@user) %>
+          <%= button_to admin_user_path(@user), 
+                        method: :delete, 
+                        class: "inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500",
+                        data: { 
+                          turbo_confirm: "Êtes-vous sûr de vouloir supprimer cet utilisateur ? Cette action est irréversible." 
+                        } do %>
+            <i class="fas fa-trash-alt mr-2"></i> Supprimer
+          <% end %>
+        <% end %>
       </div>
     </div>
   </div>

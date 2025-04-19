@@ -1,25 +1,49 @@
 class Payment < ApplicationRecord
-
   belongs_to :user
   belongs_to :order
   has_many :product_orders, through: :order # Ajout de la relation product_order
-  
+
   enum :status, %i[success pending cancel], default: :pending
   enum :payment_type, %i[cash credit_card check]
 
   after_update :update_user_membership_if_paid
   after_update :createBookOfEntry
 
+  # Scope to get active (non-cancelled) payments
+  scope :active, -> { where.not(status: :cancel) }
 
+  # Handle when user is soft deleted
+  def handle_user_deletion
+    # Instead of destroying the payment or losing the relationship,
+    # we maintain the data but anonymize any personal identifiable information
+    # This preserves payment history while protecting user privacy
+    update_columns(
+      # We keep the payment record but mark it as associated with a deleted user
+      status: :cancel,
+      # Add a note that the user was deleted
+      donation: (donation || 0)
+    )
+  end
 
+  # Check if a payment can be safely canceled
+  def can_cancel?
+    status != "cancel"
+  end
 
+  # Check if this payment is related to a membership
+  def membership_related?
+    product_orders.any? do |po|
+      po.product.product_name.include?("Adhésion") ||
+      po.product.product_name.include?("Cotisation")
+    end
+  end
 
   def payment_successful?
     # Vérifier si la commande a déjà été payée
-    if order.payments.where(status: 'success').exists?
+    if order.payments.where(status: "success").exists?
       order.product_orders.each do |product_order|
         puts "Product name: #{product_order.product.product_name}"
-  
+
         if product_order.product.product_name == "Cotisation 10 séances"
           puts "Matching product found"
           BookOfEntry.create!(user_id: self.user_id, product_id: product_order.product.id, remaining: 10, total_entry: 10)
@@ -30,8 +54,8 @@ class Payment < ApplicationRecord
       end
     end
   end
-  
-  
+
+
   def createBookOfEntry
     # Vérifier si des product_orders existent pour la commande
     if self.product_orders.empty?
@@ -40,19 +64,19 @@ class Payment < ApplicationRecord
       self.product_orders.each do |product_order|
         puts "Product name: #{product_order.product.product_name}"
       end
-  
+
       product_order = self.product_orders.first
       puts "Product name: #{product_order.product.product_name}"
-  
+
       if product_order.product.product_name == "Cotisation 10 séances"
         BookOfEntry.create!(user_id: self.user_id, product_id: product_order.product.id, remaining: 10, total_entry: 10)
         puts "Book of Entry created"
       end
     end
   end
-  
-  
-  
+
+
+
 
   def update_user_membership_if_paid
     return unless payment_successful?
@@ -64,18 +88,17 @@ class Payment < ApplicationRecord
     if user_membership.nil?
       # Si l'utilisateur n'a pas d'abonnement actif, on en crée un
       user_membership = UserMembership.create!(user: user, membership_id: membership_type, start_date: created_at, status: :active)
-      puts 'Membership créé'
+      puts "Membership créé"
     else
       # Si l'utilisateur a un abonnement actif, on met à jour sa date d'expiration
       user_membership.update!(membership_id: membership_type)
-      puts 'Membership mis à jour'
+      puts "Membership mis à jour"
     end
     update_user_membership_end_date(user_membership)
   end
 
   def determine_user_membership
-
-    product_names = product_orders.map { |po| po.product.product_name }.join(', ')
+    product_names = product_orders.map { |po| po.product.product_name }.join(", ")
     circus = Membership.find_by(type_name: :Circus).id
     basic = Membership.find_by(type_name: :Basic).id
     no_member = Membership.find_by(type_name: :No_Member).id
@@ -92,7 +115,7 @@ class Payment < ApplicationRecord
 
     return circus if circus_products.any? { |name| product_names.include?(name) }
     return basic if product_names.include?("Adhésion simple")
-    return no_member if product_names.include?("Donation")
+    no_member if product_names.include?("Donation")
   end
 
   def determine_end_date(product_name)

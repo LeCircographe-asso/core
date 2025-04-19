@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_04_18_122124) do
+ActiveRecord::Schema[8.0].define(version: 2025_04_19_155118) do
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.string "name", null: false
     t.text "body"
@@ -249,6 +249,9 @@ ActiveRecord::Schema[8.0].define(version: 2025_04_18_122124) do
     t.boolean "created_by_admin"
     t.boolean "dyslexic_font"
     t.string "full_name"
+    t.boolean "deleted", default: false, null: false
+    t.datetime "deleted_at"
+    t.index ["deleted"], name: "index_users_on_deleted"
     t.index ["email_address"], name: "index_users_on_email_address", unique: true
   end
 

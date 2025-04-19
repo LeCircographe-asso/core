@@ -16,6 +16,65 @@ class User < ApplicationRecord
 
   enum :system_role, %i[ super_admin admin volunteer user_connected ]
 
+  # Add deleted flag for soft deletion
+  attribute :deleted, :boolean, default: false
+  attribute :deleted_at, :datetime
+
+  # Scope to exclude deleted users from queries
+  scope :active, -> { where(deleted: false) }
+
+  # Override default find methods to exclude deleted users
+  def self.find_by_id(id)
+    active.find_by(id: id)
+  end
+
+  # Overriding destroy to implement soft deletion
+  def destroy
+    # Check if there are any active payments
+    if has_active_payments?
+      handle_deletion_with_payments
+    else
+      # Perform normal soft deletion
+      soft_delete
+    end
+  end
+
+  # Mark user as deleted and anonymize personal data
+  def soft_delete
+    transaction do
+      # Mark all of the user's payments as cancelled
+      payments.each(&:handle_user_deletion)
+
+      # Set the deleted flag and timestamp
+      update_columns(
+        deleted: true,
+        deleted_at: Time.current,
+        # Anonymize personal information
+        email_address: "deleted_#{id}@example.com",
+        first_name: "Deleted",
+        last_name: "User",
+        full_name: "Deleted User",
+        address: nil,
+        phone_number: nil,
+        # Keep membership information for reports
+      )
+
+      # Deactivate any active memberships
+      user_memberships.where(status: "active").update_all(status: "inactive")
+    end
+    true
+  end
+
+  # Check if the user has any active payments
+  def has_active_payments?
+    payments.active.exists?
+  end
+
+  # Handle deletion when user has payments
+  def handle_deletion_with_payments
+    soft_delete
+  end
+
   alias_attribute :email, :email_address
   has_many :sessions, dependent: :destroy
   has_many :event_attendees, dependent: :destroy

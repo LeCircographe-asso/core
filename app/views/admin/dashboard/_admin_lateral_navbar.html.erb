@@ -1,41 +1,33 @@
 <div data-controller="sidebar" data-sidebar-main-content-class=".main-content">
   <aside class="admin-sidebar" id="admin-sidebar" data-sidebar-target="sidebar">
+    <!-- Bouton retour au site en haut -->
+    <div class="px-4 py-2 border-b border-gray-200">
+      <button type="button" id="sidebar-toggle" class="sidebar-link flex items-center mb-3 w-full" data-action="click->sidebar#toggle">
+        <i class="fas fa-bars mr-2 sidebar-icon"></i> <span class="sidebar-text" data-sidebar-target="text">Menu</span>
+      </button>
+      <%= link_to root_path, class: "sidebar-link flex items-center w-full bg-[#1F5C55]/10 hover:bg-[#1F5C55]/20 text-[#1F5C55] rounded p-2" do %>
+        <i class="fas fa-arrow-left mr-2 sidebar-icon"></i> <span class="sidebar-text" data-sidebar-target="text">Retour au site</span>
+      <% end %>
+    </div>
     <div class="sidebar-logo p-4">
       <%= link_to admin_dashboard_index_path do %>
         <%= image_tag "circo-admin.webp", class: "image-main" %>
       <% end %>
     </div>
     
-    <!-- Bouton retour au site en haut -->
-    <div class="px-4 py-2 border-b border-gray-200">
-      <%= link_to root_path, class: "sidebar-link flex items-center w-full bg-[#1F5C55]/10 hover:bg-[#1F5C55]/20 text-[#1F5C55] rounded p-2" do %>
-        <i class="fas fa-arrow-left mr-2 sidebar-icon"></i> <span class="sidebar-text" data-sidebar-target="text">Retour au site</span>
-      <% end %>
-    </div>
     
     <div class="px-4 py-2 sidebar-section">
-      <button type="button" id="sidebar-toggle" class="sidebar-link flex items-center mb-3 w-full" data-action="click->sidebar#toggle">
-        <i class="fas fa-bars mr-2 sidebar-icon"></i> <span class="sidebar-text" data-sidebar-target="text">Menu</span>
-      </button>
       
       <div class="text-sm font-medium text-gray-600 mb-1 sidebar-text">
         Administration
       </div>
       <ul class="sidebar-menu">
-        <li><%= link_to admin_dashboard_index_path, class: "sidebar-link flex items-center" do %>
-              <i class="fas fa-home mr-2 sidebar-icon"></i> <span class="sidebar-text" data-sidebar-target="text">Accueil</span>
-            <% end %>
-        </li>
         <li><%= link_to admin_users_path, class: "sidebar-link flex items-center" do %>
               <i class="fas fa-users mr-2 sidebar-icon"></i> <span class="sidebar-text" data-sidebar-target="text">Liste d'adhérents</span>
             <% end %>
         </li>
         <li><%= link_to admin_events_path, class: "sidebar-link flex items-center" do %>
               <i class="fas fa-calendar-alt mr-2 sidebar-icon"></i> <span class="sidebar-text" data-sidebar-target="text">Événements</span>
-            <% end %>
-        </li>
-        <li><%= link_to edit_admin_opening_hours_path, class: "sidebar-link flex items-center" do %>
-              <i class="fas fa-clock mr-2 sidebar-icon"></i> <span class="sidebar-text" data-sidebar-target="text">Modifier les horaires</span>
             <% end %>
         </li>
         <li><%= link_to new_admin_user_path, class: "sidebar-link flex items-center" do %>
@@ -48,6 +40,10 @@
         </li>
         <li><%= link_to admin_attendance_lists_path, class: "sidebar-link flex items-center" do %>
               <i class="fas fa-clipboard-list mr-2 sidebar-icon"></i> <span class="sidebar-text" data-sidebar-target="text">Liste de présence</span>
+            <% end %>
+        </li>
+        <li><%= link_to admin_payments_path, class: "sidebar-link flex items-center" do %>
+              <i class="fas fa-money-bill-wave mr-2 sidebar-icon"></i> <span class="sidebar-text" data-sidebar-target="text">Paiements</span>
             <% end %>
         </li>
         <li><%= link_to admin_exports_path, class: "sidebar-link flex items-center" do %>
