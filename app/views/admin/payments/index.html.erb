@@ -160,7 +160,7 @@
                           <% if products_by_type["adhesion"].present? %>
                             <div class="flex items-center">
                               <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
-                                Adhésion: <%= products_by_type["adhesion"].map(&:product_name).join(', ') %>
+                                Adhésion: <%= products_by_type["adhesion"].map(&:display_name).join(', ') %>
                               </span>
                             </div>
                           <% end %>
@@ -168,7 +168,7 @@
                           <% if products_by_type["cotisation"].present? %>
                             <div class="flex items-center">
                               <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
-                                Cotisation: <%= products_by_type["cotisation"].map(&:product_name).join(', ') %>
+                                Cotisation: <%= products_by_type["cotisation"].map(&:display_name).join(', ') %>
                               </span>
                             </div>
                           <% end %>
@@ -181,7 +181,7 @@
                             <% if products_by_type[type].present? %>
                               <div class="flex items-center">
                                 <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">
-                                  <%= type.capitalize %>: <%= products_by_type[type].map(&:product_name).join(', ') %>
+                                  <%= type.capitalize %>: <%= products_by_type[type].map(&:display_name).join(', ') %>
                                 </span>
                               </div>
                             <% end %>

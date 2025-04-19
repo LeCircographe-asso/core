@@ -131,15 +131,15 @@ end
 puts PriceCatalog.first.inspect
 
 products = [
-  { product_name: "Adhésion simple", product_type: "adhesion" },
-  { product_name: "Adhésion Cirque - Tarif Plein", product_type: "adhesion" },
-  { product_name: "Adhésion Cirque - Tarif Réduit", product_type: "adhesion" },
+  { product_name: "Basic", product_type: "adhesion" },
+  { product_name: "Cirque - Tarif Plein", product_type: "adhesion" },
+  { product_name: "Cirque - Tarif Réduit", product_type: "adhesion" },
   { product_name: "Upgrade Basic to Cirque - Tarif Plein", product_type: "cotisation" },
   { product_name: "Upgrade Basic to Cirque - Tarif Réduit", product_type: "cotisation" },
   { product_name: "Pass journée", product_type: "cotisation" },
-  { product_name: "Cotisation 10 séances", product_type: "cotisation" },
-  { product_name: "Cotisation trimestrielle", product_type: "cotisation" },
-  { product_name: "Cotisation annuelle", product_type: "cotisation" }
+  { product_name: "10 séances", product_type: "cotisation" },
+  { product_name: "Trimestrielle", product_type: "cotisation" },
+  { product_name: "Annuelle", product_type: "cotisation" }
 ]
 puts "Création des produits..."
 
