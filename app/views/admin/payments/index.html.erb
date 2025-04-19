@@ -105,7 +105,7 @@
                   <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
                   <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Utilisateur</th>
                   <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Statut</th>
-                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Cotisation</th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Produits</th>
                   <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Montant</th>
                   <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Donation</th>
                   <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
@@ -146,11 +146,49 @@
                     </td>
 
                     <!-- Cotisation -->
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <td class="px-6 py-4 text-sm text-gray-500">
                       <% if payment.product_orders.any? %>
-                        <%= payment.product_orders.map { |po| po.product.product_name if po.product }.compact.join(', ') %>
+                        <% 
+                          # Group products by type
+                          products_by_type = payment.product_orders
+                            .map { |po| po.product }
+                            .compact
+                            .group_by(&:product_type)
+                        %>
+                        
+                        <div class="space-y-1">
+                          <% if products_by_type["adhesion"].present? %>
+                            <div class="flex items-center">
+                              <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
+                                Adhésion: <%= products_by_type["adhesion"].map(&:product_name).join(', ') %>
+                              </span>
+                            </div>
+                          <% end %>
+                          
+                          <% if products_by_type["cotisation"].present? %>
+                            <div class="flex items-center">
+                              <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                                Cotisation: <%= products_by_type["cotisation"].map(&:product_name).join(', ') %>
+                              </span>
+                            </div>
+                          <% end %>
+                          
+                          <% 
+                            # Handle other product types
+                            other_types = products_by_type.keys - ["adhesion", "cotisation"]
+                          %>
+                          <% other_types.each do |type| %>
+                            <% if products_by_type[type].present? %>
+                              <div class="flex items-center">
+                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">
+                                  <%= type.capitalize %>: <%= products_by_type[type].map(&:product_name).join(', ') %>
+                                </span>
+                              </div>
+                            <% end %>
+                          <% end %>
+                        </div>
                       <% else %>
-                        Aucune cotisation
+                        <span class="text-gray-400">-</span>
                       <% end %>
                     </td>
 
