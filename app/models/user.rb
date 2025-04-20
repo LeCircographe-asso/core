@@ -198,6 +198,17 @@ class User < ApplicationRecord
     create(email_address: email, **attributes)
   end
 
+  before_update :handle_payments_on_deletion, if: -> { deleted_at_changed? && deleted_at.present? }
+
+  def handle_payments_on_deletion
+    # Option 1: Soft delete the payments too
+    payments.update_all(deleted_at: Time.current)
+
+    # Option 2: Assign to admin (like our fix)
+    # admin = User.where(system_role: 'admin').first
+    # payments.update_all(user_id: admin.id) if admin
+  end
+
   private
 
   def generate_password_reset_token

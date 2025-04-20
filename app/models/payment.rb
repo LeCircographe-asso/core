@@ -21,14 +21,14 @@ class Payment < ApplicationRecord
   # Class method to get total successful payments amount
   def self.total_successful_amount
     Rails.cache.fetch("total_successful_payments", expires_in: 1.hour) do
-      where(status: :success).sum(:payment_amount)
+      where(status: :success).distinct.sum(:payment_amount)
     end
   end
 
   # Class method to get total donations
   def self.total_donations
     Rails.cache.fetch("total_donations", expires_in: 1.hour) do
-      where(status: :success).sum(:donation)
+      where(status: :success).distinct.sum(:donation)
     end
   end
 
