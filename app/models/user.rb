@@ -1,4 +1,6 @@
 class User < ApplicationRecord
+  include SoftDeletable
+
   attr_accessor :cgu, :privacy_policy
   # after_create :assign_membership
   after_create :generate_password_reset_token
@@ -16,6 +18,9 @@ class User < ApplicationRecord
 
   enum :system_role, %i[ super_admin admin volunteer user_connected ]
 
+  # Instead of using the custom soft deletion, we now use the SoftDeletable concern
+  # The attribute and scope declarations are no longer needed
+
   alias_attribute :email, :email_address
   has_many :sessions, dependent: :destroy
   has_many :event_attendees, dependent: :destroy
@@ -32,12 +37,55 @@ class User < ApplicationRecord
 
   has_many :book_of_entries
   has_many :orders
+  has_many :attendances
 
   normalizes :email_address, with: ->(e) { e.strip.downcase }
 
   validates :email_address, presence: true, uniqueness: true
   validates :cgu, acceptance: { message: "Vous devez accepter les CGU pour continuer." }
   validates :privacy_policy, acceptance: { message: "Vous devez accepter la politique de confidentialité pour continuer." }
+
+  # Override destroy method from SoftDeletable to handle payments
+  def destroy
+    if has_active_payments?
+      handle_deletion_with_payments
+    else
+      super # Call SoftDeletable's destroy method
+      anonymize_personal_data
+    end
+  end
+
+  # Anonymize personal data after soft deletion
+  def anonymize_personal_data
+    update_columns(
+      email_address: "deleted_#{id}@example.com",
+      first_name: "Deleted",
+      last_name: "User",
+      full_name: "Deleted User",
+      address: nil,
+      phone_number: nil
+    )
+
+    # Deactivate any active memberships
+    user_memberships.where(status: "active").update_all(status: "inactive")
+  end
+
+  # Check if the user has any active payments
+  def has_active_payments?
+    payments.active.exists?
+  end
+
+  # Handle deletion when user has payments
+  def handle_deletion_with_payments
+    super # Call SoftDeletable's destroy method
+
+    # Mark all of the user's payments as cancelled
+    payments.each do |payment|
+      payment.handle_user_deletion if payment.respond_to?(:handle_user_deletion)
+    end
+
+    anonymize_personal_data
+  end
 
   def welcome_send
     return if user_connected?
@@ -58,7 +106,7 @@ class User < ApplicationRecord
   end
 
   def has_privileges?
-    %w[admin super_admin volunteer].include?(self.system_role)
+    %w[admin super_admin volunteer].include?(self.system_role) # TODO: Think about how super_admin should be handled
   end
 
   def has_admin?
@@ -78,13 +126,13 @@ class User < ApplicationRecord
   def has_higher_permissions?(other_user)
     Rails.logger.debug "has_higher_permissions? called with other_user: #{other_user.inspect}"
     return false if other_user.nil?
-    
+
     # Get the integer values of the roles
     self_role_value = User.system_roles[self.system_role]
     other_role_value = User.system_roles[other_user.system_role]
-    
+
     Rails.logger.debug "self_role_value: #{self_role_value}, other_role_value: #{other_role_value}"
-    
+
     # Lower number means higher permissions in the enum
     self_role_value < other_role_value
   end
@@ -93,13 +141,13 @@ class User < ApplicationRecord
     Rails.logger.debug "inferior_rights called"
     current_role_value = User.system_roles[system_role]
     Rails.logger.debug "current_role_value: #{current_role_value.inspect}"
-    
+
     return [] if current_role_value.nil?
-    
+
     # Get all roles with higher values (lower permissions) than current role
     result = User.system_roles.select { |_, value| value > current_role_value }.keys
     Rails.logger.debug "inferior_rights result: #{result.inspect}"
-    
+
     result
   end
 
@@ -117,7 +165,7 @@ class User < ApplicationRecord
     self[:full_name] || begin
       first = first_name.to_s.strip
       last = last_name.to_s.strip
-      
+
       if first.present? && last.present?
         "#{first} #{last}"
       elsif first.present?
@@ -134,9 +182,31 @@ class User < ApplicationRecord
     Rails.logger.debug "system_role_before_type_cast called"
     Rails.logger.debug "self: #{self.inspect}"
     Rails.logger.debug "self.system_role: #{self.system_role.inspect}"
-    
+
     # Return the raw value from the database
     self[:system_role]
+  end
+
+  # Class method to find or create a user with the same email
+  def self.find_or_create_with_identity(email:, **attributes)
+    existing_user = with_deleted.find_by(email_address: email.strip.downcase)
+    if existing_user&.deleted?
+      existing_user.restore
+      existing_user.update(attributes)
+      return existing_user
+    end
+    create(email_address: email, **attributes)
+  end
+
+  before_update :handle_payments_on_deletion, if: -> { deleted_at_changed? && deleted_at.present? }
+
+  def handle_payments_on_deletion
+    # Option 1: Soft delete the payments too
+    payments.update_all(deleted_at: Time.current)
+
+    # Option 2: Assign to admin (like our fix)
+    # admin = User.where(system_role: 'admin').first
+    # payments.update_all(user_id: admin.id) if admin
   end
 
   private
@@ -148,7 +218,7 @@ class User < ApplicationRecord
   def capitalize_names
     # Capitalize first letter of first_name only
     self.first_name = first_name.to_s.strip.capitalize if first_name.present?
-    
+
     # Capitalize the entire last name if present
     if last_name.present?
       self.last_name = last_name.to_s.strip.upcase
@@ -159,16 +229,16 @@ class User < ApplicationRecord
     # Handle nil values and trim whitespace
     first = first_name.to_s.strip
     last = last_name.to_s.strip
-    
+
     # Set full_name only if both first and last are present
     self.full_name = if first.present? && last.present?
                        "#{first.capitalize} #{last.upcase}"
-                     elsif first.present?
+    elsif first.present?
                        first.capitalize
-                     elsif last.present?
+    elsif last.present?
                        last.upcase
-                     else
+    else
                        nil
-                     end
+    end
   end
 end

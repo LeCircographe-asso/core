@@ -1,10 +1,12 @@
 class BookOfEntry < ApplicationRecord
+  include SoftDeletable
+
   belongs_to :product
   belongs_to :user
 
   enum :status, %i[inactive active], default: :active
 
-  after_create :bookOfEntryValidation 
+  after_create :bookOfEntryValidation
 
   def bookOfEntryValidation
     erreurs = []

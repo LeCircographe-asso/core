@@ -1,4 +1,6 @@
 class UserMembership < ApplicationRecord
+  include SoftDeletable
+
   enum :status, %i[active pending expired canceled], default: :pending
   belongs_to :membership
   belongs_to :user
@@ -10,27 +12,27 @@ class UserMembership < ApplicationRecord
   def activate!
     MembershipService.activate_membership(self)
   end
-  
+
   def expire!
     MembershipService.expire_membership(self)
   end
-  
+
   def cancel!
     MembershipService.cancel_membership(self)
   end
-  
+
   def status_display_name
     MembershipHelper.membership_status_display_name(status)
   end
-  
+
   def status_badge_class
     MembershipHelper.membership_status_badge_class(status)
   end
-  
+
   def membership_type_display_name
     MembershipHelper.membership_type_display_name(membership.type_name)
   end
-  
+
   def membership_type_badge_class
     MembershipHelper.membership_type_badge_class(membership.type_name)
   end
@@ -40,5 +42,4 @@ class UserMembership < ApplicationRecord
   def expire_previous_memberships
     user.user_memberships.where(id: id).where(status: "active").update_all(status: "expired")
   end
-
-end 
+end
