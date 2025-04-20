@@ -27,6 +27,13 @@
           <span class="px-4 py-2 inline-flex text-sm leading-5 font-semibold rounded-full border <%= status_class %>">
             Status: <%= @payment.status.humanize %>
           </span>
+          
+          <!-- Display if this is a donation -->
+          <% if @payment.donation.present? && @payment.donation > 0 && @payment.payment_amount.to_f == 0 %>
+            <span class="ml-2 px-4 py-2 inline-flex text-sm leading-5 font-semibold rounded-full border bg-purple-100 text-purple-800 border-purple-200">
+              Type: Donation
+            </span>
+          <% end %>
         </div>
       
         <!-- Displaying the product name -->

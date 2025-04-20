@@ -25,9 +25,9 @@ module Admin
       sort_direction = params[:direction] || "desc"
       @payments = @payments.order("#{sort_column} #{sort_direction}")
 
-      # Calculate total amount for display
-      @total_amount = @payments.where(status: :success).distinct.sum(:payment_amount)
-      @total_donation = @payments.where(status: :success).distinct.sum(:donation)
+      # Ensure we're using the filtered payment set for calculations
+      @total_amount = @payments.where(status: :success).sum(:payment_amount)
+      @total_donation = @payments.where(status: :success).sum(:donation)
 
       # Handle loading a specific payment details
       if params[:id].present?
@@ -118,9 +118,13 @@ module Admin
 
       # Instead of actually deleting, mark as cancelled
       if @payment.update(status: :cancel)
-        # Expire fragment caches to force a refresh
-        expire_fragment("payments_total_amount")
-        expire_fragment("payments_summary")
+        # Clear Rails cache to ensure payment totals are recalculated
+        Rails.cache.delete("total_successful_payments")
+        Rails.cache.delete("total_donations")
+
+        # Clear view fragment caches
+        expire_fragment(/payments_summary/)
+        expire_fragment(/payments_total_amount/)
 
         redirect_to admin_payments_path, notice: "Paiement annulé avec succès"
       else

@@ -1,0 +1,65 @@
+<%
+  # Helper partial for correctly calculating payment totals
+  payments = local_assigns[:payments] || []
+  
+  # Calculate totals
+  total_count = payments.count
+  successful_count = payments.where(status: :success).count
+  pending_count = payments.where(status: :pending).count
+  canceled_count = payments.where(status: :cancel).count
+  
+  # Calculate payment totals accurately
+  payments_total = 0
+  donations_total = 0
+  
+  payments.where(status: :success).each do |payment|
+    # Add payment amount
+    if payment.payment_amount.present?
+      payments_total += payment.payment_amount
+    end
+    
+    # Add donations
+    if payment.donation.present? && payment.donation > 0
+      donations_total += payment.donation
+      
+      # Only add standalone donations to payment total (where payment_amount is 0)
+      if payment.payment_amount.to_f == 0
+        payments_total += payment.donation
+      end
+    end
+  end
+  
+  # Calculate combined total
+  combined_total = payments_total
+%>
+
+<div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4 mb-6">
+  <div class="bg-white p-4 rounded-lg shadow border">
+    <div class="text-sm text-gray-500">Total Paiements</div>
+    <div class="text-2xl font-bold text-gray-900"><%= total_count %></div>
+  </div>
+  
+  <div class="bg-white p-4 rounded-lg shadow border">
+    <div class="text-sm text-gray-500">Paiements Réussis</div>
+    <div class="text-2xl font-bold text-green-600"><%= successful_count %></div>
+  </div>
+  
+  <div class="bg-white p-4 rounded-lg shadow border">
+    <div class="text-sm text-gray-500">Paiements En Attente</div>
+    <div class="text-2xl font-bold text-yellow-600"><%= pending_count %></div>
+  </div>
+  
+  <div class="bg-white p-4 rounded-lg shadow border">
+    <div class="text-sm text-gray-500">Montant Total</div>
+    <div class="text-2xl font-bold text-gray-900">
+      <%= number_to_currency(payments_total, unit: "€", format: "%n %u") %>
+    </div>
+  </div>
+  
+  <div class="bg-white p-4 rounded-lg shadow border">
+    <div class="text-sm text-gray-500">Total Donations</div>
+    <div class="text-2xl font-bold text-purple-600">
+      <%= number_to_currency(donations_total, unit: "€", format: "%n %u") %>
+    </div>
+  </div>
+</div> 
