@@ -125,7 +125,7 @@ member_user = User.create!(
   password_confirmation: "123456",
   first_name: "Member",
   last_name: "User",
-  system_role: 2,  # Supposant que 2 = member
+  system_role: 2,  # 2 = volunteer
   birthdate: Date.new(1995, 5, 5),
   address: "789 Member Road",
   zip_code: "75002",
@@ -134,13 +134,14 @@ member_user = User.create!(
   phone_number: "+33123456791"
 )
 
-# Création du reste des utilisateurs pour avoir un total de 750
-puts "👤 Creating additional users to reach 750 total..."
-total = 747
+# Création du reste des utilisateurs pour avoir un total de 500
+puts "👤 Creating additional users to reach 500 total..."
+total = 497
 progress_step = total / 10  # Show progress every 10%
 progress_step = 1 if progress_step < 1
 
-747.times do |i|
+# Replace insert_all with individual create! calls
+497.times do |i|
   # Show progress every 10%
   if (i % progress_step) == 0
     percent = ((i.to_f / total) * 100).round
@@ -148,12 +149,12 @@ progress_step = 1 if progress_step < 1
   end
 
   User.create!(
-    email_address: "guest#{i+1}@rails.com",
+    email_address: "user#{i+1}@rails.com",
     password: "123456",
     password_confirmation: "123456",
     first_name: "Guest",
     last_name: "User#{i+1}",
-    system_role: 3,  # 3 = guest (valeur par défaut)
+    system_role: 3,  # 3 = user_connected
     birthdate: Date.new(2000, 1, 1) + i.days,
     address: "#{i+1} Guest Street",
     zip_code: "7500#{i % 10}",
@@ -165,6 +166,17 @@ progress_step = 1 if progress_step < 1
 end
 puts "\r  Progress: 100% (#{total}/#{total}) ✓"
 puts "✅ Total users created: #{User.count}"
+
+# Marquer certains utilisateurs comme supprimés (soft delete)
+puts "🗑️ Soft deleting some users..."
+users_to_delete = User.where(system_role: 3).limit(50)
+users_to_delete.each do |user|
+  user.destroy
+end
+puts "  - #{users_to_delete.count} users soft deleted ✓"
+
+# Récupérer tous les utilisateurs actifs
+users = User.all.to_a
 
 # Créer les types de membership
 puts "🎭 Creating membership types..."
@@ -232,12 +244,12 @@ end
 
 # Distribuer les adhésions aux utilisateurs
 puts "🔑 Creating user memberships..."
-users = User.all.to_a
+active_users = User.all.to_a
 membership_statuses = UserMembership.statuses.keys
 
-# 1. Création d'adhésions Basic pour une partie des utilisateurs (300)
-puts "  - Creating 300 Basic memberships..."
-basic_users = users.sample(300)
+# 1. Création d'adhésions Basic pour une partie des utilisateurs (250)
+puts "  - Creating 250 Basic memberships..."
+basic_users = active_users.sample(250)
 total = basic_users.size
 progress_step = total / 10  # Show progress every 10%
 progress_step = 1 if progress_step < 1
@@ -262,10 +274,9 @@ basic_users.each_with_index do |user, idx|
 end
 puts "\r    Progress: 100% (#{total}/#{total}) ✓"
 
-# 2. Création d'adhésions Cirque pour certains utilisateurs ayant déjà Basic (150)
-# Selon la documentation: "Une adhésion Cirque nécessite une adhésion Basic valide"
-puts "  - Creating 150 Cirque memberships..."
-circus_users = basic_users.sample(150)
+# 2. Création d'adhésions Cirque pour certains utilisateurs ayant déjà Basic (120)
+puts "  - Creating 120 Cirque memberships..."
+circus_users = basic_users.sample(120)
 total = circus_users.size
 progress_step = total / 10  # Show progress every 10%
 progress_step = 1 if progress_step < 1
@@ -327,9 +338,12 @@ basic_users.each_with_index do |user, idx|
     user: user
   )
 
-  # Créer un paiement
+  # Créer un paiement - la majorité avec succès
   payment_date = order.date + rand(0..2).days
   total_payment = order.sum + order.donation
+
+  # 80% des paiements sont réussis
+  status = rand < 0.8 ? "success" : [ "pending", "cancel" ].sample
 
   payment = Payment.create!(
     user: user,
@@ -339,17 +353,17 @@ basic_users.each_with_index do |user, idx|
     donation: order.donation,
     total_payment: total_payment,
     payment_type: Payment.payment_types.keys.sample,
-    status: Payment.statuses.keys.sample,
+    status: status,
     uuid: SecureRandom.uuid
   )
 
   # Log d'audit pour certains paiements
-  if rand < 0.2
+  if rand < 0.3
     PaymentAuditLog.create!(
       payment: payment,
       user: [ admin_user, staff_user ].sample,
       action: [ "created", "updated", "status_changed" ].sample,
-      change_data: { old_status: "pending", new_status: "completed" }.to_json
+      change_data: { old_status: "pending", new_status: payment.status }.to_json
     )
   end
 end
@@ -390,9 +404,12 @@ circus_users.each_with_index do |user, idx|
     user: user
   )
 
-  # Créer un paiement
+  # Créer un paiement - la majorité avec succès
   payment_date = order.date + rand(0..2).days
   total_payment = order.sum + order.donation
+
+  # 85% des paiements sont réussis
+  status = rand < 0.85 ? "success" : [ "pending", "cancel" ].sample
 
   payment = Payment.create!(
     user: user,
@@ -402,25 +419,25 @@ circus_users.each_with_index do |user, idx|
     donation: order.donation,
     total_payment: total_payment,
     payment_type: Payment.payment_types.keys.sample,
-    status: Payment.statuses.keys.sample,
+    status: status,
     uuid: SecureRandom.uuid
   )
 
   # Log d'audit pour certains paiements
-  if rand < 0.2
+  if rand < 0.3
     PaymentAuditLog.create!(
       payment: payment,
       user: [ admin_user, staff_user ].sample,
       action: [ "created", "updated", "status_changed" ].sample,
-      change_data: { old_status: "pending", new_status: "completed" }.to_json
+      change_data: { old_status: "pending", new_status: payment.status }.to_json
     )
   end
 end
 puts "\r    Progress: 100% (#{total}/#{total}) ✓"
 
 # 3. Achats de cotisations (uniquement pour les membres Cirque)
-puts "  - Creating cotisations for Cirque members (120 users)..."
-cotisation_users = circus_users.sample(120)
+puts "  - Creating cotisations for Cirque members (100 users)..."
+cotisation_users = circus_users.sample(100)
 total = cotisation_users.size
 progress_step = total / 10  # Show progress every 10%
 progress_step = 1 if progress_step < 1
@@ -474,9 +491,12 @@ cotisation_users.each_with_index do |user, idx|
     user: user
   )
 
-  # Créer un paiement
+  # Créer un paiement - la majorité avec succès
   payment_date = order.date + rand(0..3).days
   total_payment = order.sum + order.donation
+
+  # 90% des paiements sont réussis
+  status = rand < 0.9 ? "success" : [ "pending", "cancel" ].sample
 
   payment = Payment.create!(
     user: user,
@@ -486,8 +506,16 @@ cotisation_users.each_with_index do |user, idx|
     donation: order.donation,
     total_payment: total_payment,
     payment_type: Payment.payment_types.keys.sample,
-    status: Payment.statuses.keys.sample,
+    status: status,
     uuid: SecureRandom.uuid
+  )
+
+  # Log d'audit pour tous les paiements de cotisation
+  PaymentAuditLog.create!(
+    payment: payment,
+    user: [ admin_user, staff_user ].sample,
+    action: [ "created", "updated", "status_changed" ].sample,
+    change_data: { old_status: "pending", new_status: payment.status }.to_json
   )
 
   # Certains paiements ont des échéances pour les abonnements trimestriels/annuels
@@ -502,7 +530,7 @@ cotisation_users.each_with_index do |user, idx|
   end
 
   # Créer un carnet d'entrées pour les cotisations de type carnet ou pass
-  if cotisation_type <= 1
+  if cotisation_type <= 1 && status == "success"
     remaining = cotisation_type == 0 ? 1 : 10 # Pass journée = 1 entrée, Carnet = 10 entrées
 
     BookOfEntry.create!(
@@ -586,9 +614,9 @@ events.each do |event_data|
 end
 
 # Participants aux événements (ouverts à tous, membres ou non)
-puts "🎟️ Creating event attendees (200 participants)..."
+puts "🎟️ Creating event attendees (180 participants)..."
 # Mélanger tous les utilisateurs pour les inscriptions aux événements
-all_attendees = users.sample(200)
+all_attendees = User.all.sample(180)
 total = all_attendees.size
 progress_step = total / 10  # Show progress every 10%
 progress_step = 1 if progress_step < 1
@@ -620,6 +648,9 @@ all_attendees.each_with_index do |user, idx|
     payment_date = order.date + rand(0..2).days
     total_payment = order.sum + order.donation
 
+    # 85% de paiements réussis pour les événements
+    status = rand < 0.85 ? "success" : [ "pending", "cancel" ].sample
+
     payment = Payment.create!(
       user: user,
       order: order,
@@ -628,7 +659,7 @@ all_attendees.each_with_index do |user, idx|
       donation: order.donation,
       total_payment: total_payment,
       payment_type: Payment.payment_types.keys.sample,
-      status: Payment.statuses.keys.sample,
+      status: status,
       uuid: SecureRandom.uuid
     )
   else
@@ -715,14 +746,43 @@ tags.each do |tag|
   puts "Done ✓"
 end
 
+# Simuler des problèmes de paiement et des migrations de données
+puts "🔄 Simulating data lifecycle events..."
+
+# 1. Modifier le statut de certains paiements pour simuler des changements manuels par admin
+puts "  - Changing status of some payments..."
+payments_to_update = Payment.where(status: "pending").limit(20)
+payments_to_update.each do |payment|
+  old_status = payment.status
+  payment.update(status: "success")
+
+  PaymentAuditLog.create!(
+    payment: payment,
+    user: admin_user,
+    action: "status_changed",
+    change_data: {
+      old_status: old_status,
+      new_status: "success",
+      reason: "Manual verification by admin"
+    }.to_json
+  )
+end
+puts "    #{payments_to_update.count} payments updated to success ✓"
+
+# 2. Simuler la restauration de certains utilisateurs supprimés
+puts "  - Restoring some deleted users..."
+users_to_restore = User.with_deleted.where.not(deleted_at: nil).limit(15)
+users_to_restore.each(&:restore)
+puts "    #{users_to_restore.count} users restored ✓"
+
 puts "\n✅ Seed completed! Here's what was created:"
 puts "--------------------------------------------"
 puts "👥 USERS:"
-puts "  - #{User.count} total users"
+puts "  - #{User.with_deleted.count} total users (#{User.count} active, #{User.with_deleted.where.not(deleted_at: nil).count} soft-deleted)"
 puts "    - 1 Super Admin: super_admin@rails.com / 123456"
 puts "    - 1 Admin: admin@rails.com / 123456"
 puts "    - 1 Member: member@rails.com / 123456"
-puts "    - #{User.count - 3} Guests: guest1@rails.com through guest#{User.count - 3}@rails.com / 123456"
+puts "    - #{User.with_deleted.count - 3} Regular users"
 puts "    - #{User.where(newsletter_subscribed: true).count} users subscribed to newsletter"
 
 puts "🎭 MEMBERSHIPS:"
@@ -736,6 +796,9 @@ puts "  - #{Product.count} products"
 puts "  - #{PriceCatalog.count} price catalogs"
 puts "  - #{Order.count} orders"
 puts "  - #{Payment.count} payments"
+puts "    - #{Payment.where(status: "success").count} successful payments"
+puts "    - #{Payment.where(status: "pending").count} pending payments"
+puts "    - #{Payment.where(status: "cancel").count} cancelled payments"
 puts "  - #{PaymentAuditLog.count} payment audit logs"
 puts "  - #{BookOfEntry.count} books of entry"
 
@@ -752,6 +815,8 @@ puts "  - #{Attendance.count} attendances"
 puts "🏷️ OTHER:"
 puts "  - #{Tag.count} tags"
 
-# pour pouvoir afficher les images executer en consol :
-# sudo apt install libvips
-# pour modifier comment l'image qui s affiche pour les fronteux, c'est dans app/views/active_storage/blobs/_blob.html.erb
+puts "\n🧪 Data integrity test cases included:"
+puts "  - User soft deletion and restoration"
+puts "  - Payment lifecycle with audit logs"
+puts "  - Books of entry management"
+puts "  - Payment status transitions"
