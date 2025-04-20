@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_04_19_200002) do
+ActiveRecord::Schema[8.0].define(version: 2025_04_20_081208) do
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.string "name", null: false
     t.text "body"
@@ -143,6 +143,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_04_19_200002) do
     t.decimal "donation"
     t.datetime "deleted_at"
     t.index ["deleted_at"], name: "index_orders_on_deleted_at"
+    t.index ["donation"], name: "index_orders_on_donation"
     t.index ["user_id"], name: "index_orders_on_user_id"
   end
 
@@ -173,6 +174,10 @@ ActiveRecord::Schema[8.0].define(version: 2025_04_19_200002) do
     t.datetime "deleted_at"
     t.string "uuid"
     t.index ["deleted_at"], name: "index_payments_on_deleted_at"
+    t.index ["order_id"], name: "index_payments_on_order_id"
+    t.index ["payment_amount"], name: "index_payments_on_payment_amount"
+    t.index ["payment_date"], name: "index_payments_on_payment_date"
+    t.index ["status"], name: "index_payments_on_status"
     t.index ["user_id"], name: "index_payments_on_user_id"
     t.index ["uuid"], name: "index_payments_on_uuid", unique: true
   end
@@ -246,6 +251,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_04_19_200002) do
     t.datetime "deleted_at"
     t.index ["deleted_at"], name: "index_user_memberships_on_deleted_at"
     t.index ["membership_id"], name: "index_user_memberships_on_membership_id"
+    t.index ["user_id", "status"], name: "index_user_memberships_on_user_id_and_status"
     t.index ["user_id"], name: "index_user_memberships_on_user_id"
   end
 

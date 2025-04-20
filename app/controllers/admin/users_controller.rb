@@ -9,10 +9,10 @@ module Admin
     def index
       # Filter for deleted users if requested
       if params[:show_deleted] == "true"
-        @users = User.unscoped.where(deleted: true)
+        @users = User.unscoped.where(deleted: true).includes(:user_memberships, :memberships, :payments)
         @showing_deleted = true
       else
-        @users = User.unscoped.where(deleted: false)
+        @users = User.unscoped.where(deleted: false).includes(:user_memberships, :memberships, :payments)
         @showing_deleted = false
       end
 
@@ -31,10 +31,17 @@ module Admin
 
     # GET /admin/users/1 or /admin/users/1.json
     def show
+      # Eager load associations for the current user
+      @user = User.unscoped.includes(
+        :user_memberships,
+        :memberships,
+        payments: { order: { product_orders: { product: :price_entries } } }
+      ).find_by(id: params[:id])
+
       @array_right = available_roles_for_user(@user)
 
       add_breadcrumb "Liste d'adhérents", admin_users_path
-      add_breadcrumb @user.full_name.present? ? @user.full_name : "Utilisateur ##{@user.id}", nil
+      add_breadcrumb @user&.full_name.present? ? @user.full_name : "Utilisateur ##{@user.id}", nil
 
       respond_to do |format|
         format.html
@@ -147,7 +154,12 @@ module Admin
     private
     # Use callbacks to share common setup or constraints between actions.
     def set_user
-      @user = User.find_by(id: params[:id])
+      @user = User.unscoped.find_by(id: params[:id])
+
+      # If user not found, redirect to index with alert
+      if @user.nil?
+        redirect_to admin_users_path, alert: "Utilisateur non trouvé." and return
+      end
     end
 
     def set_breadcrumbs
