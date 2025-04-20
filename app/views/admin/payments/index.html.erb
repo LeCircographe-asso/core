@@ -1,8 +1,33 @@
 <% content_for :title, "Historique des paiements" %>
 
-<div class="min-h-screen py-6">
-  <div class="max-w-7xl mx-auto">
-    <!-- Header -->
+<div class="min-h-screen py-6 relative">
+  <!-- Sticky Action Bar -->
+  <div class="sticky top-0 z-10 bg-white shadow-md py-2 px-4 mb-4 flex justify-between items-center">
+    <div class="flex items-center space-x-2">
+      <% if @user %>
+        <%= link_to 'Retour au profil', admin_user_path(@user), class: "inline-flex items-center px-3 py-1.5 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#1F5C55] hover:bg-[#194A45] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1F5C55]" %>
+      <% else %>
+        <%= link_to 'Retour au tableau de bord', admin_dashboard_index_path, class: "inline-flex items-center px-3 py-1.5 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#1F5C55] hover:bg-[#194A45] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1F5C55]" %>
+      <% end %>
+    </div>
+    
+    <div class="flex-grow text-center font-bold text-lg text-[#1F5C55]">
+      <% if @user %>
+        Paiements de <%= @user.email %>
+      <% else %>
+        Historique des paiements
+      <% end %>
+    </div>
+    
+    <div>
+      <% if @user %>
+        <%= link_to 'Ajouter un paiement', new_admin_payment_path(user_id: @user.id), class: "inline-flex items-center px-3 py-1.5 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#1F5C55] hover:bg-[#194A45] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1F5C55]" %>
+      <% end %>
+    </div>
+  </div>
+
+  <div class="max-w-7xl mx-auto px-4 sm:px-6">
+    <!-- Main content -->
     <div class="bg-white shadow-lg rounded-lg overflow-hidden mb-6">
       <div class="bg-gradient-to-r from-[#1F5C55] to-[#194A45] px-6 py-4">
         <h1 class="text-2xl font-bold text-white">
@@ -72,33 +97,7 @@
 
       <div class="p-6">
         <!-- Summary Statistics -->
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-          <% cache("payments_summary", expires_in: 1.hour) do %>
-            <div class="bg-white p-4 rounded-lg shadow border">
-              <div class="text-sm text-gray-500">Total Paiements</div>
-              <div class="text-2xl font-bold text-gray-900"><%= @payments.count %></div>
-            </div>
-            
-            <div class="bg-white p-4 rounded-lg shadow border">
-              <div class="text-sm text-gray-500">Paiements Réussis</div>
-              <div class="text-2xl font-bold text-green-600"><%= @payments.where(status: :success).count %></div>
-            </div>
-            
-            <div class="bg-white p-4 rounded-lg shadow border">
-              <div class="text-sm text-gray-500">Paiements En Attente</div>
-              <div class="text-2xl font-bold text-yellow-600"><%= @payments.where(status: :pending).count %></div>
-            </div>
-            
-            <div class="bg-white p-4 rounded-lg shadow border">
-              <div class="text-sm text-gray-500">Montant Total</div>
-              <div class="text-2xl font-bold text-gray-900">
-                <% cache("payments_total_amount", expires_in: 1.hour) do %>
-                  <%= number_to_currency(@total_amount || Payment.total_successful_amount, unit: "€", format: "%n %u") %>
-                <% end %>
-              </div>
-            </div>
-          <% end %>
-        </div>
+        <%= render 'admin/payments/user_payment_summary', payments: @payments %>
 
         <!-- Payment Table -->
         <div class="overflow-x-auto">
@@ -191,6 +190,12 @@
                             <% end %>
                           <% end %>
                         </div>
+                      <% elsif payment.donation.present? && payment.donation > 0 %>
+                        <div class="flex items-center">
+                          <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-purple-100 text-purple-800">
+                            Donation
+                          </span>
+                        </div>
                       <% else %>
                         <span class="text-gray-400">-</span>
                       <% end %>
@@ -246,16 +251,4 @@
       </div>
     </div>
   </div>
-</div>
-
-<div class="flex justify-between max-w-7xl mx-auto">
-  <% if @user %>
-    <%= link_to 'Retour au profil', admin_user_path(@user), class: "inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#1F5C55] hover:bg-[#194A45] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1F5C55]" %>
-  <% else %>
-    <%= link_to 'Retour au tableau de bord', admin_dashboard_index_path, class: "inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#1F5C55] hover:bg-[#194A45] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1F5C55]" %>
-  <% end %>
-  
-  <% if @user %>
-    <%= link_to 'Ajouter un paiement', new_admin_payment_path(user_id: @user.id), class: "inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#1F5C55] hover:bg-[#194A45] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1F5C55]" %>
-  <% end %>
 </div>
