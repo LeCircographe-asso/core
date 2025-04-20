@@ -26,8 +26,8 @@ module Admin
       @payments = @payments.order("#{sort_column} #{sort_direction}")
 
       # Calculate total amount for display
-      @total_amount = @payments.where(status: :success).sum(:payment_amount)
-      @total_donation = @payments.where(status: :success).sum(:donation)
+      @total_amount = @payments.where(status: :success).distinct.sum(:payment_amount)
+      @total_donation = @payments.where(status: :success).distinct.sum(:donation)
 
       # Handle loading a specific payment details
       if params[:id].present?

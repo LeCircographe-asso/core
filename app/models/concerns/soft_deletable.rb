@@ -3,7 +3,7 @@ module SoftDeletable
 
   included do
     default_scope { where(deleted_at: nil) }
-    
+
     scope :with_deleted, -> { unscope(where: :deleted_at) }
     scope :only_deleted, -> { with_deleted.where.not(deleted_at: nil) }
   end
@@ -17,7 +17,9 @@ module SoftDeletable
   end
 
   def really_destroy!
-    super
+    self.class.unscoped do
+      self.class.where(id: id).delete_all
+    end
   end
 
   def restore
@@ -27,4 +29,4 @@ module SoftDeletable
   def deleted?
     deleted_at.present?
   end
-end 
+end
