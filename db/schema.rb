@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_04_19_182913) do
+ActiveRecord::Schema[8.0].define(version: 2025_04_19_200002) do
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.string "name", null: false
     t.text "body"
@@ -66,8 +66,10 @@ ActiveRecord::Schema[8.0].define(version: 2025_04_19_182913) do
     t.integer "attendance_list_id", null: false
     t.integer "user_id", null: false
     t.integer "book_of_entry_id"
+    t.datetime "deleted_at"
     t.index ["attendance_list_id"], name: "index_attendances_on_attendance_list_id"
     t.index ["book_of_entry_id"], name: "index_attendances_on_book_of_entry_id"
+    t.index ["deleted_at"], name: "index_attendances_on_deleted_at"
     t.index ["user_id"], name: "index_attendances_on_user_id"
   end
 
@@ -86,6 +88,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_04_19_182913) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "status"
+    t.datetime "deleted_at"
+    t.index ["deleted_at"], name: "index_book_of_entries_on_deleted_at"
     t.index ["product_id"], name: "index_book_of_entries_on_product_id"
     t.index ["user_id"], name: "index_book_of_entries_on_user_id"
   end
@@ -137,7 +141,22 @@ ActiveRecord::Schema[8.0].define(version: 2025_04_19_182913) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.decimal "donation"
+    t.datetime "deleted_at"
+    t.index ["deleted_at"], name: "index_orders_on_deleted_at"
     t.index ["user_id"], name: "index_orders_on_user_id"
+  end
+
+  create_table "payment_audit_logs", force: :cascade do |t|
+    t.integer "payment_id", null: false
+    t.integer "user_id"
+    t.string "action", null: false
+    t.text "change_data"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["action"], name: "index_payment_audit_logs_on_action"
+    t.index ["created_at"], name: "index_payment_audit_logs_on_created_at"
+    t.index ["payment_id"], name: "index_payment_audit_logs_on_payment_id"
+    t.index ["user_id"], name: "index_payment_audit_logs_on_user_id"
   end
 
   create_table "payments", force: :cascade do |t|
@@ -151,7 +170,11 @@ ActiveRecord::Schema[8.0].define(version: 2025_04_19_182913) do
     t.integer "order_id"
     t.decimal "donation"
     t.decimal "total_payment"
+    t.datetime "deleted_at"
+    t.string "uuid"
+    t.index ["deleted_at"], name: "index_payments_on_deleted_at"
     t.index ["user_id"], name: "index_payments_on_user_id"
+    t.index ["uuid"], name: "index_payments_on_uuid", unique: true
   end
 
   create_table "price_catalogs", force: :cascade do |t|
@@ -220,6 +243,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_04_19_182913) do
     t.datetime "updated_at", null: false
     t.integer "user_id", null: false
     t.integer "membership_id", null: false
+    t.datetime "deleted_at"
+    t.index ["deleted_at"], name: "index_user_memberships_on_deleted_at"
     t.index ["membership_id"], name: "index_user_memberships_on_membership_id"
     t.index ["user_id"], name: "index_user_memberships_on_user_id"
   end
@@ -267,6 +292,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_04_19_182913) do
   add_foreign_key "event_attendees", "users"
   add_foreign_key "events", "users", column: "creator_id"
   add_foreign_key "orders", "users"
+  add_foreign_key "payment_audit_logs", "payments"
+  add_foreign_key "payment_audit_logs", "users"
   add_foreign_key "payments", "users"
   add_foreign_key "price_entries", "price_catalogs"
   add_foreign_key "price_entries", "products"

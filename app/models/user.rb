@@ -1,4 +1,6 @@
 class User < ApplicationRecord
+  include SoftDeletable
+
   attr_accessor :cgu, :privacy_policy
   # after_create :assign_membership
   after_create :generate_password_reset_token
@@ -16,64 +18,8 @@ class User < ApplicationRecord
 
   enum :system_role, %i[ super_admin admin volunteer user_connected ]
 
-  # Add deleted flag for soft deletion
-  attribute :deleted, :boolean, default: false
-  attribute :deleted_at, :datetime
-
-  # Scope to exclude deleted users from queries
-  scope :active, -> { where(deleted: false) }
-
-  # Override default find methods to exclude deleted users
-  def self.find_by_id(id)
-    active.find_by(id: id)
-  end
-
-  # Overriding destroy to implement soft deletion
-  def destroy
-    # Check if there are any active payments
-    if has_active_payments?
-      handle_deletion_with_payments
-    else
-      # Perform normal soft deletion
-      soft_delete
-    end
-  end
-
-  # Mark user as deleted and anonymize personal data
-  def soft_delete
-    transaction do
-      # Mark all of the user's payments as cancelled
-      payments.each(&:handle_user_deletion)
-
-      # Set the deleted flag and timestamp
-      update_columns(
-        deleted: true,
-        deleted_at: Time.current,
-        # Anonymize personal information
-        email_address: "deleted_#{id}@example.com",
-        first_name: "Deleted",
-        last_name: "User",
-        full_name: "Deleted User",
-        address: nil,
-        phone_number: nil,
-        # Keep membership information for reports
-      )
-
-      # Deactivate any active memberships
-      user_memberships.where(status: "active").update_all(status: "inactive")
-    end
-    true
-  end
-
-  # Check if the user has any active payments
-  def has_active_payments?
-    payments.active.exists?
-  end
-
-  # Handle deletion when user has payments
-  def handle_deletion_with_payments
-    soft_delete
-  end
+  # Instead of using the custom soft deletion, we now use the SoftDeletable concern
+  # The attribute and scope declarations are no longer needed
 
   alias_attribute :email, :email_address
   has_many :sessions, dependent: :destroy
@@ -91,12 +37,55 @@ class User < ApplicationRecord
 
   has_many :book_of_entries
   has_many :orders
+  has_many :attendances
 
   normalizes :email_address, with: ->(e) { e.strip.downcase }
 
   validates :email_address, presence: true, uniqueness: true
   validates :cgu, acceptance: { message: "Vous devez accepter les CGU pour continuer." }
   validates :privacy_policy, acceptance: { message: "Vous devez accepter la politique de confidentialité pour continuer." }
+
+  # Override destroy method from SoftDeletable to handle payments
+  def destroy
+    if has_active_payments?
+      handle_deletion_with_payments
+    else
+      super # Call SoftDeletable's destroy method
+      anonymize_personal_data
+    end
+  end
+
+  # Anonymize personal data after soft deletion
+  def anonymize_personal_data
+    update_columns(
+      email_address: "deleted_#{id}@example.com",
+      first_name: "Deleted",
+      last_name: "User",
+      full_name: "Deleted User",
+      address: nil,
+      phone_number: nil
+    )
+
+    # Deactivate any active memberships
+    user_memberships.where(status: "active").update_all(status: "inactive")
+  end
+
+  # Check if the user has any active payments
+  def has_active_payments?
+    payments.active.exists?
+  end
+
+  # Handle deletion when user has payments
+  def handle_deletion_with_payments
+    super # Call SoftDeletable's destroy method
+
+    # Mark all of the user's payments as cancelled
+    payments.each do |payment|
+      payment.handle_user_deletion if payment.respond_to?(:handle_user_deletion)
+    end
+
+    anonymize_personal_data
+  end
 
   def welcome_send
     return if user_connected?
@@ -196,6 +185,17 @@ class User < ApplicationRecord
 
     # Return the raw value from the database
     self[:system_role]
+  end
+
+  # Class method to find or create a user with the same email
+  def self.find_or_create_with_identity(email:, **attributes)
+    existing_user = with_deleted.find_by(email_address: email.strip.downcase)
+    if existing_user&.deleted?
+      existing_user.restore
+      existing_user.update(attributes)
+      return existing_user
+    end
+    create(email_address: email, **attributes)
   end
 
   private

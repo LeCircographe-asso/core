@@ -1,16 +1,43 @@
 class Payment < ApplicationRecord
+  include SoftDeletable
+
   belongs_to :user
   belongs_to :order
   has_many :product_orders, through: :order # Ajout de la relation product_order
+  has_many :payment_audit_logs, dependent: :destroy
 
   enum :status, %i[success pending cancel], default: :pending
   enum :payment_type, %i[cash credit_card check]
 
+  before_create :generate_uuid
+  after_create :create_audit_log
   after_update :update_user_membership_if_paid
   after_update :createBookOfEntry
+  after_update :log_status_change, if: -> { saved_change_to_status? }
 
   # Scope to get active (non-cancelled) payments
   scope :active, -> { where.not(status: :cancel) }
+
+  # Generate a UUID for the payment
+  def generate_uuid
+    self.uuid = SecureRandom.uuid
+  end
+
+  # Create an audit log entry for new payments
+  def create_audit_log
+    PaymentAuditLog.log(self, user, "create")
+  end
+
+  # Log status changes
+  def log_status_change
+    change_data = {
+      status: {
+        from: status_before_last_save,
+        to: status
+      }
+    }
+    PaymentAuditLog.log(self, user, "status_change", change_data)
+  end
 
   # Handle when user is soft deleted
   def handle_user_deletion
@@ -23,11 +50,20 @@ class Payment < ApplicationRecord
       # Add a note that the user was deleted
       donation: (donation || 0)
     )
+
+    # Log the user deletion effect on payment
+    PaymentAuditLog.log(self, nil, "user_deleted")
   end
 
   # Check if a payment can be safely canceled
   def can_cancel?
     status != "cancel"
+  end
+
+  # Override destroy method to ensure audit trail
+  def destroy
+    PaymentAuditLog.log(self, Current.user, "delete")
+    super
   end
 
   # Check if this payment is related to a membership
