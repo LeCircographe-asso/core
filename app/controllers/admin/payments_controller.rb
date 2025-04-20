@@ -3,12 +3,12 @@ module Admin
     before_action :set_breadcrumbs
 
     def index
-      # Start with all payments
-      @payments = Payment.all
+      # Start with all payments with eager loading
+      @payments = Payment.includes(:user, order: { product_orders: { product: :price_entries } })
 
       # Filter by user if user_id is provided
       @user = User.find_by(id: params[:user_id])
-      @payments = @user.payments if @user
+      @payments = @user.payments.includes(:user, order: { product_orders: { product: :price_entries } }) if @user
 
       # Apply filters if provided
       @payments = @payments.where(status: params[:status]) if params[:status].present?
@@ -25,11 +25,15 @@ module Admin
       sort_direction = params[:direction] || "desc"
       @payments = @payments.order("#{sort_column} #{sort_direction}")
 
+      # Calculate total amount for display
+      @total_amount = @payments.where(status: :success).sum(:payment_amount)
+      @total_donation = @payments.where(status: :success).sum(:donation)
+
       # Handle loading a specific payment details
       if params[:id].present?
-        @payment = Payment.find_by(id: params[:id])
+        @payment = Payment.includes(order: { product_orders: { product: :price_entries } }).find_by(id: params[:id])
         if @payment
-          @order = Order.find_by(id: @payment.order_id)
+          @order = @payment.order
           @total_donation = @order&.donation
         end
       end
@@ -63,9 +67,9 @@ module Admin
     end
 
     def show
-      @payments = Payment.all
-      @payment = Payment.find(params[:id])
-      @order = Order.find_by(id: @payment.order_id)
+      @payments = Payment.includes(:user, order: { product_orders: { product: :price_entries } })
+      @payment = Payment.includes(:user, order: { product_orders: { product: :price_entries } }).find(params[:id])
+      @order = @payment.order
 
       @total_amount = @order.product_orders.sum do |product_order|
         product_order.product.price_entries.order(created_at: :desc).first&.price_catalog&.price.to_i
@@ -114,6 +118,10 @@ module Admin
 
       # Instead of actually deleting, mark as cancelled
       if @payment.update(status: :cancel)
+        # Expire fragment caches to force a refresh
+        expire_fragment("payments_total_amount")
+        expire_fragment("payments_summary")
+
         redirect_to admin_payments_path, notice: "Paiement annulé avec succès"
       else
         redirect_to admin_payments_path, alert: "Échec de l'annulation du paiement"

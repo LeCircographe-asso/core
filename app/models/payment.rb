@@ -11,12 +11,26 @@ class Payment < ApplicationRecord
 
   before_create :generate_uuid
   after_create :create_audit_log
-  after_update :update_user_membership_if_paid
-  after_update :createBookOfEntry
+  after_update :update_user_membership_if_paid, if: -> { saved_change_to_status? && status == "success" }
+  after_update :createBookOfEntry, if: -> { saved_change_to_status? && status == "success" }
   after_update :log_status_change, if: -> { saved_change_to_status? }
 
   # Scope to get active (non-cancelled) payments
   scope :active, -> { where.not(status: :cancel) }
+
+  # Class method to get total successful payments amount
+  def self.total_successful_amount
+    Rails.cache.fetch("total_successful_payments", expires_in: 1.hour) do
+      where(status: :success).sum(:payment_amount)
+    end
+  end
+
+  # Class method to get total donations
+  def self.total_donations
+    Rails.cache.fetch("total_donations", expires_in: 1.hour) do
+      where(status: :success).sum(:donation)
+    end
+  end
 
   # Generate a UUID for the payment
   def generate_uuid
@@ -37,6 +51,10 @@ class Payment < ApplicationRecord
       }
     }
     PaymentAuditLog.log(self, user, "status_change", change_data)
+
+    # Invalidate cache when status changes
+    Rails.cache.delete("total_successful_payments")
+    Rails.cache.delete("total_donations")
   end
 
   # Handle when user is soft deleted
@@ -53,6 +71,10 @@ class Payment < ApplicationRecord
 
     # Log the user deletion effect on payment
     PaymentAuditLog.log(self, nil, "user_deleted")
+
+    # Invalidate cache
+    Rails.cache.delete("total_successful_payments")
+    Rails.cache.delete("total_donations")
   end
 
   # Check if a payment can be safely canceled
@@ -63,6 +85,11 @@ class Payment < ApplicationRecord
   # Override destroy method to ensure audit trail
   def destroy
     PaymentAuditLog.log(self, Current.user, "delete")
+
+    # Invalidate cache
+    Rails.cache.delete("total_successful_payments")
+    Rails.cache.delete("total_donations")
+
     super
   end
 

@@ -73,27 +73,31 @@
       <div class="p-6">
         <!-- Summary Statistics -->
         <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-          <div class="bg-white p-4 rounded-lg shadow border">
-            <div class="text-sm text-gray-500">Total Paiements</div>
-            <div class="text-2xl font-bold text-gray-900"><%= @payments.count %></div>
-          </div>
-          
-          <div class="bg-white p-4 rounded-lg shadow border">
-            <div class="text-sm text-gray-500">Paiements Réussis</div>
-            <div class="text-2xl font-bold text-green-600"><%= @payments.where(status: :success).count %></div>
-          </div>
-          
-          <div class="bg-white p-4 rounded-lg shadow border">
-            <div class="text-sm text-gray-500">Paiements En Attente</div>
-            <div class="text-2xl font-bold text-yellow-600"><%= @payments.where(status: :pending).count %></div>
-          </div>
-          
-          <div class="bg-white p-4 rounded-lg shadow border">
-            <div class="text-sm text-gray-500">Montant Total</div>
-            <div class="text-2xl font-bold text-gray-900">
-              <%= number_to_currency(@payments.where(status: :success).sum(:payment_amount), unit: "€", format: "%n %u") %>
+          <% cache("payments_summary", expires_in: 1.hour) do %>
+            <div class="bg-white p-4 rounded-lg shadow border">
+              <div class="text-sm text-gray-500">Total Paiements</div>
+              <div class="text-2xl font-bold text-gray-900"><%= @payments.count %></div>
             </div>
-          </div>
+            
+            <div class="bg-white p-4 rounded-lg shadow border">
+              <div class="text-sm text-gray-500">Paiements Réussis</div>
+              <div class="text-2xl font-bold text-green-600"><%= @payments.where(status: :success).count %></div>
+            </div>
+            
+            <div class="bg-white p-4 rounded-lg shadow border">
+              <div class="text-sm text-gray-500">Paiements En Attente</div>
+              <div class="text-2xl font-bold text-yellow-600"><%= @payments.where(status: :pending).count %></div>
+            </div>
+            
+            <div class="bg-white p-4 rounded-lg shadow border">
+              <div class="text-sm text-gray-500">Montant Total</div>
+              <div class="text-2xl font-bold text-gray-900">
+                <% cache("payments_total_amount", expires_in: 1.hour) do %>
+                  <%= number_to_currency(@total_amount || Payment.total_successful_amount, unit: "€", format: "%n %u") %>
+                <% end %>
+              </div>
+            </div>
+          <% end %>
         </div>
 
         <!-- Payment Table -->

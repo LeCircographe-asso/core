@@ -32,5 +32,20 @@ module Circographe
       g.test_framework :rspec
       g.fixture_replacement :factory_bot, dir: "spec/factories"
     end
+
+    # Don't generate system test files.
+    config.generators.system_tests = nil
+
+    # Configure multi-database setup
+    if Rails.env.production?
+      # Configure database connections for various services
+      config.solid_cache.connects_to = { database: { writing: :"#{Rails.env}_cache", reading: :"#{Rails.env}_cache" } }
+      config.solid_queue.connects_to = { database: { writing: :"#{Rails.env}_queue", reading: :"#{Rails.env}_queue" } }
+      config.action_cable.cable_connection_class = -> { ActionCable::Connection::Base.establish_connection(adapter: "sqlite3", database: "storage/#{Rails.env}_cable.sqlite3") }
+    else
+      # Development/test configuration
+      config.solid_cache.connects_to = { database: { writing: :"#{Rails.env}_cache", reading: :"#{Rails.env}_cache" } }
+      config.solid_queue.connects_to = { database: { writing: :"#{Rails.env}_queue", reading: :"#{Rails.env}_queue" } }
+    end
   end
 end
