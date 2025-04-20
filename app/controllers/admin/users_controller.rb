@@ -3,28 +3,45 @@ module Admin
     include RoleHelper
     before_action :set_user, only: %i[ show edit update destroy ]
     before_action :set_breadcrumbs
+    before_action :check_deletion_permissions, only: [ :destroy ]
 
     # GET /admin/users or /admin/users.json
     def index
-      @users = User.all
-      
+      # Filter for deleted users if requested
+      if params[:show_deleted] == "true"
+        @users = User.unscoped.where(deleted: true).includes(:user_memberships, :memberships, :payments)
+        @showing_deleted = true
+      else
+        @users = User.unscoped.where(deleted: false).includes(:user_memberships, :memberships, :payments)
+        @showing_deleted = false
+      end
+
       # Statistiques pour le dashboard
-      @total_users = User.count
+      @total_users = User.unscoped.count
+      @active_users = User.unscoped.where(deleted: false).count
+      @deleted_users = User.unscoped.where(deleted: true).count
       @new_users_yesterday = UserService.new_users_count
       @basic_memberships = MembershipService.membership_type_count(:Basic)
       @circus_memberships = MembershipService.membership_type_count(:Circus)
       @active_memberships = MembershipService.active_memberships_count
       @users_this_month = UserService.users_this_month
-      
+
       add_breadcrumb "Liste d'adhérents", nil
     end
 
     # GET /admin/users/1 or /admin/users/1.json
     def show
+      # Eager load associations for the current user
+      @user = User.unscoped.includes(
+        :user_memberships,
+        :memberships,
+        payments: { order: { product_orders: { product: :price_entries } } }
+      ).find_by(id: params[:id])
+
       @array_right = available_roles_for_user(@user)
 
       add_breadcrumb "Liste d'adhérents", admin_users_path
-      add_breadcrumb @user.full_name.present? ? @user.full_name : "Utilisateur ##{@user.id}", nil
+      add_breadcrumb @user&.full_name.present? ? @user.full_name : "Utilisateur ##{@user.id}", nil
 
       respond_to do |format|
         format.html
@@ -44,13 +61,13 @@ module Admin
       Rails.logger.debug "Edit action called for user ID: #{params[:id]}"
       Rails.logger.debug "@user: #{@user.inspect}"
       Rails.logger.debug "current_user: #{current_user.inspect}"
-      
+
       if @user.nil?
         Rails.logger.debug "User is nil, redirecting to users list"
         redirect_to admin_users_path, alert: "Utilisateur non trouvé."
         return
       end
-      
+
       begin
         @array_right = available_roles_for_user(@user)
         Rails.logger.debug "@array_right: #{@array_right.inspect}"
@@ -71,7 +88,7 @@ module Admin
     # POST /admin/users or /admin/users.json
     def create
       result = UserService.create_user_with_membership(user_params, true)
-      
+
       if result[:success]
         redirect_to admin_user_order_path(id: result[:order], user_id: result[:user]),
                     notice: "Utilisateur créé avec succès. Un mail a été envoyé !"
@@ -88,7 +105,7 @@ module Admin
         if @user.update(user_params)
           format.html { redirect_to admin_user_path(@user), notice: "Utilisateur mis à jour avec succès." }
           format.json { render json: @user }
-          format.turbo_stream { 
+          format.turbo_stream {
             flash.now[:notice] = "Utilisateur mis à jour avec succès."
             render turbo_stream: [
               turbo_stream.replace(@user),
@@ -98,7 +115,7 @@ module Admin
         else
           format.html { render :show, status: :unprocessable_entity }
           format.json { render json: @user.errors, status: :unprocessable_entity }
-          format.turbo_stream { 
+          format.turbo_stream {
             render turbo_stream: turbo_stream.replace(
               "error_explanation",
               partial: "shared/error_messages",
@@ -119,14 +136,44 @@ module Admin
       end
     end
 
+    # POST /admin/users/1/restore
+    def restore
+      @user = User.unscoped.find(params[:id])
+
+      if @user.update(
+        deleted: false,
+        deleted_at: nil,
+        email_address: params[:email_address]
+      )
+        redirect_to admin_users_path, notice: "Utilisateur restauré avec succès."
+      else
+        redirect_to admin_users_path, alert: "Impossible de restaurer cet utilisateur."
+      end
+    end
+
     private
     # Use callbacks to share common setup or constraints between actions.
     def set_user
-      @user = User.find_by(id: params[:id])
+      @user = User.unscoped.find_by(id: params[:id])
+
+      # If user not found, redirect to index with alert
+      if @user.nil?
+        redirect_to admin_users_path, alert: "Utilisateur non trouvé." and return
+      end
     end
 
     def set_breadcrumbs
       add_breadcrumb "Dashboard", admin_dashboard_index_path
+    end
+
+    # Check if current user has permission to delete the target user
+    def check_deletion_permissions
+      return if @user.nil?
+
+      # Prevent deleting users with equal or higher privileges
+      unless current_user.has_higher_permissions?(@user)
+        redirect_to admin_users_path, alert: "Impossible de supprimer un utilisateur avec des privilèges égaux ou supérieurs."
+      end
     end
 
     # Only allow a list of trusted parameters through.

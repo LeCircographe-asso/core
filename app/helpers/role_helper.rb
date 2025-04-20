@@ -21,7 +21,7 @@ module RoleHelper
     when :admin
       "Administrateur"
     when :volunteer
-      "Volontaire"
+      "Volontaire" # TODO: change to "Bénévole"
     when :user_connected
       "Utilisateur"
     else
