@@ -1,4 +1,6 @@
 class Attendance < ApplicationRecord
+  include SoftDeletable
+
   belongs_to :attendance_list, optional: true
   belongs_to :user
   belongs_to :book_of_entry, optional: true
@@ -8,19 +10,17 @@ class Attendance < ApplicationRecord
 
   after_create :decrement_book_of_entry
 
-private 
+private
 
   def decrement_book_of_entry
-
     return unless book_of_entry
 
     if book_of_entry.remaining > 0
-        book_of_entry.update(remaining: book_of_entry.remaining - 1)
+      book_of_entry.update(remaining: book_of_entry.remaining - 1)
 
-    if book_of_entry.remaining <= 0
-        book_of_entry.update(status: inactive)
-    end 
-  end 
-end 
-
+      if book_of_entry.remaining <= 0
+        book_of_entry.update(status: :inactive)
+      end
+    end
+  end
 end
