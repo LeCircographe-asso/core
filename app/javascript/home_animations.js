@@ -7,6 +7,7 @@ function initAnimations() {
     const mainButton = document.querySelector('.main-button');
     const mainContent = document.getElementById('main-content');
     const scrollArrow = document.querySelector('.scroll-arrow-container');
+    const map = document.querySelector('.map');
     
    
     // if (!titleElement || !mainButton || !mainContent) {
@@ -21,6 +22,7 @@ function initAnimations() {
         titleElement.classList.remove('opacity-0');
         mainButton.classList.remove('opacity-0');
         mainContent.classList.remove('opacity-0');
+        map.classList.remove('opacity-0');
         if (scrollArrow) scrollArrow.classList.remove('opacity-0');
     } else {
         // Animation lettre par lettre pour le titre
@@ -30,6 +32,7 @@ function initAnimations() {
         setTimeout(() => mainButton.classList.remove('opacity-0'), 1500);
         if (scrollArrow) setTimeout(() => scrollArrow.classList.remove('opacity-0'), 1800);
         setTimeout(() => mainContent.classList.remove('opacity-0'), 2000);
+        setTimeout(() => map.classList.remove('opacity-0'), 2000);
     }
     
     // Fallback de sécurité - rendre tout visible si JavaScript échoue partiellement
