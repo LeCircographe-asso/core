@@ -1,9 +1,9 @@
 <% content_for :title, "Le Circographe - Détail Événement" %>
 
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-12 fade-in">
-        <h1 class="text-4xl font-bold text-center text-black bg-white/80 py-6 mb-8 rounded-lg shadow-md"><%= @event.title %></h1>
+        <h1 class="text-4xl font-bold text-center text-black bg-white/85 py-6 mb-8 rounded-lg shadow-md"><%= @event.title %></h1>
         
-        <div class="bg-white/80 rounded-lg shadow-md p-6">
+        <div class="bg-white/85 rounded-lg shadow-md p-6">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <div class="relative aspect-[4/3] overflow-hidden rounded-xl">
                     <%= image_tag @event.picture_url.presence || "home2.webp", 
