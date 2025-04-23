@@ -1,8 +1,7 @@
 <% content_for :title, "Le Cirque - Le Circographe" %>
 
-<div class="container mx-auto px-4">
     <!-- Page header -->
-    <header class="text-center mb-12">
+    <header class="text-center mb-12 bg-white/85 py-6 rounded-lg shadow-md fade-in">
         <h1 class="text-4xl font-bold text-gray-800">Le Cirque</h1>
         <p class="text-xl text-gray-600 mt-4">Un espace dédié à la pratique du cirque</p>
     </header>
@@ -114,4 +113,3 @@
         <h2 id="gallery-section" class="sr-only">Galerie d'images</h2>
         <%= render "shared/carousel_image", images: ["circus-img2.webp", "home2.webp", "home3.webp", "home1.webp"] %>
     </section>
-</div>
