@@ -2,7 +2,7 @@ module Admin
   class UsersController < BaseController
     include RoleHelper
     before_action :set_user, only: %i[ show edit update destroy ]
-    before_action :set_breadcrumbs
+    before_action :set_breadcrumbs, except: %i[ index new ]
     before_action :check_deletion_permissions, only: [ :destroy ]
 
     # GET /admin/users or /admin/users.json

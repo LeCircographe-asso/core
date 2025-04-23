@@ -1,6 +1,7 @@
 module Admin
   class PaymentsController < BaseController
-    before_action :set_breadcrumbs
+    # Remove the before_action since we don't need the dashboard breadcrumb
+    # before_action :set_breadcrumbs
 
     def index
       # Start with all payments with eager loading
@@ -138,8 +139,9 @@ module Admin
       params.require(:payment).permit(:payment_id, :payment_date, :payment_amount, :payment_type, :status, :user_id, :order_id, :donation, :total_payment)
     end
 
-    def set_breadcrumbs
-      add_breadcrumb "Dashboard", admin_dashboard_index_path
-    end
+    # Remove the set_breadcrumbs method since we don't need the dashboard breadcrumb
+    # def set_breadcrumbs
+    #   add_breadcrumb "Dashboard", admin_dashboard_index_path
+    # end
   end
 end
