@@ -23,6 +23,7 @@ Le Circographe est une application de gestion complète pour une association de 
 ### 📁 [Documentation Principale](../documentations/README.md)
 
 - [📁 Domaines Métier](../documentations/domains/README.md) - Règles et spécifications métier par domaine
+- [📁 Documentation Whimsical]([../documentations/domains/README.md](https://whimsical.com/circograph-LAUT9hRLjkgEcGkLDKFPKV)) - Contient toute les documentations et graphiques
 - [📁 Wireframe](https://whimsical.com/wireframe-content-mapping-HYkmAuT9fc9BdZPB2vUvGc) - Wireframe
 - [📁 Schema bdd](https://whimsical.com/diagram-database-J4Z17pjJ61YmVM9LK5jPMx) - Schema BDD
 - [📁 User Stories](https://whimsical.com/user-stories-fonctionnal-mapping-GTkoaDv7mHwg8q8h3w5Mt4) - User Stories
