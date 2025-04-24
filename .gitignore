@@ -38,6 +38,7 @@
 /docs
 /node_modules
 /.cursorrules
+/.cert
 
 # Add SimpleCov coverage reports to ignore list
 /coverage/
