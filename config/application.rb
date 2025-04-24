@@ -49,3 +49,7 @@ module Circographe
     end
   end
 end
+
+Rails.application.configure do
+  config.hosts << "lecircographe.fr"
+end
