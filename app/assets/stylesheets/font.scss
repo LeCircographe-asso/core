@@ -2,9 +2,9 @@
 
 @font-face {
   font-family: 'Circographe';
-  src: url('../fonts/Circographe-Regular.woff2') format('woff2'),
-       url('../fonts/Circographe-Regular.woff') format('woff'),
-       url('../fonts/Circographe-Regular.otf') format('opentype');
+  src: asset-url('Circographe-Regular.woff2') format('woff2'),
+       asset-url('Circographe-Regular.woff') format('woff'),
+       asset-url('Circographe-Regular.otf') format('opentype');
   font-weight: normal;
   font-style: normal;
   font-display: swap;
@@ -12,9 +12,9 @@
 
 @font-face {
   font-family: 'Rough Typewriter';
-  src: url('../fonts/Rough_typewriter.woff2') format('woff2'),
-       url('../fonts/Rough_typewriter.woff') format('woff'),
-       url('../fonts/rough_typewriter.otf') format('opentype');
+  src: asset-url('Rough_typewriter.woff2') format('woff2'),
+       asset-url('Rough_typewriter.woff') format('woff'),
+       asset-url('rough_typewriter.otf') format('opentype');
   font-weight: normal;
   font-style: normal;
   font-display: swap;
@@ -22,8 +22,8 @@
 
 @font-face {
   font-family: 'Rough Typewriter';
-  src: url('../fonts/Rough_typewriter-itl.woff2') format('woff2'),
-       url('../fonts/Rough_typewriter-itl.woff') format('woff');
+  src: asset-url('Rough_typewriter-itl.woff2') format('woff2'),
+       asset-url('Rough_typewriter-itl.woff') format('woff');
   font-weight: normal;
   font-style: italic;
   font-display: swap;
@@ -31,15 +31,15 @@
 
 @font-face {
   font-family: 'Rough Typewriter';
-  src: url('../fonts/Rough_typewriter-bld-itl.woff2') format('woff2'),
-       url('../fonts/Rough_typewriter-bld-itl.woff') format('woff');
+  src: asset-url('Rough_typewriter-bld-itl.woff2') format('woff2'),
+       asset-url('Rough_typewriter-bld-itl.woff') format('woff');
   font-weight: bold;
   font-style: italic;
   font-display: swap;
 }
 
 body {
-    font-family: Arial, sans-serif;
+    font-family: 'Rough Typewriter', monospace;
 }
 
 body.dyslexic-font-enabled {

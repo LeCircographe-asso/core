@@ -1,5 +1,4 @@
 document.addEventListener('turbo:load', initAnimations);
-document.addEventListener('DOMContentLoaded', initAnimations);
 
 function initAnimations() {
     // Éléments à animer

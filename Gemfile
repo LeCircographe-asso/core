@@ -55,6 +55,8 @@ group :development do
   gem "web-console"  # Interactive console
   gem "letter_opener"  # Preview emails in development
   gem "letter_opener_web"  # Web interface for letter_opener
+  gem "rack-cors" # Use rack-cors for handling Cross-Origin Resource Sharing (CORS)
+  gem "dartsass-rails"
 end
 
 group :test do
