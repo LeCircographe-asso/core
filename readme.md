@@ -14,7 +14,7 @@
 </div>
 
 ## 🎯 Vue d'ensemble
-Le Circographe est une application de gestion complète pour une association de cirque, développée avec Ruby on Rails 8.0.1. Cette documentation couvre l'ensemble des aspects techniques, fonctionnels et organisationnels du projet.
+Le Circographe est une application de gestion complète pour une association de cirque, développée avec Ruby on Rails 8.0.2. Cette documentation couvre l'ensemble des aspects techniques, fonctionnels et organisationnels du projet.
 
 ## 🧭 Navigation
 - [📝 Contribution](#-contribution)
