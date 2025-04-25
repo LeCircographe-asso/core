@@ -2,10 +2,6 @@ document.addEventListener("turbo:load", function () {
     initFadeInAnimations();
 });
 
-document.addEventListener("DOMContentLoaded", function () {
-    initFadeInAnimations();
-});
-
 function initFadeInAnimations() {
     const fadeElements = document.querySelectorAll(".fade-in");
 
