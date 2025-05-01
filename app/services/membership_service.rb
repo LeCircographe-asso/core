@@ -39,4 +39,6 @@ class MembershipService
                   .where(memberships: { type_name: type_name }, status: :active)
                   .count
   end
+
+
 end 
