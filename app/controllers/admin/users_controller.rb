@@ -1,4 +1,11 @@
 module Admin
+  # Admin::UsersController handles user management for administrators.
+  # This controller provides full CRUD functionality and management features
+  # for all users in the system, including higher-privileged operations like
+  # user creation, restoration of deleted users, and role management.
+  #
+  # The public UsersController in contrast only handles self-service actions
+  # for individual users managing their own profiles.
   class UsersController < BaseController
     include RoleHelper
     before_action :set_user, only: %i[ show edit update destroy ]
