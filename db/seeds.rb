@@ -167,14 +167,6 @@ end
 puts "\r  Progress: 100% (#{total}/#{total}) ✓"
 puts "✅ Total users created: #{User.count}"
 
-# Marquer certains utilisateurs comme supprimés (soft delete)
-puts "🗑️ Soft deleting some users..."
-users_to_delete = User.where(system_role: 3).limit(50)
-users_to_delete.each do |user|
-  user.destroy
-end
-puts "  - #{users_to_delete.count} users soft deleted ✓"
-
 # Récupérer tous les utilisateurs actifs
 users = User.all.to_a
 
@@ -770,19 +762,19 @@ end
 puts "    #{payments_to_update.count} payments updated to success ✓"
 
 # 2. Simuler la restauration de certains utilisateurs supprimés
-puts "  - Restoring some deleted users..."
-users_to_restore = User.with_deleted.where.not(deleted_at: nil).limit(15)
-users_to_restore.each(&:restore)
-puts "    #{users_to_restore.count} users restored ✓"
+# puts "  - Restoring some deleted users..."
+# users_to_restore = User.with_deleted.where.not(deleted_at: nil).limit(15)
+# users_to_restore.each(&:restore)
+# puts "    #{users_to_restore.count} users restored ✓"
 
 puts "\n✅ Seed completed! Here's what was created:"
 puts "--------------------------------------------"
 puts "👥 USERS:"
-puts "  - #{User.with_deleted.count} total users (#{User.count} active, #{User.with_deleted.where.not(deleted_at: nil).count} soft-deleted)"
+puts "  - #{User.count} total users"
 puts "    - 1 Super Admin: super_admin@rails.com / 123456"
 puts "    - 1 Admin: admin@rails.com / 123456"
 puts "    - 1 Member: member@rails.com / 123456"
-puts "    - #{User.with_deleted.count - 3} Regular users"
+puts "    - #{User.count - 3} Regular users"
 puts "    - #{User.where(newsletter_subscribed: true).count} users subscribed to newsletter"
 
 puts "🎭 MEMBERSHIPS:"

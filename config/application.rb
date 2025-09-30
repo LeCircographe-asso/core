@@ -47,6 +47,9 @@ module Circographe
       config.solid_cache.connects_to = { database: { writing: :"#{Rails.env}_cache", reading: :"#{Rails.env}_cache" } }
       config.solid_queue.connects_to = { database: { writing: :"#{Rails.env}_queue", reading: :"#{Rails.env}_queue" } }
     end
+
+    # Insert maintenance mode middleware at the top so it intercepts all requests
+    config.middleware.insert_before 0, "MaintenanceModeMiddleware"
   end
 end
 
