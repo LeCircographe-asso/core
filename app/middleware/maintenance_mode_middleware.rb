@@ -14,7 +14,10 @@ class MaintenanceModeMiddleware
   private
 
   def maintenance_enabled?
-    ENV["MAINTENANCE_MODE"].to_s.strip.casecmp("true").zero?
+    value = ENV["MAINTENANCE_MODE"]
+    # Sur cette branche, on active la maintenance par défaut.
+    return true if value.nil? || value.to_s.strip.empty?
+    value.to_s.strip.casecmp("true").zero?
   end
 
   def healthcheck?(env)
