@@ -1,6 +1,7 @@
 require_relative "boot"
 
 require "rails/all"
+require_relative "../app/middleware/maintenance_mode_middleware"
 
 # Require the gems listed in Gemfile, including any gems
 # you've limited to :test, :development, or :production.
@@ -49,7 +50,7 @@ module Circographe
     end
 
     # Insert maintenance mode middleware at the top so it intercepts all requests
-    config.middleware.insert_before 0, "MaintenanceModeMiddleware"
+    config.middleware.insert_before 0, MaintenanceModeMiddleware
   end
 end
 
