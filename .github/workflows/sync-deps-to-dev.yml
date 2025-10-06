@@ -1,0 +1,59 @@
+name: 🔄 Sync Dependencies to Dev
+
+on:
+  workflow_dispatch: # Manuel uniquement
+    inputs:
+      force_sync:
+        description: 'Force sync even if there are conflicts'
+        required: false
+        default: 'false'
+        type: boolean
+
+jobs:
+  sync-dependencies:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+        token: ${{ secrets.GITHUB_TOKEN }}
+    
+    - name: Check deps branch status
+      run: |
+        git fetch origin
+        echo "📋 Checking deps branch status..."
+        git log --oneline origin/deps -5
+        
+    - name: Sync deps to dev
+      run: |
+        git config --global user.name "GitHub Actions"
+        git config --global user.email "actions@github.com"
+        
+        # Checkout dev branch
+        git checkout dev
+        git pull origin dev
+        
+        # Check if there are conflicts
+        if ! git merge origin/deps --no-commit --no-ff; then
+          if [ "${{ github.event.inputs.force_sync }}" = "true" ]; then
+            echo "⚠️ Conflicts detected, but force sync enabled"
+            git merge origin/deps --no-edit
+          else
+            echo "❌ Merge conflicts detected!"
+            echo "💡 Use force_sync option or resolve conflicts manually"
+            exit 1
+          fi
+        else
+          echo "✅ No conflicts, proceeding with merge"
+          git merge origin/deps --no-edit
+        fi
+        
+        # Push to dev
+        git push origin dev
+        
+    - name: Notify sync completed
+      run: |
+        echo "🎉 Dependencies synced to dev branch"
+        echo "✅ Staging deployment will be triggered automatically"
+        echo "📊 You can now continue development with updated dependencies"
