@@ -61,3 +61,19 @@ production_queue:
 production_cable:
   <<: *default
   database: storage/production_cable.sqlite3
+
+staging:
+  <<: *default
+  database: storage/staging.sqlite3
+
+staging_cache:
+  <<: *default
+  database: storage/staging_cache.sqlite3
+
+staging_queue:
+  <<: *default
+  database: storage/staging_queue.sqlite3
+
+staging_cable:
+  <<: *default
+  database: storage/staging_cable.sqlite3

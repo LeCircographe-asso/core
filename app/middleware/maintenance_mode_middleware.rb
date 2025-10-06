@@ -14,7 +14,11 @@ class MaintenanceModeMiddleware
   private
 
   def maintenance_enabled?
-    ENV["MAINTENANCE_MODE"].to_s.strip.casecmp("true").zero?
+    # Vérifie plusieurs sources pour le mode maintenance
+    maintenance_mode = ENV["MAINTENANCE_MODE"].to_s.strip.downcase
+    maintenance_file = File.exist?("/tmp/maintenance") && File.read("/tmp/maintenance").strip.downcase == "true"
+
+    maintenance_mode == "true" || maintenance_file
   end
 
   def healthcheck?(env)
@@ -92,7 +96,7 @@ class MaintenanceModeMiddleware
                 Laisser un avis Google
               </a>
             </div>
-            
+      #{'      '}
           </div>
         </body>
       </html>
@@ -104,7 +108,7 @@ class MaintenanceModeMiddleware
       "Retry-After" => "300"
     }
 
-    [503, headers, [body]]
+    [ 503, headers, [ body ] ]
   end
 
   def google_url
@@ -143,12 +147,12 @@ class MaintenanceModeMiddleware
     return nil unless File.file?(path)
 
     mime = case File.extname(name).downcase
-           when ".webp" then "image/webp"
-           when ".png" then "image/png"
-           when ".jpg", ".jpeg" then "image/jpeg"
-           when ".svg" then "image/svg+xml"
-           else "application/octet-stream"
-           end
+    when ".webp" then "image/webp"
+    when ".png" then "image/png"
+    when ".jpg", ".jpeg" then "image/jpeg"
+    when ".svg" then "image/svg+xml"
+    else "application/octet-stream"
+    end
 
     data = ::Base64.strict_encode64(File.binread(path))
     "data:#{mime};base64,#{data}"
@@ -156,5 +160,3 @@ class MaintenanceModeMiddleware
     nil
   end
 end
-
-
