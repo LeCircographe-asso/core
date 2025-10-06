@@ -9,10 +9,6 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
-    
-    services:
-      sqlite3:
-        image: sqlite3:latest
         
     steps:
     - uses: actions/checkout@v4
@@ -71,30 +67,32 @@ jobs:
         # Déploiement avec Kamal
         kamal deploy -c config/deploy.staging.yml
         
-  deploy-production:
-    if: github.ref == 'refs/heads/main'
-    needs: test
-    runs-on: ubuntu-latest
-    
-    steps:
-    - uses: actions/checkout@v4
-    
-    - name: Setup Ruby
-      uses: ruby/setup-ruby@v1
-      with:
-        ruby-version: 3.2.5
-        bundler-cache: true
-    
-    - name: Deploy to production
-      env:
-        RAILS_MASTER_KEY: ${{ secrets.RAILS_MASTER_KEY }}
-        KAMAL_REGISTRY_PASSWORD: ${{ secrets.KAMAL_REGISTRY_PASSWORD }}
-        PRODUCTION_SERVER_IP: ${{ secrets.PRODUCTION_SERVER_IP }}
-      run: |
-        echo "Deploying to production environment"
-        # Configuration des secrets pour Kamal
-        mkdir -p .kamal
-        echo "RAILS_MASTER_KEY=$RAILS_MASTER_KEY" > .kamal/secrets
-        echo "KAMAL_REGISTRY_PASSWORD=$KAMAL_REGISTRY_PASSWORD" >> .kamal/secrets
-        # Déploiement avec Kamal
-        kamal deploy -c config/deploy.yml
+  # deploy-production: DÉSACTIVÉ pour la sécurité
+  # Le déploiement production se fait manuellement via sync-to-main.yml
+  # deploy-production:
+  #   if: github.ref == 'refs/heads/main'
+  #   needs: test
+  #   runs-on: ubuntu-latest
+  #   
+  #   steps:
+  #   - uses: actions/checkout@v4
+  #   
+  #   - name: Setup Ruby
+  #     uses: ruby/setup-ruby@v1
+  #     with:
+  #       ruby-version: 3.2.5
+  #       bundler-cache: true
+  #   
+  #   - name: Deploy to production
+  #     env:
+  #       RAILS_MASTER_KEY: ${{ secrets.RAILS_MASTER_KEY }}
+  #       KAMAL_REGISTRY_PASSWORD: ${{ secrets.KAMAL_REGISTRY_PASSWORD }}
+  #       PRODUCTION_SERVER_IP: ${{ secrets.PRODUCTION_SERVER_IP }}
+  #     run: |
+  #       echo "Deploying to production environment"
+  #       # Configuration des secrets pour Kamal
+  #       mkdir -p .kamal
+  #       echo "RAILS_MASTER_KEY=$RAILS_MASTER_KEY" > .kamal/secrets
+  #       echo "KAMAL_REGISTRY_PASSWORD=$KAMAL_REGISTRY_PASSWORD" >> .kamal/secrets
+  #       # Déploiement avec Kamal
+  #       kamal deploy -c config/deploy.yml
