@@ -1,9 +1,9 @@
 name: 🔄 Sync Dev to Main
 
 on:
-  push:
-    branches: [ dev ]
-  workflow_dispatch: # Permet le déclenchement manuel
+  # push:
+  #   branches: [ dev ]  # DÉSACTIVÉ : Sync automatique dangereux
+  workflow_dispatch: # Permet le déclenchement manuel uniquement
 
 jobs:
   sync-to-main:
