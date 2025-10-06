@@ -1,6 +1,4 @@
 class UserMailer < ApplicationMailer
-
-
   def welcome_by_admin(user, reset_password_url)
     @user = user
     @reset_password_url = reset_password_url

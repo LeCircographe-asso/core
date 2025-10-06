@@ -9,7 +9,7 @@ class NewsletterSignupService
   def call_newsletter
     # Record the attempt for analytics/rate limiting
     log_newsletter_attempt
-    
+
     # Handle based on authentication state
     if @current_user
       handle_authenticated_user
@@ -46,14 +46,14 @@ class NewsletterSignupService
       { success: false, message: "Veuillez créer un compte pour vous inscrire à la newsletter.", redirect_to: true }
     end
   end
-  
+
   # Ensure user has an unsubscribe token
   def ensure_unsubscribe_token(user)
     return if user.unsubscribe_token.present?
-    
+
     user.update(unsubscribe_token: SecureRandom.urlsafe_base64(32))
   end
-  
+
   # Log the newsletter signup attempt (useful for rate limiting and analytics)
   def log_newsletter_attempt
     # This could be expanded to log to a database or monitoring system

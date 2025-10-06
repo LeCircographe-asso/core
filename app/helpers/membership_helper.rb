@@ -13,7 +13,7 @@ module MembershipHelper
       "bg-gray-100 text-gray-800"
     end
   end
-  
+
   def membership_status_display_name(status)
     case status.to_sym
     when :active
@@ -28,7 +28,7 @@ module MembershipHelper
       status.to_s.humanize
     end
   end
-  
+
   def membership_type_badge_class(type_name)
     case type_name.to_sym
     when :Basic
@@ -41,7 +41,7 @@ module MembershipHelper
       "bg-gray-100 text-gray-800"
     end
   end
-  
+
   def membership_type_display_name(type_name)
     case type_name.to_sym
     when :Basic
@@ -54,11 +54,11 @@ module MembershipHelper
       type_name.to_s.humanize
     end
   end
-  
+
   def format_date(date)
     date&.strftime("%d/%m/%Y") || "Non renseigné"
   end
-  
+
   def user_membership_status(user)
     if user.active_subscription?
       latest_membership = user.user_memberships.order(created_at: :desc).first
@@ -67,7 +67,7 @@ module MembershipHelper
       "bg-gray-100 text-gray-800"
     end
   end
-  
+
   def user_membership_type(user)
     if user.active_subscription?
       latest_membership = user.user_memberships.order(created_at: :desc).first
@@ -76,4 +76,4 @@ module MembershipHelper
       "bg-gray-100 text-gray-800"
     end
   end
-end 
+end

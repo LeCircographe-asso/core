@@ -19,9 +19,9 @@ Rails.application.routes.draw do
     end
     resources :product_orders, only: %i[create update]
     resources :products do
-      resources :price_entries, only: %i[index new create], controller: 'price_entry'
+      resources :price_entries, only: %i[index new create], controller: "price_entry"
     end
-    resources :price_catalogs, controller: 'price_catalog'
+    resources :price_catalogs, controller: "price_catalog"
     resources :payments, only: %i[show create new update index destroy]
     resources :exports, only: %i[index] do
       get :newsletter_subscribed, on: :collection

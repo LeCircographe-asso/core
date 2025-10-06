@@ -34,9 +34,27 @@ jobs:
         bundle exec rails db:create db:migrate
         bundle exec rspec --exclude-pattern="spec/disabled/**/*_spec.rb"
         
-    - name: Notify dependencies ready
+    - name: Auto-merge to dev
+      if: success() && github.event_name == 'push'
+      run: |
+        git config --global user.name "GitHub Actions"
+        git config --global user.email "actions@github.com"
+        
+        # Fetch latest changes
+        git fetch origin
+        
+        # Checkout dev branch
+        git checkout dev
+        git pull origin dev
+        
+        # Merge deps into dev
+        git merge origin/deps --no-edit
+        
+        # Push to dev (this will trigger staging deployment)
+        git push origin dev
+        
+    - name: Notify dependency update
       if: success()
       run: |
-        echo "✅ Dependencies updated and tested on deps branch"
-        echo "📋 Ready to merge to dev when needed"
-        echo "💡 Use 'Sync Dependencies to Dev' workflow to merge manually"
+        echo "🎉 Dependencies updated and merged to dev"
+        echo "✅ Staging deployment will be triggered automatically"
