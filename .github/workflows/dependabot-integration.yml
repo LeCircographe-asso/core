@@ -1,0 +1,60 @@
+name: 🔄 Dependabot Integration
+
+on:
+  push:
+    branches: [ deps ]
+  pull_request:
+    branches: [ deps ]
+
+jobs:
+  test-dependencies:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Ruby
+      uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: 3.2.5
+        bundler-cache: true
+        
+    - name: Set up Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        
+    - name: Install dependencies
+      run: |
+        bundle install
+        npm install
+        
+    - name: Run tests
+      run: |
+        bundle exec rails db:create db:migrate
+        bundle exec rspec --exclude-pattern="spec/disabled/**/*_spec.rb"
+        
+    - name: Auto-merge to dev
+      if: success() && github.event_name == 'push'
+      run: |
+        git config --global user.name "GitHub Actions"
+        git config --global user.email "actions@github.com"
+        
+        # Fetch latest changes
+        git fetch origin
+        
+        # Checkout dev branch
+        git checkout dev
+        git pull origin dev
+        
+        # Merge deps into dev
+        git merge origin/deps --no-edit
+        
+        # Push to dev (this will trigger staging deployment)
+        git push origin dev
+        
+    - name: Notify dependency update
+      if: success()
+      run: |
+        echo "🎉 Dependencies updated and merged to dev"
+        echo "✅ Staging deployment will be triggered automatically"
