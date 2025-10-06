@@ -1,3 +1,8 @@
-# See https://www.robotstxt.org/robotstxt.html for documentation on how to use the robots.txt file
+# Robots.txt pour staging.lecircographe.fr
+# Empêche l'indexation par les moteurs de recherche
+
 User-agent: *
-Disallow: /users
+Disallow: /
+
+# Le site principal lecircographe.fr reste accessible
+# Ce robots.txt s'applique uniquement à staging.lecircographe.fr
