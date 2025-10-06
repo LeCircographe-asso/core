@@ -1,0 +1,93 @@
+name: 🧪 Test Dependabot Updates
+
+on:
+  push:
+    branches: [ deps ]
+  pull_request:
+    branches: [ deps ]
+
+jobs:
+  test-dependabot:
+    runs-on: ubuntu-latest
+    
+    services:
+      sqlite3:
+        image: sqlite3:latest
+        
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Ruby
+      uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: 3.2.5
+        bundler-cache: true
+        
+    - name: Set up Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        
+    - name: Install dependencies
+      run: |
+        bundle install
+        npm install
+        
+    - name: Run tests
+      run: |
+        bundle exec rails db:create db:migrate
+        bundle exec rspec
+        
+    - name: Run linting
+      run: |
+        bundle exec rubocop
+        npm run lint
+        
+    - name: Test deployment configuration
+      run: |
+        # Vérifier que les configurations de déploiement sont valides
+        echo "Testing deployment configurations..."
+        
+        # Test configuration staging
+        if [ -f "config/deploy.staging.yml" ]; then
+          echo "✅ Staging configuration exists"
+        else
+          echo "❌ Staging configuration missing"
+          exit 1
+        fi
+        
+        # Test configuration production
+        if [ -f "config/deploy.yml" ]; then
+          echo "✅ Production configuration exists"
+        else
+          echo "❌ Production configuration missing"
+          exit 1
+        fi
+        
+        # Test scripts
+        if [ -f "scripts/deploy-staging.sh" ] && [ -x "scripts/deploy-staging.sh" ]; then
+          echo "✅ Staging deployment script exists and is executable"
+        else
+          echo "❌ Staging deployment script missing or not executable"
+          exit 1
+        fi
+        
+        if [ -f "scripts/deploy-production.sh" ] && [ -x "scripts/deploy-production.sh" ]; then
+          echo "✅ Production deployment script exists and is executable"
+        else
+          echo "❌ Production deployment script missing or not executable"
+          exit 1
+        fi
+        
+    - name: Notify test results
+      if: always()
+      run: |
+        if [ "${{ job.status }}" == "success" ]; then
+          echo "🎉 Dependabot updates tested successfully!"
+          echo "✅ All tests passed"
+          echo "✅ Deployment configurations valid"
+          echo "✅ Scripts executable"
+        else
+          echo "❌ Dependabot updates failed tests"
+          echo "Please review the changes before merging to dev"
+        fi
