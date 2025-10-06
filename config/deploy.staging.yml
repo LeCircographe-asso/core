@@ -2,7 +2,11 @@
 service: circographe-staging
 
 # Image Docker pour staging
-image: lecircographe-asso/circographe:staging
+image: lecircographe-asso/circographe
+
+# Configuration pour éviter les tags automatiques problématiques
+builder:
+  arch: amd64
 
 # Serveurs de staging
 servers:
