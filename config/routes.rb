@@ -18,7 +18,10 @@ Rails.application.routes.draw do
       resources :attendances, only: %i[new index create show edit update]
     end
     resources :product_orders, only: %i[create update]
-    resources :products, only: %i[index]
+    resources :products do
+      resources :price_entries, only: %i[index new create], controller: 'price_entry'
+    end
+    resources :price_catalogs, controller: 'price_catalog'
     resources :payments, only: %i[show create new update index destroy]
     resources :exports, only: %i[index] do
       get :newsletter_subscribed, on: :collection
@@ -33,10 +36,13 @@ Rails.application.routes.draw do
   resources :event_attendees, only: %i[create destroy]
   resources :blogs, only: %i[show ]
   get "/blog-newsletter", to: "blogs#index"
-  resources :users do
+  resources :users, only: %i[show edit update destroy] do
     post "change_newsletter_status", on: :member
     get "change_newsletter_status", on: :member
   end
+
+  # Route for newsletter signup from footer
+  post "/newsletter_signup", to: "users#newsletter_signup", as: "newsletter_signup"
 
   scope "/checkout" do
     post "create", to: "checkout#create", as: "checkout_create"
@@ -45,6 +51,7 @@ Rails.application.routes.draw do
   end
 
   root "home#index"
+  get "fonts", to: "home#font_examples", as: "font_examples"
 
   # match "*unmatched", to: "application#url_not_found", via: :all
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html

@@ -1,9 +1,0 @@
-@import url('https://fonts.googleapis.com/css?family=OpenDyslexic');
-
-body {
-    font-family: Arial, sans-serif;
-}
-
-body.dyslexic-font-enabled {
-    font-family: 'OpenDyslexic', Arial, sans-serif;
-}

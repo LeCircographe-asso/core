@@ -1,0 +1,46 @@
+name: 🏭 Deploy to Production
+
+on:
+  workflow_dispatch: # Déploiement manuel uniquement
+    inputs:
+      environment:
+        description: 'Environment to deploy to'
+        required: true
+        default: 'production'
+        type: choice
+        options:
+        - production
+
+jobs:
+  deploy-production:
+    runs-on: ubuntu-latest
+    environment: production # Nécessite approbation manuelle
+    
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Ruby
+      uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: 3.2.5
+        bundler-cache: true
+
+    - name: Install Kamal
+      run: gem install kamal
+
+    - name: Deploy to production
+      env:
+        KAMAL_REGISTRY_PASSWORD: ${{ secrets.KAMAL_REGISTRY_PASSWORD }}
+        RAILS_MASTER_KEY: ${{ secrets.RAILS_MASTER_KEY }}
+      run: |
+        ./scripts/deploy-production.sh
+
+    - name: Notify deployment
+      if: success()
+      run: |
+        echo "✅ Déploiement production réussi : https://lecircographe.fr"
+
+    - name: Notify failure
+      if: failure()
+      run: |
+        echo "❌ Échec du déploiement production"

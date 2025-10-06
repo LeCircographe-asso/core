@@ -1,0 +1,55 @@
+@import url('https://fonts.googleapis.com/css?family=OpenDyslexic');
+
+@font-face {
+  font-family: 'Circographe';
+  src: font-url('Circographe-Regular.woff2') format('woff2'),
+       font-url('Circographe-Regular.woff') format('woff'),
+       font-url('Circographe-Regular.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Rough Typewriter';
+  src: font-url('Rough_typewriter.woff2') format('woff2'),
+       font-url('Rough_typewriter.woff') format('woff'),
+       font-url('rough_typewriter.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Rough Typewriter';
+  src: font-url('Rough_typewriter-itl.woff2') format('woff2'),
+       font-url('Rough_typewriter-itl.woff') format('woff');
+  font-weight: normal;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Rough Typewriter';
+  src: font-url('Rough_typewriter-bld-itl.woff2') format('woff2'),
+       font-url('Rough_typewriter-bld-itl.woff') format('woff');
+  font-weight: bold;
+  font-style: italic;
+  font-display: swap;
+}
+
+body {
+    font-family: 'Rough Typewriter', monospace;
+}
+
+body.dyslexic-font-enabled {
+    font-family: 'OpenDyslexic', Arial, sans-serif;
+}
+
+.font-circographe {
+    font-family: 'Circographe', Arial, sans-serif;
+}
+
+.font-rough-typewriter {
+    font-family: 'Rough Typewriter', monospace;
+}
