@@ -1,0 +1,44 @@
+name: 🔄 Auto-merge Dependabot (Tested)
+
+on:
+  pull_request:
+    branches: [ dev ]
+    types: [opened, synchronize]
+
+jobs:
+  auto-merge:
+    if: github.actor == 'dependabot[bot]' && github.event.pull_request.draft == false
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Check if PR is from deps branch
+      id: check-branch
+      run: |
+        if [[ "${{ github.head_ref }}" == "dependabot/bundler/deps/"* ]] || [[ "${{ github.head_ref }}" == "dependabot/github_actions/deps/"* ]]; then
+          echo "is_dependabot=true" >> $GITHUB_OUTPUT
+        else
+          echo "is_dependabot=false" >> $GITHUB_OUTPUT
+        fi
+    
+    - name: Wait for tests to complete
+      if: steps.check-branch.outputs.is_dependabot == 'true'
+      uses: lewagon/wait-on-check-action@v1.3.1
+      with:
+        ref: ${{ github.event.pull_request.head.sha }}
+        check-name: 'Test Dependabot Updates'
+        repo-token: ${{ secrets.GITHUB_TOKEN }}
+        wait-interval: 10
+        
+    - name: Auto-merge PR
+      if: steps.check-branch.outputs.is_dependabot == 'true'
+      uses: fastify/github-action-merge-dependabot@v3
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        target: minor
+        merge-method: squash
+        
+    - name: Notify merge
+      if: steps.check-branch.outputs.is_dependabot == 'true'
+      run: |
+        echo "🎉 Dependabot PR auto-merged to dev branch"
+        echo "✅ Updates will be deployed to staging automatically"

@@ -2,9 +2,9 @@ name: CI/CD Pipeline
 
 on:
   push:
-    branches: [ main, develop ]
+    branches: [ main, dev, deps ]
   pull_request:
-    branches: [ main, develop ]
+    branches: [ main, dev, deps ]
 
 jobs:
   test:
@@ -44,7 +44,7 @@ jobs:
         npm run lint
         
   deploy-staging:
-    if: github.ref == 'refs/heads/develop'
+    if: github.ref == 'refs/heads/dev'
     needs: test
     runs-on: ubuntu-latest
     
