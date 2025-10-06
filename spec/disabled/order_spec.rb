@@ -1,3 +1,5 @@
+require 'rails_helper'
+
 RSpec.describe Order, type: :model do
   describe 'factory' do
     it 'has a valid factory' do
@@ -21,7 +23,7 @@ RSpec.describe Order, type: :model do
     let(:order) { create(:order, user: user) }
     let(:product1) { create(:product, price: 100) }
     let(:product2) { create(:product, price: 200) }
-    
+
     before do
       create(:product_order, order: order, product: product1, quantity: 2)
       create(:product_order, order: order, product: product2, quantity: 1)
@@ -128,11 +130,11 @@ RSpec.describe Order, type: :model do
 
       it 'updates existing product order if product already exists' do
         create(:product_order, order: order, product: product, quantity: 1)
-        
+
         expect {
           order.add_product(product, 2)
         }.not_to change(ProductOrder, :count)
-        
+
         expect(order.product_orders.last.quantity).to eq(3)
       end
     end
@@ -152,4 +154,4 @@ RSpec.describe Order, type: :model do
       end
     end
   end
-end 
+end

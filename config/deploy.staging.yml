@@ -2,7 +2,7 @@
 service: circographe-staging
 
 # Image Docker pour staging
-image: ghcr.io/lecircographe-asso/circographe:staging
+image: lecircographe-asso/circographe:staging
 
 # Serveurs de staging
 servers:

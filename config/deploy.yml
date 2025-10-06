@@ -2,7 +2,7 @@
 service: circographe
 
 # Name of the container image.
-image: ghcr.io/lecircographe-asso/circographe:production
+image: lecircographe-asso/circographe:production
 
 # Deploy to these servers.
 servers:
