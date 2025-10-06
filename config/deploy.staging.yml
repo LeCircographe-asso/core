@@ -1,0 +1,45 @@
+# Configuration Kamal pour l'environnement de staging
+service: circographe-staging
+
+# Image Docker pour staging
+image: ghcr.io/lecircographe-asso/circographe:staging
+
+# Serveurs de staging
+servers:
+  web:
+    - 87.106.173.45
+
+# Configuration SSL pour staging
+proxy:
+  ssl: true
+  host: staging.lecircographe.fr
+
+# Credentials pour le registry
+registry:
+  server: ghcr.io
+  username: LeCircographe-asso
+  password:
+    - KAMAL_REGISTRY_PASSWORD
+
+# Variables d'environnement pour staging
+env:
+  secret:
+    - RAILS_MASTER_KEY
+  clear:
+    RAILS_ENV: staging
+    SOLID_QUEUE_IN_PUMA: true
+    RAILS_LOG_LEVEL: debug
+
+# Aliases pour staging
+aliases:
+  console: app exec --interactive --reuse "bin/rails console"
+  shell: app exec --interactive --reuse "bash"
+  logs: app logs -f
+
+# Volumes persistants pour staging
+volumes:
+  - "circographe_staging_storage:/rails/storage"
+
+# Configuration du builder
+builder:
+  arch: amd64

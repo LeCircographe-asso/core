@@ -9,7 +9,7 @@
 
             <!-- Elements grouped on the right for mobile -->
             <div class="flex items-center md:hidden">
-                <% if authenticated? %>
+                <% if authenticated? && Current.user %>
                 <%= link_to user_path(Current.user), class: "flex mr-3" do %>
                 <%= image_tag("users.png", alt: "photo de profil", class: "w-8 h-8 rounded-full hover:ring-2 hover:ring-indigo-300") %>
                 <% end %>
@@ -98,7 +98,7 @@
 
         <!-- User buttons (desktop only) -->
         <div class="hidden md:flex items-center md:space-x-3">
-            <% if authenticated? %>
+            <% if authenticated? && Current.user %>
             <!-- Clickable profile picture -->
             <%= link_to user_path(Current.user), class: "flex mr-3" do %>
             <%= image_tag("users.png", alt: "photo de profil", class: "w-8 h-8 rounded-full hover:ring-2 hover:ring-indigo-300") %>
@@ -264,7 +264,7 @@
 
             <!-- User buttons (mobile) -->
             <div class="flex flex-col w-full mt-4 space-y-3">
-                <% if authenticated? %>
+                <% if authenticated? && Current.user %>
                 <div class="flex items-center space-x-3 p-4 bg-gray-50 rounded-lg">
                     <%= image_tag("users.png", alt: "photo de profil", class: "w-10 h-10 rounded-full") %>
                     <div>

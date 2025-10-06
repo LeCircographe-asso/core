@@ -1,20 +1,55 @@
-## Mode maintenance
+# 🎪 Le Circographe
 
-Activer une page unique « En maintenance » pour l’ensemble du site:
+Application de gestion pour association de cirque développée avec Rails 8.0.
 
-1. Définir la variable d’environnement:
+## 🚀 Démarrage rapide
 
-   ```bash
-   export MAINTENANCE_MODE=true
-   # ou dans production: MAINTENANCE_MODE=true systemd/ENV/Dokku/Heroku variables
-   ```
+### Développement local
+```bash
+# Installation
+bundle install
+rails db:reset
+rails s
 
-2. Désactiver:
+# Accès
+http://localhost:3000
+```
 
-   ```bash
-   export MAINTENANCE_MODE=false
-   ```
+### Déploiement
+```bash
+# Staging
+./scripts/deploy-staging.sh
 
-3. L’endpoint `/up` reste accessible (healthcheck).
+# Production  
+./scripts/deploy-production.sh
+```
 
+## 📚 Documentation
 
+- **[Documentation complète](docs/README.md)** - Guide complet du projet
+- **[Configuration Rails 8.0](docs/documentations/technical/RAILS8_CONFIG.md)** - Nouvelles fonctionnalités
+- **[Déploiement](docs/documentations/technical/deployment/)** - Guides de déploiement
+- **[Environnements](docs/documentations/technical/ENVIRONMENTS.md)** - Configuration des environnements
+
+## 🔧 Environnements
+
+- **Development** : Local (localhost:3000)
+- **Staging** : staging.lecircographe.fr
+- **Production** : lecircographe.fr
+
+## 📋 Prérequis
+
+- Ruby 3.2.5+
+- Rails 8.0.2+
+- Docker (pour le déploiement)
+- Kamal (pour le déploiement)
+
+## 🔗 Liens utiles
+
+- [Documentation technique](docs/documentations/technical/)
+- [Guides utilisateur](docs/documentations/USER_GUIDES.md)
+- [Guide administrateur](docs/documentations/ADMIN_GUIDE.md)
+
+---
+
+*Application développée avec ❤️ pour Le Circographe*
