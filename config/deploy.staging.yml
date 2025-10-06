@@ -11,12 +11,12 @@ builder:
 # Serveurs de staging
 servers:
   web:
-    - 87.106.173.45
+    - <%= ENV["STAGING_SERVER_IP"] %>
 
 # Configuration pour staging (IP brute, pas de domaine)
 proxy:
   ssl: false
-  host: 87.106.173.45
+  host: <%= ENV["STAGING_SERVER_IP"] %>
 
 # Credentials pour le registry
 registry:
