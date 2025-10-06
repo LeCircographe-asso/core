@@ -32,7 +32,7 @@ jobs:
     - name: Run tests
       run: |
         bundle exec rails db:create db:migrate
-        bundle exec rspec
+        bundle exec rspec --format progress
         
     - name: Run linting
       run: |
