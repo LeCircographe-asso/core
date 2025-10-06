@@ -7,7 +7,7 @@ image: lecircographe-asso/circographe:production
 # Deploy to these servers.
 servers:
   web:
-    - 82.165.63.129
+    - <%= ENV["PRODUCTION_SERVER_IP"] %>
   # job:
   #   hosts:
   #     - 192.168.0.1
