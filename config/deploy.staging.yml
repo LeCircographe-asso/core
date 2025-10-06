@@ -11,12 +11,12 @@ builder:
 # Serveurs de staging
 servers:
   web:
-    - 82.165.63.129
+    - 87.106.173.45
 
-# Configuration SSL pour staging
+# Configuration pour staging (IP brute, pas de domaine)
 proxy:
-  ssl: true
-  host: staging.lecircographe.fr
+  ssl: false
+  host: 87.106.173.45
 
 # Credentials pour le registry
 registry:
