@@ -20,7 +20,7 @@ class SettingsController < ApplicationController
     params.require(:user).permit(
       :email_address, :image_rights,
       :newsletter_subscribed, :get_involved,
-      :dyslexic_font 
+      :dyslexic_font
     )
   end
 end

@@ -1,7 +1,7 @@
 class UsersController < ApplicationController
   # This controller handles user profile management for authenticated users.
-  # It allows users to view and edit their profile information and 
-  # delete their account (GDPR compliance). 
+  # It allows users to view and edit their profile information and
+  # delete their account (GDPR compliance).
   #
   # Note: New user registration is handled by RegistrationsController.
   # This separation follows the principle of single responsibility:
@@ -9,8 +9,8 @@ class UsersController < ApplicationController
   # - UsersController: Managing existing accounts
   # - SessionsController: Handling login/logout
   include UsersHelper
-  before_action :require_authentication, except: [:change_newsletter_status, :newsletter_signup]
-  before_action :set_user, only: [:show, :edit, :update, :change_newsletter_status, :destroy]
+  before_action :require_authentication, except: [ :change_newsletter_status, :newsletter_signup ]
+  before_action :set_user, only: [ :show, :edit, :update, :change_newsletter_status, :destroy ]
 
   # User profile view
   def show
@@ -49,7 +49,7 @@ class UsersController < ApplicationController
       toggle_newsletter_status
     end
   end
-  
+
   # Handle newsletter signup from footer
   def newsletter_signup
     # Check honeypot - if filled, it's likely a bot
@@ -58,9 +58,9 @@ class UsersController < ApplicationController
       redirect_back fallback_location: root_path, notice: "Merci pour votre inscription!"
       return
     end
-    
+
     email = params[:user][:email_address]
-    
+
     if email.blank?
       flash[:alert] = "Veuillez entrer une adresse email valide."
       redirect_back fallback_location: root_path
@@ -97,7 +97,7 @@ class UsersController < ApplicationController
   # Toggle newsletter subscription status for authenticated user
   def toggle_newsletter_status
     return redirect_to root_path, alert: "Vous devez être connecté" unless @user
-    
+
     @user.update(newsletter_subscribed: !@user.newsletter_subscribed)
     message = @user.newsletter_subscribed ? "Vous êtes inscrit à la newsletter" : "Vous êtes désinscrit de la newsletter"
     redirect_to @user, notice: message

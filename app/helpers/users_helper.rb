@@ -1,5 +1,4 @@
 module UsersHelper
-
   def newsletter_signup(email)
     if email.blank?
       flash[:alert] = "Veuillez entrer une adresse email valide."

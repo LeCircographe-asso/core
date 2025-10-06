@@ -10,6 +10,5 @@ class PagesController < ApplicationController
     @notepad = Rails.cache.fetch("notepad") || default_notepad
     @blogs = Blog.order(created_at: :desc).limit(3)
     render template: "pages/#{params[:id]}"
-        
   end
 end

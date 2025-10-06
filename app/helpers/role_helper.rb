@@ -13,7 +13,7 @@ module RoleHelper
       "bg-gray-100 text-gray-800"
     end
   end
-  
+
   def role_display_name(role)
     case role.to_sym
     when :super_admin
@@ -28,24 +28,24 @@ module RoleHelper
       role.to_s.humanize
     end
   end
-  
+
   def can_manage_users?
     current_user&.has_privileges?
   end
-  
+
   def can_edit_user?(user)
     return false unless current_user && user
-    
+
     current_user.has_higher_permissions?(user)
   end
-  
+
   def available_roles_for_user(user)
     return [] unless current_user && user
-    
+
     if current_user.has_higher_permissions?(user)
       current_user.inferior_rights
     else
-      [user.system_role]
+      [ user.system_role ]
     end
   end
-end 
+end

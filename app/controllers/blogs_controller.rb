@@ -1,5 +1,4 @@
 class BlogsController < ApplicationController
-
   before_action :set_blog, only: %i[show ]
 
   # def article
@@ -8,7 +7,7 @@ class BlogsController < ApplicationController
   # def newsletter
   # end
 
-  
+
 
 
 
@@ -20,7 +19,7 @@ class BlogsController < ApplicationController
     @tags=@blog.tags
   end
 
-  
+
 
   private
     # Use callbacks to share common setup or constraints between actions.

@@ -22,11 +22,11 @@ class CreateSolidQueueTables < ActiveRecord::Migration[8.0]
     end
 
     add_index :solid_queue_jobs, :scheduled_at, where: "finished_at IS NULL", if_not_exists: true
-    add_index :solid_queue_jobs, [:queue_name, :finished_at], if_not_exists: true
+    add_index :solid_queue_jobs, [ :queue_name, :finished_at ], if_not_exists: true
     add_index :solid_queue_jobs, :active_job_id, if_not_exists: true
-    add_index :solid_queue_jobs, [:concurrency_key, :finished_at], if_not_exists: true
+    add_index :solid_queue_jobs, [ :concurrency_key, :finished_at ], if_not_exists: true
 
     add_index :solid_queue_semaphores, :key, unique: true, if_not_exists: true
     add_index :solid_queue_semaphores, :expires_at, if_not_exists: true
   end
-end 
+end

@@ -45,4 +45,4 @@ module Admin
       params.require(:price_catalog).permit(:active, :price)
     end
   end
-end 
+end

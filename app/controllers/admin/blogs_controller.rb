@@ -1,13 +1,12 @@
 module Admin
   class BlogsController < ApplicationController
-
     before_action :set_blog, only: %i[ show edit update destroy ]
     before_action :has_admin?
-    
+
     def index
       @blogs = Blog.all
     end
-  
+
     def show
       @tags=@blog.tags
     end
@@ -22,7 +21,6 @@ module Admin
     end
 
     def create
-
       @blog = Blog.new(blog_params)
       if params[:blog][:tag_ids]
         params[:blog][:tag_ids].each do |i|
@@ -35,7 +33,6 @@ module Admin
       else
         render :new
       end
-
     end
 
     def update
