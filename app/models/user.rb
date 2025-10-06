@@ -1,5 +1,5 @@
 class User < ApplicationRecord
-  include SoftDeletable
+  # include SoftDeletable  # Temporarily disabled for seed rebuild
 
   attr_accessor :cgu, :privacy_policy
   # after_create :assign_membership
@@ -46,14 +46,14 @@ class User < ApplicationRecord
   validates :privacy_policy, acceptance: { message: "Vous devez accepter la politique de confidentialité pour continuer." }
 
   # Override destroy method from SoftDeletable to handle payments
-  def destroy
-    if has_active_payments?
-      handle_deletion_with_payments
-    else
-      super # Call SoftDeletable's destroy method
-      anonymize_personal_data
-    end
-  end
+  # def destroy
+  #   if has_active_payments?
+  #     handle_deletion_with_payments
+  #   else
+  #     super # Call SoftDeletable's destroy method
+  #     anonymize_personal_data
+  #   end
+  # end
 
   # Anonymize personal data after soft deletion
   def anonymize_personal_data

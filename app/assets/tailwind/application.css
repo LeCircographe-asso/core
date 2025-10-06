@@ -31,3 +31,10 @@
     background-color: #fff8f8; /* Exemple: couleur gray-200 de Tailwind */
     opacity: 0.2; /* Rend ce gris semi-transparent */
   }
+
+@layer components {
+  .footer-divider {
+    margin-top: 2rem !important;
+    margin-bottom: 2rem !important;
+  }
+}

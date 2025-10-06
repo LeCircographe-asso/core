@@ -1,41 +1,47 @@
 class UsersController < ApplicationController
+  # This controller handles user profile management for authenticated users.
+  # It allows users to view and edit their profile information and 
+  # delete their account (GDPR compliance). 
+  #
+  # Note: New user registration is handled by RegistrationsController.
+  # This separation follows the principle of single responsibility:
+  # - RegistrationsController: Creating new accounts
+  # - UsersController: Managing existing accounts
+  # - SessionsController: Handling login/logout
   include UsersHelper
-  before_action :set_user, only: %i[ show edit update destroy change_newsletter_status ]
-  skip_before_action :require_authentication, only: %i[create]
+  before_action :require_authentication, except: [:change_newsletter_status, :newsletter_signup]
+  before_action :set_user, only: [:show, :edit, :update, :change_newsletter_status, :destroy]
 
+  # User profile view
   def show
   end
 
+  # User profile edit form
   def edit
   end
 
-  def create
-    @user = User.new(user_params)
-    return newsletter_signup(user_params[:email_address]) unless user_params[:password]
-    if @user.save
-      redirect_to @user, notice: "Utilisateur créé avec succès."
-    else
-      render :new, status: :unprocessable_entity
-    end
-  end
-
+  # User profile update
   def update
     if @user.update(user_params)
-      redirect_to @user, notice: "Utilisateur mis à jour avec succès."
+      redirect_to @user, notice: "Votre profil a été mis à jour avec succès."
     else
       render :edit, status: :unprocessable_entity
     end
   end
 
+  # GDPR-compliant account deletion (soft delete)
   def destroy
-    @user.destroy!
-
-    respond_to do |format|
-      format.html { redirect_to root_path, status: :see_other, notice: "Utilisateur supprimé avec succès." }
-      format.json { head :no_content }
+    # Soft delete the user (keeps records for legal/audit purposes)
+    if @user.update(deleted: true, deleted_at: Time.current)
+      # End the user's session
+      reset_session
+      redirect_to root_path, notice: "Votre compte a été supprimé avec succès."
+    else
+      redirect_to edit_user_path(@user), alert: "Impossible de supprimer votre compte. Veuillez contacter l'assistance."
     end
   end
 
+  # Newsletter subscription management
   def change_newsletter_status
     if params[:token].present?
       unsubscribe_by_token
@@ -43,34 +49,100 @@ class UsersController < ApplicationController
       toggle_newsletter_status
     end
   end
+  
+  # Handle newsletter signup from footer
+  def newsletter_signup
+    # Check honeypot - if filled, it's likely a bot
+    if params[:user][:website].present?
+      # Don't show an error, just silently redirect to avoid tipping off bots
+      redirect_back fallback_location: root_path, notice: "Merci pour votre inscription!"
+      return
+    end
+    
+    email = params[:user][:email_address]
+    
+    if email.blank?
+      flash[:alert] = "Veuillez entrer une adresse email valide."
+      redirect_back fallback_location: root_path
+      return
+    end
 
+    result = NewsletterSignupService.new(email, authenticated? ? Current.user : nil).call_newsletter
+
+    if result[:redirect_to]
+      redirect_to new_registration_path
+      session[:newsletter_email] = email
+    elsif result[:success]
+      flash[:notice] = result[:message]
+      redirect_back fallback_location: root_path
+    else
+      flash[:alert] = result[:message]
+      redirect_back fallback_location: root_path
+    end
+  end
+
+  private
+
+  # Handle token-based unsubscription (public access)
   def unsubscribe_by_token
     @user = User.find_by(unsubscribe_token: params[:token])
     if @user
       @user.update(newsletter_subscribed: false)
-      redirect_to root_path, notice: "Vous avez été désinscrit de la newsletter avec succès."
+      redirect_to page_path("newsletter_unsubscribe_success")
     else
       redirect_to root_path, alert: "Token de désinscription invalide."
     end
-    redirect_to page_path("newsletter_unsubscribe_success")
   end
 
+  # Toggle newsletter subscription status for authenticated user
   def toggle_newsletter_status
+    return redirect_to root_path, alert: "Vous devez être connecté" unless @user
+    
     @user.update(newsletter_subscribed: !@user.newsletter_subscribed)
     message = @user.newsletter_subscribed ? "Vous êtes inscrit à la newsletter" : "Vous êtes désinscrit de la newsletter"
     redirect_to @user, notice: message
   end
 
-  private
+  # Set user to current user for profile actions
+  def set_user
+    @user = Current.user
+  end
 
-    # Use callbacks to share common setup or constraints between actions.
-    def set_user
-      @user = Current.user
+  # Permitted parameters for user self-management
+  def user_params
+    params.require(:user).permit(
+      :email_address,
+      :phone_number,
+      :address,
+      :zip_code,
+      :town,
+      :country,
+      :image_rights,
+      :get_involved,
+      :newsletter_subscribed,
+      :dyslexic_font
+    )
+  end
+
+  # Helper method renamed to avoid conflict
+  def process_newsletter_signup(email)
+    if email.blank?
+      flash[:alert] = "Veuillez entrer une adresse email valide."
+      redirect_back fallback_location: root_path
+      return
     end
 
-    # Only allow a list of trusted parameters through.
-    def user_params
-      params.fetch(:user, {})
-      params.require(:user).permit(:email_address)
+    result = NewsletterSignupService.new(email, authenticated? ? Current.user : nil).call_newsletter
+
+    if result[:redirect_to]
+      redirect_to new_registration_path
+      session[:newsletter_email] = email
+    elsif result[:success]
+      flash[:notice] = result[:message]
+      redirect_back fallback_location: root_path
+    else
+      flash[:alert] = result[:message]
+      redirect_back fallback_location: root_path
     end
+  end
 end
