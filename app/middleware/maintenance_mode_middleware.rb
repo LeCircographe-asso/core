@@ -14,11 +14,20 @@ class MaintenanceModeMiddleware
   private
 
   def maintenance_enabled?
-    # Vérifie plusieurs sources pour le mode maintenance
-    maintenance_mode = ENV["MAINTENANCE_MODE"].to_s.strip.downcase
-    maintenance_file = File.exist?("/tmp/maintenance") && File.read("/tmp/maintenance").strip.downcase == "true"
-
-    maintenance_mode == "true" || maintenance_file
+    # Logique hybride : maintenance par défaut si ENV non défini (comme maintenance-mode)
+    # mais support du fichier /tmp/maintenance pour plus de flexibilité
+    value = ENV["MAINTENANCE_MODE"]
+    
+    # Si ENV["MAINTENANCE_MODE"] n'est pas défini, activation par défaut (sécurité)
+    return true if value.nil? || value.to_s.strip.empty?
+    
+    # Si ENV est défini, respecter sa valeur
+    env_enabled = value.to_s.strip.casecmp("true").zero?
+    
+    # Vérifier aussi le fichier /tmp/maintenance pour plus de flexibilité
+    file_enabled = File.exist?("/tmp/maintenance") && File.read("/tmp/maintenance").strip.downcase == "true"
+    
+    env_enabled || file_enabled
   end
 
   def healthcheck?(env)
