@@ -37,17 +37,8 @@ module Circographe
     # Don't generate system test files.
     config.generators.system_tests = nil
 
-    # Configure multi-database setup
-    if Rails.env.production?
-      # Configure database connections for various services
-      config.solid_cache.connects_to = { database: { writing: :"#{Rails.env}_cache", reading: :"#{Rails.env}_cache" } }
-      config.solid_queue.connects_to = { database: { writing: :"#{Rails.env}_queue", reading: :"#{Rails.env}_queue" } }
-      config.action_cable.cable_connection_class = -> { ActionCable::Connection::Base.establish_connection(adapter: "sqlite3", database: "storage/#{Rails.env}_cable.sqlite3") }
-    else
-      # Development/test configuration
-      config.solid_cache.connects_to = { database: { writing: :"#{Rails.env}_cache", reading: :"#{Rails.env}_cache" } }
-      config.solid_queue.connects_to = { database: { writing: :"#{Rails.env}_queue", reading: :"#{Rails.env}_queue" } }
-    end
+    # Configure multi-database setup for Rails 8.0
+    # SolidCache, SolidQueue, and SolidCable use separate databases
 
     # Insert maintenance mode middleware at the top so it intercepts all requests
     config.middleware.insert_before 0, MaintenanceModeMiddleware

@@ -1,42 +1,47 @@
 FactoryBot.define do
   factory :product do
     product_name { "Adhésion simple" }
-    price { 10.0 }
-    active { true }
+    product_type { "adhesion" }
 
     trait :circus_membership do
       product_name { "Adhésion Cirque - Tarif Plein" }
-      price { 30.0 }
+      product_type { "adhesion" }
     end
 
     trait :basic_membership do
       product_name { "Adhésion simple" }
-      price { 10.0 }
+      product_type { "adhesion" }
     end
 
     trait :annual_subscription do
       product_name { "Cotisation annuelle" }
-      price { 250.0 }
+      product_type { "cotisation" }
     end
 
     trait :quarterly_subscription do
       product_name { "Cotisation trimestrielle" }
-      price { 75.0 }
+      product_type { "cotisation" }
     end
 
     trait :ten_sessions do
       product_name { "Cotisation 10 séances" }
-      price { 100.0 }
+      product_type { "cotisation" }
     end
 
     trait :day_pass do
       product_name { "Pass journée" }
-      price { 15.0 }
+      product_type { "pass" }
     end
 
     trait :donation do
       product_name { "Donation" }
-      price { 5.0 }
+      product_type { "donation" }
+    end
+
+    trait :with_price do
+      after(:create) do |product|
+        create(:price_entry, product: product, price: 10.0)
+      end
     end
   end
 end
