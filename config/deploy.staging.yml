@@ -11,7 +11,7 @@ builder:
 # Serveurs de staging
 servers:
   web:
-    - 87.106.173.45
+    - 82.165.63.129
 
 # Configuration SSL pour staging
 proxy:
