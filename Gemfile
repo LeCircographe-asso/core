@@ -46,7 +46,7 @@ group :development, :test do
   gem "dotenv-rails"  # Environment variables
 
   # RSpec testing framework
-  gem "rspec-rails", "~> 6.1.0"
+  gem "rspec-rails", "~> 8.0.2"
   gem "factory_bot_rails"
   gem "shoulda-matchers"
   gem "database_cleaner-active_record"
