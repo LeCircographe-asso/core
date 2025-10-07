@@ -1,6 +1,4 @@
 class Payment < ApplicationRecord
-  include SoftDeletable
-
   belongs_to :user
   belongs_to :order
   has_many :product_orders, through: :order # Ajout de la relation product_order

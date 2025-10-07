@@ -1,6 +1,4 @@
 class UserMembership < ApplicationRecord
-  include SoftDeletable
-
   enum :status, %i[active pending expired canceled], default: :pending
   belongs_to :membership
   belongs_to :user
