@@ -1,0 +1,44 @@
+# Configuration Kamal pour Production - VPS Ionos Linux M
+service: circographe-production
+image: ghcr.io/lecircographe-asso/circographe:latest
+
+# Serveur VPS Ionos
+servers:
+  - <%= ENV['PRODUCTION_SERVER_IP'] %>
+
+# Port standard pour production
+port: 80
+
+# Variables d'environnement production
+env:
+  RAILS_ENV: production
+  PRODUCTION_MODE: true
+  RAILS_SERVE_STATIC_FILES: true
+
+# Configuration Puma directe (pas de Nginx)
+puma:
+  threads: 4
+  workers: 2
+  bind: 0.0.0.0:80
+
+# Health check
+healthcheck:
+  path: /health
+  port: 80
+  max_attempts: 10
+  interval: 10s
+
+# Limites de ressources adaptées au VPS M
+limits:
+  memory: 512Mi
+  cpu: 500m
+
+# Volumes pour les logs et données
+volumes:
+  - /var/log/circographe:/app/log
+  - /var/lib/circographe:/app/storage
+
+# Configuration SSL avec Let's Encrypt
+ssl:
+  cert_path: /etc/letsencrypt/live/lecircographe.fr/fullchain.pem
+  key_path: /etc/letsencrypt/live/lecircographe.fr/privkey.pem
