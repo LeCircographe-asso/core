@@ -6,7 +6,7 @@ on:
       force_sync:
         description: 'Force sync even if there are conflicts'
         required: false
-        default: 'false'
+        default: false
         type: boolean
 
 jobs:
