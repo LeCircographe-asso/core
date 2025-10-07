@@ -1,8 +1,5 @@
 class User < ApplicationRecord
-  # include SoftDeletable  # Temporarily disabled for seed rebuild
-
   attr_accessor :cgu, :privacy_policy
-  # after_create :assign_membership
   after_create :generate_password_reset_token
   after_create :welcome_send
   before_validation :capitalize_names
@@ -17,9 +14,6 @@ class User < ApplicationRecord
   has_secure_password
 
   enum :system_role, %i[ super_admin admin volunteer user_connected ]
-
-  # Instead of using the custom soft deletion, we now use the SoftDeletable concern
-  # The attribute and scope declarations are no longer needed
 
   alias_attribute :email, :email_address
   has_many :sessions, dependent: :destroy
@@ -198,15 +192,14 @@ class User < ApplicationRecord
     create(email_address: email, **attributes)
   end
 
-  before_update :handle_payments_on_deletion, if: -> { deleted_at_changed? && deleted_at.present? }
-
-  def handle_payments_on_deletion
-    # Option 1: Soft delete the payments too
-    payments.update_all(deleted_at: Time.current)
-
-    # Option 2: Assign to admin (like our fix)
-    # admin = User.where(system_role: 'admin').first
-    # payments.update_all(user_id: admin.id) if admin
+  # Standard destroy method - no soft deletion
+  def destroy
+    # Transfer payments to admin user before deletion
+    admin_user = User.find_by(system_role: :admin)
+    if admin_user && payments.exists?
+      payments.update_all(user_id: admin_user.id)
+    end
+    super # Standard ActiveRecord destroy
   end
 
   private
