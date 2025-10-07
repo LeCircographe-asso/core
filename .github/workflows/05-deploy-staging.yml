@@ -2,7 +2,7 @@ name: 🚀 Deploy to Staging
 
 on:
   push:
-    branches: [ staging ]
+    branches: [ dev, staging ]
   pull_request:
     branches: [ staging ]
 
@@ -34,6 +34,16 @@ jobs:
         bundle exec rails db:create db:migrate
         bundle exec rspec --exclude-pattern="spec/disabled/**/*_spec.rb"
         
+    - name: Sync dev to staging (if push from dev)
+      if: github.ref == 'refs/heads/dev'
+      run: |
+        git config --global user.name "GitHub Actions"
+        git config --global user.email "actions@github.com"
+        git fetch origin
+        git checkout staging
+        git merge origin/dev --no-edit
+        git push origin staging
+        
     - name: Build Docker image for staging
       run: |
         echo "Building Docker image for staging..."
@@ -51,3 +61,8 @@ jobs:
         echo "🎉 Staging deployment completed successfully!"
         echo "🌐 Staging URL: https://staging.lecircographe.fr"
         echo "📊 You can now test the staging environment"
+        if [ "${{ github.ref }}" = "refs/heads/dev" ]; then
+          echo "🔄 Auto-deployment from dev branch"
+        else
+          echo "🔄 Manual deployment from staging branch"
+        fi
