@@ -1,17 +1,17 @@
-name: 🧪 Manual Testing
+name: 🧪 01 - Manual Testing
 
 on:
   workflow_dispatch:
     inputs:
-      environment:
-        description: 'Environment to test'
+      test_type:
+        description: 'Type of test to run'
         required: true
-        default: 'development'
+        default: 'full'
         type: choice
         options:
-        - development
-        - staging
-        - production
+        - full
+        - quick
+        - linting-only
 
 jobs:
   test:
@@ -32,11 +32,13 @@ jobs:
         node-version: '18'
         
     - name: Install dependencies
+      if: github.event.inputs.test_type != 'linting-only'
       run: |
         bundle install
         npm install
         
     - name: Run tests
+      if: github.event.inputs.test_type != 'linting-only'
       run: |
         bundle exec rails db:create db:migrate
         bundle exec rspec --format progress
@@ -48,5 +50,5 @@ jobs:
     - name: Test summary
       run: |
         echo "✅ Tests terminés avec succès"
-        echo "🎯 Environnement testé: ${{ github.event.inputs.environment }}"
+        echo "🎯 Type de test: ${{ github.event.inputs.test_type }}"
         echo "📅 Date: $(date)"
