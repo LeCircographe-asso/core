@@ -1,49 +1,45 @@
-# Configuration Kamal pour l'environnement de staging
+# Configuration Kamal pour Staging - VPS Ionos Linux M
 service: circographe-staging
+image: ghcr.io/lecircographe-asso/circographe:staging
 
-# Image Docker pour staging
-image: lecircographe-asso/circographe
-
-# Configuration pour éviter les tags automatiques problématiques
-builder:
-  arch: amd64
-
-# Serveurs de staging
+# Serveur VPS Ionos
 servers:
-  web:
-    - <%= ENV["STAGING_SERVER_IP"] %>
+  - <%= ENV['STAGING_SERVER_IP'] %>
 
-# Configuration pour staging (IP brute, pas de domaine)
-proxy:
-  ssl: false
-  host: <%= ENV["STAGING_SERVER_IP"] %>
+# Port différent pour éviter les conflits avec production
+port: 8080
 
-# Credentials pour le registry
-registry:
-  server: ghcr.io
-  username: LeCircographe-asso
-  password:
-    - KAMAL_REGISTRY_PASSWORD
-
-# Variables d'environnement pour staging
+# Variables d'environnement staging
 env:
-  secret:
-    - RAILS_MASTER_KEY
-  clear:
-    RAILS_ENV: staging
-    SOLID_QUEUE_IN_PUMA: true
-    RAILS_LOG_LEVEL: debug
+  RAILS_ENV: staging
+  STAGING_MODE: true
+  STAGING_AUTH: true
+  STAGING_PASSWORD: <%= ENV['STAGING_PASSWORD'] %>
+  RAILS_SERVE_STATIC_FILES: true
 
-# Aliases pour staging
-aliases:
-  console: app exec --interactive --reuse "bin/rails console"
-  shell: app exec --interactive --reuse "bash"
-  logs: app logs -f
+# Configuration Puma directe (pas de Nginx)
+puma:
+  threads: 2
+  workers: 1
+  bind: 0.0.0.0:8080
 
-# Volumes persistants pour staging
+# Health check
+healthcheck:
+  path: /health
+  port: 8080
+  max_attempts: 10
+  interval: 10s
+
+# Limites de ressources adaptées au VPS M
+limits:
+  memory: 256Mi
+  cpu: 250m
+
+# Volumes pour les logs
 volumes:
-  - "circographe_staging_storage:/rails/storage"
+  - /var/log/circographe-staging:/app/log
 
-# Configuration du builder
-builder:
-  arch: amd64
+# Configuration SSL avec Let's Encrypt (optionnel)
+# ssl:
+#   cert_path: /etc/letsencrypt/live/staging.lecircographe.fr/fullchain.pem
+#   key_path: /etc/letsencrypt/live/staging.lecircographe.fr/privkey.pem
