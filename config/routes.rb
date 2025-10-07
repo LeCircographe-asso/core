@@ -71,7 +71,8 @@ Rails.application.routes.draw do
   post "/submit_contact", to: "contacts#create"
 
   if Rails.env.development?
-    mount LetterOpenerWeb::Engine, at: "/letter_opener"
+    # LetterOpenerWeb temporairement désactivé pour production
+    # mount LetterOpenerWeb::Engine, at: "/letter_opener"
   end
 
   resource :password, only: [ :new, :create, :edit, :update ] do
