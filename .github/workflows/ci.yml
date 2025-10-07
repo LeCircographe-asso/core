@@ -1,10 +1,12 @@
-name: CI/CD Pipeline
+name: CI/CD Pipeline (Manual Only)
 
 on:
-  push:
-    branches: [ main, dev, deps ]
-  pull_request:
-    branches: [ main, dev, deps ]
+  # Désactivé pour déploiement manuel
+  # push:
+  #   branches: [ main, dev, deps ]
+  # pull_request:
+  #   branches: [ main, dev, deps ]
+  workflow_dispatch: # Déclenchement manuel uniquement
 
 jobs:
   test:
@@ -40,10 +42,11 @@ jobs:
         # bundle exec rubocop  # Temporarily disabled
         npm run lint || echo "npm lint not configured"
         
-  deploy-staging:
-    if: github.ref == 'refs/heads/dev'
-    needs: test
-    runs-on: ubuntu-latest
+      # deploy-staging: DÉSACTIVÉ pour déploiement manuel
+      # deploy-staging:
+      #   if: github.ref == 'refs/heads/dev'
+      #   needs: test
+      #   runs-on: ubuntu-latest
     
     steps:
     - uses: actions/checkout@v4
