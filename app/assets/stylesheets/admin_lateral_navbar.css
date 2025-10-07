@@ -3,10 +3,11 @@
   top: 0;
   left: 0;
   width: 260px;
-  height: 100vh;
   background-color: #fff;
   overflow-y: auto;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+  min-height: 100vh;
+  height: 100%;
   z-index: 100;
   border-right: 1px solid #f0f0f0;
   display: flex;
