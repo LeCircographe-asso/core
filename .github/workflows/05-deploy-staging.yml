@@ -35,21 +35,18 @@ jobs:
         bundle exec rspec --exclude-pattern="spec/disabled/**/*_spec.rb"
         
     - name: Build Docker image for staging
-      if: github.ref == 'refs/heads/staging'
       run: |
         echo "Building Docker image for staging..."
         docker build -t ghcr.io/lecircographe-asso/circographe:staging .
         docker push ghcr.io/lecircographe-asso/circographe:staging
         
     - name: Deploy to staging VPS
-      if: github.ref == 'refs/heads/staging'
       run: |
         echo "Deploying to staging VPS..."
         # Kamal deploy staging
         bundle exec kamal deploy -d staging
         
     - name: Notify staging deployment
-      if: github.ref == 'refs/heads/staging'
       run: |
         echo "🎉 Staging deployment completed successfully!"
         echo "🌐 Staging URL: https://staging.lecircographe.fr"

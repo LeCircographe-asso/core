@@ -1,0 +1,40 @@
+name: 🔄 Sync Dev to Staging
+
+on:
+  push:
+    branches: [ dev ]
+
+jobs:
+  sync-dev-to-staging:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+        token: ${{ secrets.GITHUB_TOKEN }}
+    
+    - name: Sync dev to staging
+      run: |
+        git config --global user.name "GitHub Actions"
+        git config --global user.email "actions@github.com"
+        
+        # Fetch latest changes
+        git fetch origin
+        
+        # Checkout staging branch
+        git checkout staging
+        git pull origin staging
+        
+        # Merge dev into staging
+        git merge origin/dev --no-edit
+        
+        # Push to staging (this will trigger staging deployment)
+        git push origin staging
+        
+    - name: Notify sync completed
+      run: |
+        echo "🎉 Dev branch synced to staging"
+        echo "✅ Staging deployment will be triggered automatically"
+        echo "🌐 Staging URL: https://staging.lecircographe.fr"
+        echo "📊 You can now test the staging environment"
