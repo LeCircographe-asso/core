@@ -1,5 +1,4 @@
 class Attendance < ApplicationRecord
-  include SoftDeletable
 
   belongs_to :attendance_list, optional: true
   belongs_to :user

@@ -29,10 +29,10 @@ class UsersController < ApplicationController
     end
   end
 
-  # GDPR-compliant account deletion (soft delete)
+  # Account deletion
   def destroy
-    # Soft delete the user (keeps records for legal/audit purposes)
-    if @user.update(deleted: true, deleted_at: Time.current)
+    # Delete the user and transfer payments to admin
+    if @user.destroy
       # End the user's session
       reset_session
       redirect_to root_path, notice: "Votre compte a été supprimé avec succès."

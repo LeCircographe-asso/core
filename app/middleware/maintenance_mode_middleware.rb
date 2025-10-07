@@ -18,8 +18,8 @@ class MaintenanceModeMiddleware
     # mais support du fichier /tmp/maintenance pour plus de flexibilité
     value = ENV["MAINTENANCE_MODE"]
     
-    # Si ENV["MAINTENANCE_MODE"] n'est pas défini, activation par défaut (sécurité)
-    return true if value.nil? || value.to_s.strip.empty?
+    # Si ENV["MAINTENANCE_MODE"] n'est pas défini, désactivation par défaut
+    return false if value.nil? || value.to_s.strip.empty?
     
     # Si ENV est défini, respecter sa valeur
     env_enabled = value.to_s.strip.casecmp("true").zero?

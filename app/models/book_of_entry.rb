@@ -1,5 +1,4 @@
 class BookOfEntry < ApplicationRecord
-  include SoftDeletable
 
   belongs_to :product
   belongs_to :user
