@@ -134,14 +134,14 @@ member_user = User.create!(
   phone_number: "+33123456791"
 )
 
-# Création du reste des utilisateurs pour avoir un total de 500
-puts "👤 Creating additional users to reach 500 total..."
-total = 497
+# Création du reste des utilisateurs pour avoir un total de 20 (version légère pour les tests)
+puts "👤 Creating additional users to reach 20 total..."
+total = 17  # 3 déjà créés + 17 = 20 total
 progress_step = total / 10  # Show progress every 10%
 progress_step = 1 if progress_step < 1
 
 # Replace insert_all with individual create! calls
-497.times do |i|
+17.times do |i|
   # Show progress every 10%
   if (i % progress_step) == 0
     percent = ((i.to_f / total) * 100).round
@@ -161,7 +161,7 @@ progress_step = 1 if progress_step < 1
     town: "Paris",
     country: "France",
     phone_number: "+331234567#{i.to_s.rjust(3, '0')}",
-    newsletter_subscribed: i < 100  # Les 100 premiers sont inscrits à la newsletter
+    newsletter_subscribed: i < 5  # Les 5 premiers sont inscrits à la newsletter
   )
 end
 puts "\r  Progress: 100% (#{total}/#{total}) ✓"
@@ -239,9 +239,9 @@ puts "🔑 Creating user memberships..."
 active_users = User.all.to_a
 membership_statuses = UserMembership.statuses.keys
 
-# 1. Création d'adhésions Basic pour une partie des utilisateurs (250)
-puts "  - Creating 250 Basic memberships..."
-basic_users = active_users.sample(250)
+# 1. Création d'adhésions Basic pour une partie des utilisateurs (10)
+puts "  - Creating 10 Basic memberships..."
+basic_users = active_users.sample(10)
 total = basic_users.size
 progress_step = total / 10  # Show progress every 10%
 progress_step = 1 if progress_step < 1
@@ -266,9 +266,9 @@ basic_users.each_with_index do |user, idx|
 end
 puts "\r    Progress: 100% (#{total}/#{total}) ✓"
 
-# 2. Création d'adhésions Cirque pour certains utilisateurs ayant déjà Basic (120)
-puts "  - Creating 120 Cirque memberships..."
-circus_users = basic_users.sample(120)
+# 2. Création d'adhésions Cirque pour certains utilisateurs ayant déjà Basic (6)
+puts "  - Creating 6 Cirque memberships..."
+circus_users = basic_users.sample(6)
 total = circus_users.size
 progress_step = total / 10  # Show progress every 10%
 progress_step = 1 if progress_step < 1
@@ -428,8 +428,8 @@ end
 puts "\r    Progress: 100% (#{total}/#{total}) ✓"
 
 # 3. Achats de cotisations (uniquement pour les membres Cirque)
-puts "  - Creating cotisations for Cirque members (100 users)..."
-cotisation_users = circus_users.sample(100)
+puts "  - Creating cotisations for Cirque members (4 users)..."
+cotisation_users = circus_users.sample(4)
 total = cotisation_users.size
 progress_step = total / 10  # Show progress every 10%
 progress_step = 1 if progress_step < 1
@@ -606,9 +606,9 @@ events.each do |event_data|
 end
 
 # Participants aux événements (ouverts à tous, membres ou non)
-puts "🎟️ Creating event attendees (180 participants)..."
+puts "🎟️ Creating event attendees (15 participants)..."
 # Mélanger tous les utilisateurs pour les inscriptions aux événements
-all_attendees = User.all.sample(180)
+all_attendees = User.all.sample(15)
 total = all_attendees.size
 progress_step = total / 10  # Show progress every 10%
 progress_step = 1 if progress_step < 1
@@ -673,10 +673,10 @@ puts "📋 Creating attendance lists and attendances..."
 list_types = AttendanceList.list_types.keys
 list_statuses = AttendanceList.statuses.keys
 
-# Créer 10 listes de présence
-puts "  - Creating 10 attendance lists..."
+# Créer 3 listes de présence
+puts "  - Creating 3 attendance lists..."
 attendance_lists = []
-10.times do |i|
+3.times do |i|
   print "    - Creating list #{i+1}... "
   start_date = Date.today - rand(1..90).days
   end_date = start_date + rand(1..7).days
@@ -698,7 +698,7 @@ total_attendances = 0
 attendance_lists.each_with_index do |attendance_list, list_idx|
   # Ajouter des présences - principalement pour les membres Cirque
   # qui ont des carnets ou des abonnements
-  attendees_count = rand(10..40)
+  attendees_count = rand(3..8)
   total_attendances += attendees_count
 
   print "    - List #{list_idx+1}: Adding #{attendees_count} attendances... "

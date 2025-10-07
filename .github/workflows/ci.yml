@@ -1,17 +1,22 @@
-name: CI/CD Pipeline (Manual Only)
+name: 🧪 01 - Manual Testing
 
 on:
-  # Désactivé pour déploiement manuel
-  # push:
-  #   branches: [ main, dev, deps ]
-  # pull_request:
-  #   branches: [ main, dev, deps ]
-  workflow_dispatch: # Déclenchement manuel uniquement
+  workflow_dispatch:
+    inputs:
+      test_type:
+        description: 'Type of test to run'
+        required: true
+        default: 'full'
+        type: choice
+        options:
+        - full
+        - quick
+        - linting-only
 
 jobs:
   test:
     runs-on: ubuntu-latest
-        
+    
     steps:
     - uses: actions/checkout@v4
     
@@ -27,80 +32,23 @@ jobs:
         node-version: '18'
         
     - name: Install dependencies
+      if: github.event.inputs.test_type != 'linting-only'
       run: |
         bundle install
         npm install
         
     - name: Run tests
+      if: github.event.inputs.test_type != 'linting-only'
       run: |
         bundle exec rails db:create db:migrate
         bundle exec rspec --format progress
         
     - name: Run linting
       run: |
-        echo "Linting disabled temporarily for deployment"
-        # bundle exec rubocop  # Temporarily disabled
-        npm run lint || echo "npm lint not configured"
+        bundle exec rubocop --format progress
         
-      # deploy-staging: DÉSACTIVÉ pour déploiement manuel
-      # deploy-staging:
-      #   if: github.ref == 'refs/heads/dev'
-      #   needs: test
-      #   runs-on: ubuntu-latest
-    
-    steps:
-    - uses: actions/checkout@v4
-    
-    - name: Setup Ruby
-      uses: ruby/setup-ruby@v1
-      with:
-        ruby-version: 3.2.5
-        bundler-cache: true
-    
-    - name: Install Kamal
+    - name: Test summary
       run: |
-        gem install kamal
-        
-    - name: Deploy to staging
-      env:
-        RAILS_MASTER_KEY: ${{ secrets.RAILS_MASTER_KEY }}
-        KAMAL_REGISTRY_PASSWORD: ${{ secrets.KAMAL_REGISTRY_PASSWORD }}
-        STAGING_SERVER_IP: ${{ secrets.STAGING_SERVER_IP }}
-      run: |
-        echo "Deploying to staging environment"
-        # Configuration des secrets pour Kamal
-        mkdir -p .kamal
-        echo "RAILS_MASTER_KEY=$RAILS_MASTER_KEY" > .kamal/secrets
-        echo "KAMAL_REGISTRY_PASSWORD=$KAMAL_REGISTRY_PASSWORD" >> .kamal/secrets
-        # Déploiement avec Kamal
-        kamal deploy -c config/deploy.staging.yml
-        
-  # deploy-production: DÉSACTIVÉ pour la sécurité
-  # Le déploiement production se fait manuellement via sync-to-main.yml
-  # deploy-production:
-  #   if: github.ref == 'refs/heads/main'
-  #   needs: test
-  #   runs-on: ubuntu-latest
-  #   
-  #   steps:
-  #   - uses: actions/checkout@v4
-  #   
-  #   - name: Setup Ruby
-  #     uses: ruby/setup-ruby@v1
-  #     with:
-  #       ruby-version: 3.2.5
-  #       bundler-cache: true
-  #   
-  #   - name: Deploy to production
-  #     env:
-  #       RAILS_MASTER_KEY: ${{ secrets.RAILS_MASTER_KEY }}
-  #       KAMAL_REGISTRY_PASSWORD: ${{ secrets.KAMAL_REGISTRY_PASSWORD }}
-  #       PRODUCTION_SERVER_IP: ${{ secrets.PRODUCTION_SERVER_IP }}
-  #     run: |
-  #       echo "Deploying to production environment"
-  #       # Configuration des secrets pour Kamal
-  #       mkdir -p .kamal
-  #       echo "RAILS_MASTER_KEY=$RAILS_MASTER_KEY" > .kamal/secrets
-  #       echo "KAMAL_REGISTRY_PASSWORD=$KAMAL_REGISTRY_PASSWORD" >> .kamal/secrets
-  #       # Déploiement avec Kamal
-  #       kamal deploy -c config/deploy.yml
+        echo "✅ Tests terminés avec succès"
+        echo "🎯 Type de test: ${{ github.event.inputs.test_type }}"
+        echo "📅 Date: $(date)"
