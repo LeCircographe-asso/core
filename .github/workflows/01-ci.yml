@@ -1,17 +1,10 @@
-name: 🧪 01 - Manual Testing
+name: 01 - CI Tests & Validation
 
 on:
-  workflow_dispatch:
-    inputs:
-      test_type:
-        description: 'Type of test to run'
-        required: true
-        default: 'full'
-        type: choice
-        options:
-        - full
-        - quick
-        - linting-only
+  push:
+    branches: [ dev, staging, main ]
+  pull_request:
+    branches: [ dev, staging, main ]
 
 jobs:
   test:
@@ -32,23 +25,25 @@ jobs:
         node-version: '18'
         
     - name: Install dependencies
-      if: github.event.inputs.test_type != 'linting-only'
       run: |
         bundle install
         npm install
         
     - name: Run tests
-      if: github.event.inputs.test_type != 'linting-only'
       run: |
         bundle exec rails db:create db:migrate
-        bundle exec rspec --format progress
+        bundle exec rspec --exclude-pattern="spec/disabled/**/*_spec.rb"
         
     - name: Run linting
       run: |
         bundle exec rubocop --format progress
         
+    - name: Security audit
+      run: |
+        bundle exec bundle audit --update
+        
     - name: Test summary
       run: |
-        echo "✅ Tests terminés avec succès"
-        echo "🎯 Type de test: ${{ github.event.inputs.test_type }}"
+        echo "✅ CI completed successfully"
+        echo "🎯 Branch: ${{ github.ref_name }}"
         echo "📅 Date: $(date)"

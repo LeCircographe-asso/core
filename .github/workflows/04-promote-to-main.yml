@@ -1,0 +1,54 @@
+name: 04 - Promote to Main
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirm_promote:
+        description: 'Type "PROMOTE" to confirm staging → main promotion'
+        required: true
+        type: string
+
+jobs:
+  promote-to-main:
+    runs-on: ubuntu-latest
+    if: github.event.inputs.confirm_promote == 'PROMOTE'
+    
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+        token: ${{ secrets.GITHUB_TOKEN }}
+    
+    - name: Check staging branch status
+      run: |
+        git fetch origin
+        echo "📋 Checking staging branch status..."
+        git log --oneline origin/staging -5
+        
+    - name: Direct merge staging → main
+      run: |
+        git config --global user.name "GitHub Actions"
+        git config --global user.email "actions@github.com"
+        
+        # Checkout main branch
+        git checkout main
+        git pull origin main
+        
+        # Check if merge is possible
+        if ! git merge origin/staging --no-commit --no-ff; then
+          echo "❌ Merge conflicts detected!"
+          echo "💡 Please resolve conflicts manually or use force merge"
+          exit 1
+        else
+          echo "✅ No conflicts, proceeding with merge"
+          git merge origin/staging --no-edit
+        fi
+        
+        # Push to main (this will trigger production deployment)
+        git push origin main
+        
+    - name: Notify promotion completed
+      run: |
+        echo "🎉 Staging promoted to main successfully"
+        echo "✅ Main branch now contains staging code"
+        echo "🚀 Production deployment will be triggered automatically"
