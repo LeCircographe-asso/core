@@ -50,7 +50,7 @@ jobs:
     - name: Run linting
       if: ${{ github.event.inputs.test_type == 'all' || github.event.inputs.test_type == 'lint_only' || github.event.inputs.test_type == '' }}
       run: |
-        bundle exec rubocop --format progress
+        bundle exec rubocop --autocorrect --format progress
         
     - name: Security audit
       if: ${{ github.event.inputs.test_type == 'all' || github.event.inputs.test_type == 'security_only' || github.event.inputs.test_type == '' }}
