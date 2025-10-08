@@ -5,6 +5,18 @@ on:
     branches: [ dev, staging, main ]
   pull_request:
     branches: [ dev, staging, main ]
+  workflow_dispatch:
+    inputs:
+      test_type:
+        description: 'Type de test à exécuter'
+        required: false
+        default: 'all'
+        type: choice
+        options:
+        - all
+        - tests_only
+        - lint_only
+        - security_only
 
 jobs:
   test:
@@ -30,15 +42,18 @@ jobs:
         npm install
         
     - name: Run tests
+      if: ${{ github.event.inputs.test_type == 'all' || github.event.inputs.test_type == 'tests_only' || github.event.inputs.test_type == '' }}
       run: |
         bundle exec rails db:create db:migrate
         bundle exec rspec --exclude-pattern="spec/disabled/**/*_spec.rb"
         
     - name: Run linting
+      if: ${{ github.event.inputs.test_type == 'all' || github.event.inputs.test_type == 'lint_only' || github.event.inputs.test_type == '' }}
       run: |
         bundle exec rubocop --format progress
         
     - name: Security audit
+      if: ${{ github.event.inputs.test_type == 'all' || github.event.inputs.test_type == 'security_only' || github.event.inputs.test_type == '' }}
       run: |
         bundle exec bundle audit --update
         
