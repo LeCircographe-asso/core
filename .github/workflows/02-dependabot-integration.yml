@@ -1,4 +1,4 @@
-name: 🔄 Dependabot Integration
+name: 02 - Dependabot Integration
 
 on:
   pull_request:

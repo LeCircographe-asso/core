@@ -1,0 +1,43 @@
+name: 03 - Staging Deploy
+
+on:
+  push:
+    branches: [ staging ]
+
+jobs:
+  deploy-staging:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Ruby (for Kamal)
+      uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: 3.2.5
+        bundler-cache: true
+        
+    - name: Login to GitHub Container Registry
+      uses: docker/login-action@v3
+      with:
+        registry: ghcr.io
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+        
+    - name: Build Docker image for staging
+      run: |
+        echo "Building Docker image for staging..."
+        docker build -t ghcr.io/lecircographe-asso/circographe:staging .
+        docker push ghcr.io/lecircographe-asso/circographe:staging
+        
+    - name: Deploy to staging VPS
+      run: |
+        echo "Deploying to staging VPS..."
+        # Kamal deploy staging
+        bundle exec kamal deploy -d staging
+        
+    - name: Notify staging deployment
+      run: |
+        echo "🎉 Staging deployment completed successfully!"
+        echo "🌐 Staging URL: https://staging.lecircographe.fr"
+        echo "📊 You can now test the staging environment"

@@ -6,6 +6,11 @@ image: ghcr.io/lecircographe-asso/circographe:latest
 servers:
   - <%= ENV['PRODUCTION_SERVER_IP'] %>
 
+# Configuration SSH pour Kamal
+ssh:
+  user: root
+  key: <%= ENV['SSH_PRIVATE_KEY'] %>
+
 # Port standard pour production
 port: 80
 
