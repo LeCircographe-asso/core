@@ -1,4 +1,4 @@
-name: 01 - CI Tests & Validation
+name: 01 - Quality Gate & Tests
 
 on:
   push:
