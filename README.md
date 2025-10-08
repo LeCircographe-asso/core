@@ -1,6 +1,17 @@
 # 🎪 Le Circographe
 
-Application de gestion pour association de cirque développée avec Rails 8.0.
+<div align="center">
+  <img src="docs/documentations/assets/screenshots/logo.png" alt="Logo Le Circographe" width="200"/>
+  <p><i>Une application de gestion complète pour association de cirque</i></p>
+  
+  ![Version](https://img.shields.io/badge/version-1.3.0-blue)
+  ![Rails](https://img.shields.io/badge/Rails-8.0.2-red)
+  ![License](https://img.shields.io/badge/license-MIT-green)
+</div>
+
+## 🎯 Vue d'ensemble
+
+Le Circographe est une application de gestion complète pour une association de cirque, développée avec Ruby on Rails 8.0.2. Cette application couvre l'ensemble des aspects de gestion d'une association de cirque moderne.
 
 ## 🚀 Démarrage rapide
 
@@ -16,20 +27,20 @@ http://localhost:3000
 ```
 
 ### Déploiement
+
+**🚀 Déploiement automatique via GitHub Actions :**
+- **Staging** : Push sur branche `staging` → Déploiement automatique
+- **Production** : Push sur branche `main` → Déploiement automatique
+- **Promotion** : Workflow "04 - Promote to Main" → staging → main
+
+**🔧 Scripts utilitaires :**
 ```bash
-# Staging
-./scripts/deploy-staging.sh
+# Mode maintenance
+./scripts/maintenance.sh [enable|disable|status] [staging|production]
 
-# Production  
-./scripts/deploy-production.sh
+# Mise à jour serveur (urgence)
+./scripts/server-pull.sh [staging|production] [SERVER_IP]
 ```
-
-## 📚 Documentation
-
-- **[Documentation complète](docs/README.md)** - Guide complet du projet
-- **[Configuration Rails 8.0](docs/documentations/technical/RAILS8_CONFIG.md)** - Nouvelles fonctionnalités
-- **[Déploiement](docs/documentations/technical/deployment/)** - Guides de déploiement
-- **[Environnements](docs/documentations/technical/ENVIRONMENTS.md)** - Configuration des environnements
 
 ## 🔧 Environnements
 
@@ -44,11 +55,39 @@ http://localhost:3000
 - Docker (pour le déploiement)
 - Kamal (pour le déploiement)
 
+## 📚 Documentation
+
+### 🧭 Navigation principale
+
+- **[Documentation complète](docs/README.md)** - Guide complet du projet
+- **[Configuration Rails 8.0](docs/documentations/technical/RAILS8_CONFIG.md)** - Nouvelles fonctionnalités
+- **[Déploiement](docs/documentations/technical/deployment/)** - Guides de déploiement
+- **[Environnements](docs/documentations/technical/ENVIRONMENTS.md)** - Configuration des environnements
+
+### 📁 Documentation détaillée
+
+- **[📁 Domaines Métier](docs/documentations/domains/README.md)** - Règles et spécifications métier par domaine
+- **[📁 Documentation Whimsical](https://whimsical.com/circograph-LAUT9hRLjkgEcGkLDKFPKV)** - Contient toute les documentations et graphiques
+- **[📁 Wireframe](https://whimsical.com/wireframe-content-mapping-HYkmAuT9fc9BdZPB2vUvGc)** - Wireframe
+- **[📁 Schema BDD](https://whimsical.com/diagram-database-J4Z17pjJ61YmVM9LK5jPMx)** - Schema BDD
+- **[📁 User Stories](https://whimsical.com/user-stories-fonctionnal-mapping-GTkoaDv7mHwg8q8h3w5Mt4)** - User Stories
+- **[📁 Guides Utilisateur](docs/documentations/guide/README.md)** - Guides pour les utilisateurs finaux
+
 ## 🔗 Liens utiles
 
 - [Documentation technique](docs/documentations/technical/)
 - [Guides utilisateur](docs/documentations/USER_GUIDES.md)
 - [Guide administrateur](docs/documentations/ADMIN_GUIDE.md)
+- [📝 Contribution](CONTRIBUTING.md)
+- [🛠️ Guide de développement](CONTRIBUTING.md)
+
+## 🎪 Fonctionnalités
+
+- **Gestion des membres** - Adhésions et suivi
+- **Événements** - Planning et organisation
+- **Paiements** - Gestion des cotisations
+- **Communication** - Newsletter et notifications
+- **Administration** - Interface d'administration complète
 
 ---
 
