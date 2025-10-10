@@ -8,7 +8,7 @@ servers:
 
 # Configuration SSH pour Kamal
 ssh:
-  user: root
+  user: deploy
   key: <%= ENV['SSH_PRIVATE_KEY'] %>
 
 # Port standard pour production

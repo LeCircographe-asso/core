@@ -76,7 +76,7 @@ jobs:
         chmod 600 ~/.ssh/config
         
         # Test SSH connection
-        ssh -i ~/.ssh/deploy_key root@${{ vars.PRODUCTION_SERVER_IP }} "echo '✅ SSH connection successful'"
+        ssh -i ~/.ssh/deploy_key deploy@${{ vars.PRODUCTION_SERVER_IP }} "echo '✅ SSH connection successful'"
         
     - name: Install Kamal
       run: |
