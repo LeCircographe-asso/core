@@ -4,6 +4,10 @@ on:
   push:
     branches: [ staging ]
 
+permissions:
+  contents: read
+  packages: write
+
 jobs:
   deploy-staging:
     runs-on: ubuntu-latest
