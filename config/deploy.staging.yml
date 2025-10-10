@@ -30,6 +30,3 @@ volumes:
 
 # Bridge fingerprinted assets
 asset_path: /rails/public/assets
-
-# Répertoire de déploiement
-destination: /srv/www/lecircographe_staging
