@@ -6,6 +6,9 @@ image: ghcr.io/lecircographe-asso/circographe:staging
 servers:
   - <%= ENV['STAGING_SERVER_IP'] %>
 
+# Ports pour éviter conflits avec prod
+port: 3001
+
 # Configuration SSH pour Kamal
 ssh:
   user: deploy
@@ -29,8 +32,15 @@ env:
     STAGING_PASSWORD: <%= ENV['STAGING_PASSWORD'] %>
     RAILS_SERVE_STATIC_FILES: true
     SOLID_QUEUE_IN_PUMA: true
+    # Optimisations pour VPS M
+    WEB_CONCURRENCY: 2
+    JOB_CONCURRENCY: 1
+    RAILS_LOG_LEVEL: info
+    # Ports staging pour éviter conflits
+    PORT: 3001
+    RAILS_PORT: 3001
 
-# Volumes pour les logs et données
+# Volumes pour les logs et données (staging)
 volumes:
   - "circographe_staging_storage:/rails/storage"
   - "/srv/www/lecircographe_staging/log:/app/log"
@@ -41,3 +51,23 @@ asset_path: /rails/public/assets
 # Configure the image builder
 builder:
   arch: amd64
+
+# Optimisations pour VPS M (2 vCPU, 4GB RAM)
+traefik:
+  options:
+    memory: 128Mi
+    cpu: 100m
+  # Labels pour distinguer staging de prod
+  labels:
+    - "traefik.enable=true"
+    - "traefik.http.routers.circographe-staging.rule=Host(`staging.lecircographe.fr`)"
+    - "traefik.http.routers.circographe-staging.priority=100"
+    - "traefik.http.services.circographe-staging.loadbalancer.server.port=3001"
+
+# Health check optimisé pour staging
+healthcheck:
+  path: /health
+  port: 3001
+  max_attempts: 5
+  interval: 30s
+  timeout: 10s
