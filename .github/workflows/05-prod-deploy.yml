@@ -1,0 +1,45 @@
+name: 05 - Production Deploy
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  deploy-production:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        ref: main
+    
+    - name: Set up Ruby (for Kamal)
+      uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: 3.2.5
+        bundler-cache: true
+        
+    - name: Login to GitHub Container Registry
+      uses: docker/login-action@v3
+      with:
+        registry: ghcr.io
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+        
+    - name: Build Docker image for production
+      run: |
+        echo "Building Docker image for production..."
+        docker build -t ghcr.io/lecircographe-asso/circographe:latest .
+        docker push ghcr.io/lecircographe-asso/circographe:latest
+        
+    - name: Deploy to production VPS
+      run: |
+        echo "Deploying to production VPS..."
+        # Kamal deploy production
+        bundle exec kamal deploy -d production
+        
+    - name: Notify production deployment
+      run: |
+        echo "🎉 Production deployment completed successfully!"
+        echo "🌐 Production URL: https://lecircographe.fr"
+        echo "📊 Production environment is now live"
