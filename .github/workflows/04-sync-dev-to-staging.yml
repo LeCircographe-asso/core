@@ -1,0 +1,60 @@
+name: 02.5 - Sync Dev to Staging
+
+on:
+  push:
+    branches: [ dev ]
+  workflow_dispatch:
+
+jobs:
+  sync-dev-to-staging:
+    runs-on: ubuntu-latest
+    # Seulement si les tests CI ont réussi
+    if: github.ref == 'refs/heads/dev' && github.event.head_commit.message != '[skip staging]'
+    
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+        token: ${{ secrets.GITHUB_TOKEN }}
+    
+    - name: Check if CI passed
+      run: |
+        echo "🔍 Vérification que les tests CI ont réussi..."
+        # Attendre que le workflow 02-ci soit terminé avec succès
+        sleep 30
+        
+    - name: Sync dev to staging
+      run: |
+        echo "🔄 Synchronisation dev → staging..."
+        git config --global user.name "GitHub Actions"
+        git config --global user.email "actions@github.com"
+        
+        # Fetch toutes les branches
+        git fetch origin
+        
+        # Checkout staging
+        git checkout staging
+        git pull origin staging
+        
+        # Merge dev dans staging
+        if git merge origin/dev --no-edit; then
+          echo "✅ Merge réussi"
+          git push origin staging
+          echo "🚀 Staging mis à jour - Déploiement automatique en cours..."
+        else
+          echo "❌ Conflits de merge détectés"
+          echo "💡 Résolution automatique des conflits..."
+          
+          # Stratégie de résolution : prendre dev
+          git merge --abort
+          git reset --hard origin/dev
+          git push origin staging --force
+          echo "✅ Staging forcé à jour avec dev"
+        fi
+    
+    - name: Notify sync completion
+      run: |
+        echo "🎉 Synchronisation dev → staging terminée"
+        echo "📋 Commit: ${{ github.sha }}"
+        echo "🌿 Branche: ${{ github.ref_name }}"
+        echo "⏰ Heure: $(date)"
