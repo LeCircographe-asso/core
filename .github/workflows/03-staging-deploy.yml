@@ -3,6 +3,7 @@ name: 03 - Staging Deploy
 on:
   push:
     branches: [ staging ]
+  workflow_dispatch:
 
 permissions:
   contents: read
