@@ -28,7 +28,6 @@ proxy:
 env:
   secret:
     - RAILS_MASTER_KEY
-    - SECRET_KEY_BASE
   clear:
     RAILS_ENV: staging
     STAGING_MODE: true
