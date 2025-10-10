@@ -11,39 +11,61 @@ ssh:
   user: deploy
   key: <%= ENV['SSH_PRIVATE_KEY'] %>
 
-# Port standard pour production
-port: 80
+# Port production (différent de staging)
+port: 3000
+
+# Credentials for your image host
+registry:
+  server: ghcr.io
+  username: LeCircographe-asso
+  password:
+    - KAMAL_REGISTRY_PASSWORD
 
 # Variables d'environnement production
 env:
-  RAILS_ENV: production
-  PRODUCTION_MODE: true
-  RAILS_SERVE_STATIC_FILES: true
+  secret:
+    - RAILS_MASTER_KEY
+  clear:
+    RAILS_ENV: production
+    PRODUCTION_MODE: true
+    RAILS_SERVE_STATIC_FILES: true
+    SOLID_QUEUE_IN_PUMA: true
+    # Optimisations pour VPS M
+    WEB_CONCURRENCY: 2
+    JOB_CONCURRENCY: 1
+    RAILS_LOG_LEVEL: info
+    # Port production
+    PORT: 3000
+    RAILS_PORT: 3000
 
-# Configuration Puma directe (pas de Nginx)
-puma:
-  threads: 4
-  workers: 2
-  bind: 0.0.0.0:80
+# Volumes pour les logs et données (production)
+volumes:
+  - "circographe_production_storage:/rails/storage"
+  - "/srv/www/lecircographe_production/log:/app/log"
 
-# Health check
+# Bridge fingerprinted assets
+asset_path: /rails/public/assets
+
+# Configure the image builder
+builder:
+  arch: amd64
+
+# Optimisations pour VPS M (2 vCPU, 4GB RAM)
+traefik:
+  options:
+    memory: 256Mi
+    cpu: 200m
+  # Labels pour distinguer prod de staging
+  labels:
+    - "traefik.enable=true"
+    - "traefik.http.routers.circographe-production.rule=Host(`lecircographe.fr`)"
+    - "traefik.http.routers.circographe-production.priority=200"
+    - "traefik.http.services.circographe-production.loadbalancer.server.port=3000"
+
+# Health check optimisé pour production
 healthcheck:
   path: /health
-  port: 80
+  port: 3000
   max_attempts: 10
   interval: 10s
-
-# Limites de ressources adaptées au VPS M
-limits:
-  memory: 512Mi
-  cpu: 500m
-
-# Volumes pour les logs et données
-volumes:
-  - /var/log/circographe:/app/log
-  - /var/lib/circographe:/app/storage
-
-# Configuration SSL avec Let's Encrypt
-ssl:
-  cert_path: /etc/letsencrypt/live/lecircographe.fr/fullchain.pem
-  key_path: /etc/letsencrypt/live/lecircographe.fr/privkey.pem
+  timeout: 5s
