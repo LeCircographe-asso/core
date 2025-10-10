@@ -11,6 +11,13 @@ ssh:
   user: deploy
   key: <%= ENV['SSH_PRIVATE_KEY'] %>
 
+# Credentials for your image host
+registry:
+  server: ghcr.io
+  username: LeCircographe-asso
+  password:
+    - KAMAL_REGISTRY_PASSWORD
+
 # Variables d'environnement staging
 env:
   secret:
