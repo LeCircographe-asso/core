@@ -11,40 +11,25 @@ ssh:
   user: deploy
   key: <%= ENV['SSH_PRIVATE_KEY'] %>
 
-# Port différent pour éviter les conflits avec production
-port: 8080
-
 # Variables d'environnement staging
 env:
-  RAILS_ENV: staging
-  STAGING_MODE: true
-  STAGING_AUTH: true
-  STAGING_PASSWORD: <%= ENV['STAGING_PASSWORD'] %>
-  RAILS_SERVE_STATIC_FILES: true
+  secret:
+    - RAILS_MASTER_KEY
+  clear:
+    RAILS_ENV: staging
+    STAGING_MODE: true
+    STAGING_AUTH: true
+    STAGING_PASSWORD: <%= ENV['STAGING_PASSWORD'] %>
+    RAILS_SERVE_STATIC_FILES: true
+    SOLID_QUEUE_IN_PUMA: true
 
-# Configuration Puma directe (pas de Nginx)
-puma:
-  threads: 2
-  workers: 1
-  bind: 0.0.0.0:8080
-
-# Health check
-healthcheck:
-  path: /health
-  port: 8080
-  max_attempts: 10
-  interval: 10s
-
-# Limites de ressources adaptées au VPS M
-limits:
-  memory: 256Mi
-  cpu: 250m
-
-# Volumes pour les logs
+# Volumes pour les logs et données
 volumes:
-  - /var/log/circographe-staging:/app/log
+  - "circographe_staging_storage:/rails/storage"
+  - "/srv/www/lecircographe_staging/log:/app/log"
 
-# Configuration SSL avec Let's Encrypt (optionnel)
-# ssl:
-#   cert_path: /etc/letsencrypt/live/staging.lecircographe.fr/fullchain.pem
-#   key_path: /etc/letsencrypt/live/staging.lecircographe.fr/privkey.pem
+# Bridge fingerprinted assets
+asset_path: /rails/public/assets
+
+# Répertoire de déploiement
+destination: /srv/www/lecircographe_staging
