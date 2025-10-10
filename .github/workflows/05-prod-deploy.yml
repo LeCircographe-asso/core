@@ -8,16 +8,36 @@ jobs:
   deploy-production:
     runs-on: ubuntu-latest
     
+    environment:
+      name: production
+      url: https://lecircographe.fr
+    
     steps:
     - uses: actions/checkout@v4
       with:
         ref: main
     
-    - name: Set up Ruby (for Kamal)
+    - name: Set up Ruby
       uses: ruby/setup-ruby@v1
       with:
         ruby-version: 3.2.5
         bundler-cache: true
+    
+    - name: Set up Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+    
+    - name: Install dependencies
+      run: |
+        bundle install
+        npm install
+    
+    - name: Run production tests
+      run: |
+        echo "🧪 Running production tests..."
+        bundle exec rails db:create db:migrate RAILS_ENV=test
+        bundle exec rspec --exclude-pattern="spec/disabled/**/*_spec.rb"
         
     - name: Login to GitHub Container Registry
       uses: docker/login-action@v3
@@ -28,18 +48,53 @@ jobs:
         
     - name: Build Docker image for production
       run: |
-        echo "Building Docker image for production..."
+        echo "🐳 Building Docker image for production..."
         docker build -t ghcr.io/lecircographe-asso/circographe:latest .
         docker push ghcr.io/lecircographe-asso/circographe:latest
+        echo "✅ Image pushed successfully"
+    
+    - name: Setup SSH key
+      run: |
+        echo "🔐 Setting up SSH key..."
+        mkdir -p ~/.ssh
+        echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/deploy_key
+        chmod 600 ~/.ssh/deploy_key
+        ssh-keyscan -H ${{ vars.PRODUCTION_SERVER_IP }} >> ~/.ssh/known_hosts
+        
+        # Configure SSH to use the deploy key
+        cat >> ~/.ssh/config << EOF
+        Host ${{ vars.PRODUCTION_SERVER_IP }}
+          IdentityFile ~/.ssh/deploy_key
+          StrictHostKeyChecking no
+          UserKnownHostsFile ~/.ssh/known_hosts
+        EOF
+        chmod 600 ~/.ssh/config
+        
+        # Test SSH connection
+        ssh -i ~/.ssh/deploy_key root@${{ vars.PRODUCTION_SERVER_IP }} "echo '✅ SSH connection successful'"
+        
+    - name: Install Kamal
+      run: |
+        echo "📦 Installing Kamal..."
+        gem install kamal
         
     - name: Deploy to production VPS
+      env:
+        PRODUCTION_SERVER_IP: ${{ vars.PRODUCTION_SERVER_IP }}
+        RAILS_MASTER_KEY: ${{ secrets.RAILS_MASTER_KEY }}
+        KAMAL_REGISTRY_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
       run: |
-        echo "Deploying to production VPS..."
-        # Kamal deploy production
-        bundle exec kamal deploy -d production
+        echo "🚀 Deploying to production VPS ($PRODUCTION_SERVER_IP)..."
+        
+        # Export SSH key path for Kamal
+        export SSH_PRIVATE_KEY="$HOME/.ssh/deploy_key"
+        
+        # Deploy with Kamal
+        kamal deploy -c config/deploy.production.yml
         
     - name: Notify production deployment
       run: |
         echo "🎉 Production deployment completed successfully!"
         echo "🌐 Production URL: https://lecircographe.fr"
+        echo "🌐 Direct IP: http://${{ vars.PRODUCTION_SERVER_IP }}"
         echo "📊 Production environment is now live"
