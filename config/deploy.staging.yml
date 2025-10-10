@@ -6,6 +6,11 @@ image: ghcr.io/lecircographe-asso/circographe:staging
 servers:
   - <%= ENV['STAGING_SERVER_IP'] %>
 
+# Configuration SSH pour Kamal
+ssh:
+  user: root
+  key: <%= ENV['SSH_PRIVATE_KEY'] %>
+
 # Port différent pour éviter les conflits avec production
 port: 8080
 

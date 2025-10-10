@@ -17,16 +17,16 @@ class MaintenanceModeMiddleware
     # Logique hybride : maintenance par défaut si ENV non défini (comme maintenance-mode)
     # mais support du fichier /tmp/maintenance pour plus de flexibilité
     value = ENV["MAINTENANCE_MODE"]
-    
+
     # Si ENV["MAINTENANCE_MODE"] n'est pas défini, désactivation par défaut
     return false if value.nil? || value.to_s.strip.empty?
-    
+
     # Si ENV est défini, respecter sa valeur
     env_enabled = value.to_s.strip.casecmp("true").zero?
-    
+
     # Vérifier aussi le fichier /tmp/maintenance pour plus de flexibilité
     file_enabled = File.exist?("/tmp/maintenance") && File.read("/tmp/maintenance").strip.downcase == "true"
-    
+
     env_enabled || file_enabled
   end
 

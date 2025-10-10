@@ -1,0 +1,64 @@
+name: 01 - CI & Tests
+
+on:
+  push:
+    branches: [ dev ]
+  pull_request:
+    branches: [ dev ]
+  workflow_dispatch:
+    inputs:
+      test_type:
+        description: 'Type de test à exécuter'
+        required: false
+        default: 'all'
+        type: choice
+        options:
+        - all
+        - tests_only
+        - lint_only
+        - security_only
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Ruby
+      uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: 3.2.5
+        bundler-cache: true
+        
+    - name: Set up Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        
+    - name: Install dependencies
+      run: |
+        bundle install
+        npm install
+        
+    - name: Run tests
+      if: ${{ github.event.inputs.test_type == 'all' || github.event.inputs.test_type == 'tests_only' || github.event.inputs.test_type == '' }}
+      run: |
+        bundle exec rails db:create db:migrate
+        bundle exec rspec --exclude-pattern="spec/disabled/**/*_spec.rb"
+        
+    - name: Run linting
+      if: ${{ github.event.inputs.test_type == 'all' || github.event.inputs.test_type == 'lint_only' || github.event.inputs.test_type == '' }}
+      run: |
+        bundle exec rubocop --autocorrect --format progress
+        
+    - name: Security audit
+      if: ${{ github.event.inputs.test_type == 'all' || github.event.inputs.test_type == 'security_only' || github.event.inputs.test_type == '' }}
+      run: |
+        bundle exec bundle audit --update
+        
+    - name: Test summary
+      run: |
+        echo "✅ CI completed successfully"
+        echo "🎯 Branch: ${{ github.ref_name }}"
+        echo "📅 Date: $(date)"

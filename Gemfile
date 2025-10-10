@@ -40,6 +40,7 @@ gem "rack-cors"  # Cross-Origin Resource Sharing
 group :development, :test do
   gem "debug", platforms: %i[ mri windows ], require: "debug/prelude"
   gem "brakeman", require: false  # Security scanner
+  gem "bundler-audit", require: false  # Security audit for gems
   gem "rubocop"  # Code linter
   gem "rubocop-rails-omakase", require: false  # Rails-specific linting
   gem "faker"  # Generate fake data
