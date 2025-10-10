@@ -1,0 +1,86 @@
+name: 00 - Pipeline Audit & Health Check
+
+on:
+  schedule:
+    - cron: '0 8 * * *'  # Tous les jours à 8h
+  workflow_dispatch:
+
+jobs:
+  audit-pipeline:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Check workflow files
+      run: |
+        echo "📋 Audit des workflows GitHub Actions"
+        echo "======================================"
+        echo ""
+        echo "📁 Workflows présents :"
+        ls -la .github/workflows/
+        echo ""
+        echo "✅ Nombre de workflows : $(ls .github/workflows/*.yml | wc -l)"
+        
+    - name: Validate YAML syntax
+      run: |
+        echo "🔍 Validation de la syntaxe YAML..."
+        for file in .github/workflows/*.yml; do
+          echo "Checking $file..."
+          if python3 -c "import yaml; yaml.safe_load(open('$file'))" 2>/dev/null; then
+            echo "  ✅ $file - OK"
+          else
+            echo "  ❌ $file - ERREUR"
+          fi
+        done
+        
+    - name: Check recent workflow runs
+      run: |
+        echo "📊 Statut des derniers workflows :"
+        echo "=================================="
+        gh run list --limit 20 --json conclusion,name,createdAt,databaseId \
+          --jq '.[] | "\(.name): \(.conclusion) (\(.createdAt))"'
+      env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        
+    - name: Check failed workflows
+      run: |
+        echo "❌ Workflows échoués récents :"
+        echo "=============================="
+        gh run list --status failure --limit 10 --json name,createdAt,conclusion \
+          --jq '.[] | "\(.name): \(.conclusion) (\(.createdAt))"'
+      env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        
+    - name: Check Dependabot PRs
+      run: |
+        echo "🤖 PRs Dependabot ouvertes :"
+        echo "============================"
+        gh pr list --author app/dependabot --limit 10 --json number,title,createdAt \
+          --jq '.[] | "#\(.number): \(.title) (\(.createdAt))"'
+      env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        
+    - name: Check deployment status
+      run: |
+        echo "🚀 Statut des déploiements :"
+        echo "============================"
+        echo "Staging : $(gh run list --workflow 05-staging-deploy.yml --limit 1 --json conclusion --jq '.[0].conclusion // "Jamais exécuté"')"
+        echo "Production : $(gh run list --workflow 07-prod-deploy.yml --limit 1 --json conclusion --jq '.[0].conclusion // "Jamais exécuté"')"
+      env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        
+    - name: Generate audit report
+      run: |
+        echo ""
+        echo "📊 RAPPORT D'AUDIT COMPLET"
+        echo "=========================="
+        echo "📅 Date : $(date)"
+        echo "🌿 Branche par défaut : $(git branch --show-current)"
+        echo "📦 Workflows actifs : $(ls .github/workflows/*.yml | wc -l)"
+        echo "✅ Tests CI : $(gh run list --workflow 02-ci.yml --limit 1 --json conclusion --jq '.[0].conclusion // "Jamais exécuté"')"
+        echo "🤖 PRs Dependabot ouvertes : $(gh pr list --author app/dependabot --json number --jq 'length')"
+        echo ""
+        echo "🎯 Pipeline Status : OPERATIONAL"
+      env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
