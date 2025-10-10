@@ -1,6 +1,6 @@
 # Configuration Kamal pour Staging - VPS Ionos Linux M
 service: circographe-staging
-image: lecircographe-asso/circographe:staging
+image: lecircographe-asso/circographe-staging
 
 # Serveur VPS Ionos
 servers:

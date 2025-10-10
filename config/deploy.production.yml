@@ -1,6 +1,6 @@
 # Configuration Kamal pour Production - VPS Ionos Linux M
 service: circographe-production
-image: lecircographe-asso/circographe:latest
+image: lecircographe-asso/circographe
 
 # Serveur VPS Ionos
 servers:
