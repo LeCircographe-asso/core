@@ -1,5 +1,4 @@
 class Attendance < ApplicationRecord
-
   belongs_to :attendance_list, optional: true
   belongs_to :user
   belongs_to :book_of_entry, optional: true

@@ -1,14 +1,29 @@
 #!/bin/bash
 
 # Script pour pull l'image sur le serveur
-# Usage: ./scripts/server-pull.sh [staging|production] [SERVER_IP]
+# Usage: ./scripts/server-pull.sh [staging|production]
+# Note: Nécessite PRODUCTION_SERVER_IP ou STAGING_SERVER_IP en variable d'environnement
 
 set -e
 
 ENVIRONMENT=${1:-production}
-SERVER_IP=${2:-"82.165.63.129"}
 REGISTRY="ghcr.io/lecircographe-asso"
 IMAGE_NAME="circographe"
+
+# Détermine l'IP du serveur selon l'environnement
+if [[ "$ENVIRONMENT" == "staging" ]]; then
+    SERVER_IP=${STAGING_SERVER_IP}
+else
+    SERVER_IP=${PRODUCTION_SERVER_IP}
+fi
+
+# Vérifie que l'IP est définie
+if [[ -z "$SERVER_IP" ]]; then
+    echo "❌ Erreur: Variable d'environnement non définie"
+    echo "   Pour staging: définir STAGING_SERVER_IP"
+    echo "   Pour production: définir PRODUCTION_SERVER_IP"
+    exit 1
+fi
 
 echo "🖥️  Pull d'image sur le serveur"
 echo "==============================="
