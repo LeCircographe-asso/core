@@ -23,6 +23,7 @@ registry:
 proxy:
   ssl: true
   host: lecircographe.fr
+  app_port: 80
 
 # Variables d'environnement production
 env:
@@ -37,6 +38,9 @@ env:
     WEB_CONCURRENCY: 2
     JOB_CONCURRENCY: 1
     RAILS_LOG_LEVEL: info
+    # Port production - Rails écoute sur 80
+    PORT: 80
+    RAILS_PORT: 80
 
 # Volumes pour les logs et données (production)
 volumes:
