@@ -85,6 +85,7 @@ jobs:
       env:
         STAGING_SERVER_IP: ${{ vars.STAGING_SERVER_IP }}
         RAILS_MASTER_KEY: ${{ secrets.RAILS_MASTER_KEY }}
+        SECRET_KEY_BASE: ${{ secrets.SECRET_KEY_BASE }}
         KAMAL_REGISTRY_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
         STAGING_PASSWORD: ${{ secrets.STAGING_PASSWORD }}
       run: |
@@ -95,6 +96,7 @@ jobs:
         
         # Export environment variables for Kamal
         export RAILS_MASTER_KEY="$RAILS_MASTER_KEY"
+        export SECRET_KEY_BASE="$SECRET_KEY_BASE"
         export STAGING_PASSWORD="$STAGING_PASSWORD"
         
         # Deploy with Kamal
