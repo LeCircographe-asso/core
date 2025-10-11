@@ -110,9 +110,12 @@ jobs:
     - name: Build Docker image for staging
       run: |
         echo "🐳 Building Docker image for staging..."
-        docker build -t ghcr.io/lecircographe-asso/circographe:staging .
-        docker push ghcr.io/lecircographe-asso/circographe:staging
-        echo "✅ Image pushed successfully"
+        # Use commit hash to force rebuild on every change
+        COMMIT_HASH=$(git rev-parse --short HEAD)
+        echo "Building with commit hash: $COMMIT_HASH"
+        docker build -t ghcr.io/lecircographe-asso/circographe-staging:$COMMIT_HASH .
+        docker push ghcr.io/lecircographe-asso/circographe-staging:$COMMIT_HASH
+        echo "✅ Image pushed successfully with tag: $COMMIT_HASH"
     
     - name: Setup SSH key
       run: |
