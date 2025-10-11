@@ -19,11 +19,12 @@ registry:
   password:
     - KAMAL_REGISTRY_PASSWORD
 
-# Proxy configuration pour production avec Traefik
+# Proxy configuration pour production (kamal-proxy avec Let's Encrypt auto)
 proxy:
   ssl: true
   host: lecircographe.fr
-  app_port: 80
+  # app_port: 80 (défaut, app écoute sur port 80 dans le conteneur)
+  # SSL géré automatiquement par kamal-proxy via Let's Encrypt
 
 # Variables d'environnement production
 env:
@@ -38,9 +39,6 @@ env:
     WEB_CONCURRENCY: 2
     JOB_CONCURRENCY: 1
     RAILS_LOG_LEVEL: info
-    # Port production - Rails écoute sur 80
-    PORT: 80
-    RAILS_PORT: 80
 
 # Volumes pour les logs et données (production)
 volumes:
