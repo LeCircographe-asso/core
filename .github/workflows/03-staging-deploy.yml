@@ -105,9 +105,25 @@ jobs:
         echo "RAILS_MASTER_KEY=$RAILS_MASTER_KEY" > .kamal/secrets
         echo "SECRET_KEY_BASE=$SECRET_KEY_BASE" >> .kamal/secrets
         echo "STAGING_PASSWORD=$STAGING_PASSWORD" >> .kamal/secrets
+        echo "KAMAL_REGISTRY_PASSWORD=$KAMAL_REGISTRY_PASSWORD" >> .kamal/secrets
         
-        # Deploy with Kamal
-        kamal deploy -c config/deploy.staging.yml
+        # Debug: Show secrets file content (without values)
+        echo "📋 Secrets file created with $(wc -l < .kamal/secrets) entries:"
+        sed 's/=.*/=***/' .kamal/secrets
+        
+        # Debug: Check Docker and environment
+        echo "🐳 Docker info:"
+        docker --version
+        docker info | head -10
+        
+        echo "🔍 Environment check:"
+        echo "STAGING_SERVER_IP: $STAGING_SERVER_IP"
+        echo "SSH_PRIVATE_KEY path: $SSH_PRIVATE_KEY"
+        ls -la ~/.ssh/
+        
+        # Deploy with Kamal (verbose)
+        echo "🚀 Starting Kamal deployment..."
+        kamal deploy -c config/deploy.staging.yml --verbose
         
     - name: Notify staging deployment
       run: |
