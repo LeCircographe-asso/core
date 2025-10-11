@@ -40,9 +40,5 @@ plugin :solid_queue if ENV["SOLID_QUEUE_IN_PUMA"]
 pidfile ENV["PIDFILE"] if ENV["PIDFILE"]
 
 # Specify the `port` to listen on (defaults to 3000, configurable via PORT env var)
-puts "🔍 PUMA DEBUG: Starting port configuration..."
-puts "🔍 PUMA DEBUG: ENV['PORT'] = #{ENV['PORT'].inspect}"
-port_value = ENV.fetch("PORT", 3000)
-puts "🔍 PUMA DEBUG: Using port = #{port_value}"
-port port_value
-puts "🔍 PUMA DEBUG: Port configuration completed!"
+# Note: With Rails 8 + Thruster, Puma runs on 3000 and Thruster proxies on PORT (80)
+port ENV.fetch("PORT", 3000)
