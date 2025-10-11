@@ -28,8 +28,9 @@ Rails.application.configure do
   config.assets.compile = false
   config.assets.digest = true
 
-  # Force SSL
+  # Force SSL (but exclude healthcheck for kamal-proxy)
   config.force_ssl = true
+  config.ssl_options = { redirect: { exclude: ->(request) { request.path == "/up" } } }
 
   # Mailer
   config.action_mailer.perform_caching = false
