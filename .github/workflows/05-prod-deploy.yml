@@ -94,6 +94,9 @@ jobs:
         # Export SSH key path for Kamal
         export SSH_PRIVATE_KEY="$HOME/.ssh/deploy_key"
         
+        # Export environment variables for Kamal
+        export RAILS_MASTER_KEY="$RAILS_MASTER_KEY"
+        
         # Deploy with Kamal
         kamal deploy -c config/deploy.production.yml
         
