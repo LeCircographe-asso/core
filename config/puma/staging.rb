@@ -1,5 +1,5 @@
 # Configuration Puma pour Staging - VPS Ionos Linux M
-workers 0
+# workers défini via WEB_CONCURRENCY dans puma.rb (0 pour staging)
 threads 2, 2
 
 # Port et binding - utilise la config de puma.rb
