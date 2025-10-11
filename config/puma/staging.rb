@@ -1,10 +1,10 @@
 # Configuration Puma pour Staging - VPS Ionos Linux M
-workers 1
+workers 0
 threads 2, 2
 
-# Port et binding
-port ENV.fetch("PORT", 8080)
-bind "tcp://0.0.0.0:#{ENV.fetch('PORT', 8080)}"
+# Port et binding - utilise la config de puma.rb
+# port ENV.fetch("PORT", 80)  # Déjà défini dans puma.rb
+# bind "tcp://0.0.0.0:80"     # Déjà défini dans puma.rb
 
 # Environnement
 environment ENV.fetch("RAILS_ENV", "staging")
@@ -12,12 +12,12 @@ environment ENV.fetch("RAILS_ENV", "staging")
 # Préchargement de l'application
 preload_app!
 
-# Logs
-stdout_redirect "/app/log/puma.stdout.log", "/app/log/puma.stderr.log", true
+# Logs - DÉSACTIVÉ pour éviter les erreurs de permissions
+# stdout_redirect "/app/log/puma.stdout.log", "/app/log/puma.stderr.log", true
 
-# PID
-pidfile "/app/tmp/pids/puma.pid"
-state_path "/app/tmp/pids/puma.state"
+# PID - utilise tmp/rails au lieu de /app/tmp
+pidfile ENV.fetch("PIDFILE", "tmp/pids/puma.pid")
+state_path "tmp/pids/puma.state"
 
 # Configuration pour VPS avec ressources limitées
 worker_timeout 30
