@@ -22,6 +22,10 @@ Rails.application.configure do
   # Cache assets for far-future expiry since they are all digest stamped.
   config.public_file_server.headers = { "cache-control" => "public, max-age=#{1.year.to_i}" }
 
+  # Host Authorization - Allow kamal-proxy container hostnames
+  # kamal-proxy uses Docker container IDs as hostnames (e.g., f4753d38178e)
+  config.hosts.clear  # Allow all hosts in production for Docker container communication
+
   # Enable serving of images, stylesheets, and JavaScripts from an asset server.
   # config.asset_host = "http://assets.example.com"
 
