@@ -20,6 +20,10 @@ Rails.application.configure do
     "Cache-Control" => "public, max-age=#{1.hour.to_i}"
   }
 
+  # Host Authorization - Allow kamal-proxy container hostnames
+  # kamal-proxy uses Docker container IDs as hostnames (e.g., f4753d38178e)
+  config.hosts.clear  # Allow all hosts in staging for Docker container communication
+
   # Assets
   config.assets.compile = false
   config.assets.digest = true
