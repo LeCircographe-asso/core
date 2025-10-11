@@ -49,11 +49,8 @@ COPY . .
 # Precompile bootsnap code for faster boot times
 RUN bundle exec bootsnap precompile app/ lib/
 
-    # Precompile assets for production
-    RUN SECRET_KEY_BASE_DUMMY=1 RAILS_ENV=development ./bin/rails assets:precompile
-
-
-
+# Precompile assets for production
+RUN SECRET_KEY_BASE_DUMMY=1 RAILS_ENV=development ./bin/rails assets:precompile
 
 # Final stage for app image
 FROM base
@@ -65,8 +62,8 @@ COPY --from=build /rails /rails
 # Run and own only the runtime files as a non-root user for security
 RUN groupadd --system --gid 1000 rails && \
     useradd rails --uid 1000 --gid 1000 --create-home --shell /bin/bash && \
-    mkdir -p /app/log && \
-    chown -R rails:rails db log storage tmp /app/log
+    mkdir -p /app/log /app/tmp/pids && \
+    chown -R rails:rails db log storage tmp /app/log /app/tmp
 USER 1000:1000
 
 # Entrypoint prepares the database.
