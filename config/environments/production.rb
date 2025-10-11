@@ -3,6 +3,10 @@ require "active_support/core_ext/integer/time"
 Rails.application.configure do
   # Settings specified here will take precedence over those in config/application.rb.
 
+  # Use the default credentials secret_key_base for production
+  # Rails will use config/credentials.yml.enc with RAILS_MASTER_KEY
+  config.secret_key_base = Rails.application.credentials.secret_key_base
+
   # Code is not reloaded between requests.
   config.enable_reloading = false
 
@@ -58,7 +62,10 @@ Rails.application.configure do
   config.action_mailer.raise_delivery_errors = true
 
   # Set host to be used by links generated in mailer templates.
-  config.action_mailer.default_url_options = { host: "example.com" }
+  config.action_mailer.default_url_options = {
+    host: "lecircographe.fr",
+    protocol: "https"
+  }
 
   # Specify outgoing SMTP server. Remember to add smtp/* credentials via rails credentials:edit.
   config.action_mailer.smtp_settings = {
