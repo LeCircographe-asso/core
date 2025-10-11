@@ -216,12 +216,11 @@ jobs:
         echo "Testing GHCR login..."
         echo "$KAMAL_REGISTRY_PASSWORD" | docker login ghcr.io -u ${{ github.actor }} --password-stdin || echo "❌ GHCR login failed"
         
-          # === STEP 7: Kamal Deploy ===
-          echo "🚀 STEP 7: Starting Kamal Deployment"
-          echo "Running: kamal deploy -c config/deploy.staging.yml --verbose --debug"
-          echo "Debug environment variables:"
-          echo "ACTIONS_STEP_DEBUG: $ACTIONS_STEP_DEBUG"
-          echo "ACTIONS_RUNNER_DEBUG: $ACTIONS_RUNNER_DEBUG"
+        # === STEP 7: Kamal Deploy ===
+        echo "🚀 STEP 7: Starting Kamal Deployment"
+        echo "Debug environment variables:"
+        echo "ACTIONS_STEP_DEBUG: $ACTIONS_STEP_DEBUG"
+        echo "ACTIONS_RUNNER_DEBUG: $ACTIONS_RUNNER_DEBUG"
         
         # Export all environment variables for Kamal
         export RAILS_MASTER_KEY="$RAILS_MASTER_KEY"
@@ -229,9 +228,8 @@ jobs:
         export STAGING_PASSWORD="$STAGING_PASSWORD"
         export KAMAL_REGISTRY_PASSWORD="$KAMAL_REGISTRY_PASSWORD"
         
-          # Deploy with maximum verbosity and debug logging
-          echo "🚀 Starting Kamal deployment with debug logging..."
-          kamal deploy -c config/deploy.staging.yml --verbose --debug || {
+        # Deploy with verbose logging
+        kamal deploy -c config/deploy.staging.yml --verbose || {
             echo "❌ Kamal deployment failed!"
             echo "🔍 Checking server logs..."
             ssh -i ~/.ssh/deploy_key deploy@$STAGING_SERVER_IP "docker ps -a" || echo "Cannot connect to server"
