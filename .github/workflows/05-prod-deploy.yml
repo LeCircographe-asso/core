@@ -97,9 +97,12 @@ jobs:
         # Export environment variables for Kamal
         export RAILS_MASTER_KEY="$RAILS_MASTER_KEY"
         
-        # Set up Kamal secrets on the server
-        echo "🔐 Setting up Kamal secrets..."
-        kamal secrets -c config/deploy.production.yml
+        # Create .kamal/secrets file for production
+        echo "🔐 Creating Kamal secrets file..."
+        mkdir -p .kamal
+        cat > .kamal/secrets << EOF
+RAILS_MASTER_KEY=$RAILS_MASTER_KEY
+EOF
         
         # Deploy with Kamal
         kamal deploy -c config/deploy.production.yml
