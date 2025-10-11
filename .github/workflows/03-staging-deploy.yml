@@ -218,7 +218,7 @@ jobs:
         
           # === STEP 7: Kamal Deploy ===
           echo "🚀 STEP 7: Starting Kamal Deployment"
-          echo "Running: kamal deploy -c config/deploy.staging.yml --verbose --debug"
+          echo "Running: kamal deploy -c config/deploy.staging.yml --verbose"
           echo "Debug environment variables:"
           echo "ACTIONS_STEP_DEBUG: $ACTIONS_STEP_DEBUG"
           echo "ACTIONS_RUNNER_DEBUG: $ACTIONS_RUNNER_DEBUG"
@@ -229,9 +229,9 @@ jobs:
         export STAGING_PASSWORD="$STAGING_PASSWORD"
         export KAMAL_REGISTRY_PASSWORD="$KAMAL_REGISTRY_PASSWORD"
         
-          # Deploy with maximum verbosity and debug logging
-          echo "🚀 Starting Kamal deployment with debug logging..."
-          kamal deploy -c config/deploy.staging.yml --verbose --debug || {
+          # Deploy with maximum verbosity
+          echo "🚀 Starting Kamal deployment with verbose logging..."
+          kamal deploy -c config/deploy.staging.yml --verbose || {
             echo "❌ Kamal deployment failed!"
             echo "🔍 Checking server logs..."
             ssh -i ~/.ssh/deploy_key deploy@$STAGING_SERVER_IP "docker ps -a" || echo "Cannot connect to server"
