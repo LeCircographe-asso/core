@@ -19,11 +19,11 @@ registry:
   password:
     - KAMAL_REGISTRY_PASSWORD
 
-# Proxy configuration pour staging avec Traefik
+# Proxy configuration pour staging (kamal-proxy avec Let's Encrypt auto)
 proxy:
   ssl: true
   host: staging.lecircographe.fr
-  app_port: 3001
+  # app_port: 80 (défaut, app écoute sur port 80 dans le conteneur)
 
 # Variables d'environnement staging
 env:
@@ -41,9 +41,6 @@ env:
     WEB_CONCURRENCY: 2
     JOB_CONCURRENCY: 1
     RAILS_LOG_LEVEL: info
-    # Port staging - Rails écoute sur 3001
-    PORT: 3001
-    RAILS_PORT: 3001
 
 # Volumes pour les logs et données (staging)
 volumes:
