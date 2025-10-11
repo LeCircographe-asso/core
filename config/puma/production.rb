@@ -1,5 +1,5 @@
 # Configuration Puma pour Production - VPS Ionos Linux M
-workers 2
+# workers défini via WEB_CONCURRENCY dans puma.rb
 threads 4, 4
 
 # Port et binding - utilise la config de puma.rb
