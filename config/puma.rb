@@ -40,4 +40,7 @@ plugin :solid_queue if ENV["SOLID_QUEUE_IN_PUMA"]
 pidfile ENV["PIDFILE"] if ENV["PIDFILE"]
 
 # Specify the `port` to listen on (defaults to 3000, configurable via PORT env var)
-port ENV.fetch("PORT", 3000)
+port_value = ENV.fetch("PORT", 3000)
+puts "🔍 PUMA DEBUG: PORT env var = #{ENV['PORT'].inspect}"
+puts "🔍 PUMA DEBUG: Using port = #{port_value}"
+port port_value
