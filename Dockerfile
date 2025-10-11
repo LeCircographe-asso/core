@@ -49,11 +49,8 @@ COPY . .
 # Precompile bootsnap code for faster boot times
 RUN bundle exec bootsnap precompile app/ lib/
 
-    # Precompile assets for production
-    RUN SECRET_KEY_BASE_DUMMY=1 RAILS_ENV=development ./bin/rails assets:precompile
-
-
-
+# Precompile assets for production
+RUN SECRET_KEY_BASE_DUMMY=1 RAILS_ENV=development ./bin/rails assets:precompile
 
 # Final stage for app image
 FROM base
