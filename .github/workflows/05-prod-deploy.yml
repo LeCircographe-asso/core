@@ -99,7 +99,7 @@ jobs:
         
         # Set up Kamal secrets on the server
         echo "🔐 Setting up Kamal secrets..."
-        kamal secrets setup -c config/deploy.production.yml
+        kamal secrets -c config/deploy.production.yml
         
         # Deploy with Kamal
         kamal deploy -c config/deploy.production.yml
