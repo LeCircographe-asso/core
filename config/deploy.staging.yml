@@ -23,6 +23,7 @@ registry:
 proxy:
   ssl: true
   host: staging.lecircographe.fr
+  port: 3001
 
 # Variables d'environnement staging
 env:
