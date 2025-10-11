@@ -39,11 +39,8 @@ Rails.application.configure do
   config.active_record.dump_schema_after_migration = false
 
   # Staging specific
-  config.staging_mode = true
-
-  # Désactiver certaines fonctionnalités en staging
-  config.disable_payments = true
-  config.disable_emails = true
+  # Note: Custom configs comme staging_mode doivent être définies dans application.rb
+  # ou via des initializers si nécessaire
 
   # Logs spécifiques
   config.logger = ActiveSupport::Logger.new(STDOUT)
