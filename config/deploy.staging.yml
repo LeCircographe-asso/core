@@ -19,11 +19,11 @@ registry:
   password:
     - KAMAL_REGISTRY_PASSWORD
 
-# Proxy configuration pour staging avec Traefik
+# Proxy configuration pour staging (kamal-proxy avec Let's Encrypt auto)
 proxy:
   ssl: true
   host: staging.lecircographe.fr
-  app_port: 3001
+  app_port: 80  # ← PORT INTERNE de l'app dans le conteneur
 
 # Variables d'environnement staging
 env:
@@ -32,18 +32,16 @@ env:
     - SECRET_KEY_BASE
   clear:
     RAILS_ENV: staging
+    PORT: 80  # ← FORCER Puma à écouter sur port 80
     STAGING_MODE: true
     STAGING_AUTH: true
     STAGING_PASSWORD: <%= ENV['STAGING_PASSWORD'] %>
     RAILS_SERVE_STATIC_FILES: true
     SOLID_QUEUE_IN_PUMA: true
     # Optimisations pour VPS M
-    WEB_CONCURRENCY: 2
+    WEB_CONCURRENCY: 0  # ← Single mode (pas de workers)
     JOB_CONCURRENCY: 1
     RAILS_LOG_LEVEL: info
-    # Port staging - Rails écoute sur 3001
-    PORT: 3001
-    RAILS_PORT: 3001
 
 # Volumes pour les logs et données (staging)
 volumes:
