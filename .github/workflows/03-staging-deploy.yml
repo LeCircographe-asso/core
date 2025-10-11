@@ -16,8 +16,43 @@ jobs:
     environment:
       name: staging
       url: https://staging.lecircographe.fr
-
+      
     steps:
+    - name: Validate Environment Variables
+      run: |
+        echo "🔍 Validating GitHub Variables and Secrets..."
+        echo "STAGING_SERVER_IP: ${{ vars.STAGING_SERVER_IP }}"
+        echo "PRODUCTION_SERVER_IP: ${{ vars.PRODUCTION_SERVER_IP }}"
+        echo "RAILS_MASTER_KEY present: ${{ secrets.RAILS_MASTER_KEY != '' }}"
+        echo "SECRET_KEY_BASE present: ${{ secrets.SECRET_KEY_BASE != '' }}"
+        echo "SSH_PRIVATE_KEY present: ${{ secrets.SSH_PRIVATE_KEY != '' }}"
+        echo "STAGING_PASSWORD present: ${{ secrets.STAGING_PASSWORD != '' }}"
+        echo "GITHUB_TOKEN present: ${{ secrets.GITHUB_TOKEN != '' }}"
+        echo "GHCR_TOKEN present: ${{ secrets.GHCR_TOKEN != '' }}"
+        
+        # Validate required variables
+        if [ -z "${{ vars.STAGING_SERVER_IP }}" ]; then
+          echo "❌ STAGING_SERVER_IP is not set!"
+          exit 1
+        fi
+        
+        if [ -z "${{ secrets.RAILS_MASTER_KEY }}" ]; then
+          echo "❌ RAILS_MASTER_KEY secret is not set!"
+          exit 1
+        fi
+        
+        if [ -z "${{ secrets.SECRET_KEY_BASE }}" ]; then
+          echo "❌ SECRET_KEY_BASE secret is not set!"
+          exit 1
+        fi
+        
+        if [ -z "${{ secrets.SSH_PRIVATE_KEY }}" ]; then
+          echo "❌ SSH_PRIVATE_KEY secret is not set!"
+          exit 1
+        fi
+        
+        echo "✅ All required variables and secrets are present"
+        
     - uses: actions/checkout@v4
     
     - name: Set up Ruby
@@ -48,6 +83,24 @@ jobs:
         registry: ghcr.io
         username: ${{ github.actor }}
         password: ${{ secrets.GHCR_TOKEN || secrets.GITHUB_TOKEN }}
+        
+    - name: Verify GitHub Permissions
+      run: |
+        echo "🔍 Verifying GitHub permissions..."
+        echo "GitHub Actor: ${{ github.actor }}"
+        echo "Repository: ${{ github.repository }}"
+        echo "Organization: ${{ github.repository_owner }}"
+        
+        # Test GitHub CLI access
+        gh auth status || echo "❌ GitHub CLI not authenticated"
+        
+        # Test repository access
+        gh repo view ${{ github.repository }} || echo "❌ Cannot access repository"
+        
+        # Test organization secrets access
+        gh secret list --org ${{ github.repository_owner }} 2>/dev/null || echo "⚠️ Cannot list organization secrets (may be normal)"
+        
+        echo "✅ Permission checks completed"
         
     - name: Build Docker image for staging
       run: |
@@ -91,23 +144,90 @@ jobs:
       run: |
         echo "🚀 Deploying to staging VPS ($STAGING_SERVER_IP)..."
         
-        # Export SSH key path for Kamal
-        export SSH_PRIVATE_KEY="$HOME/.ssh/deploy_key"
+        # === STEP 1: Environment Validation ===
+        echo "🔍 STEP 1: Environment Validation"
+        echo "STAGING_SERVER_IP: $STAGING_SERVER_IP"
+        echo "RAILS_MASTER_KEY length: ${#RAILS_MASTER_KEY}"
+        echo "SECRET_KEY_BASE length: ${#SECRET_KEY_BASE}"
+        echo "KAMAL_REGISTRY_PASSWORD length: ${#KAMAL_REGISTRY_PASSWORD}"
+        echo "STAGING_PASSWORD length: ${#STAGING_PASSWORD}"
         
-        # Export environment variables for Kamal
+        # === STEP 2: SSH Configuration ===
+        echo "🔐 STEP 2: SSH Configuration"
+        export SSH_PRIVATE_KEY="$HOME/.ssh/deploy_key"
+        echo "SSH_PRIVATE_KEY path: $SSH_PRIVATE_KEY"
+        ls -la ~/.ssh/
+        
+        # Test SSH connection
+        echo "Testing SSH connection..."
+        ssh -i ~/.ssh/deploy_key -o ConnectTimeout=10 -o StrictHostKeyChecking=no deploy@$STAGING_SERVER_IP "echo '✅ SSH connection successful'" || echo "❌ SSH connection failed"
+        
+        # === STEP 3: Docker Environment ===
+        echo "🐳 STEP 3: Docker Environment"
+        docker --version
+        echo "Docker info (first 15 lines):"
+        docker info | head -15
+        
+        # Test Docker buildx
+        echo "Testing Docker buildx..."
+        docker buildx ls || echo "❌ Docker buildx not available"
+        
+        # === STEP 4: Kamal Configuration ===
+        echo "⚙️ STEP 4: Kamal Configuration"
+        echo "Checking Kamal config files..."
+        ls -la config/deploy*.yml
+        
+        echo "Validating staging config..."
+        kamal config -c config/deploy.staging.yml || echo "❌ Kamal config validation failed"
+        
+        # === STEP 5: Secrets Management ===
+        echo "🔐 STEP 5: Secrets Management"
+        mkdir -p .kamal
+        echo "Creating .kamal/secrets file..."
+        
+        # Create secrets file
+        {
+          echo "RAILS_MASTER_KEY=$RAILS_MASTER_KEY"
+          echo "SECRET_KEY_BASE=$SECRET_KEY_BASE"
+          echo "STAGING_PASSWORD=$STAGING_PASSWORD"
+          echo "KAMAL_REGISTRY_PASSWORD=$KAMAL_REGISTRY_PASSWORD"
+        } > .kamal/secrets
+        
+        echo "Secrets file created with $(wc -l < .kamal/secrets) entries:"
+        sed 's/=.*/=***/' .kamal/secrets
+        
+        # Validate secrets file
+        echo "Validating secrets file format..."
+        while IFS='=' read -r key value; do
+          if [[ -n "$key" && -n "$value" ]]; then
+            echo "✅ $key is set"
+          else
+            echo "❌ $key is missing or empty"
+          fi
+        done < .kamal/secrets
+        
+        # === STEP 6: GitHub Container Registry ===
+        echo "📦 STEP 6: GitHub Container Registry"
+        echo "Testing GHCR login..."
+        echo "$KAMAL_REGISTRY_PASSWORD" | docker login ghcr.io -u ${{ github.actor }} --password-stdin || echo "❌ GHCR login failed"
+        
+        # === STEP 7: Kamal Deploy ===
+        echo "🚀 STEP 7: Starting Kamal Deployment"
+        echo "Running: kamal deploy -c config/deploy.staging.yml --verbose"
+        
+        # Export all environment variables for Kamal
         export RAILS_MASTER_KEY="$RAILS_MASTER_KEY"
         export SECRET_KEY_BASE="$SECRET_KEY_BASE"
         export STAGING_PASSWORD="$STAGING_PASSWORD"
+        export KAMAL_REGISTRY_PASSWORD="$KAMAL_REGISTRY_PASSWORD"
         
-        # Create .kamal/secrets file for staging
-        echo "🔐 Creating Kamal secrets file..."
-        mkdir -p .kamal
-        echo "RAILS_MASTER_KEY=$RAILS_MASTER_KEY" > .kamal/secrets
-        echo "SECRET_KEY_BASE=$SECRET_KEY_BASE" >> .kamal/secrets
-        echo "STAGING_PASSWORD=$STAGING_PASSWORD" >> .kamal/secrets
-        
-        # Deploy with Kamal
-        kamal deploy -c config/deploy.staging.yml
+        # Deploy with maximum verbosity
+        kamal deploy -c config/deploy.staging.yml --verbose || {
+          echo "❌ Kamal deployment failed!"
+          echo "🔍 Checking server logs..."
+          ssh -i ~/.ssh/deploy_key deploy@$STAGING_SERVER_IP "docker ps -a" || echo "Cannot connect to server"
+          exit 1
+        }
         
     - name: Notify staging deployment
       run: |
