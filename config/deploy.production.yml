@@ -33,6 +33,7 @@ env:
   clear:
     RAILS_ENV: production
     PORT: 80  # ← FORCER Puma à écouter sur port 80
+    MAINTENANCE_MODE: true  # ← MODE MAINTENANCE ACTIVÉ PAR DÉFAUT
     PRODUCTION_MODE: true
     RAILS_SERVE_STATIC_FILES: true
     SOLID_QUEUE_IN_PUMA: true

@@ -4,11 +4,19 @@ class MaintenanceModeMiddleware
   end
 
   def call(env)
-    if maintenance_enabled? && !healthcheck?(env)
-      return maintenance_response
-    end
+    request = Rack::Request.new(env)
 
-    @app.call(env)
+    # 1. Toujours autoriser healthcheck (pour Kamal)
+    return @app.call(env) if healthcheck?(request)
+
+    # 2. Si maintenance désactivée, tout passe
+    return @app.call(env) unless maintenance_enabled?
+
+    # 3. Autoriser admin connecté et page login
+    return @app.call(env) if admin_access?(env, request)
+
+    # 4. Sinon, page maintenance pour visiteurs
+    maintenance_response
   end
 
   private
@@ -30,9 +38,43 @@ class MaintenanceModeMiddleware
     env_enabled || file_enabled
   end
 
-  def healthcheck?(env)
-    request = Rack::Request.new(env)
+  def healthcheck?(request)
     request.path == "/up"
+  end
+
+  def admin_access?(env, request)
+    # Autoriser pages login (public et admin) pour que les admins puissent se connecter
+    # Public: /session/new, /session (POST pour login)
+    # Admin: /admin/session/new, /admin/session (POST pour login)
+    return true if request.path.start_with?("/session")
+    return true if request.path.start_with?("/admin/session")
+
+    # Autoriser toutes les routes admin si session admin valide
+    if request.path.start_with?("/admin")
+      session = load_session(env)
+      Rails.logger.debug("MaintenanceMode: Checking admin access - path: #{request.path}, user_id: #{session['user_id']}")
+      return session && session["user_id"].present?
+    end
+
+    false
+  end
+
+  def load_session(env)
+    # Charger la session Rails depuis les cookies
+    session_key = Rails.application.config.session_options[:key] || "_circographe_session"
+
+    # Créer un cookie jar pour lire les cookies chiffrés
+    cookie_jar = ActionDispatch::Cookies::CookieJar.build(
+      Rack::Request.new(env),
+      Rails.application.config.session_options
+    )
+
+    # Récupérer la session chiffrée
+    session_data = cookie_jar.encrypted[session_key]
+    session_data.is_a?(Hash) ? session_data : {}
+  rescue StandardError => e
+    Rails.logger.error("MaintenanceMode: Erreur chargement session - #{e.message}")
+    {}
   end
 
   def maintenance_response
