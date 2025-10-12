@@ -32,7 +32,5 @@ module SharedEnvironmentConfig
   end
 end
 
-# Include shared config in all environments
-Rails.application.configure do
-  include SharedEnvironmentConfig
-end
+# Shared configuration applied to all environments
+# (Module SharedEnvironmentConfig removed - was causing build errors)
