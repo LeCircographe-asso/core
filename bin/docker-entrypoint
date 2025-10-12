@@ -9,6 +9,18 @@ fi
 # If running the rails server then create or migrate existing database
 if [ "${@: -2:1}" == "./bin/rails" ] && [ "${@: -1:1}" == "server" ]; then
   ./bin/rails db:prepare
+  
+  # Create additional databases for cache, queue, and cable (Rails 8 with Solid*)
+  # SolidCache, SolidQueue, and ActionCable require their own databases
+  for db in cache queue cable; do
+    db_name="${RAILS_ENV}_${db}"
+    db_file="storage/${db_name}.sqlite3"
+    if [ ! -f "$db_file" ]; then
+      echo "Creating ${db_name} database..."
+      ./bin/rails db:create:${db_name} 2>/dev/null || touch "$db_file"
+      ./bin/rails db:migrate:${db_name} 2>/dev/null || true
+    fi
+  done
 fi
 
 exec "${@}"
