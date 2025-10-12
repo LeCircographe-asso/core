@@ -28,7 +28,7 @@ Rails.application.configure do
   config.hosts.clear  # Allow all hosts in staging for Docker container communication
 
   # Assets configuration
-  config.assets.compile = false
+  config.assets.compile = true  # Allow compilation during Docker build
   config.assets.digest = true
   config.assets.paths << Rails.root.join("app", "assets", "builds")
 
