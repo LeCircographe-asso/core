@@ -5,7 +5,8 @@ Rails.application.configure do
 
   # Use the default credentials secret_key_base for production
   # Rails will use config/credentials.yml.enc with RAILS_MASTER_KEY
-  config.secret_key_base = Rails.application.credentials.secret_key_base
+  # Allow ENV override for Docker build (asset compilation)
+  config.secret_key_base = ENV["SECRET_KEY_BASE"] || Rails.application.credentials.secret_key_base
 
   # Code is not reloaded between requests.
   config.enable_reloading = false
