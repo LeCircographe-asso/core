@@ -4,7 +4,8 @@ require_relative "shared"
 Rails.application.configure do
   # Use the default credentials secret_key_base for staging
   # Rails will use config/credentials.yml.enc with RAILS_MASTER_KEY
-  config.secret_key_base = Rails.application.credentials.secret_key_base
+  # Allow ENV override for Docker build (asset compilation)
+  config.secret_key_base = ENV["SECRET_KEY_BASE"] || Rails.application.credentials.secret_key_base
 
   # Environnement
   config.cache_classes = true
