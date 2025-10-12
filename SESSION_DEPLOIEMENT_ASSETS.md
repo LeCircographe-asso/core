@@ -162,6 +162,39 @@ env:
 3. **secret_key_base** dummy suffit pour la compilation d'assets
 4. **Middleware conditionnel** permet 1 image pour 3 environnements
 5. **GitHub Secrets** vs **Variables** : Secrets pour données sensibles, Variables pour configuration
+6. **🚨 CRITIQUE : TOUJOURS exclure `/up` des middlewares d'auth** pour les health checks Kamal
+
+## 🚨 Problème Kamal Déploiement - HTTP 401 sur /up
+
+### **Symptôme :**
+- Build Docker réussi ✅
+- Conteneur démarre puis s'arrête avec exit code 255 ❌
+- Logs : `GET /up HTTP/1.1 401 Unauthorized`
+
+### **Cause :**
+- **StagingAuth middleware** intercepte TOUTES les requêtes (y compris `/up`)
+- **Kamal-proxy** fait des health checks sur `/up`
+- **HTTP 401** → Kamal considère l'app comme down → Arrêt du conteneur
+
+### **Solution :**
+```ruby
+# app/middleware/staging_auth.rb
+def call(env)
+  request = Rack::Request.new(env)
+
+  # Skip auth for health check endpoint (Kamal needs this)
+  if request.path == "/up"
+    return @app.call(env)
+  end
+  
+  # ... reste du middleware
+end
+```
+
+### **Règle d'or :**
+**TOUJOURS exclure `/up` des middlewares d'authentification** pour permettre les health checks Kamal !
+
+---
 
 ## 🔄 Prochaines Étapes
 
