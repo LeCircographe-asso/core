@@ -83,6 +83,9 @@ class User < ApplicationRecord
 
   def welcome_send
     return if user_connected?
+    
+    # Skip email delivery during seeds (SolidQueue not ready yet)
+    return if defined?(Rails::Console) || $PROGRAM_NAME.include?("db:seed")
 
     if created_by_admin?
       UserMailer.welcome_by_admin(self, reset_password_url).deliver_later
