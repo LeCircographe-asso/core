@@ -1,19 +1,30 @@
 Rails.application.routes.draw do
   namespace :admin do
+    resources :blogs
     resources :dashboard, only: %i[index], path: "dashboard"
     resource :opening_hours, only: %i[show edit update]
-    resources :users
+    resources :donations, only: %i[create]
+    resources :users do
+      resources :orders, only: %i[create show index update] do
+        resources :product_orders, only: %i[destroy]
+        end
+      resources :user_membership, only: %i[create show update destroy]
+      post :restore, on: :member
+    end
     resources :events, only: %i[new create edit destroy index]
     resource :session, only: %i[new create destroy]
-    resource :notepad, only: %i[show edit update]
-    resources :members do
-      collection do
-        get :membership_register
-        post :membership_recap
-        post :reset_membership
-        post :membership_payment
-        post :membership_complete
-      end
+    resource :notepad, only: %i[edit update]
+    resources :attendance_lists do
+      resources :attendances, only: %i[new index create show edit update]
+    end
+    resources :product_orders, only: %i[create update]
+    resources :products do
+      resources :price_entries, only: %i[index new create], controller: "price_entry"
+    end
+    resources :price_catalogs, controller: "price_catalog"
+    resources :payments, only: %i[show create new update index destroy]
+    resources :exports, only: %i[index] do
+      get :newsletter_subscribed, on: :collection
     end
   end
 
@@ -23,9 +34,15 @@ Rails.application.routes.draw do
   resources :passwords, only: %i[new create edit update], param: :token
   resource :registration, only: %i[new create]
   resources :event_attendees, only: %i[create destroy]
-  resources :users do
+  resources :blogs, only: %i[show ]
+  get "/blog-newsletter", to: "blogs#index"
+  resources :users, only: %i[show edit update destroy] do
     post "change_newsletter_status", on: :member
+    get "change_newsletter_status", on: :member
   end
+
+  # Route for newsletter signup from footer
+  post "/newsletter_signup", to: "users#newsletter_signup", as: "newsletter_signup"
 
   scope "/checkout" do
     post "create", to: "checkout#create", as: "checkout_create"
@@ -34,6 +51,7 @@ Rails.application.routes.draw do
   end
 
   root "home#index"
+  get "fonts", to: "home#font_examples", as: "font_examples"
 
   # match "*unmatched", to: "application#url_not_found", via: :all
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
@@ -48,4 +66,18 @@ Rails.application.routes.draw do
 
   # Defines the root path route ("/")
   # root "posts#index"
+
+  # Route pour le formulaire de contact
+  post "/submit_contact", to: "contacts#create"
+
+  if Rails.env.development?
+    # LetterOpenerWeb temporairement désactivé pour production
+    # mount LetterOpenerWeb::Engine, at: "/letter_opener"
+  end
+
+  resource :password, only: [ :new, :create, :edit, :update ] do
+    get :request_reset, on: :collection
+  end
+
+  resource :settings, only: [ :show, :update ], controller: "settings"
 end

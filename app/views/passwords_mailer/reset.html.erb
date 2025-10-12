@@ -1,4 +1,29 @@
-<p>
-  You can reset your password within the next 15 minutes on
-  <%= link_to "this password reset page", edit_password_url(@user.password_reset_token) %>.
-</p>
+<!DOCTYPE html>
+<html>
+<head>
+  <meta content='text/html; charset=UTF-8' http-equiv='Content-Type' />
+</head>
+<body>
+  <div class="max-w-lg mx-auto font-sans text-gray-800">
+    <div class="bg-gray-100 p-5 text-center border-b border-gray-300">
+      <h1 class="text-xl text-gray-800">Réinitialisation de votre mot de passe</h1>
+    </div>
+    <div class="p-5">
+      <p>Bonjour <%= @user.email_address %>,</p>
+      
+      <p>Vous avez demandé la réinitialisation de votre mot de passe. Vous pouvez le réinitialiser dans les 15 prochaines minutes en cliquant sur le bouton ci-dessous :</p>
+      
+      <p class="text-center">
+        <%= link_to "Réinitialiser mon mot de passe", edit_password_url(@user.generate_token_for(:password_reset)), class: "inline-block px-6 py-3 bg-blue-500 text-white no-underline rounded mt-5" %>
+      </p>
+      
+      <p>Si vous n'avez pas demandé cette réinitialisation, veuillez ignorer cet email.</p>
+    </div>
+    
+    <div class="bg-gray-100 p-5 text-center border-t border-gray-300">
+      <p>Cordialement,<br>
+      L'équipe Le Circographe</p>
+    </div>
+  </div>
+</body>
+</html> 

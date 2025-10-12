@@ -1,12 +1,12 @@
-<% content_for :title, "Users" %>
+<% content_for :title, "Utilisateurs" %>
 
-<h1>Users</h1>
+<h1>Utilisateurs</h1>
 
 <div id="users">
-  <% @users.each do |user| %>
+    <% @users.each do |user| %>
     <%= render user %>
     <p>
-      <%= link_to "Show this user", user %>
+        <%= link_to "Voir cette utilisateur", user %>
     </p>
-  <% end %>
+    <% end %>
 </div>

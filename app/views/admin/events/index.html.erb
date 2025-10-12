@@ -1,1 +1,84 @@
-<%= render "shared/events_index" %>
+<% content_for :title, "Gestion des événements" %>
+
+<div class="min-h-screen py-6">
+  <div class="max-w-7xl mx-auto">
+    <!-- Breadcrumbs -->
+    <%= render 'shared/breadcrumbs' %>
+    
+    <!-- Header -->
+    <div class="bg-white shadow-lg rounded-lg overflow-hidden mb-6">
+      <div class="bg-gradient-to-r from-[#1F5C55] to-[#194A45] px-6 py-4">
+        <h1 class="text-2xl font-bold text-white">Gestion des événements</h1>
+        <p class="text-white/80 mt-1">Créer et gérer les événements du Circographe</p>
+      </div>
+
+      <div class="p-6">
+        <!-- Statistics -->
+        <div class="mb-6 bg-green-50 p-4 rounded-lg">
+          <div class="flex flex-col sm:flex-row justify-between items-center gap-4">
+            <p class="text-green-800 font-medium">
+              <span class="font-bold">Nombre d'événements :</span> <%= @events.count %>
+            </p>
+            <%= link_to new_admin_event_path, class: "inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500" do %>
+              <i class="fas fa-plus mr-2"></i> Créer un nouvel événement
+            <% end %>
+          </div>
+        </div>
+
+        <!-- Title section -->
+        <h2 class="text-lg font-semibold text-gray-900 border-b pb-2 mb-4">Liste des événements</h2>
+
+        <!-- Events grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <% @events.each do |event| %>
+            <div class="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-shadow">
+              <div class="p-5">
+                <h3 class="text-lg font-semibold text-gray-900 mb-2"><%= event.title %></h3>
+                
+                <div class="mb-4 space-y-2">
+                  <div class="flex items-center text-sm text-gray-600">
+                    <i class="fas fa-calendar-day mr-2"></i>
+                    <%= event.date.strftime("%d/%m/%Y") %>
+                  </div>
+                  
+                  <div class="flex items-center text-sm text-gray-600">
+                    <i class="fas fa-clock mr-2"></i>
+                    <%= event.date.strftime("%H:%M") %>
+                  </div>
+                  
+                  <div class="flex items-center text-sm text-gray-600">
+                    <i class="fas fa-users mr-2"></i>
+                    <%= event.users.length %> participant<%= event.users.length > 1 ? 's' : '' %>
+                  </div>
+                </div>
+                
+                <div class="flex justify-between items-center pt-3 border-t border-gray-100">
+                  <%= link_to event_path(event), class: "text-sm text-green-600 hover:text-green-800" do %>
+                    <i class="fas fa-eye mr-1"></i> Voir
+                  <% end %>
+                  
+                  <%= link_to edit_admin_event_path(event), class: "text-sm text-blue-600 hover:text-blue-800" do %>
+                    <i class="fas fa-edit mr-1"></i> Modifier
+                  <% end %>
+                  
+                  <%= button_to admin_event_path(event), method: :delete, class: "text-sm text-red-600 hover:text-red-800", form: { data: { turbo_confirm: "Êtes-vous sûr de vouloir supprimer cet événement ?" } } do %>
+                    <i class="fas fa-trash-alt mr-1"></i> Supprimer
+                  <% end %>
+                </div>
+              </div>
+            </div>
+          <% end %>
+        </div>
+        
+        <% if @events.empty? %>
+          <div class="text-center py-10">
+            <p class="text-gray-500">Aucun événement n'a été créé pour le moment.</p>
+            <%= link_to new_admin_event_path, class: "mt-4 inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500" do %>
+              <i class="fas fa-plus mr-2"></i> Créer votre premier événement
+            <% end %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>

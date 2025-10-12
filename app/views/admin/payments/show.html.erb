@@ -1,0 +1,145 @@
+<div class="max-w-4xl mx-auto">
+  <!-- Breadcrumbs -->
+  <%= render 'shared/breadcrumbs' %>
+  
+  <div class="bg-white shadow-lg rounded-lg overflow-hidden mb-6">
+    <div class="bg-gradient-to-r from-[#1F5C55] to-[#194A45] px-6 py-4">
+      <h1 class="text-2xl font-bold text-white">Détail du paiement #<%= @payment.id %></h1>
+      <p class="text-white/80 mt-1">
+        <% if @payment.user %>
+          Paiement de <%= @payment.user.full_name || @payment.user.email %>
+        <% else %>
+          Détails du paiement
+        <% end %>
+      </p>
+    </div>
+    
+    <div class="p-6">
+      <%= form_with(model: [:admin, @payment], method: :patch, class: "space-y-6") do |f| %>
+        <!-- Status Badge -->
+        <div class="mb-6 text-center">
+          <% status_class = case @payment.status 
+                          when "success" then "bg-green-100 text-green-800 border-green-200" 
+                          when "pending" then "bg-yellow-100 text-yellow-800 border-yellow-200"
+                          when "cancel" then "bg-red-100 text-red-800 border-red-200"
+                          else "bg-gray-100 text-gray-800 border-gray-200"
+                          end %>
+          <span class="px-4 py-2 inline-flex text-sm leading-5 font-semibold rounded-full border <%= status_class %>">
+            Status: <%= @payment.status.humanize %>
+          </span>
+          
+          <!-- Display if this is a donation -->
+          <% if @payment.donation.present? && @payment.donation > 0 && @payment.payment_amount.to_f == 0 %>
+            <span class="ml-2 px-4 py-2 inline-flex text-sm leading-5 font-semibold rounded-full border bg-purple-100 text-purple-800 border-purple-200">
+              Type: Donation
+            </span>
+          <% end %>
+        </div>
+      
+        <!-- Displaying the product name -->
+        <div class="bg-gray-50 p-4 rounded-lg mb-6">
+          <h2 class="text-lg font-medium text-gray-900 mb-3">Produits associés</h2>
+          <% if @order.product_orders.any? %>
+            <div class="space-y-2">
+              <% @order.product_orders.each do |product_order| %>
+                <div class="flex justify-between items-center p-3 bg-white rounded border">
+                  <span class="font-medium"><%= product_order.product.product_name %></span>
+                  <% price = product_order.product.price_entries.order(created_at: :desc).first&.price_catalog&.price %>
+                  <span class="text-gray-600"><%= number_to_currency(price, unit: "€", format: "%n %u") if price %></span>
+                </div>
+              <% end %>
+            </div>
+          <% else %>
+            <p class="text-gray-500 text-center">Aucun produit associé</p>
+          <% end %>
+        </div>
+
+        <!-- Payment Details -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <!-- Left Column -->
+          <div>
+            <!-- Payment Date -->
+            <div class="mb-4">
+              <%= f.label :payment_date, "Date de création", class: "block text-sm font-medium text-gray-700 mb-1" %>
+              <p class="text-gray-900 bg-gray-50 p-2 rounded border"><%= @payment.created_at.strftime("%d-%m-%Y %H:%M:%S") %></p>
+              <%= f.hidden_field :payment_date, value: @payment.created_at.strftime("%Y-%m-%d %H:%M:%S") %>
+            </div>
+            
+            <!-- Payment Type -->
+            <div class="mb-4">
+              <%= f.label :payment_type, "Type de paiement", class: "block text-sm font-medium text-gray-700 mb-1" %>
+              <%= f.select :payment_type, Payment.payment_types.keys.map { |key| [key.humanize, key] }, 
+                          { selected: @payment.payment_type }, 
+                          class: "w-full p-2 border rounded focus:ring-[#1F5C55] focus:border-[#1F5C55]" %>
+            </div>
+          </div>
+          
+          <!-- Right Column -->
+          <div>
+            <!-- Payment Amount -->
+            <div class="mb-4">
+              <%= f.label :payment_amount, "Montant du paiement", class: "block text-sm font-medium text-gray-700 mb-1" %>
+              <% if @order.product_orders.any? %>
+                <%= f.text_field :payment_amount, value: @total_amount, 
+                                class: "w-full p-2 border rounded focus:ring-[#1F5C55] focus:border-[#1F5C55]" %>
+              <% else %>
+                <%= f.text_field :payment_amount, value: "0", 
+                                class: "w-full p-2 border rounded focus:ring-[#1F5C55] focus:border-[#1F5C55]" %>
+              <% end %>
+            </div>
+            
+            <!-- Donation -->
+            <div class="mb-4">
+              <%= f.label :donation, "Montant de la donation", class: "block text-sm font-medium text-gray-700 mb-1" %>
+              <%= f.text_field :donation, value: @total_donation || 0, 
+                              class: "w-full p-2 border rounded focus:ring-[#1F5C55] focus:border-[#1F5C55]" %>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Total -->
+        <div class="mt-6 p-4 bg-gray-50 rounded-lg">
+          <div class="flex justify-between items-center">
+            <span class="font-medium text-gray-700">Total du paiement:</span>
+            <span class="text-xl font-bold text-gray-900"><%= number_to_currency(@total_payment, unit: "€", format: "%n %u") %></span>
+          </div>
+          <%= f.hidden_field :total_payment, value: @total_payment %>
+        </div>
+
+        <%= f.hidden_field :user_id, value: @payment.user_id %>
+
+        <!-- Actions -->
+        <div class="flex justify-between mt-8 pt-6 border-t">
+          <div>
+            <%= link_to "Retour", @payment.user ? admin_payments_path(user_id: @payment.user_id) : admin_payments_path, 
+                      class: "inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1F5C55]" %>
+            
+            <% if @payment.user %>
+              <%= link_to "Voir l'utilisateur", admin_user_path(@payment.user), 
+                        class: "ml-3 inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1F5C55]" %>
+            <% end %>
+          </div>
+          
+          <div>
+            <% if @payment.status == 'pending' %>
+              <%= f.hidden_field :status, value: "success" %>
+              <%= f.submit "Valider le paiement", class: "inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#1F5C55] hover:bg-[#194A45] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1F5C55]" %>
+            <% elsif @payment.status == 'success' %>
+              <div class="text-green-600 font-medium">✓ Paiement validé</div>
+            <% elsif @payment.status == 'cancel' %>
+              <div class="text-red-600 font-medium">✕ Paiement annulé</div>
+            <% end %>
+            
+            <% if @payment.status != 'cancel' %>
+              <%= button_to admin_payment_path(@payment), method: :delete, 
+                          class: "mt-3 inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500",
+                          data: { confirm: "Êtes-vous sûr de vouloir annuler ce paiement ?" } do %>
+                Annuler le paiement
+              <% end %>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>

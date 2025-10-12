@@ -1,50 +1,69 @@
-<div class="banner">
-  <%= image_tag "banner_home.jpg", class: "image", alt: "Bannière d'accueil du Circographe avec visuels artistiques" %>
+<% content_for :title, "Le Circographe - Accueil" %>
+<% content_for :background_image, "background_temp.webp" %>
+
+<!-- Main container with proper spacing for parallax effect -->
+<div class="relative w-full">
+
+    <!-- The main content -->
+    <div id="content" class="relative w-full flex flex-col items-center justify-start text-center px-2 sm:px-6">
+
+        <!-- Large empty space at the top -->
+        <div class="h-36 sm:h-45"></div>
+
+        <!-- Main title with more responsive sizing -->
+        <h1 id="title" class="font-circographe text-5xl sm:text-6xl md:text-7xl font-bold text-white opacity-0 transition-opacity duration-500 mx-2 sm:mx-4 break-words p-2 sm:p-4 rounded">Le Circographe</h1>
+
+        <!-- Large space between title and button - reduced to h-32 -->
+        <div class="h-24 sm:h-32"></div>
+
+        <!-- Button with large space after the title -->
+        <div class="main-button opacity-0 transition-opacity duration-500">
+            <%= link_to "Découvrir l'association", page_path('association'),
+                class: "px-6 sm:px-8 py-3 sm:py-4 text-lg sm:text-xl font-semibold text-gray-800 bg-white border border-gray-300 rounded-full hover:bg-gray-100 shadow-md" %>
+        </div>
+
+        <!-- Animated arrow scrolling to main content -->
+        <div class="mt-12 sm:mt-20 opacity-0 transition-opacity duration-500 scroll-arrow-container">
+            <a href="#main-content" class="scroll-arrow">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-12 sm:w-14 h-12 sm:h-14 text-white">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
+                </svg>
+            </a>
+        </div>
+
+        <!-- Space before content, reduced to h-32 -->
+        <div class="h-24 sm:h-32"></div>
+
+        <!-- Contents section with reduced padding on mobile -->
+        <div id="main-content" class="grid grid-cols-1 md:grid-cols-2 gap-8 sm:gap-32 max-w-4xl mb-12 sm:mb-24 opacity-0 transition-opacity duration-500 bg-white/80 p-3 sm:p-8 rounded-lg shadow-lg">
+
+            <!-- Article (without white background) -->
+            <div class="p-2 sm:p-4 flex flex-col">
+                <%= render "shared/event_card", event: @events.last if @events.present? %>
+            </div>
+
+            <!-- Schedules -->
+            <div>
+                <% @horaires = Rails.cache.fetch("opening_hours") || OpeningHoursHelper.default_opening_hours %>
+                <%= render 'shared/opening_hours' %>
+            </div>
+        </div>
+        <div class="flex justify-center items-center w-full mt-6 map opacity-0 transition-opacity duration-500 bg-white/80 p-2 sm:p-6 rounded-lg shadow-lg" id="map">
+            <div class="w-full overflow-hidden rounded-lg">
+                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d858.7320762106817!2d1.422364267936696!3d43.618639564522674!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x12aebb1b7b5096ef%3A0x710f3096ea206f0!2sLe%20Circographe!5e0!3m2!1sfr!2sfr!4v1745437455061!5m2!1sfr!2sfr" width="100%" height="350" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+            </div>
+        </div>
+        <!-- Extra space before the footer, less on mobile -->
+        <div class="h-16 sm:h-24"></div>
+    </div>
 </div>
 
-<div class="banner-text">
-  <p>Bienvenue sur le site du Circographe, un espace dédié à la création, au cirque, et aux arts urbains.</p>
-</div>
+<style>
+  /* Add a light text shadow to improve readability over background */
+  #title {
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+  }
+</style>
 
-<div class="container reverse">
-  <div class="text-container">
-    <strong>Le Cirque et les Entraînements Libres</strong>
-    <p>Découvrez l'univers captivant du cirque, où l'art et la performance se rencontrent pour créer des spectacles inoubliables.</p>
-    <p>Nos entraînements libres offrent aux artistes professionnels et aux passionnés l'opportunité de perfectionner leurs compétences dans un environnement stimulant et convivial.</p>
-    <p>Rejoignez-nous pour explorer diverses disciplines, des acrobaties aux arts aériens, et laissez libre cours à votre créativité.</p>
-  </div>
-  <div class="image-container">
-    <%= link_to page_path("le_cirque") do %>
-      <%= image_tag "home1.webp", class: "image-main", alt: "Artiste réalisant une performance acrobatique lors des entraînements libres" %>
-    <% end %>
-  </div>
-</div>
 
-<div class="container reverse">
-  <div class="image-container">
-    <%= link_to page_path("le_graff") do %>
-      <%= image_tag "home2.webp", class: "image-main", alt: "Illustration d'art urbain représentant des graphismes créatifs" %>
-    <% end %>
-  </div>
-  <div class="text-container">
-    <strong>Le Graff</strong>
-<p>Plongez dans le monde vibrant du graphisme, où chaque trait raconte une histoire.</p>
-<p>Nos ateliers vous permettent d'exprimer votre créativité et de développer vos compétences artistiques.</p> 
-<p>Que vous soyez débutant ou professionnel, notre espace est conçu pour inspirer et encourager l'innovation visuelle.</p>
-  </div>
-</div>
 
-<div class="container reverse">
-  <div class="text-container">
-    <strong>Le Lieu</strong>
-    <p>Situé au cœur de la ville, notre espace est un véritable havre de paix dédié à l'art et à la culture.</p>
-    <p>Avec son architecture moderne et ses installations de pointe, il offre un cadre idéal pour les artistes et le public.</p>
-    <p>Les salles spacieuses et lumineuses sont conçues pour accueillir une variété d'événements, des spectacles aux ateliers, en passant par les expositions.</p>
-    <p>Venez découvrir un lieu où l'inspiration et la créativité sont au rendez-vous.</p>
-  </div>
-  <div class="image-container">
-    <%= link_to page_path("le_lieu") do %>
-      <%= image_tag "home3.webp", class: "image-main", alt: "Vue intérieure du lieu dédié aux arts, au cirque et aux expositions" %>
-    <% end %>
-  </div>
-</div>

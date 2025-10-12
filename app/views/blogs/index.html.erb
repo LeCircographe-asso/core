@@ -1,0 +1,26 @@
+<% content_for :title, "Le Circographe - Blog & Newsletter" %>
+
+    <div class="container mx-auto px-4 mb-12">
+    
+    <section class="text-center mb-12 bg-white/95 py-6 rounded-lg shadow-md">
+        <h1 class="text-4xl font-bold text-center text-black rounded-lg ">Blog & Newsletter</h1>
+    </section>
+<!-- Blog -->
+        <div id="blogs" class="min-w-full divide-y divide-gray-200 space-y-5">
+            <% if @blogs.any? %>
+                <% @blogs.each do |blog| %>
+                    <div class="flex flex-col sm:flex-row justify-between items-center pb-5 sm:pb-0">
+                        <%= render "admin/blogs/blog", blog: blog %>
+                        <div class="w-full sm:w-auto flex flex-col sm:flex-row space-x-2 space-y-2">
+                            <%= link_to "voir", blog, class: "w-full sm:w-auto text-center rounded-md px-3.5 py-2.5 bg-gray-100 hover:bg-gray-50 inline-block font-medium" %>
+                        </div>
+                    </div>
+                <% end %>
+            <% else %>
+            <p class="text-center my-10">Aucun Blog trouvé.</p>
+            <% end %>
+        </div>
+<!-- End of Blog -->
+        <%= render 'shared/blog_card' %>
+        
+    </div>

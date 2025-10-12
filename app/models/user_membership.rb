@@ -1,13 +1,43 @@
 class UserMembership < ApplicationRecord
+  enum :status, %i[active pending expired canceled], default: :pending
+  belongs_to :membership
   belongs_to :user
-  belongs_to :subscription_type
-  belongs_to :payment, optional: true
+  belongs_to :produit, optional: true
+  belongs_to :order, optional: true
 
-  # has_many :payments, dependent: :destroy
-  has_many :training_attendees
-  has_many :user_membership_subscriptions
-  has_many :subscription_types, through: :user_membership_subscriptions
+  before_update :expire_previous_memberships, if: -> { status_changed?(to: "active") }
 
+  def activate!
+    MembershipService.activate_membership(self)
+  end
 
-  validates :user_id, :subscription_type_id, presence: true
+  def expire!
+    MembershipService.expire_membership(self)
+  end
+
+  def cancel!
+    MembershipService.cancel_membership(self)
+  end
+
+  def status_display_name
+    MembershipHelper.membership_status_display_name(status)
+  end
+
+  def status_badge_class
+    MembershipHelper.membership_status_badge_class(status)
+  end
+
+  def membership_type_display_name
+    MembershipHelper.membership_type_display_name(membership.type_name)
+  end
+
+  def membership_type_badge_class
+    MembershipHelper.membership_type_badge_class(membership.type_name)
+  end
+
+  private
+
+  def expire_previous_memberships
+    user.user_memberships.where(id: id).where(status: "active").update_all(status: "expired")
+  end
 end

@@ -1,0 +1,55 @@
+# Configuration Kamal pour Production - VPS Ionos Linux M
+service: circographe-production
+image: lecircographe-asso/circographe
+
+# Serveur VPS Ionos
+servers:
+  web:
+    hosts:
+      - <%= ENV['PRODUCTION_SERVER_IP'] %>
+
+# Configuration SSH pour Kamal
+ssh:
+  user: deploy
+
+# Credentials for your image host
+registry:
+  server: ghcr.io
+  username: LeCircographe-asso
+  password:
+    - KAMAL_REGISTRY_PASSWORD
+
+# Proxy configuration pour production (kamal-proxy avec Let's Encrypt auto)
+proxy:
+  ssl: true
+  host: lecircographe.fr
+  app_port: 80  # ← PORT INTERNE de l'app dans le conteneur
+  # SSL géré automatiquement par kamal-proxy via Let's Encrypt
+
+# Variables d'environnement production
+env:
+  secret:
+    - RAILS_MASTER_KEY
+  clear:
+    RAILS_ENV: production
+    PORT: 80  # ← FORCER Puma à écouter sur port 80
+    MAINTENANCE_MODE: true  # ← MODE MAINTENANCE ACTIVÉ PAR DÉFAUT
+    PRODUCTION_MODE: true
+    RAILS_SERVE_STATIC_FILES: true
+    SOLID_QUEUE_IN_PUMA: true
+    # Optimisations pour VPS M
+    WEB_CONCURRENCY: 0  # ← Single mode (pas de workers)
+    JOB_CONCURRENCY: 1
+    RAILS_LOG_LEVEL: info
+
+# Volumes pour les logs et données (production)
+volumes:
+  - "circographe_production_storage:/rails/storage"
+  - "/srv/www/lecircographe_production/log:/app/log"
+
+# Bridge fingerprinted assets
+asset_path: /rails/public/assets
+
+# Configure the image builder
+builder:
+  arch: amd64

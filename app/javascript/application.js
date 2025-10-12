@@ -2,3 +2,29 @@
 import "@hotwired/turbo-rails"
 import "controllers"
 import "flowbite"
+import "home_animations"
+import "global_animations"
+
+// Définir la fonction initFlowbite si elle n'existe pas déjà
+if (typeof window.initFlowbite !== 'function') {
+  window.initFlowbite = function() {
+    // Chercher la fonction initFlowbite dans l'objet global flowbite
+    if (typeof flowbite !== 'undefined' && typeof flowbite.initAccordions === 'function') {
+      flowbite.initAccordions();
+      flowbite.initCollapses();
+      flowbite.initDialogs();
+      flowbite.initDrawers();
+      flowbite.initDropdowns();
+      flowbite.initModals();
+      flowbite.initPopovers();
+      flowbite.initTabs();
+      flowbite.initTooltips();
+    }
+  };
+}
+
+document.addEventListener("turbo:load", () => {
+    window.initFlowbite();
+});
+import "trix"
+import "@rails/actiontext"

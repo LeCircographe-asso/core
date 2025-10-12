@@ -1,53 +1,306 @@
-<div class="navbar">
-  <div class="navbar-left">
-    <div class="navbar-logo">
-      <%= link_to root_path do %>
-        <%= image_tag "Le-Circographe-crop.png", alt: "Logo Circographe" %>
-      <% end %>
+<nav class="bg-white border-gray-200 sticky top-0 z-50">
+    <div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto">
+        <!-- Logo and profile combined for mobile -->
+        <div class="flex items-center justify-between w-full md:w-auto">
+            <!-- Logo -->
+            <%= link_to root_path, class: "flex items-center space-x-3 rtl:space-x-reverse" do %>
+            <%= image_tag("Le-Circographe-crop.webp", alt: "le-circographe Logo", class: "w-40 h-auto") %>
+            <% end %>
+
+            <!-- Elements grouped on the right for mobile -->
+            <div class="flex items-center md:hidden">
+                <% if authenticated? && Current.user %>
+                <%= link_to user_path(Current.user), class: "flex mr-3" do %>
+                <%= image_tag("users.png", alt: "photo de profil", class: "w-8 h-8 rounded-full hover:ring-2 hover:ring-indigo-300") %>
+                <% end %>
+                <% end %>
+
+                <!-- Hamburger button (mobile and tablet) -->
+                <button data-collapse-toggle="navbar-mobile" type="button" class="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200" aria-controls="navbar-mobile" aria-expanded="false">
+                    <span class="sr-only">Ouvrir le menu</span>
+                    <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 17 14">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 1h15M1 7h15M1 13h15" />
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- Main menu (desktop) -->
+        <div class="hidden md:flex flex-grow justify-center items-center mx-4">
+            <ul class="flex flex-row space-x-8 font-medium">
+                <!-- The association -->
+                <li class="group relative">
+                    <%= link_to page_path('association'), class: "block py-2 text-gray-900 hover:text-indigo-700 group-hover:text-indigo-700" do %>
+                    Le Lieu
+                    <% end %>
+                    <div class="hidden group-hover:block absolute left-0 top-full z-10 w-48 bg-white rounded-lg shadow-lg">
+                        <ul class="py-2 text-sm text-gray-700">
+                            <li>
+                                <%= link_to "Le Cirque", page_path('circus_details'), class: "block px-4 py-2 hover:bg-gray-100" %>
+                            </li>
+                            <li>
+                                <%= link_to "Les Arts Graphiques", page_path('graphic_arts_details'), class: "block px-4 py-2 hover:bg-gray-100" %>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+
+                <!-- Our news -->
+                <li class="group relative">
+                    <%= link_to page_path("news"), class: "block py-2 text-gray-900 hover:text-indigo-700 group-hover:text-indigo-700" do %>
+                    Nos actualités
+                    <% end %>
+                    <div class="hidden group-hover:block absolute left-0 top-full z-10 w-48 bg-white rounded-lg shadow-lg">
+                        <ul class="py-2 text-sm text-gray-700">
+                            <li>
+                                <%= link_to "Blog & Newsletters", page_path("blog_newsletter"), class: "block px-4 py-2 hover:bg-gray-100" %>
+                            </li>
+                            <li>
+                                <%= link_to "Galerie Photos", page_path("gallery"), class: "block px-4 py-2 hover:bg-gray-100" %>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+
+                <!-- Our events -->
+                <li>
+                    <%= link_to "Nos Événements", events_path, class: "block py-2 text-gray-900 hover:text-indigo-700" %>
+                </li>
+
+                <!-- Become a Member -->
+                <li>
+                    <%= link_to "Devenir Membre", page_path("become_member"), class: "block py-2 text-gray-900 hover:text-indigo-700" %>
+                </li>
+
+                <!-- About -->
+                <li class="group relative">
+                    <%= link_to page_path('about'), class: "block py-2 text-gray-900 hover:text-indigo-700 group-hover:text-indigo-700" do %>
+                    À Propos
+                    <% end %>
+                    <div class="hidden group-hover:block absolute left-0 top-full z-10 w-48 bg-white rounded-lg shadow-lg">
+                        <ul class="py-2 text-sm text-gray-700">
+                            <li>
+                                <%= link_to "Informations Utiles", page_path("practical_info"), class: "block px-4 py-2 hover:bg-gray-100" %>
+                            </li>
+                            <li>
+                                <%= link_to "Nous contacter", page_path("contact_us"), class: "block px-4 py-2 hover:bg-gray-100" %>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+
+                <!-- F.A.Q -->
+                <li>
+                    <%= link_to "F.A.Q", page_path("faq"), class: "block py-2 text-gray-900 hover:text-indigo-700" %>
+                </li>
+            </ul>
+        </div>
+
+        <!-- User buttons (desktop only) -->
+        <div class="hidden md:flex items-center md:space-x-3">
+            <% if authenticated? && Current.user %>
+            <!-- Clickable profile picture -->
+            <%= link_to user_path(Current.user), class: "flex mr-3" do %>
+            <%= image_tag("users.png", alt: "photo de profil", class: "w-8 h-8 rounded-full hover:ring-2 hover:ring-indigo-300") %>
+            <% end %>
+
+            <!-- My Space button with dropdown -->
+            <div class="relative">
+                <button id="dropdownUserButton" data-dropdown-toggle="dropdownUser" class="relative inline-flex items-center px-5 py-2.5 text-sm font-medium text-center text-white bg-[#1F5C55] rounded-lg hover:bg-gray-100 hover:text-[#1F5C55] hover:border-[#1F5C55] hover:border-2 focus:ring-4 focus:outline-none focus:ring-gray-300 transition-colors duration-300 border-2 border-transparent cursor-pointer">
+                    Mon Espace
+                    <svg class="w-2.5 h-2.5 ms-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4" />
+                    </svg>
+                    <% if false # to be replaced with an actual condition, such as unread notifications %>
+                    <div class="absolute inline-flex items-center justify-center w-6 h-6 text-xs font-bold text-white bg-red-500 border-2 border-white rounded-full -top-2 -end-2">8</div>
+                    <% end %>
+                </button>
+
+                <!-- Dropdown menu -->
+                <div id="dropdownUser" class="z-40 hidden absolute right-0 bg-white divide-y divide-gray-100 rounded-lg shadow w-44">
+                    <div class="px-4 py-3 text-sm text-gray-900">
+                        <div>
+                            <% if Current.user.first_name.present? || Current.user.last_name.present? %>
+                            <%= [Current.user.first_name, Current.user.last_name].compact.join(' ') %>
+                            <% else %>
+                            Utilisateur
+                            <% end %>
+                        </div>
+                        <div class="font-medium truncate"><%= Current.user.email %></div>
+                    </div>
+                    <ul class="py-2 text-sm text-gray-700">
+                        <li>
+                            <%= link_to "Profil", user_path(Current.user), class: "block px-4 py-2 hover:bg-gray-100" %>
+                        </li>
+                        <% if Current.user.has_privileges? %>
+                        <li>
+                            <%= link_to "Tableau de bord", admin_dashboard_index_path, class: "block px-4 py-2 hover:bg-gray-100" %>
+                        </li>
+                        <% end %>
+                        <li>
+                            <%= link_to "Paramètres", settings_path, class: "block px-4 py-2 hover:bg-gray-100" %>
+                        </li>
+                    </ul>
+                    <div class="py-1">
+                        <%= button_to "Déconnexion", session_path, method: :delete, class: "block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer" %>
+                    </div>
+                </div>
+            </div>
+            <% else %>
+            <!-- Visitor buttons -->
+            <div class="flex items-center space-x-2">
+                <%= link_to new_session_path, class: "text-gray-900 hover:text-indigo-700 font-medium rounded-lg text-sm px-4 py-2 text-center" do %>
+                Se connecter
+                <% end %>
+                <%= link_to new_registration_path, class: "px-6 py-2 tracking-wide text-white font-bold bg-[#1F5C55] border-2 border-[#1F5C55] rounded-lg shadow-lg hover:bg-gray-100 hover:text-[#1F5C55] hover:border-[#1F5C55] transition-colors duration-300" do %>
+                S'inscrire
+                <% end %>
+            </div>
+            <% end %>
+        </div>
     </div>
-  </div>
 
-  <div class="navbar-burger" onclick="toggleMenu()">
-    <div></div>
-    <div></div>
-    <div></div>
-  </div>
+    <!-- Mobile menu -->
+    <div class="hidden w-full md:hidden" id="navbar-mobile" data-controller="accordion">
+        <div class="flex flex-col items-start w-full p-4 bg-white">
+            <!-- Accordions for mobile -->
+            <div id="accordion-menu" class="w-full">
+                <!-- The Accordion Place -->
+                <div class="border-b border-gray-200">
+                    <h2 id="accordion-lieu-heading">
+                        <button type="button" class="flex items-center justify-between w-full py-4 font-medium text-left text-gray-900" data-accordion-target="#accordion-lieu-body" aria-expanded="false" aria-controls="accordion-lieu-body">
+                            <span>Le Lieu</span>
+                            <svg data-accordion-icon class="w-3 h-3 rotate-180 shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
+                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5 5 1 1 5" />
+                            </svg>
+                        </button>
+                    </h2>
+                    <div id="accordion-lieu-body" class="hidden" aria-labelledby="accordion-lieu-heading">
+                        <div class="pb-4 pl-4">
+                            <ul class="space-y-2">
+                                <li>
+                                    <%= link_to "L'Association", page_path('association'), class: "block" %>
+                                </li>
+                                <li>
+                                    <%= link_to "Le Cirque", page_path('circus_details'), class: "block" %>
+                                </li>
+                                <li>
+                                    <%= link_to "Les Arts Graphiques", page_path('graphic_arts_details'), class: "block" %>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
 
-  <div class="navbar-center">
-    <%= link_to "Accueil", root_path, class: "navbar-text navbar-link-left" %>
-    <%= link_to "Le cirque", page_path("le_cirque"), class: "navbar-text navbar-link-middle" %>
-    <%= link_to "Le graff", page_path("le_graff"), class: "navbar-text navbar-link-middle" %>
-    <%= link_to "Le lieu", page_path("le_lieu"), class: "navbar-text navbar-link-middle" %>
-    <%= link_to "Programme", events_path, class: "navbar-text navbar-link-right" %>
-    <%= link_to "À propos", page_path("about"), class: "navbar-text navbar-link-right" %>
-  </div>
+                <!-- Our accordion news -->
+                <div class="border-b border-gray-200">
+                    <h2 id="accordion-actualites-heading">
+                        <button type="button" class="flex items-center justify-between w-full py-4 font-medium text-left text-gray-900" data-accordion-target="#accordion-actualites-body" aria-expanded="false" aria-controls="accordion-actualites-body">
+                            <span>Actualités</span>
+                            <svg data-accordion-icon class="w-3 h-3 rotate-180 shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
+                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5 5 1 1 5" />
+                            </svg>
+                        </button>
+                    </h2>
+                    <div id="accordion-actualites-body" class="hidden" aria-labelledby="accordion-actualites-heading">
+                        <div class="pb-4 pl-4">
+                            <ul class="space-y-2">
+                                <li>
+                                    <%= link_to "Nos Actualités", page_path("news"), class: "block text-indigo-700 font-medium" %>
+                                </li>
+                                <li>
+                                    <%= link_to "Blog & Newsletters", page_path("blog_newsletter"), class: "block" %>
+                                </li>
+                                <li>
+                                    <%= link_to "Galerie Photos", page_path("gallery"), class: "block" %>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
 
-  <div class="navbar-right">
-    <% if authenticated? %>
-      <%= link_to "Mon profil", user_path(current_user), class: "white-button" %>
-      <%= button_to "Se déconnecter", session_path, method: :delete, class: "purple-button" %>
-    <% else %>
-      <%= link_to "Se connecter", new_session_path, class: "white-button" %>
-      <%= link_to "S'inscrire", new_registration_path, class: "purple-button" %>
-    <% end %>
-  </div>
-</div>
+                <!-- Our events (simple link) -->
+                <div class="border-b border-gray-200">
+                    <%= link_to "Nos Événements", events_path, class: "flex items-center w-full py-4 font-medium text-left text-gray-900" %>
+                </div>
 
-<script>
-  document.addEventListener('DOMContentLoaded', function () {
-    const burgerMenu = document.querySelector('.navbar-burger');
-    const navbar = document.querySelector('.navbar');
+                <!-- Become a Member (simple link) -->
+                <div class="border-b border-gray-200">
+                    <%= link_to "Devenir Membre", page_path("become_member"), class: "flex items-center w-full py-4 font-medium text-left text-gray-900" %>
+                </div>
 
-    console.log('Burger Menu:', burgerMenu);
-    console.log('Navbar:', navbar);
+                <!-- About accordion -->
+                <div class="border-b border-gray-200">
+                    <h2 id="accordion-apropos-heading">
+                        <button type="button" class="flex items-center justify-between w-full py-4 font-medium text-left text-gray-900" data-accordion-target="#accordion-apropos-body" aria-expanded="false" aria-controls="accordion-apropos-body">
+                            <span>À Propos</span>
+                            <svg data-accordion-icon class="w-3 h-3 rotate-180 shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
+                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5 5 1 1 5" />
+                            </svg>
+                        </button>
+                    </h2>
+                    <div id="accordion-apropos-body" class="hidden" aria-labelledby="accordion-apropos-heading">
+                        <div class="pb-4 pl-4">
+                            <ul class="space-y-2">
+                                <li>
+                                    <%= link_to "À Propos", page_path('about'), class: "block text-indigo-700 font-medium" %>
+                                </li>
+                                <li>
+                                    <%= link_to "Informations Utiles", page_path("practical_info"), class: "block" %>
+                                </li>
+                                <li>
+                                    <%= link_to "Nous contacter", page_path("contact_us"), class: "block" %>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
 
-    if (burgerMenu) {
-      burgerMenu.addEventListener('click', function () {
-        console.log('Burger menu clicked!');
-        navbar.classList.toggle('open');
-      });
-    } else {
-      console.error('Burger menu element not found.');
-    }
-  });
-</script>
+                <!-- F.A.Q (link simple) -->
+                <div class="border-b border-gray-200">
+                    <%= link_to "F.A.Q", page_path("faq"), class: "flex items-center w-full py-4 font-medium text-left text-gray-900" %>
+                </div>
+            </div>
+
+            <!-- User buttons (mobile) -->
+            <div class="flex flex-col w-full mt-4 space-y-3">
+                <% if authenticated? && Current.user %>
+                <div class="flex items-center space-x-3 p-4 bg-gray-50 rounded-lg">
+                    <%= image_tag("users.png", alt: "photo de profil", class: "w-10 h-10 rounded-full") %>
+                    <div>
+                        <div class="font-medium">
+                            <% if Current.user.first_name.present? || Current.user.last_name.present? %>
+                            <%= [Current.user.first_name, Current.user.last_name].compact.join(' ') %>
+                            <% else %>
+                            Utilisateur
+                            <% end %>
+                        </div>
+                        <div class="text-sm text-gray-500 truncate"><%= Current.user.email %></div>
+                    </div>
+                </div>
+                <% if Current.user.has_privileges? %>
+                <!-- For privileged users: display 4 buttons in a 2x2 grid -->
+                <div class="grid grid-cols-2 gap-3">
+                    <%= link_to "Profil", user_path(Current.user), class: "text-center py-2 px-4 bg-gray-100 rounded-lg hover:bg-gray-200" %>
+                    <%= link_to "Tableau de bord", admin_dashboard_index_path, class: "text-center py-2 px-4 bg-gray-100 rounded-lg hover:bg-gray-200" %>
+                    <%= link_to "Paramètres", settings_path, class: "text-center py-2 px-4 bg-gray-100 rounded-lg hover:bg-gray-200" %>
+                    <%= button_to "Déconnexion", session_path, method: :delete, class: "text-center py-2 px-4 bg-red-100 text-red-700 rounded-lg hover:bg-red-200 cursor-pointer" %>
+                </div>
+                <% else %>
+                <!-- For unprivileged users: show 3 buttons -->
+                <div class="grid grid-cols-2 gap-3">
+                    <%= link_to "Profil", user_path(Current.user), class: "text-center py-2 px-4 bg-gray-100 rounded-lg hover:bg-gray-200" %>
+                    <%= link_to "Paramètres", settings_path, class: "text-center py-2 px-4 bg-gray-100 rounded-lg hover:bg-gray-200" %>
+                    <%= button_to "Déconnexion", session_path, method: :delete, class: "text-center py-2 px-4 bg-red-100 text-red-700 rounded-lg hover:bg-red-200 col-span-2 cursor-pointer" %>
+                </div>
+                <% end %>
+                <% else %>
+                <div class="grid grid-cols-2 gap-3">
+                    <%= link_to "Se connecter", new_session_path, class: "text-center font-bold py-2 px-4 border border-gray-300 rounded-lg hover:bg-gray-50" %>
+                    <%= link_to "S'inscrire", new_registration_path, class: "text-center px-6 py-2 tracking-wide text-white font-bold bg-[#1F5C55] border-2 border-[#1F5C55] rounded-lg shadow-lg hover:bg-gray-100 hover:text-[#1F5C55] hover:border-[#1F5C55] transition-colors duration-300" %>
+                </div>
+                <% end %>
+            </div>
+        </div>
+    </div>
+</nav>

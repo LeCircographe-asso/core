@@ -1,33 +1,83 @@
-<div id="<%= dom_id user %>">
-<h1>Profil <%= @user.id %></h1>
-    <h2 class="profile-section-title">Informations</h2>
-    <div class="profile-info">
-      <div class="info-group">
-        <p><strong>Email:</strong> <%= @user.email_address %></p>
-        <p><strong>Date de naissance:</strong> <%= @user.birthdate %></p>
-        <p><strong>Adresse:</strong> <%= @user.address %></p>
-        <p><strong>Code Postal:</strong> <%= @user.zip_code %></p>
-        <p><strong>Ville:</strong> <%= @user.town %></p>
-        <p><strong>Pays:</strong> <%= @user.country %></p>
-        <p><strong>N° de téléphone:</strong> <%= @user.phone_number %></p>
-        <p><strong>Profession ou spécialité:</strong> <%= @user.occupation %></p>
-        <p><strong>Disciplines pratiquées:</strong> <%= @user.specialty %></p>
-        <p><strong>Droit à l'image:</strong> <%= @user.image_rights %></p>
+<div id="<%= dom_id user %>" class="bg-white shadow-lg rounded-lg overflow-hidden">
+  <div class="bg-gradient-to-r from-[#1F5C55] to-[#194A45] px-6 py-4">
+    <div class="flex justify-between items-center">
+      <div>
+        <h2 class="text-2xl font-bold text-white flex items-center gap-2">
+          <%= user.full_name %>
+          <span class="text-sm bg-white/20 px-2 py-1 rounded-full"><%= user.system_role.humanize %></span>
+        </h2>
+        <p class="text-white/80 mt-1"><%= user.email_address %></p>
       </div>
-      <div class="info-group">
-        <% if @user.user_memberships.exists? %>
-          <% latest_membership = @user.user_memberships.order(created_at: :desc).first %>
-          <p><strong>Inscription ?:</strong> Oui</p>
-          <p><strong>Date d'inscription:</strong> <%= @user.user_memberships.order(:created_at).first.created_at.strftime("%d/%m/%Y") %></p>
-          <p><strong>Type d'abonnement:</strong> <%= latest_membership.subscription_type.name %></p>
-          <p><strong>Statut de l'abonnement:</strong> <%= latest_membership.status ? "Actif" : "Inactif" %></p>
-        <% else %>
-          <p><strong>Inscription ?:</strong> Non</p>
-          <% if @user.subscription_types.exists? %>
-            <p><strong>Type d'abonnement:</strong> <%= latest_membership.subscription_type.name %></p>
-            <p><strong>Statut de l'abonnement:</strong> <%= latest_membership.status ? "Actif" : "Inactif" %></p>
+    </div>
+  </div>
+
+  <div class="p-6">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <!-- Personal Information -->
+      <div>
+        <h3 class="text-lg font-semibold text-gray-900 mb-4">Informations personnelles</h3>
+        <div class="space-y-2">
+          <p><strong>Email:</strong> <%= user.email_address %></p>
+          <p><strong>Prénom:</strong> <%= user.first_name %></p>
+          <p><strong>Nom:</strong> <%= user.last_name %></p>
+          <p><strong>Date de naissance:</strong> <%= user.birthdate&.strftime("%d/%m/%Y") || "Non renseigné" %></p>
+          <p><strong>Téléphone:</strong> <%= user.phone_number || "Non renseigné" %></p>
+        </div>
+      </div>
+
+      <!-- Membership Information -->
+      <div>
+        <h3 class="text-lg font-semibold text-gray-900 mb-4">Informations d'adhésion</h3>
+        <div class="space-y-2">
+          <% begin %>
+            <% if user.user_memberships.any? %>
+              <p><strong>Inscription:</strong> Oui</p>
+              <p><strong>Date d'inscription:</strong> <%= registration_date(user) %></p>
+              <% current_membership = latest_membership(user) %>
+              <p><strong>Type d'abonnement:</strong> <%= membership_type_name(current_membership) %></p>
+              <p><strong>Statut de l'abonnement:</strong> <%= membership_status(current_membership) %></p>
+            <% else %>
+              <p><strong>Inscription:</strong> Non</p>
+              <p><strong>Date d'inscription:</strong> N/A</p>
+              <p><strong>Type d'abonnement:</strong> Aucun</p>
+              <p><strong>Statut de l'abonnement:</strong> Inactif</p>
+            <% end %>
+          <% rescue => e %>
+            <p><strong>Inscription:</strong> Non</p>
+            <p><strong>Date d'inscription:</strong> N/A</p>
+            <p><strong>Type d'abonnement:</strong> Aucun</p>
+            <p><strong>Statut de l'abonnement:</strong> Inactif</p>
           <% end %>
-        <% end %>
-        <p><strong>Newsletter:</strong> <%= @user.newsletter %></p>
-        <p><strong>Investissement dans le projet:</strong> <%= @user.get_involved %></p>
+        </div>
       </div>
+
+      <!-- Additional Information -->
+      <div>
+        <h3 class="text-lg font-semibold text-gray-900 mb-4">Informations additionnelles</h3>
+        <div class="space-y-2">
+          <p><strong>Adresse:</strong> <%= user.address || "Non renseigné" %></p>
+          <p><strong>Code postal:</strong> <%= user.zip_code || "Non renseigné" %></p>
+          <p><strong>Ville:</strong> <%= user.town || "Non renseigné" %></p>
+          <p><strong>Pays:</strong> <%= user.country || "Non renseigné" %></p>
+          <p><strong>Profession:</strong> <%= user.occupation || "Non renseigné" %></p>
+          <p><strong>Spécialité:</strong> <%= user.specialty || "Non renseigné" %></p>
+        </div>
+      </div>
+
+      <!-- Preferences -->
+      <div>
+        <h3 class="text-lg font-semibold text-gray-900 mb-4">Préférences</h3>
+        <div class="space-y-2">
+          <p><strong>Newsletter:</strong> <%= user.newsletter_subscribed? ? "Oui" : "Non" %></p>
+          <p><strong>Droits à l'image:</strong> <%= user.image_rights? ? "Oui" : "Non" %></p>
+          <p><strong>Souhaite s'impliquer:</strong> <%= user.get_involved? ? "Oui" : "Non" %></p>
+          <p><strong>Police dyslexique:</strong> <%= user.dyslexic_font? ? "Oui" : "Non" %></p>
+        </div>
+      </div>
+    </div>
+
+    <div class="mt-6 flex justify-end space-x-3">
+      <%= link_to "Voir", admin_user_path(user), class: "px-4 py-2 bg-[#1F5C55] text-white rounded-md hover:bg-[#194A45] transition-colors" %>
+    </div>
+  </div>
+</div>

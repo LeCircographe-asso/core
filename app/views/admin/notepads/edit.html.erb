@@ -1,6 +1,41 @@
-<div class="admin-dashboard">
-<%= form_with url: admin_notepad_url, method: :put do |form| %>
-  <%= text_area_tag "notepad", @notepad%>
-  <%= submit_tag "Mettre à jour", class: "purple-button" %>
-<% end %>
-<div>
+<% content_for :title, "Modifier le bloc-note" %>
+
+<div class="min-h-screen py-6">
+  <div class="max-w-4xl mx-auto px-4 sm:px-6">
+    <!-- Breadcrumbs -->
+    <%= render 'shared/breadcrumbs' %>
+    
+    <!-- Header -->
+    <div class="mb-6">
+      <h1 class="text-2xl font-bold text-gray-900">Modifier le bloc-note</h1>
+      <p class="mt-2 text-sm text-gray-500">Ce bloc-note est visible sur le tableau de bord administrateur</p>
+    </div>
+
+    <!-- Form -->
+    <div class="bg-white shadow overflow-hidden rounded-lg">
+      <div class="px-6 py-5 border-b border-gray-200">
+        <h2 class="text-lg leading-6 font-medium text-gray-900">Contenu du bloc-note</h2>
+      </div>
+      <div class="p-6">
+        <%= form_with url: admin_notepad_url, method: :put, class: "space-y-6" do |form| %>
+          <div>
+            <%= form.text_area :notepad, 
+                value: @notepad, 
+                rows: 15, 
+                class: "shadow-sm focus:ring-[#1F5C55] focus:border-[#1F5C55] block w-full sm:text-sm border-gray-300 rounded-md", 
+                placeholder: "Saisissez vos notes ici..." %>
+            <p class="mt-2 text-sm text-gray-500">
+              <i class="fas fa-info-circle text-blue-500 mr-1"></i>
+              Vous pouvez utiliser le format Markdown pour la mise en forme du texte
+            </p>
+          </div>
+
+          <div class="flex items-center justify-end space-x-3">
+            <%= link_to "Annuler", admin_dashboard_index_path, class: "px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1F5C55]" %>
+            <%= form.submit "Enregistrer les modifications", class: "px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#1F5C55] hover:bg-[#194A45] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1F5C55]" %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>

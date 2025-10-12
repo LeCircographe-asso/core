@@ -35,3 +35,31 @@
 
 /app/assets/builds/*
 !/app/assets/builds/.keep
+/docs
+/node_modules
+/.cursorrules
+/.cert
+
+# Add SimpleCov coverage reports to ignore list
+/coverage/
+
+# Secrets et configurations sensibles
+/.kamal/secrets
+/.kamal/secrets.*
+/config/credentials/*.key
+/config/database.yml.local
+/config/secrets.yml
+.env.local
+.env.production
+.env.staging
+
+# Certificats SSL
+/.cert/
+*.pem
+*.key
+*.crt
+*.p12
+
+# Logs sensibles
+/log/production.log
+/log/staging.log

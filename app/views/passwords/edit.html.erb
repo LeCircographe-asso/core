@@ -1,21 +1,50 @@
-<div class="mx-auto md:w-2/3 w-full">
-  <% if alert = flash[:alert] %>
-    <p class="py-2 px-3 bg-red-50 mb-5 text-red-500 font-medium rounded-lg inline-block" id="alert"><%= alert %></p>
-  <% end %>
+<div class="min-h-screen py-6">
+    <div class="max-w-md mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="bg-white/95 backdrop-blur-sm shadow rounded-lg">
+            <div class="px-4 py-5 sm:p-6">
+                <h1 class="text-center text-2xl font-bold text-gray-900 mb-6">Réinitialiser votre mot de passe</h1>
 
-  <h1 class="font-bold text-4xl">Modifier votre mot de passe</h1>
+                <%= form_with url: password_path(params[:token]), method: :patch, local: true, class: "space-y-4" do |form| %>
+                    <% if @user.errors.any? %>
+                        <div class="bg-red-50 p-4 rounded-md">
+                            <div class="flex">
+                                <div class="flex-shrink-0">
+                                    <svg class="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+                                    </svg>
+                                </div>
+                                <div class="ml-3">
+                                    <h3 class="text-sm font-medium text-red-800">
+                                        <%= pluralize(@user.errors.count, "erreur") %> à corriger :
+                                    </h3>
+                                    <div class="mt-2 text-sm text-red-700">
+                                        <ul class="list-disc pl-5 space-y-1">
+                                            <% @user.errors.full_messages.each do |message| %>
+                                                <li><%= message %></li>
+                                            <% end %>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    <% end %>
 
-  <%= form_with url: password_path(params[:token]), method: :put, class: "contents" do |form| %>
-    <div class="my-5">
-      <%= form.password_field :password, required: true, autocomplete: "new-password", placeholder: "Enter new password", maxlength: 72, class: "block shadow rounded-md border border-gray-400 outline-none px-3 py-2 mt-2 w-full" %>
+                    <div class="space-y-3">
+                        <div>
+                            <%= form.label :password, "Nouveau mot de passe", class: "block text-sm font-medium text-gray-700" %>
+                            <%= form.password_field :password, required: true, autofocus: true, autocomplete: "new-password", placeholder: "Entrez votre nouveau mot de passe", class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#1F5C55] focus:ring-[#1F5C55] sm:text-sm" %>
+                        </div>
+                        <div>
+                            <%= form.label :password_confirmation, "Confirmer le mot de passe", class: "block text-sm font-medium text-gray-700" %>
+                            <%= form.password_field :password_confirmation, required: true, autocomplete: "new-password", placeholder: "Confirmez votre nouveau mot de passe", class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#1F5C55] focus:ring-[#1F5C55] sm:text-sm" %>
+                        </div>
+                    </div>
+
+                    <div class="pt-3">
+                        <%= form.submit "Réinitialiser le mot de passe", class: "w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#1F5C55] hover:bg-[#1F5C55]/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1F5C55]" %>
+                    </div>
+                <% end %>
+            </div>
+        </div>
     </div>
-
-    <div class="my-5">
-      <%= form.password_field :password_confirmation, required: true, autocomplete: "new-password", placeholder: "Repeat new password", maxlength: 72, class: "block shadow rounded-md border border-gray-400 outline-none px-3 py-2 mt-2 w-full" %>
-    </div>
-
-    <div class="inline">
-      <%= form.submit "Save", class: "rounded-lg py-3 px-5 text-white inline-block font-medium cursor-pointer" %>
-    </div>
-  <% end %>
 </div>

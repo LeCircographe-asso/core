@@ -5,12 +5,13 @@ class RegistrationsController < ApplicationController
     if authenticated?
       redirect_to root_path
     end
-    @user = User.new
+    @user = User.new(email_address: session[:newsletter_email])
   end
 
   def create
     @user = User.new(user_params)
     if @user.save
+      UserMailer.welcome_email(@user).deliver_later
       start_new_session_for @user
       redirect_to root_path, notice: "Inscription réussie !"
     else
@@ -23,6 +24,6 @@ class RegistrationsController < ApplicationController
   private
 
   def user_params
-    params.require(:user).permit(:email_address, :password, :password_confirmation, :cgu, :privacy_policy)
+    params.require(:user).permit(:email_address, :password, :password_confirmation, :cgu, :privacy_policy, :newsletter_subscribed)
   end
 end

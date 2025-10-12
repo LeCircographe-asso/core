@@ -1,0 +1,38 @@
+<section class="py-12">
+    <article class="overflow-hidden w-full flex flex-col lg:flex-row shadow-[0_4px_30px_rgba(0,0,0,0.1)] rounded-2xl backdrop-blur-xl">
+        <figure class="w-full lg:w-1/2 h-screen/2 lg:h-auto">
+            <div class="h-full">
+                <%= image_tag image, class: "w-full h-full object-cover", alt: "Artiste réalisant une performance acrobatique lors des entraînements libres" %>
+            </div>
+        </figure>
+
+        <div class="w-full lg:w-1/2 px-6 py-12 lg:py-24 bg-white/95">
+            <div class="text-center">
+                <h2 class="text-2xl font-semibold text-gray-800 dark:text-black md:text-3xl">
+                    <%= title %>
+                </h2>
+            </div>
+
+            <div class="mt-8 text-center">
+                <p class="text-black dark:text-black mb-4">
+                    <%= description %>
+                </p>
+                <p class="text-black dark:text-black mb-4">
+                    <%= description_2 %>
+                </p>
+                <p class="text-black dark:text-black">
+                    <%= description_3 %>
+                </p>
+            </div>
+
+            <div class="mt-8 text-center">
+                <%= link_to link, class: "inline-flex items-center justify-center px-6 py-2 text-sm text-white duration-300 bg-[#1F5C55] border-2 border-[#1F5C55] rounded-lg hover:bg-gray-100 hover:text-[#1F5C55] hover:border-[#1F5C55] focus:ring focus:ring-gray-300 focus:ring-opacity-80" do %>
+                  <%= button_text %>
+                  <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                  </svg>
+                <% end %>
+            </div>
+        </div>
+    </article>
+</section>

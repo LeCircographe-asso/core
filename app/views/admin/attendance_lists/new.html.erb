@@ -1,0 +1,79 @@
+<% content_for :title, "Créer une nouvelle liste de présence" %>
+
+<div class="min-h-screen py-6">
+  <div class="w-full max-w-3xl mx-auto px-2 sm:px-6">
+    <!-- Breadcrumbs -->
+    <%= render 'shared/breadcrumbs' %>
+    
+    <!-- Header -->
+    <div class="mb-5">
+      <h1 class="text-xl md:text-2xl font-bold text-gray-900">Nouvelle liste</h1>
+      <p class="mt-1 text-sm text-gray-500">Créez une liste pour gérer les présences</p>
+    </div>
+
+    <!-- Form -->
+    <div class="bg-white shadow overflow-hidden rounded-lg">
+      <div class="px-3 sm:px-6 py-4 border-b border-gray-200">
+        <h2 class="text-base sm:text-lg font-medium text-gray-900">Informations</h2>
+      </div>
+      <div class="px-3 sm:px-6 py-4">
+        <%= form_with model: AttendanceList.new, url: admin_attendance_lists_path, method: :post, class: "space-y-4" do |form| %>
+          <div>
+            <%= form.label :name, "Nom de la liste", class: "block text-sm font-medium text-gray-700" %>
+            <div class="mt-1 relative rounded-md shadow-sm">
+              <div class="absolute inset-y-0 left-0 pl-2 flex items-center pointer-events-none">
+                <i class="fas fa-tag text-gray-400 text-xs sm:text-sm"></i>
+              </div>
+              <%= form.text_field :name, 
+                  class: "pl-7 block w-full py-2 pr-2 mt-1 focus:ring-[#1F5C55] focus:border-[#1F5C55] shadow-sm text-sm border-gray-300 rounded-md",
+                  placeholder: "Ex: Formation du 15/04/2025" 
+              %>
+            </div>
+            <p class="mt-1 text-xs text-gray-500">Généré automatiquement si vide</p>
+          </div>
+        
+          <div>
+            <%= form.label :list_type, "Type de liste", class: "block text-sm font-medium text-gray-700" %>
+            <div class="mt-1 relative rounded-md shadow-sm">
+              <div class="absolute inset-y-0 left-0 pl-2 flex items-center pointer-events-none">
+                <i class="fas fa-list-ul text-gray-400 text-xs sm:text-sm"></i>
+              </div>
+              <%= form.select :list_type, 
+                  AttendanceList.list_types.keys.map { |type| [type.humanize, type] },
+                  { include_blank: "Sélectionnez un type" },
+                  { class: "pl-7 block w-full py-2 pr-7 mt-1 focus:ring-[#1F5C55] focus:border-[#1F5C55] shadow-sm text-sm border-gray-300 rounded-md appearance-none" }
+              %>
+              <div class="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
+                <i class="fas fa-chevron-down text-gray-400 text-xs sm:text-sm"></i>
+              </div>
+            </div>
+            <p class="mt-1 text-xs text-gray-500">Type d'événement</p>
+          </div>
+
+          <div>
+            <%= form.label :start_date, "Date et heure de début", class: "block text-sm font-medium text-gray-700" %>
+            <div class="mt-1 relative rounded-md shadow-sm">
+              <div class="absolute inset-y-0 left-0 pl-2 flex items-center pointer-events-none">
+                <i class="fas fa-calendar-alt text-gray-400 text-xs sm:text-sm"></i>
+              </div>
+              <%= form.datetime_local_field :start_date, 
+                  class: "pl-7 block w-full py-2 pr-2 mt-1 focus:ring-[#1F5C55] focus:border-[#1F5C55] shadow-sm text-sm border-gray-300 rounded-md"
+              %>
+            </div>
+            <p class="mt-1 text-xs text-gray-500">Fin: fin de journée</p>
+          </div>
+
+          <div class="flex items-center justify-end space-x-2 pt-4 border-t border-gray-200">
+            <%= link_to admin_attendance_lists_path, class: "w-1/2 sm:w-auto py-2 px-3 sm:px-4 bg-white border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1F5C55] text-center" do %>
+              <i class="fas fa-times mr-0 sm:mr-2"></i><span class="hidden sm:inline">Annuler</span>
+            <% end %>
+            
+            <%= form.button type: "submit", class: "w-1/2 sm:w-auto py-2 px-3 sm:px-4 bg-[#1F5C55] hover:bg-[#194A45] text-white text-sm font-medium rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1F5C55] flex items-center justify-center" do %>
+              <i class="fas fa-check mr-0 sm:mr-2"></i><span class="hidden sm:inline">Créer</span>
+            <% end %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>

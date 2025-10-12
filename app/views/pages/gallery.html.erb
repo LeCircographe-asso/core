@@ -1,0 +1,15 @@
+<section class="text-center mb-12 bg-white/95 py-6 rounded-lg shadow-md fade-in">
+    <h1 class="font-circographe text-4xl font-bold text-black">Galerie Photos</h1>
+    </section>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-12 fade-in">
+        <% image_files = ["lelieu1.webp", "lelieu2.webp", "graff-img1.webp", "circus-img2.webp", 
+                     "background.webp", "home1.webp", "home2.webp", "home3.webp", 
+                     "background_temp.webp", "jongleur.jpg", "graff.jpg", "place.jpg"] %>
+
+        <% image_files.each do |image| %>
+        <div class="relative fade-in">
+            <%= image_tag asset_path(image), alt: "Image du Circographe", class: "w-full h-64 object-cover rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300" %>
+        </div>
+        <% end %>
+    </div>

@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta content='text/html; charset=UTF-8' http-equiv='Content-Type' />
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 20px;
+        }
+
+        h1 {
+            color: #3498db;
+        }
+
+        .category {
+            display: inline-block;
+            background-color: #f8f9fa;
+            padding: 5px 10px;
+            border-radius: 3px;
+            margin-bottom: 15px;
+        }
+
+        .message {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+
+        .footer {
+            font-size: 12px;
+            color: #777;
+            margin-top: 30px;
+            padding-top: 10px;
+            border-top: 1px solid #eee;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Nouveau message de contact</h1>
+        <p><strong>Catégorie :</strong> <span class="category"><%= @category.capitalize %></span></p>
+        <p><strong>De :</strong> <%= @name %> (<%= @email %>)</p>
+        <p><strong>Envoyé le :</strong> <%= @submitted_at.strftime("%d/%m/%Y à %H:%M") %></p>
+
+        <div class="message">
+            <p><strong>Message :</strong></p>
+            <p><%= simple_format(@message) %></p>
+        </div>
+
+        <p>Vous pouvez répondre directement à ce message en utilisant la fonction "répondre" de votre client mail.</p>
+
+        <div class="footer">
+            <p>Ce message a été envoyé depuis le formulaire de contact du site Le Circographe.</p>
+        </div>
+    </div>
+</body>
+
+</html>

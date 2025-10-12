@@ -1,17 +1,243 @@
-<% content_for :title, "Modifier l'utilisateur" %>
-
-<div class="admin-dashboard">
-  <div class="row justify-content-center">
-    <div class="col-md-8">
-      <h1>Modifier l'utilisateur</h1>
-
-      <%= render "form", user: @user %>
-
-      <br>
-
-      <div>
-        <%= link_to "Retour aux utilisateurs", admin_users_path, class: "purple-button" %>
+<div class="max-w-4xl mx-auto">
+  <!-- Breadcrumbs -->
+  <%= render 'shared/breadcrumbs' %>
+  
+  <div class="bg-white shadow-lg rounded-lg overflow-hidden" id="<%= dom_id(@user) %>">
+    <!-- Header with gradient -->
+    <div class="relative">
+      <div class="h-24 w-full bg-gradient-to-r from-[#1F5C55] to-[#194A45] rounded-t-lg">
+        <!-- User Role Badge -->
+        <div class="absolute top-4 right-4 px-3 py-1 text-xs font-semibold text-white rounded-full 
+          <%= case @user.system_role
+            when 'super_admin' then 'bg-[#1F5C55]'
+            when 'admin' then 'bg-[#1F5C55]/90'
+            when 'volunteer' then 'bg-[#1F5C55]/80'
+            when 'user_connected' then 'bg-[#1F5C55]/70'
+            end %>">
+          <%= @user.system_role.humanize %>
+        </div>
       </div>
+      
+      <!-- Avatar -->
+      <div class="absolute -bottom-12 left-1/2 transform -translate-x-1/2">
+        <div class="h-24 w-24 rounded-full border-4 border-white overflow-hidden bg-white shadow-lg">
+          <% case @user.system_role %>
+          <% when 'super_admin' %>
+            <%= image_tag "super_admin.webp", alt: "Avatar Super Admin", class: "h-full w-full object-cover" %>
+          <% when 'admin' %>
+            <%= image_tag "admin.webp", alt: "Avatar Admin", class: "h-full w-full object-cover" %>
+          <% when 'volunteer' %>
+            <%= image_tag "volunteer.webp", alt: "Avatar Bénévole", class: "h-full w-full object-cover" %>
+          <% when 'user_connected' %>
+            <%= image_tag "users.png", alt: "Avatar Utilisateur", class: "h-full w-full object-cover" %>
+          <% else %>
+            <%= image_tag "users.png", alt: "Avatar", class: "h-full w-full object-cover" %>
+          <% end %>
+        </div>
+      </div>
+    </div>
+    
+    <!-- User Info -->
+    <div class="pt-16 px-6 pb-6">
+      <div class="text-center mb-6">
+        <h1 class="text-xl font-bold text-gray-800">
+          <%= @user.full_name.present? ? @user.full_name : "Utilisateur ##{@user.id}" %>
+        </h1>
+        <p class="text-gray-500 text-sm mt-1"><%= @user.email_address %></p>
+      </div>
+      
+      <%= form_with(model: [:admin, @user], data: { turbo: true }) do |form| %>
+        <% if @user.errors.any? %>
+          <div class="bg-red-50 border-l-4 border-red-400 p-4 mb-6" id="error_explanation">
+            <div class="flex">
+              <div class="ml-3">
+                <h2 class="text-sm font-medium text-red-800">
+                  <%= pluralize(@user.errors.count, "erreur") %> <%= @user.errors.count > 1 ? "empêchent" : "empêche" %> la sauvegarde :
+                </h2>
+                <div class="mt-2 text-sm text-red-700">
+                  <ul class="list-disc pl-5 space-y-1">
+                    <% @user.errors.full_messages.each do |msg| %>
+                      <li><%= msg %></li>
+                    <% end %>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        <% end %>
+        
+        <!-- Tabs Navigation -->
+        <div class="border-b border-gray-200 mb-6">
+          <nav class="flex -mb-px" aria-label="Tabs">
+            <button type="button" class="tab-button active w-1/2 py-4 px-1 text-center border-b-2 font-medium text-sm" data-tab="personal">
+              Informations personnelles
+            </button>
+            <button type="button" class="tab-button w-1/2 py-4 px-1 text-center border-b-2 font-medium text-sm" data-tab="additional">
+              Informations additionnelles
+            </button>
+          </nav>
+        </div>
+        
+        <!-- Tab Content -->
+        <div class="tab-content" id="personal-tab">
+          <div class="space-y-4">
+            <!-- Email -->
+            <div class="form-group">
+              <%= form.label :email_address, "Email", class: "block text-sm font-medium text-gray-700" %>
+              <%= form.email_field :email_address, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#1F5C55] focus:ring-[#1F5C55] sm:text-sm" %>
+            </div>
+
+            <!-- First Name -->
+            <div class="form-group">
+              <%= form.label :first_name, "Prénom", class: "block text-sm font-medium text-gray-700" %>
+              <%= form.text_field :first_name, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#1F5C55] focus:ring-[#1F5C55] sm:text-sm" %>
+            </div>
+
+            <!-- Last Name -->
+            <div class="form-group">
+              <%= form.label :last_name, "Nom", class: "block text-sm font-medium text-gray-700" %>
+              <%= form.text_field :last_name, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#1F5C55] focus:ring-[#1F5C55] sm:text-sm" %>
+            </div>
+
+            <!-- System Role -->
+            <div class="form-group">
+              <%= form.label :system_role, "Rôle système", class: "block text-sm font-medium text-gray-700" %>
+              <%= form.select :system_role, 
+                  options_for_select(@array_right.map { |role| [role.humanize, role] }, @user.system_role),
+                  {}, 
+                  { class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#1F5C55] focus:ring-[#1F5C55] sm:text-sm" } 
+              %>
+            </div>
+
+            <!-- Occupation -->
+            <div class="form-group">
+              <%= form.label :occupation, "Profession", class: "block text-sm font-medium text-gray-700" %>
+              <%= form.text_field :occupation, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#1F5C55] focus:ring-[#1F5C55] sm:text-sm" %>
+            </div>
+
+            <!-- Specialty -->
+            <div class="form-group">
+              <%= form.label :specialty, "Spécialité", class: "block text-sm font-medium text-gray-700" %>
+              <%= form.text_field :specialty, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#1F5C55] focus:ring-[#1F5C55] sm:text-sm" %>
+            </div>
+          </div>
+        </div>
+        
+        <div class="tab-content hidden" id="additional-tab">
+          <div class="space-y-4">
+            <!-- Birth Date -->
+            <div class="form-group">
+              <%= form.label :birthdate, "Date de naissance", class: "block text-sm font-medium text-gray-700" %>
+              <%= form.date_field :birthdate, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#1F5C55] focus:ring-[#1F5C55] sm:text-sm" %>
+            </div>
+
+            <!-- Phone -->
+            <div class="form-group">
+              <%= form.label :phone_number, "Téléphone", class: "block text-sm font-medium text-gray-700" %>
+              <%= form.telephone_field :phone_number, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#1F5C55] focus:ring-[#1F5C55] sm:text-sm" %>
+            </div>
+
+            <!-- Address -->
+            <div class="space-y-2">
+              <%= form.label :address, "Adresse", class: "block text-sm font-medium text-gray-700" %>
+              <%= form.text_field :address, placeholder: "Adresse", class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#1F5C55] focus:ring-[#1F5C55] sm:text-sm" %>
+              <div class="grid grid-cols-2 gap-2">
+                <%= form.text_field :zip_code, placeholder: "Code postal", class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#1F5C55] focus:ring-[#1F5C55] sm:text-sm" %>
+                <%= form.text_field :town, placeholder: "Ville", class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#1F5C55] focus:ring-[#1F5C55] sm:text-sm" %>
+              </div>
+              <%= form.text_field :country, placeholder: "Pays", class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#1F5C55] focus:ring-[#1F5C55] sm:text-sm" %>
+            </div>
+
+            <!-- Preferences -->
+            <div class="space-y-4 mt-4">
+              <h3 class="text-sm font-medium text-gray-700">Préférences</h3>
+              
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div class="flex items-start">
+                  <div class="flex items-center h-5">
+                    <%= form.check_box :newsletter_subscribed, class: "h-4 w-4 text-[#1F5C55] focus:ring-[#1F5C55] border-gray-300 rounded" %>
+                  </div>
+                  <div class="ml-3 text-sm">
+                    <%= form.label :newsletter_subscribed, "Newsletter", class: "font-medium text-gray-700" %>
+                    <p class="text-gray-500">Reçoit les communications par email</p>
+                  </div>
+                </div>
+
+                <div class="flex items-start">
+                  <div class="flex items-center h-5">
+                    <%= form.check_box :image_rights, class: "h-4 w-4 text-[#1F5C55] focus:ring-[#1F5C55] border-gray-300 rounded" %>
+                  </div>
+                  <div class="ml-3 text-sm">
+                    <%= form.label :image_rights, "Droits à l'image", class: "font-medium text-gray-700" %>
+                    <p class="text-gray-500">Autorise l'utilisation de son image</p>
+                  </div>
+                </div>
+
+                <div class="flex items-start">
+                  <div class="flex items-center h-5">
+                    <%= form.check_box :get_involved, class: "h-4 w-4 text-[#1F5C55] focus:ring-[#1F5C55] border-gray-300 rounded" %>
+                  </div>
+                  <div class="ml-3 text-sm">
+                    <%= form.label :get_involved, "Souhaite s'impliquer", class: "font-medium text-gray-700" %>
+                    <p class="text-gray-500">Intéressé(e) pour participer aux activités</p>
+                  </div>
+                </div>
+
+                <div class="flex items-start">
+                  <div class="flex items-center h-5">
+                    <%= form.check_box :dyslexic_font, class: "h-4 w-4 text-[#1F5C55] focus:ring-[#1F5C55] border-gray-300 rounded" %>
+                  </div>
+                  <div class="ml-3 text-sm">
+                    <%= form.label :dyslexic_font, "Police dyslexique", class: "font-medium text-gray-700" %>
+                    <p class="text-gray-500">Utilise la police adaptée aux dyslexiques</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Action Buttons -->
+        <div class="mt-6 flex items-center justify-end gap-3 border-t pt-6">
+          <%= link_to "Annuler", admin_user_path(@user), class: "px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1F5C55]" %>
+          <%= form.submit "Enregistrer les modifications", class: "px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#1F5C55] hover:bg-[#194A45] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1F5C55]" %>
+        </div>
+      <% end %>
     </div>
   </div>
 </div>
+
+<script>
+  document.addEventListener('turbo:load', function() {
+    // Tab functionality
+    const tabButtons = document.querySelectorAll('.tab-button');
+    const tabContents = document.querySelectorAll('.tab-content');
+    
+    tabButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        // Remove active class from all buttons
+        tabButtons.forEach(btn => {
+          btn.classList.remove('border-[#1F5C55]', 'text-[#1F5C55]');
+          btn.classList.add('border-transparent', 'text-gray-500', 'hover:text-gray-700', 'hover:border-gray-300');
+        });
+        
+        // Add active class to clicked button
+        button.classList.remove('border-transparent', 'text-gray-500', 'hover:text-gray-700', 'hover:border-gray-300');
+        button.classList.add('border-[#1F5C55]', 'text-[#1F5C55]');
+        
+        // Hide all tab contents
+        tabContents.forEach(content => {
+          content.classList.add('hidden');
+        });
+        
+        // Show the selected tab content
+        const tabId = button.getAttribute('data-tab') + '-tab';
+        document.getElementById(tabId).classList.remove('hidden');
+      });
+    });
+    
+    // Set the first tab as active by default
+    tabButtons[0].classList.add('border-[#1F5C55]', 'text-[#1F5C55]');
+    tabButtons[0].classList.remove('border-transparent', 'text-gray-500', 'hover:text-gray-700', 'hover:border-gray-300');
+  });
+</script> 

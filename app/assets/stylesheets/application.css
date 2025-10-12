@@ -1,189 +1,55 @@
-/* application.css */
-body {
-  margin: 0;
-  padding: 0;
-  width: 100%;
-  background-color: #E6E6EA;
-  display: flex;
-  flex-direction: column;
-  height: 100vh;
-  font-size: clamp(14px, 1vw, 18px);
-}
+@import url('https://fonts.googleapis.com/css?family=OpenDyslexic');
 
-main {
-  flex: 1;
-}
-
-.banner {
-  position: relative;
-  background-size: cover;
-  background-position: center;
-  height: 600px;
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  clip-path: ellipse(100% 90% at 70% 10%);
-  z-index: 1;
-}
-
-.banner_hero {
-  position: relative;
-  background-size: cover;
-  background-position: center;
-  height: 350px;
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  clip-path: ellipse(100% 90% at 70% 10%);
-  z-index: 1;
-}
-
-.banner_image_hero {
-  width: 100%;
-  height: auto;
-  max-height: 30vh;
-  object-fit: cover;
-  object-position: center;
-}
-
-.banner-text {
-  text-align: center;
-  margin-top: 18px;
-  font-size: clamp(18px, 3vw, 35px);
-  color: #374151;
-  font-weight: 500;
-  line-height: 1.4;
-  font-family: 'RoughTypewriter';
-}
-
-.container {
-  display: flex;
-  justify-content: space-between;
-  align-items: stretch;
-  gap: 100px;
-  padding: 50px;
-  margin: auto;
-  font-size: clamp(16px, 2vw, 20px);
-}
-
-.container.reverse {
-  flex-direction: row-reverse;
-}
-
-.page-container {
-  display: flex;
-  flex-wrap: wrap;
-}
-
-.image-container,
-.text-container {
-  flex: 1;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.text-container {
-  border-left: auto;
-  flex-direction: column;
-  font-size: clamp(20px, 2.5vw, 33px);
-}
-
-.text-container strong {
+@font-face {
   font-family: 'Circographe';
-  font-weight: 600;
-  font-size: clamp(22px, 2.8vw, 35px);
+  src: font-url('Circographe-Regular.woff2') format('woff2'),
+       font-url('Circographe-Regular.woff') format('woff'),
+       font-url('Circographe-Regular.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
 }
 
-.image {
-  border-radius: 15%;
-  width: 100%;
-  height: auto;
-  object-fit: cover;
+@font-face {
+  font-family: 'Rough Typewriter';
+  src: font-url('Rough_typewriter.woff2') format('woff2'),
+       font-url('Rough_typewriter.woff') format('woff'),
+       font-url('rough_typewriter.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
 }
 
-.image-main {
-  border-radius: 15%;
-  width: 100%;
-  height: auto;
-  object-fit: cover;
-  box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.1);
-  transition: transform 0.3s, box-shadow 0.3s;
+@font-face {
+  font-family: 'Rough Typewriter';
+  src: font-url('Rough_typewriter-itl.woff2') format('woff2'),
+       font-url('Rough_typewriter-itl.woff') format('woff');
+  font-weight: normal;
+  font-style: italic;
+  font-display: swap;
 }
 
-.image-main:hover {
-  transform: translateX(+12px);
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+@font-face {
+  font-family: 'Rough Typewriter';
+  src: font-url('Rough_typewriter-bld-itl.woff2') format('woff2'),
+       font-url('Rough_typewriter-bld-itl.woff') format('woff');
+  font-weight: bold;
+  font-style: italic;
+  font-display: swap;
 }
 
-/* Neutralise l'effet bleu de l'autofill Google Chrome*/
-input:-webkit-autofill,
-input:-webkit-autofill:hover,
-input:-webkit-autofill:focus,
-input:-webkit-autofill:active {
-    box-shadow: 0 0 0px 1000px white inset !important;
-    -webkit-text-fill-color: #000 !important; 
-    transition: background-color 5000s ease-in-out 0s;
+body {
+    font-family: 'Rough Typewriter', monospace;
 }
 
-@media (max-width: 1200px) {
-  .container {
-    flex-direction: column;
-    gap: 50px;
-    padding: 40px;
-  }
-
-  .banner-text {
-    font-size: clamp(16px, 2.5vw, 28px);
-  }
-
-  .text-container {
-    font-size: clamp(18px, 2.2vw, 30px);
-  }
-
-  .text-container strong {
-    font-size: clamp(20px, 2.5vw, 32px);
-  }
-
-  .banner_hero {
-    height: 300px;
-  }
-
-  .banner_image_hero {
-    max-height: 25vh;
-  }
+body.dyslexic-font-enabled {
+    font-family: 'OpenDyslexic', Arial, sans-serif;
 }
 
-@media (max-width: 768px) {
-  .container {
-    flex-direction: column;
-    gap: 20px;
-    padding: 20px;
-  }
+.font-circographe {
+    font-family: 'Circographe', Arial, sans-serif;
 }
 
-  .banner_hero {
-    height: 300px;
-  }
-
-  .banner_image_hero {
-    max-height: 25vh;
-  }
-
-  .banner-text {
-    font-size: clamp(14px, 4vw, 20px);
-  }
-
-  .text-container {
-    font-size: clamp(16px, 4vw, 22px);
-  }
-
-  .text-container strong {
-    font-size: clamp(18px, 4.5vw, 24px);
-  }
-
-  .image-main {
-    border-radius: 10%;
-  }
+.font-rough-typewriter {
+    font-family: 'Rough Typewriter', monospace;
+}

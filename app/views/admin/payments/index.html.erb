@@ -1,0 +1,261 @@
+<% content_for :title, "Historique des paiements" %>
+
+<div class="min-h-screen py-6 relative">
+  <!-- Breadcrumbs -->
+  <div class="max-w-7xl mx-auto px-4 sm:px-6">
+    <%= render 'shared/breadcrumbs' %>
+  </div>
+
+  <!-- Sticky Action Bar with full-width background -->
+  <div class="sticky top-0 z-10 bg-white shadow-md py-2 mb-4">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6">
+      <div class="flex justify-between items-center">
+        <div class="flex items-center space-x-2">
+          <% if @user %>
+            <%= link_to 'Retour au profil', admin_user_path(@user), class: "inline-flex items-center px-3 py-1.5 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#1F5C55] hover:bg-[#194A45] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1F5C55]" %>
+          <% end %>
+        </div>
+        
+        <div class="flex-grow text-center font-bold text-lg text-[#1F5C55]">
+          <% if @user %>
+            Paiements de <%= @user.email %>
+          <% else %>
+            Historique des paiements
+          <% end %>
+        </div>
+        
+        <div>
+          <% if @user %>
+            <%= link_to 'Ajouter un paiement', new_admin_payment_path(user_id: @user.id), class: "inline-flex items-center px-3 py-1.5 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#1F5C55] hover:bg-[#194A45] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1F5C55]" %>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="max-w-7xl mx-auto px-4 sm:px-6">
+    <!-- Main content -->
+    <div class="bg-white shadow-lg rounded-lg overflow-hidden mb-6">
+      <div class="bg-gradient-to-r from-[#1F5C55] to-[#194A45] px-6 py-4">
+        <h1 class="text-2xl font-bold text-white">
+          <% if @user %>
+            Historique des paiements de <%= @user.email %>
+          <% else %>
+            Tous les paiements
+          <% end %>
+        </h1>
+        <p class="text-white/80 mt-1">
+          <% if @user %>
+            Détails des paiements réalisés par cet utilisateur
+          <% else %>
+            Vue globale de tous les paiements
+          <% end %>
+        </p>
+      </div>
+
+      <!-- Filter Section -->
+      <div class="bg-gray-50 px-6 py-4 border-b">
+        <%= form_with url: admin_payments_path, method: :get, class: "flex flex-wrap gap-4 items-end" do |f| %>
+          <% if @user %>
+            <%= f.hidden_field :user_id, value: @user.id %>
+          <% end %>
+          
+          <div>
+            <%= f.label :status, "Statut", class: "block text-sm font-medium text-gray-700" %>
+            <%= f.select :status, 
+                        options_for_select([["Tous", ""], ["Succès", "success"], ["En attente", "pending"], ["Annulé", "cancel"]], params[:status]), 
+                        {}, 
+                        class: "mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-[#1F5C55] focus:border-[#1F5C55] sm:text-sm rounded-md" %>
+          </div>
+          
+          <div>
+            <%= f.label :start_date, "Date de début", class: "block text-sm font-medium text-gray-700" %>
+            <%= f.date_field :start_date, value: params[:start_date], class: "mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-[#1F5C55] focus:border-[#1F5C55] sm:text-sm" %>
+          </div>
+          
+          <div>
+            <%= f.label :end_date, "Date de fin", class: "block text-sm font-medium text-gray-700" %>
+            <%= f.date_field :end_date, value: params[:end_date], class: "mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-[#1F5C55] focus:border-[#1F5C55] sm:text-sm" %>
+          </div>
+          
+          <div>
+            <%= f.label :sort, "Trier par", class: "block text-sm font-medium text-gray-700" %>
+            <%= f.select :sort, 
+                         options_for_select([["Date", "payment_date"], ["Montant", "payment_amount"], ["Statut", "status"]], params[:sort]),
+                         {},
+                         class: "mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-[#1F5C55] focus:border-[#1F5C55] sm:text-sm rounded-md" %>
+          </div>
+          
+          <div>
+            <%= f.label :direction, "Ordre", class: "block text-sm font-medium text-gray-700" %>
+            <%= f.select :direction, 
+                         options_for_select([["Décroissant", "desc"], ["Croissant", "asc"]], params[:direction]),
+                         {},
+                         class: "mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-[#1F5C55] focus:border-[#1F5C55] sm:text-sm rounded-md" %>
+          </div>
+          
+          <div>
+            <%= f.submit "Filtrer", class: "inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#1F5C55] hover:bg-[#194A45] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1F5C55]" %>
+            
+            <%= link_to "Réinitialiser", admin_payments_path(user_id: @user&.id), class: "ml-2 inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1F5C55]" %>
+          </div>
+        <% end %>
+      </div>
+
+      <div class="p-6">
+        <!-- Summary Statistics -->
+        <%= render 'admin/payments/user_payment_summary', payments: @payments %>
+
+        <!-- Payment Table -->
+        <div class="overflow-x-auto">
+          <% if @payments.any? %>
+            <table class="min-w-full bg-white border border-gray-200 rounded-lg">
+              <thead class="bg-gray-50">
+                <tr>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Utilisateur</th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Statut</th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Produits</th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Montant</th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Donation</th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-gray-200">
+                <% @payments.each do |payment| %>
+                  <tr class="hover:bg-gray-50">
+                    <!-- Date -->
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      <% if payment.payment_date.present? %>
+                        <%= payment.payment_date.strftime("%d/%m/%Y") %>
+                      <% else %>
+                        <%= payment.created_at.strftime("%d/%m/%Y") %>
+                      <% end %>
+                    </td>
+                    
+                    <!-- User -->
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      <% if payment.user %>
+                        <%= link_to payment.user.email, admin_user_path(payment.user), class: "text-[#1F5C55] hover:underline" %>
+                      <% else %>
+                        Utilisateur inconnu
+                      <% end %>
+                    </td>
+
+                    <!-- Statut -->
+                    <td class="px-6 py-4 whitespace-nowrap text-sm">
+                      <% status_class = case payment.status 
+                                      when "success" then "bg-green-100 text-green-800" 
+                                      when "pending" then "bg-yellow-100 text-yellow-800"
+                                      when "cancel" then "bg-red-100 text-red-800"
+                                      else "bg-gray-100 text-gray-800"
+                                      end %>
+                      <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full <%= status_class %>">
+                        <%= payment.status.humanize %>
+                      </span>
+                    </td>
+
+                    <!-- Cotisation -->
+                    <td class="px-6 py-4 text-sm text-gray-500">
+                      <% if payment.product_orders.any? %>
+                        <% 
+                          # Group products by type
+                          products_by_type = payment.product_orders
+                            .map { |po| po.product }
+                            .compact
+                            .group_by(&:product_type)
+                        %>
+                        
+                        <div class="space-y-1">
+                          <% if products_by_type["adhesion"].present? %>
+                            <div class="flex items-center">
+                              <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
+                                Adhésion: <%= products_by_type["adhesion"].map(&:display_name).join(', ') %>
+                              </span>
+                            </div>
+                          <% end %>
+                          
+                          <% if products_by_type["cotisation"].present? %>
+                            <div class="flex items-center">
+                              <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                                Cotisation: <%= products_by_type["cotisation"].map(&:display_name).join(', ') %>
+                              </span>
+                            </div>
+                          <% end %>
+                          
+                          <% 
+                            # Handle other product types
+                            other_types = products_by_type.keys - ["adhesion", "cotisation"]
+                          %>
+                          <% other_types.each do |type| %>
+                            <% if products_by_type[type].present? %>
+                              <div class="flex items-center">
+                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">
+                                  <%= type.capitalize %>: <%= products_by_type[type].map(&:display_name).join(', ') %>
+                                </span>
+                              </div>
+                            <% end %>
+                          <% end %>
+                        </div>
+                      <% elsif payment.donation.present? && payment.donation > 0 %>
+                        <div class="flex items-center">
+                          <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-purple-100 text-purple-800">
+                            Donation
+                          </span>
+                        </div>
+                      <% else %>
+                        <span class="text-gray-400">-</span>
+                      <% end %>
+                    </td>
+
+                    <!-- Montant -->
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                      <%= number_to_currency(payment.payment_amount, unit: "€", format: "%n %u") %>
+                    </td>
+
+                    <!-- Donation -->
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      <% if payment.donation.present? && payment.donation > 0 %>
+                        <%= number_to_currency(payment.donation, unit: "€", format: "%n %u") %>
+                      <% else %>
+                        -
+                      <% end %>
+                    </td>
+                    
+                    <!-- Actions -->
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      <div class="flex space-x-2">
+                        <%= link_to admin_payment_path(payment), class: "text-[#1F5C55] hover:text-[#194A45]" do %>
+                          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                          </svg>
+                        <% end %>
+                        
+                        <% if payment.status != "cancel" %>
+                          <%= button_to admin_payment_path(payment), method: :delete, class: "text-red-600 hover:text-red-800", data: { confirm: "Êtes-vous sûr de vouloir annuler ce paiement ?" } do %>
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                            </svg>
+                          <% end %>
+                        <% end %>
+                      </div>
+                    </td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+          <% else %>
+            <div class="text-center py-10">
+              <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+              </svg>
+              <h3 class="mt-2 text-sm font-medium text-gray-900">Aucun paiement trouvé</h3>
+              <p class="mt-1 text-sm text-gray-500">Aucun paiement ne correspond à vos critères de recherche.</p>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,36 +1,162 @@
-<div class="admin-dashboard">
-    <h1 class="dashboard-title">Tableau de bord administrateur</h1>
+<% content_for :title, "Tableau de bord administrateur" %>
 
-    <!-- Boutons d'actions principaux -->
-    <div class="dashboard-actions-center">
-        <%= link_to "Modifier les horaires", edit_admin_opening_hours_path, class: "purple-button" %>
-        <%= link_to "Liste Utilisateurs", admin_users_path, class: "purple-button" %>
-        <%= link_to "Adhésion COMPLETE + FORM", membership_register_admin_members_path, class: "purple-button" %>
-        <%= link_to "Créer un Adhérent (basique)", new_admin_user_path, class: "purple-button"%>
+<div class="container py-6 mx-auto px-4 max-w-7xl">
+    <div class="bg-gradient-to-r from-[#1F5C55] to-teal-600 rounded-lg shadow-lg mb-8 p-6 text-white">
+        <h1 class="text-3xl font-bold text-center mb-2">Tableau de bord administrateur</h1>
+            <% if Current.user && (Current.user.first_name || Current.user.last_name) %>
+                <p class="text-center text-white/80">
+                    Bienvenue, <%= Current.user.first_name %> <%= Current.user.last_name %>
+                </p>
+            <% end %>
     </div>
 
-    <!-- Contenu principal -->
-    <div class="dashboard-content">
-        <!-- Section Horaires -->
-        <div class="dashboard-section">
-            <h3 class="dashboard-subtitle">Horaires d'ouverture</h3>
-            <table class="dashboard-table">
-                <% @opening_hours.each do |day, hours| %>
-                    <tr>
-                        <td><%= day.capitalize %></td>
-                        <td><%= hours %></td>
-                    </tr>
-                <% end %>
-            </table>
+    <!-- Main statistics -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+        <div class="bg-white rounded-lg shadow-md p-4 border-l-4 border-blue-500">
+            <div class="flex items-center">
+                <div class="p-3 rounded-full bg-blue-100 mr-4">
+                    <i class="fas fa-users text-blue-500 text-xl"></i>
+                </div>
+                <div>
+                    <p class="text-sm text-gray-500">Utilisateurs</p>
+                    <p class="text-2xl font-bold text-gray-800"><%= User.count %></p>
+                    <p class="text-xs text-gray-500">Nouveaux hier: <%= User.where("created_at >= ? AND created_at <= ?", 1.day.ago.beginning_of_day, 1.day.ago.end_of_day).count %></p>
+                </div>
+            </div>
         </div>
 
-        <!-- Section Bloc-note -->
-        <div class="dashboard-section">
-            <h3 class="dashboard-subtitle">Bloc-note</h3>
-            <div class="notepad-container">
-                <%= render "shared/notepad" %>
+        <div class="bg-white rounded-lg shadow-md p-4 border-l-4 border-green-500">
+            <div class="flex items-center">
+                <div class="p-3 rounded-full bg-green-100 mr-4">
+                    <i class="fas fa-ticket-alt text-green-500 text-xl"></i>
+                </div>
+                <div>
+                    <p class="text-sm text-gray-500">Adhésions Basic</p>
+                    <p class="text-2xl font-bold text-gray-800"><%= UserMembership.joins(:membership).where(memberships: { type_name: 'Basic' }, status: 'active').count %></p>
+                </div>
             </div>
-            <%= link_to "Modifier", edit_admin_notepad_path, class: "purple-button" %>
+        </div>
+
+        <div class="bg-white rounded-lg shadow-md p-4 border-l-4 border-purple-500">
+            <div class="flex items-center">
+                <div class="p-3 rounded-full bg-purple-100 mr-4">
+                    <i class="fas fa-id-card text-purple-500 text-xl"></i>
+                </div>
+                <div>
+                    <p class="text-sm text-gray-500">Adhésions Circus</p>
+                    <p class="text-2xl font-bold text-gray-800"><%= UserMembership.joins(:membership).where(memberships: { type_name: 'Circus' }, status: 'active').count %></p>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-lg shadow-md p-4 border-l-4 border-amber-500">
+            <div class="flex items-center">
+                <div class="p-3 rounded-full bg-amber-100 mr-4">
+                    <i class="fas fa-id-badge text-amber-500 text-xl"></i>
+                </div>
+                <div>
+                    <p class="text-sm text-gray-500">Adhésions actives</p>
+                    <p class="text-2xl font-bold text-gray-800"><%= UserMembership.where(status: "active").count %></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main action buttons -->
+    <div class="flex justify-center gap-4 mb-8 flex-wrap">
+        <%= link_to edit_admin_opening_hours_path, class: "flex items-center bg-[#1F5C55] hover:bg-[#194A45] text-white px-6 py-3 rounded-lg shadow transition-colors duration-200" do %>
+            <i class="fas fa-clock mr-2"></i> Modifier les horaires
+        <% end %>
+        
+        <%= link_to admin_users_path, class: "flex items-center bg-[#1F5C55] hover:bg-[#194A45] text-white px-6 py-3 rounded-lg shadow transition-colors duration-200" do %>
+            <i class="fas fa-users mr-2"></i> Gérer les utilisateurs
+        <% end %>
+        
+        <%= link_to new_admin_user_path, class: "flex items-center bg-[#1F5C55] hover:bg-[#194A45] text-white px-6 py-3 rounded-lg shadow transition-colors duration-200" do %>
+            <i class="fas fa-user-plus mr-2"></i> Créer un adhérent
+        <% end %>
+        
+        <%= link_to admin_attendance_lists_path, class: "flex items-center bg-[#1F5C55] hover:bg-[#194A45] text-white px-6 py-3 rounded-lg shadow transition-colors duration-200" do %>
+            <i class="fas fa-clipboard-list mr-2"></i> Listes de présence
+        <% end %>
+    </div>
+
+    <!-- Main content -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 2xl:grid-cols-3 gap-6">
+        <!-- Section Timetable with improved display -->
+        <div class="col-span-1">
+            <div class="bg-white rounded-lg shadow-md overflow-hidden h-full">
+                <div class="border-b border-gray-200 px-6 py-4 flex justify-between items-center">
+                    <h3 class="text-lg font-semibold text-gray-800">Horaires d'ouverture</h3>
+                    <%= link_to edit_admin_opening_hours_path, class: "text-[#1F5C55] hover:text-[#194A45]", title: "Modifier les horaires" do %>
+                        <i class="fas fa-edit"></i>
+                    <% end %>
+                </div>
+                <div class="p-4">
+                    <% @horaires = Rails.cache.fetch("opening_hours") || OpeningHoursHelper.default_opening_hours %>
+                    <%= render 'shared/opening_hours' %>
+                </div>
+            </div>
+        </div>
+
+        <!-- Notepad Section -->
+        <div class="col-span-1">
+            <div class="bg-white rounded-lg shadow-md overflow-hidden h-full">
+                <div class="border-b border-gray-200 px-6 py-4 flex justify-between items-center">
+                    <h3 class="text-lg font-semibold text-gray-800">Bloc-note</h3>
+                    <%= link_to edit_admin_notepad_path, class: "text-[#1F5C55] hover:text-[#194A45]", title: "Modifier le bloc-note" do %>
+                        <i class="fas fa-edit"></i>
+                    <% end %>
+                </div>
+                <div class="p-4">
+                    <div class="bg-gray-50 rounded-lg p-4 mb-4 min-h-[200px] max-h-[250px] overflow-y-auto">
+                        <%= render "shared/notepad" %>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Activity Section -->
+        <div class="col-span-1">
+            <div class="bg-white rounded-lg shadow-md overflow-hidden h-full">
+                <div class="border-b border-gray-200 px-6 py-4">
+                    <h3 class="text-lg font-semibold text-gray-800">Activité récente</h3>
+                </div>
+                <div class="overflow-y-auto max-h-[400px]">
+                    <ul class="divide-y divide-gray-200">
+                        <% User.order(created_at: :desc).limit(5).each do |user| %>
+                        <li class="p-4 hover:bg-gray-50">
+                            <div class="flex items-center">
+                            <div class="flex-shrink-0 h-10 w-10 rounded-full bg-[#1F5C55]/10 flex items-center justify-center">
+                                <span class="text-[#1F5C55] font-medium">
+                                <%= "#{user.first_name&.first}#{user.last_name&.first}".strip.presence || "?" %>
+                                </span>
+                            </div>
+                            <div class="ml-4">
+                                <p class="text-sm font-medium text-gray-900">
+                                Nouvel utilisateur : <%= [user.first_name, user.last_name].compact.join(" ") %>
+                                </p>
+                                <p class="text-xs text-gray-500"><%= time_ago_in_words(user.created_at) %></p>
+                            </div>
+                            </div>
+                        </li>
+                        <% end %>
+                        <% Event.order(created_at: :desc).limit(3).each do |event| %>
+                            <li class="p-4 hover:bg-gray-50">
+                                <div class="flex items-center">
+                                    <div class="flex-shrink-0 h-10 w-10 rounded-full bg-purple-100 flex items-center justify-center">
+                                        <i class="fas fa-calendar text-purple-500"></i>
+                                    </div>
+                                    <div class="ml-4">
+                                        <p class="text-sm font-medium text-gray-900">Nouvel événement : <%= event.title %></p>
+                                        <p class="text-xs text-gray-500"><%= time_ago_in_words(event.created_at) %></p>
+                                    </div>
+                                </div>
+                            </li>
+                        <% end %>
+                    </ul>
+                </div>
+            </div>
         </div>
     </div>
 </div>

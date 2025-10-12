@@ -1,0 +1,68 @@
+<% if @order.products.any? %>
+  <div class="bg-white shadow overflow-hidden rounded-lg mb-6">
+    <div class="px-6 py-4 border-b border-gray-200">
+      <h2 class="text-lg font-medium text-gray-900">Récapitulatif de votre commande</h2>
+    </div>
+    <table class="min-w-full divide-y divide-gray-200">
+      <thead>
+        <tr>
+          <th class="px-6 py-3 text-left text-sm font-medium text-gray-500 uppercase">Produit</th>
+          <th class="px-6 py-3 text-left text-sm font-medium text-gray-500 uppercase">Type</th>
+          <th class="px-6 py-3 text-left text-sm font-medium text-gray-500 uppercase">Prix</th>
+        </tr>
+      </thead>
+      <tbody class="bg-white divide-y divide-gray-200">
+        <% @order.product_orders.each do |product_order| %>
+          <tr id="product_order_<%= product_order.id %>">
+            <td class="px-6 py-4 text-sm text-gray-900"><%= product_order.product.product_name %></td>
+            <td class="px-6 py-4 text-sm text-gray-500"><%= product_order.product.product_type %></td>
+            <td class="px-6 py-4 text-sm text-gray-500">
+              <% if product_order.product.price_entries.any? %>
+                <%= product_order.product.price_entries.order(created_at: :desc).first.price_catalog.price %> €
+              <% else %>
+                Prix non défini
+              <% end %>
+            </td>
+            <td class="px-6 py-4 text-sm text-gray-500">
+              <%= button_to 'Supprimer', admin_user_order_product_order_path(@order.user, @order, product_order), method: :delete, data: { turbo_stream: true }, class: "bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-2 rounded text-xs" %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+
+    <!-- Total dynamic -->
+    <div id="total_price" class="px-6 py-4 text-right font-bold">
+      Total : 
+      <%= @order.product_orders.sum { |product_order| product_order.product.price_entries.order(created_at: :desc).first&.price_catalog&.price || 0 } %> €
+      </div>
+   
+    <div id="total-donation" class="px-6 py-4 text-right font-bold">
+      Total don :
+      <%= @order.donation %> €
+    </div>
+
+  </div>
+<% end %>
+
+<% if @order.present? %>
+  <!-- Payment button -->
+  <div class="flex justify-center w-full mb-6">
+    <%= button_to 'Payer', admin_payments_path, params: { payment: { order_id: @order, user_id: @user } }, method: :post, class: "bg-[#1F5C55] text-white font-bold py-2 px-4 rounded hover:bg-[#194A45]" %>
+  </div>
+<% else %>
+  <p class="text-center text-gray-700">Aucun produit dans votre commande pour le moment.</p>
+<% end %>
+
+<%= form_with(model: @order, url: admin_user_order_path(@order.user, @order), method: :patch,data: {turbo: true} ,local: true) do |form| %>
+
+  <div class="flex flex-col items-center w-full mb-6">
+    <div class="flex items-center gap-4 justify-center mb-6">
+      <%= form.label :donation, "Faire un don :", class: "text-gray-800 font-medium" %>
+      <%= form.number_field :donation, placeholder: "Montant", class: "border-gray-300 rounded px-3 py-1 w-24 text-center" %>
+      <div class="actions">
+        <%= form.submit "Ajouter le don", class: "bg-[#1F5C55] text-white font-bold py-2 px-4 rounded hover:bg-[#194A45]" %>
+      </div>
+    </div>
+  </div>
+<% end %>

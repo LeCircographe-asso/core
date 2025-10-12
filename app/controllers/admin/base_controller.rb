@@ -1,11 +1,11 @@
 module Admin
   class BaseController < ApplicationController
-    before_action :require_admin_or_godmode
+    before_action :require_admin_or_super_admin
 
     private
 
-    def require_admin_or_godmode
-      unless Current.user&.role.in?(%w[admin godmode volunteer])
+    def require_admin_or_super_admin
+      unless Current.user&.has_privileges?
         redirect_to root_path, alert: "Vous n'avez pas accès à cette page."
       end
     end
