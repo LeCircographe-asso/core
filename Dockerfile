@@ -59,9 +59,10 @@ COPY . .
 RUN bundle exec bootsnap precompile app/ lib/
 
 # Layer 6: Precompile assets (depends on code and assets)
-# Use development mode to avoid environment-specific configs and secret requirements
-RUN SECRET_KEY_BASE_DUMMY=1 \
-    RAILS_ENV=development \
+# Use production mode for optimized assets (per Rails best practices)
+# The actual runtime environment (staging/production) is set via RAILS_ENV at container startup
+RUN SECRET_KEY_BASE="a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0u1v2w3x4y5z6a7b8c9d0e1f2" \
+    RAILS_ENV=production \
     ./bin/rails assets:precompile
 
 # Final stage for app image
