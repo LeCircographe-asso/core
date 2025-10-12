@@ -2,6 +2,7 @@ require_relative "boot"
 
 require "rails/all"
 require_relative "../app/middleware/maintenance_mode_middleware"
+require_relative "../app/middleware/staging_auth"
 
 # Require the gems listed in Gemfile, including any gems
 # you've limited to :test, :development, or :production.
@@ -45,6 +46,9 @@ module Circographe
 
     # Insert maintenance mode middleware at the top so it intercepts all requests
     config.middleware.insert_before 0, MaintenanceModeMiddleware
+    
+    # Insert staging auth middleware (only active when RAILS_ENV=staging or STAGING_MODE=true)
+    config.middleware.use StagingAuth
   end
 end
 

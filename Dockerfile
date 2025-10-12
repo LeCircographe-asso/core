@@ -23,9 +23,8 @@ RUN apt-get update -qq && \
     sqlite3 \
     && rm -rf /var/lib/apt/lists /var/cache/apt/archives
 
-# Set production environment
-ENV RAILS_ENV="production" \
-    BUNDLE_DEPLOYMENT="1" \
+# Set bundle configuration (RAILS_ENV will be set at runtime via Kamal)
+ENV BUNDLE_DEPLOYMENT="1" \
     BUNDLE_PATH="/usr/local/bundle" \
     BUNDLE_WITHOUT="development"
 
@@ -49,10 +48,9 @@ COPY . .
 # Precompile bootsnap code for faster boot times
 RUN bundle exec bootsnap precompile app/ lib/
 
-# Precompile assets for production (with staging support)
-# Using a dummy secret_key_base for build time only
-# Assets will work in any environment at runtime
-RUN SECRET_KEY_BASE="dummy_key_for_build_only_123456789" ./bin/rails assets:precompile
+# Precompile assets for staging/production
+# Use a valid dummy secret_key_base for build time only
+RUN SECRET_KEY_BASE="a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0u1v2w3x4y5z6a7b8c9d0e1f2" RAILS_ENV=staging ./bin/rails assets:precompile
 
 # Final stage for app image
 FROM base
