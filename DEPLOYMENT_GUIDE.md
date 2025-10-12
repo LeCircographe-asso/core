@@ -1,0 +1,86 @@
+# 🚀 Guide Déploiement - Le Circographe
+
+## Workflow Standard
+```bash
+# 1. Développement local
+git checkout dev
+# ... modifications ...
+
+# 2. Staging
+git checkout staging
+git merge dev
+git push origin staging
+# → GitHub Actions 03 se déclenche
+
+# 3. Production (après validation staging)
+git checkout production  
+git merge staging
+git push origin production
+# → GitHub Actions 05 se déclenche
+```
+
+## Tests de Validation
+```bash
+# Staging
+curl -I https://staging.lecircographe.fr        # HTTP 200
+curl -I https://staging.lecircographe.fr/up     # HTTP 200 (sans auth)
+
+# Production  
+curl -I https://lecircographe.fr                # HTTP 200
+curl -I https://lecircographe.fr/up             # HTTP 200
+```
+
+## Variables GitHub Requises
+
+### **Secrets (Organisation)**
+- `RAILS_MASTER_KEY` - Clé de chiffrement Rails
+- `SECRET_KEY_BASE` - Clé secrète Rails  
+- `STAGING_PASSWORD` - Mot de passe auth HTTP Basic staging
+- `SSH_PRIVATE_KEY` - Clé SSH pour déploiement VPS
+
+### **Variables (Organisation)**
+- `STAGING_SERVER_IP` - IP VPS staging
+- `PRODUCTION_SERVER_IP` - IP VPS production
+
+## Troubleshooting Rapide
+
+| Erreur | Cause | Solution |
+|--------|-------|----------|
+| `Propshaft::MissingAssetError` | Assets non compilés | Vérifier Dockerfile + .dockerignore |
+| `HTTP 401 sur /up` | Middleware bloque health checks | Exclure `/up` du middleware d'auth |
+| `Exit 255` | Conteneur unhealthy | Vérifier logs + health checks |
+| `Missing secret_key_base` | Credentials manquantes | Vérifier GitHub Secrets |
+
+## Commandes Utiles
+```bash
+# Logs conteneur
+docker logs <container-id> --tail 50
+
+# Status déploiement
+gh run list --limit 5
+gh run view <run-id> --log
+
+# Vérifier workflow en cours
+gh run watch
+
+# Rollback (si nécessaire)
+kamal rollback -c config/deploy.staging.yml
+
+# Accéder au conteneur
+docker exec -it <container-id> bash
+```
+
+## Configuration Kamal Importante
+```yaml
+# config/deploy.staging.yml
+proxy:
+  ssl: true                    # Let's Encrypt automatique
+  host: staging.lecircographe.fr
+  app_port: 80                 # Port interne conteneur
+
+volumes:
+  - "circographe_staging_storage:/rails/storage"  # Données persistantes
+  - "/srv/www/lecircographe_staging/log:/app/log" # Logs accessibles
+```
+
+**Note :** Les volumes garantissent que la base SQLite et les logs persistent entre déploiements.
