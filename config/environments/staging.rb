@@ -8,7 +8,7 @@ Rails.application.configure do
   config.cache_classes = true
   config.eager_load = true
   config.consider_all_requests_local = false
-  config.public_file_server.enabled = ENV["RAILS_SERVE_STATIC_FILES"].present?
+  config.public_file_server.enabled = true
 
   # Logging
   config.log_level = :info
@@ -27,6 +27,8 @@ Rails.application.configure do
   # Assets
   config.assets.compile = false
   config.assets.digest = true
+  # Add Tailwind CSS build path for Propshaft
+  config.assets.paths << Rails.root.join("app", "assets", "builds")
 
   # Force SSL (but exclude healthcheck for kamal-proxy)
   config.force_ssl = true

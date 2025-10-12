@@ -34,7 +34,8 @@
 /node_modules/
 /app/assets/builds/*
 !/app/assets/builds/.keep
-/public/assets
+# Note: /public/assets should be included in Docker image for production
+# /public/assets
 
 # Ignore CI service files.
 /.github
