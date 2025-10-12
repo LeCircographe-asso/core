@@ -40,6 +40,9 @@ module Circographe
     # Configure multi-database setup for Rails 8.0
     # SolidCache, SolidQueue, and SolidCable use separate databases
 
+    # Add Tailwind CSS builds path for Propshaft (for all environments)
+    config.assets.paths << Rails.root.join("app", "assets", "builds")
+
     # Insert maintenance mode middleware at the top so it intercepts all requests
     config.middleware.insert_before 0, MaintenanceModeMiddleware
   end
