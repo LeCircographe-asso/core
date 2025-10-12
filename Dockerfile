@@ -50,9 +50,9 @@ COPY . .
 RUN bundle exec bootsnap precompile app/ lib/
 
 # Precompile assets for production (with staging support)
-# Using RAILS_ENV=development to avoid credentials issues during build
+# Using a dummy secret_key_base for build time only
 # Assets will work in any environment at runtime
-RUN SECRET_KEY_BASE_DUMMY=1 RAILS_ENV=development ./bin/rails assets:precompile
+RUN SECRET_KEY_BASE="dummy_key_for_build_only_123456789" ./bin/rails assets:precompile
 
 # Final stage for app image
 FROM base
