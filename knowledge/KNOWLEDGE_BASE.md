@@ -2,6 +2,17 @@
 
 ## 🚨 Règles Critiques (À NE JAMAIS OUBLIER)
 
+### **0. RÈGLE D'OR - Branches de Travail**
+```bash
+# ❌ JAMAIS de travail direct sur staging/production
+# ✅ TOUJOURS créer une branche dédiée
+git checkout -b fix/nom-du-probleme
+# ... travail ...
+git push origin fix/nom-du-probleme
+# Puis merge vers dev → staging → production
+```
+**Pourquoi :** Staging/production doivent rester stables, travail dans des branches dédiées.
+
 ### **1. Middleware d'Authentification**
 ```ruby
 # TOUJOURS exclure /up des middlewares d'auth
@@ -51,6 +62,12 @@ config.ssl_options = {
 - `config.assets.paths << Rails.root.join("app", "assets", "builds")`
 - Assets compilés en staging avec dummy key
 
+**Solution Définitive (2025-10-12) :**
+- **Problème :** `application.scss` ne génère pas `application.css` dans Propshaft
+- **Cause :** DartSass compile `.scss` vers `.scss`, pas vers `.css`
+- **Fix :** Renommer `application.scss` → `application.css` avec contenu CSS complet
+- **Résultat :** `application.css` apparaît dans le manifest Propshaft
+
 ### **HTTP 401 sur /up (Exit 255)**
 **Cause :** StagingAuth bloque health checks Kamal
 **Solution :** Exclure `/up` du middleware d'authentification
@@ -96,6 +113,41 @@ config.secret_key_base = ENV["SECRET_KEY_BASE"] || Rails.application.credentials
 - **Runtime :** `RAILS_MASTER_KEY` déchiffre `credentials.yml.enc`
 - **Kamal :** Exporte `RAILS_MASTER_KEY` + `SECRET_KEY_BASE` via `.kamal/secrets`
 - **Ordre de priorité :** ENV var → credentials.yml.enc
+
+## 🎨 Architecture CSS Découverte
+
+### **Pipeline CSS Complexe Identifié**
+```
+Tailwind CSS → app/assets/tailwind/application.css → app/assets/builds/
+DartSass    → app/assets/stylesheets/application.scss → ❌ Ne génère pas .css
+Propshaft   → Rails 8 asset pipeline (cherche application.css)
+```
+
+### **Problème Propshaft + DartSass**
+- **Propshaft** cherche `"application"` → trouve `application.scss` (❌)
+- **Layout** demande `stylesheet_link_tag "application"` → 404
+- **Solution :** Fichier doit s'appeler `application.css` pour Propshaft
+
+### **Configuration Assets Staging**
+```ruby
+# config/environments/staging.rb
+config.assets.compile = true  # CRITIQUE pour Docker build
+config.assets.digest = true
+config.assets.paths << Rails.root.join("app", "assets", "builds")
+```
+
+### **Fonts Custom - Bonnes Pratiques**
+```css
+/* app/assets/stylesheets/application.css */
+@font-face {
+  font-family: 'Circographe';
+  src: font-url('Circographe-Regular.woff2') format('woff2');
+  font-display: swap;  /* Important pour performance */
+}
+```
+- **font-url()** : Fonction Rails qui résout vers `/assets/` après compilation
+- **Formats multiples** : woff2, woff, otf pour compatibilité
+- **font-display: swap** : Évite le flash de texte invisible
 
 ## ⚠️ Pièges Évités
 
