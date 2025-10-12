@@ -1,4 +1,6 @@
 # Configuration pour l'environnement staging
+require_relative "shared"
+
 Rails.application.configure do
   # Use the default credentials secret_key_base for staging
   # Rails will use config/credentials.yml.enc with RAILS_MASTER_KEY
@@ -24,15 +26,11 @@ Rails.application.configure do
   # kamal-proxy uses Docker container IDs as hostnames (e.g., f4753d38178e)
   config.hosts.clear  # Allow all hosts in staging for Docker container communication
 
-  # Assets
+  # Assets (shared config handles paths)
   config.assets.compile = false
   config.assets.digest = true
-  # Add Tailwind CSS build path for Propshaft
-  config.assets.paths << Rails.root.join("app", "assets", "builds")
 
-  # Force SSL (but exclude healthcheck for kamal-proxy)
-  config.force_ssl = true
-  config.ssl_options = { redirect: { exclude: ->(request) { request.path == "/up" } } }
+  # SSL configuration (handled by shared config)
 
   # Mailer
   config.action_mailer.perform_caching = false
