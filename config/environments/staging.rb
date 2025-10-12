@@ -27,11 +27,14 @@ Rails.application.configure do
   # kamal-proxy uses Docker container IDs as hostnames (e.g., f4753d38178e)
   config.hosts.clear  # Allow all hosts in staging for Docker container communication
 
-  # Assets (shared config handles paths)
+  # Assets configuration
   config.assets.compile = false
   config.assets.digest = true
+  config.assets.paths << Rails.root.join("app", "assets", "builds")
 
-  # SSL configuration (handled by shared config)
+  # SSL configuration
+  config.force_ssl = true
+  config.ssl_options = { redirect: { exclude: ->(request) { request.path == "/up" } } }
 
   # Mailer
   config.action_mailer.perform_caching = false
