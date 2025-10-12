@@ -31,29 +31,43 @@ ENV BUNDLE_DEPLOYMENT="1" \
 # Throw-away build stage to reduce size of final image
 FROM base AS build
 
-# Install packages needed to build gems
+# Layer 1: Install Bundler (changes rarely)
+RUN gem install bundler:2.5.23
+
+# Layer 2: Install system dependencies (changes rarely)
 RUN apt-get update -qq && \
-    apt-get install --no-install-recommends -y build-essential git pkg-config && \
-    rm -rf /var/lib/apt/lists /var/cache/apt/archives
+    apt-get install --no-install-recommends -y \
+    build-essential \
+    git \
+    pkg-config \
+    && rm -rf /var/lib/apt/lists /var/cache/apt/archives
 
-# Install application gems
+# Layer 3: Install gems (changes when Gemfile changes)
 COPY Gemfile Gemfile.lock ./
-RUN bundle install && \
-    rm -rf ~/.bundle/ "${BUNDLE_PATH}"/ruby/*/cache "${BUNDLE_PATH}"/ruby/*/bundler/gems/*/.git && \
-    bundle exec bootsnap precompile --gemfile
+RUN bundle install --jobs 4 && \
+    rm -rf ~/.bundle/ \
+    "${BUNDLE_PATH}"/ruby/*/cache \
+    "${BUNDLE_PATH}"/ruby/*/bundler/gems/*/.git \
+    "${BUNDLE_PATH}"/ruby/*/gems/*/test \
+    "${BUNDLE_PATH}"/ruby/*/gems/*/spec \
+    && bundle exec bootsnap precompile --gemfile
 
-# Copy application code
+# Layer 4: Copy application code (changes frequently)
 COPY . .
 
-# Precompile bootsnap code for faster boot times
+# Layer 5: Precompile bootsnap (depends on code)
 RUN bundle exec bootsnap precompile app/ lib/
 
-# Precompile assets for staging/production
-# Use a valid dummy secret_key_base for build time only
-RUN SECRET_KEY_BASE="a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0u1v2w3x4y5z6a7b8c9d0e1f2" RAILS_ENV=staging ./bin/rails assets:precompile
+# Layer 6: Precompile assets (depends on code and assets)
+RUN SECRET_KEY_BASE="a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0u1v2w3x4y5z6a7b8c9d0e1f2" \
+    RAILS_ENV=staging \
+    ./bin/rails assets:precompile
 
 # Final stage for app image
 FROM base
+
+# Set production environment variables
+ENV LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libjemalloc.so.2
 
 # Copy built artifacts: gems, application
 COPY --from=build "${BUNDLE_PATH}" "${BUNDLE_PATH}"
