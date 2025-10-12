@@ -7,6 +7,11 @@ class StagingAuth
   def call(env)
     request = Rack::Request.new(env)
 
+    # Skip auth for health check endpoint (Kamal needs this)
+    if request.path == "/up"
+      return @app.call(env)
+    end
+
     # Vérifier si c'est l'environnement staging
     if staging_environment?(request)
       # Vérifier l'authentification HTTP Basic
