@@ -46,34 +46,31 @@ test_cable:
 
 # Store production database in the storage/ directory, which by default
 # is mounted as a persistent Docker volume in config/deploy.yml.
+# Rails 8 with Solid* gems expects a nested structure with primary, cache, queue, cable
 production:
-  <<: *default
-  database: storage/production.sqlite3
-
-production_cache:
-  <<: *default
-  database: storage/production_cache.sqlite3
-
-production_queue:
-  <<: *default
-  database: storage/production_queue.sqlite3
-
-production_cable:
-  <<: *default
-  database: storage/production_cable.sqlite3
+  primary:
+    <<: *default
+    database: storage/production.sqlite3
+  cache:
+    <<: *default
+    database: storage/production_cache.sqlite3
+  queue:
+    <<: *default
+    database: storage/production_queue.sqlite3
+  cable:
+    <<: *default
+    database: storage/production_cable.sqlite3
 
 staging:
-  <<: *default
-  database: storage/staging.sqlite3
-
-staging_cache:
-  <<: *default
-  database: storage/staging_cache.sqlite3
-
-staging_queue:
-  <<: *default
-  database: storage/staging_queue.sqlite3
-
-staging_cable:
-  <<: *default
-  database: storage/staging_cable.sqlite3
+  primary:
+    <<: *default
+    database: storage/staging.sqlite3
+  cache:
+    <<: *default
+    database: storage/staging_cache.sqlite3
+  queue:
+    <<: *default
+    database: storage/staging_queue.sqlite3
+  cable:
+    <<: *default
+    database: storage/staging_cable.sqlite3
