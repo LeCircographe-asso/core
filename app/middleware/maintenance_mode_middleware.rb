@@ -79,6 +79,14 @@ class MaintenanceModeMiddleware
 
   def maintenance_response
     logo_src = inline_asset_data("Le-Circographe-crop.webp") || asset_path("Le-Circographe-crop.webp")
+
+    # Headers de sécurité pour forcer HTTPS et éviter les warnings
+    headers = {
+      "Content-Type" => "text/html; charset=utf-8",
+      "Strict-Transport-Security" => "max-age=31536000; includeSubDomains",
+      "Content-Security-Policy" => "default-src 'self' https:; img-src 'self' data: https:; style-src 'self' 'unsafe-inline'; script-src 'self'; connect-src 'self'"
+    }
+
     body = <<~HTML
       <!DOCTYPE html>
       <html lang="fr">
@@ -153,11 +161,11 @@ class MaintenanceModeMiddleware
       </html>
     HTML
 
-    headers = {
-      "Content-Type" => "text/html; charset=utf-8",
+    # Fusionner avec les headers de sécurité définis plus haut
+    headers.merge!({
       "Cache-Control" => "no-store, no-cache, must-revalidate, max-age=0",
       "Retry-After" => "300"
-    }
+    })
 
     [ 503, headers, [ body ] ]
   end
