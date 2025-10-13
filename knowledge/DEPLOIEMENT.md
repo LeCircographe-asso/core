@@ -303,5 +303,61 @@ kamal app exec -c config/deploy.staging.yml "bin/rails console"
 
 ---
 
-**Ref**: [Kamal 2 Docs](https://kamal-deploy.org/)
+## 🗄️ Rails 8 + Solid* Databases (CRITIQUE)
+
+### Problème Identifié
+Rails 8 avec SolidCache/Queue/Cable utilise des **bases de données séparées** qui doivent être déclarées dans une **structure imbriquée**.
+
+❌ **Structure plate (ne marche PAS):**
+```yaml
+production:
+  database: storage/production.sqlite3
+production_cache:
+  database: storage/production_cache.sqlite3
+```
+
+✅ **Structure imbriquée (CORRECTE):**
+```yaml
+production:
+  primary:
+    database: storage/production.sqlite3
+  cache:
+    database: storage/production_cache.sqlite3
+  queue:
+    database: storage/production_queue.sqlite3
+  cable:
+    database: storage/production_cable.sqlite3
+```
+
+### Configuration Requise
+
+**1. `config/database.yml`** - Structure imbriquée pour staging ET production
+**2. `config/cache.yml`** - Pas de `database:` spécifique (utilise le défaut)
+**3. `config/queue.yml`** - Pas de `database:` spécifique (utilise le défaut)
+**4. `config/cable.yml`** - Adapter `solid_cable` seulement
+**5. `bin/docker-entrypoint`** - `db:prepare` suffit (Rails gère tout)
+
+### Asset Precompilation
+
+Le Dockerfile **doit** compiler les assets avec `RAILS_ENV=production`:
+```dockerfile
+RUN SECRET_KEY_BASE="dummy" \
+    RAILS_ENV=production \
+    ./bin/rails assets:precompile
+```
+
+**Pourquoi?** Les assets sont compilés une fois, puis l'image est utilisée pour staging ET production. Compiler en `production` donne des assets optimisés.
+
+### Erreurs Courantes
+
+| Erreur | Cause | Solution |
+|--------|-------|----------|
+| `The 'cache' database is not configured` | Structure plate dans `database.yml` | Utiliser structure imbriquée |
+| `The 'queue' database is not configured` | Idem | Idem |
+| `Missing secret_key_base for production` | `production.rb` sans fallback ENV | Ajouter `ENV["SECRET_KEY_BASE"] \|\|` |
+| Asset precompilation fails | `RAILS_ENV` incorrect | Utiliser `RAILS_ENV=production` |
+
+---
+
+**Ref**: [Kamal 2 Docs](https://kamal-deploy.org/) · [Rails 8 Guides](https://guides.rubyonrails.org/)
 
