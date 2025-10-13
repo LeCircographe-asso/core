@@ -12,9 +12,7 @@ test:
   <<: *default
 
 production:
-  database: production_cache
   <<: *default
 
 staging:
-  database: staging_cache
   <<: *default

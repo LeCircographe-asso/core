@@ -15,9 +15,7 @@ test:
   <<: *default
 
 production:
-  database: production_queue
   <<: *default
 
 staging:
-  database: staging_queue
   <<: *default

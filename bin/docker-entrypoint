@@ -8,18 +8,7 @@ fi
 
 # If running the rails server then create or migrate existing database
 if [ "${@: -2:1}" == "./bin/rails" ] && [ "${@: -1:1}" == "server" ]; then
-  # Prepare main database
-  echo "Preparing main database..."
   ./bin/rails db:prepare
-  
-  # Prepare Solid* databases (Rails 8 with separate databases)
-  # Each Solid gem (cache, queue, cable) has its own database and migrations
-  echo "Preparing SolidCache, SolidQueue, and SolidCable databases..."
-  for db_suffix in cache queue cable; do
-    echo "  - Preparing ${RAILS_ENV}_${db_suffix} database..."
-    # Rails expects db:prepare to work with DATABASE env variable
-    DATABASE="${RAILS_ENV}_${db_suffix}" ./bin/rails db:prepare 2>&1 | grep -v "already exists" || true
-  done
 fi
 
 exec "${@}"
