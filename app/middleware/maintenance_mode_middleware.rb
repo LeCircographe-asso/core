@@ -9,10 +9,13 @@ class MaintenanceModeMiddleware
     # 1. Toujours autoriser healthcheck (pour Kamal)
     return @app.call(env) if healthcheck?(request)
 
-    # 2. Si maintenance désactivée, tout passe
+    # 2. Toujours autoriser les assets (CSS, JS, images, fonts)
+    return @app.call(env) if asset_request?(request)
+
+    # 3. Si maintenance désactivée, tout passe
     return @app.call(env) unless maintenance_enabled?
 
-    # 3. Autoriser admin connecté et page login
+    # 4. Autoriser admin connecté et page login
     return @app.call(env) if admin_access?(env, request)
 
     # 4. Sinon, page maintenance pour visiteurs
@@ -42,12 +45,22 @@ class MaintenanceModeMiddleware
     request.path == "/up"
   end
 
+  def asset_request?(request)
+    # Autoriser tous les assets (CSS, JS, images, fonts, etc.)
+    request.path.start_with?("/assets/") ||
+    request.path.start_with?("/packs/") ||
+    request.path.match?(/\.(css|js|png|jpg|jpeg|gif|svg|woff|woff2|ttf|eot|ico)$/i)
+  end
+
   def admin_access?(env, request)
     # Autoriser pages login (public et admin) pour que les admins puissent se connecter
     # Public: /session/new, /session (POST pour login)
     # Admin: /admin/session/new, /admin/session (POST pour login)
     return true if request.path.start_with?("/session")
     return true if request.path.start_with?("/admin/session")
+
+    # Autoriser l'accès admin maintenance (auth simple)
+    return true if request.path.start_with?("/admin/maintenance")
 
     # Autoriser toutes les routes admin si session admin valide
     if request.path.start_with?("/admin")
@@ -117,6 +130,37 @@ class MaintenanceModeMiddleware
             .actions.google { grid-template-columns: 1fr; margin-top: 16px; }
             .btn { display: inline-flex; align-items: center; justify-content: center; gap: 10px; height: 56px; padding: 0 18px; border-radius: 12px; text-decoration: none; font-weight: 800; font-size: 1rem; border: 2px solid var(--border); color: var(--text); background: #ffffff; transition: transform .06s ease, background .2s ease, border-color .2s ease; }
             .btn:hover { transform: translateY(-1px); border-color: #94a3b8; background: #f1f5f9; }
+      #{'      '}
+            /* Bouton login admin caché - zone invisible mais détectable */
+            .admin-login-btn {
+              position: absolute;
+              top: 20px;
+              right: 20px;
+              opacity: 0;
+              transition: opacity 0.3s ease;
+              background: transparent;
+              color: transparent;
+              border: none;
+              padding: 8px 16px;
+              border-radius: 8px;
+              font-size: 0.9rem;
+              font-weight: 600;
+              cursor: pointer;
+              text-decoration: none;
+              display: inline-block;
+              z-index: 10;
+              width: 80px;
+              height: 36px;
+              /* Zone cliquable invisible mais détectable */
+              pointer-events: auto;
+            }
+            /* Visible SEULEMENT quand on hover LE BOUTON LUI-MÊME */
+            .admin-login-btn:hover {
+              opacity: 1;
+              background: var(--accent);
+              color: white;
+              transform: translateY(-1px);
+            }
             .btn.primary { background: var(--accent); color: #ffffff; border-color: var(--accent); }
             .btn.primary:hover { background: var(--accent-dark); border-color: var(--accent-dark); }
             .small { font-size: .86rem; color: #5b677a; margin-top: 22px; }
@@ -125,11 +169,17 @@ class MaintenanceModeMiddleware
         </head>
         <body>
           <div class="card">
+            <!-- Bouton accès admin caché -->
+            <a href="/admin/maintenance" class="admin-login-btn">Admin</a>
+      #{'      '}
             <img class="logo" src="#{logo_src}" alt="Logo Le Circographe" width="72" height="72" />
             <div class="brand">Le Circographe</div>
             <div class="pill" aria-live="polite">Maintenance en cours</div>
             <h1>Nous revenons très vite</h1>
             <p class="lead">Merci pour votre patience. En attendant, retrouvez‑nous sur nos réseaux&nbsp;:</p>
+
+            <!-- Horaires d'ouverture -->
+            #{opening_hours_section}
 
             <div class="actions social">
               <a class="btn" href="#{instagram_url}" target="_blank" rel="noopener" aria-label="Nous suivre sur Instagram">
@@ -188,6 +238,33 @@ class MaintenanceModeMiddleware
   def facebook_url
     url = ENV["FACEBOOK_URL"].to_s.strip
     url.empty? ? "https://www.facebook.com/lecircographe" : url
+  end
+
+  def opening_hours_section
+    # Utiliser le système de fichier JSON robuste
+    begin
+      file_path = Rails.root.join("storage", "opening_hours.json")
+      if File.exist?(file_path)
+        horaires = JSON.parse(File.read(file_path)).symbolize_keys
+      else
+        horaires = OpeningHoursHelper.default_opening_hours
+      end
+    rescue => e
+      # Fallback en cas d'erreur
+      horaires = OpeningHoursHelper.default_opening_hours
+    end
+
+    html = '<div style="margin: 20px 0; padding: 16px; background: rgba(31,92,85,0.05); border-radius: 12px; border: 1px solid rgba(31,92,85,0.15);">'
+    html += '<h3 style="margin: 0 0 12px; font-size: 1.1rem; font-weight: 700; color: var(--accent);">Horaires d\'ouverture</h3>'
+    html += '<div style="font-size: 0.95rem; line-height: 1.6; color: var(--muted);">'
+
+    horaires.each do |day, hours|
+      day_name = day.to_s.capitalize
+      html += "<div><strong>#{day_name}:</strong> #{hours}</div>"
+    end
+
+    html += "</div></div>"
+    html
   end
 
   # Auto-redirect supprimé selon la demande

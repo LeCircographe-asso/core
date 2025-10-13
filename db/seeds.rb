@@ -1,5 +1,12 @@
+# Skip seeds in production - only run in development/staging/test
+if Rails.env.production?
+  puts "⚠️  Seeds skipped in production environment"
+  puts "   Use Rails console to create data manually if needed"
+  exit 0
+end
+
 # Nettoyage des données existantes
-puts "🧹 Cleaning database..."
+puts "🧹 Cleaning database (#{Rails.env})..."
 ActiveRecord::Base.connection.disable_referential_integrity do
   # L'ordre est important pour éviter les problèmes de callbacks
   print "  - Deleting payment audit logs... "
@@ -708,6 +715,9 @@ attendance_lists.each_with_index do |attendance_list, list_idx|
 
   attendees_count.times do |j|
     user = j < circus_users.length ? potential_attendees[j] : users.sample
+
+    # Skip si l'utilisateur est déjà dans cette liste
+    next if Attendance.exists?(user: user, attendance_list: attendance_list)
 
     # Vérifier si l'utilisateur a un carnet d'entrées
     book_of_entry = BookOfEntry.where(user: user).where("remaining > 0").sample

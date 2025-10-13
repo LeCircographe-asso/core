@@ -18,7 +18,8 @@ Rails.application.configure do
   config.log_tags = [ :request_id ]
 
   # Cache
-  config.cache_store = :memory_store
+  config.cache_store = :solid_cache_store
+  config.solid_cache.connects_to = { database: { writing: :cache } }
   config.public_file_server.headers = {
     "Cache-Control" => "public, max-age=#{1.hour.to_i}"
   }

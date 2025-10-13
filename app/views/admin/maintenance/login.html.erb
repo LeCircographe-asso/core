@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Accès Admin - Le Circographe</title>
+  <style>
+    body { 
+      font-family: system-ui, -apple-system, sans-serif; 
+      background: #f7fafc; 
+      margin: 0; 
+      padding: 20px; 
+      display: flex; 
+      align-items: center; 
+      justify-content: center; 
+      min-height: 100vh; 
+    }
+    .card { 
+      background: white; 
+      border-radius: 12px; 
+      padding: 40px; 
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1); 
+      max-width: 400px; 
+      width: 100%; 
+      text-align: center; 
+    }
+    h1 { color: #1f5c55; margin-bottom: 30px; }
+    input[type="password"] { 
+      width: 100%; 
+      padding: 12px; 
+      border: 2px solid #e2e8f0; 
+      border-radius: 8px; 
+      font-size: 16px; 
+      margin-bottom: 20px; 
+    }
+    button { 
+      background: #1f5c55; 
+      color: white; 
+      border: none; 
+      padding: 12px 24px; 
+      border-radius: 8px; 
+      font-size: 16px; 
+      cursor: pointer; 
+      width: 100%; 
+    }
+    button:hover { background: #164742; }
+    .error { color: #e53e3e; margin-top: 10px; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>🔐 Accès Admin</h1>
+    <p>Entrez le mot de passe pour accéder à l'administration</p>
+    
+    <%= form_with url: admin_maintenance_path, method: :get, local: true do |form| %>
+      <%= form.password_field :password, placeholder: "Mot de passe", required: true %>
+      <%= form.submit "Accéder", class: "btn" %>
+    <% end %>
+    
+    <% if flash[:error] %>
+      <div class="error"><%= flash[:error] %></div>
+    <% end %>
+  </div>
+</body>
+</html>

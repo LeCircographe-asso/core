@@ -3,6 +3,11 @@ Rails.application.routes.draw do
     resources :blogs
     resources :dashboard, only: %i[index], path: "dashboard"
     resource :opening_hours, only: %i[show edit update]
+
+    # Routes maintenance simple (accès direct sans auth complexe)
+    get "maintenance", to: "maintenance#index"
+    post "maintenance/update_hours", to: "maintenance#update_hours"
+    delete "maintenance", to: "maintenance#logout"
     resources :donations, only: %i[create]
     resources :users do
       resources :orders, only: %i[create show index update] do

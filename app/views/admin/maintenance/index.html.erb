@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Admin Maintenance - Le Circographe</title>
+  <style>
+    body { 
+      font-family: system-ui, -apple-system, sans-serif; 
+      background: #f7fafc; 
+      margin: 0; 
+      padding: 20px; 
+    }
+    .container { 
+      max-width: 800px; 
+      margin: 0 auto; 
+      background: white; 
+      border-radius: 12px; 
+      padding: 30px; 
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1); 
+    }
+    h1 { color: #1f5c55; margin-bottom: 30px; }
+    .form-group { margin-bottom: 20px; }
+    label { 
+      display: block; 
+      font-weight: 600; 
+      margin-bottom: 5px; 
+      color: #2d3748; 
+    }
+    input[type="text"] { 
+      width: 100%; 
+      padding: 10px; 
+      border: 2px solid #e2e8f0; 
+      border-radius: 6px; 
+      font-size: 14px; 
+    }
+    .btn { 
+      background: #1f5c55; 
+      color: white; 
+      border: none; 
+      padding: 12px 24px; 
+      border-radius: 6px; 
+      font-size: 16px; 
+      cursor: pointer; 
+      margin-right: 10px; 
+    }
+    .btn:hover { background: #164742; }
+    .btn-secondary { background: #718096; }
+    .btn-secondary:hover { background: #4a5568; }
+    .alert { 
+      padding: 12px; 
+      border-radius: 6px; 
+      margin-bottom: 20px; 
+    }
+    .alert-success { background: #c6f6d5; color: #22543d; border: 1px solid #9ae6b4; }
+    .alert-error { background: #fed7d7; color: #742a2a; border: 1px solid #feb2b2; }
+    .logout { text-align: right; margin-bottom: 20px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="logout">
+      <%= link_to "🚪 Se déconnecter", admin_maintenance_path, method: :delete, 
+          confirm: "Êtes-vous sûr?", class: "btn btn-secondary" %>
+    </div>
+    
+    <h1>⚙️ Administration Maintenance</h1>
+    
+    <% if notice %>
+      <div class="alert alert-success"><%= notice %></div>
+    <% end %>
+    
+    <% if flash[:error] %>
+      <div class="alert alert-error"><%= flash[:error] %></div>
+    <% end %>
+    
+    <h2>🕐 Horaires d'ouverture</h2>
+    
+    <%= form_with url: admin_maintenance_update_hours_path, local: true do |form| %>
+      <% %w[lundi mardi mercredi jeudi vendredi samedi dimanche].each do |day| %>
+        <div class="form-group">
+          <%= form.label day.capitalize %>
+          <%= form.text_field day, value: @opening_hours[day.to_sym], 
+              placeholder: "ex: 14:00 - 22:00 ou Fermé" %>
+        </div>
+      <% end %>
+      
+      <div>
+        <%= form.submit "💾 Sauvegarder les horaires", class: "btn" %>
+        <%= link_to "🔄 Recharger", admin_maintenance_path, class: "btn btn-secondary" %>
+      </div>
+    <% end %>
+    
+    <hr style="margin: 30px 0;">
+    
+    <h3>ℹ️ Aide</h3>
+    <ul>
+      <li><strong>Format horaires:</strong> 14:00 - 22:00</li>
+      <li><strong>Jour fermé:</strong> Fermé</li>
+      <li><strong>Exemple:</strong> Lundi: Fermé, Mardi: 14:00 - 22:00</li>
+    </ul>
+  </div>
+</body>
+</html>
