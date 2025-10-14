@@ -112,13 +112,8 @@ module Admin
 
     # PATCH/PUT /admin/users/1 or /admin/users/1.json
     def update
-      Rails.logger.debug "=== UPDATE DEBUG ==="
-      Rails.logger.debug "User params: #{user_params.inspect}"
-      Rails.logger.debug "User before update: #{@user.attributes.inspect}"
-
       respond_to do |format|
         if @user.update(user_params)
-          Rails.logger.debug "Update successful!"
           format.html { redirect_to admin_user_path(@user), notice: "Utilisateur mis à jour avec succès." }
           format.json { render json: @user }
           format.turbo_stream {
@@ -129,7 +124,6 @@ module Admin
             ]
           }
         else
-          Rails.logger.debug "Update failed! Errors: #{@user.errors.full_messages}"
           format.html { render :show, status: :unprocessable_entity }
           format.json { render json: @user.errors, status: :unprocessable_entity }
           format.turbo_stream {

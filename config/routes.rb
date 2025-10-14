@@ -25,6 +25,7 @@ Rails.application.routes.draw do
     resources :payments, only: %i[show create new update index destroy]
     resources :exports, only: %i[index] do
       get :newsletter_subscribed, on: :collection
+      get :all_users, on: :collection
     end
   end
 
