@@ -1,0 +1,19 @@
+<div id="error_explanation" class="bg-red-50 border-l-4 border-red-400 p-4 mb-6">
+  <div class="flex">
+    <div class="flex-shrink-0">
+      <i class="fas fa-exclamation-circle text-red-400"></i>
+    </div>
+    <div class="ml-3">
+      <h2 class="text-sm font-medium text-red-800">
+        <%= pluralize(resource.errors.count, "erreur") %> <%= resource.errors.count > 1 ? "empêchent" : "empêche" %> la sauvegarde :
+      </h2>
+      <div class="mt-2 text-sm text-red-700">
+        <ul class="list-disc pl-5 space-y-1">
+          <% resource.errors.full_messages.each do |msg| %>
+            <li><%= msg %></li>
+          <% end %>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>

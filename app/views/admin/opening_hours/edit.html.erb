@@ -12,11 +12,17 @@
           <div>
             <h1 class="text-xl font-bold text-white">Modifier les horaires d'ouverture</h1>
             <p class="text-white/80 text-sm">Ces horaires seront affichés sur le site public</p>
+            <div class="mt-2">
+              <span class="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-white/20 text-white">
+                <i class="fas fa-calendar-week mr-1"></i>
+                Semaine du <%= Date.current.beginning_of_week.strftime("%d/%m") %> au <%= Date.current.end_of_week.strftime("%d/%m/%Y") %>
+              </span>
+            </div>
           </div>
           <div class="text-white text-sm bg-white/20 px-3 py-1.5 rounded-lg">
             <div class="flex items-center">
               <i class="fas fa-info-circle mr-2"></i>
-              <span>Format: <span class="font-mono bg-white/20 px-1 rounded">HH:MM - HH:MM</span> ou <span class="font-mono bg-white/20 px-1 rounded">Fermé</span></span>
+              <span>Utilisez les sélecteurs ou cochez "Fermé" pour chaque jour</span>
             </div>
           </div>
         </div>
@@ -37,6 +43,22 @@
         </div>
         
         <div class="p-3">
+          <!-- Message d'erreur global -->
+          <% if @error_message %>
+            <div class="bg-red-50 border-l-4 border-red-400 p-4 mb-4">
+              <div class="flex">
+                <div class="flex-shrink-0">
+                  <i class="fas fa-exclamation-circle text-red-400"></i>
+                </div>
+                <div class="ml-3">
+                  <p class="text-sm text-red-700">
+                    <%= @error_message %>
+                  </p>
+                </div>
+              </div>
+            </div>
+          <% end %>
+          
           <!-- Form -->
           <%= form_with url: admin_opening_hours_path, method: :patch, id: "opening-hours-form" do |form| %>
             <div class="overflow-hidden rounded-lg border border-gray-200">
@@ -61,12 +83,63 @@
                         </div>
                       </td>
                       <td class="px-3 py-2 whitespace-nowrap">
-                        <div class="relative">
-                          <%= text_field_tag "opening_hours[#{day}]", hours, 
-                              class: "text-sm block w-full px-2 py-1.5 text-gray-700 placeholder-gray-400 bg-white border border-gray-300 rounded-md focus:border-[#1F5C55] focus:ring-1 focus:ring-[#1F5C55] focus:outline-none time-input", 
-                              placeholder: "ex: 14:00 - 22:00 ou Fermé",
-                              data: { day: day } %>
-                          <div class="text-xs text-red-500 hidden error-message" data-error-for="<%= day %>"></div>
+                        <div class="space-y-2">
+                          <!-- Bouton Fermé -->
+                          <div class="flex items-center mb-2">
+                            <%= check_box_tag "closed_#{day}", "1", hours.to_s.downcase == "fermé", 
+                                class: "closed-checkbox h-4 w-4 text-red-600 border-gray-300 rounded focus:ring-red-500", 
+                                data: { day: day },
+                                checked: hours.to_s.downcase == "fermé" %>
+                            <%= label_tag "closed_#{day}", "Fermé", class: "ml-2 text-sm text-gray-700" %>
+                          </div>
+                          
+                          <!-- Sélecteurs d'heures modernes -->
+                          <div class="time-input" data-day="<%= day %>" style="<%= 'display: none;' if hours.to_s.downcase == 'fermé' %>">
+                            <div class="flex items-center space-x-2 text-sm">
+                              <!-- Ouverture -->
+                              <div class="flex items-center space-x-1">
+                                <select name="open_hour_<%= day %>" class="hour-select bg-white border border-gray-300 rounded px-2 py-1 text-sm focus:border-[#1F5C55] focus:ring-1 focus:ring-[#1F5C55] appearance-none cursor-pointer" data-day="<%= day %>">
+                                  <% (0..23).each do |h| %>
+                                    <% selected = hours.to_s.downcase != "fermé" && hours.split(' - ').first&.split(':')&.first&.to_i == h %>
+                                    <option value="<%= h %>" <%= 'selected' if selected %>><%= h.to_s.rjust(2, '0') %></option>
+                                  <% end %>
+                                </select>
+                                <span class="text-gray-500">:</span>
+                                <select name="open_minute_<%= day %>" class="minute-select bg-white border border-gray-300 rounded px-2 py-1 text-sm focus:border-[#1F5C55] focus:ring-1 focus:ring-[#1F5C55] appearance-none cursor-pointer" data-day="<%= day %>">
+                                  <% [0, 15, 30, 45].each do |m| %>
+                                    <% selected = hours.to_s.downcase != "fermé" && hours.split(' - ').first&.split(':')&.last&.to_i == m %>
+                                    <option value="<%= m %>" <%= 'selected' if selected %>><%= m.to_s.rjust(2, '0') %></option>
+                                  <% end %>
+                                </select>
+                              </div>
+                              
+                              <span class="text-gray-500">-</span>
+                              
+                              <!-- Fermeture -->
+                              <div class="flex items-center space-x-1">
+                                <select name="close_hour_<%= day %>" class="hour-select bg-white border border-gray-300 rounded px-2 py-1 text-sm focus:border-[#1F5C55] focus:ring-1 focus:ring-[#1F5C55] appearance-none cursor-pointer" data-day="<%= day %>">
+                                  <% (0..23).each do |h| %>
+                                    <% selected = hours.to_s.downcase != "fermé" && hours.split(' - ').last&.split(':')&.first&.to_i == h %>
+                                    <option value="<%= h %>" <%= 'selected' if selected %>><%= h.to_s.rjust(2, '0') %></option>
+                                  <% end %>
+                                </select>
+                                <span class="text-gray-500">:</span>
+                                <select name="close_minute_<%= day %>" class="minute-select bg-white border border-gray-300 rounded px-2 py-1 text-sm focus:border-[#1F5C55] focus:ring-1 focus:ring-[#1F5C55] appearance-none cursor-pointer" data-day="<%= day %>">
+                                  <% [0, 15, 30, 45].each do |m| %>
+                                    <% selected = hours.to_s.downcase != "fermé" && hours.split(' - ').last&.split(':')&.last&.to_i == m %>
+                                    <option value="<%= m %>" <%= 'selected' if selected %>><%= m.to_s.rjust(2, '0') %></option>
+                                  <% end %>
+                                </select>
+                              </div>
+                            </div>
+                            
+                            <!-- Champ caché pour la valeur finale -->
+                            <%= hidden_field_tag "opening_hours[#{day}]", hours, 
+                                class: "final-time-input", 
+                                data: { day: day } %>
+                          </div>
+                          
+                          <div class="text-xs text-red-500 hidden error-message mt-1" data-error-for="<%= day %>"></div>
                         </div>
                       </td>
                     </tr>
@@ -89,7 +162,7 @@
         </div>
         <div class="p-3">
           <div id="preview-container">
-            <%= render 'shared/opening_hours', horaires: @opening_hours %>
+            <%= render 'shared/opening_hours_compact', horaires: @opening_hours %>
           </div>
         </div>
       </div>
@@ -97,72 +170,175 @@
   </div>
 </div>
 
+<style>
+/* Masquer les flèches natives et ajouter une icône moderne */
+.hour-select, .minute-select {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+  background-position: right 8px center;
+  background-repeat: no-repeat;
+  background-size: 16px;
+  padding-right: 32px;
+}
+
+.hour-select:focus, .minute-select:focus {
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%231F5C55' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+}
+
+/* Effet hover moderne */
+.hour-select:hover, .minute-select:hover {
+  border-color: #1F5C55;
+  box-shadow: 0 0 0 1px rgba(31, 92, 85, 0.1);
+}
+</style>
+
 <script>
 document.addEventListener("DOMContentLoaded", function() {
-  const timeInputs = document.querySelectorAll('.time-input');
+  initializeOpeningHoursForm();
+});
+
+document.addEventListener("turbo:load", function() {
+  initializeOpeningHoursForm();
+});
+
+function initializeOpeningHoursForm() {
   const form = document.getElementById('opening-hours-form');
   
-  // Form validation
-  form.addEventListener('submit', function(event) {
-    let isValid = true;
-    const timeFormat = /^(([0-1]?[0-9]|2[0-3]):[0-5][0-9] - ([0-1]?[0-9]|2[0-3]):[0-5][0-9]|Fermé)$/i;
-    
-    timeInputs.forEach(input => {
-      const day = input.dataset.day;
-      const errorElement = document.querySelector(`[data-error-for="${day}"]`);
+  if (!form) {
+    return; // Pas sur la bonne page
+  }
+  
+  console.log('Initializing opening hours form');
+  
+  // Gestion des checkboxes "Fermé"
+  document.querySelectorAll('.closed-checkbox').forEach(checkbox => {
+    checkbox.addEventListener('change', function() {
+      const day = this.dataset.day;
+      const timeInput = document.querySelector(`.time-input[data-day="${day}"]`);
+      const finalInput = document.querySelector(`.final-time-input[data-day="${day}"]`);
       
-      errorElement.classList.add('hidden');
-      input.classList.remove('border-red-500');
-      
-      if (!timeFormat.test(input.value)) {
-        errorElement.textContent = "Format invalide";
-        errorElement.classList.remove('hidden');
-        input.classList.add('border-red-500');
-        isValid = false;
+      if (this.checked) {
+        timeInput.style.display = 'none';
+        if (finalInput) finalInput.value = 'Fermé';
+        updatePreview(day, 'Fermé');
+      } else {
+        timeInput.style.display = 'block';
+        // Réinitialiser les sélecteurs avec des valeurs par défaut
+        const openHourSelect = document.querySelector(`select[name="open_hour_${day}"]`);
+        const openMinuteSelect = document.querySelector(`select[name="open_minute_${day}"]`);
+        const closeHourSelect = document.querySelector(`select[name="close_hour_${day}"]`);
+        const closeMinuteSelect = document.querySelector(`select[name="close_minute_${day}"]`);
+        
+        if (openHourSelect && openMinuteSelect && closeHourSelect && closeMinuteSelect) {
+          openHourSelect.value = '14';
+          openMinuteSelect.value = '0';
+          closeHourSelect.value = '22';
+          closeMinuteSelect.value = '0';
+          updateTimeFromSelectors(day);
+        }
       }
     });
-    
-    if (!isValid) {
-      event.preventDefault();
-    }
   });
   
-  // Create a simple preview update by reapplying form values
-  timeInputs.forEach(input => {
-    input.addEventListener('input', function() {
+  // Gestion des sélecteurs d'heures
+  document.querySelectorAll('.hour-select, .minute-select').forEach(select => {
+    select.addEventListener('change', function() {
       const day = this.dataset.day;
-      const value = this.value;
-      
-      // Find all table rows in the preview
-      const rows = document.querySelectorAll('#preview-container tr');
-      
-      // Loop through rows to find the one for the current day
-      rows.forEach(row => {
-        const text = row.textContent.toLowerCase();
-        // If this row contains the day name
-        if (text.includes(day.toLowerCase())) {
-          const hourCell = row.querySelector('td:nth-child(2)'); // Second column
-          
-          if (hourCell) {
-            if (value.toLowerCase() === "fermé") {
-              hourCell.innerHTML = `
-                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
-                  <i class="fas fa-times-circle mr-1"></i>
-                  Fermé
-                </span>
-              `;
-            } else {
-              hourCell.innerHTML = `
-                <span class="text-gray-800">
-                  <i class="far fa-clock text-[#1F5C55] mr-1 hidden sm:inline"></i>
-                  ${value}
-                </span>
-              `;
-            }
-          }
-        }
-      });
+      updateTimeFromSelectors(day);
     });
   });
-});
+  
+  // Initialiser l'aperçu au chargement
+  document.querySelectorAll('.closed-checkbox').forEach(checkbox => {
+    const day = checkbox.dataset.day;
+    const finalInput = document.querySelector(`.final-time-input[data-day="${day}"]`);
+    const timeInput = document.querySelector(`.time-input[data-day="${day}"]`);
+    
+    if (finalInput) {
+      updatePreview(day, finalInput.value);
+      
+      // Initialiser l'affichage des sélecteurs selon l'état de la checkbox
+      if (checkbox.checked) {
+        timeInput.style.display = 'none';
+      } else {
+        timeInput.style.display = 'block';
+        initializeSelectors(day, finalInput.value);
+      }
+    }
+  });
+}
+
+function updateTimeFromSelectors(day) {
+  const openHourSelect = document.querySelector(`select[name="open_hour_${day}"]`);
+  const openMinuteSelect = document.querySelector(`select[name="open_minute_${day}"]`);
+  const closeHourSelect = document.querySelector(`select[name="close_hour_${day}"]`);
+  const closeMinuteSelect = document.querySelector(`select[name="close_minute_${day}"]`);
+  
+  if (openHourSelect && openMinuteSelect && closeHourSelect && closeMinuteSelect) {
+    const openHour = openHourSelect.value.padStart(2, '0');
+    const openMinute = openMinuteSelect.value.padStart(2, '0');
+    const closeHour = closeHourSelect.value.padStart(2, '0');
+    const closeMinute = closeMinuteSelect.value.padStart(2, '0');
+    
+    const timeValue = `${openHour}:${openMinute} - ${closeHour}:${closeMinute}`;
+    const finalInput = document.querySelector(`.final-time-input[data-day="${day}"]`);
+    if (finalInput) {
+      finalInput.value = timeValue;
+    }
+    updatePreview(day, timeValue);
+  }
+}
+
+function updatePreview(day, value) {
+  const rows = document.querySelectorAll('#preview-container tr');
+  
+  rows.forEach(row => {
+    const text = row.textContent.toLowerCase();
+    if (text.includes(day.toLowerCase())) {
+      const hourCell = row.querySelector('td:nth-child(2)');
+      
+      if (hourCell) {
+        if (value.toLowerCase() === "fermé") {
+          hourCell.innerHTML = `
+            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+              <i class="fas fa-times-circle mr-1"></i>
+              Fermé
+            </span>
+          `;
+        } else {
+          hourCell.innerHTML = `
+            <span class="text-gray-800">
+              <i class="far fa-clock text-[#1F5C55] mr-1 hidden sm:inline"></i>
+              ${value}
+            </span>
+          `;
+        }
+      }
+    }
+  });
+}
+
+function initializeSelectors(day, timeValue) {
+  if (timeValue && timeValue.toLowerCase() !== 'fermé') {
+    const [openTime, closeTime] = timeValue.split(' - ');
+    if (openTime && closeTime) {
+      const [openHour, openMinute] = openTime.split(':').map(Number);
+      const [closeHour, closeMinute] = closeTime.split(':').map(Number);
+      
+      const openHourSelect = document.querySelector(`select[name="open_hour_${day}"]`);
+      const openMinuteSelect = document.querySelector(`select[name="open_minute_${day}"]`);
+      const closeHourSelect = document.querySelector(`select[name="close_hour_${day}"]`);
+      const closeMinuteSelect = document.querySelector(`select[name="close_minute_${day}"]`);
+      
+      if (openHourSelect && openMinuteSelect && closeHourSelect && closeMinuteSelect) {
+        openHourSelect.value = openHour.toString();
+        openMinuteSelect.value = openMinute.toString();
+        closeHourSelect.value = closeHour.toString();
+        closeMinuteSelect.value = closeMinute.toString();
+      }
+    }
+  }
+}
 </script>

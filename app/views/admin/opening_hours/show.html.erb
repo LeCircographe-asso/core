@@ -1,19 +1,23 @@
-<div class="min-h-screen py-3">
-  <div class="max-w-6xl mx-auto px-4">
+<div class="min-h-screen py-2">
+  <div class="max-w-5xl mx-auto px-4">
     <!-- Breadcrumbs -->
     <%= render 'shared/breadcrumbs' %>
     
     <!-- Header -->
-    <div class="bg-white shadow-lg rounded-lg overflow-hidden mb-4">
-      <div class="bg-gradient-to-r from-[#1F5C55] to-teal-600 px-6 py-2.5">
-        <div class="flex flex-col sm:flex-row justify-between items-center gap-4">
+    <div class="bg-gradient-to-r from-[#1F5C55] to-teal-600 rounded-lg shadow-lg mb-3">
+      <div class="px-4 py-3">
+        <div class="flex flex-col sm:flex-row justify-between items-center gap-3">
           <div>
-            <h1 class="text-xl font-bold text-white">Horaires d'ouverture</h1>
-            <p class="text-white/80 text-sm">Ces horaires sont affichés sur le site public</p>
+            <h1 class="text-lg font-bold text-white">Horaires d'ouverture</h1>
+            <p class="text-white/80 text-xs">Ces horaires sont affichés sur le site public</p>
+            <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-white/20 text-white mt-1">
+              <i class="fas fa-calendar-week mr-1"></i>
+              Semaine du <%= Date.current.beginning_of_week.strftime("%d/%m") %> au <%= Date.current.end_of_week.strftime("%d/%m/%Y") %>
+            </span>
           </div>
           <div>
-            <%= link_to edit_admin_opening_hours_path, class: "inline-flex items-center px-4 py-2 border border-white/30 text-sm font-medium rounded-md text-white hover:bg-white/10 focus:outline-none" do %>
-              <i class="fas fa-edit mr-2"></i> Modifier
+            <%= link_to edit_admin_opening_hours_path, class: "inline-flex items-center px-3 py-1.5 border border-white/30 text-sm font-medium rounded-md text-white hover:bg-white/10 focus:outline-none" do %>
+              <i class="fas fa-edit mr-1.5"></i> Modifier
             <% end %>
           </div>
         </div>
@@ -21,10 +25,8 @@
     </div>
     
     <!-- Opening hours display -->
-    <div class="bg-white shadow-lg rounded-lg overflow-hidden">
-      <div class="p-6">
-        <%= render 'shared/opening_hours', horaires: @opening_hours %>
-      </div>
+    <div class="bg-white rounded-lg shadow-lg">
+      <%= render 'shared/opening_hours_compact', horaires: @opening_hours %>
     </div>
   </div>
 </div>
