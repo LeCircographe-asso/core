@@ -168,6 +168,14 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_14_091726) do
     t.index ["status"], name: "index_memberships_on_status"
   end
 
+  create_table "opening_hours", force: :cascade do |t|
+    t.time "open_at", null: false
+    t.time "close_at", null: false
+    t.integer "day", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "orders", force: :cascade do |t|
     t.decimal "sum"
     t.date "date"

@@ -20,22 +20,20 @@ class User < ApplicationRecord
   # Relation avec Person (nouvelle architecture)
   belongs_to :person, optional: true
   
+  # Relations Person-Based Architecture
   has_many :sessions, dependent: :destroy
   has_many :event_attendees, dependent: :destroy
   has_many :events, through: :event_attendees
-  has_many :user_memberships, dependent: :destroy
-
-  has_many :attendance_lists, through: :attendances
+  
+  # Relations via Person (nouvelles)
+  has_many :memberships, through: :person
+  has_many :payments, through: :person
+  has_many :book_of_entries, through: :person
+  has_many :attendances, through: :person
+  
+  # Relations directes (conservées pour compatibilité)
   has_many :product_orders
-  has_many :payments
-
-  has_many :memberships, through: :user_memberships
-  has_many :product_orders
-  has_many :payments
-
-  has_many :book_of_entries
   has_many :orders
-  has_many :attendances
 
   normalizes :email_address, with: ->(e) { e.strip.downcase }
 
@@ -97,8 +95,8 @@ class User < ApplicationRecord
   end
 
   def formatted_registration_date
-    if active_subscription?
-      user_memberships.order(:created_at).last.created_at.strftime("%d/%m/%Y")
+    if person&.has_active_membership?
+      person.memberships.order(:created_at).last.created_at.strftime("%d/%m/%Y")
     else
       "Pas encore membre"
     end
@@ -155,7 +153,7 @@ class User < ApplicationRecord
   end
 
   def active_subscription?
-    user_memberships.exists?(status: "active")
+    person&.has_active_membership? || false
   end
 
   def self.find_by_password_reset_token!(token)

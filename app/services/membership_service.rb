@@ -1,41 +1,22 @@
+# DEPRECATED: Ancien service obsolète - remplacé par Person-Based Architecture
+# Utilisez maintenant les services:
+# - People::Register (création Person + User + Membership)
+# - Memberships::Create (création d'adhésions)
+# - Memberships::Upgrade (mise à niveau d'adhésions)
 class MembershipService
-  def self.assign_basic_membership(user)
-    basic_membership = Membership.find_by(type_name: :Basic)
-    return false unless basic_membership
-
-    user.user_memberships.create(membership: basic_membership)
-  end
-
-  def self.activate_membership(user_membership)
-    return false unless user_membership
-
-    # Expire previous active memberships
-    user_membership.user.user_memberships
-                   .where.not(id: user_membership.id)
-                   .where(status: :active)
-                   .update_all(status: :expired)
-
-    user_membership.update(status: :active)
-  end
-
-  def self.expire_membership(user_membership)
-    return false unless user_membership
-
-    user_membership.update(status: :expired)
-  end
-
-  def self.cancel_membership(user_membership)
-    return false unless user_membership
-
-    user_membership.update(status: :canceled)
-  end
+  # Méthodes désactivées - utilisez le nouveau système Person-Based
+  # def self.assign_basic_membership(user); end
+  # def self.activate_membership(user_membership); end
+  # def self.expire_membership(user_membership); end
+  # def self.cancel_membership(user_membership); end
 
   def self.active_memberships_count
+    # Adapté au nouveau modèle Person-Based
     Membership.where(status: 'active').count
   end
 
   def self.membership_type_count(type_name)
-    # Adapter au nouveau modèle Person-Based
+    # Adapté au nouveau modèle Person-Based
     case type_name.to_s.downcase
     when 'basic'
       Membership.joins(:membership_type)

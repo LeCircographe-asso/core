@@ -4,10 +4,10 @@ class Payment < ApplicationRecord
   belongs_to :recorded_by, class_name: "User"
   has_many :payment_lines, dependent: :destroy
 
-  # Anciennes relations (à supprimer progressivement)
+  # Relations conservées pour compatibilité (à supprimer progressivement)
   belongs_to :user, optional: true
   belongs_to :order, optional: true
-  has_many :product_orders, through: :order # Ajout de la relation product_order
+  has_many :product_orders, through: :order
   has_many :payment_audit_logs, dependent: :destroy
 
   enum :status, %i[success pending cancel], default: :pending
@@ -15,8 +15,9 @@ class Payment < ApplicationRecord
 
   before_create :generate_uuid
   after_create :create_audit_log
-  after_update :update_user_membership_if_paid, if: -> { saved_change_to_status? && status == "success" }
-  after_update :createBookOfEntry, if: -> { saved_change_to_status? && status == "success" }
+  # Callbacks obsolètes désactivés - utilisez les services Person-Based
+  # after_update :update_user_membership_if_paid, if: -> { saved_change_to_status? && status == "success" }
+  # after_update :createBookOfEntry, if: -> { saved_change_to_status? && status == "success" }
   after_update :log_status_change, if: -> { saved_change_to_status? }
 
   # Scope to get active (non-cancelled) payments

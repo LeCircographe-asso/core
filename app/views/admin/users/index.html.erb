@@ -129,8 +129,8 @@
                             <%= person.user.system_role.humanize %>
                           </span>
                         <% else %>
-                          <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">
-                            Adhérent
+                          <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-orange-100 text-orange-800">
+                            Sans compte
                           </span>
                         <% end %>
                       </td>
@@ -139,7 +139,7 @@
                           <% if person.has_active_membership? %>
                             <% current_membership = person.current_membership %>
                             <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
-                              <%= current_membership.membership_type.name %>
+                              <%= current_membership.membership_type.name %> (Actif)
                             </span>
                           <% elsif person.memberships.exists? %>
                             <% last_membership = person.memberships.order(:created_at).last %>
@@ -148,7 +148,7 @@
                             </span>
                           <% else %>
                             <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">
-                              Non adhérent
+                              Pas d'adhésion
                             </span>
                           <% end %>
                         </td>
@@ -168,7 +168,10 @@
                                 class: "text-blue-600 hover:text-blue-900" %>
                           <% end %>
                         <% else %>
-                          <span class="text-gray-400 italic">Pas d'actions disponibles</span>
+                          <%= link_to "Créer compte", new_admin_user_path(person_id: person.id), 
+                              class: "text-green-600 hover:text-green-900 mr-3", 
+                              data: { turbo: false } %>
+                          <span class="text-gray-400 italic">Adhérent sans compte</span>
                         <% end %>
                       </td>
                     </tr>
