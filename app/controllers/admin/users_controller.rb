@@ -59,6 +59,7 @@ module Admin
     # GET /admin/users/new
     def new
       @user = User.new
+      @user.created_by_admin = true
       add_breadcrumb "Liste d'adhérents", admin_users_path
       add_breadcrumb "Nouvel adhérent", nil
     end
@@ -94,13 +95,16 @@ module Admin
 
     # POST /admin/users or /admin/users.json
     def create
-      result = UserService.create_user_with_membership(user_params, true)
+      # Set flag to indicate user is created by admin
+      user_params_with_admin_flag = user_params.merge(created_by_admin: true)
+      result = UserService.create_user_with_membership(user_params_with_admin_flag, true)
 
       if result[:success]
         redirect_to admin_user_order_path(id: result[:order], user_id: result[:user]),
                     notice: "Utilisateur créé avec succès. Un mail a été envoyé !"
       else
         @user = User.new(user_params)
+        @user.created_by_admin = true
         flash.now[:alert] = "Erreur lors de la création de l'utilisateur: #{result[:errors].join(', ')}"
         render :new, status: :unprocessable_entity
       end
@@ -108,8 +112,13 @@ module Admin
 
     # PATCH/PUT /admin/users/1 or /admin/users/1.json
     def update
+      Rails.logger.debug "=== UPDATE DEBUG ==="
+      Rails.logger.debug "User params: #{user_params.inspect}"
+      Rails.logger.debug "User before update: #{@user.attributes.inspect}"
+
       respond_to do |format|
         if @user.update(user_params)
+          Rails.logger.debug "Update successful!"
           format.html { redirect_to admin_user_path(@user), notice: "Utilisateur mis à jour avec succès." }
           format.json { render json: @user }
           format.turbo_stream {
@@ -120,6 +129,7 @@ module Admin
             ]
           }
         else
+          Rails.logger.debug "Update failed! Errors: #{@user.errors.full_messages}"
           format.html { render :show, status: :unprocessable_entity }
           format.json { render json: @user.errors, status: :unprocessable_entity }
           format.turbo_stream {
@@ -200,7 +210,6 @@ module Admin
         :image_rights,
         :get_involved,
         :system_role,
-        :newsletter_subscribed,
         :dyslexic_font
       )
     end
