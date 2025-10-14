@@ -59,21 +59,12 @@ module MembershipHelper
     date&.strftime("%d/%m/%Y") || "Non renseigné"
   end
 
-  def user_membership_status(user)
-    if user.active_subscription?
-      latest_membership = user.user_memberships.order(created_at: :desc).first
-      membership_status_badge_class(latest_membership.status)
-    else
-      "bg-gray-100 text-gray-800"
-    end
-  end
+  # Méthodes obsolètes désactivées - utilisez l'architecture Person-Based
+  # def user_membership_status(user)
+  #   # Utilisez user.person.current_membership à la place
+  # end
 
-  def user_membership_type(user)
-    if user.active_subscription?
-      latest_membership = user.user_memberships.order(created_at: :desc).first
-      membership_type_badge_class(latest_membership.membership.type_name)
-    else
-      "bg-gray-100 text-gray-800"
-    end
-  end
+  # def user_membership_type(user)
+  #   # Utilisez user.person.current_membership.membership_type à la place
+  # end
 end

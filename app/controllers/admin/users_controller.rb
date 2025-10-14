@@ -32,17 +32,17 @@ module Admin
 
     # GET /admin/users/1 or /admin/users/1.json
     def show
-      # Eager load associations for the current user
+      # Eager load associations for the current user with Person-Based architecture
       @user = User.unscoped.includes(
-        :user_memberships,
+        :person,
         :memberships,
-        payments: { order: { product_orders: { product: :price_entries } } }
+        payments: { payment_lines: :item }
       ).find_by(id: params[:id])
 
       @array_right = available_roles_for_user(@user)
 
       add_breadcrumb "Liste d'adhérents", admin_users_path
-      add_breadcrumb @user&.full_name.present? ? @user.full_name : "Utilisateur ##{@user.id}", nil
+      add_breadcrumb @user&.person&.full_name.present? ? @user.person.full_name : "Utilisateur ##{@user.id}", nil
 
       respond_to do |format|
         format.html
@@ -83,7 +83,7 @@ module Admin
       end
 
       add_breadcrumb "Liste d'adhérents", admin_users_path
-      add_breadcrumb @user.full_name.present? ? @user.full_name : "Utilisateur ##{@user.id}", admin_user_path(@user)
+      add_breadcrumb @user.person&.full_name.present? ? @user.person.full_name : "Utilisateur ##{@user.id}", admin_user_path(@user)
       add_breadcrumb "Modifier", nil
     end
 

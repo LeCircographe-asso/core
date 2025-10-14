@@ -26,10 +26,8 @@ class OrdersController < BaseController
       format.turbo_stream
     end
 
-    @has_valid_membership = @user.user_memberships.joins(:membership)
-      .where(user_memberships: { status: "active" })
-      .where(memberships: { type_name: [ "Circus", "Basic" ] })
-      .exists?
+    # Utilisation de l'architecture Person-Based
+    @has_valid_membership = @user.person&.has_active_membership? || false
   end
 
   def new
