@@ -1,5 +1,59 @@
 # 🚀 Optimisations à Implémenter
 
+## ✅ Réalisé le 14/10/2025
+
+- [x] **Optimisation du module Horaires d'ouverture** :
+  - Fix des messages flash dupliqués
+  - Ajout d'un message d'erreur rouge pour la validation
+  - Simplification du JavaScript (suppression de la complexité importmap)
+  - Amélioration de l'UX avec aperçu en temps réel
+  - Correction des fonctionnalités checkbox et sélecteurs
+  - Nettoyage du contrôleur pour une meilleure gestion des erreurs
+
+## À faire : Optimisations Adhérents
+
+- [x] Déplacer le(s) bouton(s) d'import/export :  
+  Mettre les boutons d'import et d'export directement sur la page de liste des adhérents.
+
+- [x] Nettoyer le menu d'administration :  
+  Retirer les liens "ajouter un adhérent" et "export" du menu d'administration (puisqu'ils existent déjà sur la liste des adhérents).
+
+- [ ] Harmoniser les termes :  
+  Remplacer tous les libellés "utilisateur" par "adhérent" dans l'application (front/boutons/messages).
+
+- [x] Rendre le champ mail optionnel :  
+  Permettre l'ajout d'adhérent sans email lorsque l'action est réalisée par un administrateur.
+
+- [x] RGPD - Newsletter :  
+  Désactiver la possibilité d'inscrire un adhérent à la newsletter depuis le menu d'administration.
+
+
+## À faire : Divers (autres optimisations)
+
+- [x] Wording :  
+  Renommer le lien "retourner sur le site" par "voir le site".
+
+- [x] Séparer Horaires du menu adhérents :  
+  Donner une entrée dédiée dans le menu d'administration pour le formulaire des horaires (actuellement accessible depuis la liste des adhérents).
+
+- [ ] Fusion de plusieurs pages informatives :  
+  Regrouper les sections suivantes sur une seule page :
+  - Le lieu
+  - Par qui / pourquoi / pour qui  
+  Suggestions pour la hiérarchie d'information :
+    - Présenter d'abord Circographe (le lieu)
+    - Ensuite les activités (pour qui/pourquoi)
+    - Enfin l'équipe  
+    **Ou**  
+    - Activités, puis lieu, puis équipe (équipe en dernier)
+
+- [ ] Fusionner contact et "nous trouver" :  
+  Mettre le formulaire de contact et les informations pour nous trouver sur une seule page.
+
+- [x] UX admin :  
+  Sur le site principal, détacher le lien d'accès au back-office d'administration du menu de profil utilisateur lorsqu'on est connecté en tant qu'admin.
+
+
 ## ✅ Priorité 1: Corrections Immédiates (< 30 min)
 
 ### 1.1 Fixer Version Bundler dans Dockerfile

@@ -1,5 +1,5 @@
 class User < ApplicationRecord
-  attr_accessor :cgu, :privacy_policy
+  attr_accessor :cgu, :privacy_policy, :created_by_admin
   after_create :generate_password_reset_token
   after_create :welcome_send
   before_validation :capitalize_names
@@ -35,9 +35,9 @@ class User < ApplicationRecord
 
   normalizes :email_address, with: ->(e) { e.strip.downcase }
 
-  validates :email_address, presence: true, uniqueness: true
-  validates :cgu, acceptance: { message: "Vous devez accepter les CGU pour continuer." }
-  validates :privacy_policy, acceptance: { message: "Vous devez accepter la politique de confidentialité pour continuer." }
+  validates :email_address, presence: true, uniqueness: true, unless: :created_by_admin?, on: :create
+  validates :cgu, acceptance: { message: "Vous devez accepter les CGU pour continuer." }, unless: :created_by_admin?
+  validates :privacy_policy, acceptance: { message: "Vous devez accepter la politique de confidentialité pour continuer." }, unless: :created_by_admin?
 
   # Override destroy method from SoftDeletable to handle payments
   # def destroy
@@ -83,6 +83,7 @@ class User < ApplicationRecord
 
   def welcome_send
     return if user_connected?
+    return if email_address.blank? # Don't send email if no email address
 
     if created_by_admin?
       UserMailer.welcome_by_admin(self, reset_password_url).deliver_later
@@ -105,6 +106,10 @@ class User < ApplicationRecord
 
   def has_admin?
     %w[admin super_admin].include?(self.system_role)
+  end
+
+  def created_by_admin?
+    @created_by_admin == true
   end
 
 

@@ -42,13 +42,14 @@
 
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <%= form.label :email_address, "Adresse email", class: "block text-sm font-medium text-gray-700" %>
+              <%= form.label :email_address, "Adresse email (optionnel)", class: "block text-sm font-medium text-gray-700" %>
               <div class="mt-1 relative rounded-md shadow-sm">
                 <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                   <i class="fas fa-envelope text-gray-400"></i>
                 </div>
-                <%= form.email_field :email_address, class: "pl-10 block w-full focus:ring-[#1F5C55] focus:border-[#1F5C55] sm:text-sm border-gray-300 rounded-md", placeholder: "email@exemple.com" %>
+                <%= form.email_field :email_address, class: "pl-10 block w-full focus:ring-[#1F5C55] focus:border-[#1F5C55] sm:text-sm border-gray-300 rounded-md", placeholder: "email@exemple.com (optionnel)" %>
               </div>
+              <p class="mt-1 text-xs text-gray-500">L'email est optionnel lors de la création par un administrateur</p>
             </div>
 
             <div></div>
@@ -73,13 +74,6 @@
               </div>
             </div>
 
-            <div class="md:col-span-2">
-              <div class="flex items-center">
-                <%= form.check_box :newsletter_subscribed, class: "h-4 w-4 text-[#1F5C55] focus:ring-[#1F5C55] border-gray-300 rounded" %>
-                <%= form.label :newsletter_subscribed, "Inscrire à la newsletter", class: "ml-2 block text-sm text-gray-700" %>
-              </div>
-              <p class="mt-1 text-xs text-gray-500">L'utilisateur recevra les communications par email</p>
-            </div>
           </div>
 
           <div class="bg-gray-50 p-4 rounded-md mt-4">

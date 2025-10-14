@@ -25,10 +25,6 @@
     <%= form.text_field :last_name %>
   </div>
 
-  <div class="field">
-    <%= form.label :newsletter_subscribed, "Inscrire à la newsletter ?" %>
-    <%= form.check_box :newsletter_subscribed %>
-  </div>
 
   <% if @user.persisted? %>
     <div class="field">

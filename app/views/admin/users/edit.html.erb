@@ -152,17 +152,21 @@
             <div class="space-y-4 mt-4">
               <h3 class="text-sm font-medium text-gray-700">Préférences</h3>
               
-              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div class="flex items-start">
-                  <div class="flex items-center h-5">
-                    <%= form.check_box :newsletter_subscribed, class: "h-4 w-4 text-[#1F5C55] focus:ring-[#1F5C55] border-gray-300 rounded" %>
+              <!-- RGPD Notice -->
+              <div class="bg-blue-50 border-l-4 border-blue-400 p-4 rounded">
+                <div class="flex">
+                  <div class="flex-shrink-0">
+                    <i class="fas fa-info-circle text-blue-400"></i>
                   </div>
-                  <div class="ml-3 text-sm">
-                    <%= form.label :newsletter_subscribed, "Newsletter", class: "font-medium text-gray-700" %>
-                    <p class="text-gray-500">Reçoit les communications par email</p>
+                  <div class="ml-3">
+                    <p class="text-sm text-blue-700">
+                      <strong>RGPD :</strong> Les préférences de newsletter ne peuvent être modifiées que par l'utilisateur lui-même depuis son profil personnel.
+                    </p>
                   </div>
                 </div>
-
+              </div>
+              
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div class="flex items-start">
                   <div class="flex items-center h-5">
                     <%= form.check_box :image_rights, class: "h-4 w-4 text-[#1F5C55] focus:ring-[#1F5C55] border-gray-300 rounded" %>

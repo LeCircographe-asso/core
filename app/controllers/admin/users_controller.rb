@@ -59,6 +59,7 @@ module Admin
     # GET /admin/users/new
     def new
       @user = User.new
+      @user.created_by_admin = true
       add_breadcrumb "Liste d'adhérents", admin_users_path
       add_breadcrumb "Nouvel adhérent", nil
     end
@@ -94,13 +95,16 @@ module Admin
 
     # POST /admin/users or /admin/users.json
     def create
-      result = UserService.create_user_with_membership(user_params, true)
+      # Set flag to indicate user is created by admin
+      user_params_with_admin_flag = user_params.merge(created_by_admin: true)
+      result = UserService.create_user_with_membership(user_params_with_admin_flag, true)
 
       if result[:success]
         redirect_to admin_user_order_path(id: result[:order], user_id: result[:user]),
                     notice: "Utilisateur créé avec succès. Un mail a été envoyé !"
       else
         @user = User.new(user_params)
+        @user.created_by_admin = true
         flash.now[:alert] = "Erreur lors de la création de l'utilisateur: #{result[:errors].join(', ')}"
         render :new, status: :unprocessable_entity
       end
@@ -200,7 +204,6 @@ module Admin
         :image_rights,
         :get_involved,
         :system_role,
-        :newsletter_subscribed,
         :dyslexic_font
       )
     end
