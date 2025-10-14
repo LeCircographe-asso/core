@@ -4,12 +4,16 @@ module Admin
     # before_action :set_breadcrumbs
 
     def index
-      # Start with all payments with eager loading
-      @payments = Payment.includes(:user, order: { product_orders: { product: :price_entries } })
+      # Start with all payments with eager loading (nouveau modèle)
+      @payments = Payment.includes(:person, :recorded_by, :payment_lines)
 
-      # Filter by user if user_id is provided
+      # Filter by person if person_id is provided
+      @person = Person.find_by(id: params[:person_id])
+      @payments = @person.payments.includes(:person, :recorded_by, :payment_lines) if @person
+
+      # Compatibilité avec l'ancien système (user_id)
       @user = User.find_by(id: params[:user_id])
-      @payments = @user.payments.includes(:user, order: { product_orders: { product: :price_entries } }) if @user
+      @payments = @user.payments.includes(:person, :recorded_by, :payment_lines) if @user
 
       # Apply filters if provided
       @payments = @payments.where(status: params[:status]) if params[:status].present?
@@ -92,14 +96,20 @@ module Admin
     end
 
     def create
-      # Remove debug output
-      @user = User.find(payment_params[:user_id])
+      # Adapter pour le nouveau modèle Person-Based
       @payment = Payment.new(payment_params)
 
+      # Utiliser le service Payments::Process pour traiter le paiement
       if @payment.save
-        redirect_to admin_payment_path(@payment), notice: "Cotisation prise en compte"
+        process_result = Payments::Process.new(@payment).call
+
+        if process_result.success?
+          redirect_to admin_payment_path(@payment), notice: "Paiement traité avec succès"
+        else
+          redirect_to admin_payments_path, alert: "Erreur lors du traitement: #{process_result.message}"
+        end
       else
-        redirect_to admin_product_order_path, alert: "Erreur lors de la création du paiement"
+        redirect_to admin_payments_path, alert: "Erreur lors de la création du paiement"
       end
     end
 
@@ -136,7 +146,12 @@ module Admin
     private
 
     def payment_params
-      params.require(:payment).permit(:payment_id, :payment_date, :payment_amount, :payment_type, :status, :user_id, :order_id, :donation, :total_payment)
+      # Nouveau modèle Person-Based
+      params.require(:payment).permit(
+        :person_id, :recorded_by_id, :total_cents, :payment_method, :status, :notes,
+        # Compatibilité avec l'ancien modèle
+        :payment_id, :payment_date, :payment_amount, :payment_type, :user_id, :order_id, :donation, :total_payment
+      )
     end
 
     # Remove the set_breadcrumbs method since we don't need the dashboard breadcrumb

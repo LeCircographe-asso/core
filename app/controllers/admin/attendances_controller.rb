@@ -1,61 +1,79 @@
 module Admin
   class AttendancesController < BaseController
-    before_action :set_attendance_list, only: [ :index, :new, :create ]
-    before_action :set_breadcrumbs
+    before_action :set_attendance, only: [ :show, :destroy ]
 
     def index
-      @users = @attendance_list.users
-      add_breadcrumb "Listes de présence", admin_attendance_lists_path
-      add_breadcrumb @attendance_list.name, admin_attendance_list_path(@attendance_list)
-      add_breadcrumb "Participants", nil
+      @attendances = Attendance.includes(:person, :event)
+
+      # Filtres
+      if params[:person_id].present?
+        @attendances = @attendances.where(person_id: params[:person_id])
+      end
+
+      if params[:event_id].present?
+        @attendances = @attendances.where(event_id: params[:event_id])
+      end
+
+      if params[:date].present?
+        @attendances = @attendances.where(date: params[:date])
+      end
+
+      if params[:today].present?
+        @attendances = @attendances.today
+      end
+
+      # Pagination
+      @attendances = @attendances.order(date: :desc).page(params[:page]).per(20)
+
+      add_breadcrumb "Gestion des présences", nil
+    end
+
+    def show
+      add_breadcrumb "Gestion des présences", admin_attendances_path
+      add_breadcrumb "Présence ##{@attendance.id}", nil
     end
 
     def new
-      @users_not_in_list = User.where.not(id: @attendance_list.users.select(:id))
-      add_breadcrumb "Listes de présence", admin_attendance_lists_path
-      add_breadcrumb @attendance_list.name, admin_attendance_list_path(@attendance_list)
-      add_breadcrumb "Participants", admin_attendance_list_attendances_path(@attendance_list)
-      add_breadcrumb "Ajouter un participant", nil
+      @attendance = Attendance.new
+      @people = Person.order(:first_name, :last_name)
+      @events = Event.upcoming.order(:date)
+
+      add_breadcrumb "Gestion des présences", admin_attendances_path
+      add_breadcrumb "Nouvelle présence", nil
     end
 
     def create
-      @user = User.find(params[:user_id])
+      # Utiliser le service Attendances::CheckIn
+      check_in_service = Attendances::CheckIn.new(attendance_params)
+      result = check_in_service.call
 
-      @has_valid_membership = @user.user_memberships.joins(:membership)
-      .where(user_memberships: { status: "active" })
-      .where(memberships: { type_name: [ "Circus", "Basic" ] })
-      .exists?
-
-      attendance = Attendance.new
-      attendance.attendance_list = @attendance_list
-      attendance.user = User.find(params[:user_id])
-      attendance.arrival_time = Time.current
-      puts "################################################"
-      puts "#{attendance.user.book_of_entries.first}" "*********************************************************************"
-      book_of_entry = attendance.user.book_of_entries.first
-
-      if book_of_entry
-        attendance.book_of_entry = book_of_entry
-      end
-
-      if attendance.save
-
-        redirect_to admin_attendance_list_attendances_path(@attendance_list),
-          notice: "#{attendance.user.first_name} #{attendance.user.last_name} a été ajouté(e) avec succès."
+      if result.success?
+        redirect_to admin_attendance_path(result.attendance), notice: "Présence enregistrée avec succès"
       else
-        flash[:error] = "Une erreur est survenue lors de l'ajout du participant : #{attendance.errors.full_messages.join(', ')}"
-        redirect_to new_admin_attendance_list_attendance_path(@attendance_list)
+        @attendance = Attendance.new(attendance_params)
+        @people = Person.order(:first_name, :last_name)
+        @events = Event.upcoming.order(:date)
+        flash.now[:alert] = "Erreur: #{result.message}"
+        render :new
+      end
+    end
+
+    def destroy
+      if @attendance.destroy
+        redirect_to admin_attendances_path, notice: "Présence supprimée avec succès"
+      else
+        redirect_to admin_attendances_path, alert: "Erreur lors de la suppression"
       end
     end
 
     private
 
-    def set_attendance_list
-      @attendance_list = AttendanceList.find(params[:attendance_list_id])
+    def set_attendance
+      @attendance = Attendance.find(params[:id])
     end
 
-    def set_breadcrumbs
-      # No need to add dashboard breadcrumb as it's already in the partial
+    def attendance_params
+      params.require(:attendance).permit(:person_id, :event_id, :date, :book_of_entry_id)
     end
   end
 end

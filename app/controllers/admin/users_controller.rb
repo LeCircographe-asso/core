@@ -14,19 +14,13 @@ module Admin
 
     # GET /admin/users or /admin/users.json
     def index
-      # Filter for deleted users if requested
-      if params[:show_deleted] == "true"
-        @users = User.unscoped.where(deleted: true).includes(:user_memberships, :memberships, :payments)
-        @showing_deleted = true
-      else
-        @users = User.unscoped.where(deleted: false).includes(:user_memberships, :memberships, :payments)
-        @showing_deleted = false
-      end
+      # Afficher TOUTES les Person (avec ou sans User)
+      @people = Person.includes(:user, :memberships, :payments).order(:last_name, :first_name)
 
       # Statistiques pour le dashboard
-      @total_users = User.unscoped.count
-      @active_users = User.unscoped.where(deleted: false).count
-      @deleted_users = User.unscoped.where(deleted: true).count
+      @total_people = Person.count
+      @people_with_user = Person.joins(:user).count
+      @people_without_user = Person.left_joins(:user).where(users: { id: nil }).count
       @new_users_yesterday = UserService.new_users_count
       @basic_memberships = MembershipService.membership_type_count(:Basic)
       @circus_memberships = MembershipService.membership_type_count(:Circus)
@@ -95,17 +89,35 @@ module Admin
 
     # POST /admin/users or /admin/users.json
     def create
-      # Set flag to indicate user is created by admin
-      user_params_with_admin_flag = user_params.merge(created_by_admin: true)
-      result = UserService.create_user_with_membership(user_params_with_admin_flag, true)
+      # Utiliser le service People::Register pour créer Person + User
+      result = People::Register.new(
+        first_name: user_params[:person][:first_name],
+        last_name: user_params[:person][:last_name],
+        email: user_params[:person][:email],
+        phone: user_params[:person][:phone],
+        birth_date: user_params[:person][:birth_date],
+        address: user_params[:person][:address],
+        emergency_contact_name: user_params[:person][:emergency_contact_name],
+        emergency_contact_phone: user_params[:person][:emergency_contact_phone],
+        notes: user_params[:person][:notes],
+        occupation: user_params[:person][:occupation],
+        specialty: user_params[:person][:specialty],
+        image_rights: user_params[:person][:image_rights],
+        get_involved: user_params[:person][:get_involved],
+        newsletter_subscribed: user_params[:person][:newsletter_subscribed],
+        dyslexic_font: user_params[:person][:dyslexic_font],
+        # User account creation (optionnel)
+        create_user_account: user_params[:email_address].present?,
+        user_email: user_params[:email_address],
+        user_system_role: user_params[:system_role] || "user_connected"
+      ).call
 
-      if result[:success]
-        redirect_to admin_user_order_path(id: result[:order], user_id: result[:user]),
-                    notice: "Utilisateur créé avec succès. Un mail a été envoyé !"
+      if result.success?
+        redirect_to admin_users_path, notice: "Adhérent créé avec succès !"
       else
-        @user = User.new(user_params)
-        @user.created_by_admin = true
-        flash.now[:alert] = "Erreur lors de la création de l'utilisateur: #{result[:errors].join(', ')}"
+        @user = User.new
+        @user.build_person
+        flash.now[:alert] = "Erreur lors de la création de l'adhérent: #{result.errors.join(', ')}"
         render :new, status: :unprocessable_entity
       end
     end
@@ -191,20 +203,26 @@ module Admin
     def user_params
       params.require(:user).permit(
         :email_address,
-        :first_name,
-        :last_name,
-        :birthdate,
-        :address,
-        :zip_code,
-        :town,
-        :country,
-        :phone_number,
-        :occupation,
-        :specialty,
-        :image_rights,
-        :get_involved,
         :system_role,
-        :dyslexic_font
+        :created_by_admin,
+        person: [
+          :id,
+          :first_name,
+          :last_name,
+          :email,
+          :phone,
+          :birth_date,
+          :address,
+          :emergency_contact_name,
+          :emergency_contact_phone,
+          :notes,
+          :occupation,
+          :specialty,
+          :image_rights,
+          :get_involved,
+          :newsletter_subscribed,
+          :dyslexic_font
+        ]
       )
     end
   end

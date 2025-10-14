@@ -1,11 +1,17 @@
 class Payment < ApplicationRecord
-  belongs_to :user
-  belongs_to :order
+  # Relations selon le domain_model_circographe.md
+  belongs_to :person
+  belongs_to :recorded_by, class_name: "User"
+  has_many :payment_lines, dependent: :destroy
+
+  # Anciennes relations (à supprimer progressivement)
+  belongs_to :user, optional: true
+  belongs_to :order, optional: true
   has_many :product_orders, through: :order # Ajout de la relation product_order
   has_many :payment_audit_logs, dependent: :destroy
 
   enum :status, %i[success pending cancel], default: :pending
-  enum :payment_type, %i[cash credit_card check]
+  enum :payment_method, %i[cash sumup cheque transfer]
 
   before_create :generate_uuid
   after_create :create_audit_log
@@ -19,7 +25,7 @@ class Payment < ApplicationRecord
   # Class method to get total successful payments amount
   def self.total_successful_amount
     Rails.cache.fetch("total_successful_payments", expires_in: 1.hour) do
-      where(status: :success).distinct.sum(:payment_amount)
+      where(status: :success).distinct.sum(:total_cents)
     end
   end
 
@@ -28,6 +34,24 @@ class Payment < ApplicationRecord
     Rails.cache.fetch("total_donations", expires_in: 1.hour) do
       where(status: :success).distinct.sum(:donation)
     end
+  end
+
+  # Nouvelles méthodes selon le domain_model_circographe.md
+  def membership_related?
+    # Vérifier si le paiement contient des adhésions
+    payment_lines.joins("JOIN memberships ON payment_lines.item_type = 'Membership' AND payment_lines.item_id = memberships.id").exists?
+  end
+
+  def carnet_related?
+    # Vérifier si le paiement contient des carnets (subscription_plans de type pack)
+    payment_lines.joins("JOIN subscription_plans ON payment_lines.item_type = 'SubscriptionPlan' AND payment_lines.item_id = subscription_plans.id")
+                 .where("subscription_plans.duration = ?", SubscriptionPlan.durations[:pack10]).exists?
+  end
+
+  def process_payment
+    # Cette méthode sera appelée par le service Payments::Process
+    # pour traiter les callbacks complexes
+    Payments::Process.call(self)
   end
 
   # Generate a UUID for the payment

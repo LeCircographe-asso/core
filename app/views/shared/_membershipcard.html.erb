@@ -48,10 +48,10 @@
 
             <!-- Membership Status -->
             <% begin %>
-              <% if @user.user_memberships.exists? %>
-                <% latest_membership = @user.user_memberships.order(created_at: :desc).first %>
-                <span class="inline-flex items-center mt-3 px-3 py-1 rounded-full text-xs font-medium <%= latest_membership.status ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' %>">
-                    <%= latest_membership.status ? "Adhésion Active" : "Adhésion Inactive" %>
+              <% if @user.person&.has_active_membership? %>
+                <% current_membership = @user.person.current_membership %>
+                <span class="inline-flex items-center mt-3 px-3 py-1 rounded-full text-xs font-medium <%= current_membership.status == 'active' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' %>">
+                    <%= current_membership.status == 'active' ? "Adhésion Active" : "Adhésion Inactive" %>
                 </span>
               <% else %>
                 <span class="inline-flex items-center mt-3 px-3 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
@@ -67,38 +67,39 @@
 
         <!-- Membership Details -->
         <div class="space-y-3 border-t border-b border-gray-200 py-3 sm:py-4 mb-4 sm:mb-6">
-            <% if @user.user_memberships.exists? %>
+            <% if @user.person&.has_active_membership? %>
+            <% current_membership = @user.person.current_membership %>
             <div class="flex justify-between items-center">
                 <span class="text-sm text-gray-500">Adhésion valable jusqu'au :</span>
-                <% end_date = @user.user_memberships.last.start_date + 1.year %>
-                <span class="text-sm font-medium <%= Date.today > end_date ? 'text-red-600' : 'text-gray-800' %>">
-                    <%= end_date.strftime("%d/%m/%Y") %>
+                <span class="text-sm font-medium <%= Date.today > current_membership.ended_at ? 'text-red-600' : 'text-gray-800' %>">
+                    <%= current_membership.ended_at.strftime("%d/%m/%Y") %>
                 </span>
             </div>
 
             <div class="flex justify-between items-center">
                 <span class="text-sm text-gray-500">Type d'adhésion :</span>
                 <span class="text-sm font-medium text-gray-800">
-                    <%= @user.user_memberships.last.membership.type_name.humanize %>
+                    <%= current_membership.membership_type.name %>
                 </span>
             </div>
 
-            <% if @user.user_memberships.last.membership.type_name == 'Basic' %>
+            <% if current_membership.membership_type.basic? %>
                 <div class="flex flex-col space-y-2">
                     <div class="flex justify-between items-center">
-                        <span class="text-sm text-gray-500">Carnet de 10 entrées :</span>
-                        <% active_booklet = @user.book_of_entries.joins(:product)
-                                          .where(products: { product_name: "Carnet de 10 entrées" })
-                                          .where(status: :active)
-                                          .last %>
-                        <% if active_booklet %>
-                            <div class="flex items-center">
-                                <span class="text-sm font-medium <%= active_booklet.remaining.to_i > 3 ? 'text-green-600' : 
-                                    (active_booklet.remaining.to_i > 0 ? 'text-yellow-600' : 'text-red-600') %>">
-                                    <%= active_booklet.remaining %> séances restantes
-                                </span>
-                                <% if active_booklet.remaining.to_i <= 3 && active_booklet.remaining.to_i > 0 %>
-                                    <span class="ml-2 px-2 py-0.5 text-xs bg-yellow-100 text-yellow-800 rounded-full">Bientôt épuisé</span>
+                        <span class="text-sm text-gray-500">Carnets disponibles :</span>
+                        <% active_booklets = @user.person.book_of_entries.where(status: :active) %>
+                        <% if active_booklets.exists? %>
+                            <div class="flex flex-col space-y-1">
+                                <% active_booklets.each do |booklet| %>
+                                    <div class="flex items-center">
+                                        <span class="text-sm font-medium <%= booklet.sessions_remaining > 3 ? 'text-green-600' : 
+                                            (booklet.sessions_remaining > 0 ? 'text-yellow-600' : 'text-red-600') %>">
+                                            <%= booklet.subscription_plan.name %>: <%= booklet.sessions_remaining %> séances
+                                        </span>
+                                        <% if booklet.sessions_remaining <= 3 && booklet.sessions_remaining > 0 %>
+                                            <span class="ml-2 px-2 py-0.5 text-xs bg-yellow-100 text-yellow-800 rounded-full">Bientôt épuisé</span>
+                                        <% end %>
+                                    </div>
                                 <% end %>
                             </div>
                         <% else %>
@@ -108,69 +109,31 @@
                         <% end %>
                     </div>
                 </div>
-            <% elsif @user.user_memberships.last.membership.type_name == 'Circus' %>
+            <% elsif current_membership.membership_type.circus? %>
                 <div class="flex flex-col space-y-2">
                     <div class="flex justify-between items-center">
-                        <span class="text-sm text-gray-500">Type de cotisation :</span>
-                        <% latest_subscription = @user.orders.joins(product_orders: :product)
-                                               .where(products: { product_type: 'cotisation' })
-                                               .last&.product_orders&.last&.product %>
-                        <% if latest_subscription %>
-                            <div class="flex items-center">
-                                <span class="text-sm font-medium text-gray-800">
-                                    <%= latest_subscription.product_name %>
-                                </span>
-                                <% if latest_subscription.product_name.include?("10 séances") %>
-                                    <% active_subscription = @user.book_of_entries.joins(:product)
-                                                          .where(products: { product_name: latest_subscription.product_name })
-                                                          .where(status: :active)
-                                                          .last %>
-                                    <% if active_subscription %>
-                                        <span class="ml-2 text-sm font-medium <%= active_subscription.remaining.to_i > 3 ? 'text-green-600' : 
-                                            (active_subscription.remaining.to_i > 0 ? 'text-yellow-600' : 'text-red-600') %>">
-                                            (<%= active_subscription.remaining %> séances restantes)
+                        <span class="text-sm text-gray-500">Carnets disponibles :</span>
+                        <% active_booklets = @user.person.book_of_entries.where(status: :active) %>
+                        <% if active_booklets.exists? %>
+                            <div class="flex flex-col space-y-1">
+                                <% active_booklets.each do |booklet| %>
+                                    <div class="flex items-center">
+                                        <span class="text-sm font-medium <%= booklet.sessions_remaining > 3 ? 'text-green-600' : 
+                                            (booklet.sessions_remaining > 0 ? 'text-yellow-600' : 'text-red-600') %>">
+                                            <%= booklet.subscription_plan.name %>: <%= booklet.sessions_remaining %> séances
                                         </span>
-                                    <% end %>
+                                        <% if booklet.sessions_remaining <= 3 && booklet.sessions_remaining > 0 %>
+                                            <span class="ml-2 px-2 py-0.5 text-xs bg-yellow-100 text-yellow-800 rounded-full">Bientôt épuisé</span>
+                                        <% end %>
+                                    </div>
                                 <% end %>
                             </div>
                         <% else %>
                             <span class="text-sm font-medium text-gray-800">
-                                Aucune cotisation active
+                                Aucun carnet actif
                             </span>
                         <% end %>
                     </div>
-
-                    <% if latest_subscription %>
-                        <div class="flex justify-between items-center">
-                            <span class="text-sm text-gray-500">Date d'expiration :</span>
-                            <div class="flex items-center">
-                                <% expiration_date = case latest_subscription.product_name
-                                    when /journée/i
-                                        @user.orders.joins(product_orders: :product)
-                                             .where(products: { id: latest_subscription.id })
-                                             .last&.created_at&.end_of_day
-                                    when /trimestriel/i
-                                        @user.orders.joins(product_orders: :product)
-                                             .where(products: { id: latest_subscription.id })
-                                             .last&.created_at&.advance(months: 3)
-                                    when /annuel/i
-                                        @user.orders.joins(product_orders: :product)
-                                             .where(products: { id: latest_subscription.id })
-                                             .last&.created_at&.advance(years: 1)
-                                    end %>
-                                <% if expiration_date %>
-                                    <span class="text-sm font-medium <%= Date.today > expiration_date ? 'text-red-600' : 'text-gray-800' %>">
-                                        <%= expiration_date.strftime("%d/%m/%Y") %>
-                                    </span>
-                                    <% if Date.today > expiration_date %>
-                                        <span class="ml-2 px-2 py-0.5 text-xs bg-red-100 text-red-800 rounded-full">Expirée</span>
-                                    <% elsif expiration_date < Date.today + 30.days %>
-                                        <span class="ml-2 px-2 py-0.5 text-xs bg-yellow-100 text-yellow-800 rounded-full">Expire bientôt</span>
-                                    <% end %>
-                                <% end %>
-                            </div>
-                        </div>
-                    <% end %>
                 </div>
             <% end %>
             <% else %>
@@ -179,6 +142,7 @@
                 <span class="text-sm font-medium text-gray-800">Pas encore membre</span>
             </div>
             <% end %>
+            
             <div class="flex justify-between items-center">
                 <span class="text-sm text-gray-500">Newsletter :</span>
                 <span class="text-sm font-medium text-gray-800">

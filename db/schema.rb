@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_10_14_052102) do
+ActiveRecord::Schema[8.0].define(version: 2025_10_14_091726) do
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.string "name", null: false
     t.text "body"
@@ -63,13 +63,20 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_14_052102) do
     t.datetime "arrival_time"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.integer "attendance_list_id", null: false
-    t.integer "user_id", null: false
+    t.integer "attendance_list_id"
+    t.integer "user_id"
     t.integer "book_of_entry_id"
     t.datetime "deleted_at"
+    t.integer "person_id"
+    t.integer "event_id"
+    t.date "date"
     t.index ["attendance_list_id"], name: "index_attendances_on_attendance_list_id"
     t.index ["book_of_entry_id"], name: "index_attendances_on_book_of_entry_id"
+    t.index ["date"], name: "index_attendances_on_date"
     t.index ["deleted_at"], name: "index_attendances_on_deleted_at"
+    t.index ["event_id"], name: "index_attendances_on_event_id"
+    t.index ["person_id", "date"], name: "index_attendances_on_person_id_and_date", unique: true
+    t.index ["person_id"], name: "index_attendances_on_person_id"
     t.index ["user_id"], name: "index_attendances_on_user_id"
   end
 
@@ -81,16 +88,26 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_14_052102) do
   end
 
   create_table "book_of_entries", force: :cascade do |t|
-    t.integer "product_id", null: false
-    t.integer "user_id", null: false
+    t.integer "product_id"
+    t.integer "user_id"
     t.integer "remaining"
     t.integer "total_entry"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "status"
     t.datetime "deleted_at"
+    t.integer "person_id"
+    t.integer "subscription_plan_id"
+    t.integer "sessions_remaining", default: 0
+    t.datetime "purchased_at"
+    t.datetime "expires_at"
     t.index ["deleted_at"], name: "index_book_of_entries_on_deleted_at"
+    t.index ["person_id", "status"], name: "index_book_of_entries_on_person_id_and_status"
+    t.index ["person_id"], name: "index_book_of_entries_on_person_id"
     t.index ["product_id"], name: "index_book_of_entries_on_product_id"
+    t.index ["purchased_at", "expires_at"], name: "index_book_of_entries_on_purchased_at_and_expires_at"
+    t.index ["status"], name: "index_book_of_entries_on_status"
+    t.index ["subscription_plan_id"], name: "index_book_of_entries_on_subscription_plan_id"
     t.index ["user_id"], name: "index_book_of_entries_on_user_id"
   end
 
@@ -107,7 +124,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_14_052102) do
   end
 
   create_table "events", force: :cascade do |t|
-    t.string "title", null: false
+    t.string "name", null: false
     t.text "upper_description"
     t.text "middle_description"
     t.text "bottom_description"
@@ -117,13 +134,38 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_14_052102) do
     t.string "picture_url"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "category", default: 0
+    t.text "description"
+    t.index ["category"], name: "index_events_on_category"
     t.index ["creator_id"], name: "index_events_on_creator_id"
+    t.index ["date"], name: "index_events_on_date"
+  end
+
+  create_table "membership_types", force: :cascade do |t|
+    t.string "name", null: false
+    t.integer "category", null: false
+    t.integer "price_cents", null: false
+    t.text "description"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["category"], name: "index_membership_types_on_category"
+    t.index ["name"], name: "index_membership_types_on_name", unique: true
   end
 
   create_table "memberships", force: :cascade do |t|
-    t.integer "type_name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "person_id"
+    t.integer "membership_type_id"
+    t.date "started_at"
+    t.date "ended_at"
+    t.integer "status", default: 1
+    t.date "first_joined_at"
+    t.index ["membership_type_id"], name: "index_memberships_on_membership_type_id"
+    t.index ["person_id", "status"], name: "index_memberships_on_person_id_and_status"
+    t.index ["person_id"], name: "index_memberships_on_person_id"
+    t.index ["started_at", "ended_at"], name: "index_memberships_on_started_at_and_ended_at"
+    t.index ["status"], name: "index_memberships_on_status"
   end
 
   create_table "orders", force: :cascade do |t|
@@ -152,26 +194,70 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_14_052102) do
     t.index ["user_id"], name: "index_payment_audit_logs_on_user_id"
   end
 
+  create_table "payment_lines", force: :cascade do |t|
+    t.integer "payment_id", null: false
+    t.string "item_type", null: false
+    t.bigint "item_id", null: false
+    t.integer "amount_cents", null: false
+    t.string "description"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["item_type", "item_id"], name: "index_payment_lines_on_item_type_and_item_id"
+    t.index ["payment_id", "item_type", "item_id"], name: "index_payment_lines_unique_item", unique: true
+    t.index ["payment_id"], name: "index_payment_lines_on_payment_id"
+  end
+
   create_table "payments", force: :cascade do |t|
     t.datetime "payment_date"
-    t.decimal "payment_amount"
+    t.decimal "total_cents"
     t.integer "payment_type"
     t.integer "status"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.integer "user_id", null: false
+    t.integer "user_id"
     t.integer "order_id"
     t.decimal "donation"
     t.decimal "total_payment"
     t.datetime "deleted_at"
     t.string "uuid"
+    t.integer "person_id"
+    t.integer "recorded_by_id"
+    t.integer "payment_method", default: 0
+    t.text "notes"
     t.index ["deleted_at"], name: "index_payments_on_deleted_at"
     t.index ["order_id"], name: "index_payments_on_order_id"
-    t.index ["payment_amount"], name: "index_payments_on_payment_amount"
     t.index ["payment_date"], name: "index_payments_on_payment_date"
+    t.index ["payment_method"], name: "index_payments_on_payment_method"
+    t.index ["person_id", "payment_method"], name: "index_payments_on_person_id_and_payment_method"
+    t.index ["person_id"], name: "index_payments_on_person_id"
+    t.index ["recorded_by_id"], name: "index_payments_on_recorded_by_id"
     t.index ["status"], name: "index_payments_on_status"
+    t.index ["total_cents"], name: "index_payments_on_total_cents"
     t.index ["user_id"], name: "index_payments_on_user_id"
     t.index ["uuid"], name: "index_payments_on_uuid", unique: true
+  end
+
+  create_table "people", force: :cascade do |t|
+    t.string "first_name", null: false
+    t.string "last_name", null: false
+    t.string "phone"
+    t.string "email"
+    t.text "address"
+    t.date "birth_date"
+    t.string "emergency_contact_name"
+    t.string "emergency_contact_phone"
+    t.text "notes"
+    t.string "occupation"
+    t.string "specialty"
+    t.boolean "image_rights", default: false
+    t.boolean "get_involved", default: false
+    t.boolean "newsletter_subscribed", default: false
+    t.boolean "dyslexic_font", default: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["email"], name: "index_people_on_email", unique: true
+    t.index ["first_name", "last_name"], name: "index_people_on_first_name_and_last_name"
+    t.index ["phone"], name: "index_people_on_phone"
   end
 
   create_table "price_catalogs", force: :cascade do |t|
@@ -215,6 +301,21 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_14_052102) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["user_id"], name: "index_sessions_on_user_id"
+  end
+
+  create_table "subscription_plans", force: :cascade do |t|
+    t.string "name", null: false
+    t.integer "duration", null: false
+    t.integer "price_cents", null: false
+    t.text "description"
+    t.integer "sessions_count"
+    t.integer "validity_days"
+    t.integer "membership_type_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["duration"], name: "index_subscription_plans_on_duration"
+    t.index ["membership_type_id"], name: "index_subscription_plans_on_membership_type_id"
+    t.index ["name"], name: "index_subscription_plans_on_name", unique: true
   end
 
   create_table "tag_blogs", force: :cascade do |t|
@@ -274,33 +375,46 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_14_052102) do
     t.string "full_name"
     t.boolean "deleted", default: false, null: false
     t.datetime "deleted_at"
+    t.integer "person_id"
     t.index ["deleted"], name: "index_users_on_deleted"
     t.index ["email_address"], name: "index_users_on_email_address", unique: true
+    t.index ["person_id"], name: "index_users_on_person_id"
   end
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "attendances", "attendance_lists"
   add_foreign_key "attendances", "book_of_entries"
+  add_foreign_key "attendances", "events"
+  add_foreign_key "attendances", "people"
   add_foreign_key "attendances", "users"
+  add_foreign_key "book_of_entries", "people"
   add_foreign_key "book_of_entries", "products"
+  add_foreign_key "book_of_entries", "subscription_plans"
   add_foreign_key "book_of_entries", "users"
   add_foreign_key "event_attendees", "events"
   add_foreign_key "event_attendees", "payments"
   add_foreign_key "event_attendees", "users"
   add_foreign_key "events", "users", column: "creator_id"
+  add_foreign_key "memberships", "membership_types"
+  add_foreign_key "memberships", "people"
   add_foreign_key "orders", "users"
   add_foreign_key "payment_audit_logs", "payments"
   add_foreign_key "payment_audit_logs", "users"
+  add_foreign_key "payment_lines", "payments"
+  add_foreign_key "payments", "people"
   add_foreign_key "payments", "users"
+  add_foreign_key "payments", "users", column: "recorded_by_id"
   add_foreign_key "price_entries", "price_catalogs"
   add_foreign_key "price_entries", "products"
   add_foreign_key "product_orders", "orders"
   add_foreign_key "product_orders", "products"
   add_foreign_key "product_orders", "users"
   add_foreign_key "sessions", "users"
+  add_foreign_key "subscription_plans", "membership_types"
   add_foreign_key "tag_blogs", "blogs"
   add_foreign_key "tag_blogs", "tags"
   add_foreign_key "user_memberships", "memberships"
   add_foreign_key "user_memberships", "users"
+  add_foreign_key "users", "people"
 end

@@ -31,12 +31,22 @@ class MembershipService
   end
 
   def self.active_memberships_count
-    UserMembership.where(status: :active).count
+    Membership.where(status: 'active').count
   end
 
   def self.membership_type_count(type_name)
-    UserMembership.joins(:membership)
-                  .where(memberships: { type_name: type_name }, status: :active)
-                  .count
+    # Adapter au nouveau modèle Person-Based
+    case type_name.to_s.downcase
+    when 'basic'
+      Membership.joins(:membership_type)
+                .where(membership_types: { category: 'basic' }, status: 'active')
+                .count
+    when 'circus'
+      Membership.joins(:membership_type)
+                .where(membership_types: { category: ['circus_full', 'circus_reduced'] }, status: 'active')
+                .count
+    else
+      0
+    end
   end
 end

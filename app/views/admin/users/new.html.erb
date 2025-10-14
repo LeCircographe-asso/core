@@ -40,40 +40,105 @@
             </div>
           <% end %>
 
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <%= form.label :email_address, "Adresse email (optionnel)", class: "block text-sm font-medium text-gray-700" %>
-              <div class="mt-1 relative rounded-md shadow-sm">
-                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <i class="fas fa-envelope text-gray-400"></i>
+          <!-- Section User (Interface) -->
+          <div class="mb-6">
+            <h3 class="text-lg font-medium text-gray-900 mb-4">Compte utilisateur (optionnel)</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <%= form.label :email_address, "Adresse email (optionnel)", class: "block text-sm font-medium text-gray-700" %>
+                <div class="mt-1 relative rounded-md shadow-sm">
+                  <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <i class="fas fa-envelope text-gray-400"></i>
+                  </div>
+                  <%= form.email_field :email_address, class: "pl-10 block w-full focus:ring-[#1F5C55] focus:border-[#1F5C55] sm:text-sm border-gray-300 rounded-md", placeholder: "email@exemple.com (optionnel)" %>
                 </div>
-                <%= form.email_field :email_address, class: "pl-10 block w-full focus:ring-[#1F5C55] focus:border-[#1F5C55] sm:text-sm border-gray-300 rounded-md", placeholder: "email@exemple.com (optionnel)" %>
+                <p class="mt-1 text-xs text-gray-500">L'email est optionnel lors de la création par un administrateur</p>
               </div>
-              <p class="mt-1 text-xs text-gray-500">L'email est optionnel lors de la création par un administrateur</p>
-            </div>
-
-            <div></div>
-
-            <div>
-              <%= form.label :first_name, "Prénom", class: "block text-sm font-medium text-gray-700" %>
-              <div class="mt-1 relative rounded-md shadow-sm">
-                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <i class="fas fa-user text-gray-400"></i>
+              <div>
+                <%= form.label :system_role, "Rôle système", class: "block text-sm font-medium text-gray-700" %>
+                <div class="mt-1 relative rounded-md shadow-sm">
+                  <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <i class="fas fa-user-tag text-gray-400"></i>
+                  </div>
+                  <%= form.select :system_role, 
+                      options_for_select([
+                        ['Utilisateur connecté', 'user_connected'],
+                        ['Bénévole', 'volunteer'],
+                        ['Administrateur', 'admin']
+                      ], 'user_connected'), 
+                      {}, 
+                      { class: "pl-10 block w-full focus:ring-[#1F5C55] focus:border-[#1F5C55] sm:text-sm border-gray-300 rounded-md" } %>
                 </div>
-                <%= form.text_field :first_name, class: "pl-10 block w-full focus:ring-[#1F5C55] focus:border-[#1F5C55] sm:text-sm border-gray-300 rounded-md" %>
-              </div>
-            </div>
-
-            <div>
-              <%= form.label :last_name, "Nom", class: "block text-sm font-medium text-gray-700" %>
-              <div class="mt-1 relative rounded-md shadow-sm">
-                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <i class="fas fa-user text-gray-400"></i>
-                </div>
-                <%= form.text_field :last_name, class: "pl-10 block w-full focus:ring-[#1F5C55] focus:border-[#1F5C55] sm:text-sm border-gray-300 rounded-md" %>
               </div>
             </div>
+          </div>
 
+          <!-- Section Person (Données réelles) -->
+          <div class="mb-6">
+            <h3 class="text-lg font-medium text-gray-900 mb-4">Informations personnelles</h3>
+            <%= form.fields_for :person, @user.person || @user.build_person do |person_form| %>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <%= person_form.label :first_name, "Prénom", class: "block text-sm font-medium text-gray-700" %>
+                  <div class="mt-1 relative rounded-md shadow-sm">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                      <i class="fas fa-user text-gray-400"></i>
+                    </div>
+                    <%= person_form.text_field :first_name, class: "pl-10 block w-full focus:ring-[#1F5C55] focus:border-[#1F5C55] sm:text-sm border-gray-300 rounded-md" %>
+                  </div>
+                </div>
+
+                <div>
+                  <%= person_form.label :last_name, "Nom", class: "block text-sm font-medium text-gray-700" %>
+                  <div class="mt-1 relative rounded-md shadow-sm">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                      <i class="fas fa-user text-gray-400"></i>
+                    </div>
+                    <%= person_form.text_field :last_name, class: "pl-10 block w-full focus:ring-[#1F5C55] focus:border-[#1F5C55] sm:text-sm border-gray-300 rounded-md" %>
+                  </div>
+                </div>
+
+                <div>
+                  <%= person_form.label :email, "Email (Person)", class: "block text-sm font-medium text-gray-700" %>
+                  <div class="mt-1 relative rounded-md shadow-sm">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                      <i class="fas fa-envelope text-gray-400"></i>
+                    </div>
+                    <%= person_form.email_field :email, class: "pl-10 block w-full focus:ring-[#1F5C55] focus:border-[#1F5C55] sm:text-sm border-gray-300 rounded-md", placeholder: "email@exemple.com" %>
+                  </div>
+                </div>
+
+                <div>
+                  <%= person_form.label :phone, "Téléphone", class: "block text-sm font-medium text-gray-700" %>
+                  <div class="mt-1 relative rounded-md shadow-sm">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                      <i class="fas fa-phone text-gray-400"></i>
+                    </div>
+                    <%= person_form.telephone_field :phone, class: "pl-10 block w-full focus:ring-[#1F5C55] focus:border-[#1F5C55] sm:text-sm border-gray-300 rounded-md", placeholder: "06 12 34 56 78" %>
+                  </div>
+                </div>
+
+                <div>
+                  <%= person_form.label :birth_date, "Date de naissance", class: "block text-sm font-medium text-gray-700" %>
+                  <div class="mt-1 relative rounded-md shadow-sm">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                      <i class="fas fa-calendar text-gray-400"></i>
+                    </div>
+                    <%= person_form.date_field :birth_date, class: "pl-10 block w-full focus:ring-[#1F5C55] focus:border-[#1F5C55] sm:text-sm border-gray-300 rounded-md" %>
+                  </div>
+                </div>
+
+                <div>
+                  <%= person_form.label :address, "Adresse", class: "block text-sm font-medium text-gray-700" %>
+                  <div class="mt-1 relative rounded-md shadow-sm">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                      <i class="fas fa-map-marker-alt text-gray-400"></i>
+                    </div>
+                    <%= person_form.text_field :address, class: "pl-10 block w-full focus:ring-[#1F5C55] focus:border-[#1F5C55] sm:text-sm border-gray-300 rounded-md", placeholder: "123 rue de la Paix" %>
+                  </div>
+                </div>
+              </div>
+            <% end %>
           </div>
 
           <div class="bg-gray-50 p-4 rounded-md mt-4">

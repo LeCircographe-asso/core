@@ -1,0 +1,20 @@
+FactoryBot.define do
+  factory :payment_line do
+    association :payment
+    association :item, factory: :membership_type
+    amount_cents { 2500 }
+    description { Faker::Lorem.sentence }
+
+    trait :for_membership_type do
+      association :item, factory: :membership_type
+    end
+
+    trait :for_subscription_plan do
+      association :item, factory: :subscription_plan
+    end
+
+    trait :for_membership do
+      association :item, factory: :membership
+    end
+  end
+end
