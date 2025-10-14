@@ -13,17 +13,24 @@
   donations_total = 0
   
   payments.where(status: :success).each do |payment|
-    # Add payment amount
-    if payment.payment_amount.present?
-      payments_total += payment.payment_amount
+    # Add payment amount (nouveau modèle Person-Based)
+    if payment.total_cents.present?
+      payments_total += payment.total_cents / 100.0
     end
     
-    # Add donations
-    if payment.donation.present? && payment.donation > 0
+    # Calculer les donations via les payment_lines (nouveau modèle)
+    payment.payment_lines.each do |line|
+      if line.description&.downcase&.include?('don') || line.item_type == 'Donation'
+        donations_total += line.amount_cents / 100.0
+      end
+    end
+    
+    # Fallback pour l'ancien système (si colonne donation existe encore)
+    if payment.respond_to?(:donation) && payment.donation.present? && payment.donation > 0
       donations_total += payment.donation
       
-      # Only add standalone donations to payment total (where payment_amount is 0)
-      if payment.payment_amount.to_f == 0
+      # Only add standalone donations to payment total (where total_cents is 0)
+      if payment.total_cents.to_f == 0
         payments_total += payment.donation
       end
     end

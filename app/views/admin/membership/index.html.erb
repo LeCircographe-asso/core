@@ -1,0 +1,112 @@
+<% content_for :title, "Adhésions" %>
+
+<div class="container py-6 mx-auto px-4 max-w-7xl">
+  <div class="bg-gradient-to-r from-[#1F5C55] to-teal-600 rounded-lg shadow-lg mb-8 p-6 text-white">
+    <h1 class="text-3xl font-bold text-center mb-2">
+      <% if @person %>
+        Adhésions de <%= @person.full_name %>
+      <% else %>
+        Gestion des adhésions
+      <% end %>
+    </h1>
+  </div>
+
+  <!-- Formulaire de création d'adhésion -->
+  <div class="bg-white shadow overflow-hidden rounded-lg mb-6">
+    <div class="px-6 py-4 border-b border-gray-200">
+      <h2 class="text-lg font-medium text-gray-900">Créer une nouvelle adhésion</h2>
+    </div>
+    
+    <%= form_with(model: [:admin, @membership || @person.memberships.build], url: admin_membership_index_path, local: true, class: "p-6") do |form| %>
+      <%= form.hidden_field :person_id, value: @person&.id %>
+      
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div>
+          <%= form.label :membership_type_id, "Type d'adhésion", class: "block text-sm font-medium text-gray-700 mb-2" %>
+          <%= form.select :membership_type_id, 
+              options_from_collection_for_select(@membership_types, :id, :name),
+              { prompt: "Sélectionner un type..." }, 
+              { class: "mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-[#1F5C55] focus:border-[#1F5C55] sm:text-sm" } %>
+        </div>
+
+        <div>
+          <%= form.label :started_at, "Date de début", class: "block text-sm font-medium text-gray-700 mb-2" %>
+          <%= form.date_field :started_at, value: Date.current,
+              class: "mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-[#1F5C55] focus:border-[#1F5C55] sm:text-sm" %>
+        </div>
+
+        <div>
+          <%= form.label :ended_at, "Date de fin", class: "block text-sm font-medium text-gray-700 mb-2" %>
+          <%= form.date_field :ended_at, value: Date.current + 1.year,
+              class: "mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-[#1F5C55] focus:border-[#1F5C55] sm:text-sm" %>
+        </div>
+      </div>
+
+      <div class="mt-4">
+        <%= form.submit "Créer l'adhésion", class: "bg-[#1F5C55] hover:bg-[#194A45] text-white font-bold py-2 px-4 rounded" %>
+      </div>
+    <% end %>
+  </div>
+
+  <!-- Liste des adhésions existantes -->
+  <% if @memberships&.any? %>
+    <div class="bg-white shadow overflow-hidden rounded-lg">
+      <div class="px-6 py-4 border-b border-gray-200">
+        <h2 class="text-lg font-medium text-gray-900">Adhésions existantes</h2>
+      </div>
+      
+      <table class="min-w-full divide-y divide-gray-200">
+        <thead class="bg-gray-50">
+          <tr>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Période</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Statut</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Prix</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+          </tr>
+        </thead>
+        <tbody class="bg-white divide-y divide-gray-200">
+          <% @memberships.each do |membership| %>
+            <tr class="hover:bg-gray-50">
+              <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full <%= membership.membership_type.basic? ? 'bg-blue-100 text-blue-800' : 'bg-purple-100 text-purple-800' %>">
+                  <%= membership.membership_type.name %>
+                </span>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                <%= membership.started_at&.strftime("%d/%m/%Y") %> - <%= membership.ended_at&.strftime("%d/%m/%Y") %>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap">
+                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full <%= 
+                  case membership.status
+                  when 'active'
+                    'bg-green-100 text-green-800'
+                  when 'expired'
+                    'bg-red-100 text-red-800'
+                  else
+                    'bg-gray-100 text-gray-800'
+                  end
+                %>">
+                  <%= membership.status.humanize %>
+                </span>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                <%= number_to_currency(membership.membership_type.price_euros, unit: "€") %>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                <span class="text-gray-400">-</span>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  <% else %>
+    <div class="bg-white shadow overflow-hidden rounded-lg">
+      <div class="p-6 text-center text-gray-500">
+        <i class="fas fa-id-card text-4xl text-gray-300 mb-4"></i>
+        <p>Aucune adhésion pour cette personne.</p>
+      </div>
+    </div>
+  <% end %>
+</div>

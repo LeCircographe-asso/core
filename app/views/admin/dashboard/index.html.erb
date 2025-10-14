@@ -11,7 +11,7 @@
     </div>
 
     <!-- Main statistics -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-8">
         <div class="bg-white rounded-lg shadow-md p-4 border-l-4 border-blue-500">
             <div class="flex items-center">
                 <div class="p-3 rounded-full bg-blue-100 mr-4">
@@ -25,6 +25,19 @@
             </div>
         </div>
 
+        <div class="bg-white rounded-lg shadow-md p-4 border-l-4 border-indigo-500">
+            <div class="flex items-center">
+                <div class="p-3 rounded-full bg-indigo-100 mr-4">
+                    <i class="fas fa-user-friends text-indigo-500 text-xl"></i>
+                </div>
+                <div>
+                    <p class="text-sm text-gray-500">Personnes</p>
+                    <p class="text-2xl font-bold text-gray-800"><%= Person.count %></p>
+                    <p class="text-xs text-gray-500">Nouveaux hier: <%= Person.where("created_at >= ? AND created_at <= ?", 1.day.ago.beginning_of_day, 1.day.ago.end_of_day).count %></p>
+                </div>
+            </div>
+        </div>
+
         <div class="bg-white rounded-lg shadow-md p-4 border-l-4 border-green-500">
             <div class="flex items-center">
                 <div class="p-3 rounded-full bg-green-100 mr-4">
@@ -32,7 +45,7 @@
                 </div>
                 <div>
                     <p class="text-sm text-gray-500">Adhésions Basic</p>
-                    <p class="text-2xl font-bold text-gray-800"><%= UserMembership.joins(:membership).where(memberships: { type_name: 'Basic' }, status: 'active').count %></p>
+                    <p class="text-2xl font-bold text-gray-800"><%= Membership.joins(:membership_type).where(membership_types: { category: 'basic' }, status: 'active').count %></p>
                 </div>
             </div>
         </div>
@@ -44,7 +57,7 @@
                 </div>
                 <div>
                     <p class="text-sm text-gray-500">Adhésions Circus</p>
-                    <p class="text-2xl font-bold text-gray-800"><%= UserMembership.joins(:membership).where(memberships: { type_name: 'Circus' }, status: 'active').count %></p>
+                    <p class="text-2xl font-bold text-gray-800"><%= Membership.joins(:membership_type).where(membership_types: { category: ['circus_full', 'circus_reduced'] }, status: 'active').count %></p>
                 </div>
             </div>
         </div>
@@ -56,7 +69,7 @@
                 </div>
                 <div>
                     <p class="text-sm text-gray-500">Adhésions actives</p>
-                    <p class="text-2xl font-bold text-gray-800"><%= UserMembership.where(status: "active").count %></p>
+                    <p class="text-2xl font-bold text-gray-800"><%= Membership.where(status: 'active').count %></p>
                 </div>
             </div>
         </div>
@@ -68,12 +81,16 @@
             <i class="fas fa-clock mr-2"></i> Modifier les horaires
         <% end %>
         
-        <%= link_to admin_users_path, class: "flex items-center bg-[#1F5C55] hover:bg-[#194A45] text-white px-6 py-3 rounded-lg shadow transition-colors duration-200" do %>
-            <i class="fas fa-users mr-2"></i> Gérer les utilisateurs
+        <%= link_to admin_people_path, class: "flex items-center bg-[#1F5C55] hover:bg-[#194A45] text-white px-6 py-3 rounded-lg shadow transition-colors duration-200" do %>
+            <i class="fas fa-user-friends mr-2"></i> Gérer les adhérents
         <% end %>
         
-        <%= link_to new_admin_user_path, class: "flex items-center bg-[#1F5C55] hover:bg-[#194A45] text-white px-6 py-3 rounded-lg shadow transition-colors duration-200" do %>
-            <i class="fas fa-user-plus mr-2"></i> Créer un adhérent
+        <%= link_to new_admin_person_path, class: "flex items-center bg-[#1F5C55] hover:bg-[#194A45] text-white px-6 py-3 rounded-lg shadow transition-colors duration-200" do %>
+            <i class="fas fa-user-plus mr-2"></i> Nouvel adhérent
+        <% end %>
+        
+        <%= link_to admin_users_path, class: "flex items-center bg-[#1F5C55] hover:bg-[#194A45] text-white px-6 py-3 rounded-lg shadow transition-colors duration-200" do %>
+            <i class="fas fa-users mr-2"></i> Gérer les utilisateurs
         <% end %>
         
         <%= link_to admin_attendance_lists_path, class: "flex items-center bg-[#1F5C55] hover:bg-[#194A45] text-white px-6 py-3 rounded-lg shadow transition-colors duration-200" do %>
@@ -124,7 +141,24 @@
                 </div>
                 <div class="overflow-y-auto max-h-[400px]">
                     <ul class="divide-y divide-gray-200">
-                        <% User.order(created_at: :desc).limit(5).each do |user| %>
+                        <% Person.order(created_at: :desc).limit(3).each do |person| %>
+                        <li class="p-4 hover:bg-gray-50">
+                            <div class="flex items-center">
+                            <div class="flex-shrink-0 h-10 w-10 rounded-full bg-indigo-100 flex items-center justify-center">
+                                <span class="text-indigo-600 font-medium">
+                                <%= "#{person.first_name&.first}#{person.last_name&.first}".strip.presence || "?" %>
+                                </span>
+                            </div>
+                            <div class="ml-4">
+                                <p class="text-sm font-medium text-gray-900">
+                                Nouvel adhérent : <%= person.full_name %>
+                                </p>
+                                <p class="text-xs text-gray-500"><%= time_ago_in_words(person.created_at) %></p>
+                            </div>
+                            </div>
+                        </li>
+                        <% end %>
+                        <% User.order(created_at: :desc).limit(2).each do |user| %>
                         <li class="p-4 hover:bg-gray-50">
                             <div class="flex items-center">
                             <div class="flex-shrink-0 h-10 w-10 rounded-full bg-[#1F5C55]/10 flex items-center justify-center">
@@ -141,14 +175,14 @@
                             </div>
                         </li>
                         <% end %>
-                        <% Event.order(created_at: :desc).limit(3).each do |event| %>
+                        <% Event.order(created_at: :desc).limit(2).each do |event| %>
                             <li class="p-4 hover:bg-gray-50">
                                 <div class="flex items-center">
                                     <div class="flex-shrink-0 h-10 w-10 rounded-full bg-purple-100 flex items-center justify-center">
                                         <i class="fas fa-calendar text-purple-500"></i>
                                     </div>
                                     <div class="ml-4">
-                                        <p class="text-sm font-medium text-gray-900">Nouvel événement : <%= event.title %></p>
+                                        <p class="text-sm font-medium text-gray-900">Nouvel événement : <%= event.name %></p>
                                         <p class="text-xs text-gray-500"><%= time_ago_in_words(event.created_at) %></p>
                                     </div>
                                 </div>

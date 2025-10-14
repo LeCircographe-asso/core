@@ -23,6 +23,7 @@ Rails.application.routes.draw do
     end
     resources :price_catalogs, controller: "price_catalog"
     resources :payments, only: %i[show create new update index destroy]
+    resources :attendances, only: %i[index show new create destroy]
     resources :exports, only: %i[index] do
       get :newsletter_subscribed, on: :collection
       get :all_users, on: :collection

@@ -16,6 +16,10 @@ class User < ApplicationRecord
   enum :system_role, %i[ super_admin admin volunteer user_connected ]
 
   alias_attribute :email, :email_address
+  
+  # Relation avec Person (nouvelle architecture)
+  belongs_to :person, optional: true
+  
   has_many :sessions, dependent: :destroy
   has_many :event_attendees, dependent: :destroy
   has_many :events, through: :event_attendees
@@ -161,7 +165,8 @@ class User < ApplicationRecord
 
   # Method for backward compatibility
   def full_name
-    self[:full_name] || begin
+    # Priorité à la Person liée, sinon utiliser les données User
+    person&.full_name || self[:full_name] || begin
       first = first_name.to_s.strip
       last = last_name.to_s.strip
 
@@ -175,6 +180,11 @@ class User < ApplicationRecord
         nil
       end
     end
+  end
+  
+  # Méthode pour obtenir le nom de la personne (nouvelle architecture)
+  def person_name
+    person&.full_name
   end
 
   def system_role_before_type_cast
