@@ -55,6 +55,28 @@ module MembershipHelper
     end
   end
 
+  # Nouvelles méthodes Person-Based
+  def person_membership_status(person)
+    return "Non membre" unless person&.has_active_membership?
+
+    membership = person.current_membership
+    membership_status_display_name(membership.status)
+  end
+
+  def person_membership_type(person)
+    return "Non membre" unless person&.has_active_membership?
+
+    membership = person.current_membership
+    membership.membership_type.name
+  end
+
+  def person_membership_badge_class(person)
+    return "bg-gray-100 text-gray-800" unless person&.has_active_membership?
+
+    membership = person.current_membership
+    membership_type_badge_class(membership.membership_type.name)
+  end
+
   def format_date(date)
     date&.strftime("%d/%m/%Y") || "Non renseigné"
   end
