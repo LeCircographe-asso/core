@@ -16,21 +16,21 @@ class User < ApplicationRecord
   enum :system_role, %i[ super_admin admin volunteer user_connected ]
 
   alias_attribute :email, :email_address
-  
+
   # Relation avec Person (nouvelle architecture)
   belongs_to :person, optional: true
-  
+
   # Relations Person-Based Architecture
   has_many :sessions, dependent: :destroy
   has_many :event_attendees, dependent: :destroy
   has_many :events, through: :event_attendees
-  
+
   # Relations via Person (nouvelles)
   has_many :memberships, through: :person
   has_many :payments, through: :person
   has_many :book_of_entries, through: :person
   has_many :attendances, through: :person
-  
+
   # Relations directes (conservées pour compatibilité)
   has_many :product_orders
   has_many :orders
@@ -119,10 +119,11 @@ class User < ApplicationRecord
     event_attendees.exists?(event_id: event_id)
   end
 
-  def assign_basic_membership
-      basic_membership = Membership.find_by(type_name: :basic)
-      user_memberships.create(membership: basic_membership) if basic_membership
-  end
+  # Méthode obsolète supprimée - utiliser Person-Based Architecture
+  # def assign_basic_membership
+  #     basic_membership = Membership.find_by(type_name: :basic)
+  #     user_memberships.create(membership: basic_membership) if basic_membership
+  # end
 
   def has_higher_permissions?(other_user)
     Rails.logger.debug "has_higher_permissions? called with other_user: #{other_user.inspect}"
@@ -179,7 +180,7 @@ class User < ApplicationRecord
       end
     end
   end
-  
+
   # Méthode pour obtenir le nom de la personne (nouvelle architecture)
   def person_name
     person&.full_name

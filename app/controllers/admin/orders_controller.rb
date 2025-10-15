@@ -28,6 +28,8 @@ class OrdersController < BaseController
 
     # Utilisation de l'architecture Person-Based
     @has_valid_membership = @user.person&.has_active_membership? || false
+    @current_membership = @user.person&.current_membership
+    @membership_type = @current_membership&.membership_type
   end
 
   def new
