@@ -31,7 +31,7 @@ module Admin
       @payments = @payments.order("#{sort_column} #{sort_direction}")
 
       # Ensure we're using the filtered payment set for calculations
-      @total_amount = @payments.where(status: :success).sum(:payment_amount)
+      @total_amount = @payments.where(status: :success).sum(:total_cents)
       @total_donation = @payments.where(status: :success).sum(:donation)
 
       # Handle loading a specific payment details
