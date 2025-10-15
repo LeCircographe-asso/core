@@ -86,9 +86,14 @@ class User < ApplicationRecord
   def welcome_send
     return if user_connected?
     return if email_address.blank? # Don't send email if no email address
+    
+    # Skip email sending in seeds
+    return if caller.any? { |line| line.include?('db/seeds') }
 
     if created_by_admin?
-      UserMailer.welcome_by_admin(self, reset_password_url).deliver_later
+      # Generate password reset URL for admin-created users
+      reset_url = Rails.application.routes.url_helpers.edit_password_url(token: password_reset_token)
+      UserMailer.welcome_by_admin(self, reset_url).deliver_later
     else
       UserMailer.welcome_email(self).deliver_later
     end

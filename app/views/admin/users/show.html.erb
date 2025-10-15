@@ -230,7 +230,7 @@
                         <%= payment.payment_date&.strftime("%d/%m/%Y") || payment.created_at.strftime("%d/%m/%Y") %>
                       </td>
                       <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                        <%= number_to_currency(payment.payment_amount, unit: "€", format: "%n %u") %>
+                         <%= number_to_currency(payment.total_cents / 100.0, unit: "€", format: "%n %u") %>
                       </td>
                       <td class="px-6 py-4 whitespace-nowrap text-sm">
                         <% status_class = case payment.status 
