@@ -2,17 +2,24 @@ module Admin
   class DonationsController < BaseController
     def create
       @user = User.find(params[:user_id])
-      @order = Order.create!(user: @user)
-      @payment = Payment.new(payment_params.merge(order_id: @order.id))
+      @person = @user.person
+      
+      # Créer un paiement directement (plus besoin d'Order)
+      @payment = Payment.new(
+        person: @person,
+        recorded_by: Current.user,
+        total_cents: payment_params[:payment_amount].to_f * 100,
+        payment_method: :cash,
+        status: :success,
+        notes: "Donation"
+      )
 
       begin
-        Payment.transaction do
-          if @payment.save
-            redirect_to admin_payment_path(@payment), notice: "Donation prise en compte"
-          else
-            flash[:alert] = "Échec de la création du paiement"
-            render :new
-          end
+        if @payment.save
+          redirect_to admin_payment_path(@payment), notice: "Donation prise en compte"
+        else
+          flash[:alert] = "Échec de la création du paiement"
+          render :new
         end
       rescue => e
         flash[:alert] = "Erreur lors de la création de la donation: #{e.message}"

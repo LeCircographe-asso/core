@@ -5,11 +5,12 @@ Rails.application.routes.draw do
     resource :opening_hours, only: %i[show edit update]
     resources :donations, only: %i[create]
     resources :users do
-      resources :orders, only: %i[create show index update] do
-        resources :product_orders, only: %i[destroy]
-        end
-      resources :user_membership, only: %i[create show update destroy]
+      resources :memberships, only: %i[create show update destroy]
       post :restore, on: :member
+      # Nouvelles actions pour gérer Person
+      post :create_membership, on: :member
+      post :create_subscription, on: :member
+      post :create_user_for_person, on: :member
     end
     resources :events, only: %i[new create edit destroy index]
     resource :session, only: %i[new create destroy]
@@ -17,13 +18,10 @@ Rails.application.routes.draw do
     resources :attendance_lists do
       resources :attendances, only: %i[new index create show edit update]
     end
-    resources :product_orders, only: %i[create update]
-    resources :products do
-      resources :price_entries, only: %i[index new create], controller: "price_entry"
-    end
-    resources :price_catalogs, controller: "price_catalog"
     resources :payments, only: %i[show create new update index destroy]
     resources :attendances, only: %i[index show new create destroy]
+    resources :memberships, only: %i[index show new create edit update destroy]
+    resources :subscription_plans, only: %i[index show new create]
     resources :exports, only: %i[index] do
       get :newsletter_subscribed, on: :collection
       get :all_users, on: :collection

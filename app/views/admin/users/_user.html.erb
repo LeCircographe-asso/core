@@ -20,8 +20,8 @@
           <p><strong>Email:</strong> <%= user.email_address %></p>
           <p><strong>Prénom:</strong> <%= user.first_name %></p>
           <p><strong>Nom:</strong> <%= user.last_name %></p>
-          <p><strong>Date de naissance:</strong> <%= user.birthdate&.strftime("%d/%m/%Y") || "Non renseigné" %></p>
-          <p><strong>Téléphone:</strong> <%= user.phone_number || "Non renseigné" %></p>
+          <p><strong>Date de naissance:</strong> <%= user.birth_date&.strftime("%d/%m/%Y") || "Non renseigné" %></p>
+          <p><strong>Téléphone:</strong> <%= user.phone || "Non renseigné" %></p>
         </div>
       </div>
 

@@ -2,8 +2,6 @@ class User < ApplicationRecord
   attr_accessor :cgu, :privacy_policy, :created_by_admin
   after_create :generate_password_reset_token
   after_create :welcome_send
-  before_validation :capitalize_names
-  before_validation :set_full_name
 
   # Configuration du token de réinitialisation de mot de passe
   generates_token_for :password_reset, expires_in: 15.minutes do
@@ -31,9 +29,14 @@ class User < ApplicationRecord
   has_many :book_of_entries, through: :person
   has_many :attendances, through: :person
 
-  # Relations directes (conservées pour compatibilité)
-  has_many :product_orders
-  has_many :orders
+  # Délégation des attributs personnels vers Person
+  delegate :first_name, :last_name, :full_name, :phone, :email, :address, 
+           :birth_date, :emergency_contact_name, :emergency_contact_phone,
+           :notes, :occupation, :specialty, :image_rights, :get_involved,
+           :newsletter_subscribed, :dyslexic_font, :zip_code, :town, :country,
+           to: :person, prefix: false, allow_nil: true
+
+
 
   normalizes :email_address, with: ->(e) { e.strip.downcase }
 
@@ -54,13 +57,19 @@ class User < ApplicationRecord
   # Anonymize personal data after soft deletion
   def anonymize_personal_data
     update_columns(
-      email_address: "deleted_#{id}@example.com",
-      first_name: "Deleted",
-      last_name: "User",
-      full_name: "Deleted User",
-      address: nil,
-      phone_number: nil
+      email_address: "deleted_#{id}@example.com"
     )
+
+    # Anonymiser les données de la Person liée
+    if person
+      person.update_columns(
+        first_name: "Deleted",
+        last_name: "User",
+        address: nil,
+        phone: nil,
+        email: "deleted_#{id}@example.com"
+      )
+    end
 
     # Deactivate any active memberships
     user_memberships.where(status: "active").update_all(status: "inactive")
@@ -167,23 +176,9 @@ class User < ApplicationRecord
     find(id)
   end
 
-  # Method for backward compatibility
+  # Method for backward compatibility - now delegated to person
   def full_name
-    # Priorité à la Person liée, sinon utiliser les données User
-    person&.full_name || self[:full_name] || begin
-      first = first_name.to_s.strip
-      last = last_name.to_s.strip
-
-      if first.present? && last.present?
-        "#{first} #{last}"
-      elsif first.present?
-        first
-      elsif last.present?
-        last
-      else
-        nil
-      end
-    end
+    person&.full_name
   end
 
   # Méthode pour obtenir le nom de la personne (nouvelle architecture)
@@ -227,30 +222,6 @@ class User < ApplicationRecord
     generate_token_for(:password_reset)
   end
 
-  def capitalize_names
-    # Capitalize first letter of first_name only
-    self.first_name = first_name.to_s.strip.capitalize if first_name.present?
-
-    # Capitalize the entire last name if present
-    if last_name.present?
-      self.last_name = last_name.to_s.strip.upcase
-    end
-  end
-
-  def set_full_name
-    # Handle nil values and trim whitespace
-    first = first_name.to_s.strip
-    last = last_name.to_s.strip
-
-    # Set full_name only if both first and last are present
-    self.full_name = if first.present? && last.present?
-                       "#{first.capitalize} #{last.upcase}"
-    elsif first.present?
-                       first.capitalize
-    elsif last.present?
-                       last.upcase
-    else
-                       nil
-    end
-  end
+  # Méthodes obsolètes supprimées - les noms sont maintenant gérés par Person
+  # capitalize_names et set_full_name ne sont plus nécessaires
 end

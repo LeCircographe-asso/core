@@ -6,11 +6,17 @@ class Person < ApplicationRecord
   has_many :attendances, dependent: :destroy
   has_many :book_of_entries, dependent: :destroy
 
+  # Attribut pour skip validation dans certains cas (seeds, migrations)
+  attr_accessor :skip_membership_validation
+
   # Validations
   validates :first_name, presence: true
   validates :last_name, presence: true
   validates :email, uniqueness: true, allow_blank: true
   validates :phone, uniqueness: true, allow_blank: true
+  
+  # Validation d'adhésion obligatoire (sauf cas spéciaux)
+  validate :must_have_active_membership, unless: :skip_membership_validation
 
   # Méthodes
   def full_name
@@ -41,4 +47,13 @@ class Person < ApplicationRecord
                                         "%#{query}%", "%#{query}%") }
   scope :with_email, -> { where.not(email: [ nil, "" ]) }
   scope :with_phone, -> { where.not(phone: [ nil, "" ]) }
+
+  private
+
+  def must_have_active_membership
+    return if new_record? # Skip à la création
+    return if memberships.active.any?
+    
+    errors.add(:base, "Une adhésion active est obligatoire")
+  end
 end

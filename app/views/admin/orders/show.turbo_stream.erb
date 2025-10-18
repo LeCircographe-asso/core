@@ -1,3 +1,0 @@
-<%= turbo_stream.replace "product-container" do %>
-  <%= render partial: @order.products.any? { |product| product.product_type == 'adhesion' } ? 'product_subscription' : 'product_membership' %>
-<% end %>
