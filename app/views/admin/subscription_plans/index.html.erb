@@ -1,0 +1,34 @@
+<h1>Plans d'Abonnement</h1>
+
+<div class="table-container">
+  <table class="admin-table">
+    <thead>
+      <tr>
+        <th>Nom</th>
+        <th>Type d'Adhésion</th>
+        <th>Prix</th>
+        <th>Durée</th>
+        <th>Séances</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @subscription_plans.each do |plan| %>
+        <tr>
+          <td><%= plan.name %></td>
+          <td><%= plan.membership_type.name %></td>
+          <td><%= plan.price_cents / 100.0 %>€</td>
+          <td><%= plan.duration %> mois</td>
+          <td><%= plan.sessions_count || "Illimité" %></td>
+          <td>
+            <%= link_to "Voir", admin_subscription_plan_path(plan), class: "btn btn-sm btn-primary" %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>
+
+<div class="mt-4">
+  <%= link_to "Retour à l'administration", admin_root_path, class: "btn btn-secondary" %>
+</div>

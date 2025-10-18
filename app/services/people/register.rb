@@ -10,6 +10,9 @@ module People
     attribute :email, :string
     attribute :phone, :string
     attribute :address, :string
+    attribute :zip_code, :string
+    attribute :town, :string
+    attribute :country, :string
     attribute :birth_date, :date
     attribute :emergency_contact_name, :string
     attribute :emergency_contact_phone, :string
@@ -35,7 +38,7 @@ module People
     validates :last_name, presence: true
     validates :user_email, presence: true, if: -> { create_user_account == true }
     validates :user_password, presence: true, if: -> { create_user_account == true }
-    validates :membership_type_id, presence: true, if: -> { create_membership == true }
+    validates :membership_type_id, presence: { message: "Une adhésion est obligatoire" }
     validate :email_uniqueness
     validate :phone_uniqueness
     validate :user_email_uniqueness
@@ -45,8 +48,9 @@ module People
 
       ActiveRecord::Base.transaction do
         person = find_or_create_person
+        person.skip_membership_validation = true # Permettre création
+        create_membership_and_payment # TOUJOURS créer adhésion
         create_user_account_record if create_user_account == true
-        create_membership_and_payment if create_membership == true
         success(person)
       end
     rescue ActiveRecord::RecordInvalid => e
@@ -66,6 +70,9 @@ module People
           first_name: first_name,
           last_name: last_name,
           address: address,
+          zip_code: zip_code,
+          town: town,
+          country: country,
           birth_date: birth_date,
           emergency_contact_name: emergency_contact_name,
           emergency_contact_phone: emergency_contact_phone,
@@ -86,6 +93,9 @@ module People
           email: email.present? ? email : nil,
           phone: phone.present? ? phone : nil,
           address: address,
+          zip_code: zip_code,
+          town: town,
+          country: country,
           birth_date: birth_date,
           emergency_contact_name: emergency_contact_name,
           emergency_contact_phone: emergency_contact_phone,
@@ -112,9 +122,7 @@ module People
           email_address: user_email || email,
           password: user_password,
           password_confirmation: user_password,
-          system_role: user_system_role,
-          first_name: first_name,
-          last_name: last_name
+          system_role: user_system_role
         )
       else
         # Générer un mot de passe temporaire si non fourni
@@ -125,15 +133,13 @@ module People
           email_address: user_email || email,
           password: temp_password,
           password_confirmation: temp_password,
-          system_role: user_system_role,
-          first_name: first_name,
-          last_name: last_name
+          system_role: user_system_role
         )
       end
     end
 
     def create_membership_and_payment
-      return unless create_membership == true && membership_type_id.present?
+      return unless membership_type_id.present?
 
       # Créer l'adhésion
       membership = @created_person.memberships.create!(
@@ -146,9 +152,13 @@ module People
 
       # Créer le paiement
       membership_type = MembershipType.find(membership_type_id)
+      
+      # Trouver un admin pour recorded_by si non fourni
+      admin_user = recorded_by_id ? User.find(recorded_by_id) : User.find_by(system_role: [:admin, :super_admin])
+      
       payment = Payment.create!(
         person: @created_person,
-        recorded_by_id: recorded_by_id,
+        recorded_by: admin_user,
         total_cents: membership_type.price_cents,
         payment_method: payment_method,
         status: "success",

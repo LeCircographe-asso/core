@@ -32,6 +32,10 @@ class MembershipType < ApplicationRecord
     self.price_cents = (value.to_f * 100).round
   end
 
+  def name_with_price
+    "#{name} - #{price_euros}€"
+  end
+
   # Scopes
   scope :circus_types, -> { where(category: [ :circus_full, :circus_reduced ]) }
   scope :basic_types, -> { where(category: :basic) }

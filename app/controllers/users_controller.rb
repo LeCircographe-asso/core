@@ -22,7 +22,8 @@ class UsersController < ApplicationController
 
   # User profile update
   def update
-    if @user.update(user_params)
+    # Mettre à jour les données de la Person liée
+    if @user.person&.update(person_params)
       redirect_to @user, notice: "Votre profil a été mis à jour avec succès."
     else
       render :edit, status: :unprocessable_entity
@@ -86,8 +87,8 @@ class UsersController < ApplicationController
   # Handle token-based unsubscription (public access)
   def unsubscribe_by_token
     @user = User.find_by(unsubscribe_token: params[:token])
-    if @user
-      @user.update(newsletter_subscribed: false)
+    if @user && @user.person
+      @user.person.update(newsletter_subscribed: false)
       redirect_to page_path("newsletter_unsubscribe_success")
     else
       redirect_to root_path, alert: "Token de désinscription invalide."
@@ -98,8 +99,12 @@ class UsersController < ApplicationController
   def toggle_newsletter_status
     return redirect_to root_path, alert: "Vous devez être connecté" unless @user
 
-    @user.update(newsletter_subscribed: !@user.newsletter_subscribed)
-    message = @user.newsletter_subscribed ? "Vous êtes inscrit à la newsletter" : "Vous êtes désinscrit de la newsletter"
+    if @user.person
+      @user.person.update(newsletter_subscribed: !@user.person.newsletter_subscribed)
+      message = @user.person.newsletter_subscribed ? "Vous êtes inscrit à la newsletter" : "Vous êtes désinscrit de la newsletter"
+    else
+      message = "Erreur: aucune personne liée à ce compte"
+    end
     redirect_to @user, notice: message
   end
 
@@ -108,11 +113,10 @@ class UsersController < ApplicationController
     @user = Current.user
   end
 
-  # Permitted parameters for user self-management
-  def user_params
+  # Permitted parameters for person data (migrated from user)
+  def person_params
     params.require(:user).permit(
-      :email_address,
-      :phone_number,
+      :phone,
       :address,
       :zip_code,
       :town,

@@ -2,42 +2,73 @@
   <!-- Breadcrumbs -->
   <%= render 'shared/breadcrumbs' %>
   
-  <div class="bg-white shadow-lg rounded-lg overflow-hidden" id="<%= dom_id(@user) %>">
+  <div class="bg-white shadow-lg rounded-lg overflow-hidden" id="<%= dom_id(@person || @user) %>">
     <!-- Header with gradient -->
     <div class="relative">
       <div class="h-24 w-full bg-gradient-to-r from-[#1F5C55] to-[#194A45] rounded-t-lg">
         <!-- User Role Badge -->
-        <div class="absolute top-4 right-4 px-3 py-1 text-xs font-semibold text-white rounded-full 
-          <%= case @user.system_role
-            when 'super_admin' then 'bg-[#1F5C55]'
-            when 'admin' then 'bg-[#1F5C55]/90'
-            when 'volunteer' then 'bg-[#1F5C55]/80'
-            when 'user_connected' then 'bg-[#1F5C55]/70'
-            end %>">
-          <%= @user.system_role.humanize %>
-          <% if @is_deleted %>
-            <span class="ml-1 px-2 py-0.5 text-xs rounded-full bg-red-500 text-white">Supprimé</span>
+        <% if @is_person_without_user %>
+          <div class="absolute top-4 right-4 px-3 py-1 text-xs font-semibold text-white rounded-full bg-orange-500">
+            Personne sans compte
+          </div>
+        <% else %>
+          <% if @user.system_role.present? %>
+            <div class="absolute top-4 right-4 px-3 py-1 text-xs font-semibold text-white rounded-full 
+              <%= case @user.system_role
+                when 'super_admin' then 'bg-[#1F5C55]'
+                when 'admin' then 'bg-[#1F5C55]/90'
+                when 'volunteer' then 'bg-[#1F5C55]/80'
+                when 'user_connected' then 'bg-[#1F5C55]/70'
+                end %>">
+              <%= @user.system_role.humanize %>
+              <% if @is_deleted %>
+                <span class="ml-1 px-2 py-0.5 text-xs rounded-full bg-red-500 text-white">Supprimé</span>
+              <% end %>
+            </div>
+          <% else %>
+            <div class="absolute top-4 right-4 px-3 py-1 text-xs font-semibold text-white rounded-full bg-orange-500">
+              Personne sans compte
+            </div>
           <% end %>
-        </div>
+        <% end %>
         
         <!-- Action Buttons -->
         <div class="absolute top-4 left-4 flex space-x-2">
           <% unless @is_deleted %>
             <!-- Edit Button -->
-            <%= link_to edit_admin_user_path(@user), class: "inline-flex items-center px-3 py-1 text-xs font-semibold text-white rounded-full bg-[#1F5C55]/80 hover:bg-[#1F5C55] transition-colors duration-200" do %>
-              <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
-              </svg>
-              Modifier
+            <% if @is_person_without_user %>
+              <!-- Pour Person sans User, on peut ajouter des actions spécifiques -->
+              <span class="inline-flex items-center px-3 py-1 text-xs font-semibold text-white rounded-full bg-orange-500/80">
+                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                </svg>
+                Créer compte
+              </span>
+            <% else %>
+              <%= link_to edit_admin_user_path(@user), class: "inline-flex items-center px-3 py-1 text-xs font-semibold text-white rounded-full bg-[#1F5C55]/80 hover:bg-[#1F5C55] transition-colors duration-200" do %>
+                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                </svg>
+                Modifier
+              <% end %>
             <% end %>
           <% end %>
           
           <!-- Payment History Button -->
-          <%= link_to admin_payments_path(user_id: @user.id), class: "inline-flex items-center px-3 py-1 text-xs font-semibold text-white rounded-full bg-[#1F5C55]/80 hover:bg-[#1F5C55] transition-colors duration-200" do %>
-            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
-            </svg>
-            Historique de paiement
+          <% if @is_person_without_user %>
+            <%= link_to admin_payments_path(person_id: @person.id), class: "inline-flex items-center px-3 py-1 text-xs font-semibold text-white rounded-full bg-[#1F5C55]/80 hover:bg-[#1F5C55] transition-colors duration-200" do %>
+              <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+              </svg>
+              Historique de paiement
+            <% end %>
+          <% else %>
+            <%= link_to admin_payments_path(user_id: @user.id), class: "inline-flex items-center px-3 py-1 text-xs font-semibold text-white rounded-full bg-[#1F5C55]/80 hover:bg-[#1F5C55] transition-colors duration-200" do %>
+              <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+              </svg>
+              Historique de paiement
+            <% end %>
           <% end %>
         </div>
       </div>
@@ -114,7 +145,13 @@
           <!-- System Role -->
           <div class="grid grid-cols-3 gap-4 py-2 border-b">
             <div class="text-sm font-medium text-gray-500">Rôle système</div>
-            <div class="col-span-2 text-sm text-gray-900"><%= @user.system_role.humanize %></div>
+            <div class="col-span-2 text-sm text-gray-900">
+              <% if @user.system_role.present? %>
+                <%= @user.system_role.humanize %>
+              <% else %>
+                <span class="text-orange-600 font-medium">Aucun compte utilisateur</span>
+              <% end %>
+            </div>
           </div>
 
           <!-- Occupation -->
@@ -136,13 +173,13 @@
           <!-- Birth Date -->
           <div class="grid grid-cols-3 gap-4 py-2 border-b">
             <div class="text-sm font-medium text-gray-500">Date de naissance</div>
-            <div class="col-span-2 text-sm text-gray-900"><%= @user.birthdate&.strftime("%d/%m/%Y") %></div>
+            <div class="col-span-2 text-sm text-gray-900"><%= @user.birth_date&.strftime("%d/%m/%Y") %></div>
           </div>
 
           <!-- Phone -->
           <div class="grid grid-cols-3 gap-4 py-2 border-b">
             <div class="text-sm font-medium text-gray-500">Téléphone</div>
-            <div class="col-span-2 text-sm text-gray-900"><%= @user.phone_number %></div>
+            <div class="col-span-2 text-sm text-gray-900"><%= @user.phone %></div>
           </div>
 
           <!-- Address -->

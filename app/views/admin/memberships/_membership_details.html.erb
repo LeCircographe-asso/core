@@ -1,0 +1,37 @@
+<div class="bg-white shadow-lg rounded-lg p-6 mb-6">
+  <h2 class="text-xl font-semibold text-gray-900 mb-4">Adhésion Actuelle</h2>
+  
+  <% if @person.current_membership %>
+    <div class="grid grid-cols-2 gap-4">
+      <div>
+        <label class="block text-sm font-medium text-gray-700">Type d'adhésion</label>
+        <p class="mt-1 text-sm text-gray-900"><%= @person.current_membership.membership_type.name %></p>
+      </div>
+      
+      <div>
+        <label class="block text-sm font-medium text-gray-700">Prix</label>
+        <p class="mt-1 text-sm text-gray-900"><%= @person.current_membership.membership_type.price_euros %> €</p>
+      </div>
+      
+      <div>
+        <label class="block text-sm font-medium text-gray-700">Date de début</label>
+        <p class="mt-1 text-sm text-gray-900"><%= @person.current_membership.started_at.strftime("%d/%m/%Y") %></p>
+      </div>
+      
+      <div>
+        <label class="block text-sm font-medium text-gray-700">Date de fin</label>
+        <p class="mt-1 text-sm text-gray-900"><%= @person.current_membership.ended_at.strftime("%d/%m/%Y") %></p>
+      </div>
+      
+      <div>
+        <label class="block text-sm font-medium text-gray-700">Statut</label>
+        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
+          <%= @person.current_membership.active? ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' %>">
+          <%= @person.current_membership.status.humanize %>
+        </span>
+      </div>
+    </div>
+  <% else %>
+    <p class="text-red-600">Aucune adhésion active trouvée.</p>
+  <% end %>
+</div>

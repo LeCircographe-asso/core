@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_10_14_091726) do
+ActiveRecord::Schema[8.0].define(version: 2025_10_18_152139) do
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.string "name", null: false
     t.text "body"
@@ -263,6 +263,9 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_14_091726) do
     t.boolean "dyslexic_font", default: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "zip_code"
+    t.string "town"
+    t.string "country"
     t.index ["email"], name: "index_people_on_email", unique: true
     t.index ["first_name", "last_name"], name: "index_people_on_first_name_and_last_name"
     t.index ["phone"], name: "index_people_on_phone"
@@ -361,26 +364,11 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_14_091726) do
     t.string "password_digest", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.string "last_name"
-    t.string "first_name"
-    t.date "birthdate"
-    t.text "address"
-    t.string "zip_code"
-    t.text "town"
-    t.string "country"
-    t.string "phone_number"
-    t.text "occupation"
-    t.text "specialty"
-    t.boolean "image_rights", default: false
-    t.boolean "get_involved", default: false
     t.string "password_reset_token"
     t.datetime "password_reset_sent_at"
     t.integer "system_role", default: 3, null: false
-    t.boolean "newsletter_subscribed"
     t.string "unsubscribe_token"
     t.boolean "created_by_admin"
-    t.boolean "dyslexic_font"
-    t.string "full_name"
     t.boolean "deleted", default: false, null: false
     t.datetime "deleted_at"
     t.integer "person_id"

@@ -1,0 +1,50 @@
+<h1>Gestion des Adhésions</h1>
+
+<div class="table-container">
+  <table class="admin-table">
+    <thead>
+      <tr>
+        <th>Personne</th>
+        <th>Email</th>
+        <th>Adhésion Actuelle</th>
+        <th>Statut</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @people.each do |person| %>
+        <tr>
+          <td><%= person.full_name %></td>
+          <td><%= person.email %></td>
+          <td>
+            <% if person.current_membership %>
+              <%= person.current_membership.membership_type.name %>
+              (<%= person.current_membership.membership_type.price_euros %>€)
+            <% else %>
+              <span class="text-danger">Aucune adhésion</span>
+            <% end %>
+          </td>
+          <td>
+            <% if person.current_membership %>
+              <span class="badge badge-success">Active</span>
+            <% else %>
+              <span class="badge badge-danger">Inactive</span>
+            <% end %>
+          </td>
+          <td>
+            <% if person.current_membership %>
+              <%= link_to "Voir", admin_membership_path(person), class: "btn btn-sm btn-primary" %>
+              <%= link_to "Modifier", edit_admin_membership_path(person), class: "btn btn-sm btn-secondary" %>
+            <% else %>
+              <%= link_to "Créer", new_admin_membership_path(person_id: person.id), class: "btn btn-sm btn-success" %>
+            <% end %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>
+
+<div class="mt-4">
+  <%= link_to "Retour à l'administration", admin_root_path, class: "btn btn-secondary" %>
+</div>
