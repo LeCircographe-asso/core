@@ -7,7 +7,7 @@ module RoleHelper
       "bg-blue-100 text-blue-800"
     when :volunteer
       "bg-green-100 text-green-800"
-    when :user_connected
+    when :web_visitor
       "bg-gray-100 text-gray-800"
     else
       "bg-gray-100 text-gray-800"
@@ -22,7 +22,7 @@ module RoleHelper
       "Administrateur"
     when :volunteer
       "Volontaire" # TODO: change to "Bénévole"
-    when :user_connected
+    when :web_visitor
       "Utilisateur"
     else
       role.to_s.humanize

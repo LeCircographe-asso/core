@@ -1,6 +1,7 @@
 module ApplicationHelper
   include RoleHelper
   include MembershipHelper
+  include Pagy::Frontend
 
   def current_user
     if authenticated?
