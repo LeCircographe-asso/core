@@ -13,8 +13,8 @@ class Attendance < ApplicationRecord
   validates :person_id, uniqueness: { scope: :date, message: "est déjà marqué présent aujourd'hui" }
 
   # Ancienne validation (à supprimer progressivement)
-  validates :arrival_time, presence: true, if: -> { user_id.present? }
-  validates :user_id, uniqueness: { scope: :attendance_list_id, message: "est déjà marqué présent dans cette liste" }, if: -> { user_id.present? && attendance_list_id.present? }
+  # validates :arrival_time, presence: true, if: -> { user_id.present? }
+  # validates :user_id, uniqueness: { scope: :attendance_list_id, message: "est déjà marqué présent dans cette liste" }, if: -> { user_id.present? && attendance_list_id.present? }
 
   # Callbacks
   before_create :set_date_if_missing

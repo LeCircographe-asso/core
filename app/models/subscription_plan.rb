@@ -52,7 +52,7 @@ class SubscriptionPlan < ApplicationRecord
     when "annual"
       365
     when "pack10"
-      validity_days || 365 # Par défaut 1 an si pas spécifié
+      nil # Les packs10 n'ont pas de durée limitée
     else
       0
     end

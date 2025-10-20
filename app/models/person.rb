@@ -158,12 +158,11 @@ class Person < ApplicationRecord
   }
   scope :with_expired_membership, -> { 
     joins(:memberships)
-      .where(memberships: { status: :active })
-      .where('memberships.ended_at < ?', Date.current)
+      .where(memberships: { status: :expired })
   }
   scope :without_membership, -> { left_joins(:memberships).where(memberships: { id: nil }) }
   scope :search_by_contact, ->(query) { 
-    where("first_name ILIKE ? OR last_name ILIKE ? OR email ILIKE ? OR phone ILIKE ?", 
+    where("first_name LIKE ? OR last_name LIKE ? OR email LIKE ? OR phone LIKE ?", 
           "%#{query}%", "%#{query}%", "%#{query}%", "%#{query}%") 
   }
 
