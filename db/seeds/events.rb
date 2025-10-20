@@ -1,55 +1,38 @@
-# Seeds pour les événements
-puts "📅 Creating events..."
+# Seed pour les événements
+puts "\n📅 Creating sample events..."
 
-# Récupérer un utilisateur admin
-admin_user = User.first || User.create!(
-  first_name: "Admin",
-  last_name: "System",
-  email: "admin@circographe.com",
-  password: "password123",
-  password_confirmation: "password123"
-)
+# Récupérer l'admin comme créateur
+admin_user = User.find_by(system_role: "super_admin")
 
 events = [
   {
     name: "Spectacle de Cirque",
-    category: :show,
+    category: "show",
     date: 1.week.from_now,
-    description: "Spectacle de cirque avec les élèves de l'école"
+    location: "Salle de spectacle",
+    description: "Spectacle de fin d'année avec tous les élèves",
+    creator: admin_user
   },
   {
     name: "Atelier Jonglage",
-    category: :workshop,
-    date: 2.days.from_now,
-    description: "Atelier d'initiation au jonglage pour tous niveaux"
+    category: "workshop",
+    date: 3.days.from_now,
+    location: "Salle de jonglage",
+    description: "Atelier découverte du jonglage pour débutants",
+    creator: admin_user
   },
   {
     name: "Atelier Équilibre",
-    category: :workshop,
-    date: 1.week.from_now,
-    description: "Atelier d'équilibre sur fil et boule"
-  },
-  {
-    name: "Bénévolat Entretien",
-    category: :volunteering,
-    date: 3.days.from_now,
-    description: "Séance de bénévolat pour l'entretien des locaux"
-  },
-  {
-    name: "Réunion d'Équipe",
-    category: :other,
-    date: 5.days.from_now,
-    description: "Réunion de l'équipe pédagogique"
+    category: "workshop",
+    date: 1.week.from_now + 1.day,
+    location: "Salle d'équilibre",
+    description: "Atelier équilibre sur boule et fil",
+    creator: admin_user
   }
 ]
 
 events.each do |attrs|
-  event = Event.find_or_create_by(name: attrs[:name], date: attrs[:date]) do |e|
-    e.category = attrs[:category]
-    e.description = attrs[:description]
-    e.creator = admin_user
-  end
-  
+  event = Event.create!(attrs)
   puts "  ✅ #{event.name} (#{event.category}) - #{event.date.strftime('%d/%m/%Y')}"
 end
 
