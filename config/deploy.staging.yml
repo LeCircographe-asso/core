@@ -46,7 +46,8 @@ env:
 # Configuration pour reset complet de la BDD en staging
 # Utilise la tâche Rake qui gère les erreurs proprement
 boot:
-  - "rails db:force_reset"
+  commands:
+    - "rails db:force_reset"
 
 # Volumes pour les logs et données (staging)
 volumes:
