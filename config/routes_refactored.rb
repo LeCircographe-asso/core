@@ -1,24 +1,42 @@
+# Routes pour les contrôleurs refactorisés
+# À utiliser une fois que les nouveaux contrôleurs sont testés et validés
+
 Rails.application.routes.draw do
   namespace :admin do
-    root to: "dashboard#index"
     resources :blogs
     resources :dashboard, only: %i[index], path: "dashboard"
     resource :opening_hours, only: %i[show edit update]
     resources :donations, only: %i[create]
+    
+    # ROUTES REFACTORISÉES - Respecte la structure existante
     resources :users do
+      # Actions principales du contrôleur users (inchangées)
       resources :memberships, only: %i[create show update destroy]
       post :restore, on: :member
-      # Nouvelles actions pour gérer Person
       post :create_membership, on: :member
       post :create_user_for_person, on: :member
       get :edit_person, on: :member
-      # Actions pour gérer les doublons
       get :duplicates, on: :collection
-      # Route de test pour la vue refactorisée
-      get :index_refactored, on: :collection
-      # Route de test pour ViewComponents
-      get :index_viewcomponents, on: :collection
+      
+      # NOUVELLES ROUTES POUR LES SOUS-CONTRÔLEURS
+      # Ces routes utilisent les nouveaux contrôleurs mais gardent la même structure URL
+      scope module: :users do
+        # Gestion des adhésions via le nouveau contrôleur
+        # POST /admin/users/person_1/memberships -> Admin::Users::MembershipsController#create
+        post 'person_:person_id/memberships', to: 'memberships#create', as: :person_membership
+        
+        # Gestion des paiements via le nouveau contrôleur  
+        # GET /admin/users/person_1/payments -> Admin::Users::PaymentsController#index
+        get 'person_:person_id/payments', to: 'payments#index', as: :person_payments
+        post 'person_:person_id/payments', to: 'payments#create'
+        
+        # Gestion des doublons via le nouveau contrôleur
+        # POST /admin/users/duplicates/merge -> Admin::Users::DuplicatesController#merge
+        post 'duplicates/merge', to: 'duplicates#merge', on: :collection
+        post 'duplicates/cleanup', to: 'duplicates#cleanup', on: :collection
+      end
     end
+    
     resources :events, only: %i[new create edit destroy index]
     resource :session, only: %i[new create destroy]
     resource :notepad, only: %i[edit update]
@@ -36,6 +54,7 @@ Rails.application.routes.draw do
     end
   end
 
+  # Routes publiques (inchangées)
   resources :events, only: %i[show index]
   resources :pages, only: %i[show]
   resource :session, only: %i[new create destroy]
@@ -53,39 +72,8 @@ Rails.application.routes.draw do
   post "/newsletter_signup", to: "users#newsletter_signup", as: "newsletter_signup"
 
   scope "/checkout" do
-    post "create", to: "checkout#create", as: "checkout_create"
-    get "success", to: "checkout#success", as: "checkout_success"
-    get "cancel", to: "checkout#cancel", as: "checkout_cancel"
+    resources :subscriptions, only: %i[new create show]
   end
 
-  root "home#index"
-  get "fonts", to: "home#font_examples", as: "font_examples"
-
-  # match "*unmatched", to: "application#url_not_found", via: :all
-  # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
-
-  # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
-  # Can be used by load balancers and uptime monitors to verify that the app is live.
-  get "up" => "rails/health#show", as: :rails_health_check
-
-  # Render dynamic PWA files from app/views/pwa/* (remember to link manifest in application.html.erb)
-  get "manifest" => "rails/pwa#manifest", as: :pwa_manifest
-  get "service-worker" => "rails/pwa#service_worker", as: :pwa_service_worker
-
-  # Defines the root path route ("/")
-  # root "posts#index"
-
-  # Route pour le formulaire de contact
-  post "/submit_contact", to: "contacts#create"
-
-  if Rails.env.development?
-    # LetterOpenerWeb temporairement désactivé pour production
-    # mount LetterOpenerWeb::Engine, at: "/letter_opener"
-  end
-
-  resource :password, only: [ :new, :create, :edit, :update ] do
-    get :request_reset, on: :collection
-  end
-
-  resource :settings, only: [ :show, :update ], controller: "settings"
+  root "pages#show", id: "home"
 end
