@@ -1,189 +1,230 @@
-<% content_for :title, "Utilisateurs" %>
+<% content_for :title, "Gestion des Adhérents" %>
 
-<div class="min-h-screen py-6">
+<div class="min-h-screen py-6" data-controller="admin-users">
   <div class="max-w-7xl mx-auto">
     <!-- Breadcrumbs -->
     <%= render 'shared/breadcrumbs' %>
     
-    <!-- Header -->
+    <!-- Header avec gradient -->
     <div class="bg-white shadow-lg rounded-lg overflow-hidden mb-6">
       <div class="bg-gradient-to-r from-[#1F5C55] to-[#194A45] px-6 py-4">
-        <h1 class="text-2xl font-bold text-white">Gestion des utilisateurs</h1>
+        <h1 class="text-2xl font-bold text-white">Gestion des Adhérents</h1>
         <p class="text-white/80 mt-1">
-          <% if @showing_deleted %>
-            Affichage des utilisateurs supprimés
-          <% else %>
-            Voir et gérer tous les utilisateurs actifs
-          <% end %>
+          Interface unifiée pour gérer les personnes, adhésions et cotisations
         </p>
       </div>
 
       <div class="p-6">
-        <!-- Statistics -->
+        <!-- Statistiques -->
         <div class="mb-6">
           <h2 class="text-lg font-semibold text-gray-900 mb-3">Statistiques</h2>
           <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4">
             <!-- Total personnes -->
-            <div class="bg-blue-50 rounded-lg p-4">
+            <div class="stat-card bg-blue-50 rounded-lg p-4 cursor-pointer" 
+                 data-admin-users-target="statCard" 
+                 data-stat-type=""
+                 data-action="click->admin-users#statCardClick">
               <p class="text-sm text-blue-500">Total personnes</p>
               <p class="text-2xl font-bold text-blue-800"><%= @total_people %></p>
             </div>
             
             <!-- Nouveaux d'hier -->
-            <div class="bg-teal-50 rounded-lg p-4">
+            <div class="stat-card bg-teal-50 rounded-lg p-4 cursor-pointer" 
+                 data-admin-users-target="statCard" 
+                 data-stat-type=""
+                 data-action="click->admin-users#statCardClick">
               <p class="text-sm text-teal-500">Nouveaux (hier)</p>
               <p class="text-2xl font-bold text-teal-800"><%= @new_users_yesterday %></p>
             </div>
             
             <!-- Adhésions Basic -->
-            <div class="bg-green-50 rounded-lg p-4">
+            <div class="stat-card bg-green-50 rounded-lg p-4 cursor-pointer" 
+                 data-admin-users-target="statCard" 
+                 data-stat-type="basic"
+                 data-action="click->admin-users#statCardClick">
               <p class="text-sm text-green-500">Adhésions Basic</p>
               <p class="text-2xl font-bold text-green-800"><%= @basic_memberships %></p>
             </div>
             
             <!-- Adhésions Circus -->
-            <div class="bg-indigo-50 rounded-lg p-4">
+            <div class="stat-card bg-indigo-50 rounded-lg p-4 cursor-pointer" 
+                 data-admin-users-target="statCard" 
+                 data-stat-type="circus"
+                 data-action="click->admin-users#statCardClick">
               <p class="text-sm text-indigo-500">Adhésions Circus</p>
               <p class="text-2xl font-bold text-indigo-800"><%= @circus_memberships %></p>
             </div>
             
             <!-- Adhésions actives totales -->
-            <div class="bg-purple-50 rounded-lg p-4">
+            <div class="stat-card bg-purple-50 rounded-lg p-4 cursor-pointer" 
+                 data-admin-users-target="statCard" 
+                 data-stat-type="with_active_membership"
+                 data-action="click->admin-users#statCardClick">
               <p class="text-sm text-purple-500">Adhésions actives</p>
               <p class="text-2xl font-bold text-purple-800"><%= @active_memberships %></p>
             </div>
             
             <!-- Personnes sans compte -->
-            <div class="bg-orange-50 rounded-lg p-4">
+            <div class="stat-card bg-orange-50 rounded-lg p-4 cursor-pointer" 
+                 data-admin-users-target="statCard" 
+                 data-stat-type="without_user_account"
+                 data-action="click->admin-users#statCardClick">
               <p class="text-sm text-orange-500">Sans compte</p>
               <p class="text-2xl font-bold text-orange-800"><%= @people_without_user %></p>
             </div>
           </div>
         </div>
 
-        <!-- Actions -->
-        <div class="flex flex-wrap gap-3 mb-8">
-          <% unless @showing_deleted %>
-            <%= link_to "Créer un Adhérent", new_admin_user_path, 
-                class: "inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#1F5C55] hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1F5C55]" %>
-            
-            <%= link_to "Export CSV", all_users_admin_exports_path, 
-                class: "inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#1F5C55] hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1F5C55]" %>
-          <% end %>
+        <!-- Actions principales -->
+        <div class="flex flex-wrap gap-3 mb-6">
+          <%= link_to "Créer un Adhérent", new_admin_user_path, 
+              class: "inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#1F5C55] hover:bg-[#194A45] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1F5C55]" %>
           
-          <!-- Toggle deleted users view -->
-          <div class="ml-auto">
-            <% if @showing_deleted %>
-              <%= link_to "Afficher les utilisateurs actifs", admin_users_path(show_deleted: 'false'), 
-                  class: "inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1F5C55]" %>
-            <% else %>
-              <%= link_to "Afficher les utilisateurs supprimés", admin_users_path(show_deleted: 'true'), 
-                  class: "inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1F5C55]" %>
-            <% end %>
+          <%= link_to "Export CSV", all_users_admin_exports_path, 
+              class: "inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#5836a5] hover:bg-[#4c2d8a] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#5836a5]",
+              data: { 
+                action: "click->admin-users#exportData",
+                format: "csv"
+              } %>
+          
+          <%= link_to "Détecter les doublons", duplicates_admin_users_path, 
+              class: "inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500" %>
+        </div>
+
+        <!-- Barre de recherche et filtres -->
+        <div class="filter-section bg-gray-50 rounded-lg p-4 mb-6" data-controller="search" data-search-url-value="<%= admin_users_path %>">
+          <div class="flex flex-col md:flex-row gap-4">
+            <!-- Recherche -->
+            <div class="flex-1">
+              <label for="search" class="block text-sm font-medium text-gray-700 mb-1">Recherche</label>
+              <div class="relative">
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <svg class="h-4 w-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                  </svg>
+                </div>
+                <input type="text" 
+                       id="search" 
+                       name="search" 
+                       data-search-target="input"
+                       data-action="input->admin-users#searchInput"
+                       value="<%= params[:search] %>"
+                       placeholder="Nom, email, téléphone... (Ctrl+K pour focus)"
+                       class="search-input pl-10 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#1F5C55] focus:ring-[#1F5C55] sm:text-sm">
+                <% if params[:search].present? %>
+                  <button type="button" 
+                          data-action="click->search#clear"
+                          class="absolute inset-y-0 right-0 pr-3 flex items-center">
+                    <svg class="h-4 w-4 text-gray-400 hover:text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                  </button>
+                <% end %>
+              </div>
+            </div>
+            
+            <!-- Filtres -->
+            <div class="md:w-64">
+              <label for="filter" class="block text-sm font-medium text-gray-700 mb-1">Filtres</label>
+              <%= form_with url: admin_users_path, method: :get, local: true, class: "flex gap-2" do |form| %>
+                <%= form.hidden_field :search, value: params[:search] %>
+                <%= form.select :filter, 
+                    options_for_select([
+                      ['Tous', ''],
+                      ['Avec adhésion active', 'with_active_membership'],
+                      ['Adhésion expirant', 'with_expiring_membership'],
+                      ['Adhésion expirée', 'with_expired_membership'],
+                      ['Sans adhésion', 'without_membership'],
+                      ['Avec compte web', 'with_user_account'],
+                      ['Sans compte web', 'without_user_account']
+                    ], params[:filter]),
+                    {},
+                    { 
+                      class: "block w-full rounded-md border-gray-300 shadow-sm focus:border-[#1F5C55] focus:ring-[#1F5C55] sm:text-sm",
+                      onchange: "this.form.submit()"
+                    } %>
+              <% end %>
+            </div>
           </div>
         </div>
 
-        <!-- Section Title -->
-        <h2 class="text-lg font-semibold text-gray-900 border-b pb-2 mb-4">
-          <% if @showing_deleted %>
-            Liste des utilisateurs supprimés
-          <% else %>
-            Liste des utilisateurs
-          <% end %>
-        </h2>
-
-        <!-- Explicit wrapper for the array -->
-        <div class="user-table-container" style="overflow-x: auto !important;">
-          <div class="user-table">
-            <table class="min-w-full bg-white border border-gray-200 rounded-lg">
+        <!-- Tableau des adhérents -->
+        <div class="bg-white shadow overflow-hidden rounded-lg">
+          <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200">
               <thead class="bg-gray-50">
                 <tr>
-                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Id</th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Numéro</th>
                   <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nom</th>
-                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
-                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Rôle</th>
-                  <% unless @showing_deleted %>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Abonnement</th>
-                  <% else %>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Supprimé le</th>
-                  <% end %>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Contact</th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Statut Adhésion</th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Cotisations</th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Compte</th>
                   <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                 </tr>
               </thead>
-              <tbody class="divide-y divide-gray-200">
+              <tbody class="bg-white divide-y divide-gray-200">
                 <% if @people.any? %>
-                      <% @people.each do |person| %>
-                    <tr class="hover:bg-gray-50">
-                      <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900"><%= person.id %></td>
-                      <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500"><%= person.full_name.present? ? person.full_name : "Non renseigné" %></td>
-                      <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        <% if person.user %>
-                          <%= person.user.email_address %>
-                        <% else %>
-                          <span class="text-gray-400 italic">Pas de compte</span>
-                        <% end %>
-                      </td>
-                      <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        <% if person.user %>
-                          <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-purple-100 text-purple-800">
-                            <%= person.user.system_role.humanize %>
-                          </span>
-                        <% else %>
-                          <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-orange-100 text-orange-800">
-                            Sans compte
-                          </span>
-                        <% end %>
+                  <% @people.each do |person| %>
+                    <tr class="table-row hover:bg-gray-50" data-admin-users-target="tableRow">
+                      <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                        <%= person.id %>
                       </td>
                       
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                          <% if person.has_active_membership? %>
-                            <% current_membership = person.current_membership %>
-                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
-                              <%= current_membership.membership_type.name %> (Actif)
-                            </span>
-                          <% elsif person.memberships.exists? %>
-                            <% last_membership = person.memberships.order(:created_at).last %>
-                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">
-                              <%= last_membership.membership_type.name %> (Expiré)
-                            </span>
-                          <% else %>
-                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">
-                              Pas d'adhésion
-                            </span>
-                          <% end %>
-                        </td>
+                      <td class="px-6 py-4 whitespace-nowrap text-sm">
+                        <%= member_number_display(person) %>
+                      </td>
+                      
+                      <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                        <%= display_name(person) %>
+                      </td>
+                      
+                      <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        <div class="space-y-1">
+                          <div><%= display_email(person) %></div>
+                          <div><%= display_phone(person) %></div>
+                        </div>
+                      </td>
+                      
+                      <td class="px-6 py-4 whitespace-nowrap text-sm">
+                        <%= membership_status_badge(person) %>
+                      </td>
+                      
+                      <td class="px-6 py-4 whitespace-nowrap text-sm">
+                        <%= membership_type_badge(person) %>
+                      </td>
+                      
+                      <td class="px-6 py-4 whitespace-nowrap text-sm">
+                        <%= subscription_status_badge(person) %>
+                      </td>
+                      
+                      <td class="px-6 py-4 whitespace-nowrap text-sm text-center">
+                        <%= web_account_icon(person) %>
+                      </td>
                       
                       <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                        <!-- Lien vers la fiche Person (unifié) -->
-                        <%= link_to "Voir", admin_user_path("person_#{person.id}"), 
-                            class: "text-grey-600 hover:text-purple-900 mr-3", 
-                            data: { turbo: false } %>
-                        
-                        <% if person.user %>
-                          <% if @showing_deleted %>
-                            <%= link_to "Restaurer", admin_user_path(person.user), 
-                                class: "text-green-600 hover:text-green-900",
-                                data: { turbo: false } %>
-                          <% else %>
-                            <%= link_to "Modifier", edit_admin_user_path(person.user), 
-                                class: "text-blue-600 hover:text-blue-900" %>
-                          <% end %>
-                        <% else %>
-                          <%= link_to "Créer compte", new_admin_user_path(person_id: person.id), 
-                              class: "text-green-600 hover:text-green-900 mr-3", 
-                              data: { turbo: false } %>
-                        <% end %>
+                        <%= contextual_actions(person) %>
                       </td>
                     </tr>
                   <% end %>
                 <% else %>
                   <tr>
-                    <td colspan="6" class="px-6 py-10 text-center text-gray-500">
-                      <% if @showing_deleted %>
-                        Aucun utilisateur supprimé n'a été trouvé.
-                      <% else %>
-                        Aucun utilisateur n'a été trouvé.
-                      <% end %>
+                    <td colspan="9" class="px-6 py-10 text-center text-gray-500">
+                      <div class="empty-state flex flex-col items-center">
+                        <svg class="h-12 w-12 text-gray-300 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"></path>
+                        </svg>
+                        <p class="text-lg font-medium">Aucun adhérent trouvé</p>
+                        <p class="text-sm">
+                          <% if params[:search].present? %>
+                            Essayez de modifier votre recherche ou vos filtres.
+                          <% else %>
+                            Commencez par créer votre premier adhérent.
+                          <% end %>
+                        </p>
+                      </div>
                     </td>
                   </tr>
                 <% end %>
@@ -191,6 +232,70 @@
             </table>
           </div>
         </div>
+
+        <!-- Pagination -->
+        <% if @pagy.pages > 1 %>
+          <div class="mt-6 flex justify-center">
+            <div class="bg-white px-4 py-3 flex items-center justify-between border-t border-gray-200 sm:px-6 rounded-lg shadow">
+              <div class="flex-1 flex justify-between sm:hidden">
+                <% if @pagy.prev %>
+                  <%= link_to "Précédent", admin_users_path(page: @pagy.prev, search: params[:search], filter: params[:filter]), 
+                      class: "relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50" %>
+                <% end %>
+                <% if @pagy.next %>
+                  <%= link_to "Suivant", admin_users_path(page: @pagy.next, search: params[:search], filter: params[:filter]), 
+                      class: "ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50" %>
+                <% end %>
+              </div>
+              
+              <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
+                <div>
+                  <p class="text-sm text-gray-700">
+                    Affichage de 
+                    <span class="font-medium"><%= @pagy.from %></span>
+                    à 
+                    <span class="font-medium"><%= @pagy.to %></span>
+                    sur 
+                    <span class="font-medium"><%= @pagy.count %></span>
+                    résultats
+                  </p>
+                </div>
+                <div>
+                  <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
+                    <% if @pagy.prev %>
+                      <%= link_to admin_users_path(page: @pagy.prev, search: params[:search], filter: params[:filter]), 
+                          class: "relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50" do %>
+                        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                        </svg>
+                      <% end %>
+                    <% end %>
+                    
+                    <% @pagy.series.each do |item| %>
+                      <% if item.is_a?(Integer) %>
+                        <%= link_to item, admin_users_path(page: item, search: params[:search], filter: params[:filter]), 
+                            class: "relative inline-flex items-center px-4 py-2 border text-sm font-medium #{item == @pagy.page ? 'z-10 bg-[#1F5C55] border-[#1F5C55] text-white' : 'bg-white border-gray-300 text-gray-500 hover:bg-gray-50'}" %>
+                      <% elsif item == :gap %>
+                        <span class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700">
+                          ...
+                        </span>
+                      <% end %>
+                    <% end %>
+                    
+                    <% if @pagy.next %>
+                      <%= link_to admin_users_path(page: @pagy.next, search: params[:search], filter: params[:filter]), 
+                          class: "relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50" do %>
+                        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                        </svg>
+                      <% end %>
+                    <% end %>
+                  </nav>
+                </div>
+              </div>
+            </div>
+          </div>
+        <% end %>
       </div>
     </div>
   </div>
