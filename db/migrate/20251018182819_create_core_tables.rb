@@ -1,7 +1,6 @@
 class CreateCoreTables < ActiveRecord::Migration[8.0]
   def up
-    # These are extensions that must be enabled in order to support this database
-    enable_extension "plpgsql" unless connection.extension_enabled?("plpgsql")
+    # SQLite3 doesn't require any special extensions
 
     # Core Tables - Person-Based Architecture
     create_table "people", force: :cascade do |t|
