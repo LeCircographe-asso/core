@@ -25,7 +25,7 @@ module People
     attribute :dyslexic_font, :boolean, default: false
     attribute :create_user_account, :boolean, default: false
     attribute :user_email, :string
-    attribute :user_system_role, :string, default: "user_connected"
+    attribute :user_system_role, :string, default: "web_visitor"
     attribute :user_password, :string
 
     # Adhésion et paiement
