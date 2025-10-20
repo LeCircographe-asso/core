@@ -63,3 +63,10 @@
 # Logs sensibles
 /log/production.log
 /log/staging.log
+
+# Temporary files
+temp_*.rb
+test_*.rb
+*_status.rb
+cookies.txt
+db/schema_clean.rb
