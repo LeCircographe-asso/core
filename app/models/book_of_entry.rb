@@ -47,6 +47,10 @@ class BookOfEntry < ApplicationRecord
   def expired?
     Date.current > expires_at
   end
+
+  def remaining_entries
+    sessions_remaining
+  end
   
   def expire!
     # Marquer le carnet comme expiré
