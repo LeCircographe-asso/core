@@ -1,0 +1,26 @@
+#!/bin/bash
+
+# Hook de pré-déploiement pour staging
+# Force un reset complet de la base de données à chaque déploiement
+
+echo "🔄 [STAGING] Pre-deploy hook: Resetting database..."
+
+# Vérifier si on est en staging
+if [ "$RAILS_ENV" = "staging" ]; then
+    echo "🗄️  [STAGING] Environment detected: $RAILS_ENV"
+    echo "⚠️  [STAGING] Forcing complete database reset..."
+    
+    # Exécuter le reset forcé de la base de données
+    rails db:force_reset
+    
+    if [ $? -eq 0 ]; then
+        echo "✅ [STAGING] Database reset completed successfully"
+    else
+        echo "❌ [STAGING] Database reset failed"
+        exit 1
+    fi
+else
+    echo "ℹ️  [STAGING] Not in staging environment, skipping database reset"
+fi
+
+echo "✅ [STAGING] Pre-deploy hook completed"
