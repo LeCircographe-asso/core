@@ -9,8 +9,10 @@ Rails.application.routes.draw do
       post :restore, on: :member
       # Nouvelles actions pour gérer Person
       post :create_membership, on: :member
-      post :create_subscription, on: :member
       post :create_user_for_person, on: :member
+      get :edit_person, on: :member
+      # Actions pour gérer les doublons
+      get :duplicates, on: :collection
     end
     resources :events, only: %i[new create edit destroy index]
     resource :session, only: %i[new create destroy]
@@ -21,7 +23,8 @@ Rails.application.routes.draw do
     resources :payments, only: %i[show create new update index destroy]
     resources :attendances, only: %i[index show new create destroy]
     resources :memberships, only: %i[index show new create edit update destroy]
-    resources :subscription_plans, only: %i[index show new create]
+    resources :membership_types, only: %i[index show new create edit update destroy]
+    resources :subscription_plans, only: %i[index show new create edit update destroy]
     resources :exports, only: %i[index] do
       get :newsletter_subscribed, on: :collection
       get :all_users, on: :collection

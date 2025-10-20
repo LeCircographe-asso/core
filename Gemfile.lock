@@ -273,6 +273,7 @@ GEM
     nokogiri (1.18.10-x86_64-linux-musl)
       racc (~> 1.4)
     ostruct (0.6.3)
+    pagy (6.5.0)
     parallel (1.27.0)
     parser (3.3.9.0)
       ast (~> 2.4.1)
@@ -541,6 +542,7 @@ DEPENDENCIES
   letter_opener
   letter_opener_web
   mailjet
+  pagy (~> 6.0)
   propshaft
   puma (>= 5.0)
   rack-cors
