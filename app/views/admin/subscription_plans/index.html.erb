@@ -1,34 +1,111 @@
-<h1>Plans d'Abonnement</h1>
+<div class="min-h-screen bg-gray-50 py-6">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <!-- Header -->
+    <div class="bg-gradient-to-r from-[#1F5C55] to-[#194A45] rounded-lg shadow-lg mb-6">
+      <div class="px-6 py-4 flex justify-between items-center">
+        <div>
+          <h1 class="text-2xl font-bold text-white">Plans d'Abonnement</h1>
+          <p class="text-green-100 mt-1">Gérer les cotisations et leurs prix</p>
+        </div>
+        <div>
+          <%= link_to "Nouveau plan", new_admin_subscription_plan_path, 
+              class: "inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-white bg-opacity-20 hover:bg-opacity-30 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-white" %>
+        </div>
+      </div>
+    </div>
 
-<div class="table-container">
-  <table class="admin-table">
-    <thead>
-      <tr>
-        <th>Nom</th>
-        <th>Type d'Adhésion</th>
-        <th>Prix</th>
-        <th>Durée</th>
-        <th>Séances</th>
-        <th>Actions</th>
-      </tr>
-    </thead>
-    <tbody>
-      <% @subscription_plans.each do |plan| %>
-        <tr>
-          <td><%= plan.name %></td>
-          <td><%= plan.membership_type.name %></td>
-          <td><%= plan.price_cents / 100.0 %>€</td>
-          <td><%= plan.duration %> mois</td>
-          <td><%= plan.sessions_count || "Illimité" %></td>
-          <td>
-            <%= link_to "Voir", admin_subscription_plan_path(plan), class: "btn btn-sm btn-primary" %>
-          </td>
-        </tr>
-      <% end %>
-    </tbody>
-  </table>
-</div>
+    <!-- Liste des plans d'abonnement -->
+    <div class="bg-white rounded-lg shadow-lg">
+      <div class="px-6 py-4 border-b border-gray-200">
+        <h2 class="text-lg font-semibold text-gray-900">Plans d'Abonnement Disponibles</h2>
+        <p class="text-sm text-gray-600 mt-1">Configurez les cotisations et leurs tarifs</p>
+      </div>
 
-<div class="mt-4">
-  <%= link_to "Retour à l'administration", admin_root_path, class: "btn btn-secondary" %>
+      <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200">
+          <thead class="bg-gray-50">
+            <tr>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nom</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Prix</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Séances</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Validité</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Carnets</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+            </tr>
+          </thead>
+          <tbody class="bg-white divide-y divide-gray-200">
+            <% @subscription_plans.each do |plan| %>
+              <tr class="hover:bg-gray-50">
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="text-sm font-medium text-gray-900"><%= plan.name %></div>
+                  <div class="text-sm text-gray-500 max-w-xs truncate"><%= plan.description %></div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
+                    <%= case plan.duration
+                        when 'day' then 'bg-blue-100 text-blue-800'
+                        when 'trimester' then 'bg-green-100 text-green-800'
+                        when 'annual' then 'bg-purple-100 text-purple-800'
+                        when 'pack10' then 'bg-orange-100 text-orange-800'
+                        else 'bg-gray-100 text-gray-800'
+                        end %>">
+                    <%= plan.duration.humanize %>
+                  </span>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="text-sm font-semibold text-[#1F5C55]"><%= plan.price_euros %>€</div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="text-sm text-gray-900">
+                    <% if plan.sessions_count %>
+                      <%= plan.sessions_count %> séances
+                    <% else %>
+                      <span class="text-gray-400">Illimité</span>
+                    <% end %>
+                  </div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="text-sm text-gray-900">
+                    <% if plan.validity_days %>
+                      <%= plan.validity_days %> jours
+                    <% else %>
+                      <span class="text-gray-400">-</span>
+                    <% end %>
+                  </div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="text-sm text-gray-900">
+                    <%= plan.book_of_entries.count %> carnets
+                  </div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                  <div class="flex space-x-2">
+                    <%= link_to "Voir", admin_subscription_plan_path(plan), 
+                        class: "text-[#1F5C55] hover:text-[#194A45]" %>
+                    <%= link_to "Modifier", edit_admin_subscription_plan_path(plan), 
+                        class: "text-blue-600 hover:text-blue-900" %>
+                    <% if plan.book_of_entries.empty? %>
+                      <%= link_to "Supprimer", admin_subscription_plan_path(plan), 
+                          method: :delete, 
+                          data: { confirm: "Êtes-vous sûr de vouloir supprimer ce plan d'abonnement ?" },
+                          class: "text-red-600 hover:text-red-900" %>
+                    <% else %>
+                      <span class="text-gray-400">Supprimer</span>
+                    <% end %>
+                  </div>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="mt-6 flex justify-between">
+      <%= link_to "Retour au tableau de bord", admin_dashboard_index_path,
+          class: "inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1F5C55]" %>
+    </div>
+  </div>
 </div>
