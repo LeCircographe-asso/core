@@ -44,7 +44,10 @@ env:
     RAILS_LOG_LEVEL: info
 
 # Configuration pour reset complet de la BDD en staging
-# Le reset sera géré par la migration robuste
+# Force un reset complet à chaque déploiement pour éviter les conflits de contraintes
+hooks:
+  before_deploy:
+    - "rails db:force_reset"
 
 # Volumes pour les logs et données (staging)
 volumes:
