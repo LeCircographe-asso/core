@@ -44,10 +44,7 @@ env:
     RAILS_LOG_LEVEL: info
 
 # Configuration pour reset complet de la BDD en staging
-# Force un reset complet à chaque déploiement pour éviter les conflits de contraintes
-hooks:
-  before_deploy:
-    - "rails db:force_reset"
+# Le reset sera géré par le hook pre-deploy dans .kamal/hooks/
 
 # Volumes pour les logs et données (staging)
 volumes:
