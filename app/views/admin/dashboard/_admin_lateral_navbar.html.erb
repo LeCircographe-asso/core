@@ -53,6 +53,24 @@
       </ul>
     </div>
 
+    <% if current_user&.super_admin? %>
+    <div class="border-t border-gray-200 mt-2 pt-2 px-4 sidebar-section">
+      <div class="text-sm font-medium text-gray-600 mb-1 sidebar-text">
+        Gestion des Articles
+      </div>
+      <ul class="sidebar-menu">
+        <li><%= link_to admin_membership_types_path, class: "sidebar-link flex items-center" do %>
+              <i class="fas fa-id-card mr-2 sidebar-icon"></i> <span class="sidebar-text" data-sidebar-target="text">Types d'Adhésion</span>
+            <% end %>
+        </li>
+        <li><%= link_to admin_subscription_plans_path, class: "sidebar-link flex items-center" do %>
+              <i class="fas fa-ticket-alt mr-2 sidebar-icon"></i> <span class="sidebar-text" data-sidebar-target="text">Plans d'Abonnement</span>
+            <% end %>
+        </li>
+      </ul>
+    </div>
+    <% end %>
+
     <div class="border-t border-gray-200 mt-2 pt-2 px-4 sidebar-section">
       <div class="text-sm font-medium text-gray-600 mb-1 sidebar-text">
         Navigation
