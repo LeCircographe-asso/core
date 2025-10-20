@@ -8,7 +8,13 @@ fi
 
 # If running the rails server then create or migrate existing database
 if [ "${@: -2:1}" == "./bin/rails" ] && [ "${@: -1:1}" == "server" ]; then
-  ./bin/rails db:prepare
+  # In staging, force a complete database reset to avoid constraint conflicts
+  if [ "$RAILS_ENV" = "staging" ]; then
+    echo "🔄 [STAGING] Forcing complete database reset..."
+    ./bin/rails db:force_reset
+  else
+    ./bin/rails db:prepare
+  fi
 fi
 
 exec "${@}"
