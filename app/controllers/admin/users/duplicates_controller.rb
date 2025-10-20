@@ -1,82 +1,50 @@
 module Admin
   module Users
-    # Admin::Users::DuplicatesController handles duplicate detection
-    # and management for users/persons. This controller is responsible for:
-    # - Detecting duplicates
-    # - Managing duplicate resolution
-    # - Cleaning up duplicate records
-    class DuplicatesController < BaseController
-      before_action :set_breadcrumbs
+    class DuplicatesController < Admin::BaseController
+      before_action :ensure_admin_access
 
-      # GET /admin/users/duplicates
       def index
-        @duplicate_report = DuplicateDetectionService.generate_report
-        add_breadcrumb "Détection des doublons", nil
+        @duplicate_report = find_duplicate_people
+        @breadcrumbs = ["Utilisateurs", "Détection des doublons"]
       end
 
-      # POST /admin/users/duplicates/merge
       def merge
-        primary_person_id = params[:primary_person_id]
-        secondary_person_id = params[:secondary_person_id]
-        
-        primary_person = Person.find(primary_person_id)
-        secondary_person = Person.find(secondary_person_id)
-        
-        result = MemberManagementService.merge_duplicate_persons(primary_person, secondary_person)
-        
-        if result[:success]
-          redirect_to admin_users_duplicates_path, 
-                      notice: "✅ Doublons fusionnés avec succès ! #{result[:transferred_count]} éléments transférés."
+        primary_person = Person.find_by(id: params[:primary_person_id])
+        secondary_person = Person.find_by(id: params[:secondary_person_id])
+
+        if primary_person && secondary_person
+          merge_people(primary_person, secondary_person)
+          redirect_to duplicates_admin_users_path, notice: "Doublons fusionnés avec succès"
         else
-          redirect_to admin_users_duplicates_path, 
-                      alert: "❌ Erreur lors de la fusion: #{result[:error]}"
+          redirect_to duplicates_admin_users_path, alert: "Personnes non trouvées"
         end
-      rescue => e
-        redirect_to admin_users_duplicates_path, 
-                    alert: "❌ Erreur lors de la fusion: #{e.message}"
-      end
-
-      # POST /admin/users/duplicates/cleanup
-      def cleanup
-        results = MemberManagementService.cleanup_duplicates
-        
-        success_count = results.count { |r| r[:result][:success] }
-        error_count = results.count { |r| !r[:result][:success] }
-        
-        if error_count == 0
-          redirect_to admin_users_duplicates_path, 
-                      notice: "✅ Nettoyage automatique terminé ! #{success_count} doublons fusionnés."
-        else
-          redirect_to admin_users_duplicates_path, 
-                      alert: "⚠️ Nettoyage partiel: #{success_count} succès, #{error_count} erreurs."
-        end
-      rescue => e
-        redirect_to admin_users_duplicates_path, 
-                    alert: "❌ Erreur lors du nettoyage automatique: #{e.message}"
-      end
-
-      # GET /admin/users/duplicates/identify
-      def identify
-        @duplicates = MemberManagementService.identify_duplicates
-        add_breadcrumb "Identification des doublons", nil
-      end
-
-      # POST /admin/users/duplicates/assign_missing_numbers
-      def assign_missing_numbers
-        MemberManagementService.assign_missing_member_numbers
-        
-        redirect_to admin_users_duplicates_path, 
-                    notice: "✅ Numéros d'adhérent assignés à toutes les personnes qui n'en avaient pas."
-      rescue => e
-        redirect_to admin_users_duplicates_path, 
-                    alert: "❌ Erreur lors de l'assignation des numéros: #{e.message}"
       end
 
       private
 
-      def set_breadcrumbs
-        add_breadcrumb "Liste d'adhérents", admin_users_path
-        add_breadcrumb "Gestion des doublons", nil
+      def find_duplicate_people
+        # Logique simple de détection de doublons basée sur le nom
+        Person.joins(:user)
+              .group(:first_name, :last_name)
+              .having("COUNT(*) > 1")
+              .pluck(:first_name, :last_name)
+      end
+
+      def merge_people(primary, secondary)
+        # Transférer les adhésions, paiements, etc. vers la personne principale
+        secondary.memberships.update_all(person_id: primary.id)
+        secondary.payments.update_all(person_id: primary.id)
+        secondary.book_of_entries.update_all(person_id: primary.id)
+        secondary.attendances.update_all(person_id: primary.id)
+        
+        # Supprimer la personne secondaire
+        secondary.destroy
+      end
+
+      def ensure_admin_access
+        unless current_user&.has_admin?
+          redirect_to root_path, alert: "Vous n'avez pas accès à cette page"
+        end
       end
     end
   end

@@ -5,9 +5,7 @@ FactoryBot.define do
     password_confirmation { "password123" }
     cgu { true }
     privacy_policy { true }
-    system_role { :user_connected }
-    first_name { "John" }
-    last_name { "Doe" }
+    system_role { :web_visitor }
 
     trait :admin do
       system_role { :admin }
