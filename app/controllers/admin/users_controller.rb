@@ -8,6 +8,9 @@ module Admin
   # for individual users managing their own profiles.
   class UsersController < BaseController
     include RoleHelper
+    include Admin::Users::DisplayHelper
+    include Admin::Users::StatusHelper
+    include Admin::Users::ActionsHelper
     before_action :set_user, only: %i[ show edit update destroy ]
     before_action :set_breadcrumbs, except: %i[ index new ]
     before_action :check_deletion_permissions, only: [ :destroy ]
@@ -44,6 +47,78 @@ module Admin
       @users_this_month = UserService.users_this_month
 
       add_breadcrumb "Liste d'adhérents", nil
+    end
+
+    # GET /admin/users/index_refactored - Version refactorisée avec partials
+    def index_refactored
+      
+      # Même logique que index mais avec les nouveaux helpers et components
+      @people = Person.main_people.includes(
+        :user, 
+        :memberships => :membership_type, 
+        :book_of_entries => :subscription_plan
+      )
+
+      # Filtres
+      apply_filters
+      
+      # Recherche
+      apply_search if params[:search].present?
+      
+      # Tri
+      @people = @people.order(:last_name, :first_name)
+      
+      # Pagination
+      @pagy, @people = pagy(@people, items: 25)
+
+      # Statistiques pour le dashboard (basées sur les Person principales)
+      @total_people = Person.main_people.count
+      @people_with_user = Person.main_people.joins(:user).count
+      @people_without_user = Person.main_people.left_joins(:user).where(users: { id: nil }).count
+      @new_users_yesterday = UserService.new_users_count
+      @basic_memberships = MembershipService.membership_type_count(:Basic)
+      @circus_memberships = MembershipService.membership_type_count(:Circus)
+      @active_memberships = MembershipService.active_memberships_count
+      @users_this_month = UserService.users_this_month
+
+      add_breadcrumb "Liste d'adhérents", admin_users_path
+      add_breadcrumb "Version Refactorisée", nil
+    end
+
+
+    # GET /admin/users/index_viewcomponents - Version avec ViewComponents
+    def index_viewcomponents
+      # Même logique que index_refactored mais avec ViewComponents
+      @people = Person.main_people.includes(
+        :user, 
+        :memberships => :membership_type, 
+        :book_of_entries => :subscription_plan
+      )
+
+      # Filtres
+      apply_filters
+      
+      # Recherche
+      apply_search if params[:search].present?
+      
+      # Tri
+      @people = @people.order(:last_name, :first_name)
+      
+      # Pagination
+      @pagy, @people = pagy(@people, items: 25)
+
+      # Statistiques pour le dashboard (basées sur les Person principales)
+      @total_people = Person.main_people.count
+      @people_with_user = Person.main_people.joins(:user).count
+      @people_without_user = Person.main_people.left_joins(:user).where(users: { id: nil }).count
+      @new_users_yesterday = UserService.new_users_count
+      @basic_memberships = MembershipService.membership_type_count(:Basic)
+      @circus_memberships = MembershipService.membership_type_count(:Circus)
+      @active_memberships = MembershipService.active_memberships_count
+      @users_this_month = UserService.users_this_month
+
+      add_breadcrumb "Liste d'adhérents", admin_users_path
+      add_breadcrumb "Version ViewComponents", nil
     end
 
     # GET /admin/users/1 or /admin/users/1.json
