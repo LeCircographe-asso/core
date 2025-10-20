@@ -53,3 +53,201 @@ body.dyslexic-font-enabled {
 .font-rough-typewriter {
     font-family: 'Rough Typewriter', monospace;
 }
+
+/* ===== AMÉLIORATIONS UX ADMIN USERS ===== */
+
+/* Animation pour les actions */
+.action-icon {
+  transition: all 0.2s ease-in-out;
+  border-radius: 4px;
+  padding: 4px;
+}
+
+.action-icon:hover {
+  transform: scale(1.1);
+  background-color: rgba(31, 92, 85, 0.1);
+}
+
+/* Amélioration des badges de statut */
+.status-badge {
+  position: relative;
+  overflow: hidden;
+}
+
+.status-badge::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+  transition: left 0.5s;
+}
+
+.status-badge:hover::before {
+  left: 100%;
+}
+
+/* Amélioration des lignes du tableau */
+.table-row {
+  transition: all 0.2s ease-in-out;
+}
+
+.table-row:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Animation pour les statistiques */
+.stat-card {
+  transition: all 0.3s ease-in-out;
+  position: relative;
+  overflow: hidden;
+}
+
+.stat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.stat-card::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(45deg, transparent 30%, rgba(255,255,255,0.1) 50%, transparent 70%);
+  transform: translateX(-100%);
+  transition: transform 0.6s;
+}
+
+.stat-card:hover::after {
+  transform: translateX(100%);
+}
+
+/* Amélioration des boutons d'action */
+.action-button {
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.action-button::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  transition: width 0.3s, height 0.3s;
+}
+
+.action-button:hover::before {
+  width: 100%;
+  height: 100%;
+}
+
+/* Animation pour les filtres */
+.filter-section {
+  transition: all 0.3s ease-in-out;
+}
+
+.filter-section:hover {
+  background-color: rgba(249, 250, 251, 0.8);
+}
+
+/* Amélioration de la recherche */
+.search-input {
+  transition: all 0.3s ease-in-out;
+}
+
+.search-input:focus {
+  transform: scale(1.02);
+  box-shadow: 0 0 0 3px rgba(31, 92, 85, 0.1);
+}
+
+/* Animation pour les tooltips */
+.tooltip {
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease-in-out;
+  transform: translateY(10px);
+}
+
+.tooltip.show {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+/* Amélioration de la pagination */
+.pagination-button {
+  transition: all 0.2s ease-in-out;
+  position: relative;
+  overflow: hidden;
+}
+
+.pagination-button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.pagination-button.active {
+  background: linear-gradient(135deg, #1F5C55, #194A45);
+  box-shadow: 0 4px 15px rgba(31, 92, 85, 0.3);
+}
+
+/* Animation pour les états vides */
+.empty-state {
+  animation: fadeInUp 0.6s ease-out;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Amélioration des badges de type d'adhésion */
+.membership-badge {
+  position: relative;
+  overflow: hidden;
+}
+
+.membership-badge::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+  transition: left 0.5s;
+}
+
+.membership-badge:hover::before {
+  left: 100%;
+}
+
+/* Responsive improvements */
+@media (max-width: 768px) {
+  .table-row:hover {
+    transform: none;
+    box-shadow: none;
+  }
+  
+  .stat-card:hover {
+    transform: none;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+}
