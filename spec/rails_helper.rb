@@ -7,8 +7,8 @@ abort("The Rails environment is running in production mode!") if Rails.env.produ
 require 'rspec/rails'
 # Add additional requires below this line. Rails is not loaded until this point!
 require 'factory_bot_rails'
-require 'shoulda/matchers'
-require 'database_cleaner/active_record'
+# require 'shoulda/matchers'  # Commenté - on peut l'ajouter plus tard
+# require 'database_cleaner/active_record'  # Commenté - on peut l'ajouter plus tard
 
 # Requires supporting ruby files with custom matchers and macros, etc, in
 # spec/support/ and its subdirectories. Files matching `spec/**/*_spec.rb` are
@@ -40,31 +40,27 @@ RSpec.configure do |config|
   # If you're not using ActiveRecord, or you'd prefer not to run each of your
   # examples within a transaction, remove the following line or assign false
   # instead of true.
-  config.use_transactional_fixtures = false
+  config.use_transactional_fixtures = true  # Utilise les transactions Rails par défaut
 
   # Setup factory_bot
   config.include FactoryBot::Syntax::Methods
 
-  # Setup database cleaner
-  config.before(:suite) do
-    DatabaseCleaner.clean_with(:truncation)
-  end
-
-  config.before(:each) do
-    DatabaseCleaner.strategy = :transaction
-  end
-
-  config.before(:each, js: true) do
-    DatabaseCleaner.strategy = :truncation
-  end
-
-  config.before(:each) do
-    DatabaseCleaner.start
-  end
-
-  config.after(:each) do
-    DatabaseCleaner.clean
-  end
+  # Setup database cleaner - Commenté pour simplifier
+  # config.before(:suite) do
+  #   DatabaseCleaner.clean_with(:truncation)
+  # end
+  # config.before(:each) do
+  #   DatabaseCleaner.strategy = :transaction
+  # end
+  # config.before(:each, js: true) do
+  #   DatabaseCleaner.strategy = :truncation
+  # end
+  # config.before(:each) do
+  #   DatabaseCleaner.start
+  # end
+  # config.after(:each) do
+  #   DatabaseCleaner.clean
+  # end
 
   # You can uncomment this line to turn off ActiveRecord support entirely.
   # config.use_active_record = false
@@ -90,10 +86,10 @@ RSpec.configure do |config|
   # config.filter_gems_from_backtrace("gem name")
 end
 
-# Configure Shoulda Matchers
-Shoulda::Matchers.configure do |config|
-  config.integrate do |with|
-    with.test_framework :rspec
-    with.library :rails
-  end
-end
+# Configure Shoulda Matchers - Commenté pour simplifier
+# Shoulda::Matchers.configure do |config|
+#   config.integrate do |with|
+#     with.test_framework :rspec
+#     with.library :rails
+#   end
+# end
