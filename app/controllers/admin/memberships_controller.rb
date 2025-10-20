@@ -28,22 +28,22 @@ module Admin
       @person = Person.find(membership_params[:person_id])
       @membership_type = MembershipType.find(membership_params[:membership_type_id])
       
-      # Créer l'adhésion
+      # Créer l'adhésion en statut pending pour le traiter
       @membership = @person.memberships.create!(
         membership_type: @membership_type,
         started_at: Date.current,
         ended_at: 1.year.from_now,
-        status: :active,
+        status: :pending,
         first_joined_at: Date.current
       )
 
-      # Créer le paiement
+      # Créer le paiement en statut pending pour le traiter
       payment = Payment.create!(
         person: @person,
         recorded_by: Current.user,
         total_cents: @membership_type.price_cents,
         payment_method: membership_params[:payment_method] || :cash,
-        status: :success,
+        status: :pending,
         notes: "Adhésion #{@membership_type.name}"
       )
 
@@ -55,7 +55,14 @@ module Admin
         description: "Adhésion #{@membership_type.name}"
       )
 
-      redirect_to admin_membership_path(@membership), notice: "Adhésion créée avec succès"
+      # Traiter le paiement (cela assignera automatiquement le numéro d'adhérent)
+      result = Payments::Process.new(payment).call
+      
+      unless result.success?
+        raise "Erreur lors du traitement du paiement: #{result.message}"
+      end
+
+      redirect_to admin_user_path("person_#{@person.id}"), notice: "Adhésion créée avec succès ! Vous pouvez maintenant ajouter une cotisation depuis la fiche utilisateur."
     rescue => e
       flash[:alert] = "Erreur lors de la création de l'adhésion: #{e.message}"
       redirect_to new_admin_membership_path(person_id: @person.id)
@@ -98,7 +105,7 @@ module Admin
     end
 
     def set_breadcrumbs
-      add_breadcrumb "Administration", admin_root_path
+      add_breadcrumb "Administration", admin_dashboard_index_path
     end
 
     def membership_params

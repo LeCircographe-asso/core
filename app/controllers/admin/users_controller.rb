@@ -14,13 +14,29 @@ module Admin
 
     # GET /admin/users or /admin/users.json
     def index
-      # Afficher TOUTES les Person (avec ou sans User)
-      @people = Person.includes(:user, :memberships, :payments).order(:last_name, :first_name)
+      # Base query avec eager loading optimisé - ne montrer que les Person principales
+      @people = Person.main_people.includes(
+        :user, 
+        :memberships => :membership_type, 
+        :book_of_entries => :subscription_plan
+      )
 
-      # Statistiques pour le dashboard
-      @total_people = Person.count
-      @people_with_user = Person.joins(:user).count
-      @people_without_user = Person.left_joins(:user).where(users: { id: nil }).count
+      # Filtres
+      apply_filters
+      
+      # Recherche
+      apply_search if params[:search].present?
+      
+      # Tri
+      @people = @people.order(:last_name, :first_name)
+      
+      # Pagination
+      @pagy, @people = pagy(@people, items: 25)
+
+      # Statistiques pour le dashboard (basées sur les Person principales)
+      @total_people = Person.main_people.count
+      @people_with_user = Person.main_people.joins(:user).count
+      @people_without_user = Person.main_people.left_joins(:user).where(users: { id: nil }).count
       @new_users_yesterday = UserService.new_users_count
       @basic_memberships = MembershipService.membership_type_count(:Basic)
       @circus_memberships = MembershipService.membership_type_count(:Circus)
@@ -51,12 +67,15 @@ module Admin
           @user.association(:person).target = @person
           @user.association(:person).loaded!
           @is_person_without_user = true
+        else
+          @is_person_without_user = false
         end
         
         # Données pour les formulaires
         @membership_types = MembershipType.all
         @subscription_plans = SubscriptionPlan.all
         @users = User.where(person: nil) # Users non liés
+        @recent_payments = @person.payments.includes(:payment_lines, :recorded_by).order(created_at: :desc).limit(10)
         
         add_breadcrumb "Liste d'adhérents", admin_users_path
         add_breadcrumb @person.full_name, nil
@@ -72,6 +91,7 @@ module Admin
         @person = @user.person
         @array_right = available_roles_for_user(@user)
         @is_person_without_user = false
+        @recent_payments = @person&.payments&.includes(:payment_lines, :recorded_by)&.order(created_at: :desc)&.limit(10) || []
         
         add_breadcrumb "Liste d'adhérents", admin_users_path
         add_breadcrumb @user&.person&.full_name.present? ? @user.person.full_name : "Utilisateur ##{@user.id}", nil
@@ -87,16 +107,37 @@ module Admin
     def new
       @user = User.new
       @user.created_by_admin = true
+      
+      # Si on a un person_id, pré-remplir avec les données de la personne
+      if params[:person_id].present?
+        @person = Person.find(params[:person_id])
+        @user.person = @person
+        @user.email_address = @person.email
+        @user.system_role = "web_visitor" # Rôle par défaut
+        add_breadcrumb "Liste d'adhérents", admin_users_path
+        add_breadcrumb @person.full_name, admin_user_path("person_#{@person.id}")
+        add_breadcrumb "Créer un compte web", nil
+      else
+        add_breadcrumb "Liste d'adhérents", admin_users_path
+        add_breadcrumb "Nouvel adhérent", nil
+      end
+    end
+
+    # GET /admin/users/person_1/edit_person
+    def edit_person
+      person_id = params[:id].to_s.gsub('person_', '')
+      @person = Person.find(person_id)
       add_breadcrumb "Liste d'adhérents", admin_users_path
-      add_breadcrumb "Nouvel adhérent", nil
+      add_breadcrumb @person.full_name, admin_user_path("person_#{@person.id}")
+      add_breadcrumb "Modifier", nil
     end
 
     # GET /admin/users/1/edit
     def edit
       # Adapter pour gérer les Person
       if params[:id].to_s.start_with?('person_')
-        # Rediriger vers la fiche Person pour modification
-        redirect_to admin_user_path(params[:id]), notice: "Utilisez la fiche Person pour modifier les informations"
+        # Rediriger vers l'édition Person
+        redirect_to edit_person_admin_user_path(params[:id])
         return
       end
 
@@ -129,8 +170,69 @@ module Admin
 
     # POST /admin/users or /admin/users.json
     def create
-      # Utiliser le service People::Register pour créer Person + User + Membership
-      result = People::Register.new(
+      # Si on a un person_id, on crée un compte pour une personne existante
+      if params[:person_id].present?
+        person = Person.find(params[:person_id])
+        
+        # Vérifier si cette personne a déjà un compte User
+        if person.user.present?
+          redirect_to admin_user_path("person_#{person.id}"), 
+                      alert: "Cette personne a déjà un compte web. ID User: #{person.user.id}"
+          return
+        end
+        
+        # Créer le User si compte web demandé
+        if user_params[:create_web_account] == "true"
+          # Un compte web nécessite un email
+          if person.email.blank?
+            flash.now[:alert] = "Un email est obligatoire pour créer un compte web."
+            @user = User.new
+            @user.person = person
+            render :new, status: :unprocessable_entity
+            return
+          end
+          
+          # LOGIQUE SIMPLE : Chercher un User existant avec cet email
+          existing_user = User.find_by(email_address: person.email)
+          
+          if existing_user.present?
+            # CAS 1: User existe déjà → Le lier à cette Person
+            if existing_user.person.present?
+              redirect_to admin_user_path("person_#{person.id}"), 
+                          alert: "Ce compte web (#{existing_user.email_address}) est déjà lié à #{existing_user.person.full_name}. Impossible de le lier à #{person.full_name}."
+              return
+            else
+              # User existe mais pas lié → Le lier
+              existing_user.update!(person: person)
+              redirect_to admin_user_path("person_#{person.id}"), 
+                          notice: "✅ Compte web lié ! #{existing_user.email_address} est maintenant associé à #{person.full_name}."
+              return
+            end
+          else
+            # CAS 2: Pas de User existant → Créer un nouveau User
+            password = SecureRandom.hex(8)
+            user = User.create!(
+              person: person,
+              email_address: person.email,
+              password: password,
+              password_confirmation: password,
+              system_role: user_params[:system_role] || "web_visitor",
+              created_by_admin: true,
+              cgu: true,
+              privacy_policy: true
+            )
+            redirect_to admin_user_path("person_#{person.id}"), 
+                        notice: "✅ Nouveau compte web créé ! Email: #{person.email}, Mot de passe temporaire généré."
+            return
+          end
+        end
+
+        redirect_to admin_user_path("person_#{person.id}"), notice: "Compte web créé avec succès !"
+        return
+      end
+
+      # Sinon, créer une nouvelle Person (sans adhésion obligatoire)
+      person = Person.new(
         first_name: user_params[:person][:first_name],
         last_name: user_params[:person][:last_name],
         email: user_params[:person][:email],
@@ -143,28 +245,47 @@ module Admin
         emergency_contact_name: user_params[:person][:emergency_contact_name],
         emergency_contact_phone: user_params[:person][:emergency_contact_phone],
         notes: user_params[:person][:notes],
-        occupation: user_params[:person][:occupation],
         specialty: user_params[:person][:specialty],
-        image_rights: user_params[:person][:image_rights],
-        get_involved: user_params[:person][:get_involved],
-        newsletter_subscribed: user_params[:person][:newsletter_subscribed],
-        dyslexic_font: user_params[:person][:dyslexic_font],
-        # Adhésion obligatoire
-        membership_type_id: user_params[:membership_type_id],
-        payment_method: user_params[:payment_method] || "cash",
-        recorded_by_id: Current.user&.id,
-        # User account creation (optionnel)
-        create_user_account: user_params[:email_address].present?,
-        user_email: user_params[:email_address],
-        user_system_role: user_params[:system_role] || "user_connected"
-      ).call
+        is_minor: user_params[:person][:is_minor] || false,
+        image_rights: user_params[:person][:image_rights] || false,
+        get_involved: user_params[:person][:get_involved] || false,
+        newsletter_subscribed: user_params[:person][:newsletter_subscribed] || false,
+      )
 
-      if result.success?
-        redirect_to admin_users_path, notice: "Adhérent créé avec succès !"
+        if person.save
+          # PAS d'assignation automatique du numéro d'adhérent
+          # Le numéro sera assigné lors du premier paiement d'adhésion
+        
+        # Créer le User si compte web demandé
+        if user_params[:create_web_account] == "true"
+          # Un compte web nécessite un email
+          if person.email.blank?
+            flash.now[:alert] = "Un email est obligatoire pour créer un compte web."
+            @user = User.new
+            @user.person = person
+            render :new, status: :unprocessable_entity
+            return
+          end
+          
+          password = SecureRandom.hex(8)
+          user = User.create!(
+            person: person,
+            email_address: person.email,
+            password: password,
+            password_confirmation: password,
+            system_role: user_params[:system_role] || "web_visitor",
+            created_by_admin: true,
+            cgu: true,
+            privacy_policy: true
+          )
+        end
+
+        # Rediriger vers la page de création d'adhésion
+        redirect_to new_admin_membership_path(person_id: person.id), notice: "Personne créée avec succès ! Veuillez maintenant créer son adhésion."
       else
         @user = User.new
-        @user.build_person
-        flash.now[:alert] = "Erreur lors de la création de l'adhérent: #{result.errors.join(', ')}"
+        @user.person = person
+        flash.now[:alert] = "Erreur lors de la création : #{person.errors.full_messages.join(', ')}"
         render :new, status: :unprocessable_entity
       end
     end
@@ -173,8 +294,14 @@ module Admin
     def update
       # Adapter pour gérer les Person
       if params[:id].to_s.start_with?('person_')
-        # Rediriger vers la fiche Person
-        redirect_to admin_user_path(params[:id]), notice: "Utilisez la fiche Person pour modifier les informations"
+        person_id = params[:id].to_s.gsub('person_', '')
+        @person = Person.find(person_id)
+        
+        if @person.update(person_params)
+          redirect_to admin_user_path("person_#{@person.id}"), notice: "Informations mises à jour avec succès."
+        else
+          render :edit_person, status: :unprocessable_entity
+        end
         return
       end
 
@@ -235,6 +362,15 @@ module Admin
       end
     end
 
+
+    # GET /admin/users/duplicates
+    def duplicates
+      @duplicate_report = DuplicateDetectionService.generate_report
+      add_breadcrumb "Liste d'adhérents", admin_users_path
+      add_breadcrumb "Détection des doublons", nil
+    end
+
+
     private
     # Use callbacks to share common setup or constraints between actions.
     def set_user
@@ -272,22 +408,22 @@ module Admin
       @person = Person.find(params[:id])
       @membership_type = MembershipType.find(params[:membership_type_id])
       
-      # Créer l'adhésion
+      # Créer l'adhésion en statut pending pour le traiter
       membership = @person.memberships.create!(
         membership_type: @membership_type,
         started_at: Date.current,
         ended_at: 1.year.from_now,
-        status: :active,
+        status: :pending,
         first_joined_at: Date.current
       )
 
-      # Créer le paiement
+      # Créer le paiement en statut pending pour le traiter
       payment = Payment.create!(
         person: @person,
         recorded_by: Current.user,
         total_cents: @membership_type.price_cents,
         payment_method: params[:payment_method] || :cash,
-        status: :success,
+        status: :pending,
         notes: "Adhésion #{@membership_type.name}"
       )
 
@@ -299,52 +435,19 @@ module Admin
         description: "Adhésion #{@membership_type.name}"
       )
 
+      # Traiter le paiement (cela assignera automatiquement le numéro d'adhérent)
+      result = Payments::Process.new(payment).call
+      
+      unless result.success?
+        raise "Erreur lors du traitement du paiement: #{result.message}"
+      end
+
       redirect_to admin_user_path("person_#{@person.id}"), notice: "Adhésion créée avec succès"
     rescue => e
       redirect_to admin_user_path("person_#{@person.id}"), alert: "Erreur lors de la création de l'adhésion: #{e.message}"
     end
 
-    def create_subscription
-      @person = Person.find(params[:id])
-      @subscription_plan = SubscriptionPlan.find(params[:subscription_plan_id])
-      
-      # Vérifier que la personne peut acheter des plans d'abonnement
-      unless @person.can_buy_subscription_plans?
-        redirect_to admin_user_path("person_#{@person.id}"), alert: "Cette personne doit avoir une adhésion Cirque pour acheter des plans d'abonnement"
-        return
-      end
 
-      # Créer le carnet d'entrées
-      book_of_entry = @person.book_of_entries.create!(
-        subscription_plan: @subscription_plan,
-        sessions_remaining: @subscription_plan.sessions_count || 0,
-        purchased_at: Time.current,
-        expires_at: @subscription_plan.validity_days.days.from_now,
-        status: :active
-      )
-
-      # Créer le paiement
-      payment = Payment.create!(
-        person: @person,
-        recorded_by: Current.user,
-        total_cents: @subscription_plan.price_cents,
-        payment_method: params[:payment_method] || :cash,
-        status: :success,
-        notes: "Plan d'abonnement #{@subscription_plan.name}"
-      )
-
-      # Créer la ligne de paiement
-      PaymentLine.create!(
-        payment: payment,
-        item: book_of_entry,
-        amount_cents: @subscription_plan.price_cents,
-        description: "Plan d'abonnement #{@subscription_plan.name}"
-      )
-
-      redirect_to admin_user_path("person_#{@person.id}"), notice: "Plan d'abonnement acheté avec succès"
-    rescue => e
-      redirect_to admin_user_path("person_#{@person.id}"), alert: "Erreur lors de l'achat du plan: #{e.message}"
-    end
 
     def create_user_for_person
       @person = Person.find(params[:id])
@@ -355,19 +458,39 @@ module Admin
         return
       end
 
-      # Créer le compte User
+      # LOGIQUE SIMPLE : Chercher un User existant avec cet email
+      if @person.email.present?
+        existing_user = User.find_by(email_address: @person.email)
+        
+        if existing_user.present?
+          # User existe déjà → Le lier à cette Person
+          if existing_user.person.present?
+            redirect_to admin_user_path("person_#{@person.id}"), 
+                        alert: "Ce compte web (#{existing_user.email_address}) est déjà lié à #{existing_user.person.full_name}. Impossible de le lier à #{@person.full_name}."
+            return
+          else
+            # User existe mais pas lié → Le lier
+            existing_user.update!(person: @person)
+            redirect_to admin_user_path("person_#{@person.id}"), 
+                        notice: "✅ Compte web lié ! #{existing_user.email_address} est maintenant associé à #{@person.full_name}."
+            return
+          end
+        end
+      end
+
+      # Pas de User existant → Créer un nouveau User
       user = User.create!(
         person: @person,
         email_address: @person.email,
         password: SecureRandom.hex(8), # Mot de passe temporaire
         password_confirmation: SecureRandom.hex(8),
-        system_role: params[:system_role] || "user_connected",
+        system_role: params[:system_role] || "web_visitor",
         created_by_admin: true,
         cgu: true,
         privacy_policy: true
       )
 
-      redirect_to admin_user_path("person_#{@person.id}"), notice: "Compte utilisateur créé avec succès. Mot de passe temporaire généré."
+      redirect_to admin_user_path("person_#{@person.id}"), notice: "✅ Nouveau compte web créé ! Email: #{@person.email}, Mot de passe temporaire généré."
     rescue => e
       redirect_to admin_user_path("person_#{@person.id}"), alert: "Erreur lors de la création du compte: #{e.message}"
     end
@@ -378,6 +501,7 @@ module Admin
         :email_address,
         :system_role,
         :created_by_admin,
+        :create_web_account,
         person: [
           :id,
           :first_name,
@@ -389,14 +513,58 @@ module Admin
           :emergency_contact_name,
           :emergency_contact_phone,
           :notes,
-          :occupation,
           :specialty,
+          :is_minor,
           :image_rights,
           :get_involved,
           :newsletter_subscribed,
-          :dyslexic_font
         ]
       )
     end
+
+    def person_params
+      params.require(:person).permit(
+        :first_name,
+        :last_name,
+        :email,
+        :phone,
+        :address,
+        :zip_code,
+        :town,
+        :country,
+        :birth_date,
+        :emergency_contact_name,
+        :emergency_contact_phone,
+        :notes,
+        :newsletter_subscribed,
+        :get_involved,
+        :image_rights,
+        :is_minor
+      )
+    end
+
+    # Méthodes privées pour les filtres et la recherche
+    def apply_filters
+      case params[:filter]
+      when 'with_active_membership'
+        @people = @people.with_active_membership
+      when 'with_expiring_membership'
+        @people = @people.with_expiring_membership
+      when 'with_expired_membership'
+        @people = @people.with_expired_membership
+      when 'without_membership'
+        @people = @people.without_membership
+      when 'with_user_account'
+        @people = @people.with_user_account
+      when 'without_user_account'
+        @people = @people.without_user_account
+      end
+    end
+
+    def apply_search
+      @people = @people.search_by_contact(params[:search])
+    end
+
+
   end
 end
