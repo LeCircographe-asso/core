@@ -1,0 +1,146 @@
+<% content_for :title, "Détection des doublons" %>
+
+<div class="min-h-screen py-6">
+  <div class="max-w-6xl mx-auto">
+    <!-- Breadcrumbs -->
+    <%= render 'shared/breadcrumbs' %>
+    
+    <div class="bg-white shadow-lg rounded-lg overflow-hidden">
+      <!-- Header -->
+      <div class="bg-gradient-to-r from-orange-500 to-red-500 px-6 py-4">
+        <h1 class="text-2xl font-bold text-white">🔍 Détection des doublons</h1>
+        <p class="text-white/80 mt-1">
+          Identification et résolution des doublons dans la base de données
+        </p>
+      </div>
+
+      <div class="p-6">
+        <!-- Statistiques -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+          <div class="bg-blue-50 rounded-lg p-4">
+            <div class="text-2xl font-bold text-blue-600"><%= @duplicate_report[:total_duplicates] %></div>
+            <div class="text-sm text-blue-800">Total doublons</div>
+          </div>
+          <div class="bg-red-50 rounded-lg p-4">
+            <div class="text-2xl font-bold text-red-600"><%= @duplicate_report[:high_severity] %></div>
+            <div class="text-sm text-red-800">Haute priorité</div>
+          </div>
+          <div class="bg-yellow-50 rounded-lg p-4">
+            <div class="text-2xl font-bold text-yellow-600"><%= @duplicate_report[:medium_severity] %></div>
+            <div class="text-sm text-yellow-800">Priorité moyenne</div>
+          </div>
+          <div class="bg-green-50 rounded-lg p-4">
+            <div class="text-2xl font-bold text-green-600"><%= @duplicate_report[:duplicates].count { |d| d[:severity] == :low } %></div>
+            <div class="text-sm text-green-800">Faible priorité</div>
+          </div>
+        </div>
+
+        <!-- Liste des doublons -->
+        <% if @duplicate_report[:duplicates].any? %>
+          <div class="space-y-6">
+            <% @duplicate_report[:duplicates].each_with_index do |duplicate, index| %>
+              <div class="border rounded-lg p-6 <%= duplicate[:severity] == :high ? 'border-red-200 bg-red-50' : duplicate[:severity] == :medium ? 'border-yellow-200 bg-yellow-50' : 'border-gray-200 bg-gray-50' %>">
+                <!-- Header du doublon -->
+                <div class="flex items-center justify-between mb-4">
+                  <div class="flex items-center">
+                    <div class="<%= duplicate[:severity] == :high ? 'bg-red-500' : duplicate[:severity] == :medium ? 'bg-yellow-500' : 'bg-gray-500' %> rounded-full p-2 mr-3">
+                      <svg class="h-5 w-5 text-white" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+                      </svg>
+                    </div>
+                    <div>
+                      <h3 class="text-lg font-semibold <%= duplicate[:severity] == :high ? 'text-red-900' : duplicate[:severity] == :medium ? 'text-yellow-900' : 'text-gray-900' %>">
+                        <%= duplicate[:description] %>
+                      </h3>
+                      <p class="text-sm <%= duplicate[:severity] == :high ? 'text-red-700' : duplicate[:severity] == :medium ? 'text-yellow-700' : 'text-gray-700' %>">
+                        <%= duplicate[:records].count %> enregistrement(s) concerné(s)
+                      </p>
+                    </div>
+                  </div>
+                  <div class="<%= duplicate[:severity] == :high ? 'bg-red-100 text-red-800' : duplicate[:severity] == :medium ? 'bg-yellow-100 text-yellow-800' : 'bg-gray-100 text-gray-800' %> px-3 py-1 rounded-full text-sm font-medium">
+                    <%= duplicate[:severity].to_s.humanize %>
+                  </div>
+                </div>
+
+                <!-- Détails des enregistrements -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                  <% duplicate[:records].each do |record| %>
+                    <div class="bg-white rounded-lg p-4 border">
+                      <div class="flex items-center justify-between mb-3">
+                        <h4 class="font-medium text-gray-900">
+                          <% if record.is_a?(Person) %>
+                            Person ID: <%= record.id %>
+                          <% elsif record.is_a?(User) %>
+                            User ID: <%= record.id %>
+                          <% end %>
+                        </h4>
+                        <%= link_to "Voir", admin_user_path(record.is_a?(Person) ? "person_#{record.id}" : record.id), 
+                            class: "text-blue-600 hover:text-blue-800 text-sm" %>
+                      </div>
+                      
+                      <div class="space-y-2 text-sm">
+                        <% if record.is_a?(Person) %>
+                          <div><strong>Nom:</strong> <%= record.full_name %></div>
+                          <div><strong>Email:</strong> <%= record.email.present? ? record.email : "Non renseigné" %></div>
+                          <div><strong>Téléphone:</strong> <%= record.phone.present? ? record.phone : "Non renseigné" %></div>
+                          <div><strong>Compte web:</strong> 
+                            <% if record.user.present? %>
+                              <span class="text-green-600">✓ Lié (User ID: <%= record.user.id %>)</span>
+                            <% else %>
+                              <span class="text-gray-500">✗ Pas de compte</span>
+                            <% end %>
+                          </div>
+                          <div><strong>Adhésions:</strong> <%= record.memberships.count %></div>
+                          <div><strong>Paiements:</strong> <%= record.payments.count %></div>
+                        <% elsif record.is_a?(User) %>
+                          <div><strong>Email:</strong> <%= record.email_address %></div>
+                          <div><strong>Rôle:</strong> <%= record.system_role.humanize %></div>
+                          <div><strong>Person liée:</strong> 
+                            <% if record.person.present? %>
+                              <span class="text-green-600">✓ <%= record.person.full_name %> (ID: <%= record.person.id %>)</span>
+                            <% else %>
+                              <span class="text-red-600">✗ Non lié</span>
+                            <% end %>
+                          </div>
+                          <div><strong>Créé le:</strong> <%= record.created_at.strftime("%d/%m/%Y") %></div>
+                        <% end %>
+                      </div>
+                    </div>
+                  <% end %>
+                </div>
+
+                <!-- Actions de fusion (pour les doublons de Person) -->
+                <% if duplicate[:type] == :name_email_duplicate && duplicate[:records].all? { |r| r.is_a?(Person) } && duplicate[:records].count == 2 %>
+                  <div class="mt-4 p-4 bg-blue-50 rounded-lg">
+                    <h4 class="font-medium text-blue-900 mb-2">Action recommandée : Fusionner les personnes</h4>
+                    <p class="text-sm text-blue-700 mb-3">
+                      Ces deux personnes ont le même nom. Vous pouvez les fusionner pour éviter la duplication.
+                    </p>
+                    <%= form_with url: merge_persons_admin_users_path, method: :post, local: true, class: "inline" do |form| %>
+                      <%= form.hidden_field :source_person_id, value: duplicate[:records].first.id %>
+                      <%= form.hidden_field :target_person_id, value: duplicate[:records].last.id %>
+                      <%= form.submit "Fusionner vers #{duplicate[:records].last.full_name}", 
+                          class: "px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 text-sm",
+                          data: { 
+                            confirm: "Êtes-vous sûr de vouloir fusionner #{duplicate[:records].first.full_name} vers #{duplicate[:records].last.full_name} ? Cette action est irréversible.",
+                            disable_with: "Fusion en cours..."
+                          } %>
+                    <% end %>
+                  </div>
+                <% end %>
+              </div>
+            <% end %>
+          </div>
+        <% else %>
+          <div class="text-center py-12">
+            <svg class="mx-auto h-12 w-12 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            <h3 class="mt-2 text-sm font-medium text-gray-900">Aucun doublon détecté</h3>
+            <p class="mt-1 text-sm text-gray-500">Votre base de données est propre !</p>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>
