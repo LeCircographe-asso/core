@@ -189,23 +189,23 @@
                       </td>
                       
                       <td class="px-6 py-4 whitespace-nowrap text-sm">
-                        <%= membership_status_badge(person) %>
+                        <%= render MembershipStatusBadgeComponent.new(person: person) %>
                       </td>
                       
                       <td class="px-6 py-4 whitespace-nowrap text-sm">
-                        <%= membership_type_badge(person) %>
+                        <%= render MembershipTypeBadgeComponent.new(person: person) %>
                       </td>
                       
                       <td class="px-6 py-4 whitespace-nowrap text-sm">
-                        <%= subscription_status_badge(person) %>
+                        <%= render SubscriptionStatusBadgeComponent.new(person: person) %>
                       </td>
                       
                       <td class="px-6 py-4 whitespace-nowrap text-sm text-center">
-                        <%= web_account_icon(person) %>
+                        <%= render WebAccountIconComponent.new(person: person) %>
                       </td>
                       
                       <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                        <%= contextual_actions(person) %>
+                        <%= render ContextualActionsComponent.new(person: person) %>
                       </td>
                     </tr>
                   <% end %>
