@@ -15,7 +15,6 @@ module Admin
     end
 
     def new
-      @subscription_plans = SubscriptionPlan.all
       @person = Person.find(params[:person_id]) if params[:person_id]
       
       # Vérifier que la personne peut acheter des plans d'abonnement
@@ -23,6 +22,16 @@ module Admin
         flash[:alert] = "Cette personne doit avoir une adhésion Cirque pour acheter des plans d'abonnement"
         redirect_to admin_users_path
         return
+      end
+      
+      # Filtrer les plans d'abonnement selon le type d'adhésion de la personne
+      if @person&.current_membership&.membership_type&.circus?
+        @subscription_plans = SubscriptionPlan.joins(:membership_type)
+                                            .where(membership_types: { category: [:circus_full, :circus_reduced] })
+                                            .current_versions
+                                            .order(:duration, :price_cents)
+      else
+        @subscription_plans = []
       end
       
       add_breadcrumb "Nouvel abonnement", nil
@@ -54,13 +63,19 @@ module Admin
       @subscription_plan = SubscriptionPlan.find(subscription_params[:subscription_plan_id])
       
       # Créer le carnet d'entrées (BookOfEntry)
-      book_of_entry = @person.book_of_entries.create!(
+      book_of_entry_params = {
         subscription_plan: @subscription_plan,
         sessions_remaining: @subscription_plan.sessions_count || 0,
         purchased_at: Time.current,
-        expires_at: @subscription_plan.validity_days.days.from_now,
         status: :active
-      )
+      }
+      
+      # Les packs10 n'expirent jamais, les autres plans ont une date d'expiration
+      unless @subscription_plan.duration == "pack10"
+        book_of_entry_params[:expires_at] = @subscription_plan.duration_days.days.from_now
+      end
+      
+      book_of_entry = @person.book_of_entries.create!(book_of_entry_params)
 
       # Créer le paiement
       payment = Payment.create!(

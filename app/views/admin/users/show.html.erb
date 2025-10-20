@@ -257,8 +257,13 @@
                           </div>
                         </div>
                         <div class="text-right">
-                          <div class="text-sm text-gray-500">Expire le</div>
-                          <div class="text-sm font-medium text-gray-900"><%= book.expires_at.strftime("%d/%m/%Y") %></div>
+                          <% if book.expires_at %>
+                            <div class="text-sm text-gray-500">Expire le</div>
+                            <div class="text-sm font-medium text-gray-900"><%= book.expires_at.strftime("%d/%m/%Y") %></div>
+                          <% else %>
+                            <div class="text-sm text-gray-500">Validité</div>
+                            <div class="text-sm font-medium text-green-600">Sans expiration</div>
+                          <% end %>
                         </div>
                       </div>
                     </div>

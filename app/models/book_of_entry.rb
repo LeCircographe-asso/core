@@ -11,7 +11,7 @@ class BookOfEntry < ApplicationRecord
   validates :sessions_remaining, presence: true, numericality: { greater_than_or_equal_to: 0 }
   validates :status, presence: true
   validates :purchased_at, presence: true
-  validates :expires_at, presence: true
+  validates :expires_at, presence: true, unless: :is_pack10?
   
   # Enum pour les statuts selon le domain_model_circographe.md
   enum :status, { 
@@ -28,7 +28,15 @@ class BookOfEntry < ApplicationRecord
   # Méthodes
   def can_use?
     # Un carnet peut être utilisé s'il est actif et a des séances restantes
-    active? && sessions_remaining > 0 && !expired?
+    return false unless active? && sessions_remaining > 0
+    
+    # Pour les packs, vérifier qu'il n'est pas expiré (sauf si c'est un pack10)
+    return false if expired? && !is_pack10?
+    
+    # Vérifier que la personne a une adhésion Circus active
+    return false unless person.current_membership&.membership_type&.circus?
+    
+    true
   end
   
   def use_session!
@@ -45,12 +53,26 @@ class BookOfEntry < ApplicationRecord
   end
   
   def expired?
+    # Les packs10 ne expirent jamais
+    return false if is_pack10?
+    
     Date.current > expires_at
+  end
+  
+  def is_pack10?
+    subscription_plan.duration == "pack10"
   end
 
   def remaining_entries
     sessions_remaining
   end
+
+  # Scopes optimisés pour les requêtes d'expiration
+  scope :expired, -> { where('expires_at < ?', Date.current) }
+  scope :not_expired, -> { where('expires_at IS NULL OR expires_at > ?', Date.current) }
+  scope :with_expiration, -> { where.not(expires_at: nil) }
+  scope :without_expiration, -> { where(expires_at: nil) }
+  scope :usable, -> { active.not_expired.where('sessions_remaining > 0') }
   
   def expire!
     # Marquer le carnet comme expiré

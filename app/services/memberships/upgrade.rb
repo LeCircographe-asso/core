@@ -13,86 +13,45 @@ module Memberships
     validates :person_id, presence: true
     validates :new_membership_type_id, presence: true
 
-    def initialize(attributes = {})
-      super
-      self.started_at ||= Date.current
-      self.payment_method ||= "cash"
+    def initialize(membership = nil, new_membership_type = nil, custom_start_date = nil)
+      super()
+      @membership = membership
+      @new_membership_type = new_membership_type
+      @custom_start_date = custom_start_date
     end
 
     def call
-      return failure("Person not found") unless person
-      return failure("New membership type not found") unless new_membership_type
-      return failure("No current membership to upgrade") unless current_membership
-      return failure("Cannot upgrade to this membership type") unless can_upgrade?
+      return failure("Membership is required") unless @membership
+      return failure("New membership type is required") unless @new_membership_type
+      return failure("Cannot upgrade to the same membership type") unless upgrade_allowed?
 
       ActiveRecord::Base.transaction do
-        calculate_price_difference
-        create_upgrade_payment if price_difference > 0
         perform_upgrade
         success
       end
-    rescue ActiveRecord::RecordInvalid => e
+    rescue StandardError => e
       failure(e.message)
     end
 
     private
 
-    def person
-      @person ||= Person.find_by(id: person_id)
-    end
-
-    def new_membership_type
-      @new_membership_type ||= MembershipType.find_by(id: new_membership_type_id)
-    end
-
-    def current_membership
-      @current_membership ||= person&.current_membership
-    end
-
-    def can_upgrade?
-      current_membership&.can_upgrade_to?(new_membership_type)
-    end
-
-    def calculate_price_difference
-      current_price = current_membership.membership_type.price_cents
-      new_price = new_membership_type.price_cents
-      @price_difference = [ new_price - current_price, 0 ].max
-    end
-
-    def price_difference
-      @price_difference ||= 0
-    end
-
-    def create_upgrade_payment
-      payment = Payment.create!(
-        person: person,
-        recorded_by: User.first, # Fallback si Current.user n'est pas disponible
-        total_cents: price_difference,
-        payment_method: payment_method,
-        notes: "Upgrade from #{current_membership.membership_type.name} to #{new_membership_type.name}"
-      )
-
-      # Créer une ligne de paiement pour la différence
-      PaymentLine.create!(
-        payment: payment,
-        item: new_membership_type,
-        amount_cents: price_difference,
-        description: "Upgrade membership"
-      )
-
-      # Traiter le paiement
-      Payments::Process.new(payment).call
+    def upgrade_allowed?
+      return false if @membership.membership_type == @new_membership_type
+      return false if @membership.membership_type.circus? && @new_membership_type.basic?
+      true
     end
 
     def perform_upgrade
-      current_membership.upgrade_to!(new_membership_type, started_at)
+      start_date = @custom_start_date || Date.current
+      @membership.upgrade_to!(@new_membership_type, start_date)
     end
 
     def success
       OpenStruct.new(
         success?: true,
-        new_membership: person.current_membership,
-        message: "Membership upgraded successfully to #{new_membership_type.name}"
+        new_membership: @membership.person.reload.current_membership,
+        old_membership: @membership,
+        message: "Membership upgraded successfully"
       )
     end
 

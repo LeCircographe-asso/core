@@ -33,7 +33,11 @@ class Payment < ApplicationRecord
   # Class method to get total donations
   def self.total_donations
     Rails.cache.fetch("total_donations", expires_in: 1.hour) do
-      where(status: :success).distinct.sum(:donation)
+      joins(:payment_lines)
+        .where(status: :success)
+        .where(payment_lines: { item_type: 'Donation' })
+        .sum('payment_lines.amount_cents')
+        
     end
   end
 
@@ -98,7 +102,7 @@ class Payment < ApplicationRecord
   def process_payment
     # Cette méthode sera appelée par le service Payments::Process
     # pour traiter les callbacks complexes
-    Payments::Process.call(self)
+    Payments::Process.new(self).call
   end
 
   # Generate a UUID for the payment
@@ -108,18 +112,20 @@ class Payment < ApplicationRecord
 
   # Create an audit log entry for new payments
   def create_audit_log
-    PaymentAuditLog.log(self, user, "create")
+    PaymentAuditLog.log(self, recorded_by, "create")
   end
 
   # Log status changes
   def log_status_change
+    return unless saved_change_to_status
+    
     change_data = {
       status: {
-        from: status_before_last_save,
+        from: saved_change_to_status.first,
         to: status
       }
     }
-    PaymentAuditLog.log(self, user, "status_change", change_data)
+    PaymentAuditLog.log(self, recorded_by, "status_change", change_data)
 
     # Invalidate cache when status changes
     Rails.cache.delete("total_successful_payments")
@@ -135,7 +141,7 @@ class Payment < ApplicationRecord
       # We keep the payment record but mark it as associated with a deleted user
       status: :cancel,
       # Add a note that the user was deleted
-      donation: (donation || 0)
+      notes: "User deleted - payment cancelled"
     )
 
     # Log the user deletion effect on payment
@@ -153,7 +159,7 @@ class Payment < ApplicationRecord
 
   # Override destroy method to ensure audit trail
   def destroy
-    PaymentAuditLog.log(self, Current.user, "delete")
+    PaymentAuditLog.log(self, recorded_by, "delete")
 
     # Invalidate cache
     Rails.cache.delete("total_successful_payments")

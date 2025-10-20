@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_10_20_024008) do
+ActiveRecord::Schema[8.0].define(version: 2025_10_20_232335) do
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.string "name", null: false
     t.text "body"
@@ -82,10 +82,11 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_20_024008) do
     t.bigint "subscription_plan_id", null: false
     t.integer "sessions_remaining", default: 0
     t.datetime "purchased_at", null: false
-    t.datetime "expires_at", null: false
+    t.datetime "expires_at"
     t.integer "status", default: 0, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["expires_at"], name: "index_book_of_entries_on_expires_at"
     t.index ["person_id", "status"], name: "index_book_of_entries_on_person_id_and_status"
     t.index ["person_id"], name: "index_book_of_entries_on_person_id"
     t.index ["purchased_at", "expires_at"], name: "index_book_of_entries_on_purchased_at_and_expires_at"

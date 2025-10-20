@@ -67,7 +67,9 @@
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap">
                   <div class="text-sm text-gray-900">
-                    <% if plan.validity_days %>
+                    <% if plan.duration == 'pack10' %>
+                      <span class="text-green-600 font-medium">Sans expiration</span>
+                    <% elsif plan.validity_days %>
                       <%= plan.validity_days %> jours
                     <% else %>
                       <span class="text-gray-400">-</span>
@@ -76,7 +78,7 @@
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap">
                   <div class="text-sm text-gray-900">
-                    <%= plan.book_of_entries.count %> carnets
+                    <%= pluralize(plan.book_of_entries.count, 'carnet') %>
                   </div>
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
