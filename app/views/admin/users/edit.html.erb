@@ -12,7 +12,7 @@
             when 'super_admin' then 'bg-[#1F5C55]'
             when 'admin' then 'bg-[#1F5C55]/90'
             when 'volunteer' then 'bg-[#1F5C55]/80'
-            when 'user_connected' then 'bg-[#1F5C55]/70'
+            when 'web_visitor' then 'bg-[#1F5C55]/70'
             end %>">
           <%= @user.system_role.humanize %>
         </div>
@@ -28,7 +28,7 @@
             <%= image_tag "admin.webp", alt: "Avatar Admin", class: "h-full w-full object-cover" %>
           <% when 'volunteer' %>
             <%= image_tag "volunteer.webp", alt: "Avatar Bénévole", class: "h-full w-full object-cover" %>
-          <% when 'user_connected' %>
+          <% when 'web_visitor' %>
             <%= image_tag "users.png", alt: "Avatar Utilisateur", class: "h-full w-full object-cover" %>
           <% else %>
             <%= image_tag "users.png", alt: "Avatar", class: "h-full w-full object-cover" %>
