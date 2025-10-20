@@ -28,7 +28,7 @@ class RegistrationsController < ApplicationController
       create_user_account: true,
       user_email: user_params[:email_address],
       user_password: user_params[:password],
-      user_system_role: "user_connected"
+      user_system_role: "web_visitor"
     ).call
     
     if result.success?
