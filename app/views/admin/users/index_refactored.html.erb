@@ -188,6 +188,14 @@
             <%== pagy_nav(@pagy) if @pagy.pages > 1 %>
           </div>
         <% end %>
+
+        <!-- Navigation -->
+        <div class="mt-6 flex justify-between">
+          <%= link_to "Version ViewComponents", index_viewcomponents_admin_users_path, 
+                      class: "inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50" %>
+          <%= link_to "Retour à la liste originale", admin_users_path, 
+                      class: "inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#1F5C55] hover:bg-[#194A45]" %>
+        </div>
       </div>
     </div>
   </div>
