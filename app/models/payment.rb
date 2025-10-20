@@ -11,7 +11,7 @@ class Payment < ApplicationRecord
   has_many :payment_audit_logs, dependent: :destroy
 
   enum :status, %i[success pending cancel], default: :pending
-  enum :payment_method, %i[cash sumup cheque transfer]
+  enum :payment_method, %i[cash card cheque transfer offered], default: :cash
 
   before_create :generate_uuid
   after_create :create_audit_log
@@ -38,6 +38,52 @@ class Payment < ApplicationRecord
   end
 
   # Nouvelles méthodes selon le domain_model_circographe.md
+  def payment_type
+    # Déterminer le type de paiement basé sur les payment_lines
+    if payment_lines.memberships.any?
+      "Adhésion"
+    elsif payment_lines.subscription_plans.any?
+      "Cotisation"
+    elsif payment_lines.any?
+      # Utiliser la description de la première ligne
+      payment_lines.first.item_description
+    else
+      "Autre"
+    end
+  end
+
+  # Méthodes pour le système d'encaissement
+  def total_euros
+    total_cents / 100.0
+  end
+
+  def total_euros=(value)
+    self.total_cents = (value.to_f * 100).round
+  end
+
+  def payment_method_humanized
+    case payment_method
+    when 'cash' then 'Espèces'
+    when 'card' then 'Carte bancaire'
+    when 'cheque' then 'Chèque'
+    when 'transfer' then 'Virement'
+    when 'offered' then 'Offert'
+    else payment_method.humanize
+    end
+  end
+
+  def is_offered?
+    payment_method == 'offered'
+  end
+
+  def is_paid?
+    status == 'success'
+  end
+
+  def can_be_cancelled?
+    status != 'cancel' && created_at > 24.hours.ago
+  end
+
   def membership_related?
     # Vérifier si le paiement contient des adhésions
     payment_lines.joins("JOIN memberships ON payment_lines.item_type = 'Membership' AND payment_lines.item_id = memberships.id").exists?

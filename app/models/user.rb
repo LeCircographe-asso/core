@@ -11,7 +11,7 @@ class User < ApplicationRecord
 
   has_secure_password
 
-  enum :system_role, %i[ super_admin admin volunteer user_connected ]
+  enum :system_role, %i[ super_admin admin volunteer web_visitor ]
 
   alias_attribute :email, :email_address
 
@@ -38,9 +38,10 @@ class User < ApplicationRecord
 
 
 
-  normalizes :email_address, with: ->(e) { e.strip.downcase }
+  normalizes :email_address, with: ->(e) { e&.strip&.downcase }
 
-  validates :email_address, presence: true, uniqueness: true, unless: :created_by_admin?, on: :create
+  validates :email_address, presence: true
+  validate :email_uniqueness_unless_person_email
   validates :cgu, acceptance: { message: "Vous devez accepter les CGU pour continuer." }, unless: :created_by_admin?
   validates :privacy_policy, acceptance: { message: "Vous devez accepter la politique de confidentialité pour continuer." }, unless: :created_by_admin?
 
@@ -93,7 +94,7 @@ class User < ApplicationRecord
   end
 
   def welcome_send
-    return if user_connected?
+    return if web_visitor?
     return if email_address.blank? # Don't send email if no email address
     
     # Skip email sending in seeds
@@ -148,6 +149,10 @@ class User < ApplicationRecord
     other_role_value = User.system_roles[other_user.system_role]
 
     Rails.logger.debug "self_role_value: #{self_role_value}, other_role_value: #{other_role_value}"
+
+    # Handle nil roles - nil means no permissions (lowest level)
+    return false if self_role_value.nil?
+    return true if other_role_value.nil?
 
     # Lower number means higher permissions in the enum
     self_role_value < other_role_value
@@ -214,6 +219,20 @@ class User < ApplicationRecord
       payments.update_all(user_id: admin_user.id)
     end
     super # Standard ActiveRecord destroy
+  end
+
+  def email_uniqueness_unless_person_email
+    return if email_address.blank?
+    
+    # Si on a une Person associée avec le même email, c'est OK
+    if person&.email == email_address
+      return
+    end
+    
+    # Sinon, vérifier l'unicité normale
+    if User.where(email_address: email_address).where.not(id: id).exists?
+      errors.add(:email_address, "est déjà utilisé")
+    end
   end
 
   private
