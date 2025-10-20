@@ -46,6 +46,12 @@ module Payments
     def process_membership_payment(line)
       membership = line.item
       membership.update!(status: :active) if membership.pending?
+      
+      # Assigner un numéro d'adhérent lors du premier paiement d'adhésion
+      person = membership.person
+      if person.member_number.blank?
+        MemberManagementService.assign_member_number(person) # Laisser le service déterminer automatiquement le type
+      end
     end
 
     def process_subscription_plan_payment(line)
@@ -85,7 +91,7 @@ module Payments
       start_date = Date.current
       end_date = start_date + 1.year
 
-      Membership.create!(
+      membership = Membership.create!(
         person: person,
         membership_type: membership_type,
         started_at: start_date,
@@ -93,6 +99,13 @@ module Payments
         status: :active,
         first_joined_at: start_date
       )
+      
+      # Assigner un numéro d'adhérent lors du premier paiement d'adhésion
+      if person.member_number.blank?
+        MemberManagementService.assign_member_number(person) # Laisser le service déterminer automatiquement le type
+      end
+      
+      membership
     end
 
     def update_payment_status

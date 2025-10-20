@@ -112,22 +112,22 @@ module Admin
       @person = Person.find(params[:id])
       @membership_type = MembershipType.find(params[:membership_type_id])
       
-      # Créer l'adhésion
+      # Créer l'adhésion en statut pending pour le traiter
       membership = @person.memberships.create!(
         membership_type: @membership_type,
         started_at: Date.current,
         ended_at: 1.year.from_now,
-        status: :active,
+        status: :pending,
         first_joined_at: Date.current
       )
 
-      # Créer le paiement
+      # Créer le paiement en statut pending pour le traiter
       payment = Payment.create!(
         person: @person,
         recorded_by: Current.user,
         total_cents: @membership_type.price_cents,
         payment_method: params[:payment_method] || :cash,
-        status: :success,
+        status: :pending,
         notes: "Adhésion #{@membership_type.name}"
       )
 
@@ -138,6 +138,13 @@ module Admin
         amount_cents: @membership_type.price_cents,
         description: "Adhésion #{@membership_type.name}"
       )
+
+      # Traiter le paiement (cela assignera automatiquement le numéro d'adhérent)
+      result = Payments::Process.new(payment).call
+      
+      unless result.success?
+        raise "Erreur lors du traitement du paiement: #{result.message}"
+      end
 
       redirect_to admin_person_path(@person), notice: "Adhésion créée avec succès"
     rescue => e
@@ -222,7 +229,7 @@ module Admin
         email_address: @person.email,
         password: SecureRandom.hex(8), # Mot de passe temporaire
         password_confirmation: SecureRandom.hex(8),
-        system_role: params[:system_role] || "user_connected",
+        system_role: params[:system_role] || "web_visitor",
         created_by_admin: true,
         cgu: true,
         privacy_policy: true
