@@ -14,9 +14,10 @@ class Membership < ApplicationRecord
 
   # Enum pour les statuts selon le domain_model_circographe.md
   enum :status, {
-    inactive: 0,
-    active: 1,
-    expired: 2
+    pending: 0,
+    inactive: 1,
+    active: 2,
+    expired: 3
   }
 
   # Validations personnalisées
