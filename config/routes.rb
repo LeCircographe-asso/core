@@ -15,9 +15,9 @@ Rails.application.routes.draw do
       # Actions pour gérer les doublons
       get :duplicates, on: :collection
       # Route de test pour la vue refactorisée
-      get :index_refactored, on: :collection
+      get :index_refactored, on: :collection, as: :index_refactored
       # Route de test pour ViewComponents
-      get :index_viewcomponents, on: :collection
+      get :index_viewcomponents, on: :collection, as: :index_viewcomponents
     end
     resources :events, only: %i[new create edit destroy index]
     resource :session, only: %i[new create destroy]
