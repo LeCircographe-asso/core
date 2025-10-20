@@ -50,12 +50,14 @@ group :development, :test do
   gem "faker"  # Generate fake data
   gem "dotenv-rails"  # Environment variables
 
-  # RSpec testing framework
+  # RSpec testing framework - ESSENTIELS
   gem "rspec-rails", "~> 8.0.2"
   gem "factory_bot_rails"
-  gem "shoulda-matchers"
-  gem "database_cleaner-active_record"
-  gem "rails-controller-testing"
+  
+  # OPTIONNELS - On peut les ajouter petit à petit
+  # gem "shoulda-matchers"  # Pour tester les validations Rails
+  # gem "database_cleaner-active_record"  # Nettoyage de DB entre tests
+  # gem "rails-controller-testing"  # Tests de contrôleurs (rspec le fait déjà)
 end
 
 group :development do
@@ -66,10 +68,13 @@ group :development do
 end
 
 group :test do
-  gem "capybara"  # System testing
-  gem "selenium-webdriver"  # Browser automation
+  # UTILES POUR CI/CD
   gem "rspec_junit_formatter"  # JUnit XML output for CI/CD integration
-  gem "simplecov", require: false  # Code coverage analysis
+  
+  # OPTIONNELS - On peut les ajouter petit à petit
+  # gem "capybara"  # Tests d'intégration navigateur (Rails a déjà system tests)
+  # gem "selenium-webdriver"  # Automatisation navigateur (utilisé par capybara)
+  # gem "simplecov", require: false  # Couverture de code
 end
 
 # Deployment
