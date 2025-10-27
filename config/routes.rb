@@ -30,6 +30,9 @@ Rails.application.routes.draw do
     resources :memberships, only: %i[index show new create edit update destroy]
     resources :membership_types, only: %i[index show new create edit update destroy]
     resources :subscription_plans, only: %i[index show new create edit update destroy]
+    resources :duplicates, only: %i[index] do
+      post :merge, on: :collection
+    end
     resources :exports, only: %i[index] do
       get :newsletter_subscribed, on: :collection
       get :all_users, on: :collection
@@ -47,6 +50,11 @@ Rails.application.routes.draw do
   resources :users, only: %i[show edit update destroy] do
     post "change_newsletter_status", on: :member
     get "change_newsletter_status", on: :member
+  end
+  
+  # Routes pour revendication de compte
+  resources :account_claims, only: [:new, :create] do
+    get :confirm, on: :collection
   end
 
   # Route for newsletter signup from footer

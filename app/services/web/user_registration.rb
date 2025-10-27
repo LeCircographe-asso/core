@@ -53,27 +53,35 @@ module Web
     private
 
     def create_or_find_person
-      # Chercher une Person existante par email
-      existing_person = Person.find_by(email: email)
-
+      # 1. Chercher si Person existe avec cet email
+      existing_person = Person.active.find_by(email: email) if email.present?
+      
       if existing_person
-        # Mettre à jour la Person existante
-        existing_person.update!(
-          first_name: first_name,
-          last_name: last_name,
-          newsletter_subscribed: newsletter_subscribed
-        )
-        success(existing_person, "Person updated")
-      else
-        # Créer une nouvelle Person
-        People::PersonCreator.new(
-          first_name: first_name,
-          last_name: last_name,
-          email: email,
-          newsletter_subscribed: newsletter_subscribed
-        ).call
+        # Person existe → Bloquer et proposer revendication
+        Rails.logger.warn("[WEB_REGISTRATION] BLOCKED: Email #{email} existe sur Person #{existing_person.id}")
+        
+        if existing_person.user.present?
+          # Person a déjà un User → Mot de passe oublié
+          return failure("Cette adresse email est déjà utilisée. Utilisez 'Mot de passe oublié' pour récupérer votre compte.")
+        else
+          # Person sans User → Revendication
+          return failure("Cette adresse email est associée à une fiche adhérent. Utilisez 'Récupérer mon compte' pour la lier à votre espace web.")
+        end
       end
+
+      # 2. Supprimer la recherche par nom+prénom (trop permissive)
+      # SUPPRIMÉ : candidates = Person.active.where(...)
+      
+      # 3. Créer nouvelle Person
+      Rails.logger.info("[WEB_REGISTRATION] Création nouvelle Person pour #{email}")
+      People::PersonCreator.new(
+        first_name: first_name,
+        last_name: last_name,
+        email: email,
+        newsletter_subscribed: newsletter_subscribed
+      ).call
     end
+
 
     def create_user_account(person)
       # Vérifier si la Person a déjà un User
@@ -103,9 +111,17 @@ module Web
     def email_uniqueness
       return if email.blank?
 
-      # Vérifier l'unicité dans Person
-      if Person.where(email: email).where.not(id: nil).exists?
-        errors.add(:email, "has already been taken")
+      # Vérifier si une Person avec cet email existe
+      existing_person = Person.active.find_by(email: email)
+
+      if existing_person
+        if existing_person.user.present?
+          # Person a déjà un compte web → erreur
+          errors.add(:email, "Cette adresse email est déjà utilisée. Veuillez utiliser une autre adresse ou vous connecter.")
+        else
+          # Person existe mais pas de compte web → OK, on va la récupérer
+          # Pas d'erreur, on va lier le compte web à cette Person
+        end
       end
 
       # Vérifier s'il existe un User avec le même email mais sans Person liée
@@ -118,15 +134,21 @@ module Web
     def user_email_uniqueness
       return if user_email.blank?
 
-      # Vérifier l'unicité dans User
-      if User.where(email_address: user_email).where.not(person_id: nil).exists?
+      # Vérifier l'unicité dans User (sauf si c'est le même email que email)
+      if user_email != email && User.where(email_address: user_email).where.not(person_id: nil).exists?
         errors.add(:user_email, "has already been taken")
       end
 
       # Vérifier s'il existe une Person avec le même email
-      # (pour éviter les conflits entre Person.email et User.email_address)
-      if Person.where(email: user_email).where.not(id: nil).exists?
-        errors.add(:user_email, "is already used as newsletter email")
+      existing_person = Person.active.find_by(email: user_email)
+      if existing_person
+        if existing_person.user.present?
+          # Person a déjà un compte web → erreur
+          errors.add(:user_email, "is already used as newsletter email")
+        else
+          # Person existe mais pas de compte web → OK, on va la récupérer
+          # Pas d'erreur
+        end
       end
     end
 

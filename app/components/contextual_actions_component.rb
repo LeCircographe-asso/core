@@ -4,48 +4,42 @@ class ContextualActionsComponent < ViewComponent::Base
   end
 
   def actions
-    actions = []
-
-    # Action "Voir" (toujours disponible)
-    actions << view_action
-
-    # Action "Créer Espace Utilisateur" (si pas de compte)
-    actions << create_user_action unless person.user
-
-    # Actions d'adhésion
-    actions.concat(membership_actions)
-
-    # Actions de cotisation (si adhésion Cirque)
-    actions << subscription_action if person.has_active_membership? && person.current_membership.membership_type.name.downcase.include?("cirque")
-
-    actions.compact
+    @actions ||= build_actions
   end
 
   private
 
   attr_reader :person
 
-  def view_action
-    {
-      icon: view_icon,
-      url: admin_user_path("person_#{person.id}"),
-      class: "action-icon text-gray-600 hover:text-[#1F5C55] mr-2",
-      title: "Voir la fiche",
-      data: { turbo: false }
-    }
+  def build_actions
+    actions = []
+
+    # Action "Voir" (toujours disponible)
+    actions << { type: :view, icon: :view_icon, url: "person_#{person.id}", 
+                 class: "action-icon text-gray-600 hover:text-[#1F5C55] mr-2", 
+                 title: "Voir la fiche", data: { turbo: false } }
+
+    # Action "Créer Espace Utilisateur" (si pas de compte)
+    unless person.user
+      actions << { type: :create_user, icon: :create_user_icon, url: "new", 
+                   class: "action-icon text-green-600 hover:text-green-800 mr-2", 
+                   title: "Créer un compte web", data: { turbo: false } }
+    end
+
+    # Actions d'adhésion
+    actions.concat(membership_actions_data)
+
+    # Actions de cotisation (si adhésion Cirque)
+    if person.has_active_membership? && person.current_membership.membership_type.name.downcase.include?("cirque")
+      actions << { type: :subscription, icon: :subscription_icon, url: "#", 
+                   class: "action-icon text-indigo-600 hover:text-indigo-800 mr-2", 
+                   title: "Ajouter une cotisation" }
+    end
+
+    actions.compact
   end
 
-  def create_user_action
-    link_to(
-      create_user_icon,
-      new_admin_user_path(person_id: person.id),
-      class: "action-icon text-green-600 hover:text-green-800 mr-2",
-      title: "Créer un compte web",
-      data: { turbo: false }
-    )
-  end
-
-  def membership_actions
+  def membership_actions_data
     actions = []
 
     if person.has_active_membership?
@@ -53,53 +47,23 @@ class ContextualActionsComponent < ViewComponent::Base
 
       if current_membership.membership_type.name.downcase.include?("basic")
         # Upgrade vers Cirque
-        actions << upgrade_action
+        actions << { type: :upgrade, icon: :upgrade_icon, url: "#", 
+                     class: "action-icon text-purple-600 hover:text-purple-800 mr-2", 
+                     title: "Upgrade vers Cirque" }
       end
 
       # Voir l'adhésion
-      actions << view_membership_action
+      actions << { type: :view_membership, icon: :membership_icon, url: "#", 
+                   class: "action-icon text-blue-600 hover:text-blue-800 mr-2", 
+                   title: "Voir l'adhésion" }
     else
       # Ajouter une adhésion
-      actions << add_membership_action
+      actions << { type: :add_membership, icon: :add_icon, url: "membership", 
+                   class: "action-icon text-green-600 hover:text-green-800 mr-2", 
+                   title: "Ajouter une adhésion" }
     end
 
     actions
-  end
-
-  def upgrade_action
-    link_to(
-      upgrade_icon,
-      "#", # TODO: Lien vers upgrade
-      class: "action-icon text-purple-600 hover:text-purple-800 mr-2",
-      title: "Upgrade vers Cirque"
-    )
-  end
-
-  def view_membership_action
-    link_to(
-      membership_icon,
-      "#", # TODO: Lien vers détails adhésion
-      class: "action-icon text-blue-600 hover:text-blue-800 mr-2",
-      title: "Voir l'adhésion"
-    )
-  end
-
-  def add_membership_action
-    link_to(
-      add_icon,
-      new_admin_membership_path(person_id: person.id),
-      class: "action-icon text-green-600 hover:text-green-800 mr-2",
-      title: "Ajouter une adhésion"
-    )
-  end
-
-  def subscription_action
-    link_to(
-      subscription_icon,
-      "#", # TODO: Lien vers ajout cotisation
-      class: "action-icon text-indigo-600 hover:text-indigo-800 mr-2",
-      title: "Ajouter une cotisation"
-    )
   end
 
   # Icônes SVG

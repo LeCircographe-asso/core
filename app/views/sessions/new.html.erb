@@ -46,6 +46,15 @@
             <div class="text-center">
                 <%= link_to "Pas encore de compte ? S'inscrire", new_registration_path, class: "text-sm text-gray-400 hover:text-[#5836a5] hover:underline focus:outline-[#5836a5] outline-offset-1" %>
             </div>
+            
+            <!-- Lien revendication de compte -->
+            <div class="text-center mt-2">
+                <p class="text-sm text-gray-600">
+                    Déjà adhérent du Circographe ? 
+                    <%= link_to "Récupérer mon compte", new_account_claim_path, 
+                                class: "text-[#1F5C55] hover:underline font-medium" %>
+                </p>
+            </div>
             <% end %>
         </div>
     </div>

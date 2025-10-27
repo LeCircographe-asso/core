@@ -10,7 +10,21 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_10_20_232335) do
+ActiveRecord::Schema[8.1].define(version: 2025_10_27_222047) do
+  create_table "account_claims", force: :cascade do |t|
+    t.string "confirmation_token", null: false
+    t.datetime "created_at", null: false
+    t.datetime "expires_at", null: false
+    t.integer "person_id", null: false
+    t.string "status", default: "pending"
+    t.datetime "updated_at", null: false
+    t.integer "user_id"
+    t.index ["confirmation_token"], name: "index_account_claims_on_confirmation_token", unique: true
+    t.index ["person_id"], name: "index_account_claims_on_person_id"
+    t.index ["status"], name: "index_account_claims_on_status"
+    t.index ["user_id"], name: "index_account_claims_on_user_id"
+  end
+
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.text "body"
     t.datetime "created_at", null: false
@@ -229,6 +243,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_10_20_232335) do
     t.date "birth_date"
     t.string "country"
     t.datetime "created_at", null: false
+    t.datetime "deleted_at"
     t.boolean "dyslexic_font", default: false
     t.string "email"
     t.string "emergency_contact_name"
@@ -240,6 +255,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_10_20_232335) do
     t.string "last_name", null: false
     t.string "member_number"
     t.boolean "newsletter_subscribed", default: false
+    t.string "newsletter_unsubscribe_token"
     t.text "notes"
     t.string "occupation"
     t.string "phone"
@@ -247,9 +263,11 @@ ActiveRecord::Schema[8.1].define(version: 2025_10_20_232335) do
     t.string "town"
     t.datetime "updated_at", null: false
     t.string "zip_code"
+    t.index ["deleted_at"], name: "index_people_on_deleted_at"
     t.index ["email"], name: "index_people_on_email", unique: true, where: "email IS NOT NULL AND email != ''"
     t.index ["first_name", "last_name"], name: "index_people_on_first_name_and_last_name"
     t.index ["member_number"], name: "index_people_on_member_number", unique: true
+    t.index ["newsletter_unsubscribe_token"], name: "index_people_on_newsletter_unsubscribe_token", unique: true
     t.index ["phone"], name: "index_people_on_phone"
   end
 
@@ -311,7 +329,6 @@ ActiveRecord::Schema[8.1].define(version: 2025_10_20_232335) do
     t.string "password_salt"
     t.bigint "person_id"
     t.integer "system_role", default: 3, null: false
-    t.string "unsubscribe_token"
     t.datetime "updated_at", null: false
     t.index ["deleted"], name: "index_users_on_deleted"
     t.index ["email_address"], name: "index_users_on_email_address", unique: true
@@ -319,6 +336,8 @@ ActiveRecord::Schema[8.1].define(version: 2025_10_20_232335) do
     t.index ["system_role"], name: "index_users_on_system_role"
   end
 
+  add_foreign_key "account_claims", "people"
+  add_foreign_key "account_claims", "users"
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "attendances", "events"
