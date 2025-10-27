@@ -29,7 +29,7 @@ class NewsletterSignupService
       else
         @current_user.person.update!(newsletter_subscribed: true)
         # Generate unsubscribe token if not already present
-        ensure_unsubscribe_token(@current_user)
+        ensure_unsubscribe_token(@current_user.person)
         { success: true, message: "Vous êtes maintenant inscrit à la newsletter." }
       end
     elsif @current_user.email_address.downcase == @new_email
@@ -65,10 +65,10 @@ class NewsletterSignupService
   end
 
   # Ensure user has an unsubscribe token
-  def ensure_unsubscribe_token(user)
-    return if user.unsubscribe_token.present?
+  def ensure_unsubscribe_token(person)
+    return if person.newsletter_unsubscribe_token.present?
 
-    user.update(unsubscribe_token: SecureRandom.urlsafe_base64(32))
+    person.update(newsletter_unsubscribe_token: SecureRandom.urlsafe_base64(32))
   end
 
   # Create a Person only for newsletter subscription

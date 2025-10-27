@@ -20,7 +20,7 @@ module Admin
     # GET /admin/users or /admin/users.json
     def index
       # Base query avec eager loading optimisé - ne montrer que les Person principales
-      @people = Person.main_people.includes(
+      @people = Person.active.main_people.includes(
         :user,
         memberships: :membership_type,
         book_of_entries: :subscription_plan
@@ -51,8 +51,21 @@ module Admin
       if params[:id].to_s.start_with?("person_")
         # ID de Person (format: person_123)
         person_id = params[:id].gsub("person_", "")
-        @person = Person.includes(:user, memberships: :membership_type, book_of_entries: :subscription_plan, payments: [ :payment_lines, :recorded_by ])
-                        .find(person_id)
+
+        # Chercher d'abord dans les Person actives
+        @person = Person.active.includes(:user, memberships: :membership_type, book_of_entries: :subscription_plan, payments: [ :payment_lines, :recorded_by ])
+                        .find_by(id: person_id)
+
+        # Si Person archivée (fusion), rediriger vers la liste
+        if @person.nil?
+          archived_person = Person.find_by(id: person_id)
+          if archived_person&.deleted_at.present?
+            redirect_to admin_users_path, notice: "Cette fiche a été fusionnée avec une autre. Retour à la liste des utilisateurs."
+            return
+          else
+            raise ActiveRecord::RecordNotFound
+          end
+        end
         @user = @person.user # Peut être nil
 
         # Si pas de User, créer un User temporaire pour la vue
@@ -109,7 +122,7 @@ module Admin
 
       # Si on a un person_id, pré-remplir avec les données de la personne
       if params[:person_id].present?
-        @person = Person.find(params[:person_id])
+        @person = Person.active.find(params[:person_id])
         @user.person = @person
         @user.email_address = @person.email
         @user.system_role = "web_visitor" # Rôle par défaut
@@ -125,7 +138,7 @@ module Admin
     # GET /admin/users/person_1/edit_person
     def edit_person
       person_id = params[:id].to_s.gsub("person_", "")
-      @person = Person.find(person_id)
+      @person = Person.active.find(person_id)
       add_breadcrumb "Liste d'adhérents", admin_users_path
       add_breadcrumb @person.full_name, admin_user_path("person_#{@person.id}")
       add_breadcrumb "Modifier", nil
@@ -171,7 +184,7 @@ module Admin
     def create
       # Si on a un person_id, on crée un compte pour une personne existante
       if params[:person_id].present?
-        person = Person.find(params[:person_id])
+        person = Person.active.find(params[:person_id])
 
         # Vérifier si cette personne a déjà un compte User
         if person.user.present?
@@ -294,7 +307,7 @@ module Admin
       # Adapter pour gérer les Person
       if params[:id].to_s.start_with?("person_")
         person_id = params[:id].to_s.gsub("person_", "")
-        @person = Person.find(person_id)
+        @person = Person.active.find(person_id)
 
         if @person.update(person_params)
           redirect_to admin_user_path("person_#{@person.id}"), notice: "Informations mises à jour avec succès."
@@ -424,7 +437,7 @@ module Admin
 
     # Actions pour gérer les adhésions et cotisations
     def create_membership
-      @person = Person.find(params[:id])
+      @person = Person.active.find(params[:id])
       @membership_type = MembershipType.find(params[:membership_type_id])
 
       result = Admin::Operations::MembershipOperations.new(actor: Current.user)
@@ -440,7 +453,7 @@ module Admin
 
 
     def create_user_for_person
-      @person = Person.find(params[:id])
+      @person = Person.active.find(params[:id])
 
       result = Admin::Operations::UserAccountOperations.new(actor: Current.user)
         .ensure_user_account_for(
@@ -454,7 +467,7 @@ module Admin
 
     # Actions pour gérer les cotisations
     def create_subscription
-      @person = Person.find(params[:id])
+      @person = Person.active.find(params[:id])
       @subscription_plan = SubscriptionPlan.find(params[:subscription_plan_id])
 
       # Vérifier que la personne peut acheter des plans d'abonnement
@@ -497,7 +510,7 @@ module Admin
 
     # Action pour lier un compte User existant
     def link_user
-      @person = Person.find(params[:id])
+      @person = Person.active.find(params[:id])
       @user = User.find(params[:user_id])
 
       # Vérifier que le User n'est pas déjà lié à une autre Person

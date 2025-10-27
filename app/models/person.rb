@@ -1,8 +1,8 @@
 class Person < ApplicationRecord
-  # Relations
+  # Relations (MODIFIER dependent pour protéger données financières)
   has_one :user, dependent: :nullify
-  has_many :memberships, dependent: :destroy
-  has_many :payments, dependent: :destroy
+  has_many :memberships, dependent: :restrict_with_error  # ✅ Empêcher suppression
+  has_many :payments, dependent: :restrict_with_error     # ✅ Empêcher suppression
   has_many :attendances, dependent: :destroy
   has_many :book_of_entries, dependent: :destroy
   has_many :member_number_histories, dependent: :destroy
@@ -21,10 +21,17 @@ class Person < ApplicationRecord
   validates :email, presence: true, if: :newsletter_subscribed?
 
   # Validation d'adhésion obligatoire (sauf cas spéciaux)
-  validate :must_have_active_membership, unless: :skip_membership_validation
+  # SUPPRIMÉE : Une Person peut exister sans adhésion (newsletter, prospects, etc.)
+  # validate :must_have_active_membership, unless: :skip_membership_validation
 
   # Normalisation des données
   before_validation :normalize_email
+
+  # Callbacks newsletter
+  before_create :generate_newsletter_token, if: :newsletter_subscribed?
+  before_update :generate_newsletter_token, if: -> {
+    newsletter_subscribed? && newsletter_unsubscribe_token.blank?
+  }
 
   # Méthodes
   def full_name
@@ -125,6 +132,8 @@ class Person < ApplicationRecord
   end
 
   # Scopes
+  scope :active, -> { where(deleted_at: nil) }
+  scope :archived, -> { where.not(deleted_at: nil) }
   scope :with_user_account, -> { joins(:user) }
   scope :without_user_account, -> { left_joins(:user).where(users: { id: nil }) }
   scope :by_name, ->(query) { where("first_name LIKE ? OR last_name LIKE ?",
@@ -166,6 +175,45 @@ class Person < ApplicationRecord
           "%#{query}%", "%#{query}%", "%#{query}%", "%#{query}%")
   }
 
+  # Soft delete
+  def archive!
+    return false if has_financial_data?
+    update!(deleted_at: Time.current)
+  end
+
+  def restore!
+    update!(deleted_at: nil)
+  end
+
+  def archived?
+    deleted_at.present?
+  end
+
+  # Newsletter scopes
+  scope :newsletter_subscribers, -> {
+    active.where(newsletter_subscribed: true).where.not(email: [ nil, "" ])
+  }
+
+  # Méthodes utilitaires pour la sécurité des fusions
+  def safe_to_merge_with?(other_person)
+    return false if other_person.nil?
+    return false if id == other_person.id
+    
+    # Si les deux ont des Users différents, fusion dangereuse
+    if user.present? && other_person.user.present? && user.id != other_person.user.id
+      return false
+    end
+    
+    true
+  end
+
+  def can_be_claimed_by?(email_to_check)
+    return false if user.present? # Déjà lié à un User
+    return false if email.blank? # Pas d'email
+    return false if email.downcase != email_to_check.downcase # Email différent
+    true
+  end
+
   private
 
   def normalize_email
@@ -175,7 +223,16 @@ class Person < ApplicationRecord
   def must_have_active_membership
     return if new_record? # Skip à la création
     return if memberships.active.any?
+    return if skip_membership_validation # Skip si explicitement demandé
 
     errors.add(:base, "Une adhésion active est obligatoire")
+  end
+
+  def has_financial_data?
+    payments.exists? || memberships.exists?
+  end
+
+  def generate_newsletter_token
+    self.newsletter_unsubscribe_token ||= SecureRandom.urlsafe_base64(32)
   end
 end

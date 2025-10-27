@@ -1,0 +1,20 @@
+<h1>Confirmez votre revendication de compte</h1>
+
+<p>Bonjour <%= @claim.user.first_name %>,</p>
+
+<p>Nous avons trouvé une fiche membre correspondant à l'email <strong><%= @person.email %></strong> :</p>
+
+<ul>
+  <li>Nom : <%= @person.full_name %></li>
+  <li>Membre depuis : <%= @person.created_at.strftime("%d/%m/%Y") %></li>
+  <li>Adhésions : <%= @person.memberships.count %></li>
+  <li>Paiements : <%= @person.payments.count %></li>
+</ul>
+
+<p>Si cette fiche vous appartient, cliquez sur le lien ci-dessous :</p>
+
+<%= link_to "Confirmer la revendication", @confirmation_url, 
+            class: "btn-primary", 
+            style: "display: inline-block; background: #1F5C55; color: white; padding: 12px 24px; text-decoration: none; border-radius: 8px;" %>
+
+<p><small>Ce lien expire dans 24h pour votre sécurité.</small></p>

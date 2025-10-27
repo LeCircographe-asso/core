@@ -30,14 +30,15 @@ class RegistrationsController < ApplicationController
       # Créer un objet User temporaire pour afficher les erreurs dans la vue
       @user = User.new(user_only_params)
 
-      # Gérer les erreurs spécifiques
+      # Gérer les erreurs spécifiques et ajouter des liens d'aide
       error_messages = result.errors
-      if error_messages.any? { |msg| msg.include?("already been taken") || msg.include?("already used") }
-        @user.errors.add(:email_address, "Cette adresse email est déjà utilisée")
-        flash.now[:alert] = "Cette adresse email est déjà utilisée. Veuillez utiliser une autre adresse ou vous connecter."
-      else
-        @user.errors.add(:base, error_messages.join(", "))
-        flash.now[:alert] = error_messages.join(", ")
+      flash.now[:alert] = result.message
+      
+      # Ajouter des liens d'aide si email existe
+      if result.message.include?("Mot de passe oublié")
+        flash.now[:help_link] = { text: "Mot de passe oublié", url: new_password_reset_path }
+      elsif result.message.include?("Récupérer mon compte")
+        flash.now[:help_link] = { text: "Récupérer mon compte", url: new_account_claim_path }
       end
 
       render :new, status: :unprocessable_entity
