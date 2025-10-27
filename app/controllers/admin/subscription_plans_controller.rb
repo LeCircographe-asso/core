@@ -101,7 +101,37 @@ module Admin
         description: "Plan d'abonnement #{@subscription_plan.name}"
       )
 
-      redirect_to admin_user_path("person_#{@person.id}"), notice: "Cotisation achetée avec succès !"
+      # Si demandé, enregistrer la présence
+      if params[:record_attendance] == "true"
+        attendance_date = params[:attendance_date]&.to_date || Date.current
+        
+        Attendance.create!(
+          person: @person,
+          date: attendance_date,
+          book_of_entry: book_of_entry
+        )
+        
+        book_of_entry&.use_session!
+        
+        respond_to do |format|
+          format.turbo_stream do
+            render turbo_stream: [
+              turbo_stream.update("attendance-frame-#{@person.id}", 
+                partial: "admin/users/attendance_success", 
+                locals: { person: @person, result: OpenStruct.new(message: "Cotisation payée et présence enregistrée") }),
+              turbo_stream.update("flash", 
+                partial: "shared/flash", 
+                locals: { notice: "Cotisation payée et présence enregistrée avec succès" })
+            ]
+          end
+          format.html do
+            redirect_to admin_user_path("person_#{@person.id}"), notice: "Cotisation achetée avec succès !"
+          end
+        end
+      else
+        # Comportement existant
+        redirect_to admin_user_path("person_#{@person.id}"), notice: "Cotisation achetée avec succès !"
+      end
     rescue => e
       flash[:alert] = "Erreur lors de l'achat du plan: #{e.message}"
       redirect_to new_admin_subscription_plan_path(person_id: @person.id)

@@ -14,6 +14,9 @@ Rails.application.routes.draw do
       get :edit_person, on: :member
       # Actions pour gérer les doublons
       get :duplicates, on: :collection
+      # Actions pour la gestion des présences
+      post :check_attendance_eligibility, on: :member
+      post :record_attendance_with_book, on: :member
       # Route de test pour la vue refactorisée
       get :index_refactored, on: :collection, as: :index_refactored
       # Route de test pour ViewComponents

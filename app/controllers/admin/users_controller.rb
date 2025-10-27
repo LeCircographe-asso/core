@@ -223,7 +223,7 @@ module Admin
           else
             # CAS 2: Pas de User existant → Créer un nouveau User
             password = SecureRandom.hex(8)
-            user = User.create!(
+            User.create!(
               person: person,
               email_address: person.email,
               password: password,
@@ -605,6 +605,53 @@ module Admin
         :image_rights,
         :is_minor
       )
+    end
+
+    # Actions pour la gestion des présences
+    def check_attendance_eligibility
+      person_id = params[:id].gsub("person_", "")
+      @person = Person.active.find(person_id)
+      @date = params[:date]&.to_date || Date.current
+
+      operations = Admin::Operations::AttendanceOperations.new(actor: Current.user)
+      @result = operations.check_eligibility_for(person: @person, date: @date)
+
+      respond_to do |format|
+        format.turbo_stream
+      end
+    end
+
+    def record_attendance_with_book
+      person_id = params[:id].gsub("person_", "")
+      @person = Person.active.find(person_id)
+      @book_of_entry = BookOfEntry.find(params[:book_of_entry_id])
+      @date = params[:date]&.to_date || Date.current
+
+      operations = Admin::Operations::AttendanceOperations.new(actor: Current.user)
+      @result = operations.record_with_book(
+        person: @person,
+        book_of_entry: @book_of_entry,
+        date: @date
+      )
+
+      respond_to do |format|
+        format.turbo_stream do
+          if @result.success?
+            render turbo_stream: [
+              turbo_stream.update("attendance-frame-#{@person.id}", 
+                partial: "admin/users/attendance_success", 
+                locals: { person: @person, result: @result }),
+              turbo_stream.update("flash", 
+                partial: "shared/flash", 
+                locals: { notice: @result.message })
+            ]
+          else
+            render turbo_stream: turbo_stream.update("flash", 
+              partial: "shared/flash", 
+              locals: { alert: @result.message })
+          end
+        end
+      end
     end
 
     # Méthodes privées pour les filtres et la recherche
