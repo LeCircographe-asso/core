@@ -60,13 +60,7 @@ class NewsletterSignupService
       { success: false, message: "Cette adresse email est utilisée pour la connexion. Veuillez utiliser votre email de newsletter." }
     else
       # Créer une Person uniquement pour la newsletter
-      newsletter_result = People::NewsletterOnlySignupService.new(email: @new_email).call
-      
-      if newsletter_result.success?
-        { success: true, message: newsletter_result.message }
-      else
-        { success: false, message: newsletter_result.message }
-      end
+      create_newsletter_only_person
     end
   end
 
@@ -75,6 +69,33 @@ class NewsletterSignupService
     return if user.unsubscribe_token.present?
 
     user.update(unsubscribe_token: SecureRandom.urlsafe_base64(32))
+  end
+
+  # Create a Person only for newsletter subscription
+  def create_newsletter_only_person
+    # Vérifier l'unicité de l'email
+    if User.where(email_address: @new_email).where(person_id: nil).exists?
+      return { success: false, message: "Cette adresse email est déjà utilisée par un compte de connexion existant" }
+    end
+
+    # Créer une Person uniquement pour la newsletter
+    person = Person.new(
+      first_name: "Newsletter",
+      last_name: "Subscriber",
+      email: @new_email,
+      newsletter_subscribed: true
+    )
+
+    # Skip validation d'adhésion pour newsletter seule
+    person.skip_membership_validation = true
+
+    if person.save
+      { success: true, message: "Inscription à la newsletter réussie !" }
+    else
+      { success: false, message: "Une erreur s'est produite lors de l'inscription. Veuillez réessayer." }
+    end
+  rescue ActiveRecord::RecordInvalid => e
+    { success: false, message: e.message }
   end
 
   # Log the newsletter signup attempt (useful for rate limiting and analytics)

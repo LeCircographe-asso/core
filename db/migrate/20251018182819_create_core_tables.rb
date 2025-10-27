@@ -1,8 +1,17 @@
 class CreateCoreTables < ActiveRecord::Migration[8.0]
   def up
-    # SQLite3 doesn't require any special extensions
-
-    # Core Tables - Person-Based Architecture
+    # ========================================
+    # CORE TABLES - Person-Based Architecture
+    # ========================================
+    # Cette migration crée les tables principales du système :
+    # - people : Informations personnelles des adhérents
+    # - users : Comptes de connexion (liés aux people)
+    # - sessions : Sessions utilisateur (Rails)
+    # ========================================
+    # TABLE: people
+    # ========================================
+    # Informations personnelles des adhérents
+    # Relation : 1 Person -> 0..1 User
     create_table "people", force: :cascade do |t|
       t.string "first_name", null: false
       t.string "last_name", null: false
@@ -29,6 +38,11 @@ class CreateCoreTables < ActiveRecord::Migration[8.0]
       t.index [ "phone" ], name: "index_people_on_phone"
     end
 
+    # ========================================
+    # TABLE: users
+    # ========================================
+    # Comptes de connexion web
+    # Relation : 1 User -> 0..1 Person
     create_table "users", force: :cascade do |t|
       t.string "email_address", null: false
       t.string "password_digest", null: false
@@ -49,7 +63,11 @@ class CreateCoreTables < ActiveRecord::Migration[8.0]
       t.index [ "system_role" ], name: "index_users_on_system_role"
     end
 
-    # Session System (Rails)
+    # ========================================
+    # TABLE: sessions
+    # ========================================
+    # Sessions utilisateur (Rails)
+    # Relation : 1 Session -> 1 User
     create_table "sessions", force: :cascade do |t|
       t.bigint "user_id", null: false
       t.string "ip_address"
@@ -59,9 +77,12 @@ class CreateCoreTables < ActiveRecord::Migration[8.0]
       t.index [ "user_id" ], name: "index_sessions_on_user_id"
     end
 
-    # Foreign Keys - avec vérification d'existence
-    # add_foreign_key "users", "people" unless foreign_key_exists?(:users, :people)
-    # add_foreign_key "sessions", "users" unless foreign_key_exists?(:sessions, :users)
+    # ========================================
+    # FOREIGN KEYS
+    # ========================================
+    # Contraintes de clés étrangères avec vérification d'existence
+    add_foreign_key "users", "people" unless foreign_key_exists?(:users, :people)
+    add_foreign_key "sessions", "users" unless foreign_key_exists?(:sessions, :users)
   end
 
   def down
@@ -73,33 +94,5 @@ class CreateCoreTables < ActiveRecord::Migration[8.0]
     drop_table "sessions" if table_exists?("sessions")
     drop_table "users" if table_exists?("users")
     drop_table "people" if table_exists?("people")
-  end
-
-  private
-
-  def cleanup_invalid_foreign_keys
-    # Nettoyer les users avec des person_id invalides
-    if table_exists?("users") && table_exists?("people")
-      invalid_user_ids = connection.execute(
-        "SELECT id FROM users WHERE person_id IS NOT NULL AND person_id NOT IN (SELECT id FROM people)"
-      ).map { |row| row["id"] }
-
-      if invalid_user_ids.any?
-        say "Nettoyage de #{invalid_user_ids.count} users avec des person_id invalides"
-        connection.execute("UPDATE users SET person_id = NULL WHERE id IN (#{invalid_user_ids.join(',')})")
-      end
-    end
-
-    # Nettoyer les sessions avec des user_id invalides
-    if table_exists?("sessions") && table_exists?("users")
-      invalid_session_ids = connection.execute(
-        "SELECT id FROM sessions WHERE user_id NOT IN (SELECT id FROM users)"
-      ).map { |row| row["id"] }
-
-      if invalid_session_ids.any?
-        say "Nettoyage de #{invalid_session_ids.count} sessions avec des user_id invalides"
-        connection.execute("DELETE FROM sessions WHERE id IN (#{invalid_session_ids.join(',')})")
-      end
-    end
   end
 end
