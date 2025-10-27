@@ -1,6 +1,6 @@
 module Admin
   class MembershipsController < BaseController
-    before_action :set_person, only: [:show, :edit, :update, :destroy]
+    before_action :set_person, only: [ :show, :edit, :update, :destroy ]
     before_action :set_breadcrumbs
 
     def index
@@ -12,7 +12,7 @@ module Admin
       @membership = @person.current_membership
       @membership_types = MembershipType.all
       @subscription_plans = SubscriptionPlan.all
-      
+
       add_breadcrumb "Liste d'adhérents", admin_users_path
       add_breadcrumb @person.full_name, admin_user_path("person_#{@person.id}")
       add_breadcrumb "Adhésion", nil
@@ -27,45 +27,21 @@ module Admin
     def create
       @person = Person.find(membership_params[:person_id])
       @membership_type = MembershipType.find(membership_params[:membership_type_id])
-      
-      # Créer l'adhésion en statut pending pour le traiter
-      @membership = @person.memberships.create!(
-        membership_type: @membership_type,
-        started_at: Date.current,
-        ended_at: 1.year.from_now,
-        status: :pending,
-        first_joined_at: Date.current
-      )
 
-      # Créer le paiement en statut pending pour le traiter
-      payment = Payment.create!(
-        person: @person,
-        recorded_by: Current.user,
-        total_cents: @membership_type.price_cents,
-        payment_method: membership_params[:payment_method] || :cash,
-        status: :pending,
-        notes: "Adhésion #{@membership_type.name}"
-      )
+      result = Admin::Operations::MembershipOperations.new(actor: Current.user)
+        .create_membership_with_payment(
+          person: @person,
+          membership_type: @membership_type,
+          payment_method: membership_params[:payment_method] || :cash
+        )
 
-      # Créer la ligne de paiement
-      PaymentLine.create!(
-        payment: payment,
-        item: @membership,
-        amount_cents: @membership_type.price_cents,
-        description: "Adhésion #{@membership_type.name}"
-      )
-
-      # Traiter le paiement (cela assignera automatiquement le numéro d'adhérent)
-      result = Payments::Process.new(payment).call
-      
-      unless result.success?
-        raise "Erreur lors du traitement du paiement: #{result.message}"
+      if result.success?
+        redirect_to admin_user_path("person_#{@person.id}"),
+                    notice: "Adhésion créée avec succès ! Vous pouvez maintenant ajouter une cotisation depuis la fiche utilisateur."
+      else
+        flash[:alert] = result.errors.join(", ")
+        redirect_to new_admin_membership_path(person_id: @person.id)
       end
-
-      redirect_to admin_user_path("person_#{@person.id}"), notice: "Adhésion créée avec succès ! Vous pouvez maintenant ajouter une cotisation depuis la fiche utilisateur."
-    rescue => e
-      flash[:alert] = "Erreur lors de la création de l'adhésion: #{e.message}"
-      redirect_to new_admin_membership_path(person_id: @person.id)
     end
 
     def edit
@@ -77,7 +53,7 @@ module Admin
     def update
       @membership = @person.current_membership
       @membership_type = MembershipType.find(membership_params[:membership_type_id])
-      
+
       # Mettre à jour l'adhésion
       @membership.update!(
         membership_type: @membership_type,
@@ -94,7 +70,7 @@ module Admin
     def destroy
       @membership = @person.current_membership
       @membership.update!(status: :inactive)
-      
+
       redirect_to admin_memberships_path, notice: "Adhésion désactivée avec succès"
     end
 
