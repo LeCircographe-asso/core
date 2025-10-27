@@ -609,8 +609,16 @@ module Admin
 
     # Actions pour la gestion des présences
     def check_attendance_eligibility
-      person_id = params[:id].gsub("person_", "")
-      @person = Person.active.find(person_id)
+      # Gérer les IDs de User et Person
+      if params[:id].start_with?("person_")
+        person_id = params[:id].gsub("person_", "")
+        @person = Person.active.find(person_id)
+      else
+        # ID numérique = User ID
+        user = User.find(params[:id])
+        @person = user.person
+      end
+      
       @date = params[:date]&.to_date || Date.current
 
       operations = Admin::Operations::AttendanceOperations.new(actor: Current.user)
@@ -622,8 +630,16 @@ module Admin
     end
 
     def record_attendance_directly
-      person_id = params[:id].gsub("person_", "")
-      @person = Person.active.find(person_id)
+      # Gérer les IDs de User et Person
+      if params[:id].start_with?("person_")
+        person_id = params[:id].gsub("person_", "")
+        @person = Person.active.find(person_id)
+      else
+        # ID numérique = User ID
+        user = User.find(params[:id])
+        @person = user.person
+      end
+      
       @date = params[:date]&.to_date || Date.current
 
       operations = Admin::Operations::AttendanceOperations.new(actor: Current.user)
@@ -653,8 +669,16 @@ module Admin
     end
 
     def record_attendance_with_book
-      person_id = params[:id].gsub("person_", "")
-      @person = Person.active.find(person_id)
+      # Gérer les IDs de User et Person
+      if params[:id].start_with?("person_")
+        person_id = params[:id].gsub("person_", "")
+        @person = Person.active.find(person_id)
+      else
+        # ID numérique = User ID
+        user = User.find(params[:id])
+        @person = user.person
+      end
+      
       @book_of_entry = BookOfEntry.find(params[:book_of_entry_id])
       @date = params[:date]&.to_date || Date.current
 
