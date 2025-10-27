@@ -105,10 +105,28 @@ module Admin
       if params[:record_attendance] == "true"
         attendance_date = params[:attendance_date]&.to_date || Date.current
         
+        # Créer ou trouver la liste de présence du jour pour les entraînements libres
+        attendance_list = AttendanceList.find_by(
+          list_type: :training,
+          start_date: attendance_date,
+          end_date: attendance_date + 1.day
+        )
+        
+        unless attendance_list
+          attendance_list = AttendanceList.create!(
+            list_type: :training,
+            start_date: attendance_date,
+            end_date: attendance_date + 1.day,
+            name: "Entraînement libre #{attendance_date.strftime('%d/%m/%Y')}",
+            status: :open
+          )
+        end
+        
         Attendance.create!(
           person: @person,
           date: attendance_date,
-          book_of_entry: book_of_entry
+          book_of_entry: book_of_entry,
+          attendance_list: attendance_list
         )
         
         book_of_entry&.use_session!

@@ -30,8 +30,32 @@ module Admin
         if usable_book
           needs_book_confirmation(person, usable_book, date)
         else
-          needs_subscription(person, date)
+          # Si pas de carnet mais adhésion active, on peut quand même enregistrer la présence
+          # (pour les adhésions annuelles, basiques, etc.)
+          can_record_directly(person, date)
         end
+      end
+
+      # Enregistrer présence sans carnet (adhésion directe)
+      def record_directly(person:, date: Date.current)
+        return failure("Invalid actor") unless actor.present?
+
+        ActiveRecord::Base.transaction do
+          # Créer ou trouver la liste de présence du jour pour les entraînements libres
+          attendance_list = find_or_create_training_list_for_date(date)
+          
+          attendance = Attendance.create!(
+            person: person,
+            date: date,
+            attendance_list: attendance_list
+          )
+
+          Rails.logger.info("[ATTENDANCE] #{actor.email_address} enregistré présence de #{person.full_name} (adhésion directe) dans la liste #{attendance_list.id}")
+
+          success(attendance, "Présence enregistrée (adhésion #{person.current_membership.membership_type.name})")
+        end
+      rescue => e
+        failure(e.message)
       end
 
       # Enregistrer présence avec carnet
@@ -39,15 +63,19 @@ module Admin
         return failure("Invalid actor") unless actor.present?
 
         ActiveRecord::Base.transaction do
+          # Créer ou trouver la liste de présence du jour pour les entraînements libres
+          attendance_list = find_or_create_training_list_for_date(date)
+          
           attendance = Attendance.create!(
             person: person,
             date: date,
-            book_of_entry: book_of_entry
+            book_of_entry: book_of_entry,
+            attendance_list: attendance_list
           )
 
           book_of_entry.use_session!
 
-          Rails.logger.info("[ATTENDANCE] #{actor.email_address} enregistré présence de #{person.full_name} avec carnet #{book_of_entry.id}")
+          Rails.logger.info("[ATTENDANCE] #{actor.email_address} enregistré présence de #{person.full_name} avec carnet #{book_of_entry.id} dans la liste #{attendance_list.id}")
 
           success(attendance, "Présence enregistrée (#{book_of_entry.sessions_remaining} séances restantes)")
         end
@@ -100,12 +128,43 @@ module Admin
         )
       end
 
+      def can_record_directly(person, date)
+        OpenStruct.new(
+          success?: false,
+          can_record_directly?: true,
+          person: person,
+          date: date,
+          membership_type: person.current_membership.membership_type.name,
+          message: "Enregistrement direct possible"
+        )
+      end
+
       def success(attendance, message)
         OpenStruct.new(success?: true, attendance: attendance, message: message)
       end
 
       def failure(message)
         OpenStruct.new(success?: false, errors: [message], message: message)
+      end
+
+      def find_or_create_training_list_for_date(date)
+        # Chercher une liste existante pour les entraînements libres de cette date
+        existing_list = AttendanceList.find_by(
+          list_type: :training,
+          start_date: date,
+          end_date: date + 1.day
+        )
+        
+        return existing_list if existing_list
+        
+        # Créer une nouvelle liste
+        AttendanceList.create!(
+          list_type: :training,
+          start_date: date,
+          end_date: date + 1.day,
+          name: "Entraînement libre #{date.strftime('%d/%m/%Y')}",
+          status: :open
+        )
       end
     end
   end

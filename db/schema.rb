@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_10_27_222047) do
+ActiveRecord::Schema[8.1].define(version: 2025_10_27_224950) do
   create_table "account_claims", force: :cascade do |t|
     t.string "confirmation_token", null: false
     t.datetime "created_at", null: false
@@ -74,11 +74,14 @@ ActiveRecord::Schema[8.1].define(version: 2025_10_27_222047) do
   end
 
   create_table "attendances", force: :cascade do |t|
+    t.integer "attendance_list_id"
+    t.integer "book_of_entry_id"
     t.datetime "created_at", null: false
     t.date "date", null: false
     t.bigint "event_id"
     t.bigint "person_id", null: false
     t.datetime "updated_at", null: false
+    t.integer "user_id"
     t.index ["event_id"], name: "index_attendances_on_event_id"
     t.index ["person_id", "date"], name: "index_attendances_on_person_id_and_date", unique: true
     t.index ["person_id"], name: "index_attendances_on_person_id"

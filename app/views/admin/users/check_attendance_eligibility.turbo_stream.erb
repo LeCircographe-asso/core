@@ -5,6 +5,12 @@
                book_of_entry: @result.book_of_entry, 
                date: @date %>
                
+  <% elsif @result.can_record_directly? %>
+    <%= render "admin/users/attendance_direct_confirmation", 
+               person: @person, 
+               membership_type: @result.membership_type, 
+               date: @date %>
+               
   <% elsif @result.needs_subscription? %>
     <%= render "admin/users/attendance_subscription_options", 
                person: @person, 
