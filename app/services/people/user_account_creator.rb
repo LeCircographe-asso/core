@@ -10,6 +10,8 @@ module People
     attribute :user_password, :string
     attribute :user_system_role, :string, default: "web_visitor"
     attribute :created_by_admin, :boolean, default: true
+    attribute :cgu, :string
+    attribute :privacy_policy, :string
 
     validates :person, presence: true
     validates :user_email, presence: true
@@ -57,7 +59,9 @@ module People
         password: user_password,
         password_confirmation: user_password,
         system_role: user_system_role,
-        created_by_admin: created_by_admin
+        created_by_admin: created_by_admin,
+        cgu: cgu,
+        privacy_policy: privacy_policy
       )
 
       success(user, "User account created successfully for #{person.full_name}")

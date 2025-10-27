@@ -17,7 +17,9 @@ class RegistrationsController < ApplicationController
       newsletter_subscribed: user_params[:newsletter_subscribed] == "1",
       user_email: user_params[:email_address],
       user_password: user_params[:password],
-      user_system_role: "web_visitor"
+      user_system_role: "web_visitor",
+      cgu: user_params[:cgu],
+      privacy_policy: user_params[:privacy_policy]
     ).call
 
     if result.success?
