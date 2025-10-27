@@ -24,9 +24,9 @@ class CreateCoreTables < ActiveRecord::Migration[8.0]
       t.boolean "dyslexic_font", default: false
       t.datetime "created_at", null: false
       t.datetime "updated_at", null: false
-      t.index ["email"], name: "index_people_on_email", unique: true
-      t.index ["first_name", "last_name"], name: "index_people_on_first_name_and_last_name"
-      t.index ["phone"], name: "index_people_on_phone"
+      t.index [ "email" ], name: "index_people_on_email", unique: true
+      t.index [ "first_name", "last_name" ], name: "index_people_on_first_name_and_last_name"
+      t.index [ "phone" ], name: "index_people_on_phone"
     end
 
     create_table "users", force: :cascade do |t|
@@ -43,10 +43,10 @@ class CreateCoreTables < ActiveRecord::Migration[8.0]
       t.bigint "person_id"
       t.datetime "created_at", null: false
       t.datetime "updated_at", null: false
-      t.index ["deleted"], name: "index_users_on_deleted"
-      t.index ["email_address"], name: "index_users_on_email_address", unique: true
-      t.index ["person_id"], name: "index_users_on_person_id"
-      t.index ["system_role"], name: "index_users_on_system_role"
+      t.index [ "deleted" ], name: "index_users_on_deleted"
+      t.index [ "email_address" ], name: "index_users_on_email_address", unique: true
+      t.index [ "person_id" ], name: "index_users_on_person_id"
+      t.index [ "system_role" ], name: "index_users_on_system_role"
     end
 
     # Session System (Rails)
@@ -56,22 +56,19 @@ class CreateCoreTables < ActiveRecord::Migration[8.0]
       t.string "user_agent"
       t.datetime "created_at", null: false
       t.datetime "updated_at", null: false
-      t.index ["user_id"], name: "index_sessions_on_user_id"
+      t.index [ "user_id" ], name: "index_sessions_on_user_id"
     end
 
-    # Nettoyer les données incompatibles avant d'ajouter les contraintes
-    cleanup_invalid_foreign_keys
-
     # Foreign Keys - avec vérification d'existence
-    add_foreign_key "users", "people" unless foreign_key_exists?(:users, :people)
-    add_foreign_key "sessions", "users" unless foreign_key_exists?(:sessions, :users)
+    # add_foreign_key "users", "people" unless foreign_key_exists?(:users, :people)
+    # add_foreign_key "sessions", "users" unless foreign_key_exists?(:sessions, :users)
   end
 
   def down
     # Supprimer les contraintes de clés étrangères
     remove_foreign_key "sessions", "users" if foreign_key_exists?(:sessions, :users)
     remove_foreign_key "users", "people" if foreign_key_exists?(:users, :people)
-    
+
     # Supprimer les tables
     drop_table "sessions" if table_exists?("sessions")
     drop_table "users" if table_exists?("users")
@@ -86,7 +83,7 @@ class CreateCoreTables < ActiveRecord::Migration[8.0]
       invalid_user_ids = connection.execute(
         "SELECT id FROM users WHERE person_id IS NOT NULL AND person_id NOT IN (SELECT id FROM people)"
       ).map { |row| row["id"] }
-      
+
       if invalid_user_ids.any?
         say "Nettoyage de #{invalid_user_ids.count} users avec des person_id invalides"
         connection.execute("UPDATE users SET person_id = NULL WHERE id IN (#{invalid_user_ids.join(',')})")
@@ -98,7 +95,7 @@ class CreateCoreTables < ActiveRecord::Migration[8.0]
       invalid_session_ids = connection.execute(
         "SELECT id FROM sessions WHERE user_id NOT IN (SELECT id FROM users)"
       ).map { |row| row["id"] }
-      
+
       if invalid_session_ids.any?
         say "Nettoyage de #{invalid_session_ids.count} sessions avec des user_id invalides"
         connection.execute("DELETE FROM sessions WHERE id IN (#{invalid_session_ids.join(',')})")
