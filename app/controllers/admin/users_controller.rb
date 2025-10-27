@@ -11,6 +11,8 @@ module Admin
     include Admin::Users::DisplayHelper
     include Admin::Users::StatusHelper
     include Admin::Users::ActionsHelper
+    include Admin::Users::Filtering
+    include Admin::Users::Statistics
     before_action :set_user, only: %i[ show edit update destroy ]
     before_action :set_breadcrumbs, except: %i[ index new ]
     before_action :check_deletion_permissions, only: [ :destroy ]
@@ -25,10 +27,10 @@ module Admin
       )
 
       # Filtres
-      apply_filters
+      apply_person_filters
 
       # Recherche
-      apply_search if params[:search].present?
+      apply_person_search
 
       # Tri
       @people = @people.order(:last_name, :first_name)
@@ -38,89 +40,9 @@ module Admin
       @pagy, @people = pagy(@people, items: items_per_page)
 
       # Statistiques pour le dashboard (basées sur les Person principales)
-      @total_people = Person.main_people.count
-      @people_with_user = Person.main_people.joins(:user).count
-      @people_without_user = Person.main_people.left_joins(:user).where(users: { id: nil }).count
-      @new_users_yesterday = UserService.new_users_count
-      @basic_memberships = MembershipService.membership_type_count(:Basic)
-      @circus_memberships = MembershipService.membership_type_count(:Circus)
-      @active_memberships = MembershipService.active_memberships_count
-      @users_this_month = UserService.users_this_month
+      load_dashboard_statistics
 
       add_breadcrumb "Liste d'adhérents", nil
-    end
-
-    # GET /admin/users/index_refactored - Version refactorisée avec partials
-    def index_refactored
-      # Même logique que index mais avec les nouveaux helpers et components
-      @people = Person.main_people.includes(
-        :user,
-        memberships: :membership_type,
-        book_of_entries: :subscription_plan
-      )
-
-      # Filtres
-      apply_filters
-
-      # Recherche
-      apply_search if params[:search].present?
-
-      # Tri
-      @people = @people.order(:last_name, :first_name)
-
-      # Pagination - Réduire à 15 éléments pour une meilleure lisibilité (ou paramètre items)
-      items_per_page = params[:items]&.to_i || 15
-      @pagy, @people = pagy(@people, items: items_per_page)
-
-      # Statistiques pour le dashboard (basées sur les Person principales)
-      @total_people = Person.main_people.count
-      @people_with_user = Person.main_people.joins(:user).count
-      @people_without_user = Person.main_people.left_joins(:user).where(users: { id: nil }).count
-      @new_users_yesterday = UserService.new_users_count
-      @basic_memberships = MembershipService.membership_type_count(:Basic)
-      @circus_memberships = MembershipService.membership_type_count(:Circus)
-      @active_memberships = MembershipService.active_memberships_count
-      @users_this_month = UserService.users_this_month
-
-      add_breadcrumb "Liste d'adhérents", admin_users_path
-      add_breadcrumb "Version Refactorisée", nil
-    end
-
-
-    # GET /admin/users/index_viewcomponents - Version avec ViewComponents
-    def index_viewcomponents
-      # Même logique que index_refactored mais avec ViewComponents
-      @people = Person.main_people.includes(
-        :user,
-        memberships: :membership_type,
-        book_of_entries: :subscription_plan
-      )
-
-      # Filtres
-      apply_filters
-
-      # Recherche
-      apply_search if params[:search].present?
-
-      # Tri
-      @people = @people.order(:last_name, :first_name)
-
-      # Pagination - Réduire à 15 éléments pour une meilleure lisibilité (ou paramètre items)
-      items_per_page = params[:items]&.to_i || 15
-      @pagy, @people = pagy(@people, items: items_per_page)
-
-      # Statistiques pour le dashboard (basées sur les Person principales)
-      @total_people = Person.main_people.count
-      @people_with_user = Person.main_people.joins(:user).count
-      @people_without_user = Person.main_people.left_joins(:user).where(users: { id: nil }).count
-      @new_users_yesterday = UserService.new_users_count
-      @basic_memberships = MembershipService.membership_type_count(:Basic)
-      @circus_memberships = MembershipService.membership_type_count(:Circus)
-      @active_memberships = MembershipService.active_memberships_count
-      @users_this_month = UserService.users_this_month
-
-      add_breadcrumb "Liste d'adhérents", admin_users_path
-      add_breadcrumb "Version ViewComponents", nil
     end
 
     # GET /admin/users/1 or /admin/users/1.json
@@ -505,43 +427,14 @@ module Admin
       @person = Person.find(params[:id])
       @membership_type = MembershipType.find(params[:membership_type_id])
 
-      # Créer l'adhésion en statut pending pour le traiter
-      membership = @person.memberships.create!(
-        membership_type: @membership_type,
-        started_at: Date.current,
-        ended_at: 1.year.from_now,
-        status: :pending,
-        first_joined_at: Date.current
-      )
+      result = Admin::Operations::MembershipOperations.new(actor: Current.user)
+        .create_membership_with_payment(
+          person: @person,
+          membership_type: @membership_type,
+          payment_method: params[:payment_method] || :cash
+        )
 
-      # Créer le paiement en statut pending pour le traiter
-      payment = Payment.create!(
-        person: @person,
-        recorded_by: Current.user,
-        total_cents: @membership_type.price_cents,
-        payment_method: params[:payment_method] || :cash,
-        status: :pending,
-        notes: "Adhésion #{@membership_type.name}"
-      )
-
-      # Créer la ligne de paiement
-      PaymentLine.create!(
-        payment: payment,
-        item: membership,
-        amount_cents: @membership_type.price_cents,
-        description: "Adhésion #{@membership_type.name}"
-      )
-
-      # Traiter le paiement (cela assignera automatiquement le numéro d'adhérent)
-      result = Payments::Process.new(payment).call
-
-      unless result.success?
-        raise "Erreur lors du traitement du paiement: #{result.message}"
-      end
-
-      redirect_to admin_user_path("person_#{@person.id}"), notice: "Adhésion créée avec succès"
-    rescue => e
-      redirect_to admin_user_path("person_#{@person.id}"), alert: "Erreur lors de la création de l'adhésion: #{e.message}"
+      handle_result(result, success_path: admin_user_path("person_#{@person.id}"))
     end
 
 
@@ -549,47 +442,84 @@ module Admin
     def create_user_for_person
       @person = Person.find(params[:id])
 
-      # Vérifier qu'il n'y a pas déjà un compte User
-      if @person.user.present?
-        redirect_to admin_user_path("person_#{@person.id}"), alert: "Cette personne a déjà un compte utilisateur"
+      result = Admin::Operations::UserAccountOperations.new(actor: Current.user)
+        .ensure_user_account_for(
+          person: @person,
+          email: @person.email,
+          system_role: params[:system_role] || "web_visitor"
+        )
+
+      handle_result(result, success_path: admin_user_path("person_#{@person.id}"))
+    end
+
+    # Actions pour gérer les cotisations
+    def create_subscription
+      @person = Person.find(params[:id])
+      @subscription_plan = SubscriptionPlan.find(params[:subscription_plan_id])
+
+      # Vérifier que la personne peut acheter des plans d'abonnement
+      unless @person.can_buy_subscription_plans?
+        redirect_to admin_user_path("person_#{@person.id}"), alert: "Cette personne doit avoir une adhésion Cirque pour acheter des plans d'abonnement"
         return
       end
 
-      # LOGIQUE SIMPLE : Chercher un User existant avec cet email
-      if @person.email.present?
-        existing_user = User.find_by(email_address: @person.email)
-
-        if existing_user.present?
-          # User existe déjà → Le lier à cette Person
-          if existing_user.person.present?
-            redirect_to admin_user_path("person_#{@person.id}"),
-                        alert: "Ce compte web (#{existing_user.email_address}) est déjà lié à #{existing_user.person.full_name}. Impossible de le lier à #{@person.full_name}."
-            return
-          else
-            # User existe mais pas lié → Le lier
-            existing_user.update!(person: @person)
-            redirect_to admin_user_path("person_#{@person.id}"),
-                        notice: "✅ Compte web lié ! #{existing_user.email_address} est maintenant associé à #{@person.full_name}."
-            return
-          end
-        end
-      end
-
-      # Pas de User existant → Créer un nouveau User
-      user = User.create!(
-        person: @person,
-        email_address: @person.email,
-        password: SecureRandom.hex(8), # Mot de passe temporaire
-        password_confirmation: SecureRandom.hex(8),
-        system_role: params[:system_role] || "web_visitor",
-        created_by_admin: true,
-        cgu: true,
-        privacy_policy: true
+      # Créer le carnet d'entrées
+      book_of_entry = @person.book_of_entries.create!(
+        subscription_plan: @subscription_plan,
+        sessions_remaining: @subscription_plan.sessions_count || 0,
+        purchased_at: Time.current,
+        expires_at: @subscription_plan.validity_days.days.from_now,
+        status: :active
       )
 
-      redirect_to admin_user_path("person_#{@person.id}"), notice: "✅ Nouveau compte web créé ! Email: #{@person.email}, Mot de passe temporaire généré."
+      # Créer le paiement
+      payment = Payment.create!(
+        person: @person,
+        recorded_by: Current.user,
+        total_cents: @subscription_plan.price_cents,
+        payment_method: params[:payment_method] || :cash,
+        status: :success,
+        notes: "Plan d'abonnement #{@subscription_plan.name}"
+      )
+
+      # Créer la ligne de paiement
+      PaymentLine.create!(
+        payment: payment,
+        item: book_of_entry,
+        amount_cents: @subscription_plan.price_cents,
+        description: "Plan d'abonnement #{@subscription_plan.name}"
+      )
+
+      redirect_to admin_user_path("person_#{@person.id}"), notice: "Plan d'abonnement acheté avec succès"
     rescue => e
-      redirect_to admin_user_path("person_#{@person.id}"), alert: "Erreur lors de la création du compte: #{e.message}"
+      redirect_to admin_user_path("person_#{@person.id}"), alert: "Erreur lors de l'achat du plan: #{e.message}"
+    end
+
+    # Action pour lier un compte User existant
+    def link_user
+      @person = Person.find(params[:id])
+      @user = User.find(params[:user_id])
+
+      # Vérifier que le User n'est pas déjà lié à une autre Person
+      if @user.person.present?
+        redirect_to admin_user_path("person_#{@person.id}"), alert: "Ce compte utilisateur est déjà lié à une autre personne"
+        return
+      end
+
+      # Lier le User à la Person
+      @user.update!(person: @person)
+
+      redirect_to admin_user_path("person_#{@person.id}"), notice: "Compte utilisateur lié avec succès"
+    rescue => e
+      redirect_to admin_user_path("person_#{@person.id}"), alert: "Erreur lors de la liaison: #{e.message}"
+    end
+
+    def handle_result(result, success_path:)
+      if result.success?
+        redirect_to success_path, notice: result.message
+      else
+        redirect_back fallback_location: admin_users_path, alert: result.errors.join(", ")
+      end
     end
 
     # Only allow a list of trusted parameters through.
@@ -665,25 +595,5 @@ module Admin
     end
 
     # Méthodes privées pour les filtres et la recherche
-    def apply_filters
-      case params[:filter]
-      when "with_active_membership"
-        @people = @people.with_active_membership
-      when "with_expiring_membership"
-        @people = @people.with_expiring_membership
-      when "with_expired_membership"
-        @people = @people.with_expired_membership
-      when "without_membership"
-        @people = @people.without_membership
-      when "with_user_account"
-        @people = @people.with_user_account
-      when "without_user_account"
-        @people = @people.without_user_account
-      end
-    end
-
-    def apply_search
-      @people = @people.search_by_contact(params[:search])
-    end
   end
 end
