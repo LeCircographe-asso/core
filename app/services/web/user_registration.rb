@@ -15,6 +15,8 @@ module Web
     attribute :user_email, :string
     attribute :user_password, :string
     attribute :user_system_role, :string, default: "web_visitor"
+    attribute :cgu, :string
+    attribute :privacy_policy, :string
 
     # Validations
     validates :first_name, presence: true
@@ -23,6 +25,8 @@ module Web
     validates :user_email, presence: true
     validates :user_password, presence: true
     validates :user_system_role, inclusion: { in: %w[super_admin admin volunteer web_visitor] }
+    validates :cgu, acceptance: { message: "Vous devez accepter les CGU pour continuer." }
+    validates :privacy_policy, acceptance: { message: "Vous devez accepter la politique de confidentialité pour continuer." }
     validate :email_uniqueness
     validate :user_email_uniqueness
 
@@ -89,7 +93,9 @@ module Web
           user_email: user_email,
           user_password: user_password,
           user_system_role: user_system_role,
-          created_by_admin: false # Créé par l'utilisateur lui-même
+          created_by_admin: false, # Créé par l'utilisateur lui-même
+          cgu: cgu,
+          privacy_policy: privacy_policy
         ).call
       end
     end
