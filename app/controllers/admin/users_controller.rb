@@ -621,6 +621,37 @@ module Admin
       end
     end
 
+    def record_attendance_directly
+      person_id = params[:id].gsub("person_", "")
+      @person = Person.active.find(person_id)
+      @date = params[:date]&.to_date || Date.current
+
+      operations = Admin::Operations::AttendanceOperations.new(actor: Current.user)
+      @result = operations.record_directly(
+        person: @person,
+        date: @date
+      )
+
+      respond_to do |format|
+        format.turbo_stream do
+          if @result.success?
+            render turbo_stream: [
+              turbo_stream.update("attendance-frame-#{@person.id}", 
+                partial: "admin/users/attendance_success", 
+                locals: { person: @person, result: @result }),
+              turbo_stream.update("flash", 
+                partial: "shared/flash", 
+                locals: { notice: @result.message })
+            ]
+          else
+            render turbo_stream: turbo_stream.update("flash", 
+              partial: "shared/flash", 
+              locals: { alert: @result.message })
+          end
+        end
+      end
+    end
+
     def record_attendance_with_book
       person_id = params[:id].gsub("person_", "")
       @person = Person.active.find(person_id)
