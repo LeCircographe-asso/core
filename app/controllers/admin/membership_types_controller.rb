@@ -41,6 +41,12 @@ module Admin
     end
 
     def destroy
+      # Seul le super_admin peut supprimer des types d'adhésion
+      unless Current.user&.system_role == "super_admin"
+        redirect_to admin_membership_types_path, alert: "Seul le super-admin peut supprimer des types d'adhésion."
+        return
+      end
+
       if @membership_type.memberships.any?
         redirect_to admin_membership_types_path, alert: "Impossible de supprimer ce type d'adhésion car il est utilisé par des membres."
       else

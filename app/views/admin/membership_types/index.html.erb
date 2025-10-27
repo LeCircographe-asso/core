@@ -62,18 +62,44 @@
                   </div>
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                  <div class="flex space-x-2">
-                    <%= link_to "Voir", admin_membership_type_path(membership_type), 
-                        class: "text-[#1F5C55] hover:text-[#194A45]" %>
-                    <%= link_to "Modifier", edit_admin_membership_type_path(membership_type), 
-                        class: "text-blue-600 hover:text-blue-900" %>
+                  <div class="flex space-x-3">
+                    <%= link_to edit_admin_membership_type_path(membership_type), 
+                        class: "inline-flex items-center p-2 text-blue-600 hover:text-blue-900 hover:bg-blue-50 rounded-md transition-colors duration-200",
+                        title: "Modifier" do %>
+                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                      </svg>
+                    <% end %>
                     <% if membership_type.memberships.empty? %>
-                      <%= link_to "Supprimer", admin_membership_type_path(membership_type), 
-                          method: :delete, 
-                          data: { confirm: "Êtes-vous sûr de vouloir supprimer ce type d'adhésion ?" },
-                          class: "text-red-600 hover:text-red-900" %>
+                      <% if Current.user&.system_role == 'super_admin' %>
+                        <%= link_to admin_membership_type_path(membership_type), 
+                            method: :delete, 
+                            data: { confirm: "Êtes-vous sûr de vouloir supprimer ce type d'adhésion ?" },
+                            class: "inline-flex items-center p-2 text-red-600 hover:text-red-900 hover:bg-red-50 rounded-md transition-colors duration-200",
+                            title: "Supprimer" do %>
+                          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                          </svg>
+                        <% end %>
+                      <% else %>
+                        <span class="inline-flex items-center p-2 text-gray-400 cursor-not-allowed" 
+                              data-controller="tooltip" 
+                              data-tooltip-content-value="Seul le super-admin peut supprimer des types d'adhésion"
+                              title="Seul le super-admin peut supprimer des types d'adhésion">
+                          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                          </svg>
+                        </span>
+                      <% end %>
                     <% else %>
-                      <span class="text-gray-400">Supprimer</span>
+                      <span class="inline-flex items-center p-2 text-gray-400 cursor-not-allowed" 
+                            data-controller="tooltip" 
+                            data-tooltip-content-value="Impossible de supprimer - utilisé par des membres"
+                            title="Impossible de supprimer - utilisé par des membres">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                        </svg>
+                      </span>
                     <% end %>
                   </div>
                 </td>
