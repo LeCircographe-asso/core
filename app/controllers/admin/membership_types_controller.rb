@@ -1,6 +1,6 @@
 module Admin
   class MembershipTypesController < BaseController
-    before_action :set_membership_type, only: [:show, :edit, :update, :destroy]
+    before_action :set_membership_type, only: [ :show, :edit, :update, :destroy ]
     before_action :set_breadcrumbs
 
     def index
@@ -34,7 +34,7 @@ module Admin
 
     def update
       if @membership_type.update(membership_type_params)
-        redirect_to admin_membership_type_path(@membership_type), notice: "Type d'adhésion mis à jour avec succès !"
+        redirect_to admin_membership_types_path, notice: "Type d'adhésion mis à jour avec succès !"
       else
         render :edit, status: :unprocessable_entity
       end
