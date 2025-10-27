@@ -33,8 +33,9 @@ module Admin
       # Tri
       @people = @people.order(:last_name, :first_name)
 
-      # Pagination
-      @pagy, @people = pagy(@people, items: 25)
+      # Pagination - Réduire à 15 éléments pour une meilleure lisibilité (ou paramètre items)
+      items_per_page = params[:items]&.to_i || 15
+      @pagy, @people = pagy(@people, items: items_per_page)
 
       # Statistiques pour le dashboard (basées sur les Person principales)
       @total_people = Person.main_people.count
@@ -67,8 +68,9 @@ module Admin
       # Tri
       @people = @people.order(:last_name, :first_name)
 
-      # Pagination
-      @pagy, @people = pagy(@people, items: 25)
+      # Pagination - Réduire à 15 éléments pour une meilleure lisibilité (ou paramètre items)
+      items_per_page = params[:items]&.to_i || 15
+      @pagy, @people = pagy(@people, items: items_per_page)
 
       # Statistiques pour le dashboard (basées sur les Person principales)
       @total_people = Person.main_people.count
@@ -103,8 +105,9 @@ module Admin
       # Tri
       @people = @people.order(:last_name, :first_name)
 
-      # Pagination
-      @pagy, @people = pagy(@people, items: 25)
+      # Pagination - Réduire à 15 éléments pour une meilleure lisibilité (ou paramètre items)
+      items_per_page = params[:items]&.to_i || 15
+      @pagy, @people = pagy(@people, items: items_per_page)
 
       # Statistiques pour le dashboard (basées sur les Person principales)
       @total_people = Person.main_people.count
