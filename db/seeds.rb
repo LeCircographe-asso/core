@@ -45,6 +45,9 @@ load Rails.root.join('db', 'seeds', 'events.rb')
 # 4. Personnes de test avec numéros d'adhérent et historiques
 load Rails.root.join('db', 'seeds', 'sample_people.rb')
 
+# 5. Création de 75 utilisateurs supplémentaires pour les tests
+load Rails.root.join('db', 'seeds', 'bulk_users.rb')
+
 puts "\n🎉 Seeds completed successfully!"
 puts "=" * 60
 puts "📊 Summary:"
