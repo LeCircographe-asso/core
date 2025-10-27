@@ -37,7 +37,7 @@ module Admin
         if has_active_subscriptions?
           {
             controller: "tooltip",
-            tooltip_content: tooltip_text
+            "tooltip-content-value": tooltip_text
           }
         else
           {}

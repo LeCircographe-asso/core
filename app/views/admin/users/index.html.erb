@@ -92,8 +92,8 @@
         </div>
 
         <!-- Barre de recherche et filtres -->
-        <div class="filter-section bg-gray-50 rounded-lg p-4 mb-6" data-controller="search" data-search-url-value="<%= admin_users_path %>">
-          <div class="flex flex-col md:flex-row gap-4">
+        <div class="filter-section bg-gray-50 rounded-lg p-4 mb-6">
+          <%= form_with url: admin_users_path, method: :get, local: true, class: "flex flex-col md:flex-row gap-4" do |form| %>
             <!-- Recherche -->
             <div class="flex-1">
               <label for="search" class="block text-sm font-medium text-gray-700 mb-1">Recherche</label>
@@ -103,17 +103,14 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                   </svg>
                 </div>
-                <input type="text" 
-                       id="search" 
-                       name="search" 
-                       data-search-target="input"
-                       data-action="input->admin-users#searchInput"
-                       value="<%= params[:search] %>"
-                       placeholder="Nom, email, téléphone... (Ctrl+K pour focus)"
-                       class="search-input pl-10 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#1F5C55] focus:ring-[#1F5C55] sm:text-sm">
+                <%= form.text_field :search, 
+                    id: "search",
+                    value: params[:search],
+                    placeholder: "Nom, email, téléphone... (Ctrl+K pour focus)",
+                    class: "search-input pl-10 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#1F5C55] focus:ring-[#1F5C55] sm:text-sm" %>
                 <% if params[:search].present? %>
                   <button type="button" 
-                          data-action="click->search#clear"
+                          onclick="clearSearch()"
                           class="absolute inset-y-0 right-0 pr-3 flex items-center">
                     <svg class="h-4 w-4 text-gray-400 hover:text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
@@ -126,26 +123,28 @@
             <!-- Filtres -->
             <div class="md:w-64">
               <label for="filter" class="block text-sm font-medium text-gray-700 mb-1">Filtres</label>
-              <%= form_with url: admin_users_path, method: :get, local: true, class: "flex gap-2" do |form| %>
-                <%= form.hidden_field :search, value: params[:search] %>
-                <%= form.select :filter, 
-                    options_for_select([
-                      ['Tous', ''],
-                      ['Avec adhésion active', 'with_active_membership'],
-                      ['Adhésion expirant', 'with_expiring_membership'],
-                      ['Adhésion expirée', 'with_expired_membership'],
-                      ['Sans adhésion', 'without_membership'],
-                      ['Avec compte web', 'with_user_account'],
-                      ['Sans compte web', 'without_user_account']
-                    ], params[:filter]),
-                    {},
-                    { 
-                      class: "block w-full rounded-md border-gray-300 shadow-sm focus:border-[#1F5C55] focus:ring-[#1F5C55] sm:text-sm",
-                      onchange: "this.form.submit()"
-                    } %>
-              <% end %>
+              <%= form.select :filter, 
+                  options_for_select([
+                    ['Tous', ''],
+                    ['Avec adhésion active', 'with_active_membership'],
+                    ['Adhésion expirant', 'with_expiring_membership'],
+                    ['Adhésion expirée', 'with_expired_membership'],
+                    ['Sans adhésion', 'without_membership'],
+                    ['Avec compte web', 'with_user_account'],
+                    ['Sans compte web', 'without_user_account']
+                  ], params[:filter]),
+                  {},
+                  { 
+                    class: "block w-full rounded-md border-gray-300 shadow-sm focus:border-[#1F5C55] focus:ring-[#1F5C55] sm:text-sm",
+                    onchange: "this.form.submit()"
+                  } %>
             </div>
-          </div>
+            
+            <!-- Bouton de recherche -->
+            <div class="flex items-end">
+              <%= form.submit "Rechercher", class: "px-4 py-2 bg-[#1F5C55] text-white rounded-md hover:bg-[#194A45] focus:outline-none focus:ring-2 focus:ring-[#1F5C55]" %>
+            </div>
+          <% end %>
         </div>
 
         <!-- Tableau des adhérents -->
@@ -249,7 +248,7 @@
               </div>
               
               <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
-                <div>
+                <div class="flex items-center space-x-4">
                   <p class="text-sm text-gray-700">
                     Affichage de 
                     <span class="font-medium"><%= @pagy.from %></span>
@@ -259,6 +258,18 @@
                     <span class="font-medium"><%= @pagy.count %></span>
                     résultats
                   </p>
+                  
+                  <!-- Sélecteur d'éléments par page -->
+                  <div class="flex items-center space-x-2">
+                    <label for="items-per-page" class="text-sm text-gray-700">Par page:</label>
+                    <select id="items-per-page" onchange="changeItemsPerPage(this.value)" 
+                            class="border border-gray-300 rounded-md px-2 py-1 text-sm focus:ring-[#1F5C55] focus:border-[#1F5C55]">
+                      <option value="10" <%= 'selected' if params[:items] == '10' %>>10</option>
+                      <option value="15" <%= 'selected' if params[:items] == '15' || params[:items].blank? %>>15</option>
+                      <option value="25" <%= 'selected' if params[:items] == '25' %>>25</option>
+                      <option value="50" <%= 'selected' if params[:items] == '50' %>>50</option>
+                    </select>
+                  </div>
                 </div>
                 <div>
                   <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
@@ -300,3 +311,36 @@
     </div>
   </div>
 </div>
+
+<script>
+function changeItemsPerPage(items) {
+  const url = new URL(window.location);
+  url.searchParams.set('items', items);
+  url.searchParams.delete('page'); // Reset to first page
+  window.location.href = url.toString();
+}
+
+function clearSearch() {
+  document.getElementById('search').value = '';
+  document.querySelector('form').submit();
+}
+
+// Raccourci clavier Ctrl+K pour focus sur la recherche
+document.addEventListener('keydown', function(e) {
+  if (e.ctrlKey && e.key === 'k') {
+    e.preventDefault();
+    document.getElementById('search').focus();
+  }
+});
+
+// Auto-submit du formulaire de recherche avec debounce
+let searchTimeout;
+document.getElementById('search').addEventListener('input', function(e) {
+  clearTimeout(searchTimeout);
+  searchTimeout = setTimeout(() => {
+    if (e.target.value.length >= 2 || e.target.value.length === 0) {
+      e.target.form.submit();
+    }
+  }, 500);
+});
+</script>

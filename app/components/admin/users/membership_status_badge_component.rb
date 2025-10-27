@@ -45,7 +45,7 @@ module Admin
         if person.has_active_membership? || person.memberships.exists?
           {
             controller: "tooltip",
-            tooltip_content: tooltip_text
+            "tooltip-content-value": tooltip_text
           }
         else
           {}

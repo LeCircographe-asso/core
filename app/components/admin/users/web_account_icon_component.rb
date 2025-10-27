@@ -28,7 +28,7 @@ module Admin
       def tooltip_data
         {
           controller: "tooltip",
-          tooltip_content: icon_title
+          "tooltip-content-value": icon_title
         }
       end
 
