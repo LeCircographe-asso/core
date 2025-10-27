@@ -50,22 +50,24 @@ module People
       ActiveRecord::Base.transaction do
         # 1. Créer ou mettre à jour la personne
         person_result = create_person
-        return person_result unless person_result.success?
+        return failure(person_result.errors.join(", ")) unless person_result.success?
 
         person = person_result.person
         person.skip_membership_validation = true # Permettre création
 
         # 2. Créer le compte utilisateur si demandé
         user_result = create_user_account_service(person) if create_user_account == true
-        return user_result unless user_result.nil? || user_result.success?
+        return failure(user_result.errors.join(", ")) unless user_result.nil? || user_result.success?
 
         # 3. Créer l'adhésion et le paiement
         membership_result = create_membership(person)
-        return membership_result unless membership_result.success?
+        return failure(membership_result.errors.join(", ")) unless membership_result.success?
 
         success(person, user_result&.user, membership_result.membership)
       end
     rescue ActiveRecord::RecordInvalid => e
+      failure(e.message)
+    rescue ActiveRecord::Rollback => e
       failure(e.message)
     end
 
@@ -129,7 +131,7 @@ module People
     def failure(message)
       OpenStruct.new(
         success?: false,
-        errors: [message],
+        errors: [ message ],
         message: message
       )
     end

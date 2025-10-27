@@ -9,34 +9,35 @@ class RegistrationsController < ApplicationController
   end
 
   def create
-    # Trouver l'adhésion Basic par défaut
-    basic_membership = MembershipType.find_by(category: :basic)
-    
-    if basic_membership.nil?
-      flash.now[:alert] = "Erreur système: adhésion de base non trouvée"
-      render :new, status: :unprocessable_entity
-      return
-    end
-
-    # Utiliser People::Register pour créer Person + User + Membership
-    result = People::Register.new(
-      first_name: user_params[:first_name] || "Utilisateur",
-      last_name: user_params[:last_name] || "Anonyme", 
+    # Utiliser Web::UserRegistration pour créer un espace utilisateur
+    result = Web::UserRegistration.new(
+      first_name: user_params[:first_name].present? ? user_params[:first_name] : "Utilisateur",
+      last_name: user_params[:last_name].present? ? user_params[:last_name] : "Anonyme",
       email: user_params[:email_address],
-      membership_type_id: basic_membership.id,
-      payment_method: "pending", # À payer plus tard
-      create_user_account: true,
+      newsletter_subscribed: user_params[:newsletter_subscribed] == "1",
       user_email: user_params[:email_address],
       user_password: user_params[:password],
       user_system_role: "web_visitor"
     ).call
-    
+
     if result.success?
       UserMailer.welcome_email(result.user).deliver_later
       start_new_session_for result.user
       redirect_to root_path, notice: "Inscription réussie !"
     else
-      flash.now[:alert] = result.errors.join(", ")
+      # Créer un objet User temporaire pour afficher les erreurs dans la vue
+      @user = User.new(user_only_params)
+
+      # Gérer les erreurs spécifiques
+      error_messages = result.errors
+      if error_messages.any? { |msg| msg.include?("already been taken") || msg.include?("already used") }
+        @user.errors.add(:email_address, "Cette adresse email est déjà utilisée")
+        flash.now[:alert] = "Cette adresse email est déjà utilisée. Veuillez utiliser une autre adresse ou vous connecter."
+      else
+        @user.errors.add(:base, error_messages.join(", "))
+        flash.now[:alert] = error_messages.join(", ")
+      end
+
       render :new, status: :unprocessable_entity
     end
   end
@@ -45,5 +46,9 @@ class RegistrationsController < ApplicationController
 
   def user_params
     params.require(:user).permit(:email_address, :password, :password_confirmation, :cgu, :privacy_policy, :newsletter_subscribed, :first_name, :last_name)
+  end
+
+  def user_only_params
+    params.require(:user).permit(:email_address, :password, :password_confirmation, :cgu, :privacy_policy)
   end
 end

@@ -9,6 +9,7 @@ module People
     attribute :user_email, :string
     attribute :user_password, :string
     attribute :user_system_role, :string, default: "web_visitor"
+    attribute :created_by_admin, :boolean, default: true
 
     validates :person, presence: true
     validates :user_email, presence: true
@@ -36,7 +37,7 @@ module People
 
     def update_existing_user
       existing_user = person.user
-      
+
       # Mettre à jour le User existant
       existing_user.update!(
         email_address: user_email,
@@ -56,7 +57,7 @@ module People
         password: user_password,
         password_confirmation: user_password,
         system_role: user_system_role,
-        created_by_admin: true # Marquer comme créé par admin
+        created_by_admin: created_by_admin
       )
 
       success(user, "User account created successfully for #{person.full_name}")
@@ -67,7 +68,7 @@ module People
 
       # Vérifier l'unicité dans User
       existing_user = User.find_by(email_address: user_email)
-      
+
       if existing_user && existing_user != person&.user
         # Si l'email existe déjà sur un autre User
         if existing_user.person.present?
@@ -86,7 +87,7 @@ module People
     end
 
     def person_not_already_has_user
-      return unless person&.user.present?
+      nil unless person&.user.present?
 
       # Si la Person a déjà un User, on peut quand même mettre à jour
       # Cette validation est juste informative
@@ -104,7 +105,7 @@ module People
     def failure(message)
       OpenStruct.new(
         success?: false,
-        errors: [message],
+        errors: [ message ],
         message: message
       )
     end
