@@ -1,16 +1,19 @@
-# Seed pour des Person de test avec numéros d'adhérent et historiques
-puts "\n👥 Creating sample people with member numbers and history..."
+# Seed pour des Person de test avec différents types de création
+puts "\n👥 Creating sample people..."
 
 # Récupérer les types d'adhésion
 basic_membership = MembershipType.find_by(category: "basic")
 circus_full_membership = MembershipType.find_by(category: "circus_full")
 circus_reduced_membership = MembershipType.find_by(category: "circus_reduced")
 
-# Récupérer l'admin pour les paiements
-admin_user = User.find_by(system_role: "super_admin")
+# Récupérer les comptes système pour les créations par admin/volunteer
+admin_user = User.find_by(system_role: "admin")
+volunteer_user = User.find_by(system_role: "volunteer")
 
-# 1. Alice - Adhérente Cirque avec historique (Basique → Cirque)
-puts "\n  🎭 Creating Alice (Cirque with history)..."
+puts "\n📋 PARTIE 1: 3 personnes créées par admin/volunteer..."
+
+# 1. Alice - Créée par Admin
+puts "\n  🎭 Creating Alice (created by admin)..."
 alice = Person.create!(
   first_name: "Alice",
   last_name: "Cirque",
@@ -24,84 +27,23 @@ alice = Person.create!(
   newsletter_subscribed: true,
   get_involved: true,
   image_rights: true,
-  is_minor: false
+  is_minor: false,
+  notes: "Créée par admin"
 )
 
-# Créer un compte web pour Alice
-alice_user = User.create!(
-  person: alice,
-  email_address: alice.email,
-  password: "password123",
-  password_confirmation: "password123",
-  system_role: "web_visitor",
-  created_by_admin: true,
-  cgu: true,
-  privacy_policy: true
-)
-
-# Simuler l'historique : Alice a commencé en Basique puis est passée en Cirque
-# 1. Adhésion Basique (il y a 6 mois)
-basic_membership_alice = alice.memberships.create!(
+# Adhésion Basique pour Alice
+alice_membership = alice.memberships.create!(
   membership_type: basic_membership,
-  started_at: 6.months.ago,
-  ended_at: 6.months.ago + 1.year,
-  status: :expired,
-  first_joined_at: 6.months.ago
-)
-
-# Paiement pour l'adhésion Basique (cela assigne le numéro)
-basic_payment = Payment.create!(
-  person: alice,
-  recorded_by: admin_user,
-  total_cents: basic_membership.price_cents,
-  payment_method: :cash,
-  status: :success,
-  notes: "Paiement initial adhésion Basique"
-)
-
-PaymentLine.create!(
-  payment: basic_payment,
-  item: basic_membership_alice,
-  amount_cents: basic_membership.price_cents,
-  description: "Adhésion Basique"
-)
-
-# Assigner le numéro d'adhérent pour l'adhésion Basique
-MemberManagementService.assign_member_number(alice, 'BASIQUE')
-
-# 2. Adhésion Cirque (maintenant)
-circus_membership_alice = alice.memberships.create!(
-  membership_type: circus_full_membership,
-  started_at: Date.current,
-  ended_at: 1.year.from_now,
+  started_at: 3.months.ago,
+  ended_at: 3.months.ago + 1.year,
   status: :active,
-  first_joined_at: Date.current
+  first_joined_at: 3.months.ago
 )
 
-# Paiement pour l'adhésion Cirque
-circus_payment = Payment.create!(
-  person: alice,
-  recorded_by: admin_user,
-  total_cents: circus_full_membership.price_cents,
-  payment_method: :card,
-  status: :success,
-  notes: "Upgrade vers Cirque"
-)
+puts "    ✅ #{alice.full_name}: Créée par #{admin_user.person.full_name}"
 
-PaymentLine.create!(
-  payment: circus_payment,
-  item: circus_membership_alice,
-  amount_cents: circus_full_membership.price_cents,
-  description: "Adhésion Cirque Complète"
-)
-
-# Changer le numéro d'adhérent (Basique → Cirque)
-alice.change_member_number('CIRQUE', 'Upgrade de Basique vers Cirque')
-
-puts "    ✅ #{alice.full_name}: #{alice.member_number} (historique: #{alice.member_number_history.count} entrée(s))"
-
-# 2. Bob - Adhérent Basique simple
-puts "\n  🎪 Creating Bob (Basique simple)..."
+# 2. Bob - Créé par Volunteer
+puts "\n  🎪 Creating Bob (created by volunteer)..."
 bob = Person.create!(
   first_name: "Bob",
   last_name: "Basique",
@@ -115,54 +57,23 @@ bob = Person.create!(
   newsletter_subscribed: false,
   get_involved: false,
   image_rights: true,
-  is_minor: false
+  is_minor: false,
+  notes: "Créée par volunteer"
 )
 
-# Créer un compte web pour Bob
-bob_user = User.create!(
-  person: bob,
-  email_address: bob.email,
-  password: "password123",
-  password_confirmation: "password123",
-  system_role: "web_visitor",
-  created_by_admin: true,
-  cgu: true,
-  privacy_policy: true
-)
-
-# Adhésion Basique
+# Adhésion Cirque Complète pour Bob
 bob_membership = bob.memberships.create!(
-  membership_type: basic_membership,
-  started_at: 3.months.ago,
-  ended_at: 3.months.ago + 1.year,
+  membership_type: circus_full_membership,
+  started_at: 1.month.ago,
+  ended_at: 1.month.ago + 1.year,
   status: :active,
-  first_joined_at: 3.months.ago
+  first_joined_at: 1.month.ago
 )
 
-# Paiement pour l'adhésion Basique
-bob_payment = Payment.create!(
-  person: bob,
-  recorded_by: admin_user,
-  total_cents: basic_membership.price_cents,
-  payment_method: :cash,
-  status: :success,
-  notes: "Paiement adhésion Basique"
-)
+puts "    ✅ #{bob.full_name}: Créé par #{volunteer_user.person.full_name}"
 
-PaymentLine.create!(
-  payment: bob_payment,
-  item: bob_membership,
-  amount_cents: basic_membership.price_cents,
-  description: "Adhésion Basique"
-)
-
-# Assigner le numéro d'adhérent
-MemberManagementService.assign_member_number(bob, 'BASIQUE')
-
-puts "    ✅ #{bob.full_name}: #{bob.member_number} (historique: #{bob.member_number_history.count} entrée(s))"
-
-# 3. Charlie - Adhérent Cirque Réduit
-puts "\n  🎨 Creating Charlie (Cirque Réduit)..."
+# 3. Charlie - Créé par Admin
+puts "\n  🎨 Creating Charlie (created by admin)..."
 charlie = Person.create!(
   first_name: "Charlie",
   last_name: "Étudiant",
@@ -176,45 +87,26 @@ charlie = Person.create!(
   newsletter_subscribed: true,
   get_involved: true,
   image_rights: false,
-  is_minor: false
+  is_minor: false,
+  notes: "Créée par admin"
 )
 
-# Pas de compte web pour Charlie
-
-# Adhésion Cirque Réduite
+# Adhésion Cirque Réduite pour Charlie
 charlie_membership = charlie.memberships.create!(
   membership_type: circus_reduced_membership,
-  started_at: 1.month.ago,
-  ended_at: 1.month.ago + 1.year,
+  started_at: 2.weeks.ago,
+  ended_at: 2.weeks.ago + 1.year,
   status: :active,
-  first_joined_at: 1.month.ago
+  first_joined_at: 2.weeks.ago
 )
 
-# Paiement pour l'adhésion Cirque Réduite
-charlie_payment = Payment.create!(
-  person: charlie,
-  recorded_by: admin_user,
-  total_cents: circus_reduced_membership.price_cents,
-  payment_method: :transfer,
-  status: :success,
-  notes: "Paiement étudiant Cirque Réduit"
-)
+puts "    ✅ #{charlie.full_name}: Créé par #{admin_user.person.full_name}"
 
-PaymentLine.create!(
-  payment: charlie_payment,
-  item: charlie_membership,
-  amount_cents: circus_reduced_membership.price_cents,
-  description: "Adhésion Cirque Réduite"
-)
+puts "\n🌐 PARTIE 2: 3 comptes web créés par les utilisateurs eux-mêmes..."
 
-# Assigner le numéro d'adhérent
-MemberManagementService.assign_member_number(charlie, 'CIRQUE')
-
-puts "    ✅ #{charlie.full_name}: #{charlie.member_number} (historique: #{charlie.member_number_history.count} entrée(s))"
-
-# 4. Diana - Person sans adhésion (pas de numéro d'adhérent)
-puts "\n  👤 Creating Diana (no membership yet)..."
-diana = Person.create!(
+# 4. Diana - Compte web créé par l'utilisateur
+puts "\n  👤 Creating Diana (web account created by user)..."
+diana_person = Person.create!(
   first_name: "Diana",
   last_name: "Prospect",
   email: "diana.prospect@example.com",
@@ -227,15 +119,26 @@ diana = Person.create!(
   newsletter_subscribed: true,
   get_involved: false,
   image_rights: true,
-  is_minor: false
+  is_minor: false,
+  notes: "Créée par l'utilisateur lui-même"
 )
 
-# Pas de compte web, pas d'adhésion, pas de numéro d'adhérent
-puts "    ✅ #{diana.full_name}: Pas de numéro d'adhérent (pas encore d'adhésion)"
+diana_user = User.create!(
+  person: diana_person,
+  email_address: diana_person.email,
+  password: "password123",
+  password_confirmation: "password123",
+  system_role: "web_visitor",
+  created_by_admin: false,  # Créé par l'utilisateur
+  cgu: true,
+  privacy_policy: true
+)
 
-# 5. Emma - Adhérente avec historique complexe (Basique → Cirque → Basique)
-puts "\n  🎪 Creating Emma (complex history)..."
-emma = Person.create!(
+puts "    ✅ #{diana_person.full_name}: Compte web créé par l'utilisateur"
+
+# 5. Emma - Compte web créé par l'utilisateur
+puts "\n  🎪 Creating Emma (web account created by user)..."
+emma_person = Person.create!(
   first_name: "Emma",
   last_name: "Complexe",
   email: "emma.complexe@example.com",
@@ -248,81 +151,23 @@ emma = Person.create!(
   newsletter_subscribed: true,
   get_involved: true,
   image_rights: true,
-  is_minor: false
+  is_minor: false,
+  notes: "Créée par l'utilisateur lui-même"
 )
 
-# Créer un compte web pour Emma
 emma_user = User.create!(
-  person: emma,
-  email_address: emma.email,
+  person: emma_person,
+  email_address: emma_person.email,
   password: "password123",
   password_confirmation: "password123",
   system_role: "web_visitor",
-  created_by_admin: true,
+  created_by_admin: false,  # Créé par l'utilisateur
   cgu: true,
   privacy_policy: true
 )
 
-# 1. Adhésion Basique (il y a 1 an)
-emma_basic_1 = emma.memberships.create!(
-  membership_type: basic_membership,
-  started_at: 1.year.ago,
-  ended_at: 1.year.ago + 1.year,
-  status: :expired,
-  first_joined_at: 1.year.ago
-)
-
-# Paiement pour la première adhésion Basique
-emma_payment_1 = Payment.create!(
-  person: emma,
-  recorded_by: admin_user,
-  total_cents: basic_membership.price_cents,
-  payment_method: :cash,
-  status: :success,
-  notes: "Première adhésion Basique"
-)
-
-PaymentLine.create!(
-  payment: emma_payment_1,
-  item: emma_basic_1,
-  amount_cents: basic_membership.price_cents,
-  description: "Adhésion Basique"
-)
-
-# Assigner le premier numéro d'adhérent
-MemberManagementService.assign_member_number(emma, 'BASIQUE')
-
-# 2. Adhésion Cirque (il y a 6 mois)
-emma_cirque = emma.memberships.create!(
-  membership_type: circus_full_membership,
-  started_at: 6.months.ago,
-  ended_at: 6.months.ago + 1.year,
-  status: :expired,
-  first_joined_at: 6.months.ago
-)
-
-# Paiement pour l'adhésion Cirque
-emma_payment_2 = Payment.create!(
-  person: emma,
-  recorded_by: admin_user,
-  total_cents: circus_full_membership.price_cents,
-  payment_method: :card,
-  status: :success,
-  notes: "Upgrade vers Cirque"
-)
-
-PaymentLine.create!(
-  payment: emma_payment_2,
-  item: emma_cirque,
-  amount_cents: circus_full_membership.price_cents,
-  description: "Adhésion Cirque Complète"
-)
-
-# Changer le numéro d'adhérent (Basique → Cirque)
-emma.change_member_number('CIRQUE', 'Upgrade de Basique vers Cirque')
-
-# 3. Retour en Basique (maintenant)
-emma_basic_2 = emma.memberships.create!(
+# Adhésion Basique pour Emma
+emma_membership = emma_person.memberships.create!(
   membership_type: basic_membership,
   started_at: Date.current,
   ended_at: 1.year.from_now,
@@ -330,31 +175,46 @@ emma_basic_2 = emma.memberships.create!(
   first_joined_at: Date.current
 )
 
-# Paiement pour le retour en Basique
-emma_payment_3 = Payment.create!(
-  person: emma,
-  recorded_by: admin_user,
-  total_cents: basic_membership.price_cents,
-  payment_method: :cash,
-  status: :success,
-  notes: "Retour en Basique"
+puts "    ✅ #{emma_person.full_name}: Compte web créé par l'utilisateur"
+
+# 6. Frank - Compte web créé par l'utilisateur
+puts "\n  🎨 Creating Frank (web account created by user)..."
+frank_person = Person.create!(
+  first_name: "Frank",
+  last_name: "Newcomer",
+  email: "frank.newcomer@example.com",
+  phone: "+33 6 67 89 01 23",
+  address: "17 Rue de la Clown",
+  zip_code: "75017",
+  town: "Paris",
+  country: "France",
+  birth_date: Date.new(1998, 12, 3),
+  newsletter_subscribed: false,
+  get_involved: true,
+  image_rights: true,
+  is_minor: false,
+  notes: "Créée par l'utilisateur lui-même"
 )
 
-PaymentLine.create!(
-  payment: emma_payment_3,
-  item: emma_basic_2,
-  amount_cents: basic_membership.price_cents,
-  description: "Adhésion Basique"
+frank_user = User.create!(
+  person: frank_person,
+  email_address: frank_person.email,
+  password: "password123",
+  password_confirmation: "password123",
+  system_role: "web_visitor",
+  created_by_admin: false,  # Créé par l'utilisateur
+  cgu: true,
+  privacy_policy: true
 )
 
-# Changer le numéro d'adhérent (Cirque → Basique)
-emma.change_member_number('BASIQUE', 'Retour de Cirque vers Basique')
+puts "    ✅ #{frank_person.full_name}: Compte web créé par l'utilisateur"
 
-puts "    ✅ #{emma.full_name}: #{emma.member_number} (historique: #{emma.member_number_history.count} entrée(s))"
-
-puts "\n🎉 Created #{Person.count - 1} sample people (excluding admin)"
-puts "📊 Member number statistics:"
-Person.where.not(member_number: nil).each do |person|
-  history_count = person.member_number_history.count
-  puts "  - #{person.full_name}: #{person.member_number} (#{history_count} historique(s))"
-end
+puts "\n🎉 Sample people created successfully!"
+puts "📊 Summary:"
+puts "  - #{Person.count} personnes total"
+puts "  - #{User.count} utilisateurs total"
+puts "  - #{Person.where("notes LIKE ?", "%admin%").count} personnes créées par admin"
+puts "  - #{Person.where("notes LIKE ?", "%volunteer%").count} personnes créées par volunteer"
+puts "  - #{Person.where("notes LIKE ?", "%utilisateur%").count} personnes créées par les utilisateurs eux-mêmes"
+puts "  - #{User.where(created_by_admin: true).count} comptes créés par admin"
+puts "  - #{User.where(created_by_admin: false).count} comptes créés par les utilisateurs"
