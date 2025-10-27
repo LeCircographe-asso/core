@@ -1,7 +1,7 @@
 module Admin
   class SubscriptionPlansController < BaseController
-    before_action :set_subscription_plan, only: [:show, :edit, :update, :destroy]
-    before_action :set_person, only: [:new, :create]
+    before_action :set_subscription_plan, only: [ :show, :edit, :update, :destroy ]
+    before_action :set_person, only: [ :new, :create ]
     before_action :set_breadcrumbs
 
     def index
@@ -16,24 +16,24 @@ module Admin
 
     def new
       @person = Person.find(params[:person_id]) if params[:person_id]
-      
+
       # Vérifier que la personne peut acheter des plans d'abonnement
       unless @person&.can_buy_subscription_plans?
         flash[:alert] = "Cette personne doit avoir une adhésion Cirque pour acheter des plans d'abonnement"
         redirect_to admin_users_path
         return
       end
-      
+
       # Filtrer les plans d'abonnement selon le type d'adhésion de la personne
       if @person&.current_membership&.membership_type&.circus?
         @subscription_plans = SubscriptionPlan.joins(:membership_type)
-                                            .where(membership_types: { category: [:circus_full, :circus_reduced] })
+                                            .where(membership_types: { category: [ :circus_full, :circus_reduced ] })
                                             .current_versions
                                             .order(:duration, :price_cents)
       else
         @subscription_plans = []
       end
-      
+
       add_breadcrumb "Nouvel abonnement", nil
     end
 
@@ -43,13 +43,19 @@ module Admin
 
     def update
       if @subscription_plan.update(subscription_plan_params)
-        redirect_to admin_subscription_plan_path(@subscription_plan), notice: "Plan d'abonnement mis à jour avec succès !"
+        redirect_to admin_subscription_plans_path, notice: "Plan d'abonnement mis à jour avec succès !"
       else
         render :edit, status: :unprocessable_entity
       end
     end
 
     def destroy
+      # Seul le super_admin peut supprimer des cotisations
+      unless Current.user&.system_role == "super_admin"
+        redirect_to admin_subscription_plans_path, alert: "Seul le super-admin peut supprimer des cotisations."
+        return
+      end
+
       if @subscription_plan.book_of_entries.any?
         redirect_to admin_subscription_plans_path, alert: "Impossible de supprimer ce plan car il est utilisé par des carnets d'entrées."
       else
@@ -61,7 +67,7 @@ module Admin
     def create
       @person = Person.find(subscription_params[:person_id])
       @subscription_plan = SubscriptionPlan.find(subscription_params[:subscription_plan_id])
-      
+
       # Créer le carnet d'entrées (BookOfEntry)
       book_of_entry_params = {
         subscription_plan: @subscription_plan,
@@ -69,12 +75,12 @@ module Admin
         purchased_at: Time.current,
         status: :active
       }
-      
+
       # Les packs10 n'expirent jamais, les autres plans ont une date d'expiration
       unless @subscription_plan.duration == "pack10"
         book_of_entry_params[:expires_at] = @subscription_plan.duration_days.days.from_now
       end
-      
+
       book_of_entry = @person.book_of_entries.create!(book_of_entry_params)
 
       # Créer le paiement
