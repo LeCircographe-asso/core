@@ -63,10 +63,14 @@ module Admin
                       notice: "Adhésion upgradée avec succès ! #{membership_type.name} - Différence payée: #{(price_difference / 100.0).round(2)}€"
         else
           # Création d'une nouvelle adhésion
+          custom_amount = membership_purchase_params[:payment_method] == "offered" ? 
+                         (membership_purchase_params[:custom_amount_cents]&.to_i || 0) : nil
+          
           result = @person.create_membership!(
             membership_type,
             payment_method: membership_purchase_params[:payment_method],
-            recorded_by: Current.user
+            recorded_by: Current.user,
+            custom_amount_cents: custom_amount
           )
 
           redirect_to admin_user_path("person_#{@person.id}"),
@@ -127,7 +131,7 @@ module Admin
     end
 
     def membership_purchase_params
-      params.require(:membership).permit(:person_id, :membership_type_id, :payment_method).merge(
+      params.require(:membership).permit(:person_id, :membership_type_id, :payment_method, :custom_amount_cents).merge(
         recorded_by_id: Current.user.id
       )
     end

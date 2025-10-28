@@ -222,7 +222,7 @@ class Person < ApplicationRecord
   end
 
   # Méthodes métier pour la création d'adhésions
-  def create_membership!(membership_type, payment_method: :cash, recorded_by:)
+  def create_membership!(membership_type, payment_method: :cash, recorded_by:, custom_amount_cents: nil)
     ActiveRecord::Base.transaction do
       # Vérifier qu'il n'y a pas d'adhésion active
       if memberships.active.current.exists?
@@ -237,21 +237,29 @@ class Person < ApplicationRecord
         status: :active
       )
 
+      # Déterminer le montant selon le mode de paiement
+      amount_cents = case payment_method.to_s
+      when "offered"
+        custom_amount_cents || 0 # Montant personnalisé ou 0 pour les offres
+      else
+        membership_type.price_cents # Prix normal
+      end
+
       # Créer le paiement
       payment = payments.create!(
-        total_cents: membership_type.price_cents,
+        total_cents: amount_cents,
         payment_method: payment_method,
         status: :success,
         recorded_by: recorded_by,
-        notes: "Paiement pour adhésion #{membership_type.name}"
+        notes: payment_method.to_s == "offered" ? "Adhésion offerte #{membership_type.name}" : "Paiement pour adhésion #{membership_type.name}"
       )
 
       # Créer la ligne de paiement
       payment.payment_lines.create!(
         item_type: "Membership",
         item_id: membership.id,
-        amount_cents: membership_type.price_cents,
-        description: "Adhésion #{membership_type.name}"
+        amount_cents: amount_cents,
+        description: payment_method.to_s == "offered" ? "Adhésion offerte #{membership_type.name}" : "Adhésion #{membership_type.name}"
       )
 
       { membership: membership, payment: payment }
@@ -259,7 +267,7 @@ class Person < ApplicationRecord
   end
 
   # Méthodes métier pour la création de cotisations
-  def create_subscription!(subscription_plan, payment_method: :cash, recorded_by:, record_attendance: false)
+  def create_subscription!(subscription_plan, payment_method: :cash, recorded_by:, record_attendance: false, custom_amount_cents: nil)
     ActiveRecord::Base.transaction do
       # Vérifier que la personne peut acheter des plans d'abonnement
       unless can_buy_subscription_plans?
@@ -300,21 +308,29 @@ class Person < ApplicationRecord
         expires_at: expires_at
       )
 
+      # Déterminer le montant selon le mode de paiement
+      amount_cents = case payment_method.to_s
+      when "offered"
+        custom_amount_cents || 0 # Montant personnalisé ou 0 pour les offres
+      else
+        subscription_plan.price_cents # Prix normal
+      end
+
       # Créer le paiement
       payment = payments.create!(
-        total_cents: subscription_plan.price_cents,
+        total_cents: amount_cents,
         payment_method: payment_method,
         status: :success,
         recorded_by: recorded_by,
-        notes: "Plan d'abonnement #{subscription_plan.name}"
+        notes: payment_method.to_s == "offered" ? "Cotisation offerte #{subscription_plan.name}" : "Plan d'abonnement #{subscription_plan.name}"
       )
 
       # Créer la ligne de paiement
       payment.payment_lines.create!(
         item_type: "BookOfEntry",
         item_id: book_of_entry.id,
-        amount_cents: subscription_plan.price_cents,
-        description: "Plan d'abonnement #{subscription_plan.name}"
+        amount_cents: amount_cents,
+        description: payment_method.to_s == "offered" ? "Cotisation offerte #{subscription_plan.name}" : "Plan d'abonnement #{subscription_plan.name}"
       )
 
       # Enregistrer la présence si demandé
