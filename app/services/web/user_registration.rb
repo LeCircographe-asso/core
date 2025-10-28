@@ -55,11 +55,11 @@ module Web
     def create_or_find_person
       # 1. Chercher si Person existe avec cet email
       existing_person = Person.active.find_by(email: email) if email.present?
-      
+
       if existing_person
         # Person existe → Bloquer et proposer revendication
         Rails.logger.warn("[WEB_REGISTRATION] BLOCKED: Email #{email} existe sur Person #{existing_person.id}")
-        
+
         if existing_person.user.present?
           # Person a déjà un User → Mot de passe oublié
           return failure("Cette adresse email est déjà utilisée. Utilisez 'Mot de passe oublié' pour récupérer votre compte.")
@@ -71,10 +71,10 @@ module Web
 
       # 2. Supprimer la recherche par nom+prénom (trop permissive)
       # SUPPRIMÉ : candidates = Person.active.where(...)
-      
+
       # 3. Créer nouvelle Person
       Rails.logger.info("[WEB_REGISTRATION] Création nouvelle Person pour #{email}")
-      People::PersonCreator.new(
+      PersonManagement::PersonCreator.new(
         first_name: first_name,
         last_name: last_name,
         email: email,
@@ -96,7 +96,7 @@ module Web
         success(person.user, "User account updated")
       else
         # Créer un nouveau User
-        People::UserAccountCreator.new(
+        UserManagement::AccountCreator.new(
           person: person,
           user_email: user_email,
           user_password: user_password,

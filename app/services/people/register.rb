@@ -74,11 +74,11 @@ module People
     private
 
     def create_person
-      People::PersonCreator.new(person_attributes).call
+      PersonManagement::PersonCreator.new(person_attributes).call
     end
 
     def create_user_account_service(person)
-      People::UserAccountCreator.new(
+      UserManagement::AccountCreator.new(
         person: person,
         user_email: user_email,
         user_password: user_password,
@@ -87,7 +87,7 @@ module People
     end
 
     def create_membership(person)
-      People::MembershipCreator.new(
+      MembershipManagement::MembershipCreator.new(
         person: person,
         membership_type_id: membership_type_id,
         payment_method: payment_method,

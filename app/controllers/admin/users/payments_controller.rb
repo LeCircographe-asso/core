@@ -25,38 +25,37 @@ module Admin
       end
 
       # POST /admin/users/person_1/payments
-      def create
-        @payment = @person.payments.build(payment_params)
-        @payment.recorded_by = Current.user
-        @payment.status = :pending
+    def create
+      begin
+        # Créer le paiement directement via le modèle Person
+        payment = @person.payments.create!(
+          total_cents: payment_params[:total_cents],
+          payment_method: payment_params[:payment_method] || "cash",
+          status: :success,
+          recorded_by: Current.user,
+          notes: payment_params[:notes]
+        )
 
-        if @payment.save
-          # Créer les lignes de paiement si spécifiées
-          if params[:payment_lines].present?
-            params[:payment_lines].each do |line_params|
-              @payment.payment_lines.create!(
-                item_type: line_params[:item_type],
-                item_id: line_params[:item_id],
-                amount_cents: line_params[:amount_cents],
-                description: line_params[:description]
-              )
-            end
+        # Ajouter les lignes de paiement si spécifiées
+        if params[:payment_lines].present?
+          params[:payment_lines].each do |line_params|
+            payment.payment_lines.create!(
+              item_type: line_params[:item_type],
+              item_id: line_params[:item_id],
+              amount_cents: line_params[:amount_cents],
+              description: line_params[:description]
+            )
           end
-
-          # Traiter le paiement
-          result = Payments::Process.new(@payment).call
-          
-          if result.success?
-            redirect_to admin_user_path("person_#{@person.id}"), notice: "Paiement créé et traité avec succès"
-          else
-            redirect_to admin_user_path("person_#{@person.id}"), alert: "Paiement créé mais erreur lors du traitement: #{result.message}"
-          end
-        else
-          @membership_types = MembershipType.all
-          @subscription_plans = SubscriptionPlan.all
-          render :new, status: :unprocessable_entity
         end
+
+        redirect_to admin_user_path("person_#{@person.id}"), notice: "Paiement créé avec succès"
+      rescue => e
+        @membership_types = MembershipType.all
+        @subscription_plans = SubscriptionPlan.all
+        flash.now[:alert] = "Erreur lors de la création du paiement: #{e.message}"
+        render :new, status: :unprocessable_entity
       end
+    end
 
       # GET /admin/users/person_1/payments/1
       def show
@@ -66,7 +65,7 @@ module Admin
       # PATCH /admin/users/person_1/payments/1
       def update
         @payment = @person.payments.find(params[:id])
-        
+
         if @payment.update(payment_params)
           redirect_to admin_user_path("person_#{@person.id}"), notice: "Paiement mis à jour avec succès"
         else
@@ -77,7 +76,7 @@ module Admin
       # DELETE /admin/users/person_1/payments/1
       def destroy
         @payment = @person.payments.find(params[:id])
-        
+
         if @payment.destroy
           redirect_to admin_user_path("person_#{@person.id}"), notice: "Paiement supprimé avec succès"
         else
@@ -86,22 +85,23 @@ module Admin
       end
 
       # POST /admin/users/person_1/payments/1/process
-      def process_payment
-        @payment = @person.payments.find(params[:id])
+    def process_payment
+      @payment = @person.payments.find(params[:id])
+      
+      begin
+        # Traiter le paiement (marquer comme success s'il ne l'est pas déjà)
+        @payment.update!(status: :success) if @payment.pending?
         
-        result = Payments::Process.new(@payment).call
-        
-        if result.success?
-          redirect_to admin_user_path("person_#{@person.id}"), notice: "Paiement traité avec succès"
-        else
-          redirect_to admin_user_path("person_#{@person.id}"), alert: "Erreur lors du traitement: #{result.message}"
-        end
+        redirect_to admin_user_path("person_#{@person.id}"), notice: "Paiement traité avec succès"
+      rescue => e
+        redirect_to admin_user_path("person_#{@person.id}"), alert: "Erreur lors du traitement: #{e.message}"
       end
+    end
 
       private
 
       def set_person
-        person_id = params[:person_id].to_s.gsub('person_', '')
+        person_id = params[:person_id].to_s.gsub("person_", "")
         @person = Person.find(person_id)
       end
 

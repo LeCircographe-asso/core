@@ -30,7 +30,7 @@ class User < ApplicationRecord
   has_many :attendances, through: :person
 
   # Délégation des attributs personnels vers Person
-  delegate :first_name, :last_name, :full_name, :phone, :email, :address, 
+  delegate :first_name, :last_name, :full_name, :phone, :email, :address,
            :birth_date, :emergency_contact_name, :emergency_contact_phone,
            :notes, :occupation, :specialty, :image_rights, :get_involved,
            :newsletter_subscribed, :dyslexic_font, :zip_code, :town, :country,
@@ -96,9 +96,9 @@ class User < ApplicationRecord
   def welcome_send
     return if web_visitor?
     return if email_address.blank? # Don't send email if no email address
-    
+
     # Skip email sending in seeds
-    return if caller.any? { |line| line.include?('db/seeds') }
+    return if caller.any? { |line| line.include?("db/seeds") }
 
     if created_by_admin?
       # Generate password reset URL for admin-created users
@@ -106,14 +106,6 @@ class User < ApplicationRecord
       UserMailer.welcome_by_admin(self, reset_url).deliver_later
     else
       UserMailer.welcome_email(self).deliver_later
-    end
-  end
-
-  def formatted_registration_date
-    if person&.has_active_membership?
-      person.memberships.order(:created_at).last.created_at.strftime("%d/%m/%Y")
-    else
-      "Pas encore membre"
     end
   end
 
@@ -127,11 +119,6 @@ class User < ApplicationRecord
 
   def created_by_admin?
     @created_by_admin == true
-  end
-
-
-  def is_interested_in?(event_id)
-    event_attendees.exists?(event_id: event_id)
   end
 
   # Méthode obsolète supprimée - utiliser Person-Based Architecture
@@ -223,12 +210,12 @@ class User < ApplicationRecord
 
   def email_uniqueness_unless_person_email
     return if email_address.blank?
-    
+
     # Si on a une Person associée avec le même email, c'est OK
     if person&.email == email_address
       return
     end
-    
+
     # Sinon, vérifier l'unicité normale
     if User.where(email_address: email_address).where.not(id: id).exists?
       errors.add(:email_address, "est déjà utilisé")

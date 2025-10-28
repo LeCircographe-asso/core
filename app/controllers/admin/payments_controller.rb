@@ -5,24 +5,24 @@ module Admin
 
     def index
       # Start with all payments with eager loading (nouveau modèle)
-      @payments = Payment.includes(:person, :recorded_by, :payment_lines)
+      @payments = PaymentQuery.with_person_and_recorded_by
 
       # Filter by person if person_id is provided
       @person = Person.find_by(id: params[:person_id])
-      @payments = @person.payments.includes(:person, :recorded_by, :payment_lines) if @person
+      @payments = PaymentQuery.by_person(@person.id) if @person
 
       # Compatibilité avec l'ancien système (user_id)
       @user = User.find_by(id: params[:user_id])
-      @payments = @user.payments.includes(:person, :recorded_by, :payment_lines) if @user
+      @payments = PaymentQuery.by_user(@user.id) if @user
 
       # Apply filters if provided
-      @payments = @payments.where(status: params[:status]) if params[:status].present?
+      @payments = PaymentQuery.by_status(params[:status]) if params[:status].present?
 
       # Filter by date range if provided
       if params[:start_date].present? && params[:end_date].present?
         start_date = Date.parse(params[:start_date])
         end_date = Date.parse(params[:end_date])
-        @payments = @payments.where(payment_date: start_date.beginning_of_day..end_date.end_of_day)
+        @payments = PaymentQuery.by_date_range(start_date, end_date)
       end
 
       # Apply sorting (default to newest first)
@@ -31,8 +31,8 @@ module Admin
       @payments = @payments.order("#{sort_column} #{sort_direction}")
 
       # Ensure we're using the filtered payment set for calculations
-      @total_amount = @payments.where(status: :success).sum(:total_cents)
-      @total_donation = @payments.where(status: :success).sum(:donation)
+      @total_amount = PaymentQuery.total_amount
+      @total_donation = PaymentQuery.total_donation
 
       # Handle loading a specific payment details
       if params[:id].present?
@@ -96,20 +96,21 @@ module Admin
     end
 
     def create
-      # Adapter pour le nouveau modèle Person-Based
-      @payment = Payment.new(payment_params)
+      begin
+        person = Person.find(payment_params[:person_id])
+        
+        # Créer le paiement directement
+        payment = person.payments.create!(
+          total_cents: payment_params[:total_cents],
+          payment_method: payment_params[:payment_method] || "cash",
+          status: :success,
+          recorded_by: Current.user,
+          notes: payment_params[:notes]
+        )
 
-      # Utiliser le service Payments::Process pour traiter le paiement
-      if @payment.save
-        process_result = Payments::Process.new(@payment).call
-
-        if process_result.success?
-          redirect_to admin_payment_path(@payment), notice: "Paiement traité avec succès"
-        else
-          redirect_to admin_payments_path, alert: "Erreur lors du traitement: #{process_result.message}"
-        end
-      else
-        redirect_to admin_payments_path, alert: "Erreur lors de la création du paiement"
+        redirect_to admin_payment_path(payment), notice: "Paiement créé avec succès"
+      rescue => e
+        redirect_to admin_payments_path, alert: "Erreur lors de la création du paiement: #{e.message}"
       end
     end
 

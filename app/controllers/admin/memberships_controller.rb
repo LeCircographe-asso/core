@@ -1,6 +1,7 @@
 module Admin
   class MembershipsController < BaseController
     before_action :set_person, only: [ :show, :edit, :update, :destroy ]
+    before_action :set_person_for_create, only: [ :create ]
     before_action :set_breadcrumbs
 
     def index
@@ -25,21 +26,20 @@ module Admin
     end
 
     def create
-      @person = Person.find(membership_params[:person_id])
-      @membership_type = MembershipType.find(membership_params[:membership_type_id])
+      @person = Person.find(membership_purchase_params[:person_id])
+      membership_type = MembershipType.find(membership_purchase_params[:membership_type_id])
 
-      result = Admin::Operations::MembershipOperations.new(actor: Current.user)
-        .create_membership_with_payment(
-          person: @person,
-          membership_type: @membership_type,
-          payment_method: membership_params[:payment_method] || :cash
+      begin
+        result = @person.create_membership!(
+          membership_type,
+          payment_method: membership_purchase_params[:payment_method],
+          recorded_by: Current.user
         )
 
-      if result.success?
         redirect_to admin_user_path("person_#{@person.id}"),
                     notice: "Adhésion créée avec succès ! Vous pouvez maintenant ajouter une cotisation depuis la fiche utilisateur."
-      else
-        flash[:alert] = result.errors.join(", ")
+      rescue => e
+        flash[:alert] = "Erreur lors de la création de l'adhésion: #{e.message}"
         redirect_to new_admin_membership_path(person_id: @person.id)
       end
     end
@@ -80,12 +80,22 @@ module Admin
       @person = Person.find(params[:id])
     end
 
+    def set_person_for_create
+      @person = Person.find(membership_purchase_params[:person_id])
+    end
+
     def set_breadcrumbs
       add_breadcrumb "Administration", admin_dashboard_index_path
     end
 
     def membership_params
       params.require(:membership).permit(:person_id, :membership_type_id, :payment_method, :started_at, :ended_at)
+    end
+
+    def membership_purchase_params
+      params.require(:membership).permit(:person_id, :membership_type_id, :payment_method).merge(
+        recorded_by_id: Current.user.id
+      )
     end
   end
 end

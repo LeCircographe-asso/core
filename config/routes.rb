@@ -5,24 +5,13 @@ Rails.application.routes.draw do
     resources :dashboard, only: %i[index], path: "dashboard"
     resource :opening_hours, only: %i[show edit update]
     resources :donations, only: %i[create]
-    resources :users do
-      resources :memberships, only: %i[create show update destroy]
-      post :restore, on: :member
-      # Nouvelles actions pour gérer Person
-      post :create_membership, on: :member
-      post :create_user_for_person, on: :member
-      get :edit_person, on: :member
-      # Actions pour gérer les doublons
-      get :duplicates, on: :collection
-      # Actions pour la gestion des présences
-      post :check_attendance_eligibility, on: :member
-      post :record_attendance_with_book, on: :member
-      post :record_attendance_directly, on: :member
-      # Route de test pour la vue refactorisée
-      get :index_refactored, on: :collection, as: :index_refactored
-      # Route de test pour ViewComponents
-      get :index_viewcomponents, on: :collection, as: :index_viewcomponents
-    end
+            resources :users do
+              post :restore, on: :member
+              # Actions pour gérer Person
+              get :edit_person, on: :member
+              # Actions pour gérer les doublons
+              get :duplicates, on: :collection
+            end
     resources :events, only: %i[new create edit destroy index]
     resource :session, only: %i[new create destroy]
     resource :notepad, only: %i[edit update]
@@ -55,9 +44,9 @@ Rails.application.routes.draw do
     post "change_newsletter_status", on: :member
     get "change_newsletter_status", on: :member
   end
-  
+
   # Routes pour revendication de compte
-  resources :account_claims, only: [:new, :create] do
+  resources :account_claims, only: [ :new, :create ] do
     get :confirm, on: :collection
   end
 

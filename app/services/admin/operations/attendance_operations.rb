@@ -148,23 +148,15 @@ module Admin
       end
 
       def find_or_create_training_list_for_date(date)
-        # Chercher une liste existante pour les entraînements libres de cette date
-        existing_list = AttendanceList.find_by(
+        # Utiliser find_or_create_by pour éviter les doublons
+        AttendanceList.find_or_create_by(
           list_type: :training,
           start_date: date,
           end_date: date + 1.day
-        )
-        
-        return existing_list if existing_list
-        
-        # Créer une nouvelle liste
-        AttendanceList.create!(
-          list_type: :training,
-          start_date: date,
-          end_date: date + 1.day,
-          name: "Entraînement libre #{date.strftime('%d/%m/%Y')}",
-          status: :open
-        )
+        ) do |list|
+          list.name = "Entraînement libre #{date.strftime('%d/%m/%Y')}"
+          list.status = :open
+        end
       end
     end
   end

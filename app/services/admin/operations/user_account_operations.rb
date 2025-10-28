@@ -16,9 +16,9 @@ module Admin
           if person.user.present?
             return success(person.user, "Compte déjà existant")
           end
-          
+
           existing_user = User.find_by(email_address: email)
-          
+
           if existing_user
             handle_existing_user(person, existing_user, system_role)
           else
@@ -38,20 +38,20 @@ module Admin
           success(user, "Déjà lié")
         else
           other_person = user.person
-          
+
           # Vérification avant fusion
           if other_person.payments.any? || other_person.memberships.any?
             log_admin_action("ATTENTION: Fusion Person #{other_person.id} (avec données financières) -> Person #{person.id}")
           end
-          
+
           # Fusion avec audit
-          merge_result = People::Merger.new(
+          merge_result = PersonManagement::PersonMerger.new(
             source: other_person,
             target: person,
             actor: @actor,
             merge_type: "admin_merge"
           ).call
-          
+
           if merge_result.success?
             log_admin_action("Fusion réussie: Person #{other_person.id} -> Person #{person.id}")
             success(user, "Fusion effectuée: #{other_person.full_name} -> #{person.full_name}")
@@ -61,9 +61,9 @@ module Admin
           end
         end
       end
-      
+
       def create_new_user_for_person(person, email, system_role)
-        user_creation_result = People::UserAccountCreator.new(
+        user_creation_result = UserManagement::AccountCreator.new(
           person: person,
           user_email: email,
           user_password: SecureRandom.hex(8), # Mot de passe temporaire
