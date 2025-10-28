@@ -13,9 +13,15 @@ module Admin
       @total_donation = service_result[:total_donation]
 
       # Handle pagination in controller (service returns the query)
-      sort_column = params[:sort] || "created_at"
+      sort_column = params[:sort] || "payments.created_at"
       sort_direction = params[:direction] || "desc"
-      @payments = @payments.order("#{sort_column} #{sort_direction}")
+      
+      # Ensure sort_column is properly qualified with table name
+      if sort_column.include?('.')
+        @payments = @payments.order("#{sort_column} #{sort_direction}")
+      else
+        @payments = @payments.order("payments.#{sort_column} #{sort_direction}")
+      end
 
       items_per_page = params[:items]&.to_i || 15
       @pagy, @payments = pagy(@payments, items: items_per_page)
