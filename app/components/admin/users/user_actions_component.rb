@@ -1,0 +1,139 @@
+class Admin::Users::UserActionsComponent < ViewComponent::Base
+  def initialize(user:, person:, is_person_without_user: false, is_deleted: false, current_user:)
+    @user = user
+    @person = person
+    @is_person_without_user = is_person_without_user
+    @is_deleted = is_deleted
+    @current_user = current_user
+  end
+
+  private
+
+  attr_reader :user, :person, :is_person_without_user, :is_deleted, :current_user
+
+  def primary_actions
+    return [] if is_deleted
+
+    actions = []
+
+    # Membership action
+    actions << membership_action
+
+    # Subscription action
+    actions << subscription_action
+
+    # Create web account action
+    if is_person_without_user
+      actions << create_web_account_action
+    end
+
+    actions.compact
+  end
+
+  def secondary_actions
+    return [] if is_deleted
+
+    [
+      edit_information_action,
+      payment_history_action,
+      make_donation_action
+    ].compact
+  end
+
+  def membership_action
+    current_membership = person.current_membership
+
+    if current_membership.nil?
+      link_to "Ajouter une adhésion",
+              new_admin_membership_path(person_id: person.id),
+              class: "inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#1F5C55] hover:bg-[#194A45] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1F5C55]"
+    elsif current_membership.membership_type.basic?
+      link_to "Upgrader vers Cirque",
+              new_admin_membership_path(person_id: person.id, upgrade: true),
+              class: "inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#1F5C55] hover:bg-[#194A45] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1F5C55]"
+    elsif current_membership.membership_type.circus?
+      if current_membership.ended_at < 30.days.from_now
+        link_to "Renouveler adhésion",
+                new_admin_membership_path(person_id: person.id, renew: true),
+                class: "inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#1F5C55] hover:bg-[#194A45] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1F5C55]"
+      else
+        content_tag :span, "Adhésion Cirque active",
+                    class: "inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-500 bg-gray-100"
+      end
+    else
+      link_to "Renouveler adhésion",
+              new_admin_membership_path(person_id: person.id, renew: true),
+              class: "inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#1F5C55] hover:bg-[#194A45] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1F5C55]"
+    end
+  end
+
+  def subscription_action
+    current_membership = person.current_membership
+
+    if current_membership.nil?
+      content_tag :span, "Adhésion requise",
+                  class: "inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-500 bg-gray-100"
+    elsif current_membership.membership_type.basic?
+      content_tag :span, "Adhésion Basique",
+                  class: "inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-500 bg-gray-100"
+    elsif current_membership.membership_type.circus?
+      active_book = person.book_of_entries.active.first
+
+      if active_book && active_book.remaining_entries > 0
+        link_to "Voir cotisation (#{active_book.remaining_entries} restantes)",
+                admin_user_path(user ? user.id : "person_#{person.id}"),
+                class: "inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#1F5C55] hover:bg-[#194A45] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1F5C55]"
+      else
+        link_to "Ajouter une cotisation",
+                new_admin_subscription_plan_path(person_id: person.id),
+                class: "inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#1F5C55] hover:bg-[#194A45] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1F5C55]"
+      end
+    else
+      content_tag :span, "Non applicable",
+                  class: "inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-500 bg-gray-100"
+    end
+  end
+
+  def create_web_account_action
+    link_to "Créer un compte web",
+            new_admin_user_path(person_id: person.id),
+            class: "inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#5836a5] hover:bg-[#4c2d8a] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#5836a5]"
+  end
+
+  def edit_information_action
+    link_to "Modifier les informations",
+            edit_person_admin_user_path("person_#{person.id}"),
+            class: "text-[#1F5C55] hover:text-[#194A45] hover:underline"
+  end
+
+  def payment_history_action
+    link_to "Historique des paiements",
+            admin_payments_path(user_id: user&.id, person_id: person.id),
+            class: "text-[#1F5C55] hover:text-[#194A45] hover:underline"
+  end
+
+  def make_donation_action
+    link_to "Faire un don",
+            admin_donations_path(user_id: user&.id, person_id: person.id),
+            class: "text-[#1F5C55] hover:text-[#194A45] hover:underline"
+  end
+
+  def restore_user_form
+    form_tag restore_admin_user_path(user), method: :post, class: "flex items-center" do
+      email_field_tag(:email_address, "", placeholder: "Nouvel email", required: true,
+                     class: "border border-gray-300 rounded-md px-3 py-2 shadow-sm focus:outline-none focus:ring-[#1F5C55] focus:border-[#1F5C55] sm:text-sm mr-2") +
+      submit_tag("Restaurer l'utilisateur",
+                class: "inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500")
+    end
+  end
+
+  def delete_action
+    return unless current_user.has_higher_permissions?(user)
+
+    link_to "Supprimer",
+            admin_user_path(user || "person_#{person.id}"),
+            method: :delete,
+            data: { confirm: "Êtes-vous sûr de vouloir supprimer cet utilisateur/cette personne ?" },
+            class: "text-red-600 hover:text-red-800 hover:underline"
+  end
+end

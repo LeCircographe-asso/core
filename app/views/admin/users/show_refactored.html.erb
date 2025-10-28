@@ -1,0 +1,249 @@
+<div class="max-w-4xl mx-auto">
+  <!-- Breadcrumbs -->
+  <%= render 'shared/breadcrumbs' %>
+  
+  <div class="bg-white shadow-lg rounded-lg overflow-hidden" id="<%= dom_id(@person || @user) %>">
+    <!-- Header with gradient -->
+    <div class="relative">
+      <div class="h-24 w-full bg-gradient-to-r from-[#1F5C55] to-[#194A45] rounded-t-lg">
+        <!-- User Role Badge -->
+        <% if @is_person_without_user %>
+          <div class="absolute top-4 right-4 px-3 py-1 text-xs font-semibold text-white rounded-full bg-orange-500">
+            Personne sans compte
+          </div>
+        <% else %>
+          <% if @user.system_role.present? %>
+            <div class="absolute top-4 right-4 px-3 py-1 text-xs font-semibold text-white rounded-full 
+              <%= case @user.system_role
+                when 'super_admin' then 'bg-[#1F5C55]'
+                when 'admin' then 'bg-[#1F5C55]/90'
+                when 'volunteer' then 'bg-[#1F5C55]/80'
+                when 'web_visitor' then 'bg-[#1F5C55]/70'
+                end %>">
+              <%= @user.system_role.humanize %>
+              <% if @is_deleted %>
+                <span class="ml-1 px-2 py-0.5 text-xs rounded-full bg-red-500 text-white">Supprimé</span>
+              <% end %>
+            </div>
+          <% else %>
+            <div class="absolute top-4 right-4 px-3 py-1 text-xs font-semibold text-white rounded-full bg-orange-500">
+              Personne sans compte
+            </div>
+          <% end %>
+        <% end %>
+        
+        <!-- Action Buttons -->
+        <div class="absolute top-4 left-4 flex space-x-2">
+          <% unless @is_deleted %>
+            <!-- Edit Button -->
+            <% if @is_person_without_user %>
+              <span class="inline-flex items-center px-3 py-1 text-xs font-semibold text-white rounded-full bg-orange-500/80">
+                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                </svg>
+                Créer compte
+              </span>
+            <% else %>
+              <%= link_to edit_admin_user_path(@user), class: "inline-flex items-center px-3 py-1 text-xs font-semibold text-white rounded-full bg-[#1F5C55]/80 hover:bg-[#1F5C55] transition-colors duration-200" do %>
+                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                </svg>
+                Modifier
+              <% end %>
+            <% end %>
+          <% end %>
+          
+          <!-- Payment History Button -->
+          <% if @is_person_without_user %>
+            <%= link_to admin_payments_path(person_id: @person.id), class: "inline-flex items-center px-3 py-1 text-xs font-semibold text-white rounded-full bg-[#1F5C55]/80 hover:bg-[#1F5C55] transition-colors duration-200" do %>
+              <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+              </svg>
+              Historique de paiement
+            <% end %>
+          <% else %>
+            <%= link_to admin_payments_path(user_id: @user.id), class: "inline-flex items-center px-3 py-1 text-xs font-semibold text-white rounded-full bg-[#1F5C55]/80 hover:bg-[#1F5C55] transition-colors duration-200" do %>
+              <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+              </svg>
+              Historique de paiement
+            <% end %>
+          <% end %>
+        </div>
+      </div>
+      
+      <!-- Avatar -->
+      <div class="absolute -bottom-12 left-1/2 transform -translate-x-1/2">
+        <div class="h-24 w-24 rounded-full border-4 border-white overflow-hidden bg-white shadow-lg <%= @is_deleted ? 'grayscale' : '' %>">
+          <% case @user.system_role %>
+          <% when 'super_admin' %>
+            <%= image_tag "super_admin.webp", alt: "Avatar Super Admin", class: "h-full w-full object-cover" %>
+          <% when 'admin' %>
+            <%= image_tag "admin.webp", alt: "Avatar Admin", class: "h-full w-full object-cover" %>
+          <% when 'volunteer' %>
+            <%= image_tag "volunteer.webp", alt: "Avatar Bénévole", class: "h-full w-full object-cover" %>
+          <% when 'web_visitor' %>
+            <%= image_tag "users.png", alt: "Avatar Utilisateur", class: "h-full w-full object-cover" %>
+          <% else %>
+            <%= image_tag "users.png", alt: "Avatar", class: "h-full w-full object-cover" %>
+          <% end %>
+        </div>
+      </div>
+    </div>
+    
+    <!-- User Info -->
+    <div class="pt-16 px-6 pb-6">
+      <div class="text-center mb-6">
+        <h1 class="text-xl font-bold text-gray-800">
+          <%= @user.full_name.present? ? @user.full_name : "Utilisateur ##{@user.id}" %>
+        </h1>
+        <p class="text-gray-500 text-sm mt-1"><%= @user.email_address %></p>
+        <% if @is_deleted %>
+          <p class="text-red-500 text-sm mt-1">
+            Compte supprimé le <%= @user.deleted_at.strftime("%d/%m/%Y à %H:%M") %>
+          </p>
+        <% end %>
+      </div>
+      
+      <!-- Tabs Navigation -->
+      <div class="border-b border-gray-200 mb-6">
+        <nav class="flex -mb-px" aria-label="Tabs">
+          <button type="button" class="tab-button active w-1/4 py-4 px-1 text-center border-b-2 font-medium text-sm" data-tab="personal">
+            Informations personnelles
+          </button>
+          <button type="button" class="tab-button w-1/4 py-4 px-1 text-center border-b-2 font-medium text-sm" data-tab="membership">
+            Adhésion & Cotisations
+          </button>
+          <button type="button" class="tab-button w-1/4 py-4 px-1 text-center border-b-2 font-medium text-sm" data-tab="payments">
+            Paiements récents
+          </button>
+        </nav>
+      </div>
+      
+      <!-- Tab Content -->
+      <div class="tab-content" id="personal-tab">
+        <%= render Admin::Users::UserInfoComponent.new(
+          user: @user, 
+          person: @person, 
+          is_person_without_user: @is_person_without_user
+        ) %>
+      </div>
+      
+      <!-- Membership Tab -->
+      <div class="tab-content hidden" id="membership-tab">
+        <%= render Admin::Users::MembershipDisplayComponent.new(person: @person) %>
+      </div>
+      
+      <!-- Payments Tab -->
+      <div class="tab-content hidden" id="payments-tab">
+        <div class="space-y-4">
+          <h3 class="text-sm font-medium text-gray-700 mb-4">Paiements récents</h3>
+          
+          <% if @recent_payments&.any? %>
+            <div class="overflow-x-auto">
+              <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                  <tr>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Montant</th>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Statut</th>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                  </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                  <% @recent_payments.each do |payment| %>
+                    <tr class="hover:bg-gray-50">
+                      <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        <%= payment.created_at.strftime("%d/%m/%Y") %>
+                      </td>
+                      <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                         <%= number_to_currency(payment.total_cents / 100.0, unit: "€", format: "%n %u") %>
+                      </td>
+                      <td class="px-6 py-4 whitespace-nowrap text-sm">
+                        <% status_class = case payment.status 
+                                        when "success" then "bg-green-100 text-green-800" 
+                                        when "pending" then "bg-yellow-100 text-yellow-800"
+                                        when "cancel" then "bg-red-100 text-red-800"
+                                        else "bg-gray-100 text-gray-800"
+                                        end %>
+                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full <%= status_class %>">
+                          <%= payment.status.humanize %>
+                        </span>
+                      </td>
+                      <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        <%= payment.payment_method_humanized %>
+                      </td>
+                      <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        <%= link_to admin_payment_path(payment), class: "text-[#1F5C55] hover:text-[#194A45]" do %>
+                          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                          </svg>
+                        <% end %>
+                      </td>
+                    </tr>
+                  <% end %>
+                </tbody>
+              </table>
+            </div>
+            
+            <div class="mt-4 text-right">
+              <%= link_to "Voir tout l'historique", admin_payments_path(user_id: @user.id), class: "text-[#1F5C55] hover:underline text-sm font-medium" %>
+            </div>
+          <% else %>
+            <div class="bg-gray-50 p-4 rounded-md text-center">
+              <p class="text-gray-700">Aucun paiement enregistré pour cet utilisateur.</p>
+            </div>
+          <% end %>
+        </div>
+      </div>
+      
+      <!-- Actions -->
+      <div class="mt-8 border-t pt-6">
+        <%= render Admin::Users::UserActionsComponent.new(
+          user: @user,
+          person: @person,
+          is_person_without_user: @is_person_without_user,
+          is_deleted: @is_deleted,
+          current_user: current_user
+        ) %>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.addEventListener('turbo:load', function() {
+    // Tab functionality
+    const tabButtons = document.querySelectorAll('.tab-button');
+    const tabContents = document.querySelectorAll('.tab-content');
+    
+    tabButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        // Remove active class from all buttons
+        tabButtons.forEach(btn => {
+          btn.classList.remove('border-[#1F5C55]', 'text-[#1F5C55]');
+          btn.classList.add('border-transparent', 'text-gray-500', 'hover:text-gray-700', 'hover:border-gray-300');
+        });
+        
+        // Add active class to clicked button
+        button.classList.remove('border-transparent', 'text-gray-500', 'hover:text-gray-700', 'hover:border-gray-300');
+        button.classList.add('border-[#1F5C55]', 'text-[#1F5C55]');
+        
+        // Hide all tab contents
+        tabContents.forEach(content => {
+          content.classList.add('hidden');
+        });
+        
+        // Show the selected tab content
+        const tabId = button.getAttribute('data-tab') + '-tab';
+        document.getElementById(tabId).classList.remove('hidden');
+      });
+    });
+    
+    // Set the first tab as active by default
+    tabButtons[0].classList.add('border-[#1F5C55]', 'text-[#1F5C55]');
+    tabButtons[0].classList.remove('border-transparent', 'text-gray-500', 'hover:text-gray-700', 'hover:border-gray-300');
+  });
+</script>
