@@ -345,9 +345,12 @@ module Admin
     end
 
     def load_dashboard_statistics
-      @total_people = Person.count
-      @people_with_user = Person.joins(:user).count
-      @people_without_user = Person.left_joins(:user).where(users: { id: nil }).count
+      # Utiliser les mêmes filtres que la pagination pour la cohérence
+      base_people = PersonQuery.active.main_people
+      
+      @total_people = base_people.count
+      @people_with_user = base_people.joins(:user).count
+      @people_without_user = base_people.left_joins(:user).where(users: { id: nil }).count
       @new_users_yesterday = User.where(created_at: 1.day.ago.beginning_of_day..1.day.ago.end_of_day).count
       @basic_memberships = Membership.joins(:membership_type).where(membership_types: { name: "Basic" }).count
       @circus_memberships = Membership.joins(:membership_type).where(membership_types: { name: "Cirque" }).count
