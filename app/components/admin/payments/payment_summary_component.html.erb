@@ -1,0 +1,48 @@
+<div class="payment-summary bg-gray-50 rounded-lg p-4 mb-6">
+  <h2 class="text-lg font-semibold text-gray-900 mb-3">Résumé des paiements</h2>
+  <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+    <!-- Total des paiements -->
+    <div class="stat-card bg-blue-50 rounded-lg p-3">
+      <p class="text-sm text-blue-500">Total paiements</p>
+      <p class="text-xl font-bold text-blue-800"><%= total_payments_count %></p>
+    </div>
+    
+    <!-- Paiements réussis -->
+    <div class="stat-card bg-green-50 rounded-lg p-3">
+      <p class="text-sm text-green-500">Réussis</p>
+      <p class="text-xl font-bold text-green-800"><%= successful_payments_count %></p>
+    </div>
+    
+    <!-- Paiements en attente -->
+    <div class="stat-card bg-yellow-50 rounded-lg p-3">
+      <p class="text-sm text-yellow-500">En attente</p>
+      <p class="text-xl font-bold text-yellow-800"><%= pending_payments_count %></p>
+    </div>
+    
+    <!-- Paiements annulés -->
+    <div class="stat-card bg-red-50 rounded-lg p-3">
+      <p class="text-sm text-red-500">Annulés</p>
+      <p class="text-xl font-bold text-red-800"><%= cancelled_payments_count %></p>
+    </div>
+    
+    <!-- Montant total -->
+    <div class="stat-card bg-indigo-50 rounded-lg p-3">
+      <p class="text-sm text-indigo-500">Montant total</p>
+      <p class="text-xl font-bold text-indigo-800"><%= total_amount_formatted %></p>
+    </div>
+    
+    <!-- Donations totales -->
+    <div class="stat-card bg-purple-50 rounded-lg p-3">
+      <p class="text-sm text-purple-500">Donations</p>
+      <p class="text-xl font-bold text-purple-800"><%= total_donation_formatted %></p>
+    </div>
+  </div>
+  
+  <!-- Revenus totaux -->
+  <div class="mt-4 pt-4 border-t border-gray-200">
+    <div class="flex justify-between items-center">
+      <span class="text-lg font-semibold text-gray-900">Revenus totaux :</span>
+      <span class="text-2xl font-bold text-[#1F5C55]"><%= total_revenue_formatted %></span>
+    </div>
+  </div>
+</div>

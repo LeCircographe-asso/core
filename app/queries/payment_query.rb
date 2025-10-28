@@ -37,6 +37,8 @@ module PaymentQuery
   end
 
   def self.total_donation
-    successful.sum(:donation)
+    Payment.joins(:payment_lines)
+      .where(payment_lines: { item_type: "Donation" })
+      .sum("payment_lines.amount_cents")
   end
 end

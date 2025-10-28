@@ -4,53 +4,24 @@ module Admin
     # before_action :set_breadcrumbs
 
     def index
-      # Start with all payments with eager loading (nouveau modèle)
-      @payments = PaymentQuery.with_person_and_recorded_by
+      # Use service to handle business logic
+      payments_service = Admin::PaymentsService.new(params)
+      service_result = payments_service.call
 
-      # Filter by person if person_id is provided
-      @person = Person.find_by(id: params[:person_id])
-      @payments = PaymentQuery.by_person(@person.id) if @person
+      @payments = service_result[:payments]
+      @total_amount = service_result[:total_amount]
+      @total_donation = service_result[:total_donation]
 
-      # Compatibilité avec l'ancien système (user_id)
-      @user = User.find_by(id: params[:user_id])
-      @payments = PaymentQuery.by_user(@user.id) if @user
-
-      # Apply filters if provided
-      @payments = PaymentQuery.by_status(params[:status]) if params[:status].present?
-
-      # Filter by date range if provided
-      if params[:start_date].present? && params[:end_date].present?
-        start_date = Date.parse(params[:start_date])
-        end_date = Date.parse(params[:end_date])
-        @payments = PaymentQuery.by_date_range(start_date, end_date)
-      end
-
-      # Apply sorting (default to newest first)
-      sort_column = params[:sort] || "payment_date"
+      # Handle pagination in controller (service returns the query)
+      sort_column = params[:sort] || "created_at"
       sort_direction = params[:direction] || "desc"
       @payments = @payments.order("#{sort_column} #{sort_direction}")
 
-      # Ensure we're using the filtered payment set for calculations
-      @total_amount = PaymentQuery.total_amount
-      @total_donation = PaymentQuery.total_donation
+      items_per_page = params[:items]&.to_i || 15
+      @pagy, @payments = pagy(@payments, items: items_per_page)
 
-      # Handle loading a specific payment details
-      if params[:id].present?
-        @payment = Payment.includes(order: { product_orders: { product: :price_entries } }).find_by(id: params[:id])
-        if @payment
-          @order = @payment.order
-          @total_donation = @order&.donation
-        end
-      end
-
-      # Set breadcrumb
-      if @user
-        add_breadcrumb "Liste d'adhérents", admin_users_path
-        add_breadcrumb @user.full_name.present? ? @user.full_name : "Utilisateur ##{@user.id}", admin_user_path(@user)
-        add_breadcrumb "Historique des paiements", nil
-      else
-        add_breadcrumb "Historique des paiements", nil
-      end
+      # Set breadcrumbs
+      set_payments_breadcrumbs
     end
 
     def new
@@ -98,7 +69,7 @@ module Admin
     def create
       begin
         person = Person.find(payment_params[:person_id])
-        
+
         # Créer le paiement directement
         payment = person.payments.create!(
           total_cents: payment_params[:total_cents],
@@ -155,9 +126,16 @@ module Admin
       )
     end
 
-    # Remove the set_breadcrumbs method since we don't need the dashboard breadcrumb
-    # def set_breadcrumbs
-    #   add_breadcrumb "Dashboard", admin_dashboard_index_path
-    # end
+    def set_payments_breadcrumbs
+      @user = User.find_by(id: params[:user_id]) if params[:user_id].present?
+
+      if @user
+        add_breadcrumb "Liste d'adhérents", admin_users_path
+        add_breadcrumb @user.full_name.present? ? @user.full_name : "Utilisateur ##{@user.id}", admin_user_path(@user)
+        add_breadcrumb "Historique des paiements", nil
+      else
+        add_breadcrumb "Historique des paiements", nil
+      end
+    end
   end
 end
