@@ -353,7 +353,7 @@ class Person < ApplicationRecord
       # Enregistrer la présence si demandé
       if record_attendance
         # Logique pour enregistrer la présence
-        # TODO: Implémenter selon vos besoins
+        # À implémenter selon les besoins
       end
 
       { book_of_entry: book_of_entry, payment: payment }
@@ -474,7 +474,6 @@ class Person < ApplicationRecord
 
   # Créer un log d'audit pour les offres
   def create_offer_audit_log!(recorded_by, offer_type, offer_reason, subscription_plan = nil)
-    # TODO: Créer une table audit_offers pour tracer toutes les offres
     Rails.logger.info "OFFER AUDIT: #{recorded_by.email} offered #{offer_type} to #{full_name} (#{id}) - Reason: #{offer_reason}"
   end
 

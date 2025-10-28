@@ -2,11 +2,6 @@ class BookOfEntry < ApplicationRecord
   # Relations selon le domain_model_circographe.md
   belongs_to :person
   belongs_to :subscription_plan
-
-  # Anciennes relations (à supprimer progressivement)
-  belongs_to :product, optional: true
-  belongs_to :user, optional: true
-
   # Validations
   validates :sessions_remaining, presence: true, numericality: { greater_than_or_equal_to: 0 }, if: :has_session_limit?
   validates :status, presence: true

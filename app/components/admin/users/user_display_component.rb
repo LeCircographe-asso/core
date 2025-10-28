@@ -69,10 +69,6 @@ module Admin
         number_to_currency(amount, unit: "€", separator: ",", delimiter: " ")
       end
 
-      def format_phone_number(phone)
-        # Simple formatting - can be enhanced
-        phone
-      end
     end
   end
 end
