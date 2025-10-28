@@ -18,11 +18,15 @@ class Admin::Users::UserInfoComponent < ViewComponent::Base
   end
 
   def display_date(date)
-    if date.present?
-      date.strftime("%d/%m/%Y")
+    return content_tag(:span, "Non renseigné", class: "text-gray-400 italic") if date.blank?
+
+    if date.is_a?(String)
+      Date.parse(date).strftime("%d/%m/%Y")
     else
-      display_value(nil)
+      date.strftime("%d/%m/%Y")
     end
+  rescue
+    content_tag(:span, "Date invalide", class: "text-gray-400 italic")
   end
 
   def display_address
@@ -51,13 +55,7 @@ class Admin::Users::UserInfoComponent < ViewComponent::Base
 
   def display_role
     if user.system_role.present?
-      case user.system_role
-      when "volunteer" then "Bénévole"
-      when "super_admin" then "Super Admin"
-      when "admin" then "Admin"
-      when "web_visitor" then "Visiteur Web"
-      else user.system_role.humanize
-      end
+      user.role_humanized
     else
       "Aucun compte"
     end

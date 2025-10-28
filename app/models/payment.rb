@@ -1,4 +1,8 @@
 class Payment < ApplicationRecord
+  include Priceable
+  include Humanizable
+  include Statusable
+  
   # Relations selon le domain_model_circographe.md
   belongs_to :person
   belongs_to :recorded_by, class_name: "User"
@@ -56,24 +60,7 @@ class Payment < ApplicationRecord
   end
 
   # Méthodes pour le système d'encaissement
-  def total_euros
-    total_cents / 100.0
-  end
-
-  def total_euros=(value)
-    self.total_cents = (value.to_f * 100).round
-  end
-
-  def payment_method_humanized
-    case payment_method
-    when "cash" then "Espèces"
-    when "card" then "Carte bancaire"
-    when "cheque" then "Chèque"
-    when "transfer" then "Virement"
-    when "offered" then "Offert"
-    else payment_method.humanize
-    end
-  end
+  # (total_euros et payment_method_humanized maintenant dans les modules)
 
   def is_offered?
     payment_method == "offered"

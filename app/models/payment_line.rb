@@ -1,4 +1,6 @@
 class PaymentLine < ApplicationRecord
+  include Priceable
+  
   # Relations
   belongs_to :payment
   belongs_to :item, polymorphic: true
@@ -29,13 +31,7 @@ class PaymentLine < ApplicationRecord
     end
   end
 
-  def amount_euros
-    amount_cents / 100.0
-  end
-
-  def amount_euros=(value)
-    self.amount_cents = (value.to_f * 100).round
-  end
+  # (amount_euros maintenant dans le module Priceable)
 
   # Scopes
   scope :memberships, -> { where(item_type: "Membership") }

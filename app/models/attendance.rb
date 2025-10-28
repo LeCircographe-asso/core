@@ -1,4 +1,6 @@
 class Attendance < ApplicationRecord
+  include Dateable
+  
   # Relations selon le domain_model_circographe.md
   belongs_to :person
   belongs_to :event, optional: true

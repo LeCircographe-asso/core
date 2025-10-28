@@ -77,7 +77,8 @@ module Admin
           payment_method: (subscription_purchase_params[:payment_method].presence || "cash"),
           recorded_by: Current.user,
           record_attendance: false,
-          custom_amount_cents: custom_amount
+          custom_amount_cents: custom_amount,
+          offer_reason: subscription_purchase_params[:offer_reason]
         )
 
         redirect_to admin_user_path("person_#{@person.id}"), notice: "Plan de cotisation acheté avec succès !"
@@ -111,7 +112,7 @@ module Admin
     end
 
     def subscription_purchase_params
-      params.require(:subscription_plan).permit(:person_id, :subscription_plan_id, :payment_method, :record_attendance, :attendance_date, :custom_amount_cents).merge(
+      params.require(:subscription_plan).permit(:person_id, :subscription_plan_id, :payment_method, :record_attendance, :attendance_date, :custom_amount_cents, :offer_reason).merge(
         recorded_by_id: Current.user.id
       )
     end
