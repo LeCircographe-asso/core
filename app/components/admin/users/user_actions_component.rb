@@ -129,12 +129,25 @@ class Admin::Users::UserActionsComponent < ViewComponent::Base
   end
 
   def delete_action
-    return unless current_user.has_higher_permissions?(user)
+    # Pour les Person sans User, vérifier les permissions différemment
+    if user.nil?
+      return unless current_user.has_admin_rights?
+    else
+      return unless current_user.has_higher_permissions?(user)
+    end
 
-    link_to "Supprimer",
-            admin_user_path(user || "person_#{person.id}"),
-            method: :delete,
-            data: { confirm: "Êtes-vous sûr de vouloir supprimer cet utilisateur/cette personne ?" },
-            class: "text-red-600 hover:text-red-800 hover:underline"
+    # Vérifier si la personne a des données financières
+    if person.has_financial_data?
+      return content_tag(:span, 
+                        "❌ Suppression impossible (données financières)", 
+                        class: "text-gray-400 text-sm italic cursor-not-allowed",
+                        title: "Cette personne a des adhésions actives ou des paiements. Annulez d'abord les adhésions pour pouvoir la supprimer.")
+    end
+
+    button_to "Supprimer",
+              admin_user_path(user || "person_#{person.id}"),
+              method: :delete,
+              data: { confirm: "Êtes-vous sûr de vouloir supprimer cet utilisateur/cette personne ?" },
+              class: "text-red-600 hover:text-red-800 hover:underline bg-transparent border-none cursor-pointer"
   end
 end

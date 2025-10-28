@@ -269,8 +269,28 @@ module Admin
     def destroy
       # Adapter pour gérer les Person
       if params[:id].to_s.start_with?("person_")
-        # Rediriger vers la fiche Person
-        redirect_to admin_user_path(params[:id]), notice: "Utilisez la fiche Person pour gérer les suppressions"
+        # Supprimer la Person (déjà chargée dans set_user)
+        person = @person
+        
+        # Debug: vérifier si @person est défini
+        if person.nil?
+          Rails.logger.error "DEBUG: @person is nil for params[:id] = #{params[:id]}"
+          redirect_to admin_users_path, alert: "Personne non trouvée." and return
+        end
+        
+        # Vérifier les permissions
+        if person.user && !current_user.has_higher_permissions?(person.user)
+          redirect_to admin_users_path, alert: "Vous n'avez pas les permissions pour supprimer cette personne." and return
+        elsif !person.user && !current_user.has_admin_rights?
+          redirect_to admin_users_path, alert: "Vous n'avez pas les permissions pour supprimer cette personne." and return
+        end
+        
+        # Supprimer la Person (soft delete)
+        if person.archive!
+          redirect_to admin_users_path, status: :see_other, notice: "Personne supprimée avec succès."
+        else
+          redirect_to admin_users_path, alert: "❌ Impossible de supprimer #{person.full_name} : cette personne a des données financières (adhésions actives ou paiements). Veuillez d'abord annuler les adhésions ou supprimer les paiements."
+        end
         return
       end
 
@@ -310,8 +330,16 @@ module Admin
     def set_user
       # Adapter pour gérer les IDs de Person (format: person_123)
       if params[:id].to_s.start_with?("person_")
-        # Pour les Person, on ne fait rien ici - géré dans show
-        @user = nil
+        # Pour les Person, charger la Person
+        person_id = params[:id].gsub("person_", "")
+        @person = Person.find_by(id: person_id)
+        
+        # If person not found, redirect to index with alert
+        if @person.nil?
+          redirect_to admin_users_path, alert: "Utilisateur non trouvé." and return
+        end
+        
+        @user = @person.user # Peut être nil si pas de compte utilisateur
       else
         # Pour les User classiques
         @user = User.unscoped.find_by(id: params[:id])
