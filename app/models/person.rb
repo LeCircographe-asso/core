@@ -21,8 +21,8 @@ class Person < ApplicationRecord
   validates :email, presence: true, if: :newsletter_subscribed?
 
   # Validation d'adhésion obligatoire (sauf cas spéciaux)
-  # SUPPRIMÉE : Une Person peut exister sans adhésion (newsletter, prospects, etc.)
-  # validate :must_have_active_membership, unless: :skip_membership_validation
+  # Une Person peut exister sans adhésion (inscription de base, newsletter, prospects, etc.)
+  # L'adhésion sera ajoutée plus tard selon les besoins
 
   # Normalisation des données
   before_validation :normalize_email
@@ -222,8 +222,13 @@ class Person < ApplicationRecord
   end
 
   # Méthodes métier pour la création d'adhésions
-  def create_membership!(membership_type, payment_method: :cash, recorded_by:, custom_amount_cents: nil)
+  def create_membership!(membership_type, payment_method: :cash, recorded_by:, custom_amount_cents: nil, offer_reason: nil)
     ActiveRecord::Base.transaction do
+      # Vérifier les permissions pour les offres
+      if payment_method.to_s == "offered"
+        validate_offer_permissions!(recorded_by, "membership", offer_reason)
+      end
+
       # Vérifier qu'il n'y a pas d'adhésion active
       if memberships.active.current.exists?
         raise "Cette personne a déjà une adhésion active"
@@ -237,21 +242,32 @@ class Person < ApplicationRecord
         status: :active
       )
 
-      # Déterminer le montant selon le mode de paiement
-      amount_cents = case payment_method.to_s
-      when "offered"
-        custom_amount_cents || 0 # Montant personnalisé ou 0 pour les offres
-      else
-        membership_type.price_cents # Prix normal
+      # Générer le numéro d'adhérent si la personne n'en a pas
+      if member_number.blank?
+        # Normaliser la catégorie pour la génération du numéro
+        normalized_category = case membership_type.category
+        when 'circus_full', 'circus_reduced'
+          'CIRQUE'
+        when 'basic'
+          'BASIQUE'
+        else
+          'BASIQUE'
+        end
+        
+        MemberManagementService.assign_member_number(self, normalized_category)
       end
 
-      # Créer le paiement
+      # Déterminer le montant selon le mode de paiement
+      amount_cents = calculate_amount_cents(payment_method, membership_type.price_cents, custom_amount_cents)
+
+      # Créer le paiement (toujours pour la traçabilité, même si montant = 0)
+      description = generate_payment_description(payment_method, membership_type.name, "Membership")
       payment = payments.create!(
         total_cents: amount_cents,
         payment_method: payment_method,
         status: :success,
         recorded_by: recorded_by,
-        notes: payment_method.to_s == "offered" ? "Adhésion offerte #{membership_type.name}" : "Paiement pour adhésion #{membership_type.name}"
+        notes: "Paiement pour #{description}"
       )
 
       # Créer la ligne de paiement
@@ -259,7 +275,7 @@ class Person < ApplicationRecord
         item_type: "Membership",
         item_id: membership.id,
         amount_cents: amount_cents,
-        description: payment_method.to_s == "offered" ? "Adhésion offerte #{membership_type.name}" : "Adhésion #{membership_type.name}"
+        description: description
       )
 
       { membership: membership, payment: payment }
@@ -267,8 +283,13 @@ class Person < ApplicationRecord
   end
 
   # Méthodes métier pour la création de cotisations
-  def create_subscription!(subscription_plan, payment_method: :cash, recorded_by:, record_attendance: false, custom_amount_cents: nil)
+  def create_subscription!(subscription_plan, payment_method: :cash, recorded_by:, record_attendance: false, custom_amount_cents: nil, offer_reason: nil)
     ActiveRecord::Base.transaction do
+      # Vérifier les permissions pour les offres
+      if payment_method.to_s == "offered"
+        validate_offer_permissions!(recorded_by, "subscription", offer_reason, subscription_plan)
+      end
+
       # Vérifier que la personne peut acheter des plans d'abonnement
       unless can_buy_subscription_plans?
         raise "Cette personne doit avoir une adhésion Cirque pour acheter des plans d'abonnement"
@@ -281,16 +302,16 @@ class Person < ApplicationRecord
       when "day"
         1 # Une journée = 1 séance
       when "trimester", "annual"
-        nil # Pas de limite de séances pour les abonnements
+        nil # Pas de limite de séances pour les abonnements (accès rapide à la présence)
       else
         subscription_plan.sessions_count || 1 # Par défaut 1 si non spécifié
       end
 
       expires_at = case subscription_plan.duration
       when "pack10"
-        nil # Les packs10 n'expirent jamais
+        nil # Les packs10 n'expirent jamais et se réactivent avec une nouvelle adhésion
       when "day"
-        Date.current + 1.day
+        Date.current.end_of_day # Expire à la fin de la journée achetée
       when "trimester"
         Date.current + 90.days
       when "annual"
@@ -309,20 +330,16 @@ class Person < ApplicationRecord
       )
 
       # Déterminer le montant selon le mode de paiement
-      amount_cents = case payment_method.to_s
-      when "offered"
-        custom_amount_cents || 0 # Montant personnalisé ou 0 pour les offres
-      else
-        subscription_plan.price_cents # Prix normal
-      end
+      amount_cents = calculate_amount_cents(payment_method, subscription_plan.price_cents, custom_amount_cents)
 
-      # Créer le paiement
+      # Créer le paiement (toujours pour la traçabilité, même si montant = 0)
+      description = generate_payment_description(payment_method, subscription_plan.name, "BookOfEntry")
       payment = payments.create!(
         total_cents: amount_cents,
         payment_method: payment_method,
         status: :success,
         recorded_by: recorded_by,
-        notes: payment_method.to_s == "offered" ? "Cotisation offerte #{subscription_plan.name}" : "Plan d'abonnement #{subscription_plan.name}"
+        notes: "Paiement pour #{description}"
       )
 
       # Créer la ligne de paiement
@@ -330,7 +347,7 @@ class Person < ApplicationRecord
         item_type: "BookOfEntry",
         item_id: book_of_entry.id,
         amount_cents: amount_cents,
-        description: payment_method.to_s == "offered" ? "Cotisation offerte #{subscription_plan.name}" : "Plan d'abonnement #{subscription_plan.name}"
+        description: description
       )
 
       # Enregistrer la présence si demandé
@@ -367,7 +384,218 @@ class Person < ApplicationRecord
     end
   end
 
+  # Méthode métier pour les upgrades d'adhésion
+  def upgrade_membership!(new_membership_type, payment_method: :cash, recorded_by:, custom_amount_cents: nil, offer_reason: nil)
+    ActiveRecord::Base.transaction do
+      # Vérifier qu'il y a une adhésion active
+      current_membership = current_membership
+      raise "Aucune adhésion active à upgrader" unless current_membership
+
+      # Vérifier les permissions pour les offres
+      if payment_method.to_s == "offered"
+        validate_offer_permissions!(recorded_by, "membership_upgrade", offer_reason)
+      end
+
+      # Sauvegarder l'ancienne adhésion
+      old_membership_type = current_membership.membership_type
+      
+      # Calculer la différence de prix
+      price_difference = new_membership_type.price_cents - old_membership_type.price_cents
+
+      # Effectuer l'upgrade
+      new_membership = current_membership.upgrade_to!(new_membership_type)
+
+      # Gérer le paiement selon le type
+      payment = case payment_method.to_s
+      when "offered"
+        handle_offered_upgrade_payment!(price_difference, custom_amount_cents, recorded_by, old_membership_type, new_membership_type)
+      else
+        handle_standard_upgrade_payment!(price_difference, payment_method, recorded_by, old_membership_type, new_membership_type)
+      end
+
+      { membership: new_membership, payment: payment }
+    end
+  end
+
   private
+
+  # Calculer le montant selon le mode de paiement
+  def calculate_amount_cents(payment_method, base_price_cents, custom_amount_cents = nil)
+    case payment_method.to_s
+    when "offered"
+      custom_amount_cents || 0
+    else
+      base_price_cents
+    end
+  end
+
+  # Générer la description d'un paiement
+  def generate_payment_description(payment_method, item_name, item_type)
+    case payment_method.to_s
+    when "offered"
+      case item_type
+      when "Membership" then "Adhésion offerte #{item_name}"
+      when "BookOfEntry" then "Cotisation offerte #{item_name}"
+      when "MembershipUpgrade" then "Upgrade offert d'adhésion vers #{item_name}"
+      else "#{item_type} offert #{item_name}"
+      end
+    else
+      case item_type
+      when "Membership" then "Adhésion #{item_name}"
+      when "BookOfEntry" then "Plan d'abonnement #{item_name}"
+      when "MembershipUpgrade" then "Upgrade d'adhésion vers #{item_name}"
+      else "#{item_type} #{item_name}"
+      end
+    end
+  end
+
+  # Validation des permissions pour les offres
+  def validate_offer_permissions!(recorded_by, offer_type, offer_reason, subscription_plan = nil)
+    # Vérifier que l'utilisateur a les permissions
+    unless recorded_by.super_admin? || recorded_by.admin? || recorded_by.volunteer?
+      raise "Seuls les bénévoles, admins et super-admins peuvent offrir des #{offer_type}s"
+    end
+
+    # Vérifier que la raison est fournie
+    if offer_reason.blank?
+      raise "Une raison doit être fournie pour offrir une #{offer_type}"
+    end
+
+    # Restrictions spécifiques pour les bénévoles
+    if recorded_by.volunteer?
+      if offer_type == "subscription" && subscription_plan&.duration != "day"
+        raise "Les bénévoles ne peuvent offrir que des cotisations 'journée'"
+      end
+    end
+
+    # Enregistrer l'audit trail
+    create_offer_audit_log!(recorded_by, offer_type, offer_reason, subscription_plan)
+  end
+
+  # Créer un log d'audit pour les offres
+  def create_offer_audit_log!(recorded_by, offer_type, offer_reason, subscription_plan = nil)
+    # TODO: Créer une table audit_offers pour tracer toutes les offres
+    Rails.logger.info "OFFER AUDIT: #{recorded_by.email} offered #{offer_type} to #{full_name} (#{id}) - Reason: #{offer_reason}"
+  end
+
+  # Gérer le paiement d'un upgrade offert
+  def handle_offered_upgrade_payment!(price_difference, custom_amount_cents, recorded_by, old_membership_type, new_membership_type)
+    amount = calculate_amount_cents("offered", 0, custom_amount_cents)
+    
+    # Toujours créer un paiement pour la traçabilité, même si montant = 0
+    create_payment_with_line!(
+      amount_cents: amount,
+      payment_method: "offered",
+      recorded_by: recorded_by,
+      item_type: "MembershipUpgrade",
+      item_id: current_membership.id,
+      description: "Upgrade offert d'adhésion de #{old_membership_type.name} vers #{new_membership_type.name} - Montant: #{(amount / 100.0).round(2)}€"
+    )
+  end
+
+  # Gérer le paiement d'un upgrade standard
+  def handle_standard_upgrade_payment!(price_difference, payment_method, recorded_by, old_membership_type, new_membership_type)
+    if price_difference > 0
+      # Paiement de la différence
+      create_payment_with_line!(
+        amount_cents: price_difference,
+        payment_method: payment_method,
+        recorded_by: recorded_by,
+        item_type: "MembershipUpgrade",
+        item_id: current_membership.id,
+        description: "Upgrade d'adhésion de #{old_membership_type.name} vers #{new_membership_type.name}"
+      )
+    elsif price_difference < 0
+      # Crédit/remboursement
+      create_payment_with_line!(
+        amount_cents: price_difference.abs,
+        payment_method: "refund",
+        recorded_by: recorded_by,
+        item_type: "MembershipUpgrade",
+        item_id: current_membership.id,
+        description: "Crédit pour upgrade d'adhésion de #{old_membership_type.name} vers #{new_membership_type.name}"
+      )
+    else
+      nil # Pas de différence de prix
+    end
+  end
+
+  # Méthode utilitaire pour créer un paiement avec sa ligne
+  def create_payment_with_line!(amount_cents:, payment_method:, recorded_by:, item_type:, item_id:, description:)
+    payment = payments.create!(
+      total_cents: amount_cents,
+      payment_method: payment_method,
+      status: :success,
+      recorded_by: recorded_by,
+      notes: description
+    )
+
+    payment.payment_lines.create!(
+      item_type: item_type,
+      item_id: item_id,
+      amount_cents: amount_cents,
+      description: description
+    )
+
+    payment
+  end
+
+  # Méthodes pour les statistiques et la traçabilité
+  def offered_payments_count
+    payments.where(payment_method: "offered").count
+  end
+
+  def offered_payments_total
+    payments.where(payment_method: "offered").sum(:total_cents)
+  end
+
+  def free_offers_count
+    payments.where(payment_method: "offered", total_cents: 0).count
+  end
+
+  def paid_offers_count
+    payments.where(payment_method: "offered").where("total_cents > 0").count
+  end
+
+  def membership_upgrades_count
+    payments.joins(:payment_lines)
+            .where(payment_lines: { item_type: "MembershipUpgrade" })
+            .count
+  end
+
+  def subscription_purchases_count
+    payments.joins(:payment_lines)
+            .where(payment_lines: { item_type: "BookOfEntry" })
+            .count
+  end
+
+  # Méthodes de classe pour les statistiques globales
+  def self.total_offered_payments
+    joins(:payments).where(payments: { payment_method: "offered" }).count
+  end
+
+  def self.total_free_offers
+    joins(:payments).where(payments: { payment_method: "offered", total_cents: 0 }).count
+  end
+
+  def self.total_paid_offers
+    joins(:payments).where(payments: { payment_method: "offered" }).where("payments.total_cents > 0").count
+  end
+
+  def self.offered_payments_by_reason
+    joins(:payments)
+      .where(payments: { payment_method: "offered" })
+      .group("payments.notes")
+      .count
+  end
+
+  def self.upgrades_today
+    joins(:payments)
+      .joins("JOIN payment_lines ON payments.id = payment_lines.payment_id")
+      .where(payment_lines: { item_type: "MembershipUpgrade" })
+      .where(payments: { created_at: Date.current.beginning_of_day..Date.current.end_of_day })
+      .count
+  end
 
   def normalize_email
     self.email = nil if email.blank?

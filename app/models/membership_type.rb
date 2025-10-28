@@ -1,4 +1,9 @@
 class MembershipType < ApplicationRecord
+  include Priceable
+  include Humanizable
+  include Versionable
+  include Categorizable
+  
   # Relations
   has_many :memberships, dependent: :restrict_with_error
   has_many :subscription_plans, dependent: :destroy
@@ -27,31 +32,8 @@ class MembershipType < ApplicationRecord
     category == "basic"
   end
 
-  def price_euros
-    price_cents / 100.0
-  end
 
-  def price_euros=(value)
-    self.price_cents = (value.to_f * 100).round
-  end
-
-  def name_with_price
-    "#{name} - #{price_euros}€"
-  end
-
-  def category_display_name
-    case category
-    when "basic" then "Basique"
-    when "circus_full" then "Tarif Plein"
-    when "circus_reduced" then "Tarif Réduit"
-    else category.humanize
-    end
-  end
-
-  # Méthodes d'audit et versioning
-  def current_version?
-    effective_until.nil?
-  end
+  # (price_euros, category_display_name, current_version? maintenant dans les modules)
 
   def create_price_change!(new_price_cents, effective_from: Date.current, reason: nil, user: nil)
     # Fermer la version actuelle

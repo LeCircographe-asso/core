@@ -1,4 +1,7 @@
 class User < ApplicationRecord
+  include Roleable
+  include Dateable
+  
   attr_accessor :cgu, :privacy_policy, :created_by_admin
   after_create :generate_password_reset_token
   after_create :welcome_send
@@ -45,10 +48,7 @@ class User < ApplicationRecord
   validates :cgu, acceptance: { message: "Vous devez accepter les CGU pour continuer." }, unless: :created_by_admin?
   validates :privacy_policy, acceptance: { message: "Vous devez accepter la politique de confidentialité pour continuer." }, unless: :created_by_admin?
 
-  # Permissions for member number editing
-  def can_edit_member_numbers?
-    super_admin? || admin?
-  end
+  # (can_edit_member_numbers? maintenant dans le module Roleable)
 
   # Override destroy method from SoftDeletable to handle payments
   # def destroy

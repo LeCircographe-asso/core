@@ -35,27 +35,14 @@ module Admin
     end
 
     def payment_method_display(payment)
-      case payment.payment_method
-      when "cash"
-        "Espèces"
-      when "card"
-        "Carte"
-      when "cheque"
-        "Chèque"
-      when "transfer"
-        "Virement"
-      when "offered"
-        "Offert"
-      else
-        payment.payment_method.humanize
-      end
+      payment.payment_method_humanized
     end
 
     def payment_lines_display(payment)
       if payment.payment_lines.any?
         payment.payment_lines.map do |line|
           content_tag :div, class: "text-xs" do
-            "#{line.description || line.item_type}: #{number_to_currency(line.amount_cents / 100.0, unit: "€", separator: ",", delimiter: " ")}"
+            "#{line.description || line.item_type}: #{number_to_currency(line.price_euros, unit: "€", separator: ",", delimiter: " ")}"
           end
         end.join.html_safe
       else
@@ -66,7 +53,7 @@ module Admin
     def payment_amount_display(payment)
       return "-" if payment.total_cents.blank?
 
-      number_to_currency(payment.total_cents / 100.0, unit: "€", separator: ",", delimiter: " ")
+      number_to_currency(payment.price_euros, unit: "€", separator: ",", delimiter: " ")
     end
 
     def payment_recorded_by_display(payment)

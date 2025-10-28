@@ -22,7 +22,7 @@ class SubscriptionStatusBadgeComponent < ViewComponent::Base
       when "day"
         "Journée"
       when "trimester"
-        "Trimestre"
+        "Trimestriel"
       when "annual"
         "Annuel"
       else

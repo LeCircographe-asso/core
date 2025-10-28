@@ -1,4 +1,7 @@
 class Membership < ApplicationRecord
+  include Statusable
+  include Dateable
+  
   # Relations selon le domain_model_circographe.md
   belongs_to :person
   belongs_to :membership_type
@@ -27,10 +30,7 @@ class Membership < ApplicationRecord
   # Attribut pour skip validation dans certains cas (upgrades, tests)
   attr_accessor :skip_overlap_validation
 
-  # Méthodes
-  def expired?
-    Date.current > ended_at
-  end
+  # (expired? maintenant dans le module Statusable)
 
   def can_upgrade_to?(membership_type)
     # Un membre Basic peut passer à Circus

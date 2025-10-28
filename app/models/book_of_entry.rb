@@ -12,6 +12,9 @@ class BookOfEntry < ApplicationRecord
   validates :status, presence: true
   validates :purchased_at, presence: true
   validates :expires_at, presence: true, unless: :is_pack10?
+  
+  # Validation personnalisée pour les séances
+  validate :sessions_remaining_validation
 
   # Enum pour les statuts selon le domain_model_circographe.md
   enum :status, {
@@ -53,8 +56,13 @@ class BookOfEntry < ApplicationRecord
   end
 
   def expired?
-    # Les packs10 ne expirent jamais
+    # Les packs10 ne expirent jamais et se réactivent avec une nouvelle adhésion
     return false if is_pack10?
+
+    # Pour les journées, vérifier si on est après la fin de journée
+    if subscription_plan.duration == "day"
+      return Time.current > expires_at.end_of_day
+    end
 
     Date.current > expires_at
   end
@@ -65,7 +73,7 @@ class BookOfEntry < ApplicationRecord
 
   def has_session_limit?
     # Les packs10 et les journées ont une limite de séances
-    # Les abonnements (trimester, annual) n'en ont pas
+    # Les abonnements (trimester, annual) n'en ont pas (accès rapide à la présence)
     is_pack10? || subscription_plan.duration == "day"
   end
 
@@ -74,22 +82,40 @@ class BookOfEntry < ApplicationRecord
   end
 
   # Scopes optimisés pour les requêtes d'expiration
-  scope :expired, -> { where("expires_at < ?", Date.current) }
-  scope :not_expired, -> { where("expires_at IS NULL OR expires_at > ?", Date.current) }
+  scope :expired_by_date, -> { where("expires_at < ?", Date.current) }
+  scope :not_expired_by_date, -> { where("expires_at IS NULL OR expires_at > ?", Date.current) }
   scope :with_expiration, -> { where.not(expires_at: nil) }
   scope :without_expiration, -> { where(expires_at: nil) }
-  scope :usable, -> { active.not_expired.where("sessions_remaining > 0") }
 
-  # Scopes
+  # Scopes de statut
   scope :active, -> { where(status: :active) }
   scope :expired, -> { where(status: :expired) }
   scope :consumed, -> { where(status: :consumed) }
-  scope :usable, -> { where(status: :active).where("sessions_remaining > 0") }
-  scope :expired_by_date, -> { where("expires_at < ?", Date.current) }
+  
+  # Scope utilisable : actif, pas expiré par date, et avec séances restantes (si applicable)
+  scope :usable, -> { 
+    active
+      .where("expires_at IS NULL OR expires_at > ?", Date.current)
+      .where("sessions_remaining IS NULL OR sessions_remaining > 0")
+  }
 
   # Méthodes de classe
 
   private
+
+  def sessions_remaining_validation
+    # Pour les abonnements illimités (trimester, annual), sessions_remaining doit être nil
+    if subscription_plan&.duration.in?(['trimester', 'annual'])
+      if sessions_remaining.present?
+        errors.add(:sessions_remaining, "doit être vide pour les abonnements illimités")
+      end
+    # Pour les packs et journées, sessions_remaining doit être présent et positif
+    elsif has_session_limit?
+      if sessions_remaining.blank? || sessions_remaining < 0
+        errors.add(:sessions_remaining, "doit être présent et positif pour les packs et journées")
+      end
+    end
+  end
 
   def set_initial_values
     # Valeurs par défaut si pas définies

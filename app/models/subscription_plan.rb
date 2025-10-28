@@ -1,4 +1,8 @@
 class SubscriptionPlan < ApplicationRecord
+  include Priceable
+  include Humanizable
+  include Versionable
+  
   # Relations
   belongs_to :membership_type
   has_many :book_of_entries, dependent: :destroy
@@ -47,17 +51,7 @@ class SubscriptionPlan < ApplicationRecord
     duration == "day"
   end
 
-  def price_euros
-    price_cents / 100.0
-  end
-
-  def price_euros=(value)
-    self.price_cents = (value.to_f * 100).round
-  end
-
-  def name_with_price
-    "#{name} - #{price_euros}€"
-  end
+  # (price_euros, name_with_price maintenant dans le module Priceable)
 
   def duration_days
     case duration
@@ -78,25 +72,9 @@ class SubscriptionPlan < ApplicationRecord
     is_pack? ? sessions_count : nil
   end
 
-  def duration_humanized
-    case duration
-    when "day"
-      "Journée"
-    when "trimester"
-      "Trimestriel"
-    when "annual"
-      "Annuel"
-    when "pack10"
-      "Pack de séances"
-    else
-      duration.humanize
-    end
-  end
+  # (duration_humanized maintenant dans le module Humanizable)
 
-  # Méthodes d'audit et versioning
-  def current_version?
-    effective_until.nil?
-  end
+  # (current_version? maintenant dans le module Versionable)
 
   def create_price_change!(new_price_cents, effective_from: Date.current, reason: nil, user: nil)
     # Fermer la version actuelle

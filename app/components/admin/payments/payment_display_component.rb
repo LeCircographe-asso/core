@@ -28,40 +28,19 @@ module Admin
       end
 
       def display_status
-        status_class = case payment.status
-        when "success" then "bg-green-100 text-green-800"
-        when "pending" then "bg-yellow-100 text-yellow-800"
-        when "cancel" then "bg-red-100 text-red-800"
-        else "bg-gray-100 text-gray-800"
-        end
-
         content_tag :span,
-                    class: "px-2 inline-flex text-xs leading-5 font-semibold rounded-full #{status_class}" do
-          payment.status.humanize
+                    class: "px-2 inline-flex text-xs leading-5 font-semibold rounded-full #{payment.status_badge_class}" do
+          payment.status_humanized
         end
       end
 
       def display_amount
         return "-" if payment.total_cents.blank?
-
-        number_to_currency(payment.total_cents / 100.0, unit: "€", separator: ",", delimiter: " ")
+        number_to_currency(payment.price_euros, unit: "€", separator: ",", delimiter: " ")
       end
 
       def display_payment_method
-        case payment.payment_method
-        when "cash"
-          "Espèces"
-        when "card"
-          "Carte"
-        when "cheque"
-          "Chèque"
-        when "transfer"
-          "Virement"
-        when "offered"
-          "Offert"
-        else
-          payment.payment_method.humanize
-        end
+        payment.payment_method_humanized
       end
 
       def display_payment_lines

@@ -1,151 +1,104 @@
-<div class="min-h-screen bg-gray-50 py-6">
-  <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+<% content_for :title, "Nouvelle cotisation" %>
+
+<div class="min-h-screen py-6">
+  <div class="max-w-4xl mx-auto">
+    <!-- Breadcrumbs -->
+    <%= render 'shared/breadcrumbs' %>
+    
     <!-- Header -->
-    <div class="bg-gradient-to-r from-[#1F5C55] to-[#194A45] rounded-lg shadow-lg mb-6">
-      <div class="px-6 py-4">
-        <h1 class="text-2xl font-bold text-white">Nouveau plan de cotisation</h1>
-        <p class="text-green-100 mt-1">Créer une nouvelle cotisation</p>
+    <div class="bg-white shadow-lg rounded-lg overflow-hidden mb-6">
+      <div class="bg-gradient-to-r from-[#1F5C55] to-[#194A45] px-6 py-4">
+        <h1 class="text-2xl font-bold text-white">Nouvelle cotisation</h1>
+        <p class="text-white/80 mt-1">
+          <% if @person %>
+            Pour <%= @person.full_name %>
+          <% else %>
+            Sélectionnez un plan de cotisation
+          <% end %>
+        </p>
       </div>
     </div>
 
-    <!-- Informations de la personne -->
-    <% if @person %>
-      <div class="bg-white rounded-lg shadow-lg mb-6">
-        <div class="px-6 py-4 border-b border-gray-200">
-          <h2 class="text-lg font-semibold text-gray-900">Informations de la personne</h2>
-        </div>
-        <div class="p-6">
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <p class="text-sm font-medium text-gray-500">Nom complet</p>
-              <p class="text-lg text-gray-900"><%= @person.full_name %></p>
-            </div>
-            <div>
-              <p class="text-sm font-medium text-gray-500">Email</p>
-              <p class="text-lg text-gray-900"><%= @person.email %></p>
-            </div>
-            <div>
-              <p class="text-sm font-medium text-gray-500">Adhésion actuelle</p>
-              <p class="text-lg text-gray-900">
-                <% if @person.current_membership %>
-                  <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                    <%= @person.current_membership.membership_type.name %>
-                  </span>
-                <% else %>
-                  <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
-                    Aucune adhésion
-                  </span>
-                <% end %>
-              </p>
-            </div>
-            <div>
-              <p class="text-sm font-medium text-gray-500">Peut acheter des cotisations</p>
-              <p class="text-lg text-gray-900">
-                <% if @person.can_buy_subscription_plans? %>
-                  <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                    ✅ Oui
-                  </span>
-                <% else %>
-                  <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
-                    ❌ Non - Adhésion Cirque requise
-                  </span>
-                <% end %>
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-    <% end %>
-
-    <!-- Sélection du plan -->
-    <div class="bg-white rounded-lg shadow-lg">
-      <div class="px-6 py-4 border-b border-gray-200">
-        <h2 class="text-lg font-semibold text-gray-900">Choisir un plan de cotisation</h2>
-        <p class="text-sm text-gray-600 mt-1">Sélectionnez le plan que vous souhaitez acheter</p>
-      </div>
-
+    <!-- Content -->
+    <div class="bg-white shadow-lg rounded-lg overflow-hidden">
       <div class="p-6">
-        <%= form_with model: [:admin, SubscriptionPlan.new], url: admin_subscription_plans_path, method: :post, local: true, class: "space-y-6" do |form| %>
-          <%= form.hidden_field :person_id, value: @person&.id %>
-          
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <% @subscription_plans.each do |plan| %>
-              <div class="border border-gray-200 rounded-lg p-6 hover:border-[#1F5C55] hover:shadow-md transition-all duration-200">
-                <div class="flex items-center justify-between mb-4">
-                  <h3 class="text-lg font-semibold text-gray-900"><%= plan.name %></h3>
-                  <div class="text-right">
-                    <p class="text-2xl font-bold text-[#1F5C55]"><%= plan.price_euros %>€</p>
-                    <p class="text-sm text-gray-500">Version <%= plan.version %></p>
-                  </div>
-                </div>
+        <% if @person&.can_buy_subscription_plans? %>
+          <!-- Plans disponibles -->
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
+            <% @subscription_plans.each do |subscription_plan| %>
+              <div class="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
+                <h3 class="text-lg font-medium text-gray-900"><%= subscription_plan.name %></h3>
+                <p class="text-sm text-gray-600 mt-1"><%= subscription_plan.description %></p>
                 
-                <div class="space-y-2 mb-4">
-                  <p class="text-sm text-gray-600">
-                    <strong>Type:</strong> 
-                    <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                      <%= plan.duration_humanized %>
-                    </span>
-                  </p>
-                  
-                  <% if plan.sessions_count %>
-                    <p class="text-sm text-gray-600">
-                      <strong>Séances:</strong> <%= plan.sessions_count %>
-                    </p>
+                <div class="mt-3">
+                  <p class="text-2xl font-bold text-[#1F5C55]"><%= subscription_plan.price_euros %> €</p>
+                  <% if subscription_plan.sessions_count %>
+                    <p class="text-sm text-gray-500"><%= subscription_plan.sessions_count %> séances</p>
                   <% end %>
-                  
-                  <p class="text-sm text-gray-600">
-                    <strong>Validité:</strong> <%= plan.validity_days %> jours
-                  </p>
-                  
-                  <p class="text-sm text-gray-600">
-                    <strong>Adhésion requise:</strong> 
-                    <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                      <%= plan.membership_type.name %>
-                    </span>
-                  </p>
+                  <% if subscription_plan.validity_days %>
+                    <p class="text-sm text-gray-500">Valide <%= subscription_plan.validity_days %> jours</p>
+                  <% end %>
                 </div>
                 
-                <% if plan.description.present? %>
-                  <p class="text-sm text-gray-500 mb-4"><%= plan.description %></p>
-                <% end %>
-                
-                <div class="flex items-center justify-between">
-                  <%= form.radio_button :subscription_plan_id, plan.id, 
-                      class: "h-4 w-4 text-[#1F5C55] focus:ring-[#1F5C55] border-gray-300",
-                      required: true %>
-                  <label class="ml-2 text-sm font-medium text-gray-700">
-                    Sélectionner ce plan
-                  </label>
+                <div class="mt-4">
+                  <%= form_with url: admin_subscription_plans_path, method: :post, local: true, class: "space-y-3" do |form| %>
+                    <%= form.hidden_field :subscription_plan_id, value: subscription_plan.id %>
+                    <%= form.hidden_field :person_id, value: @person.id %>
+                    
+                    <div>
+                      <%= form.label :payment_method, "Mode de paiement", class: "block text-sm font-medium text-gray-700 mb-1" %>
+                      <%= form.select :payment_method, 
+                          options_for_select([
+                            ['Espèces', 'cash'],
+                            ['Carte bancaire', 'card'],
+                            ['Chèque', 'cheque'],
+                            ['Virement', 'transfer'],
+                            ['Offert', 'offered']
+                          ]),
+                          { selected: 'cash' },
+                          { class: "w-full text-sm border-gray-300 rounded-md focus:border-[#1F5C55] focus:ring-[#1F5C55]" } %>
+                    </div>
+                    
+                    <div id="custom-amount-<%= subscription_plan.id %>" class="hidden">
+                      <%= form.label :custom_amount_cents, "Montant personnalisé (€)", class: "block text-sm font-medium text-gray-700 mb-1" %>
+                      <%= form.number_field :custom_amount_cents, 
+                          step: 0.01, 
+                          min: 0,
+                          placeholder: "0.00",
+                          class: "w-full text-sm border-gray-300 rounded-md focus:border-[#1F5C55] focus:ring-[#1F5C55]" %>
+                    </div>
+                    
+                    <%= form.submit "Acheter la cotisation", 
+                        class: "w-full inline-flex justify-center items-center px-3 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-[#1F5C55] hover:bg-[#194A45] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1F5C55]" %>
+                  <% end %>
                 </div>
               </div>
             <% end %>
           </div>
-
-          <!-- Méthode de paiement -->
-          <div class="border-t border-gray-200 pt-6">
-            <h3 class="text-lg font-semibold text-gray-900 mb-4">Méthode de paiement</h3>
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-              <% Payment.payment_methods.each do |method, value| %>
-                <label class="flex items-center p-3 border border-gray-200 rounded-lg hover:border-[#1F5C55] cursor-pointer">
-                  <%= form.radio_button :payment_method, method, 
-                      class: "h-4 w-4 text-[#1F5C55] focus:ring-[#1F5C55] border-gray-300",
-                      checked: method == 'cash' %>
-                  <span class="ml-2 text-sm font-medium text-gray-700">
-                    <%= Payment.human_attribute_name("payment_method.#{method}") %>
-                  </span>
-                </label>
-              <% end %>
-            </div>
-          </div>
-
-          <div class="flex justify-end space-x-3 pt-6 border-t border-gray-200">
-            <%= link_to "Annuler", admin_subscription_plans_path,
-                class: "inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1F5C55]" %>
-            <%= form.submit "Acheter la cotisation",
-                class: "inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#1F5C55] hover:bg-[#194A45] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1F5C55]" %>
+        <% else %>
+          <div class="bg-yellow-50 border border-yellow-200 rounded-md p-4">
+            <p class="text-yellow-800 text-sm">Cette personne doit avoir une adhésion Cirque pour acheter des plans de cotisation.</p>
           </div>
         <% end %>
       </div>
     </div>
   </div>
 </div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Gérer l'affichage du champ montant personnalisé pour chaque plan
+    document.querySelectorAll('select[name="payment_method"]').forEach(function(select) {
+      select.addEventListener('change', function() {
+        const planId = this.closest('form').querySelector('input[name="subscription_plan_id"]').value;
+        const customAmountDiv = document.getElementById('custom-amount-' + planId);
+        
+        if (this.value === 'offered') {
+          customAmountDiv.classList.remove('hidden');
+        } else {
+          customAmountDiv.classList.add('hidden');
+        }
+      });
+    });
+  });
+</script>
