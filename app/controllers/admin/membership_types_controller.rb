@@ -14,7 +14,11 @@ module Admin
     end
 
     def new
-      @membership_type = MembershipType.new
+      @membership_type = MembershipType.new(
+        effective_from: Date.current,
+        version: 1,
+        created_by_user: Current.user
+      )
       add_breadcrumb "Nouveau type d'adhésion", nil
     end
 
@@ -22,7 +26,10 @@ module Admin
       @membership_type = MembershipType.new(membership_type_params)
 
       if @membership_type.save
-        redirect_to admin_membership_type_path(@membership_type), notice: "Type d'adhésion créé avec succès !"
+        respond_to do |format|
+          format.html { redirect_to admin_membership_types_path, notice: "Type d'adhésion créé avec succès !" }
+          format.turbo_stream { redirect_to admin_membership_types_path, notice: "Type d'adhésion créé avec succès !" }
+        end
       else
         render :new, status: :unprocessable_entity
       end
@@ -34,7 +41,10 @@ module Admin
 
     def update
       if @membership_type.update(membership_type_params)
-        redirect_to admin_membership_types_path, notice: "Type d'adhésion mis à jour avec succès !"
+        respond_to do |format|
+          format.html { redirect_to admin_membership_types_path, notice: "Type d'adhésion mis à jour avec succès !" }
+          format.turbo_stream { redirect_to admin_membership_types_path, notice: "Type d'adhésion mis à jour avec succès !" }
+        end
       else
         render :edit, status: :unprocessable_entity
       end
@@ -67,7 +77,7 @@ module Admin
     end
 
     def membership_type_params
-      params.require(:membership_type).permit(:name, :category, :price_cents, :description)
+      params.require(:membership_type).permit(:name, :category, :price_cents, :description, :effective_from, :version, :created_by_user_id)
     end
   end
 end

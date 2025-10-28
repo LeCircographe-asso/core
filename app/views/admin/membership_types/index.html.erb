@@ -33,7 +33,7 @@
                         when 'circus_reduced' then 'bg-yellow-100 text-yellow-800'
                         else 'bg-gray-100 text-gray-800'
                         end %>">
-                    <%= membership_type.category.humanize %>
+                    <%= membership_type.category_display_name %>
                   </span>
                   <span class="text-sm text-gray-500">
                     <%= membership_type.memberships.count %> membres
@@ -118,7 +118,7 @@
                         when 'circus_reduced' then 'bg-yellow-100 text-yellow-800'
                         else 'bg-gray-100 text-gray-800'
                         end %>">
-                    <%= membership_type.category.humanize %>
+                    <%= membership_type.category_display_name %>
                   </span>
                   <span class="text-sm text-gray-500">
                     <%= membership_type.memberships.count %> membres

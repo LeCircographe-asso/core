@@ -69,11 +69,11 @@ module Admin
       subscription_plan = SubscriptionPlan.find(subscription_purchase_params[:subscription_plan_id])
 
       begin
-        result = @person.create_subscription!(
+        @person.create_subscription!(
           subscription_plan,
-          payment_method: subscription_purchase_params[:payment_method],
+          payment_method: (subscription_purchase_params[:payment_method].presence || "cash"),
           recorded_by: Current.user,
-          record_attendance: subscription_purchase_params[:record_attendance]
+          record_attendance: false
         )
 
         redirect_to admin_user_path("person_#{@person.id}"), notice: "Plan de cotisation acheté avec succès !"
