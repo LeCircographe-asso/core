@@ -175,6 +175,11 @@ class Person < ApplicationRecord
           "%#{query}%", "%#{query}%", "%#{query}%", "%#{query}%")
   }
 
+  # Vérifier si la personne a des données financières
+  def has_financial_data?
+    payments.exists? || memberships.where(status: :active).exists?
+  end
+
   # Soft delete
   def archive!
     return false if has_financial_data?
@@ -608,9 +613,6 @@ class Person < ApplicationRecord
     errors.add(:base, "Une adhésion active est obligatoire")
   end
 
-  def has_financial_data?
-    payments.exists? || memberships.exists?
-  end
 
   def generate_newsletter_token
     self.newsletter_unsubscribe_token ||= SecureRandom.urlsafe_base64(32)
