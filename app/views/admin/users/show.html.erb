@@ -129,8 +129,33 @@
       });
     });
     
-    // Set the first tab as active by default
-    tabButtons[0].classList.add('border-[#1F5C55]', 'text-[#1F5C55]');
-    tabButtons[0].classList.remove('border-transparent', 'text-gray-500', 'hover:text-gray-700', 'hover:border-gray-300');
+    // Check for hash in URL to determine active tab
+    const hash = window.location.hash.substring(1); // Remove the # symbol
+    let activeTabId = 'personal'; // Default tab
+    
+    if (hash && ['personal', 'membership', 'payments'].includes(hash)) {
+      activeTabId = hash;
+    }
+    
+    // Set the active tab based on hash or default to first tab
+    const activeTabButton = document.querySelector(`[data-tab="${activeTabId}"]`);
+    if (activeTabButton) {
+      // Remove active classes from all tabs
+      tabButtons.forEach(button => {
+        button.classList.remove('border-[#1F5C55]', 'text-[#1F5C55]');
+        button.classList.add('border-transparent', 'text-gray-500', 'hover:text-gray-700', 'hover:border-gray-300');
+      });
+      
+      // Add active classes to the selected tab
+      activeTabButton.classList.add('border-[#1F5C55]', 'text-[#1F5C55]');
+      activeTabButton.classList.remove('border-transparent', 'text-gray-500', 'hover:text-gray-700', 'hover:border-gray-300');
+      
+      // Show the corresponding tab content
+      showTab(activeTabId);
+    } else {
+      // Set the first tab as active by default
+      tabButtons[0].classList.add('border-[#1F5C55]', 'text-[#1F5C55]');
+      tabButtons[0].classList.remove('border-transparent', 'text-gray-500', 'hover:text-gray-700', 'hover:border-gray-300');
+    }
   });
 </script>

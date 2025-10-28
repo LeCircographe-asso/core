@@ -19,15 +19,6 @@ class Admin::Users::UserHeaderComponent < ViewComponent::Base
     user.email_address
   end
 
-  def role_badge_class
-    case user.system_role
-    when "super_admin" then "bg-[#1F5C55]"
-    when "admin" then "bg-[#1F5C55]/90"
-    when "volunteer" then "bg-[#1F5C55]/80"
-    when "web_visitor" then "bg-[#1F5C55]/70"
-    else "bg-orange-500"
-    end
-  end
 
   def role_text
     if is_person_without_user

@@ -57,8 +57,9 @@ class Admin::Users::UserActionsComponent < ViewComponent::Base
                 new_admin_membership_path(person_id: person.id, renew: true),
                 class: "inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#1F5C55] hover:bg-[#194A45] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1F5C55]"
       else
-        content_tag :span, "Adhésion Cirque active",
-                    class: "inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-500 bg-gray-100"
+        link_to "Voir adhésion",
+                admin_user_path(user ? user.id : "person_#{person.id}") + "#membership",
+                class: "inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#1F5C55] hover:bg-[#194A45] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1F5C55]"
       end
     else
       link_to "Renouveler adhésion",
@@ -81,7 +82,7 @@ class Admin::Users::UserActionsComponent < ViewComponent::Base
 
       if active_book && active_book.remaining_entries > 0
         link_to "Voir cotisation (#{active_book.remaining_entries} restantes)",
-                admin_user_path(user ? user.id : "person_#{person.id}"),
+                admin_user_path(user ? user.id : "person_#{person.id}") + "#payments",
                 class: "inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#1F5C55] hover:bg-[#194A45] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1F5C55]"
       else
         link_to "Ajouter une cotisation",

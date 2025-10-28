@@ -13,7 +13,7 @@ module PaymentQuery
   end
 
   def self.by_date_range(start_date, end_date)
-    Payment.where(payment_date: start_date.beginning_of_day..end_date.end_of_day)
+    Payment.where(created_at: start_date.beginning_of_day..end_date.end_of_day)
   end
 
   def self.successful
@@ -25,7 +25,7 @@ module PaymentQuery
   end
 
   def self.ordered_by_date(direction = :desc)
-    Payment.order(payment_date: direction)
+    Payment.order(created_at: direction)
   end
 
   def self.ordered_by_created_at(direction = :desc)
