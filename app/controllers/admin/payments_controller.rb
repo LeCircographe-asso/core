@@ -15,9 +15,9 @@ module Admin
       # Handle pagination in controller (service returns the query)
       sort_column = params[:sort] || "payments.created_at"
       sort_direction = params[:direction] || "desc"
-      
+
       # Ensure sort_column is properly qualified with table name
-      if sort_column.include?('.')
+      if sort_column.include?(".")
         @payments = @payments.order("#{sort_column} #{sort_direction}")
       else
         @payments = @payments.order("payments.#{sort_column} #{sort_direction}")

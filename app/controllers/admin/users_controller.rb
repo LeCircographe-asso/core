@@ -349,8 +349,8 @@ module Admin
       @people_with_user = Person.joins(:user).count
       @people_without_user = Person.left_joins(:user).where(users: { id: nil }).count
       @new_users_yesterday = User.where(created_at: 1.day.ago.beginning_of_day..1.day.ago.end_of_day).count
-      @basic_memberships = Membership.joins(:membership_type).where(membership_types: { name: 'Basic' }).count
-      @circus_memberships = Membership.joins(:membership_type).where(membership_types: { name: 'Cirque' }).count
+      @basic_memberships = Membership.joins(:membership_type).where(membership_types: { name: "Basic" }).count
+      @circus_memberships = Membership.joins(:membership_type).where(membership_types: { name: "Cirque" }).count
       @active_memberships = Membership.active.count
       @users_this_month = User.where(created_at: Date.current.beginning_of_month..Date.current.end_of_month).count
     end
