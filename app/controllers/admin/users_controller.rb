@@ -347,7 +347,7 @@ module Admin
     def load_dashboard_statistics
       # Utiliser les mêmes filtres que la pagination pour la cohérence
       base_people = PersonQuery.active.main_people
-      
+
       @total_people = base_people.count
       @people_with_user = base_people.joins(:user).count
       @people_without_user = base_people.left_joins(:user).where(users: { id: nil }).count
