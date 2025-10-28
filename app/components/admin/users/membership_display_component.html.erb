@@ -1,0 +1,127 @@
+<div class="space-y-6">
+  <!-- Current Membership Card -->
+  <div class="bg-gradient-to-r from-[#1F5C55] to-[#194A45] rounded-lg p-6 text-white">
+    <div class="flex items-center justify-between mb-4">
+      <h3 class="text-lg font-semibold">Adhésion Actuelle</h3>
+      <% if has_active_membership? %>
+        <%= render MembershipStatusBadgeComponent.new(person: person) %>
+      <% end %>
+    </div>
+    
+    <% if has_active_membership? %>
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <div class="text-sm opacity-80">Type d'adhésion</div>
+          <div class="text-sm font-medium"><%= membership_type_name %></div>
+        </div>
+        <div>
+          <div class="text-sm opacity-80">Prix</div>
+          <div class="text-sm font-medium"><%= membership_price %>€</div>
+        </div>
+        <div>
+          <div class="text-sm opacity-80">Début</div>
+          <div class="text-sm font-medium"><%= membership_start_date %></div>
+        </div>
+        <div>
+          <div class="text-sm opacity-80">Fin</div>
+          <div class="text-sm font-medium"><%= membership_end_date %></div>
+        </div>
+      </div>
+    <% else %>
+      <div class="text-center py-4">
+        <div class="text-lg mb-2">Aucune adhésion active</div>
+        <p class="text-sm opacity-80 mb-4">Cette personne n'a pas d'adhésion en cours</p>
+        <%= link_to "Créer une adhésion", new_admin_membership_path(person_id: person.id), 
+            class: "inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-white/20 hover:bg-white/30 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-white" %>
+      </div>
+    <% end %>
+  </div>
+
+  <!-- Subscription Plans Section -->
+  <% if can_purchase_subscriptions? %>
+    <div class="bg-blue-50 rounded-lg p-6">
+      <h3 class="text-lg font-medium text-gray-900 mb-4">Cotisations Disponibles</h3>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <% subscription_plans.each do |plan| %>
+          <div class="bg-white rounded-lg p-4 border border-gray-200 shadow-sm">
+            <h4 class="font-medium text-gray-900 mb-1"><%= plan.name %></h4>
+            <p class="text-sm text-gray-500 mb-3"><%= plan.description %></p>
+            <div class="text-lg font-bold text-[#1F5C55] mb-4"><%= plan.price_euros %>€</div>
+            <%= form_with model: [:admin, SubscriptionPlan.new], url: admin_subscription_plans_path, method: :post, local: true, class: "space-y-2" do |form| %>
+              <%= form.hidden_field :subscription_plan_id, value: plan.id %>
+              <%= form.hidden_field :person_id, value: person.id %>
+              <%= form.select :payment_method, 
+                  options_for_select([
+                    ['Espèces', 'cash'],
+                    ['Chèque', 'check'],
+                    ['Virement', 'transfer']
+                  ]),
+                  { selected: 'cash' },
+                  { class: "w-full text-sm border-gray-300 rounded-md" } %>
+              <%= form.submit "Acheter", class: "w-full bg-[#1F5C55] text-white py-2 px-4 rounded-md text-sm hover:bg-[#194A45] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1F5C55]" %>
+            <% end %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  <% else %>
+    <div class="bg-yellow-50 rounded-lg p-6 border border-yellow-200">
+      <div class="flex items-center">
+        <svg class="w-6 h-6 text-yellow-600 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.732-.833-2.5 0L4.268 16.5c-.77.833.192 2.5 1.732 2.5z" />
+        </svg>
+        <div>
+          <div class="text-yellow-800 font-medium">Adhésion Cirque requise</div>
+          <p class="text-sm text-yellow-700 mt-1">Pour acheter des cotisations, cette personne doit avoir une adhésion Cirque.</p>
+        </div>
+      </div>
+    </div>
+  <% end %>
+
+  <!-- Active Subscriptions -->
+  <% if person.book_of_entries&.active&.any? %>
+    <div class="bg-green-50 rounded-lg p-6 border border-green-200">
+      <h3 class="text-lg font-medium text-gray-900 mb-4">Carnets d'Entrées Actifs</h3>
+      <div class="space-y-3">
+        <% person.book_of_entries.active.each do |book| %>
+          <% if book.subscription_plan.present? %>
+            <div class="bg-white rounded-lg p-4 border border-gray-200 shadow-sm">
+              <div class="flex justify-between items-center">
+                <div>
+                  <div class="font-medium text-gray-900"><%= book.subscription_plan.name %></div>
+                  <div class="text-sm text-gray-500 mt-1">
+                    <%= book.sessions_remaining %> séance<%= 's' if book.sessions_remaining > 1 %> restante<%= 's' if book.sessions_remaining > 1 %>
+                  </div>
+                </div>
+                <div class="text-right">
+                  <% if book.expires_at %>
+                    <div class="text-sm text-gray-500">Expire le</div>
+                    <div class="text-sm font-medium text-gray-900"><%= book.expires_at.strftime("%d/%m/%Y") %></div>
+                  <% else %>
+                    <div class="text-sm text-gray-500">Validité</div>
+                    <div class="text-sm font-medium text-green-600">Sans expiration</div>
+                  <% end %>
+                </div>
+              </div>
+            </div>
+          <% else %>
+            <div class="bg-yellow-50 rounded-lg p-4 border border-yellow-200">
+              <div class="flex justify-between items-center">
+                <div>
+                  <div class="font-medium text-yellow-800">Carnet d'entrées orphelin</div>
+                  <div class="text-sm text-yellow-600 mt-1">
+                    ID: <%= book.id %> - Plan d'abonnement manquant
+                  </div>
+                </div>
+                <div class="text-right">
+                  <div class="text-sm text-yellow-500">Expire le</div>
+                  <div class="text-sm font-medium text-yellow-800"><%= book.expires_at.strftime("%d/%m/%Y") %></div>
+                </div>
+              </div>
+            </div>
+          <% end %>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+</div>

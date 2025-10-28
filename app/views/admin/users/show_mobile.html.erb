@@ -2,7 +2,7 @@
   <!-- Breadcrumbs -->
   <%= render 'shared/breadcrumbs' %>
   
-  <div class="max-w-2xl xl:max-w-6xl mx-auto p-3">
+  <div class="max-w-4xl mx-auto p-4">
     <div class="bg-white shadow-lg rounded-lg overflow-hidden" id="<%= dom_id(@person || @user) %>">
       
       <!-- Header Component -->
@@ -17,7 +17,7 @@
       <%= render Admin::Users::UserTabsComponent.new(active_tab: "personal") %>
       
       <!-- Tab Content -->
-      <div class="px-3 pb-3">
+      <div class="px-4 pb-4">
         <!-- Personal Info Tab -->
         <div class="tab-content" id="personal-tab">
           <%= render Admin::Users::UserInfoComponent.new(
@@ -86,7 +86,7 @@
       </div>
       
       <!-- Actions -->
-      <div class="border-t bg-gray-50 px-3 py-3">
+      <div class="border-t bg-gray-50 px-4 py-4">
         <%= render Admin::Users::UserActionsComponent.new(
           user: @user,
           person: @person,
