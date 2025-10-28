@@ -26,10 +26,10 @@ class MembershipStatusBadgeComponent < ViewComponent::Base
   def tooltip_text
     if person.has_active_membership?
       current_membership = person.current_membership
-      "Adhésion #{current_membership.membership_type.name} - Expire le #{current_membership.ended_at.strftime('%d/%m/%Y')}"
+      "#{normalized_membership_name(current_membership.membership_type.name)} - Expire le #{current_membership.ended_at.strftime('%d/%m/%Y')}"
     elsif person.memberships.exists?
       last_membership = person.memberships.order(:created_at).last
-      "Adhésion #{last_membership.membership_type.name} expirée le #{last_membership.ended_at.strftime('%d/%m/%Y')}"
+      "#{normalized_membership_name(last_membership.membership_type.name)} expirée le #{last_membership.ended_at.strftime('%d/%m/%Y')}"
     else
       "Aucune adhésion"
     end
@@ -49,4 +49,18 @@ class MembershipStatusBadgeComponent < ViewComponent::Base
   private
 
   attr_reader :person
+
+  # Normalize membership display to avoid duplicated prefix like "Adhésion Adhésion ..."
+  def normalized_membership_name(raw_name)
+    name = raw_name.to_s.strip
+    return "Adhésion" if name.blank?
+
+    downcased = name.downcase
+    if downcased.start_with?("adhesion ") || downcased.start_with?("adhésion ")
+      # Name already contains the word, keep it as-is capitalized
+      name.gsub(/^adhesion\s+/i, "Adhésion ").gsub(/^adhésion\s+/i, "Adhésion ")
+    else
+      "Adhésion #{name}"
+    end
+  end
 end
