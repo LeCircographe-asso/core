@@ -23,7 +23,7 @@ class MembershipTypeBadgeComponent < ViewComponent::Base
 
   def badge_text
     if person.has_active_membership?
-      person.current_membership.membership_type.name
+      simplified_membership_name(person.current_membership.membership_type.name)
     else
       "Aucune"
     end
@@ -32,4 +32,20 @@ class MembershipTypeBadgeComponent < ViewComponent::Base
   private
 
   attr_reader :person
+
+  # Simplified membership name for admin dashboard - just the base type
+  def simplified_membership_name(raw_name)
+    name = raw_name.to_s.strip
+    return "Adhésion" if name.blank?
+
+    # Extract base type by removing common suffixes
+    simplified = name.gsub(/\s+(complète|complete|standard|basique|basic)$/i, "")
+
+    # Add "Adhésion" prefix if not already present
+    if simplified.downcase.start_with?("adhesion") || simplified.downcase.start_with?("adhésion")
+      simplified
+    else
+      "Adhésion #{simplified}"
+    end
+  end
 end

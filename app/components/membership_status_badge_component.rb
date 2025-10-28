@@ -26,10 +26,10 @@ class MembershipStatusBadgeComponent < ViewComponent::Base
   def tooltip_text
     if person.has_active_membership?
       current_membership = person.current_membership
-      "#{normalized_membership_name(current_membership.membership_type.name)} - Expire le #{current_membership.ended_at.strftime('%d/%m/%Y')}"
+      "#{simplified_membership_name(current_membership.membership_type.name)} - Expire le #{current_membership.ended_at.strftime('%d/%m/%Y')}"
     elsif person.memberships.exists?
       last_membership = person.memberships.order(:created_at).last
-      "#{normalized_membership_name(last_membership.membership_type.name)} expirée le #{last_membership.ended_at.strftime('%d/%m/%Y')}"
+      "#{simplified_membership_name(last_membership.membership_type.name)} expirée le #{last_membership.ended_at.strftime('%d/%m/%Y')}"
     else
       "Aucune adhésion"
     end
@@ -49,6 +49,22 @@ class MembershipStatusBadgeComponent < ViewComponent::Base
   private
 
   attr_reader :person
+
+  # Simplified membership name for tooltip - just the base type
+  def simplified_membership_name(raw_name)
+    name = raw_name.to_s.strip
+    return "Adhésion" if name.blank?
+
+    # Extract base type by removing common suffixes
+    simplified = name.gsub(/\s+(complète|complete|standard|basique|basic)$/i, "")
+
+    # Add "Adhésion" prefix if not already present
+    if simplified.downcase.start_with?("adhesion") || simplified.downcase.start_with?("adhésion")
+      simplified
+    else
+      "Adhésion #{simplified}"
+    end
+  end
 
   # Normalize membership display to avoid duplicated prefix like "Adhésion Adhésion ..."
   def normalized_membership_name(raw_name)
