@@ -1,14 +1,15 @@
 class Admin::Users::UserHeaderComponent < ViewComponent::Base
-  def initialize(user:, person:, is_person_without_user: false, is_deleted: false)
+  def initialize(user:, person:, is_person_without_user: false, is_deleted: false, current_user: nil)
     @user = user
     @person = person
     @is_person_without_user = is_person_without_user
     @is_deleted = is_deleted
+    @current_user = current_user
   end
 
   private
 
-  attr_reader :user, :person, :is_person_without_user, :is_deleted
+  attr_reader :user, :person, :is_person_without_user, :is_deleted, :current_user
 
   def user_name
     user.full_name.present? ? user.full_name : "Utilisateur ##{user.id}"
