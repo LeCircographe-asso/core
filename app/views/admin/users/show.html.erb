@@ -452,7 +452,7 @@
         <!-- Actions secondaires -->
         <div class="flex flex-wrap gap-3 text-sm">
           <% unless @is_deleted %>
-            <%= link_to "Modifier les informations", edit_admin_user_path(@user || "person_#{@person.id}"), 
+            <%= link_to "Modifier les informations", edit_person_admin_user_path("person_#{@person.id}"), 
                 class: "text-[#1F5C55] hover:text-[#194A45] hover:underline" %>
             
             <%= link_to "Historique des paiements", admin_payments_path(user_id: @user&.id, person_id: @person.id),
