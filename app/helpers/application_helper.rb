@@ -52,4 +52,11 @@ module ApplicationHelper
     current_page?(path) ? "bg-gray-900 text-white" : "text-gray-300 hover:bg-gray-700 hover:text-white"
   end
 
+  def format_phone_number(phone)
+    return "Non renseigné" if phone.blank?
+
+    # Format: +33 6 12 34 56 78
+    phone.gsub(/(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})/, '\1 \2 \3 \4 \5')
+  end
+
 end
