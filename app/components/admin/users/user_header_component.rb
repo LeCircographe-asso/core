@@ -63,4 +63,9 @@ class Admin::Users::UserHeaderComponent < ViewComponent::Base
     else "Avatar"
     end
   end
+
+  # Show crown overlay for super admins
+  def crown?
+    user.system_role == "super_admin"
+  end
 end

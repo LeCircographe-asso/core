@@ -30,9 +30,16 @@ class Admin::Users::UserInfoComponent < ViewComponent::Base
 
     address_parts = [ user.address, user.zip_code, user.town, user.country ].compact.reject(&:blank?)
 
-    # Format: "Adresse, Code Postal Ville, Pays"
+    # Format sur 3 lignes : Adresse, Code Postal + Ville, Pays
     if address_parts.length >= 3
-      "#{address_parts[0]}, #{address_parts[1]} #{address_parts[2]}#{', ' + address_parts[3] if address_parts[3]}"
+      address_line = address_parts[0]
+      city_line = "#{address_parts[1]} #{address_parts[2]}"
+      country_line = address_parts[3] if address_parts[3]
+
+      content = content_tag(:div, address_line, class: "block")
+      content += content_tag(:div, city_line, class: "block")
+      content += content_tag(:div, country_line, class: "block") if country_line
+      content.html_safe
     else
       address_parts.join(", ")
     end
