@@ -92,7 +92,7 @@
                 <% if Current.user&.system_role == 'super_admin' %>
                   <%= link_to admin_subscription_plan_path(plan), 
                       method: :delete, 
-                      data: { confirm: "Êtes-vous sûr de vouloir supprimer ce plan d'abonnement ?" },
+                      data: { confirm: "Êtes-vous sûr de vouloir supprimer ce plan de cotisation ?" },
                       class: "inline-flex items-center px-3 py-2 text-sm font-medium text-red-600 bg-red-50 hover:bg-red-100 rounded-lg transition-colors duration-200",
                       title: "Supprimer" do %>
                     <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -204,7 +204,7 @@
                 <% if Current.user&.system_role == 'super_admin' %>
                   <%= link_to admin_subscription_plan_path(plan), 
                       method: :delete, 
-                      data: { confirm: "Êtes-vous sûr de vouloir supprimer ce plan d'abonnement ?" },
+                      data: { confirm: "Êtes-vous sûr de vouloir supprimer ce plan de cotisation ?" },
                       class: "inline-flex items-center px-3 py-2 text-sm font-medium text-red-600 bg-red-50 hover:bg-red-100 rounded-lg transition-colors duration-200",
                       title: "Supprimer" do %>
                     <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">

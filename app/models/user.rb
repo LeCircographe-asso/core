@@ -222,6 +222,13 @@ class User < ApplicationRecord
     end
   end
 
+  # Check if user is interested in an event (Person-Based Architecture)
+  def is_interested_in?(event_id)
+    return false unless person
+    
+    person.attendances.exists?(event_id: event_id)
+  end
+
   private
 
   def generate_password_reset_token

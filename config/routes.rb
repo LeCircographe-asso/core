@@ -37,7 +37,7 @@ Rails.application.routes.draw do
   resource :session, only: %i[new create destroy]
   resources :passwords, only: %i[new create edit update], param: :token
   resource :registration, only: %i[new create]
-  resources :event_attendees, only: %i[create destroy]
+  resources :event_interests, only: %i[create destroy]
   resources :blogs, only: %i[show ]
   get "/blog-newsletter", to: "blogs#index"
   resources :users, only: %i[show edit update destroy] do

@@ -6,7 +6,7 @@ module Admin
 
     def index
       @subscription_plans = SubscriptionPlan.includes(:membership_type).all.order(:duration, :price_cents)
-      add_breadcrumb "Plans d'Abonnement", nil
+    add_breadcrumb "Plans de cotisation", nil
     end
 
     def show
@@ -17,14 +17,14 @@ module Admin
     def new
       @person = Person.find(params[:person_id]) if params[:person_id]
 
-      # Vérifier que la personne peut acheter des plans d'abonnement
+      # Vérifier que la personne peut acheter des plans de cotisation
       unless @person&.can_buy_subscription_plans?
-        flash[:alert] = "Cette personne doit avoir une adhésion Cirque pour acheter des plans d'abonnement"
+        flash[:alert] = "Cette personne doit avoir une adhésion Cirque pour acheter des plans de cotisation"
         redirect_to admin_users_path
         return
       end
 
-      # Filtrer les plans d'abonnement selon le type d'adhésion de la personne
+      # Filtrer les plans de cotisation selon le type d'adhésion de la personne
       if @person&.current_membership&.membership_type&.circus?
         @subscription_plans = SubscriptionPlan.joins(:membership_type)
                                             .where(membership_types: { category: [ :circus_full, :circus_reduced ] })
@@ -34,7 +34,7 @@ module Admin
         @subscription_plans = []
       end
 
-      add_breadcrumb "Nouvel abonnement", nil
+      add_breadcrumb "Nouvelle cotisation", nil
     end
 
     def edit
@@ -43,7 +43,7 @@ module Admin
 
     def update
       if @subscription_plan.update(subscription_plan_params)
-        redirect_to admin_subscription_plans_path, notice: "Plan d'abonnement mis à jour avec succès !"
+        redirect_to admin_subscription_plans_path, notice: "Plan de cotisation mis à jour avec succès !"
       else
         render :edit, status: :unprocessable_entity
       end
@@ -60,7 +60,7 @@ module Admin
         redirect_to admin_subscription_plans_path, alert: "Impossible de supprimer ce plan car il est utilisé par des carnets d'entrées."
       else
         @subscription_plan.destroy
-        redirect_to admin_subscription_plans_path, notice: "Plan d'abonnement supprimé avec succès !"
+        redirect_to admin_subscription_plans_path, notice: "Plan de cotisation supprimé avec succès !"
       end
     end
 
@@ -76,7 +76,7 @@ module Admin
           record_attendance: subscription_purchase_params[:record_attendance]
         )
 
-        redirect_to admin_user_path("person_#{@person.id}"), notice: "Plan d'abonnement acheté avec succès !"
+        redirect_to admin_user_path("person_#{@person.id}"), notice: "Plan de cotisation acheté avec succès !"
       rescue => e
         flash[:alert] = "Erreur lors de l'achat du plan: #{e.message}"
         redirect_to new_admin_subscription_plan_path(person_id: @person.id)
@@ -95,7 +95,7 @@ module Admin
 
     def set_breadcrumbs
       add_breadcrumb "Administration", admin_dashboard_index_path
-      add_breadcrumb "Plans d'Abonnement", admin_subscription_plans_path
+      add_breadcrumb "Plans de cotisation", admin_subscription_plans_path
     end
 
     def subscription_params
