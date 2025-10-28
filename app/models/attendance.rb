@@ -4,18 +4,10 @@ class Attendance < ApplicationRecord
   # Relations selon le domain_model_circographe.md
   belongs_to :person
   belongs_to :event, optional: true
-
-  # Anciennes relations (à supprimer progressivement)
-  belongs_to :attendance_list, optional: true
-  belongs_to :user, optional: true
-  belongs_to :book_of_entry, optional: true
-
   # Validations
   validates :date, presence: true
   validates :person_id, uniqueness: { scope: :date, message: "est déjà marqué présent aujourd'hui" }
 
-  # Ancienne validation (à supprimer progressivement)
-  # validates :arrival_time, presence: true, if: -> { user_id.present? }
   # validates :user_id, uniqueness: { scope: :attendance_list_id, message: "est déjà marqué présent dans cette liste" }, if: -> { user_id.present? && attendance_list_id.present? }
 
   # Callbacks

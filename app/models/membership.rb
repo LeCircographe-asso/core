@@ -5,11 +5,6 @@ class Membership < ApplicationRecord
   # Relations selon le domain_model_circographe.md
   belongs_to :person
   belongs_to :membership_type
-
-  # Anciennes relations désactivées (à supprimer progressivement)
-  # has_many :user_memberships, dependent: :destroy
-  # has_many :users, through: :user_memberships
-
   # Validations
   validates :started_at, presence: true
   validates :ended_at, presence: true

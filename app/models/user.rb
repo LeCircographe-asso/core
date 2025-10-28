@@ -39,8 +39,6 @@ class User < ApplicationRecord
            :newsletter_subscribed, :dyslexic_font, :zip_code, :town, :country,
            to: :person, prefix: false, allow_nil: true
 
-
-
   normalizes :email_address, with: ->(e) { e&.strip&.downcase }
 
   validates :email_address, presence: true
@@ -115,7 +113,7 @@ class User < ApplicationRecord
   end
 
   def has_privileges?
-    %w[admin super_admin volunteer].include?(self.system_role) # TODO: Think about how super_admin should be handled
+    %w[admin super_admin volunteer].include?(self.system_role)
   end
 
   def has_admin?
@@ -125,13 +123,6 @@ class User < ApplicationRecord
   def created_by_admin?
     @created_by_admin == true
   end
-
-  # Méthode obsolète supprimée - utiliser Person-Based Architecture
-  # def assign_basic_membership
-  #     basic_membership = Membership.find_by(type_name: :basic)
-  #     user_memberships.create(membership: basic_membership) if basic_membership
-  # end
-
   def has_higher_permissions?(other_user)
     Rails.logger.debug "has_higher_permissions? called with other_user: #{other_user.inspect}"
     return false if other_user.nil?

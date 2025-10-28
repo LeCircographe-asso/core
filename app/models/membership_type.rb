@@ -31,8 +31,6 @@ class MembershipType < ApplicationRecord
   def basic?
     category == "basic"
   end
-
-
   # (price_euros, category_display_name, current_version? maintenant dans les modules)
 
   def create_price_change!(new_price_cents, effective_from: Date.current, reason: nil, user: nil)
