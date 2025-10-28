@@ -189,21 +189,28 @@ class Person < ApplicationRecord
     deleted_at.present?
   end
 
-  # Newsletter scopes
-  scope :newsletter_subscribers, -> {
-    active.where(newsletter_subscribed: true).where.not(email: [ nil, "" ])
-  }
+  # Scopes
+  scope :active, -> { where(deleted_at: nil) }
+  scope :archived, -> { where.not(deleted_at: nil) }
+  scope :with_user_account, -> { joins(:user) }
+  scope :without_user_account, -> { left_joins(:user).where(users: { id: nil }) }
+  scope :by_name, ->(query) { where("first_name LIKE ? OR last_name LIKE ?",
+                                        "%#{query}%", "%#{query}%") }
+  scope :with_email, -> { where.not(email: [ nil, "" ]) }
+  scope :with_phone, -> { where.not(phone: [ nil, "" ]) }
+  scope :minors, -> { where(is_minor: true) }
+  scope :adults, -> { where(is_minor: false) }
 
   # Méthodes utilitaires pour la sécurité des fusions
   def safe_to_merge_with?(other_person)
     return false if other_person.nil?
     return false if id == other_person.id
-    
+
     # Si les deux ont des Users différents, fusion dangereuse
     if user.present? && other_person.user.present? && user.id != other_person.user.id
       return false
     end
-    
+
     true
   end
 
@@ -212,6 +219,136 @@ class Person < ApplicationRecord
     return false if email.blank? # Pas d'email
     return false if email.downcase != email_to_check.downcase # Email différent
     true
+  end
+
+  # Méthodes métier pour la création d'adhésions
+  def create_membership!(membership_type, payment_method: :cash, recorded_by:)
+    ActiveRecord::Base.transaction do
+      # Vérifier qu'il n'y a pas d'adhésion active
+      if memberships.active.current.exists?
+        raise "Cette personne a déjà une adhésion active"
+      end
+
+      # Créer l'adhésion
+      membership = memberships.create!(
+        membership_type: membership_type,
+        started_at: Date.current,
+        ended_at: Date.current + 1.year,
+        status: :active
+      )
+
+      # Créer le paiement
+      payment = payments.create!(
+        total_cents: membership_type.price_cents,
+        payment_method: payment_method,
+        status: :success,
+        recorded_by: recorded_by,
+        notes: "Paiement pour adhésion #{membership_type.name}"
+      )
+
+      # Créer la ligne de paiement
+      payment.payment_lines.create!(
+        item_type: "Membership",
+        item_id: membership.id,
+        amount_cents: membership_type.price_cents,
+        description: "Adhésion #{membership_type.name}"
+      )
+
+      { membership: membership, payment: payment }
+    end
+  end
+
+  # Méthodes métier pour la création de cotisations
+  def create_subscription!(subscription_plan, payment_method: :cash, recorded_by:, record_attendance: false)
+    ActiveRecord::Base.transaction do
+      # Vérifier que la personne peut acheter des plans d'abonnement
+      unless can_buy_subscription_plans?
+        raise "Cette personne doit avoir une adhésion Cirque pour acheter des plans d'abonnement"
+      end
+
+      # Déterminer les valeurs selon le type de plan
+      sessions_remaining = case subscription_plan.duration
+      when "pack10"
+        subscription_plan.sessions_count || 10 # Par défaut 10 pour les packs
+      when "day"
+        1 # Une journée = 1 séance
+      when "trimester", "annual"
+        nil # Pas de limite de séances pour les abonnements
+      else
+        subscription_plan.sessions_count || 1 # Par défaut 1 si non spécifié
+      end
+
+      expires_at = case subscription_plan.duration
+      when "pack10"
+        nil # Les packs10 n'expirent jamais
+      when "day"
+        Date.current + 1.day
+      when "trimester"
+        Date.current + 90.days
+      when "annual"
+        Date.current + 1.year
+      else
+        subscription_plan.validity_days ? Date.current + subscription_plan.validity_days.days : nil
+      end
+
+      # Créer le carnet d'entrées
+      book_of_entry = book_of_entries.create!(
+        subscription_plan: subscription_plan,
+        sessions_remaining: sessions_remaining,
+        status: :active,
+        purchased_at: Time.current,
+        expires_at: expires_at
+      )
+
+      # Créer le paiement
+      payment = payments.create!(
+        total_cents: subscription_plan.price_cents,
+        payment_method: payment_method,
+        status: :success,
+        recorded_by: recorded_by,
+        notes: "Plan d'abonnement #{subscription_plan.name}"
+      )
+
+      # Créer la ligne de paiement
+      payment.payment_lines.create!(
+        item_type: "BookOfEntry",
+        item_id: book_of_entry.id,
+        amount_cents: subscription_plan.price_cents,
+        description: "Plan d'abonnement #{subscription_plan.name}"
+      )
+
+      # Enregistrer la présence si demandé
+      if record_attendance
+        # Logique pour enregistrer la présence
+        # TODO: Implémenter selon vos besoins
+      end
+
+      { book_of_entry: book_of_entry, payment: payment }
+    end
+  end
+
+  # Méthodes métier pour la création de donations
+  def create_donation!(amount_cents, payment_method: :cash, recorded_by:, notes: "Donation")
+    ActiveRecord::Base.transaction do
+      # Créer le paiement
+      payment = payments.create!(
+        total_cents: amount_cents,
+        payment_method: payment_method,
+        status: :success,
+        recorded_by: recorded_by,
+        notes: notes
+      )
+
+      # Créer la ligne de paiement
+      payment.payment_lines.create!(
+        item_type: "Donation",
+        item_id: payment.id, # Lié au paiement lui-même pour les donations simples
+        amount_cents: amount_cents,
+        description: notes
+      )
+
+      payment
+    end
   end
 
   private

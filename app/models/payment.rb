@@ -35,9 +35,8 @@ class Payment < ApplicationRecord
     Rails.cache.fetch("total_donations", expires_in: 1.hour) do
       joins(:payment_lines)
         .where(status: :success)
-        .where(payment_lines: { item_type: 'Donation' })
-        .sum('payment_lines.amount_cents')
-        
+        .where(payment_lines: { item_type: "Donation" })
+        .sum("payment_lines.amount_cents")
     end
   end
 
@@ -67,25 +66,25 @@ class Payment < ApplicationRecord
 
   def payment_method_humanized
     case payment_method
-    when 'cash' then 'Espèces'
-    when 'card' then 'Carte bancaire'
-    when 'cheque' then 'Chèque'
-    when 'transfer' then 'Virement'
-    when 'offered' then 'Offert'
+    when "cash" then "Espèces"
+    when "card" then "Carte bancaire"
+    when "cheque" then "Chèque"
+    when "transfer" then "Virement"
+    when "offered" then "Offert"
     else payment_method.humanize
     end
   end
 
   def is_offered?
-    payment_method == 'offered'
+    payment_method == "offered"
   end
 
   def is_paid?
-    status == 'success'
+    status == "success"
   end
 
   def can_be_cancelled?
-    status != 'cancel' && created_at > 24.hours.ago
+    status != "cancel" && created_at > 24.hours.ago
   end
 
   def membership_related?
@@ -100,9 +99,9 @@ class Payment < ApplicationRecord
   end
 
   def process_payment
-    # Cette méthode sera appelée par le service Payments::Process
+    # Cette méthode sera appelée par le service PaymentProcessing::PaymentProcessor
     # pour traiter les callbacks complexes
-    Payments::Process.new(self).call
+    PaymentProcessing::PaymentProcessor.new(self).call
   end
 
   # Generate a UUID for the payment
@@ -118,7 +117,7 @@ class Payment < ApplicationRecord
   # Log status changes
   def log_status_change
     return unless saved_change_to_status
-    
+
     change_data = {
       status: {
         from: saved_change_to_status.first,
@@ -167,25 +166,4 @@ class Payment < ApplicationRecord
 
     super
   end
-
-  # Méthode obsolète supprimée - utiliser la nouvelle méthode Person-Based
-  # def membership_related?
-  #   product_orders.any? do |po|
-  #     po.product.product_name.include?("Adhésion") ||
-  #     po.product.product_name.include?("Cotisation")
-  #   end
-  # end
-
-  # Méthodes obsolètes supprimées - utiliser les services Person-Based
-  # def payment_successful?
-  # def createBookOfEntry
-
-
-
-
-  # Méthodes obsolètes supprimées - utiliser les services Person-Based
-  # def update_user_membership_if_paid
-  # def determine_user_membership
-  # def determine_end_date
-  # def update_user_membership_end_date
 end

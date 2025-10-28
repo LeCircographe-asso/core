@@ -65,94 +65,22 @@ module Admin
     end
 
     def create
-      @person = Person.find(subscription_params[:person_id])
-      @subscription_plan = SubscriptionPlan.find(subscription_params[:subscription_plan_id])
+      @person = Person.find(subscription_purchase_params[:person_id])
+      subscription_plan = SubscriptionPlan.find(subscription_purchase_params[:subscription_plan_id])
 
-      # Créer le carnet d'entrées (BookOfEntry)
-      book_of_entry_params = {
-        subscription_plan: @subscription_plan,
-        sessions_remaining: @subscription_plan.sessions_count || 0,
-        purchased_at: Time.current,
-        status: :active
-      }
-
-      # Les packs10 n'expirent jamais, les autres plans ont une date d'expiration
-      unless @subscription_plan.duration == "pack10"
-        book_of_entry_params[:expires_at] = @subscription_plan.duration_days.days.from_now
-      end
-
-      book_of_entry = @person.book_of_entries.create!(book_of_entry_params)
-
-      # Créer le paiement
-      payment = Payment.create!(
-        person: @person,
-        recorded_by: Current.user,
-        total_cents: @subscription_plan.price_cents,
-        payment_method: subscription_params[:payment_method] || :cash,
-        status: :success,
-        notes: "Plan d'abonnement #{@subscription_plan.name}"
-      )
-
-      # Créer la ligne de paiement
-      PaymentLine.create!(
-        payment: payment,
-        item: book_of_entry,
-        amount_cents: @subscription_plan.price_cents,
-        description: "Plan d'abonnement #{@subscription_plan.name}"
-      )
-
-      # Si demandé, enregistrer la présence
-      if params[:record_attendance] == "true"
-        attendance_date = params[:attendance_date]&.to_date || Date.current
-        
-        # Créer ou trouver la liste de présence du jour pour les entraînements libres
-        attendance_list = AttendanceList.find_by(
-          list_type: :training,
-          start_date: attendance_date,
-          end_date: attendance_date + 1.day
+      begin
+        result = @person.create_subscription!(
+          subscription_plan,
+          payment_method: subscription_purchase_params[:payment_method],
+          recorded_by: Current.user,
+          record_attendance: subscription_purchase_params[:record_attendance]
         )
-        
-        unless attendance_list
-          attendance_list = AttendanceList.create!(
-            list_type: :training,
-            start_date: attendance_date,
-            end_date: attendance_date + 1.day,
-            name: "Entraînement libre #{attendance_date.strftime('%d/%m/%Y')}",
-            status: :open
-          )
-        end
-        
-        Attendance.create!(
-          person: @person,
-          date: attendance_date,
-          book_of_entry: book_of_entry,
-          attendance_list: attendance_list
-        )
-        
-        book_of_entry&.use_session!
-        
-        respond_to do |format|
-          format.turbo_stream do
-            render turbo_stream: [
-              turbo_stream.update("attendance-frame-#{@person.id}", 
-                partial: "admin/users/attendance_success", 
-                locals: { person: @person, result: OpenStruct.new(message: "Cotisation payée et présence enregistrée") }),
-              turbo_stream.update("flash", 
-                partial: "shared/flash", 
-                locals: { notice: "Cotisation payée et présence enregistrée avec succès" })
-            ]
-          end
-          format.html do
-            redirect_to admin_user_path("person_#{@person.id}"), notice: "Cotisation achetée avec succès !"
-          end
-        end
-      else
-        # Comportement existant
-        redirect_to admin_user_path("person_#{@person.id}"), notice: "Cotisation achetée avec succès !"
+
+        redirect_to admin_user_path("person_#{@person.id}"), notice: "Plan d'abonnement acheté avec succès !"
+      rescue => e
+        flash[:alert] = "Erreur lors de l'achat du plan: #{e.message}"
+        redirect_to new_admin_subscription_plan_path(person_id: @person.id)
       end
-    rescue => e
-      flash[:alert] = "Erreur lors de l'achat du plan: #{e.message}"
-      redirect_to new_admin_subscription_plan_path(person_id: @person.id)
     end
 
     private
@@ -176,6 +104,12 @@ module Admin
 
     def subscription_plan_params
       params.require(:subscription_plan).permit(:name, :duration, :price_cents, :description, :membership_type_id, :sessions_count, :validity_days)
+    end
+
+    def subscription_purchase_params
+      params.require(:subscription_plan).permit(:person_id, :subscription_plan_id, :payment_method, :record_attendance, :attendance_date).merge(
+        recorded_by_id: Current.user.id
+      )
     end
   end
 end

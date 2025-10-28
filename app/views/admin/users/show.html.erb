@@ -287,32 +287,6 @@
               </div>
             </div>
           <% end %>
-          
-          <!-- Ajouter à la présence du jour -->
-          <% if @person&.current_membership %>
-            <div class="bg-green-50 rounded-lg p-4 mb-6">
-              <div class="flex items-center justify-between">
-                <div>
-                  <h3 class="text-lg font-medium text-gray-900">Présence du jour</h3>
-                  <p class="text-sm text-gray-500 mt-1">
-                    <%= Date.current.strftime("%A %d %B %Y") %>
-                  </p>
-                </div>
-                
-                <%= button_to "Ajouter à la présence", 
-                              check_attendance_eligibility_admin_user_path(@person.id),
-                              method: :post,
-                              params: { date: Date.current },
-                              data: { turbo_frame: "attendance-frame-#{@person.id}" },
-                              class: "inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500" %>
-              </div>
-              
-              <!-- Turbo Frame pour afficher les options -->
-              <div id="attendance-frame-<%= @person.id %>" class="mt-4">
-                <!-- Les options s'afficheront ici -->
-              </div>
-            </div>
-          <% end %>
         </div>
       </div>
         <div class="space-y-4">

@@ -1,8 +1,15 @@
 module Admin
   module Users
-    module DisplayHelper
-      # Formatage du nom avec fallback
-      def display_name(person)
+    class UserDisplayComponent < ViewComponent::Base
+      def initialize(person:)
+        @person = person
+      end
+
+      private
+
+      attr_reader :person
+
+      def display_name
         if person.full_name.present?
           person.full_name
         else
@@ -10,8 +17,7 @@ module Admin
         end
       end
 
-      # Formatage de l'email avec fallback
-      def display_email(person)
+      def display_email
         if person.user&.email_address.present?
           person.user.email_address
         elsif person.email.present?
@@ -21,8 +27,7 @@ module Admin
         end
       end
 
-      # Formatage du téléphone avec fallback
-      def display_phone(person)
+      def display_phone
         if person.phone.present?
           format_phone_number(person.phone)
         else
@@ -30,13 +35,11 @@ module Admin
         end
       end
 
-      # Formatage du numéro de membre
       def format_member_number(number)
         number.present? ? "##{number}" : "-"
       end
 
-      # Formatage du nom complet
-      def format_full_name(person)
+      def format_full_name
         if person.first_name.present? && person.last_name.present?
           "#{person.first_name} #{person.last_name}"
         elsif person.first_name.present?
@@ -48,10 +51,9 @@ module Admin
         end
       end
 
-      # Formatage de la date
       def format_display_date(date)
         return "-" if date.blank?
-        
+
         if date.is_a?(String)
           Date.parse(date).strftime("%d/%m/%Y")
         else
@@ -61,11 +63,15 @@ module Admin
         "-"
       end
 
-      # Formatage de la monnaie
       def format_currency(amount)
         return "-" if amount.blank?
-        
+
         number_to_currency(amount, unit: "€", separator: ",", delimiter: " ")
+      end
+
+      def format_phone_number(phone)
+        # Simple formatting - can be enhanced
+        phone
       end
     end
   end

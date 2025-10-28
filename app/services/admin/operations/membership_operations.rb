@@ -10,8 +10,8 @@ module Admin
       # Créer adhésion + paiement + traitement
       def create_membership_with_payment(person:, membership_type:, payment_method: :cash)
         ActiveRecord::Base.transaction do
-          # 1. Utiliser service métier People::MembershipCreator
-          result = People::MembershipCreator.new(
+          # 1. Utiliser service métier MembershipManagement::MembershipCreator
+          result = MembershipManagement::MembershipCreator.new(
             person: person,
             membership_type_id: membership_type.id,
             payment_method: payment_method,
