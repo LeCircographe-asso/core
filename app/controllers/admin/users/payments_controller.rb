@@ -24,7 +24,7 @@ module Admin
         @subscription_plans = SubscriptionPlan.all
       end
 
-      # POST /admin/users/person_1/payments
+    # POST /admin/users/person_1/payments
     def create
       begin
         # Créer le paiement directement via le modèle Person
@@ -84,14 +84,14 @@ module Admin
         end
       end
 
-      # POST /admin/users/person_1/payments/1/process
+    # POST /admin/users/person_1/payments/1/process
     def process_payment
       @payment = @person.payments.find(params[:id])
-      
+
       begin
         # Traiter le paiement (marquer comme success s'il ne l'est pas déjà)
         @payment.update!(status: :success) if @payment.pending?
-        
+
         redirect_to admin_user_path("person_#{@person.id}"), notice: "Paiement traité avec succès"
       rescue => e
         redirect_to admin_user_path("person_#{@person.id}"), alert: "Erreur lors du traitement: #{e.message}"

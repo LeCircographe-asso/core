@@ -22,10 +22,10 @@ class Admin::Users::UserActionsComponent < ViewComponent::Base
     # Subscription action
     actions << subscription_action
 
-    # Create web account action
-    if is_person_without_user
-      actions << create_web_account_action
-    end
+    # Create web account action - moved to header
+    # if is_person_without_user
+    #   actions << create_web_account_action
+    # end
 
     actions.compact
   end

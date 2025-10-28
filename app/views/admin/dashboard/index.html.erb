@@ -7,13 +7,25 @@
     
     <!-- Header -->
     <div class="bg-white shadow-lg rounded-lg overflow-hidden mb-4">
-      <div class="bg-gradient-to-r from-[#1F5C55] to-[#194A45] px-6 py-6">
-        <h1 class="text-2xl font-bold text-white text-center mb-1">Tableau de bord administrateur</h1>
-        <% if Current.user && (Current.user.first_name || Current.user.last_name) %>
-          <p class="text-center text-white/80 text-base">
-            Bienvenue, <%= Current.user.first_name %> <%= Current.user.last_name %>
-          </p>
-        <% end %>
+      <div class="bg-gradient-to-r from-[#1F5C55] to-[#194A45] px-6 py-6 relative">
+        <div class="text-center">
+          <h1 class="text-2xl font-bold text-white mb-1">Tableau de bord administrateur</h1>
+          <% if Current.user && (Current.user.first_name || Current.user.last_name) %>
+            <p class="text-white/80 text-base">
+              Bienvenue, <%= Current.user.first_name %> <%= Current.user.last_name %>
+            </p>
+          <% end %>
+        </div>
+        
+        <!-- Action Button - Top Right -->
+        <div class="absolute top-4 right-4">
+          <%= link_to new_admin_user_path, class: "group bg-white/20 hover:bg-white/30 text-white px-4 py-2 rounded-lg shadow-lg transition-all duration-200 flex items-center" do %>
+            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path>
+            </svg>
+            <span class="text-sm font-medium">Nouvel adhérent</span>
+          <% end %>
+        </div>
       </div>
     </div>
 
@@ -92,19 +104,6 @@
         </div>
     </div>
 
-    <!-- Main action button -->
-    <div class="flex justify-center mb-6">
-        <%= link_to new_admin_user_path, class: "group bg-[#1F5C55] hover:bg-[#194A45] text-white px-6 py-3 rounded-lg shadow-lg transition-all duration-200 flex items-center" do %>
-            <div class="text-center">
-                <div class="p-2 rounded-full bg-white/20 group-hover:bg-white/30 mx-auto mb-1 w-fit">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path>
-                    </svg>
-                </div>
-                <span class="text-base font-medium">Nouvel adhérent</span>
-            </div>
-        <% end %>
-    </div>
 
     <!-- Main content -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -151,12 +150,12 @@
                     Activité récente
                 </h3>
             </div>
-            <div class="overflow-y-auto max-h-[300px]">
-                <ul class="divide-y divide-gray-200">
+            <div class="p-4">
+                <ul class="space-y-2">
                     <% Person.order(created_at: :desc).limit(3).each do |person| %>
-                    <li class="p-3 hover:bg-gray-50 transition-colors">
+                    <li class="p-2 hover:bg-gray-50 transition-colors rounded">
                         <div class="flex items-center">
-                            <div class="flex-shrink-0 h-8 w-8 rounded-full bg-indigo-100 flex items-center justify-center">
+                            <div class="flex-shrink-0 h-7 w-7 rounded-full bg-indigo-100 flex items-center justify-center">
                                 <span class="text-indigo-600 font-medium text-xs">
                                     <%= "#{person.first_name&.first}#{person.last_name&.first}".strip.presence || "?" %>
                                 </span>
@@ -171,9 +170,9 @@
                     </li>
                     <% end %>
                     <% User.order(created_at: :desc).limit(2).each do |user| %>
-                    <li class="p-3 hover:bg-gray-50 transition-colors">
+                    <li class="p-2 hover:bg-gray-50 transition-colors rounded">
                         <div class="flex items-center">
-                            <div class="flex-shrink-0 h-8 w-8 rounded-full bg-[#1F5C55]/10 flex items-center justify-center">
+                            <div class="flex-shrink-0 h-7 w-7 rounded-full bg-[#1F5C55]/10 flex items-center justify-center">
                                 <span class="text-[#1F5C55] font-medium text-xs">
                                     <%= "#{user.first_name&.first}#{user.last_name&.first}".strip.presence || "?" %>
                                 </span>
@@ -188,10 +187,10 @@
                     </li>
                     <% end %>
                     <% Event.order(created_at: :desc).limit(2).each do |event| %>
-                        <li class="p-3 hover:bg-gray-50 transition-colors">
+                        <li class="p-2 hover:bg-gray-50 transition-colors rounded">
                             <div class="flex items-center">
-                                <div class="flex-shrink-0 h-8 w-8 rounded-full bg-purple-100 flex items-center justify-center">
-                                    <svg class="w-4 h-4 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <div class="flex-shrink-0 h-7 w-7 rounded-full bg-purple-100 flex items-center justify-center">
+                                    <svg class="w-3 h-3 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
                                     </svg>
                                 </div>

@@ -198,9 +198,25 @@ module Admin
         @person = PersonQuery.active.find(person_id)
 
         if @person.update(person_params)
-          redirect_to admin_user_path("person_#{@person.id}"), notice: "Informations mises à jour avec succès."
+          # Handle AJAX requests for inline editing
+          if request.xhr?
+            render json: {
+              success: true,
+              member_number: @person.member_number,
+              message: "Numéro d'adhérent mis à jour avec succès."
+            }
+          else
+            redirect_to admin_user_path("person_#{@person.id}"), notice: "Informations mises à jour avec succès."
+          end
         else
-          render :edit_person, status: :unprocessable_entity
+          if request.xhr?
+            render json: {
+              success: false,
+              errors: @person.errors.full_messages
+            }, status: :unprocessable_entity
+          else
+            render :edit_person, status: :unprocessable_entity
+          end
         end
         return
       end
