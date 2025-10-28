@@ -5,15 +5,29 @@ class SubscriptionStatusBadgeComponent < ViewComponent::Base
 
   def badge_class
     if has_active_subscriptions?
-      "px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-indigo-100 text-indigo-800 cursor-help"
+      "px-2 py-1 inline-block text-xs leading-tight font-semibold rounded-full bg-indigo-100 text-indigo-800 cursor-help text-center"
     else
-      "px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800"
+      "px-2 py-1 inline-block text-xs leading-tight font-semibold rounded-full bg-gray-100 text-gray-800 text-center"
     end
   end
 
   def badge_text
     if has_active_subscriptions?
-      "#{total_sessions} séances"
+      active_subscription = person.book_of_entries.active.first
+      case active_subscription.subscription_plan.duration
+      when "pack10"
+        sessions_remaining = active_subscription.sessions_remaining
+        plural_s = (sessions_remaining > 1) ? "s" : ""
+        "<div class='block'>#{sessions_remaining} séance#{plural_s}</div><div class='text-xs opacity-75'>restante#{plural_s}</div>".html_safe
+      when "day"
+        "Journée"
+      when "trimester"
+        "Trimestre"
+      when "annual"
+        "Annuel"
+      else
+        "#{total_sessions} séances"
+      end
     else
       "Aucune"
     end
@@ -21,7 +35,19 @@ class SubscriptionStatusBadgeComponent < ViewComponent::Base
 
   def tooltip_text
     if has_active_subscriptions?
-      "#{total_sessions} séances restantes"
+      active_subscription = person.book_of_entries.active.first
+      case active_subscription.subscription_plan.duration
+      when "pack10"
+        "Carnet de 10 séances"
+      when "day"
+        "Cotisation journée"
+      when "trimester"
+        "Cotisation trimestrielle - Expire le #{active_subscription.expires_at.strftime('%d/%m/%Y')}"
+      when "annual"
+        "Cotisation annuelle - Expire le #{active_subscription.expires_at.strftime('%d/%m/%Y')}"
+      else
+        "#{total_sessions} séances restantes"
+      end
     else
       ""
     end
