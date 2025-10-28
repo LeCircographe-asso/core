@@ -51,7 +51,7 @@ module Admin
         search_term = "%#{params[:search]}%"
         query = query.joins(:person)
           .where(
-            "people.first_name ILIKE ? OR people.last_name ILIKE ? OR people.email ILIKE ? OR payments.total_cents::text ILIKE ?",
+            "people.first_name LIKE ? COLLATE NOCASE OR people.last_name LIKE ? COLLATE NOCASE OR people.email LIKE ? COLLATE NOCASE OR CAST(payments.total_cents AS TEXT) LIKE ? COLLATE NOCASE",
             search_term, search_term, search_term, search_term
           )
       end
