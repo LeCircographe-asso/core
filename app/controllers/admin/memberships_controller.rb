@@ -43,7 +43,7 @@ module Admin
 
       begin
         # Vérifier si c'est un upgrade
-        if params[:upgrade] == "true" && @person.current_membership&.basic?
+        if membership_purchase_params[:upgrade] == "true" && @person.current_membership&.basic?
           # Utiliser la méthode métier centralisée
           custom_amount = membership_purchase_params[:payment_method] == "offered" ? 
                          (membership_purchase_params[:custom_amount_cents]&.to_i || 0) : nil
@@ -82,7 +82,7 @@ module Admin
         end
       rescue => e
         flash[:alert] = "Erreur lors de la création de l'adhésion: #{e.message}"
-        redirect_to new_admin_membership_path(person_id: @person.id, upgrade: params[:upgrade])
+        redirect_to new_admin_membership_path(person_id: @person.id, upgrade: membership_purchase_params[:upgrade])
       end
     end
 
@@ -135,7 +135,7 @@ module Admin
     end
 
     def membership_purchase_params
-      params.require(:membership).permit(:person_id, :membership_type_id, :payment_method, :custom_amount_cents, :offer_reason).merge(
+      params.require(:membership).permit(:person_id, :membership_type_id, :payment_method, :custom_amount_cents, :offer_reason, :upgrade).merge(
         recorded_by_id: Current.user.id
       )
     end
