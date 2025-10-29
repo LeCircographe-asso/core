@@ -56,11 +56,17 @@ module Admin
             offer_reason: membership_purchase_params[:offer_reason]
           )
 
+          # Construire le message de succès
           message = if membership_purchase_params[:payment_method] == "offered"
             "Adhésion upgradée avec succès ! #{membership_type.name} - Offert"
           else
             price_difference = membership_type.price_cents - @person.current_membership.membership_type.price_cents
             "Adhésion upgradée avec succès ! #{membership_type.name} - Différence: #{(price_difference / 100.0).round(2)}€"
+          end
+
+          # Ajouter l'information sur le changement de numéro d'adhérent
+          if result[:member_number_changed]
+            message += " | Numéro d'adhérent changé: #{result[:old_member_number]} → #{result[:new_member_number]}"
           end
 
           redirect_to admin_user_path("person_#{@person.id}"), notice: message
