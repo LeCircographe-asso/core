@@ -44,52 +44,68 @@ module Admin
       begin
         # Vérifier si c'est un upgrade
         if membership_purchase_params[:upgrade] == "true" && @person.current_membership&.basic?
-          # Utiliser la méthode métier centralisée
+          # Utiliser le service MembershipManagement::MembershipUpgrader
           custom_amount = membership_purchase_params[:payment_method] == "offered" ? 
                          (membership_purchase_params[:custom_amount_cents]&.to_i || 0) : nil
+
+          # Conserver l'ancien type AVANT l'upgrade pour un calcul fiable de la différence
+          old_membership_type = @person.current_membership.membership_type
           
-          result = @person.upgrade_membership!(
-            membership_type,
+          upgrader = MembershipManagement::MembershipUpgrader.new(
+            person: @person,
+            new_membership_type_id: membership_type.id,
             payment_method: membership_purchase_params[:payment_method],
-            recorded_by: Current.user,
+            recorded_by_id: Current.user.id,
             custom_amount_cents: custom_amount,
             offer_reason: membership_purchase_params[:offer_reason]
           )
+          
+          result = upgrader.call
 
-          # Construire le message de succès
-          message = if membership_purchase_params[:payment_method] == "offered"
-            "Adhésion upgradée avec succès ! #{membership_type.name} - Offert"
+          if result.success?
+            # Construire le message de succès
+            message = if membership_purchase_params[:payment_method] == "offered"
+              "Adhésion upgradée avec succès ! #{membership_type.name} - Offert"
+            else
+              # IMPORTANT: utiliser l'ancien type conservé avant l'upgrade
+              price_difference = membership_type.price_cents - old_membership_type.price_cents
+              "Adhésion upgradée avec succès ! #{membership_type.name} - Différence: #{(price_difference / 100.0).round(2)}€"
+            end
+
+            # Ajouter l'information sur le changement de numéro d'adhérent
+            if result.member_number_changed
+              message += " | Numéro d'adhérent changé: #{result.old_member_number} → #{result.new_member_number}"
+            end
+
+            redirect_to admin_user_path("person_#{@person.id}"), notice: message
           else
-            price_difference = membership_type.price_cents - @person.current_membership.membership_type.price_cents
-            "Adhésion upgradée avec succès ! #{membership_type.name} - Différence: #{(price_difference / 100.0).round(2)}€"
+            redirect_to new_admin_membership_path(person_id: @person.id, upgrade: membership_purchase_params[:upgrade]),
+                        alert: "Erreur lors de l'upgrade: #{result.message}"
           end
-
-          # Ajouter l'information sur le changement de numéro d'adhérent
-          if result[:member_number_changed]
-            message += " | Numéro d'adhérent changé: #{result[:old_member_number]} → #{result[:new_member_number]}"
-          end
-
-          redirect_to admin_user_path("person_#{@person.id}"), notice: message
         else
           # Création d'une nouvelle adhésion
           custom_amount = membership_purchase_params[:payment_method] == "offered" ? 
                          (membership_purchase_params[:custom_amount_cents]&.to_i || 0) : nil
           
-          result = @person.create_membership!(
-            membership_type,
+          creator = MembershipManagement::MembershipCreator.new(
+            person: @person,
+            membership_type_id: membership_type.id,
             payment_method: membership_purchase_params[:payment_method],
-            recorded_by: Current.user,
+            recorded_by_id: Current.user.id,
             custom_amount_cents: custom_amount,
             offer_reason: membership_purchase_params[:offer_reason]
           )
+          
+          result = creator.call
 
-          redirect_to admin_user_path("person_#{@person.id}"),
-                      notice: "Adhésion créée avec succès ! Vous pouvez maintenant ajouter une cotisation depuis la fiche utilisateur."
+          if result.success?
+            redirect_to admin_user_path("person_#{@person.id}"),
+                        notice: "Adhésion créée avec succès ! Vous pouvez maintenant ajouter une cotisation depuis la fiche utilisateur."
+          else
+            redirect_to new_admin_membership_path(person_id: @person.id),
+                        alert: "Erreur lors de la création de l'adhésion: #{result.message}"
+          end
         end
-      rescue => e
-        flash[:alert] = "Erreur lors de la création de l'adhésion: #{e.message}"
-        redirect_to new_admin_membership_path(person_id: @person.id, upgrade: membership_purchase_params[:upgrade])
-      end
     end
 
     def edit
