@@ -410,6 +410,10 @@ class Person < ApplicationRecord
       # Effectuer l'upgrade
       new_membership = current_membership.upgrade_to!(new_membership_type)
 
+      # Changer automatiquement le numéro d'adhérent si nécessaire
+      old_member_number = member_number
+      new_member_number = handle_member_number_change!(old_membership_type, new_membership_type, recorded_by)
+
       # Gérer le paiement selon le type
       payment = case payment_method.to_s
       when "offered"
@@ -418,11 +422,91 @@ class Person < ApplicationRecord
         handle_standard_upgrade_payment!(price_difference, payment_method, recorded_by, old_membership_type, new_membership_type, new_membership)
       end
 
-      { membership: new_membership, payment: payment }
+      { 
+        membership: new_membership, 
+        payment: payment,
+        member_number_changed: old_member_number != new_member_number,
+        old_member_number: old_member_number,
+        new_member_number: new_member_number
+      }
     end
   end
 
   private
+
+  # Gérer le changement automatique de numéro d'adhérent lors d'un upgrade
+  def handle_member_number_change!(old_membership_type, new_membership_type, recorded_by)
+    # Déterminer si un changement de numéro est nécessaire
+    old_type_code = get_membership_type_code(old_membership_type)
+    new_type_code = get_membership_type_code(new_membership_type)
+    
+    # Si le type de numéro change, générer un nouveau numéro
+    if old_type_code != new_type_code
+      # Générer le nouveau numéro selon le type d'adhésion
+      new_member_number = MemberManagementService.generate_member_number(new_type_code)
+      
+      # Créer l'historique du changement
+      create_member_number_change_history!(old_member_number: member_number, 
+                                         new_member_number: new_member_number,
+                                         old_type: old_type_code,
+                                         new_type: new_type_code,
+                                         recorded_by: recorded_by)
+      
+      # Mettre à jour le numéro actuel
+      update!(member_number: new_member_number)
+      
+      new_member_number
+    else
+      # Pas de changement nécessaire, retourner le numéro actuel
+      member_number
+    end
+  end
+
+  # Obtenir le code de type d'adhésion pour la génération de numéro
+  def get_membership_type_code(membership_type)
+    case membership_type.category
+    when 'circus_full', 'circus_reduced'
+      'CIRQUE'
+    when 'basic'
+      'BASIQUE'
+    else
+      'BASIQUE' # Par défaut
+    end
+  end
+
+  # Obtenir le nom de type d'adhésion pour l'historique
+  def get_membership_type_name(membership_type)
+    case membership_type.category
+    when 'circus_full', 'circus_reduced'
+      'Cirque'
+    when 'basic'
+      'Basique'
+    else
+      'Basique' # Par défaut
+    end
+  end
+
+  # Créer l'historique du changement de numéro d'adhérent
+  def create_member_number_change_history!(old_member_number:, new_member_number:, old_type:, new_type:, recorded_by:)
+    # Marquer l'ancien numéro comme remplacé
+    if old_member_number.present?
+      old_history = member_number_histories.where(member_number: old_member_number, replaced_at: nil).first
+      old_history&.mark_as_replaced!
+    end
+
+    # Convertir les codes en noms pour l'historique
+    old_type_name = old_type == 'CIRQUE' ? 'Cirque' : 'Basique'
+    new_type_name = new_type == 'CIRQUE' ? 'Cirque' : 'Basique'
+
+    # Créer l'historique pour le nouveau numéro
+    member_number_histories.create!(
+      member_number: new_member_number,
+      membership_type: new_type_name,
+      year: Date.current.year,
+      notes: "Changement automatique lors de l'upgrade d'adhésion (#{old_type_name} → #{new_type_name}) - Enregistré par #{recorded_by.email}",
+      assigned_at: Time.current
+    )
+  end
 
   # Calculer le montant selon le mode de paiement
   def calculate_amount_cents(payment_method, base_price_cents, custom_amount_cents = nil)

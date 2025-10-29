@@ -23,6 +23,10 @@ Rails.application.routes.draw do
     resources :memberships, only: %i[index show new create edit update destroy]
     resources :membership_types, only: %i[index show new create edit update destroy]
     resources :subscription_plans, only: %i[index show new create edit update destroy]
+    resources :member_numbers, only: [] do
+      post :suggest, on: :collection
+      patch :change, on: :member
+    end
     resources :duplicates, only: %i[index] do
       post :merge, on: :collection
     end
