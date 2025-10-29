@@ -393,7 +393,7 @@ class Person < ApplicationRecord
   def upgrade_membership!(new_membership_type, payment_method: :cash, recorded_by:, custom_amount_cents: nil, offer_reason: nil)
     ActiveRecord::Base.transaction do
       # Vérifier qu'il y a une adhésion active
-      current_membership = current_membership
+      current_membership = self.current_membership
       raise "Aucune adhésion active à upgrader" unless current_membership
 
       # Vérifier les permissions pour les offres
@@ -413,9 +413,9 @@ class Person < ApplicationRecord
       # Gérer le paiement selon le type
       payment = case payment_method.to_s
       when "offered"
-        handle_offered_upgrade_payment!(price_difference, custom_amount_cents, recorded_by, old_membership_type, new_membership_type)
+        handle_offered_upgrade_payment!(price_difference, custom_amount_cents, recorded_by, old_membership_type, new_membership_type, new_membership)
       else
-        handle_standard_upgrade_payment!(price_difference, payment_method, recorded_by, old_membership_type, new_membership_type)
+        handle_standard_upgrade_payment!(price_difference, payment_method, recorded_by, old_membership_type, new_membership_type, new_membership)
       end
 
       { membership: new_membership, payment: payment }
@@ -483,7 +483,7 @@ class Person < ApplicationRecord
   end
 
   # Gérer le paiement d'un upgrade offert
-  def handle_offered_upgrade_payment!(price_difference, custom_amount_cents, recorded_by, old_membership_type, new_membership_type)
+  def handle_offered_upgrade_payment!(price_difference, custom_amount_cents, recorded_by, old_membership_type, new_membership_type, new_membership)
     amount = calculate_amount_cents("offered", 0, custom_amount_cents)
     
     # Toujours créer un paiement pour la traçabilité, même si montant = 0
@@ -491,22 +491,22 @@ class Person < ApplicationRecord
       amount_cents: amount,
       payment_method: "offered",
       recorded_by: recorded_by,
-      item_type: "MembershipUpgrade",
-      item_id: current_membership.id,
+      item_type: "Membership",
+      item_id: new_membership.id,
       description: "Upgrade offert d'adhésion de #{old_membership_type.name} vers #{new_membership_type.name} - Montant: #{(amount / 100.0).round(2)}€"
     )
   end
 
   # Gérer le paiement d'un upgrade standard
-  def handle_standard_upgrade_payment!(price_difference, payment_method, recorded_by, old_membership_type, new_membership_type)
+  def handle_standard_upgrade_payment!(price_difference, payment_method, recorded_by, old_membership_type, new_membership_type, new_membership)
     if price_difference > 0
       # Paiement de la différence
       create_payment_with_line!(
         amount_cents: price_difference,
         payment_method: payment_method,
         recorded_by: recorded_by,
-        item_type: "MembershipUpgrade",
-        item_id: current_membership.id,
+        item_type: "Membership",
+        item_id: new_membership.id,
         description: "Upgrade d'adhésion de #{old_membership_type.name} vers #{new_membership_type.name}"
       )
     elsif price_difference < 0
@@ -515,8 +515,8 @@ class Person < ApplicationRecord
         amount_cents: price_difference.abs,
         payment_method: "refund",
         recorded_by: recorded_by,
-        item_type: "MembershipUpgrade",
-        item_id: current_membership.id,
+        item_type: "Membership",
+        item_id: new_membership.id,
         description: "Crédit pour upgrade d'adhésion de #{old_membership_type.name} vers #{new_membership_type.name}"
       )
     else
