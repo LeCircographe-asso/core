@@ -70,3 +70,6 @@ test_*.rb
 *_status.rb
 cookies.txt
 db/schema_clean.rb
+
+# IDE files
+/.idea
