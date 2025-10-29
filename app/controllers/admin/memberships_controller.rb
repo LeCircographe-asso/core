@@ -106,6 +106,7 @@ module Admin
                         alert: "Erreur lors de la création de l'adhésion: #{result.message}"
           end
         end
+      end
     end
 
     def edit

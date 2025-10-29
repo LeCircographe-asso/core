@@ -1,0 +1,96 @@
+<!-- Background overlay -->
+<div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" 
+     data-action="click->payment-modal#close"></div>
+
+<!-- Modal panel -->
+<div class="fixed inset-0 z-10 overflow-y-auto">
+  <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
+    <div class="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg">
+      <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+        <div class="flex justify-between items-center mb-4">
+          <h3 class="text-lg font-medium text-gray-900" id="modal-title">
+            Nouveau paiement
+          </h3>
+          <button type="button" 
+                  data-action="click->payment-modal#close"
+                  class="text-gray-400 hover:text-gray-500">
+            <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+
+        <%= form_with model: [:admin, Payment.new],
+                      url: admin_payments_path,
+                      data: {
+                        controller: "payment-form",
+                        action: "turbo:submit-end->payment-modal#handleSubmit",
+                        turbo_frame: "_top"
+                      },
+                      class: "space-y-4" do |f| %>
+          
+          <!-- Personne -->
+          <div>
+            <%= f.label :person_id, "Personne", class: "block text-sm font-medium text-gray-700 mb-1" %>
+            <%= f.select :person_id,
+                options_from_collection_for_select(
+                  Person.active.order(:last_name, :first_name),
+                  :id,
+                  :full_name,
+                  params[:person_id]
+                ),
+                { prompt: "Sélectionner une personne" },
+                { 
+                  class: "w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-[#1F5C55] focus:border-[#1F5C55]",
+                  data: { payment_modal_target: "personSelect" }
+                } %>
+          </div>
+
+          <!-- Montant -->
+          <div>
+            <%= f.label :total_cents, "Montant (€)", class: "block text-sm font-medium text-gray-700 mb-1" %>
+            <%= f.number_field :total_cents,
+                step: 0.01,
+                min: 0,
+                placeholder: "0.00",
+                class: "w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-[#1F5C55] focus:border-[#1F5C55]" %>
+          </div>
+
+          <!-- Méthode de paiement -->
+          <div>
+            <%= f.label :payment_method, "Méthode de paiement", class: "block text-sm font-medium text-gray-700 mb-1" %>
+            <%= f.select :payment_method,
+                options_for_select([
+                  ['Espèces', 'cash'],
+                  ['Carte', 'card'],
+                  ['Chèque', 'cheque'],
+                  ['Virement', 'transfer'],
+                  ['Offert', 'offered']
+                ]),
+                {},
+                { class: "w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-[#1F5C55] focus:border-[#1F5C55]" } %>
+          </div>
+
+          <!-- Notes -->
+          <div>
+            <%= f.label :notes, "Notes", class: "block text-sm font-medium text-gray-700 mb-1" %>
+            <%= f.text_area :notes,
+                rows: 3,
+                placeholder: "Notes optionnelles...",
+                class: "w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-[#1F5C55] focus:border-[#1F5C55]" %>
+          </div>
+
+          <div class="flex justify-end space-x-3 mt-6">
+            <button type="button"
+                    data-action="click->payment-modal#close"
+                    class="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1F5C55]">
+              Annuler
+            </button>
+            <%= f.submit "Créer le paiement",
+                class: "px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#1F5C55] hover:bg-[#194A45] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1F5C55]" %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>

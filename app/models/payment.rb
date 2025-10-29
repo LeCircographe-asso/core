@@ -23,6 +23,7 @@ class Payment < ApplicationRecord
   # after_update :update_user_membership_if_paid, if: -> { saved_change_to_status? && status == "success" }
   # after_update :createBookOfEntry, if: -> { saved_change_to_status? && status == "success" }
   after_update :log_status_change, if: -> { saved_change_to_status? }
+  after_update :invalidate_totals_cache, if: -> { saved_change_to_total_cents? }
 
   # Scope to get active (non-cancelled) payments
   scope :active, -> { where.not(status: :cancel) }
@@ -114,6 +115,12 @@ class Payment < ApplicationRecord
     PaymentAuditLog.log(self, recorded_by, "status_change", change_data)
 
     # Invalidate cache when status changes
+    Rails.cache.delete("total_successful_payments")
+    Rails.cache.delete("total_donations")
+  end
+
+  # Invalidate totals cache when payment amount changes
+  def invalidate_totals_cache
     Rails.cache.delete("total_successful_payments")
     Rails.cache.delete("total_donations")
   end

@@ -1,6 +1,6 @@
 <% content_for :title, "Historique des paiements" %>
 
-<div class="min-h-screen py-6" data-controller="admin-payments">
+<div class="min-h-screen py-6" data-controller="admin-payments payment-modal">
   <div class="max-w-7xl mx-auto">
     <!-- Breadcrumbs -->
     <%= render 'shared/breadcrumbs' %>
@@ -17,11 +17,23 @@
       <div class="p-6">
         <!-- Actions principales -->
         <div class="flex flex-wrap gap-3 mb-6">
-          <%= link_to "Nouveau paiement", new_admin_payment_path, 
-              class: "inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#1F5C55] hover:bg-[#194A45] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1F5C55]" %>
+          <%= render Ui::DisabledButtonComponent.new(
+              text: "Nouveau paiement",
+              disabled: true,
+              disabled_reason: "Création de paiement temporairement désactivée"
+            ) %>
           
           <%= link_to "Export CSV", admin_payments_path(format: :csv), 
               class: "inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#5836a5] hover:bg-[#4c2d8a] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#5836a5]" %>
+        </div>
+        
+        <!-- Modal pour création -->
+        <div data-payment-modal-target="container"
+             class="hidden fixed inset-0 z-50 overflow-y-auto"
+             aria-labelledby="modal-title"
+             role="dialog"
+             aria-modal="true">
+          <%= render "modal" %>
         </div>
 
         <!-- Barre de recherche et filtres -->
@@ -43,7 +55,7 @@
                     class: "search-input pl-10 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#1F5C55] focus:ring-[#1F5C55] sm:text-sm" %>
                 <% if params[:search].present? %>
                   <button type="button" 
-                          onclick="clearSearch()"
+                          data-action="click->admin-payments#clearSearch"
                           class="absolute inset-y-0 right-0 pr-3 flex items-center">
                     <svg class="h-4 w-4 text-gray-400 hover:text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
@@ -92,11 +104,13 @@
         </div>
 
         <!-- Résumé des paiements -->
-        <%= render Admin::Payments::PaymentSummaryComponent.new(
-          payments: @payments, 
-          total_amount: @total_amount, 
-          total_donation: @total_donation
-        ) %>
+        <div id="payment-summary">
+          <%= render Admin::Payments::PaymentSummaryComponent.new(
+            payments: @payments, 
+            total_amount: @total_amount, 
+            total_donation: @total_donation
+          ) %>
+        </div>
 
         <!-- Tableau des paiements -->
         <div class="bg-white shadow overflow-hidden rounded-lg">
@@ -114,42 +128,10 @@
                   <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                 </tr>
               </thead>
-              <tbody class="bg-white divide-y divide-gray-200">
+              <tbody id="payments" class="bg-white divide-y divide-gray-200">
                 <% if @payments.any? %>
                   <% @payments.each do |payment| %>
-                    <tr class="table-row hover:bg-gray-50" data-admin-payments-target="tableRow">
-                      <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        <%= payment_date_display(payment) %>
-                      </td>
-                      
-                      <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        <%= payment_person_display(payment) %>
-                      </td>
-                      
-                      <td class="px-6 py-4 whitespace-nowrap text-sm">
-                        <%= payment_status_display(payment) %>
-                      </td>
-
-                      <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        <%= payment_method_display(payment) %>
-                      </td>
-
-                      <td class="px-6 py-4 text-sm text-gray-500">
-                        <%= payment_lines_display(payment) %>
-                      </td>
-
-                      <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                        <%= payment_amount_display(payment) %>
-                      </td>
-
-                      <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        <%= payment_recorded_by_display(payment) %>
-                      </td>
-                      
-                      <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                        <%= render Admin::Payments::PaymentActionsComponent.new(payment: payment) %>
-                      </td>
-                    </tr>
+                    <%= render "payment_row", payment: payment %>
                   <% end %>
                 <% else %>
                   <tr>
@@ -205,7 +187,8 @@
                   <!-- Sélecteur d'éléments par page -->
                   <div class="flex items-center space-x-2">
                     <label for="items-per-page" class="text-sm text-gray-700">Par page:</label>
-                    <select id="items-per-page" onchange="changeItemsPerPage(this.value)" 
+                    <select id="items-per-page" 
+                            data-action="change->admin-payments#changeItemsPerPage"
                             class="border border-gray-300 rounded-md px-2 py-1 text-sm focus:ring-[#1F5C55] focus:border-[#1F5C55]">
                       <option value="10" <%= 'selected' if params[:items] == '10' %>>10</option>
                       <option value="15" <%= 'selected' if params[:items] == '15' || params[:items].blank? %>>15</option>
@@ -254,36 +237,3 @@
     </div>
   </div>
 </div>
-
-<script>
-function changeItemsPerPage(items) {
-  const url = new URL(window.location);
-  url.searchParams.set('items', items);
-  url.searchParams.delete('page'); // Reset to first page
-  window.location.href = url.toString();
-}
-
-function clearSearch() {
-  document.getElementById('search').value = '';
-  document.querySelector('form').submit();
-}
-
-// Raccourci clavier Ctrl+K pour focus sur la recherche
-document.addEventListener('keydown', function(e) {
-  if (e.ctrlKey && e.key === 'k') {
-    e.preventDefault();
-    document.getElementById('search').focus();
-  }
-});
-
-// Auto-submit du formulaire de recherche avec debounce
-let searchTimeout;
-document.getElementById('search').addEventListener('input', function(e) {
-  clearTimeout(searchTimeout);
-  searchTimeout = setTimeout(() => {
-    if (e.target.value.length >= 2 || e.target.value.length === 0) {
-      e.target.form.submit();
-    }
-  }, 500);
-});
-</script>

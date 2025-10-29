@@ -13,7 +13,7 @@ class EventInterestsController < ApplicationController
     if @attendance.save
       redirect_to @event, notice: "Vous êtes maintenant intéressé par cet événement !"
     else
-      redirect_to @event, alert: "Erreur lors de l'inscription"
+      redirect_to @event, alert: "Erreur lors de l'ajout de votre intérêt"
     end
   end
 
@@ -23,7 +23,7 @@ class EventInterestsController < ApplicationController
     if @attendance&.destroy
       redirect_to @event, notice: "Vous n'êtes plus intéressé par cet événement"
     else
-      redirect_to @event, alert: "Erreur lors de la désinscription"
+      redirect_to @event, alert: "Erreur lors de la suppression de votre intérêt"
     end
   end
 

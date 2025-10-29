@@ -1,3 +1,5 @@
+require "ostruct"
+
 module PaymentManagement
   class PaymentCreator
     include ActiveModel::Model
@@ -30,20 +32,30 @@ module PaymentManagement
 
           # Create payment
           payment = person.payments.create!(
-            amount_cents: amount_cents,
+            total_cents: amount_cents,
             payment_method: payment_method,
             recorded_by: recorded_by,
-            description: description || "Paiement #{item_type.downcase}",
             notes: notes
           )
 
           # Create payment line
-          payment.payment_lines.create!(
-            item_type: item_type,
-            item_id: item_id,
-            amount_cents: amount_cents,
-            description: description || "Paiement #{item_type.downcase}"
-          )
+          if item_type == "Donation"
+            # Pour les donations, lier au paiement lui-même
+            payment.payment_lines.create!(
+              item_type: "Payment",
+              item_id: payment.id,
+              amount_cents: amount_cents,
+              description: description || "Donation"
+            )
+          else
+            # Pour les autres types, utiliser l'item fourni
+            payment.payment_lines.create!(
+              item_type: item_type,
+              item_id: item_id,
+              amount_cents: amount_cents,
+              description: description || "Paiement #{item_type.downcase}"
+            )
+          end
 
           success(payment: payment)
         end

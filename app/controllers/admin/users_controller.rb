@@ -318,12 +318,6 @@ module Admin
       end
     end
 
-    # GET /admin/users/duplicates
-    def duplicates
-      @duplicate_report = DuplicateDetectionService.generate_report
-      add_breadcrumb "Liste d'adhérents", admin_users_path
-      add_breadcrumb "Détection des doublons", nil
-    end
 
     private
 
