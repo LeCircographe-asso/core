@@ -278,18 +278,19 @@ module Admin
           redirect_to admin_users_path, alert: "Personne non trouvée." and return
         end
         
-        # Vérifier les permissions
-        if person.user && !current_user.has_higher_permissions?(person.user)
-          redirect_to admin_users_path, alert: "Vous n'avez pas les permissions pour supprimer cette personne." and return
-        elsif !person.user && !current_user.has_admin_rights?
-          redirect_to admin_users_path, alert: "Vous n'avez pas les permissions pour supprimer cette personne." and return
-        end
+        # Utiliser le service UserManagement::UserDeleter
+        deleter = UserManagement::UserDeleter.new(
+          person_id: person.id,
+          deleted_by_id: current_user.id,
+          reason: "Suppression via interface admin"
+        )
         
-        # Supprimer la Person (soft delete)
-        if person.archive!
+        result = deleter.call
+        
+        if result.success?
           redirect_to admin_users_path, status: :see_other, notice: "Personne supprimée avec succès."
         else
-          redirect_to admin_users_path, alert: "❌ Impossible de supprimer #{person.full_name} : cette personne a des données financières (adhésions actives ou paiements). Veuillez d'abord annuler les adhésions ou supprimer les paiements."
+          redirect_to admin_users_path, alert: "❌ #{result.message}"
         end
         return
       end
