@@ -4,15 +4,26 @@ class Attendance < ApplicationRecord
   # Relations selon le domain_model_circographe.md
   belongs_to :person
   belongs_to :event, optional: true
+  belongs_to :attendance_list, optional: true
+  belongs_to :book_of_entry, optional: true
   # Validations
   validates :date, presence: true
-  validates :person_id, uniqueness: { scope: :date, message: "est déjà marqué présent aujourd'hui" }
+  # Validation conditionnelle : pour les Events, on vérifie person_id + event_id
+  validates :person_id, uniqueness: { 
+    scope: :event_id, 
+    message: "est déjà intéressé par cet événement"
+  }, if: -> { event_id.present? }
+  # Validation conditionnelle : pour les AttendanceList, on vérifie person_id + date
+  validates :person_id, uniqueness: { 
+    scope: :date, 
+    message: "est déjà marqué présent aujourd'hui"
+  }, if: -> { event_id.nil? }
 
   # validates :user_id, uniqueness: { scope: :attendance_list_id, message: "est déjà marqué présent dans cette liste" }, if: -> { user_id.present? && attendance_list_id.present? }
 
   # Callbacks
   before_create :set_date_if_missing
-  after_create :decrement_book_of_entry
+  after_create :decrement_book_of_entry, if: -> { attendance_list_id.present? }
 
   # Scopes
   scope :today, -> { where(date: Date.current) }

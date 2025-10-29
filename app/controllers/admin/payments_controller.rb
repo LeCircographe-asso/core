@@ -49,75 +49,200 @@ module Admin
     end
 
     def show
-      @payments = Payment.includes(:user, order: { product_orders: { product: :price_entries } })
-      @payment = Payment.includes(:user, order: { product_orders: { product: :price_entries } }).find(params[:id])
-      @order = @payment.order
+      # Rediriger vers la liste des paiements avec un message
+      redirect_to admin_payments_path, notice: "Utilisez l'édition inline pour modifier les paiements"
+    end
 
-      @total_amount = @order.product_orders.sum do |product_order|
-        product_order.product.price_entries.order(created_at: :desc).first&.price_catalog&.price.to_i
-      end
-
-      @total_donation = @order.donation
-      @total_payment = (@total_amount || 0) + (@total_donation || 0)
-
-      # Set breadcrumb
-      if @payment.user.present?
-        add_breadcrumb "Liste d'adhérents", admin_users_path
-        add_breadcrumb @payment.user.full_name.present? ? @payment.user.full_name : "Utilisateur ##{@payment.user.id}", admin_user_path(@payment.user)
-        add_breadcrumb "Historique des paiements", admin_payments_path(user_id: @payment.user.id)
-        add_breadcrumb "Détail du paiement ##{@payment.id}", nil
-      else
-        add_breadcrumb "Historique des paiements", admin_payments_path
-        add_breadcrumb "Détail du paiement ##{@payment.id}", nil
+    def edit
+      @payment = Payment.find(params[:id])
+      
+      respond_to do |format|
+        format.html { render partial: "edit_form", locals: { payment: @payment } }
+        format.turbo_stream { 
+          render turbo_stream: turbo_stream.replace("payment_#{@payment.id}_actions", partial: "edit_form", locals: { payment: @payment }) 
+        }
       end
     end
 
     def create
-      begin
-        person = Person.find(payment_params[:person_id])
-
-        # Créer le paiement directement
-        payment = person.payments.create!(
-          total_cents: payment_params[:total_cents],
-          payment_method: payment_params[:payment_method] || "cash",
-          status: :success,
-          recorded_by: Current.user,
-          notes: payment_params[:notes]
-        )
-
-        redirect_to admin_payment_path(payment), notice: "Paiement créé avec succès"
-      rescue => e
-        redirect_to admin_payments_path, alert: "Erreur lors de la création du paiement: #{e.message}"
+      # NEW: Utiliser le service PaymentManagement::PaymentCreator
+      # Convertir le montant en centimes si fourni en euros
+      total_cents = payment_params[:total_cents]
+      total_cents = (total_cents.to_f * 100).to_i if total_cents.present?
+      
+      creator = PaymentManagement::PaymentCreator.new(
+        person_id: payment_params[:person_id],
+        amount_cents: total_cents,
+        payment_method: payment_params[:payment_method] || "cash",
+        recorded_by_id: Current.user.id,
+        item_type: "Donation", # Par défaut pour les paiements directs
+        item_id: payment_params[:person_id], # Lié à la personne
+        description: "Paiement direct",
+        notes: payment_params[:notes]
+      )
+      
+      result = creator.call
+      
+      respond_to do |format|
+        if result.success?
+          format.html { redirect_to admin_payments_path, notice: "Paiement créé avec succès" }
+          format.turbo_stream {
+            # Recalculer les totaux
+            payments_service = Admin::PaymentsService.new({})
+            service_result = payments_service.call
+            
+            render turbo_stream: [
+              turbo_stream.append("payments", partial: "payment_row", locals: { payment: result.payment }),
+              turbo_stream.replace("payment-summary", partial: "payment_summary", locals: { 
+                payments: Payment.includes(:person, :recorded_by, :payment_lines).order(created_at: :desc),
+                total_amount: Payment.total_successful_amount,
+                total_donation: Payment.total_donations
+              }),
+              turbo_stream.replace("flash", partial: "shared/flash", locals: { notice: "Paiement créé avec succès" })
+            ]
+          }
+        else
+          format.html { redirect_to admin_payments_path, alert: "Erreur lors de la création du paiement: #{result.message}" }
+          format.turbo_stream {
+            render turbo_stream: turbo_stream.replace("flash", partial: "shared/flash", locals: { alert: "Erreur: #{result.message}" })
+          }
+        end
       end
+
+      # OLD: logique directe (commentée pour rollback)
+      # begin
+      #   person = Person.find(payment_params[:person_id])
+      #   payment = person.payments.create!(
+      #     total_cents: payment_params[:total_cents],
+      #     payment_method: payment_params[:payment_method] || "cash",
+      #     status: :success,
+      #     recorded_by: Current.user,
+      #     notes: payment_params[:notes]
+      #   )
+      #   redirect_to admin_payment_path(payment), notice: "Paiement créé avec succès"
+      # rescue => e
+      #   redirect_to admin_payments_path, alert: "Erreur lors de la création du paiement: #{e.message}"
+      # end
     end
 
     def update
-      @payment = Payment.find(params[:id])
-
-      if @payment.update(payment_params)
-        redirect_to admin_payment_path(@payment), notice: "Mise à jour réussie"
-      else
-        redirect_to admin_payment_path(@payment), alert: "Échec de la mise à jour"
+      # NEW: Utiliser le service PaymentManagement::PaymentUpdater
+      # Convertir le montant en centimes si fourni en euros
+      total_cents = payment_params[:total_cents]
+      total_cents = (total_cents.to_f * 100).to_i if total_cents.present?
+      
+      updater = PaymentManagement::PaymentUpdater.new(
+        payment_id: params[:id],
+        total_cents: total_cents,
+        payment_method: payment_params[:payment_method],
+        status: payment_params[:status],
+        notes: payment_params[:notes],
+        updated_by_id: Current.user.id
+      )
+      
+      result = updater.call
+      
+      respond_to do |format|
+        if result.success?
+          format.html { redirect_to admin_payments_path, notice: "Mise à jour réussie" }
+          format.turbo_stream {
+            # Recalculer les totaux
+            payments_service = Admin::PaymentsService.new({})
+            service_result = payments_service.call
+            
+            render turbo_stream: [
+              turbo_stream.replace("payment_#{result.payment.id}_actions", partial: "payment_actions", locals: { payment: result.payment }),
+              turbo_stream.replace("payment_row_#{result.payment.id}", partial: "payment_row", locals: { payment: result.payment }),
+              turbo_stream.replace("payment-summary", partial: "payment_summary", locals: { 
+                payments: Payment.includes(:person, :recorded_by, :payment_lines).order(created_at: :desc),
+                total_amount: Payment.total_successful_amount,
+                total_donation: Payment.total_donations
+              }),
+              turbo_stream.replace("flash", partial: "shared/flash", locals: { notice: "Mise à jour réussie" })
+            ]
+          }
+        else
+          format.html { redirect_to admin_payment_path(params[:id]), alert: "Échec de la mise à jour: #{result.message}" }
+          format.turbo_stream {
+            render turbo_stream: turbo_stream.replace("flash", partial: "shared/flash", locals: { alert: "Erreur: #{result.message}" })
+          }
+        end
       end
+
+      # OLD: logique directe (commentée pour rollback)
+      # @payment = Payment.find(params[:id])
+      # if @payment.update(payment_params)
+      #   redirect_to admin_payment_path(@payment), notice: "Mise à jour réussie"
+      # else
+      #   redirect_to admin_payment_path(@payment), alert: "Échec de la mise à jour"
+      # end
     end
 
     # Add destroy method with soft deletion support
     def destroy
-      @payment = Payment.find(params[:id])
+      # NEW: Utiliser le service PaymentManagement::PaymentDeleter
+      deleter = PaymentManagement::PaymentDeleter.new(
+        payment_id: params[:id],
+        deleted_by_id: Current.user.id,
+        reason: "Suppression via interface admin"
+      )
+      
+      result = deleter.call
+      
+      respond_to do |format|
+        if result.success?
+          format.html { redirect_to admin_payments_path, notice: "Paiement annulé avec succès" }
+          format.turbo_stream {
+            # Recalculer les totaux
+            payments_service = Admin::PaymentsService.new({})
+            service_result = payments_service.call
+            
+            render turbo_stream: [
+              turbo_stream.remove("payment_row_#{result.payment.id}"),
+              turbo_stream.replace("payment-summary", partial: "payment_summary", locals: { 
+                payments: Payment.includes(:person, :recorded_by, :payment_lines).order(created_at: :desc),
+                total_amount: Payment.total_successful_amount,
+                total_donation: Payment.total_donations
+              }),
+              turbo_stream.replace("flash", partial: "shared/flash", locals: { notice: "Paiement annulé avec succès" })
+            ]
+          }
+        else
+          format.html { redirect_to admin_payments_path, alert: "Échec de l'annulation du paiement: #{result.message}" }
+          format.turbo_stream {
+            render turbo_stream: turbo_stream.replace("flash", partial: "shared/flash", locals: { alert: "Erreur: #{result.message}" })
+          }
+        end
+      end
 
-      # Instead of actually deleting, mark as cancelled
-      if @payment.update(status: :cancel)
-        # Clear Rails cache to ensure payment totals are recalculated
-        Rails.cache.delete("total_successful_payments")
-        Rails.cache.delete("total_donations")
+      # OLD: logique directe (commentée pour rollback)
+      # @payment = Payment.find(params[:id])
+      # if @payment.update(status: :cancel)
+      #   Rails.cache.delete("total_successful_payments")
+      #   Rails.cache.delete("total_donations")
+      #   expire_fragment(/payments_summary/)
+      #   expire_fragment(/payments_total_amount/)
+      #   redirect_to admin_payments_path, notice: "Paiement annulé avec succès"
+      # else
+      #   redirect_to admin_payments_path, alert: "Échec de l'annulation du paiement"
+      # end
+    end
 
-        # Clear view fragment caches
-        expire_fragment(/payments_summary/)
-        expire_fragment(/payments_total_amount/)
-
-        redirect_to admin_payments_path, notice: "Paiement annulé avec succès"
+    # POST /admin/payments/:id/restore
+    def restore
+      # NEW: Utiliser le service PaymentManagement::PaymentRestorer
+      restorer = PaymentManagement::PaymentRestorer.new(
+        payment_id: params[:id],
+        restored_by_id: Current.user.id,
+        reason: "Restauration via interface admin"
+      )
+      
+      result = restorer.call
+      
+      if result.success?
+        redirect_to admin_payment_path(result.payment), notice: "Paiement restauré avec succès"
       else
-        redirect_to admin_payments_path, alert: "Échec de l'annulation du paiement"
+        redirect_to admin_payments_path, alert: "Échec de la restauration du paiement: #{result.message}"
       end
     end
 

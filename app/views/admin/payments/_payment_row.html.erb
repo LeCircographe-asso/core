@@ -1,0 +1,35 @@
+<tr id="payment_row_<%= payment.id %>" class="table-row hover:bg-gray-50" data-admin-payments-target="tableRow">
+  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+    <%= payment_date_display(payment) %>
+  </td>
+  
+  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+    <%= payment_person_display(payment) %>
+  </td>
+  
+  <td class="px-6 py-4 whitespace-nowrap text-sm">
+    <%= payment_status_display(payment) %>
+  </td>
+
+  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+    <%= payment_method_display(payment) %>
+  </td>
+
+  <td class="px-6 py-4 text-sm text-gray-500">
+    <%= payment_lines_display(payment) %>
+  </td>
+
+  <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+    <%= payment_amount_display(payment) %>
+  </td>
+
+  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+    <%= payment_recorded_by_display(payment) %>
+  </td>
+  
+  <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+    <%= turbo_frame_tag "payment_#{payment.id}_actions" do %>
+      <%= render Admin::Payments::PaymentActionsComponent.new(payment: payment) %>
+    <% end %>
+  </td>
+</tr>

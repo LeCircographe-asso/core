@@ -13,13 +13,25 @@ module Admin
     end
 
     def create
-      @event = Event.new(event_params)
-      @event.creator = current_user
+      creator = EventManagement::EventCreator.new(
+        name: event_params[:title],
+        upper_description: event_params[:upper_description],
+        middle_description: event_params[:middle_description],
+        bottom_description: event_params[:bottom_description],
+        date: event_params[:date],
+        location: event_params[:location],
+        creator_id: current_user.id,
+        category: 'other' # Default category, can be enhanced later
+      )
+      
+      result = creator.call
+      
       respond_to do |format|
-        if @event.save!
-          format.html { redirect_to admin_events_path, notice: "Evenement créé avec succès" }
+        if result.success?
+          format.html { redirect_to admin_events_path, notice: "Événement créé avec succès" }
         else
-          format.html { render :new, alert: @event.errors.full_messages }
+          @event = Event.new(event_params)
+          format.html { render :new, alert: result.message }
         end
       end
     end
@@ -31,8 +43,24 @@ module Admin
     end
     def update
       @event = Event.find params[:id]
-      if @event.update(event_params)
-        redirect_to event_path, notice: "Evenement modifié avec succès"
+      
+      updater = EventManagement::EventUpdater.new(
+        event_id: @event.id,
+        name: event_params[:title],
+        upper_description: event_params[:upper_description],
+        middle_description: event_params[:middle_description],
+        bottom_description: event_params[:bottom_description],
+        date: event_params[:date],
+        location: event_params[:location],
+        updated_by_id: current_user.id
+      )
+      
+      result = updater.call
+      
+      if result.success?
+        redirect_to event_path(@event), notice: "Événement modifié avec succès"
+      else
+        redirect_to edit_admin_event_path(@event), alert: result.message
       end
     end
     private

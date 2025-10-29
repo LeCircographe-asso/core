@@ -60,7 +60,7 @@ module Admin
     end
 
     def calculate_total_amount
-      filtered_payments.sum(:total_cents)
+      filtered_payments.where(status: :success).sum(:total_cents)
     end
 
     def calculate_total_donation
