@@ -3,7 +3,7 @@ source "https://rubygems.org"
 ruby "3.3.5"
 
 # Core Rails gems
-gem "rails", "~> 8.1"
+gem "rails", "~> 8.1.1"
 gem "stringio", "~> 3.1.2"
 gem "bootsnap", require: false  # Reduces boot times through caching
 
@@ -17,7 +17,7 @@ gem "propshaft"  # Modern asset pipeline
 gem "importmap-rails"  # JavaScript module imports
 gem "turbo-rails"  # Hotwire's SPA accelerator
 gem "stimulus-rails"  # Hotwire's JavaScript framework
-gem "tailwindcss-rails", "~> 4.2"  # CSS framework
+gem "tailwindcss-rails", "~> 4.4"  # CSS framework
 gem "image_processing", "~> 1.2"  # For Active Storage image processing
 gem "view_component"  # Modular UI components
 
