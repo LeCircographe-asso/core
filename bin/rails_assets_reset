@@ -1,0 +1,48 @@
+#!/bin/bash
+# Script de reset complet des assets avec PID
+# Usage: bin/rails_assets_reset
+
+echo "🎨 Rails Assets Reset - Reset complet des assets"
+echo "==============================================="
+
+# 1. Arrêter tous les processus par PID
+echo "1️⃣ Arrêt des processus par PID..."
+pkill -f "rails server" 2>/dev/null || true
+pkill -f "puma" 2>/dev/null || true
+pkill -f "tailwindcss:watch" 2>/dev/null || true
+pkill -f "bin/dev" 2>/dev/null || true
+
+# 2. Supprimer les fichiers PID
+echo "2️⃣ Suppression des fichiers PID..."
+rm -f tmp/pids/server.pid
+rm -f tmp/pids/puma.pid
+
+# 3. Nettoyer le cache
+echo "3️⃣ Nettoyage du cache..."
+rm -rf tmp/cache/*
+rm -rf tmp/sockets/*
+
+# 4. Clobber complet des assets
+echo "4️⃣ Clobber complet des assets..."
+bundle exec rails assets:clobber
+
+# 5. Nettoyer les assets manuellement (au cas où)
+echo "5️⃣ Nettoyage manuel des assets..."
+rm -rf public/assets/*
+rm -f public/assets/.manifest.json
+
+# 6. Précompiler les assets
+echo "6️⃣ Précompilation des assets..."
+bundle exec rails assets:precompile
+
+# 7. Vérifier la compilation
+echo "7️⃣ Vérification de la compilation..."
+if [ -f "public/assets/application.css" ]; then
+    echo "✅ CSS compilé avec succès"
+else
+    echo "❌ Erreur de compilation CSS"
+    exit 1
+fi
+
+echo "✅ Reset des assets terminé !"
+echo "💡 Utilisez 'bin/dev' pour redémarrer"

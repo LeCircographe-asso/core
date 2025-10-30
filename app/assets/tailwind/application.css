@@ -1,3 +1,52 @@
+/* Local fonts first (Propshaft rewrites /fonts/... to fingerprinted assets) */
+@font-face {
+  font-family: "Circographe";
+  src: url("/fonts/Circographe-Regular.woff2") format("woff2"),
+       url("/fonts/Circographe-Regular.woff") format("woff");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Rough Typewriter";
+  src: url("/fonts/Rough_typewriter.woff2") format("woff2"),
+       url("/fonts/Rough_typewriter.woff") format("woff");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Rough Typewriter";
+  src: url("/fonts/Rough_typewriter-itl.woff2") format("woff2"),
+       url("/fonts/Rough_typewriter-itl.woff") format("woff");
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Rough Typewriter";
+  src: url("/fonts/Rough_typewriter-bld-itl.woff2") format("woff2"),
+       url("/fonts/Rough_typewriter-bld-itl.woff") format("woff");
+  font-weight: 700;
+  font-style: italic;
+  font-display: swap;
+}
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body { @apply font-sans; }
+}
+
+@layer utilities {
+  .font-circographe { font-family: "Circographe", Arial, sans-serif; }
+  .font-rough-typewriter { font-family: "Rough Typewriter", monospace; }
+}
 @import "tailwindcss";
 
 @layer base {
