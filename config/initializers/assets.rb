@@ -6,6 +6,5 @@ Rails.application.config.assets.version = "1.0"
 # Add additional assets to the asset load path.
 # Rails.application.config.assets.paths << Emoji.images_path
 
-# Note: In Rails 8.1, assets.paths is frozen after initialization
-# Assets paths should be added via Propshaft or in application.rb during app configuration
+# Note: Assets paths should be added via Propshaft or in application.rb during app configuration
 Rails.application.config.assets.precompile += %w[ .svg .eot .woff .ttf .woff2 .otf flowbite.css flowbite.turbo.min.js ]
