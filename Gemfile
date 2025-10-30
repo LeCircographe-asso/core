@@ -31,7 +31,7 @@ gem "solid_cache"  # Database-backed cache
 gem "solid_cable"  # Database-backed Action Cable
 
 # Pagination
-gem "pagy", "~> 6.0"  # Lightweight pagination
+gem "pagy", "~> 9.4"  # Lightweight pagination
 gem "whenever", require: false  # Cron jobs
 
 # API and External Services
