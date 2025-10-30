@@ -1,6 +1,6 @@
 # Configure SolidCache to use SQLite database
 Rails.application.config.to_prepare do
-  # SolidCache uses different configuration method in Rails 8.0.2
+  # SolidCache configuration for Rails 8.1
   Rails.application.config.solid_cache.expires_in = 1.day
   Rails.application.config.solid_cache.connects_to = { database: { writing: :cache } }
   Rails.application.config.solid_cache.max_entries = 10000
