@@ -30,7 +30,8 @@ Rails.application.configure do
   # Assets configuration
   config.assets.compile = true  # Allow compilation during Docker build
   config.assets.digest = true
-  config.assets.paths << Rails.root.join("app", "assets", "builds")
+  # Note: In Rails 8.1, assets.paths manipulation causes frozen errors
+  # Assets paths should be configured via Propshaft
 
   # SSL configuration
   config.force_ssl = true

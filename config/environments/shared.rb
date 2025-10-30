@@ -6,7 +6,8 @@ module SharedEnvironmentConfig
 
   included do
     # Assets configuration
-    config.assets.paths << Rails.root.join("app", "assets", "builds")
+    # Note: In Rails 8.1, assets.paths is frozen - configured via Propshaft instead
+    # config.assets.paths << Rails.root.join("app", "assets", "builds")
     
     # Tailwind CSS builds path for Propshaft
     config.assets.precompile += %w[.svg .eot .woff .ttf .woff2 .otf]
