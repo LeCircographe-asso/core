@@ -27,7 +27,7 @@ module Circographe
     # config.eager_load_paths << Rails.root.join("extras")
     # config.action_mailer.default_url_options = { host: "circographe.com" }
 
-    # Use classic autoloader for RSpec compatibility with Rails 8.0
+    # Use classic autoloader for RSpec compatibility
     config.autoloader = :classic
 
     config.generators do |g|
@@ -38,7 +38,7 @@ module Circographe
     # Don't generate system test files.
     config.generators.system_tests = nil
 
-    # Configure multi-database setup for Rails 8.0
+    # Configure multi-database setup for Rails 8.1
     # SolidCache, SolidQueue, and SolidCable use separate databases
 
     # Add Tailwind CSS builds path for Propshaft (for all environments)
