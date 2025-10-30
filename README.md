@@ -5,13 +5,13 @@
   <p><i>Une application de gestion complète pour association de cirque</i></p>
   
   ![Version](https://img.shields.io/badge/version-1.3.0-blue)
-  ![Rails](https://img.shields.io/badge/Rails-8.0.2-red)
+  ![Rails](https://img.shields.io/badge/Rails-8.1.1-red)
   ![License](https://img.shields.io/badge/license-MIT-green)
 </div>
 
 ## 🎯 Vue d'ensemble
 
-Le Circographe est une application de gestion complète pour une association de cirque, développée avec Ruby on Rails 8.0.2. Cette application couvre l'ensemble des aspects de gestion d'une association de cirque moderne.
+Le Circographe est une application de gestion complète pour une association de cirque, développée avec Ruby on Rails 8.1.1. Cette application couvre l'ensemble des aspects de gestion d'une association de cirque moderne.
 
 ## 🚀 Démarrage rapide
 
@@ -50,8 +50,8 @@ http://localhost:3000
 
 ## 📋 Prérequis
 
-- Ruby 3.2.5+
-- Rails 8.0.2+
+- Ruby 3.3.5+
+- Rails 8.1.1+
 - Docker (pour le déploiement)
 - Kamal (pour le déploiement)
 
@@ -60,7 +60,7 @@ http://localhost:3000
 ### 🧭 Navigation principale
 
 - **[Documentation complète](docs/README.md)** - Guide complet du projet
-- **[Configuration Rails 8.0](docs/documentations/technical/RAILS8_CONFIG.md)** - Nouvelles fonctionnalités
+- **[Configuration Rails 8.1](docs/documentations/technical/RAILS8_CONFIG.md)** - Nouvelles fonctionnalités
 - **[Déploiement](docs/documentations/technical/deployment/)** - Guides de déploiement
 - **[Environnements](docs/documentations/technical/ENVIRONMENTS.md)** - Configuration des environnements
 

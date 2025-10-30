@@ -1,7 +1,7 @@
 # 🚀 Guide Déploiement - Le Circographe
 
 **VPS**: Ionos Linux M - 82.165.63.129  
-**Stack**: Rails 8.0.3 + Kamal 2.7.0 + kamal-proxy + Thruster
+**Stack**: Rails 8.1.1 + Kamal 2.8.2 + kamal-proxy + Thruster
 
 ---
 
