@@ -1,4 +1,67 @@
-<div class="member-history-details max-h-40 overflow-y-auto" 
-     data-controller="tooltip">
-  <%= history_items %>
+<div class="bg-white rounded-lg border border-gray-200 p-4">
+  <div class="flex items-center justify-between mb-4">
+    <h3 class="text-lg font-semibold text-gray-900 flex items-center">
+      <svg class="w-5 h-5 mr-2 text-[#1F5C55]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 4V2a1 1 0 011-1h8a1 1 0 011 1v2m-9 0h10m-10 0a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V6a2 2 0 00-2-2M9 9h6m-6 4h6m-6 4h4" />
+      </svg>
+      Historique des numéros d'adhérent
+    </h3>
+    
+    <% if can_edit? %>
+      <button type="button" 
+              class="inline-flex items-center px-3 py-1.5 text-sm font-medium text-white bg-[#1F5C55] hover:bg-[#194A45] rounded-md transition-colors duration-200"
+              data-action="click->member-number-change#showChangeForm">
+        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+        </svg>
+        Changer le numéro
+      </button>
+    <% end %>
+  </div>
+
+  <% if member_number_history.any? %>
+    <div class="space-y-3">
+      <% member_number_history.each do |history_item| %>
+        <div class="flex items-center justify-between p-3 rounded-lg border <%= history_item.current? ? 'border-green-200 bg-green-50' : 'border-gray-200 bg-gray-50' %>">
+          <div class="flex items-center space-x-3">
+            <div class="flex-shrink-0">
+              <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium <%= status_class(history_item) %>">
+                <%= history_item.member_number %>
+              </span>
+            </div>
+            
+            <div class="flex-1 min-w-0">
+              <div class="text-sm font-medium text-gray-900">
+                <%= history_item.membership_type %>
+              </div>
+              <div class="text-xs text-gray-500">
+                Assigné le <%= format_date(history_item.assigned_at) %>
+                <% if history_item.notes.present? %>
+                  • <%= history_item.notes %>
+                <% end %>
+              </div>
+            </div>
+          </div>
+          
+          <div class="flex-shrink-0 text-right">
+            <div class="text-xs text-gray-500">
+              <%= duration_display(history_item) %>
+            </div>
+            <% if history_item.replaced_at.present? %>
+              <div class="text-xs text-gray-400">
+                Remplacé le <%= format_date(history_item.replaced_at) %>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  <% else %>
+    <div class="text-center py-8">
+      <svg class="w-12 h-12 mx-auto text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+      </svg>
+      <p class="text-gray-500 text-sm">Aucun historique disponible</p>
+    </div>
+  <% end %>
 </div>

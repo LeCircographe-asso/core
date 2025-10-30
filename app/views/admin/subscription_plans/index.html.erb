@@ -4,44 +4,28 @@
     <div class="bg-gradient-to-r from-[#1F5C55] to-[#194A45] rounded-lg shadow-lg mb-6">
       <div class="px-6 py-4 flex justify-between items-center">
         <div>
-          <h1 class="text-2xl font-bold text-white">Plans d'Abonnement</h1>
+          <h1 class="text-2xl font-bold text-white">Liste des cotisations disponibles</h1>
           <p class="text-green-100 mt-1">Gérer les cotisations et leurs prix</p>
         </div>
         <div>
           <%= link_to "Nouveau plan", new_admin_subscription_plan_path, 
-              class: "inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-white bg-opacity-20 hover:bg-opacity-30 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-white" %>
+              class: "inline-flex items-center px-4 py-2 border border-white rounded-md shadow-sm text-sm font-medium text-[#1F5C55] bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-white" %>
         </div>
       </div>
     </div>
 
-    <!-- Liste des plans d'abonnement -->
-    <div class="bg-white rounded-lg shadow-lg">
-      <div class="px-6 py-4 border-b border-gray-200">
-        <h2 class="text-lg font-semibold text-gray-900">Plans d'Abonnement Disponibles</h2>
-        <p class="text-sm text-gray-600 mt-1">Configurez les cotisations et leurs tarifs</p>
-      </div>
+    <!-- Liste des cotisations -->
+    <div class="bg-white rounded-lg shadow-lg p-4 md:p-6 lg:hidden">
 
-      <div class="overflow-x-auto">
-        <table class="min-w-full divide-y divide-gray-200">
-          <thead class="bg-gray-50">
-            <tr>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nom</th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Prix</th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Séances</th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Validité</th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Carnets</th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-            </tr>
-          </thead>
-          <tbody class="bg-white divide-y divide-gray-200">
-            <% @subscription_plans.each do |plan| %>
-              <tr class="hover:bg-gray-50">
-                <td class="px-6 py-4 whitespace-nowrap">
-                  <div class="text-sm font-medium text-gray-900"><%= plan.name %></div>
-                  <div class="text-sm text-gray-500 max-w-xs truncate"><%= plan.description %></div>
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap">
+      <!-- Mobile-first card layout with max width constraint -->
+      <div class="grid grid-cols-1 gap-4 max-w-4xl mx-auto">
+        <% @subscription_plans.each do |plan| %>
+          <div class="bg-white rounded-lg shadow-md border border-gray-200 p-4 hover:shadow-lg transition-shadow duration-200">
+            <!-- Card Header -->
+            <div class="flex justify-between items-start mb-3">
+              <div class="flex-1">
+                <h3 class="text-lg font-semibold text-gray-900 mb-1"><%= plan.name %></h3>
+                <div class="flex items-center space-x-2">
                   <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
                     <%= case plan.duration
                         when 'day' then 'bg-blue-100 text-blue-800'
@@ -52,53 +36,207 @@
                         end %>">
                     <%= plan.duration.humanize %>
                   </span>
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap">
-                  <div class="text-sm font-semibold text-[#1F5C55]"><%= plan.price_euros %>€</div>
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap">
-                  <div class="text-sm text-gray-900">
-                    <% if plan.sessions_count %>
-                      <%= plan.sessions_count %> séances
-                    <% else %>
-                      <span class="text-gray-400">Illimité</span>
-                    <% end %>
-                  </div>
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap">
-                  <div class="text-sm text-gray-900">
-                    <% if plan.validity_days %>
-                      <%= plan.validity_days %> jours
-                    <% else %>
-                      <span class="text-gray-400">-</span>
-                    <% end %>
-                  </div>
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap">
-                  <div class="text-sm text-gray-900">
-                    <%= plan.book_of_entries.count %> carnets
-                  </div>
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                  <div class="flex space-x-2">
-                    <%= link_to "Voir", admin_subscription_plan_path(plan), 
-                        class: "text-[#1F5C55] hover:text-[#194A45]" %>
-                    <%= link_to "Modifier", edit_admin_subscription_plan_path(plan), 
-                        class: "text-blue-600 hover:text-blue-900" %>
-                    <% if plan.book_of_entries.empty? %>
-                      <%= link_to "Supprimer", admin_subscription_plan_path(plan), 
-                          method: :delete, 
-                          data: { confirm: "Êtes-vous sûr de vouloir supprimer ce plan d'abonnement ?" },
-                          class: "text-red-600 hover:text-red-900" %>
-                    <% else %>
-                      <span class="text-gray-400">Supprimer</span>
-                    <% end %>
-                  </div>
-                </td>
-              </tr>
-            <% end %>
-          </tbody>
-        </table>
+                  <span class="text-sm text-gray-500">
+                    <%= pluralize(plan.book_of_entries.count, 'carnet') %>
+                  </span>
+                </div>
+              </div>
+              <div class="text-right">
+                <div class="text-xl font-bold text-[#1F5C55]"><%= plan.price_euros %>€</div>
+              </div>
+            </div>
+            
+            <!-- Description -->
+            <div class="mb-4">
+              <p class="text-sm text-gray-600 leading-relaxed"><%= plan.description %></p>
+            </div>
+            
+            <!-- Details Row -->
+            <div class="grid grid-cols-2 gap-4 mb-4 text-sm">
+              <div>
+                <span class="text-gray-500">Séances:</span>
+                <span class="ml-1 font-medium">
+                  <% if plan.sessions_count %>
+                    <%= plan.sessions_count %> séances
+                  <% else %>
+                    <span class="text-gray-400">Illimité</span>
+                  <% end %>
+                </span>
+              </div>
+              <div>
+                <span class="text-gray-500">Validité:</span>
+                <span class="ml-1 font-medium">
+                  <% if plan.duration == 'pack10' %>
+                    <span class="text-green-600">Sans expiration</span>
+                  <% elsif plan.validity_days %>
+                    <%= plan.validity_days %> jours
+                  <% else %>
+                    <span class="text-gray-400">-</span>
+                  <% end %>
+                </span>
+              </div>
+            </div>
+            
+            <!-- Actions -->
+            <div class="flex justify-end space-x-2">
+              <%= link_to edit_admin_subscription_plan_path(plan), 
+                  class: "inline-flex items-center px-3 py-2 text-sm font-medium text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors duration-200",
+                  title: "Modifier" do %>
+                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                </svg>
+                Modifier
+              <% end %>
+              
+              <% if plan.book_of_entries.empty? %>
+                <% if Current.user&.system_role == 'super_admin' %>
+                  <%= link_to admin_subscription_plan_path(plan), 
+                      method: :delete, 
+                      data: { confirm: "Êtes-vous sûr de vouloir supprimer ce plan de cotisation ?" },
+                      class: "inline-flex items-center px-3 py-2 text-sm font-medium text-red-600 bg-red-50 hover:bg-red-100 rounded-lg transition-colors duration-200",
+                      title: "Supprimer" do %>
+                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                    </svg>
+                    Supprimer
+                  <% end %>
+                <% else %>
+                  <span class="inline-flex items-center px-3 py-2 text-sm font-medium text-gray-400 bg-gray-50 rounded-lg cursor-not-allowed" 
+                        data-controller="tooltip" 
+                        data-tooltip-content-value="Seul le super-admin peut supprimer des cotisations"
+                        title="Seul le super-admin peut supprimer des cotisations">
+                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                    </svg>
+                    Supprimer
+                  </span>
+                <% end %>
+              <% else %>
+                <span class="inline-flex items-center px-3 py-2 text-sm font-medium text-gray-400 bg-gray-50 rounded-lg cursor-not-allowed" 
+                      data-controller="tooltip" 
+                      data-tooltip-content-value="Impossible de supprimer - utilisé par des carnets"
+                      title="Impossible de supprimer - utilisé par des carnets">
+                  <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                  </svg>
+                  Supprimer
+                </span>
+              <% end %>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+
+    <!-- Version pour écrans larges (sans conteneur blanc) -->
+    <div class="hidden lg:block">
+      <div class="grid grid-cols-1 gap-4 max-w-4xl mx-auto">
+        <% @subscription_plans.each do |plan| %>
+          <div class="bg-white rounded-lg shadow-md border border-gray-200 p-4 hover:shadow-lg transition-shadow duration-200">
+            <!-- Card Header -->
+            <div class="flex justify-between items-start mb-3">
+              <div class="flex-1">
+                <h3 class="text-lg font-semibold text-gray-900 mb-1"><%= plan.name %></h3>
+                <div class="flex items-center space-x-2">
+                  <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
+                    <%= case plan.duration
+                        when 'day' then 'bg-blue-100 text-blue-800'
+                        when 'trimester' then 'bg-green-100 text-green-800'
+                        when 'annual' then 'bg-purple-100 text-purple-800'
+                        when 'pack10' then 'bg-orange-100 text-orange-800'
+                        else 'bg-gray-100 text-gray-800'
+                        end %>">
+                    <%= plan.duration.humanize %>
+                  </span>
+                  <span class="text-sm text-gray-500">
+                    <%= pluralize(plan.book_of_entries.count, 'carnet') %>
+                  </span>
+                </div>
+              </div>
+              <div class="text-right">
+                <div class="text-xl font-bold text-[#1F5C55]"><%= plan.price_euros %>€</div>
+              </div>
+            </div>
+            
+            <!-- Description -->
+            <div class="mb-4">
+              <p class="text-sm text-gray-600 leading-relaxed"><%= plan.description %></p>
+            </div>
+            
+            <!-- Details Row -->
+            <div class="grid grid-cols-2 gap-4 mb-4 text-sm">
+              <div>
+                <span class="text-gray-500">Séances:</span>
+                <span class="ml-1 font-medium">
+                  <% if plan.sessions_count %>
+                    <%= plan.sessions_count %> séances
+                  <% else %>
+                    <span class="text-gray-400">Illimité</span>
+                  <% end %>
+                </span>
+              </div>
+              <div>
+                <span class="text-gray-500">Validité:</span>
+                <span class="ml-1 font-medium">
+                  <% if plan.duration == 'pack10' %>
+                    <span class="text-green-600">Sans expiration</span>
+                  <% elsif plan.validity_days %>
+                    <%= plan.validity_days %> jours
+                  <% else %>
+                    <span class="text-gray-400">-</span>
+                  <% end %>
+                </span>
+              </div>
+            </div>
+            
+            <!-- Actions -->
+            <div class="flex justify-end space-x-2">
+              <%= link_to edit_admin_subscription_plan_path(plan), 
+                  class: "inline-flex items-center px-3 py-2 text-sm font-medium text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors duration-200",
+                  title: "Modifier" do %>
+                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                </svg>
+                Modifier
+              <% end %>
+              
+              <% if plan.book_of_entries.empty? %>
+                <% if Current.user&.system_role == 'super_admin' %>
+                  <%= link_to admin_subscription_plan_path(plan), 
+                      method: :delete, 
+                      data: { confirm: "Êtes-vous sûr de vouloir supprimer ce plan de cotisation ?" },
+                      class: "inline-flex items-center px-3 py-2 text-sm font-medium text-red-600 bg-red-50 hover:bg-red-100 rounded-lg transition-colors duration-200",
+                      title: "Supprimer" do %>
+                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                    </svg>
+                    Supprimer
+                  <% end %>
+                <% else %>
+                  <span class="inline-flex items-center px-3 py-2 text-sm font-medium text-gray-400 bg-gray-50 rounded-lg cursor-not-allowed" 
+                        data-controller="tooltip" 
+                        data-tooltip-content-value="Seul le super-admin peut supprimer des cotisations"
+                        title="Seul le super-admin peut supprimer des cotisations">
+                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                    </svg>
+                    Supprimer
+                  </span>
+                <% end %>
+              <% else %>
+                <span class="inline-flex items-center px-3 py-2 text-sm font-medium text-gray-400 bg-gray-50 rounded-lg cursor-not-allowed" 
+                      data-controller="tooltip" 
+                      data-tooltip-content-value="Impossible de supprimer - utilisé par des carnets"
+                      title="Impossible de supprimer - utilisé par des carnets">
+                  <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                  </svg>
+                  Supprimer
+                </span>
+              <% end %>
+            </div>
+          </div>
+        <% end %>
       </div>
     </div>
 

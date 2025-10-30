@@ -15,21 +15,50 @@ FactoryBot.define do
       status { :inactive }
     end
 
+    trait :pending do
+      status { :pending }
+    end
+
     trait :expired do
       status { :expired }
       ended_at { 1.day.ago }
     end
 
     trait :basic do
-      association :membership_type, factory: [:membership_type, :basic]
+      association :membership_type, category: :basic
     end
 
     trait :circus_full do
-      association :membership_type, factory: [:membership_type, :circus_full]
+      association :membership_type, category: :circus_full
     end
 
     trait :circus_reduced do
-      association :membership_type, factory: [:membership_type, :circus_reduced]
+      association :membership_type, category: :circus_reduced
+    end
+
+    trait :current do
+      started_at { Date.current - 1.month }
+      ended_at { Date.current + 11.months }
+    end
+
+    trait :future do
+      started_at { Date.current + 1.month }
+      ended_at { Date.current + 13.months }
+    end
+
+    trait :past do
+      started_at { Date.current - 1.year }
+      ended_at { Date.current - 1.month }
+    end
+
+    trait :expiring do
+      started_at { Date.current - 11.months }
+      ended_at { Date.current + 1.month }
+    end
+
+    trait :recently_started do
+      started_at { Date.current - 1.week }
+      ended_at { Date.current + 51.weeks }
     end
   end
 end

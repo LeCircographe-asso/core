@@ -1,476 +1,110 @@
-<div class="max-w-4xl mx-auto">
-  <!-- Breadcrumbs -->
-  <%= render 'shared/breadcrumbs' %>
-  
-  <div class="bg-white shadow-lg rounded-lg overflow-hidden" id="<%= dom_id(@person || @user) %>">
-    <!-- Header with gradient -->
-    <div class="relative">
-      <div class="h-24 w-full bg-gradient-to-r from-[#1F5C55] to-[#194A45] rounded-t-lg">
-        <!-- User Role Badge -->
-        <% if @is_person_without_user %>
-          <div class="absolute top-4 right-4 px-3 py-1 text-xs font-semibold text-white rounded-full bg-orange-500">
-            Personne sans compte
-          </div>
-        <% else %>
-          <% if @user.system_role.present? %>
-            <div class="absolute top-4 right-4 px-3 py-1 text-xs font-semibold text-white rounded-full 
-              <%= case @user.system_role
-                when 'super_admin' then 'bg-[#1F5C55]'
-                when 'admin' then 'bg-[#1F5C55]/90'
-                when 'volunteer' then 'bg-[#1F5C55]/80'
-                when 'web_visitor' then 'bg-[#1F5C55]/70'
-                end %>">
-              <%= @user.system_role.humanize %>
-              <% if @is_deleted %>
-                <span class="ml-1 px-2 py-0.5 text-xs rounded-full bg-red-500 text-white">Supprimé</span>
-              <% end %>
-            </div>
-          <% else %>
-            <div class="absolute top-4 right-4 px-3 py-1 text-xs font-semibold text-white rounded-full bg-orange-500">
-              Personne sans compte
-            </div>
-          <% end %>
-        <% end %>
-        
-        <!-- Action Buttons -->
-        <div class="absolute top-4 left-4 flex space-x-2">
-          <% unless @is_deleted %>
-            <!-- Edit Button -->
-            <% if @is_person_without_user %>
-              <!-- Pour Person sans User, on peut ajouter des actions spécifiques -->
-              <span class="inline-flex items-center px-3 py-1 text-xs font-semibold text-white rounded-full bg-orange-500/80">
-                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                </svg>
-                Créer compte
-              </span>
-            <% else %>
-              <%= link_to edit_admin_user_path(@user), class: "inline-flex items-center px-3 py-1 text-xs font-semibold text-white rounded-full bg-[#1F5C55]/80 hover:bg-[#1F5C55] transition-colors duration-200" do %>
-                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
-                </svg>
-                Modifier
-              <% end %>
-            <% end %>
-          <% end %>
-          
-          <!-- Payment History Button -->
-          <% if @is_person_without_user %>
-            <%= link_to admin_payments_path(person_id: @person.id), class: "inline-flex items-center px-3 py-1 text-xs font-semibold text-white rounded-full bg-[#1F5C55]/80 hover:bg-[#1F5C55] transition-colors duration-200" do %>
-              <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
-              </svg>
-              Historique de paiement
-            <% end %>
-          <% else %>
-            <%= link_to admin_payments_path(user_id: @user.id), class: "inline-flex items-center px-3 py-1 text-xs font-semibold text-white rounded-full bg-[#1F5C55]/80 hover:bg-[#1F5C55] transition-colors duration-200" do %>
-              <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
-              </svg>
-              Historique de paiement
-            <% end %>
-          <% end %>
-        </div>
-      </div>
-      
-      <!-- Avatar -->
-      <div class="absolute -bottom-12 left-1/2 transform -translate-x-1/2">
-        <div class="h-24 w-24 rounded-full border-4 border-white overflow-hidden bg-white shadow-lg <%= @is_deleted ? 'grayscale' : '' %>">
-          <% case @user.system_role %>
-          <% when 'super_admin' %>
-            <%= image_tag "super_admin.webp", alt: "Avatar Super Admin", class: "h-full w-full object-cover" %>
-          <% when 'admin' %>
-            <%= image_tag "admin.webp", alt: "Avatar Admin", class: "h-full w-full object-cover" %>
-          <% when 'volunteer' %>
-            <%= image_tag "volunteer.webp", alt: "Avatar Bénévole", class: "h-full w-full object-cover" %>
-          <% when 'web_visitor' %>
-            <%= image_tag "users.png", alt: "Avatar Utilisateur", class: "h-full w-full object-cover" %>
-          <% else %>
-            <%= image_tag "users.png", alt: "Avatar", class: "h-full w-full object-cover" %>
-          <% end %>
-        </div>
-      </div>
-    </div>
+<div class="min-h-screen py-6">
+  <div class="max-w-4xl mx-auto">
+    <!-- Breadcrumbs -->
+    <%= render 'shared/breadcrumbs' %>
     
-    <!-- User Info -->
-    <div class="pt-16 px-6 pb-6">
-      <div class="text-center mb-6">
-        <h1 class="text-xl font-bold text-gray-800">
-          <%= @user.full_name.present? ? @user.full_name : "Utilisateur ##{@user.id}" %>
-        </h1>
-        <p class="text-gray-500 text-sm mt-1"><%= @user.email_address %></p>
-        <% if @is_deleted %>
-          <p class="text-red-500 text-sm mt-1">
-            Compte supprimé le <%= @user.deleted_at.strftime("%d/%m/%Y à %H:%M") %>
-          </p>
-        <% end %>
-      </div>
+    <div class="bg-white rounded-xl shadow-lg overflow-hidden mb-6" id="<%= dom_id(@person || @user) %>">
       
-      <!-- Tabs Navigation -->
-      <div class="border-b border-gray-200 mb-6">
-        <nav class="flex -mb-px" aria-label="Tabs">
-          <button type="button" class="tab-button active w-1/4 py-4 px-1 text-center border-b-2 font-medium text-sm" data-tab="personal">
-            Informations personnelles
-          </button>
-          <button type="button" class="tab-button w-1/4 py-4 px-1 text-center border-b-2 font-medium text-sm" data-tab="membership">
-            Adhésion & Cotisations
-          </button>
-          <button type="button" class="tab-button w-1/4 py-4 px-1 text-center border-b-2 font-medium text-sm" data-tab="additional">
-            Informations additionnelles
-          </button>
-          <button type="button" class="tab-button w-1/4 py-4 px-1 text-center border-b-2 font-medium text-sm" data-tab="payments">
-            Paiements récents
-          </button>
-        </nav>
-      </div>
+      <!-- Header Component -->
+      <%= render Admin::Users::UserHeaderComponent.new(
+        user: @user,
+        person: @person,
+        is_person_without_user: @is_person_without_user,
+        is_deleted: @is_deleted,
+        current_user: current_user
+      ) %>
+      
+      <!-- Tabs Component -->
+      <%= render Admin::Users::UserTabsComponent.new(active_tab: "personal") %>
       
       <!-- Tab Content -->
-      <div class="tab-content" id="personal-tab">
-        <div class="space-y-4">
-          <!-- Email -->
-          <div class="grid grid-cols-3 gap-4 py-2 border-b">
-            <div class="text-sm font-medium text-gray-500">Email</div>
-            <div class="col-span-2 text-sm text-gray-900"><%= @user.email_address %></div>
-          </div>
-
-          <!-- First Name -->
-          <div class="grid grid-cols-3 gap-4 py-2 border-b">
-            <div class="text-sm font-medium text-gray-500">Prénom</div>
-            <div class="col-span-2 text-sm text-gray-900"><%= @user.first_name %></div>
-          </div>
-
-          <!-- Last Name -->
-          <div class="grid grid-cols-3 gap-4 py-2 border-b">
-            <div class="text-sm font-medium text-gray-500">Nom</div>
-            <div class="col-span-2 text-sm text-gray-900"><%= @user.last_name %></div>
-          </div>
-
-          <!-- System Role -->
-          <div class="grid grid-cols-3 gap-4 py-2 border-b">
-            <div class="text-sm font-medium text-gray-500">Rôle système</div>
-            <div class="col-span-2 text-sm text-gray-900">
-              <% if @user.system_role.present? %>
-                <%= @user.system_role.humanize %>
-              <% else %>
-                <span class="text-orange-600 font-medium">Aucun compte utilisateur</span>
-              <% end %>
-            </div>
-          </div>
-
-          <!-- Occupation -->
-          <div class="grid grid-cols-3 gap-4 py-2 border-b">
-            <div class="text-sm font-medium text-gray-500">Profession</div>
-            <div class="col-span-2 text-sm text-gray-900"><%= @user.occupation %></div>
-          </div>
-
-          <!-- Specialty -->
-          <div class="grid grid-cols-3 gap-4 py-2 border-b">
-            <div class="text-sm font-medium text-gray-500">Spécialité</div>
-            <div class="col-span-2 text-sm text-gray-900"><%= @user.specialty %></div>
-          </div>
+      <div class="px-4 sm:px-6 pb-6">
+        <!-- Personal Info Tab -->
+        <div class="tab-content" id="personal-tab">
+          <%= render Admin::Users::UserInfoComponent.new(
+            user: @user, 
+            person: @person, 
+            is_person_without_user: @is_person_without_user
+          ) %>
         </div>
-      </div>
-      
-      <!-- Membership Tab -->
-      <div class="tab-content hidden" id="membership-tab">
-        <div class="space-y-6">
-          <!-- Current Membership -->
-          <div class="bg-gray-50 rounded-lg p-4">
-            <h3 class="text-lg font-medium text-gray-900 mb-4">Adhésion Actuelle</h3>
-            <% if @person&.current_membership %>
-              <div class="grid grid-cols-2 gap-4">
-                <div>
-                  <div class="text-sm font-medium text-gray-500">Type d'adhésion</div>
-                  <div class="text-sm text-gray-900"><%= @person.current_membership.membership_type.name %></div>
-                </div>
-                <div>
-                  <div class="text-sm font-medium text-gray-500">Prix</div>
-                  <div class="text-sm text-gray-900"><%= @person.current_membership.membership_type.price_euros %>€</div>
-                </div>
-                <div>
-                  <div class="text-sm font-medium text-gray-500">Début</div>
-                  <div class="text-sm text-gray-900"><%= @person.current_membership.started_at.strftime("%d/%m/%Y") %></div>
-                </div>
-                <div>
-                  <div class="text-sm font-medium text-gray-500">Fin</div>
-                  <div class="text-sm text-gray-900"><%= @person.current_membership.ended_at.strftime("%d/%m/%Y") %></div>
-                </div>
-              </div>
-            <% else %>
-              <div class="text-center py-4">
-                <div class="text-gray-500 mb-2">Aucune adhésion active</div>
-                <%= link_to "Créer une adhésion", new_admin_membership_path(person_id: @person.id), 
-                    class: "inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-[#1F5C55] hover:bg-[#194A45] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1F5C55]" %>
-              </div>
-            <% end %>
-          </div>
-
-          <!-- Subscription Plans -->
-          <% if @person&.current_membership&.membership_type&.circus? %>
-            <div class="bg-blue-50 rounded-lg p-4">
-              <h3 class="text-lg font-medium text-gray-900 mb-4">Cotisations Disponibles</h3>
-              <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                <% SubscriptionPlan.for_circus_members.each do |plan| %>
-                  <div class="bg-white rounded-lg p-4 border border-gray-200">
-                    <h4 class="font-medium text-gray-900"><%= plan.name %></h4>
-                    <p class="text-sm text-gray-500 mb-2"><%= plan.description %></p>
-                    <div class="text-lg font-bold text-[#1F5C55] mb-3"><%= plan.price_euros %>€</div>
-                    <%= form_with model: [:admin, SubscriptionPlan.new], url: admin_subscription_plans_path, method: :post, local: true, class: "space-y-2" do |form| %>
-                      <%= form.hidden_field :subscription_plan_id, value: plan.id %>
-                      <%= form.hidden_field :person_id, value: @person.id %>
-                      <%= form.select :payment_method, 
-                          options_for_select([
-                            ['Espèces', 'cash'],
-                            ['Chèque', 'check'],
-                            ['Virement', 'transfer']
-                          ]),
-                          { selected: 'cash' },
-                          { class: "w-full text-sm border-gray-300 rounded-md" } %>
-                      <%= form.submit "Acheter", class: "w-full bg-[#1F5C55] text-white py-2 px-4 rounded-md text-sm hover:bg-[#194A45] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1F5C55]" %>
-                    <% end %>
-                  </div>
-                <% end %>
-              </div>
-            </div>
-          <% else %>
-            <div class="bg-yellow-50 rounded-lg p-4">
-              <div class="text-center">
-                <div class="text-yellow-800 mb-2">Adhésion Cirque requise</div>
-                <p class="text-sm text-yellow-700">Pour acheter des cotisations, cette personne doit avoir une adhésion Cirque.</p>
-              </div>
-            </div>
-          <% end %>
-
-          <!-- Current Subscriptions -->
-          <% if @person&.book_of_entries&.active&.any? %>
-            <div class="bg-green-50 rounded-lg p-4">
-              <h3 class="text-lg font-medium text-gray-900 mb-4">Carnets d'Entrées Actifs</h3>
-              <div class="space-y-3">
-                <% @person.book_of_entries.active.each do |book| %>
-                  <% if book.subscription_plan.present? %>
-                    <div class="bg-white rounded-lg p-3 border border-gray-200">
-                      <div class="flex justify-between items-center">
-                        <div>
-                          <div class="font-medium text-gray-900"><%= book.subscription_plan.name %></div>
-                          <div class="text-sm text-gray-500">
-                            <%= book.sessions_remaining %> séances restantes
-                          </div>
-                        </div>
-                        <div class="text-right">
-                          <div class="text-sm text-gray-500">Expire le</div>
-                          <div class="text-sm font-medium text-gray-900"><%= book.expires_at.strftime("%d/%m/%Y") %></div>
-                        </div>
-                      </div>
-                    </div>
-                  <% else %>
-                    <div class="bg-yellow-50 rounded-lg p-3 border border-yellow-200">
-                      <div class="flex justify-between items-center">
-                        <div>
-                          <div class="font-medium text-yellow-800">Carnet d'entrées orphelin</div>
-                          <div class="text-sm text-yellow-600">
-                            ID: <%= book.id %> - Plan d'abonnement manquant
-                          </div>
-                        </div>
-                        <div class="text-right">
-                          <div class="text-sm text-yellow-500">Expire le</div>
-                          <div class="text-sm font-medium text-yellow-800"><%= book.expires_at.strftime("%d/%m/%Y") %></div>
-                        </div>
-                      </div>
-                    </div>
-                  <% end %>
-                <% end %>
-              </div>
-            </div>
-          <% end %>
+        
+        <!-- Membership Tab -->
+        <div class="tab-content hidden" id="membership-tab">
+          <%= render Admin::Users::MembershipDisplayComponent.new(person: @person) %>
         </div>
-      </div>
-      
-      <div class="tab-content hidden" id="additional-tab">
-        <div class="space-y-4">
-          <!-- Birth Date -->
-          <div class="grid grid-cols-3 gap-4 py-2 border-b">
-            <div class="text-sm font-medium text-gray-500">Date de naissance</div>
-            <div class="col-span-2 text-sm text-gray-900"><%= @user.birth_date&.strftime("%d/%m/%Y") %></div>
-          </div>
-
-          <!-- Phone -->
-          <div class="grid grid-cols-3 gap-4 py-2 border-b">
-            <div class="text-sm font-medium text-gray-500">Téléphone</div>
-            <div class="col-span-2 text-sm text-gray-900"><%= @user.phone %></div>
-          </div>
-
-          <!-- Address -->
-          <div class="grid grid-cols-3 gap-4 py-2 border-b">
-            <div class="text-sm font-medium text-gray-500">Adresse</div>
-            <div class="col-span-2 text-sm text-gray-900">
-              <%= @user.address %><br>
-              <%= @user.zip_code %> <%= @user.town %><br>
-              <%= @user.country %>
-            </div>
-          </div>
-
-          <!-- Preferences -->
-          <div class="space-y-4 mt-4">
-            <h3 class="text-sm font-medium text-gray-700">Préférences</h3>
+        
+        <!-- Payments Tab -->
+        <div class="tab-content hidden" id="payments-tab">
+          <div class="space-y-4">
+            <h3 class="text-sm font-medium text-gray-700 mb-4">Paiements récents</h3>
             
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div class="flex items-start">
-                <div class="flex items-center h-5">
-                  <div class="h-4 w-4 rounded-full <%= @user.newsletter_subscribed ? 'bg-[#1F5C55]' : 'bg-gray-200' %>"></div>
-                </div>
-                <div class="ml-3 text-sm">
-                  <div class="font-medium text-gray-700">Newsletter</div>
-                  <p class="text-gray-500">Reçoit les communications par email</p>
-                </div>
-              </div>
-
-              <div class="flex items-start">
-                <div class="flex items-center h-5">
-                  <div class="h-4 w-4 rounded-full <%= @user.image_rights ? 'bg-[#1F5C55]' : 'bg-gray-200' %>"></div>
-                </div>
-                <div class="ml-3 text-sm">
-                  <div class="font-medium text-gray-700">Droits à l'image</div>
-                  <p class="text-gray-500">Autorise l'utilisation de son image</p>
-                </div>
-              </div>
-
-              <div class="flex items-start">
-                <div class="flex items-center h-5">
-                  <div class="h-4 w-4 rounded-full <%= @user.get_involved ? 'bg-[#1F5C55]' : 'bg-gray-200' %>"></div>
-                </div>
-                <div class="ml-3 text-sm">
-                  <div class="font-medium text-gray-700">Souhaite s'impliquer</div>
-                  <p class="text-gray-500">Intéressé(e) pour participer aux activités</p>
-                </div>
-              </div>
-
-              <div class="flex items-start">
-                <div class="flex items-center h-5">
-                  <div class="h-4 w-4 rounded-full <%= @user.dyslexic_font ? 'bg-[#1F5C55]' : 'bg-gray-200' %>"></div>
-                </div>
-                <div class="ml-3 text-sm">
-                  <div class="font-medium text-gray-700">Police dyslexique</div>
-                  <p class="text-gray-500">Utilise la police adaptée aux dyslexiques</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      
-      <!-- Payments Tab -->
-      <div class="tab-content hidden" id="payments-tab">
-        <div class="space-y-4">
-          <h3 class="text-sm font-medium text-gray-700 mb-4">Paiements récents</h3>
-          
-          
-          <% if @recent_payments&.any? %>
-            <div class="overflow-x-auto">
-              <table class="min-w-full divide-y divide-gray-200">
-                <thead class="bg-gray-50">
-                  <tr>
-                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
-                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Montant</th>
-                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Statut</th>
-                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
-                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-                  </tr>
-                </thead>
-                <tbody class="bg-white divide-y divide-gray-200">
-                  <% @recent_payments.each do |payment| %>
-                    <tr class="hover:bg-gray-50">
-                      <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        <%= payment.created_at.strftime("%d/%m/%Y") %>
-                      </td>
-                      <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                         <%= number_to_currency(payment.total_cents / 100.0, unit: "€", format: "%n %u") %>
-                      </td>
-                      <td class="px-6 py-4 whitespace-nowrap text-sm">
+            <% if @recent_payments&.any? %>
+              <div class="space-y-3">
+                <% @recent_payments.each do |payment| %>
+                  <div class="bg-gray-50 rounded-lg p-4">
+                    <div class="flex justify-between items-start mb-2">
+                      <div class="flex-1">
+                        <div class="flex items-center gap-2 mb-1">
+                          <div class="text-sm font-medium text-gray-900">
+                            <% if payment.is_offered? %>
+                              <span class="text-purple-600 font-semibold">Offert</span>
+                            <% else %>
+                              <%= number_to_currency(payment.total_cents / 100.0, unit: "€", format: "%n %u") %>
+                            <% end %>
+                          </div>
+                          <% if payment.payment_lines.any? %>
+                            <span class="text-xs text-gray-500 bg-gray-200 px-2 py-1 rounded">
+                              <%= payment.payment_lines.first.item_description %>
+                            </span>
+                          <% end %>
+                        </div>
+                        <div class="text-xs text-gray-500">
+                          <%= payment.created_at.strftime("%d/%m/%Y") %>
+                        </div>
+                      </div>
+                      <div class="text-right">
                         <% status_class = case payment.status 
                                         when "success" then "bg-green-100 text-green-800" 
                                         when "pending" then "bg-yellow-100 text-yellow-800"
                                         when "cancel" then "bg-red-100 text-red-800"
                                         else "bg-gray-100 text-gray-800"
                                         end %>
-                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full <%= status_class %>">
+                        <span class="px-2 py-1 text-xs font-semibold rounded-full <%= status_class %>">
                           <%= payment.status.humanize %>
                         </span>
-                      </td>
-                      <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        <%= payment.payment_method_humanized %>
-                      </td>
-                      <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        <%= link_to admin_payment_path(payment), class: "text-[#1F5C55] hover:text-[#194A45]" do %>
-                          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                          </svg>
-                        <% end %>
-                      </td>
-                    </tr>
-                  <% end %>
-                </tbody>
-              </table>
-            </div>
-            
-            <div class="mt-4 text-right">
-              <%= link_to "Voir tout l'historique", admin_payments_path(user_id: @user.id), class: "text-[#1F5C55] hover:underline text-sm font-medium" %>
-            </div>
-          <% else %>
-            <div class="bg-gray-50 p-4 rounded-md text-center">
-              <p class="text-gray-700">Aucun paiement enregistré pour cet utilisateur.</p>
-            </div>
-          <% end %>
+                      </div>
+                    </div>
+                    <div class="flex justify-end items-center">
+                      <%= link_to admin_payment_path(payment), class: "text-[#1F5C55] hover:text-[#194A45] text-xs" do %>
+                        Voir détails →
+                      <% end %>
+                    </div>
+                  </div>
+                <% end %>
+              </div>
+              
+              <div class="mt-4 text-center">
+                <%= link_to "Voir tout l'historique", admin_payments_path(user_id: @user.id), 
+                    class: "text-[#1F5C55] hover:underline text-sm font-medium" %>
+              </div>
+            <% else %>
+              <div class="bg-gray-50 p-4 rounded-lg text-center">
+                <p class="text-gray-700 text-sm">Aucun paiement enregistré</p>
+              </div>
+            <% end %>
+          </div>
         </div>
       </div>
       
-      <!-- Actions principales -->
-      <div class="mt-8 border-t pt-6">
-        <div class="flex flex-wrap gap-3 mb-4">
-          <% unless @is_deleted %>
-            <!-- Actions principales -->
-            <%= membership_action_button(@person) %>
-            <%= subscription_action_button(@person) %>
-            
-            <!-- Créer un compte web si pas de compte -->
-            <% if @is_person_without_user %>
-              <%= link_to "Créer un compte web", new_admin_user_path(person_id: @person.id), 
-                  class: "inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#5836a5] hover:bg-[#4c2d8a] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#5836a5]" %>
-            <% end %>
-          <% else %>
-            <!-- Restore user form -->
-            <%= form_tag restore_admin_user_path(@user), method: :post, class: "flex items-center" do %>
-              <%= email_field_tag :email_address, "", placeholder: "Nouvel email", required: true, class: "border border-gray-300 rounded-md px-3 py-2 shadow-sm focus:outline-none focus:ring-[#1F5C55] focus:border-[#1F5C55] sm:text-sm mr-2" %>
-              <%= submit_tag "Restaurer l'utilisateur", class: "inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500" %>
-            <% end %>
-          <% end %>
-        </div>
-        
-        <!-- Actions secondaires -->
-        <div class="flex flex-wrap gap-3 text-sm">
-          <% unless @is_deleted %>
-            <%= link_to "Modifier les informations", edit_admin_user_path(@user || "person_#{@person.id}"), 
-                class: "text-[#1F5C55] hover:text-[#194A45] hover:underline" %>
-            
-            <%= link_to "Historique des paiements", admin_payments_path(user_id: @user&.id, person_id: @person.id),
-              class: "text-[#1F5C55] hover:text-[#194A45] hover:underline" %>
-            
-            <%= link_to "Faire un don", admin_donations_path(user_id: @user&.id, person_id: @person.id),
-              class: "text-[#1F5C55] hover:text-[#194A45] hover:underline" %>
-          <% end %>
-          
-          <%= link_to "Retour à la liste", admin_users_path, 
-              class: "text-gray-600 hover:text-gray-800 hover:underline" %>
-          
-          <% unless @is_deleted %>
-            <% if current_user.has_higher_permissions?(@user) %>
-              <%= link_to "Supprimer", admin_user_path(@user || "person_#{@person.id}"), 
-                  method: :delete, 
-                  data: { confirm: "Êtes-vous sûr de vouloir supprimer cet utilisateur/cette personne ?" }, 
-                  class: "text-red-600 hover:text-red-800 hover:underline" %>
-            <% end %>
-          <% end %>
-        </div>
+      <!-- Actions -->
+      <div class="border-t bg-gray-50 px-4 sm:px-6 py-4">
+        <%= render Admin::Users::UserActionsComponent.new(
+          user: @user,
+          person: @person,
+          is_person_without_user: @is_person_without_user,
+          is_deleted: @is_deleted,
+          current_user: current_user
+        ) %>
       </div>
     </div>
   </div>
@@ -505,9 +139,33 @@
       });
     });
     
-    // Set the first tab as active by default
-    tabButtons[0].classList.add('border-[#1F5C55]', 'text-[#1F5C55]');
-    tabButtons[0].classList.remove('border-transparent', 'text-gray-500', 'hover:text-gray-700', 'hover:border-gray-300');
+    // Check for hash in URL to determine active tab
+    const hash = window.location.hash.substring(1); // Remove the # symbol
+    let activeTabId = 'personal'; // Default tab
+    
+    if (hash && ['personal', 'membership', 'payments'].includes(hash)) {
+      activeTabId = hash;
+    }
+    
+    // Set the active tab based on hash or default to first tab
+    const activeTabButton = document.querySelector(`[data-tab="${activeTabId}"]`);
+    if (activeTabButton) {
+      // Remove active classes from all tabs
+      tabButtons.forEach(button => {
+        button.classList.remove('border-[#1F5C55]', 'text-[#1F5C55]');
+        button.classList.add('border-transparent', 'text-gray-500', 'hover:text-gray-700', 'hover:border-gray-300');
+      });
+      
+      // Add active classes to the selected tab
+      activeTabButton.classList.add('border-[#1F5C55]', 'text-[#1F5C55]');
+      activeTabButton.classList.remove('border-transparent', 'text-gray-500', 'hover:text-gray-700', 'hover:border-gray-300');
+      
+      // Show the corresponding tab content
+      showTab(activeTabId);
+    } else {
+      // Set the first tab as active by default
+      tabButtons[0].classList.add('border-[#1F5C55]', 'text-[#1F5C55]');
+      tabButtons[0].classList.remove('border-transparent', 'text-gray-500', 'hover:text-gray-700', 'hover:border-gray-300');
+    }
   });
 </script>
-

@@ -17,7 +17,7 @@ membership_types = [
     change_reason: "Données initiales - Version 1"
   },
   {
-    name: "Adhésion Cirque Complète",
+    name: "Adhésion Cirque Tarif Plein",
     category: "circus_full",
     price_cents: 1000, # 10€
     description: "Accès complet aux cours de cirque - tarif normal pour adultes",
@@ -28,10 +28,10 @@ membership_types = [
     change_reason: "Données initiales - Version 1"
   },
   {
-    name: "Adhésion Cirque Réduite",
+    name: "Adhésion Cirque Tarif Réduit",
     category: "circus_reduced",
-    price_cents: 800, # 8€
-    description: "Accès complet aux cours de cirque - tarif réduit (étudiants, chômeurs, etc.)",
+    price_cents: 700, # 7€
+    description: "Accès complet aux cours de cirque - tarif réduit (Porteur de Handicap, RSA, Mineur, Etudiant)",
     version: 1,
     effective_from: Date.current,
     effective_until: nil,

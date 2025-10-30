@@ -119,7 +119,9 @@
               <tr>
                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nom</th>
                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
-                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Présent</th>
+                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Statut</th>
+                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
               </tr>
             </thead>
@@ -127,19 +129,27 @@
               <% @attendance_list.attendances.each do |attendance| %>
                 <tr class="hover:bg-gray-50">
                   <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                    <%= attendance.user.present? ? attendance.user.full_name : attendance.name %>
+                    <%= attendance.person.full_name %>
                   </td>
                   <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    <%= attendance.user.present? ? attendance.user.email_address : attendance.email %>
+                    <%= attendance.person.email.presence || 'Non renseigné' %>
                   </td>
                   <td class="px-6 py-4 whitespace-nowrap">
-                    <% if attendance.present? %>
-                      <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
-                        <i class="fas fa-check mr-1"></i> Présent
+                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                      <i class="fas fa-check mr-1"></i> Présent
+                    </span>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <%= attendance.date.strftime("%d/%m/%Y") %>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <% if attendance.book_of_entry.present? %>
+                      <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
+                        <i class="fas fa-ticket-alt mr-1"></i> Carnet
                       </span>
                     <% else %>
                       <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">
-                        <i class="fas fa-times mr-1"></i> Absent
+                        <i class="fas fa-id-card mr-1"></i> Adhésion
                       </span>
                     <% end %>
                   </td>

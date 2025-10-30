@@ -10,7 +10,7 @@
   <div class="form-container bg-white shadow-lg rounded-lg overflow-hidden p-6">
     <h1 class="text-2xl font-bold text-[#1F5C55] mb-4">Modifier l'événement</h1>
 
-    <%= form_with model: @event, url: event_path, method: "put" do |form| %>
+    <%= form_with model: @event, url: admin_event_path(@event), method: "put" do |form| %>
       <div class="space-y-4">
         <!-- Title Field -->
         <div class="form-group">

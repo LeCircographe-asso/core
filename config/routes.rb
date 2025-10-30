@@ -5,31 +5,31 @@ Rails.application.routes.draw do
     resources :dashboard, only: %i[index], path: "dashboard"
     resource :opening_hours, only: %i[show edit update]
     resources :donations, only: %i[create]
-    resources :users do
-      resources :memberships, only: %i[create show update destroy]
-      post :restore, on: :member
-      # Nouvelles actions pour gérer Person
-      post :create_membership, on: :member
-      post :create_user_for_person, on: :member
-      get :edit_person, on: :member
-      # Actions pour gérer les doublons
-      get :duplicates, on: :collection
-      # Route de test pour la vue refactorisée
-      get :index_refactored, on: :collection, as: :index_refactored
-      # Route de test pour ViewComponents
-      get :index_viewcomponents, on: :collection, as: :index_viewcomponents
-    end
+            resources :users do
+              post :restore, on: :member
+              # Actions pour gérer Person
+              get :edit_person, on: :member
+              # Actions pour gérer les doublons
+              get :duplicates, on: :collection
+            end
     resources :events, only: %i[new create edit destroy index]
     resource :session, only: %i[new create destroy]
     resource :notepad, only: %i[edit update]
     resources :attendance_lists do
       resources :attendances, only: %i[new index create show edit update]
     end
-    resources :payments, only: %i[show create new update index destroy]
+    resources :payments, only: %i[show create new edit update index destroy]
     resources :attendances, only: %i[index show new create destroy]
     resources :memberships, only: %i[index show new create edit update destroy]
     resources :membership_types, only: %i[index show new create edit update destroy]
     resources :subscription_plans, only: %i[index show new create edit update destroy]
+    resources :member_numbers, only: [] do
+      post :suggest, on: :collection
+      patch :change, on: :member
+    end
+    resources :duplicates, only: %i[index] do
+      post :merge, on: :collection
+    end
     resources :exports, only: %i[index] do
       get :newsletter_subscribed, on: :collection
       get :all_users, on: :collection
@@ -41,12 +41,17 @@ Rails.application.routes.draw do
   resource :session, only: %i[new create destroy]
   resources :passwords, only: %i[new create edit update], param: :token
   resource :registration, only: %i[new create]
-  resources :event_attendees, only: %i[create destroy]
+  resources :event_interests, only: %i[create destroy]
   resources :blogs, only: %i[show ]
   get "/blog-newsletter", to: "blogs#index"
   resources :users, only: %i[show edit update destroy] do
     post "change_newsletter_status", on: :member
     get "change_newsletter_status", on: :member
+  end
+
+  # Routes pour revendication de compte
+  resources :account_claims, only: [ :new, :create ] do
+    get :confirm, on: :collection
   end
 
   # Route for newsletter signup from footer

@@ -1,10 +1,10 @@
 FactoryBot.define do
   factory :payment do
-    association :user
-    association :order
-    amount { 50.0 }
+    association :person
+    association :recorded_by, factory: :user
+    total_cents { 1500 }
     status { :pending }
-    payment_type { :credit_card }
+    payment_method { :cash }
 
     trait :success do
       status { :success }
@@ -19,15 +19,56 @@ FactoryBot.define do
     end
 
     trait :cash do
-      payment_type { :cash }
+      payment_method { :cash }
     end
 
-    trait :credit_card do
-      payment_type { :credit_card }
+    trait :card do
+      payment_method { :card }
     end
 
-    trait :check do
-      payment_type { :check }
+    trait :cheque do
+      payment_method { :cheque }
+    end
+
+    trait :transfer do
+      payment_method { :transfer }
+    end
+
+    trait :offered do
+      payment_method { :offered }
+    end
+
+    trait :with_membership_line do
+      after(:create) do |payment|
+        membership = create(:membership, person: payment.person)
+        create(:payment_line, payment: payment, item: membership, item_type: "Membership", amount_cents: payment.total_cents)
+      end
+    end
+
+    trait :with_subscription_plan_line do
+      after(:create) do |payment|
+        subscription_plan = create(:subscription_plan)
+        create(:payment_line, payment: payment, item: subscription_plan, item_type: "SubscriptionPlan", amount_cents: payment.total_cents)
+      end
+    end
+
+    trait :with_membership_type_line do
+      after(:create) do |payment|
+        membership_type = create(:membership_type)
+        create(:payment_line, payment: payment, item: membership_type, item_type: "MembershipType", amount_cents: payment.total_cents)
+      end
+    end
+
+    trait :with_donation do
+      donation { 500 } # 5€ donation
+    end
+
+    trait :recent do
+      created_at { 1.hour.ago }
+    end
+
+    trait :old do
+      created_at { 25.hours.ago }
     end
   end
 end

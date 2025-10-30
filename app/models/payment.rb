@@ -1,4 +1,8 @@
 class Payment < ApplicationRecord
+  include Priceable
+  include Humanizable
+  include Statusable
+  
   # Relations selon le domain_model_circographe.md
   belongs_to :person
   belongs_to :recorded_by, class_name: "User"
@@ -19,6 +23,7 @@ class Payment < ApplicationRecord
   # after_update :update_user_membership_if_paid, if: -> { saved_change_to_status? && status == "success" }
   # after_update :createBookOfEntry, if: -> { saved_change_to_status? && status == "success" }
   after_update :log_status_change, if: -> { saved_change_to_status? }
+  after_update :invalidate_totals_cache, if: -> { saved_change_to_total_cents? }
 
   # Scope to get active (non-cancelled) payments
   scope :active, -> { where.not(status: :cancel) }
@@ -33,7 +38,10 @@ class Payment < ApplicationRecord
   # Class method to get total donations
   def self.total_donations
     Rails.cache.fetch("total_donations", expires_in: 1.hour) do
-      where(status: :success).distinct.sum(:donation)
+      joins(:payment_lines)
+        .where(status: :success)
+        .where(payment_lines: { item_type: "Donation" })
+        .sum("payment_lines.amount_cents")
     end
   end
 
@@ -53,35 +61,18 @@ class Payment < ApplicationRecord
   end
 
   # Méthodes pour le système d'encaissement
-  def total_euros
-    total_cents / 100.0
-  end
-
-  def total_euros=(value)
-    self.total_cents = (value.to_f * 100).round
-  end
-
-  def payment_method_humanized
-    case payment_method
-    when 'cash' then 'Espèces'
-    when 'card' then 'Carte bancaire'
-    when 'cheque' then 'Chèque'
-    when 'transfer' then 'Virement'
-    when 'offered' then 'Offert'
-    else payment_method.humanize
-    end
-  end
+  # (total_euros et payment_method_humanized maintenant dans les modules)
 
   def is_offered?
-    payment_method == 'offered'
+    payment_method == "offered"
   end
 
   def is_paid?
-    status == 'success'
+    status == "success"
   end
 
   def can_be_cancelled?
-    status != 'cancel' && created_at > 24.hours.ago
+    status != "cancel" && created_at > 24.hours.ago
   end
 
   def membership_related?
@@ -96,9 +87,9 @@ class Payment < ApplicationRecord
   end
 
   def process_payment
-    # Cette méthode sera appelée par le service Payments::Process
+    # Cette méthode sera appelée par le service PaymentProcessing::PaymentProcessor
     # pour traiter les callbacks complexes
-    Payments::Process.call(self)
+    PaymentProcessing::PaymentProcessor.new(self).call
   end
 
   # Generate a UUID for the payment
@@ -108,20 +99,28 @@ class Payment < ApplicationRecord
 
   # Create an audit log entry for new payments
   def create_audit_log
-    PaymentAuditLog.log(self, user, "create")
+    PaymentAuditLog.log(self, recorded_by, "create")
   end
 
   # Log status changes
   def log_status_change
+    return unless saved_change_to_status
+
     change_data = {
       status: {
-        from: status_before_last_save,
+        from: saved_change_to_status.first,
         to: status
       }
     }
-    PaymentAuditLog.log(self, user, "status_change", change_data)
+    PaymentAuditLog.log(self, recorded_by, "status_change", change_data)
 
     # Invalidate cache when status changes
+    Rails.cache.delete("total_successful_payments")
+    Rails.cache.delete("total_donations")
+  end
+
+  # Invalidate totals cache when payment amount changes
+  def invalidate_totals_cache
     Rails.cache.delete("total_successful_payments")
     Rails.cache.delete("total_donations")
   end
@@ -135,7 +134,7 @@ class Payment < ApplicationRecord
       # We keep the payment record but mark it as associated with a deleted user
       status: :cancel,
       # Add a note that the user was deleted
-      donation: (donation || 0)
+      notes: "User deleted - payment cancelled"
     )
 
     # Log the user deletion effect on payment
@@ -153,7 +152,7 @@ class Payment < ApplicationRecord
 
   # Override destroy method to ensure audit trail
   def destroy
-    PaymentAuditLog.log(self, Current.user, "delete")
+    PaymentAuditLog.log(self, recorded_by, "delete")
 
     # Invalidate cache
     Rails.cache.delete("total_successful_payments")
@@ -161,25 +160,4 @@ class Payment < ApplicationRecord
 
     super
   end
-
-  # Méthode obsolète supprimée - utiliser la nouvelle méthode Person-Based
-  # def membership_related?
-  #   product_orders.any? do |po|
-  #     po.product.product_name.include?("Adhésion") ||
-  #     po.product.product_name.include?("Cotisation")
-  #   end
-  # end
-
-  # Méthodes obsolètes supprimées - utiliser les services Person-Based
-  # def payment_successful?
-  # def createBookOfEntry
-
-
-
-
-  # Méthodes obsolètes supprimées - utiliser les services Person-Based
-  # def update_user_membership_if_paid
-  # def determine_user_membership
-  # def determine_end_date
-  # def update_user_membership_end_date
 end

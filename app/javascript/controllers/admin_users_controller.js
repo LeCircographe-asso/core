@@ -5,48 +5,8 @@ export default class extends Controller {
   
   connect() {
     console.log("Admin Users Controller connected")
-    this.initializeTooltips()
     this.initializeAnimations()
-  }
-  
-  // Initialiser les tooltips
-  initializeTooltips() {
-    const tooltipElements = document.querySelectorAll('[data-controller="tooltip"]')
-    tooltipElements.forEach(element => {
-      element.addEventListener('mouseenter', this.showTooltip.bind(this))
-      element.addEventListener('mouseleave', this.hideTooltip.bind(this))
-    })
-  }
-  
-  // Afficher un tooltip
-  showTooltip(event) {
-    const element = event.target
-    const content = element.getAttribute('data-tooltip-content') || element.getAttribute('title')
-    
-    if (!content) return
-    
-    // Créer le tooltip
-    const tooltip = document.createElement('div')
-    tooltip.className = 'tooltip absolute z-50 px-2 py-1 text-sm text-white bg-gray-900 rounded shadow-lg'
-    tooltip.textContent = content
-    tooltip.style.top = `${element.offsetTop - 35}px`
-    tooltip.style.left = `${element.offsetLeft}px`
-    
-    // Ajouter au DOM
-    element.style.position = 'relative'
-    element.appendChild(tooltip)
-    
-    // Animation
-    setTimeout(() => tooltip.classList.add('show'), 10)
-  }
-  
-  // Masquer un tooltip
-  hideTooltip(event) {
-    const element = event.target
-    const tooltip = element.querySelector('.tooltip')
-    if (tooltip) {
-      tooltip.remove()
-    }
+    this.initializeKeyboardShortcuts()
   }
   
   // Initialiser les animations

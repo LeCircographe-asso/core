@@ -1,17 +1,42 @@
 <div class="bg-white shadow-lg rounded-lg p-6 mb-6">
-  <h2 class="text-xl font-semibold text-gray-900 mb-4">Créer une Adhésion</h2>
+  <% if @is_upgrade %>
+    <h2 class="text-xl font-semibold text-gray-900 mb-4">Upgrade vers Cirque</h2>
+    <div class="mb-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+      <h3 class="text-sm font-medium text-blue-800 mb-2">Adhésion actuelle</h3>
+      <p class="text-sm text-blue-700">
+        <strong><%= @current_membership.membership_type.name %></strong> - 
+        <%= @current_membership.membership_type.price_euros %>€
+      </p>
+    </div>
+  <% else %>
+    <h2 class="text-xl font-semibold text-gray-900 mb-4">Créer une Adhésion</h2>
+  <% end %>
   
   <%= form_with model: [:admin, @membership || Membership.new], url: admin_memberships_path, method: :post, local: true, class: "space-y-4" do |form| %>
     <%= form.hidden_field :person_id, value: @person.id %>
+    <%= form.hidden_field :upgrade, value: @is_upgrade %>
     
     <div>
-      <%= form.label :membership_type_id, "Type d'adhésion", class: "block text-sm font-medium text-gray-700" %>
+      <%= form.label :membership_type_id, @is_upgrade ? "Nouveau type d'adhésion" : "Type d'adhésion", class: "block text-sm font-medium text-gray-700" %>
       <%= form.select :membership_type_id, 
-          options_from_collection_for_select(@membership_types, :id, :name_with_price), 
-          { prompt: "Sélectionner un type d'adhésion" },
+          @is_upgrade ? 
+            @membership_types.map { |mt| [upgrade_name_with_price(mt), mt.id] } :
+            options_from_collection_for_select(@membership_types, :id, :name_with_price), 
+          { prompt: @is_upgrade ? "Sélectionner le nouveau type" : "Sélectionner un type d'adhésion" },
           { class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#1F5C55] focus:ring-[#1F5C55] sm:text-sm", required: true } %>
       <% if @membership_types.empty? %>
         <p class="text-red-500 text-sm mt-1">⚠️ Aucun type d'adhésion disponible</p>
+      <% end %>
+      <% if @is_upgrade %>
+        <div class="mt-2 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+          <p class="text-sm text-yellow-800">
+            💡 <strong>Upgrade :</strong> Vous ne paierez que la différence de prix entre l'ancienne et la nouvelle adhésion
+          </p>
+          <div class="mt-2 text-sm text-yellow-700">
+            <p><strong>Adhésion actuelle :</strong> <%= @current_membership.membership_type.name %> - <%= @current_membership.membership_type.price_euros %>€</p>
+            <p><strong>Nouvelle adhésion :</strong> Sélectionnez ci-dessus pour voir la différence</p>
+          </div>
+        </div>
       <% end %>
     </div>
     
@@ -30,7 +55,7 @@
     </div>
     
     <div class="flex justify-end">
-      <%= form.submit "Créer l'adhésion", class: "inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-[#1F5C55] hover:bg-[#194A45] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1F5C55]" %>
+      <%= form.submit @is_upgrade ? "Upgrader l'adhésion" : "Créer l'adhésion", class: "inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-[#1F5C55] hover:bg-[#194A45] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1F5C55]" %>
     </div>
   <% end %>
 </div>

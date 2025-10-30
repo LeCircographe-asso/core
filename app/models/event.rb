@@ -1,20 +1,14 @@
 class Event < ApplicationRecord
+  include Categorizable
+  include Dateable
+  
   # Relations selon le domain_model_circographe.md
   belongs_to :creator, class_name: "User"
   has_many :attendances, dependent: :destroy
   has_many :people, through: :attendances
-
-  # Anciennes relations (à supprimer progressivement)
-  has_many :event_attendees, dependent: :destroy
-  has_many :users, through: :event_attendees
-
   # Validations
   validates :name, :date, presence: true
   validates :category, presence: true
-
-  # Ancienne validation (à supprimer progressivement)
-  validates :title, presence: true, if: -> { name.blank? }
-
   # Enum pour les catégories selon le domain_model_circographe.md
   enum :category, {
     show: 0,

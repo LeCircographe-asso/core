@@ -1,4 +1,7 @@
 class User < ApplicationRecord
+  include Roleable
+  include Dateable
+  
   attr_accessor :cgu, :privacy_policy, :created_by_admin
   after_create :generate_password_reset_token
   after_create :welcome_send
@@ -30,13 +33,11 @@ class User < ApplicationRecord
   has_many :attendances, through: :person
 
   # Délégation des attributs personnels vers Person
-  delegate :first_name, :last_name, :full_name, :phone, :email, :address, 
+  delegate :first_name, :last_name, :full_name, :phone, :email, :address,
            :birth_date, :emergency_contact_name, :emergency_contact_phone,
            :notes, :occupation, :specialty, :image_rights, :get_involved,
            :newsletter_subscribed, :dyslexic_font, :zip_code, :town, :country,
            to: :person, prefix: false, allow_nil: true
-
-
 
   normalizes :email_address, with: ->(e) { e&.strip&.downcase }
 
@@ -44,6 +45,8 @@ class User < ApplicationRecord
   validate :email_uniqueness_unless_person_email
   validates :cgu, acceptance: { message: "Vous devez accepter les CGU pour continuer." }, unless: :created_by_admin?
   validates :privacy_policy, acceptance: { message: "Vous devez accepter la politique de confidentialité pour continuer." }, unless: :created_by_admin?
+
+  # (can_edit_member_numbers? maintenant dans le module Roleable)
 
   # Override destroy method from SoftDeletable to handle payments
   # def destroy
@@ -96,9 +99,9 @@ class User < ApplicationRecord
   def welcome_send
     return if web_visitor?
     return if email_address.blank? # Don't send email if no email address
-    
+
     # Skip email sending in seeds
-    return if caller.any? { |line| line.include?('db/seeds') }
+    return if caller.any? { |line| line.include?("db/seeds") }
 
     if created_by_admin?
       # Generate password reset URL for admin-created users
@@ -109,16 +112,8 @@ class User < ApplicationRecord
     end
   end
 
-  def formatted_registration_date
-    if person&.has_active_membership?
-      person.memberships.order(:created_at).last.created_at.strftime("%d/%m/%Y")
-    else
-      "Pas encore membre"
-    end
-  end
-
   def has_privileges?
-    %w[admin super_admin volunteer].include?(self.system_role) # TODO: Think about how super_admin should be handled
+    %w[admin super_admin volunteer].include?(self.system_role)
   end
 
   def has_admin?
@@ -128,18 +123,6 @@ class User < ApplicationRecord
   def created_by_admin?
     @created_by_admin == true
   end
-
-
-  def is_interested_in?(event_id)
-    event_attendees.exists?(event_id: event_id)
-  end
-
-  # Méthode obsolète supprimée - utiliser Person-Based Architecture
-  # def assign_basic_membership
-  #     basic_membership = Membership.find_by(type_name: :basic)
-  #     user_memberships.create(membership: basic_membership) if basic_membership
-  # end
-
   def has_higher_permissions?(other_user)
     Rails.logger.debug "has_higher_permissions? called with other_user: #{other_user.inspect}"
     return false if other_user.nil?
@@ -223,16 +206,23 @@ class User < ApplicationRecord
 
   def email_uniqueness_unless_person_email
     return if email_address.blank?
-    
+
     # Si on a une Person associée avec le même email, c'est OK
     if person&.email == email_address
       return
     end
-    
+
     # Sinon, vérifier l'unicité normale
     if User.where(email_address: email_address).where.not(id: id).exists?
       errors.add(:email_address, "est déjà utilisé")
     end
+  end
+
+  # Check if user is interested in an event (Person-Based Architecture)
+  def is_interested_in?(event_id)
+    return false unless person
+
+    person.attendances.exists?(event_id: event_id)
   end
 
   private

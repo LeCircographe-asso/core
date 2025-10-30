@@ -1,5 +1,81 @@
+<style>
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideOutRight {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+}
+
+.flash-closing {
+  animation: slideOutRight 0.3s ease-in forwards;
+}
+</style>
+
 <% flash.each do |type, message| %>
-<div class="flash <%= type %>">
-    <%= message %>
+<% 
+  # Définir les couleurs selon le type
+  border_color = case type
+  when 'notice', 'success'
+    'border-green-500 bg-green-50'
+  when 'alert', 'error'
+    'border-red-500 bg-red-50'
+  when 'warning'
+    'border-yellow-500 bg-yellow-50'
+  else
+    'border-blue-500 bg-blue-50'
+  end
+%>
+<div class="fixed bottom-4 right-4 z-50 max-w-sm w-full bg-white rounded-lg shadow-lg border-l-4 p-4 transform transition-all duration-300 ease-in-out <%= border_color %>" 
+     data-controller="flash" 
+     data-flash-target="notification"
+     style="animation: slideInRight 0.3s ease-out;">
+  <div class="flex items-start">
+    <div class="flex-shrink-0">
+      <% case type %>
+      <% when 'notice', 'success' %>
+        <svg class="h-6 w-6 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+      <% when 'alert', 'error' %>
+        <svg class="h-6 w-6 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+      <% when 'warning' %>
+        <svg class="h-6 w-6 text-yellow-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
+        </svg>
+      <% else %>
+        <svg class="h-6 w-6 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+      <% end %>
+    </div>
+    <div class="ml-3 w-0 flex-1">
+      <p class="text-sm font-medium text-gray-900"><%= message %></p>
+    </div>
+    <div class="ml-4 flex-shrink-0 flex">
+      <button class="bg-white rounded-md inline-flex text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" data-action="click->flash#close">
+        <span class="sr-only">Fermer</span>
+        <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+        </svg>
+      </button>
+    </div>
+  </div>
 </div>
 <% end %>

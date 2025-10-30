@@ -1,8 +1,12 @@
 class SubscriptionPlan < ApplicationRecord
+  include Priceable
+  include Humanizable
+  include Versionable
+  
   # Relations
   belongs_to :membership_type
   has_many :book_of_entries, dependent: :destroy
-  belongs_to :created_by_user, class_name: 'User', optional: true
+  belongs_to :created_by_user, class_name: "User", optional: true
 
   # Validations
   validates :name, presence: true, uniqueness: { scope: :version }
@@ -31,17 +35,23 @@ class SubscriptionPlan < ApplicationRecord
     duration == "pack10"
   end
 
-  def price_euros
-    price_cents / 100.0
+  def is_pack10?
+    duration == "pack10"
   end
 
-  def price_euros=(value)
-    self.price_cents = (value.to_f * 100).round
+  def is_annual?
+    duration == "annual"
   end
 
-  def name_with_price
-    "#{name} - #{price_euros}€"
+  def is_trimester?
+    duration == "trimester"
   end
+
+  def is_day?
+    duration == "day"
+  end
+
+  # (price_euros, name_with_price maintenant dans le module Priceable)
 
   def duration_days
     case duration
@@ -52,7 +62,7 @@ class SubscriptionPlan < ApplicationRecord
     when "annual"
       365
     when "pack10"
-      validity_days || 365 # Par défaut 1 an si pas spécifié
+      nil # Les packs10 n'ont pas de durée limitée
     else
       0
     end
@@ -62,30 +72,14 @@ class SubscriptionPlan < ApplicationRecord
     is_pack? ? sessions_count : nil
   end
 
-  def duration_humanized
-    case duration
-    when 'day'
-      'Journée'
-    when 'trimester'
-      'Trimestriel'
-    when 'annual'
-      'Annuel'
-    when 'pack10'
-      'Pack de séances'
-    else
-      duration.humanize
-    end
-  end
+  # (duration_humanized maintenant dans le module Humanizable)
 
-  # Méthodes d'audit et versioning
-  def current_version?
-    effective_until.nil?
-  end
+  # (current_version? maintenant dans le module Versionable)
 
   def create_price_change!(new_price_cents, effective_from: Date.current, reason: nil, user: nil)
     # Fermer la version actuelle
     update!(effective_until: effective_from - 1.day)
-    
+
     # Créer la nouvelle version
     new_version = dup
     new_version.assign_attributes(
@@ -97,7 +91,7 @@ class SubscriptionPlan < ApplicationRecord
       change_reason: reason
     )
     new_version.save!
-    
+
     new_version
   end
 
@@ -109,9 +103,9 @@ class SubscriptionPlan < ApplicationRecord
   def price_change_percentage(from_date, to_date)
     old_price = SubscriptionPlan.where(name: name, effective_from: from_date).first&.price_cents
     new_price = SubscriptionPlan.where(name: name, effective_from: to_date).first&.price_cents
-    
+
     return nil unless old_price && new_price && old_price > 0
-    
+
     ((new_price - old_price).to_f / old_price * 100).round(2)
   end
 
@@ -123,7 +117,7 @@ class SubscriptionPlan < ApplicationRecord
   scope :pack_plans, -> { where(duration: :pack10) }
   scope :by_price, -> { order(:price_cents) }
   scope :current_versions, -> { where(effective_until: nil) }
-  scope :effective_on, ->(date) { where('effective_from <= ? AND (effective_until IS NULL OR effective_until >= ?)', date, date) }
+  scope :effective_on, ->(date) { where("effective_from <= ? AND (effective_until IS NULL OR effective_until >= ?)", date, date) }
   scope :price_history, -> { order(:effective_from, :version) }
 
   # Méthodes de classe pour créer les plans par défaut

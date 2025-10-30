@@ -8,30 +8,30 @@ function initAnimations() {
     const scrollArrow = document.querySelector('.scroll-arrow-container');
     const map = document.querySelector('.map');
     
-   
-    // if (!titleElement || !mainButton || !mainContent) {
-    //     console.error("Certains éléments de la page n'ont pas été trouvés");
-    //     return; // Sortir si des éléments sont manquants
-    // } 
+    // Vérifier si nous sommes sur la page d'accueil (éléments présents)
+    if (!titleElement || !mainButton || !mainContent) {
+        // Pas sur la page d'accueil, ne pas exécuter les animations
+        return;
+    }
     
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     
     if (prefersReducedMotion) {
         // Afficher immédiatement tout le contenu sans animation
-        titleElement.classList.remove('opacity-0');
-        mainButton.classList.remove('opacity-0');
-        mainContent.classList.remove('opacity-0');
-        map.classList.remove('opacity-0');
+        if (titleElement) titleElement.classList.remove('opacity-0');
+        if (mainButton) mainButton.classList.remove('opacity-0');
+        if (mainContent) mainContent.classList.remove('opacity-0');
+        if (map) map.classList.remove('opacity-0');
         if (scrollArrow) scrollArrow.classList.remove('opacity-0');
     } else {
         // Animation lettre par lettre pour le titre
-        animateTextLetterByLetter(titleElement);
+        if (titleElement) animateTextLetterByLetter(titleElement);
         
         // Animation des autres éléments après le titre
-        setTimeout(() => mainButton.classList.remove('opacity-0'), 1500);
+        if (mainButton) setTimeout(() => mainButton.classList.remove('opacity-0'), 1500);
         if (scrollArrow) setTimeout(() => scrollArrow.classList.remove('opacity-0'), 1800);
-        setTimeout(() => mainContent.classList.remove('opacity-0'), 2000);
-        setTimeout(() => map.classList.remove('opacity-0'), 2000);
+        if (mainContent) setTimeout(() => mainContent.classList.remove('opacity-0'), 2000);
+        if (map) setTimeout(() => map.classList.remove('opacity-0'), 2000);
     }
     
     // Fallback de sécurité - rendre tout visible si JavaScript échoue partiellement
@@ -44,8 +44,20 @@ function initAnimations() {
 }
 
 function animateTextLetterByLetter(element) {
+    // Vérification de sécurité
+    if (!element) {
+        console.warn('animateTextLetterByLetter: element is null');
+        return;
+    }
+    
     // Récupérer le texte original
     const text = element.textContent;
+    
+    // Vérifier que le texte existe
+    if (!text) {
+        console.warn('animateTextLetterByLetter: no text content found');
+        return;
+    }
     
     // Vider le contenu original
     element.innerHTML = '';

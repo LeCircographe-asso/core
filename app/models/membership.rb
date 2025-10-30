@@ -1,12 +1,10 @@
 class Membership < ApplicationRecord
+  include Statusable
+  include Dateable
+  
   # Relations selon le domain_model_circographe.md
   belongs_to :person
   belongs_to :membership_type
-
-  # Anciennes relations désactivées (à supprimer progressivement)
-  # has_many :user_memberships, dependent: :destroy
-  # has_many :users, through: :user_memberships
-
   # Validations
   validates :started_at, presence: true
   validates :ended_at, presence: true
@@ -22,12 +20,12 @@ class Membership < ApplicationRecord
 
   # Validations personnalisées
   validate :end_date_after_start_date
-  validate :no_overlapping_active_memberships, on: :create
+  validate :no_overlapping_active_memberships, on: :create, unless: :skip_overlap_validation
 
-  # Méthodes
-  def expired?
-    Date.current > ended_at
-  end
+  # Attribut pour skip validation dans certains cas (upgrades, tests)
+  attr_accessor :skip_overlap_validation
+
+  # (expired? maintenant dans le module Statusable)
 
   def can_upgrade_to?(membership_type)
     # Un membre Basic peut passer à Circus
@@ -54,13 +52,15 @@ class Membership < ApplicationRecord
     first_joined = first_joined_at || started_at
 
     # Créer la nouvelle adhésion
-    new_membership = person.memberships.create!(
+    new_membership = person.memberships.build(
       membership_type: new_membership_type,
       started_at: started_at,
       ended_at: started_at + 1.year,
       status: :active,
-      first_joined_at: first_joined
+      first_joined_at: first_joined,
+      skip_overlap_validation: true
     )
+    new_membership.save!
 
     # Marquer l'ancienne comme inactive
     update!(status: :inactive)

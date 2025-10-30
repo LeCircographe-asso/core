@@ -4,8 +4,9 @@ FactoryBot.define do
     category { [:basic, :circus_full, :circus_reduced].sample }
     price_cents { [1500, 2000, 2500].sample }
     description { Faker::Lorem.paragraph }
+    version { 1 }
     effective_from { Date.current }
-    effective_until { 1.year.from_now }
+    effective_until { nil }
 
     trait :basic do
       category { :basic }

@@ -1,0 +1,68 @@
+<%= turbo_frame_tag "payment_#{payment.id}_actions" do %>
+  <%= form_with model: [:admin, payment], 
+                method: :patch,
+                data: { 
+                  controller: "payment-form",
+                  action: "turbo:submit-end->payment-form#handleSubmit",
+                  turbo_frame: "payment_#{payment.id}_actions"
+                },
+                class: "inline-block" do |f| %>
+    
+    <div class="grid grid-cols-2 gap-2 text-sm">
+      <!-- Montant -->
+      <div>
+        <%= f.label :total_cents, "Montant (€)", class: "block text-xs font-medium text-gray-700 mb-1" %>
+        <%= f.number_field :total_cents, 
+            value: payment.total_cents / 100.0,
+            step: 0.01,
+            min: 0,
+            class: "w-full px-2 py-1 text-xs border border-gray-300 rounded focus:ring-[#1F5C55] focus:border-[#1F5C55]" %>
+      </div>
+
+      <!-- Méthode de paiement -->
+      <div>
+        <%= f.label :payment_method, "Méthode", class: "block text-xs font-medium text-gray-700 mb-1" %>
+        <%= f.select :payment_method,
+            options_for_select([
+              ['Espèces', 'cash'],
+              ['Carte', 'card'],
+              ['Chèque', 'cheque'],
+              ['Virement', 'transfer'],
+              ['Offert', 'offered']
+            ], payment.payment_method),
+            {},
+            { class: "w-full px-2 py-1 text-xs border border-gray-300 rounded focus:ring-[#1F5C55] focus:border-[#1F5C55]" } %>
+      </div>
+
+      <!-- Statut -->
+      <div>
+        <%= f.label :status, "Statut", class: "block text-xs font-medium text-gray-700 mb-1" %>
+        <%= f.select :status,
+            options_for_select([
+              ['Succès', 'success'],
+              ['En attente', 'pending'],
+              ['Annulé', 'cancel']
+            ], payment.status),
+            {},
+            { class: "w-full px-2 py-1 text-xs border border-gray-300 rounded focus:ring-[#1F5C55] focus:border-[#1F5C55]" } %>
+      </div>
+
+      <!-- Notes -->
+      <div>
+        <%= f.label :notes, "Notes", class: "block text-xs font-medium text-gray-700 mb-1" %>
+        <%= f.text_field :notes,
+            value: payment.notes,
+            class: "w-full px-2 py-1 text-xs border border-gray-300 rounded focus:ring-[#1F5C55] focus:border-[#1F5C55]" %>
+      </div>
+    </div>
+
+    <div class="flex items-center space-x-2 mt-2">
+      <%= f.submit "Enregistrer", 
+          class: "px-3 py-1 text-xs bg-[#1F5C55] text-white rounded hover:bg-[#194A45] focus:outline-none focus:ring-2 focus:ring-[#1F5C55]" %>
+      <%= link_to "Annuler", 
+          admin_payment_path(payment),
+          class: "px-3 py-1 text-xs bg-gray-200 text-gray-700 rounded hover:bg-gray-300",
+          data: { turbo_frame: "payment_#{payment.id}_actions" } %>
+    </div>
+  <% end %>
+<% end %>

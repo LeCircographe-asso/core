@@ -1,195 +1,213 @@
 <% content_for :title, "Tableau de bord administrateur" %>
 
-<div class="container py-6 mx-auto px-4 max-w-7xl">
-    <div class="bg-gradient-to-r from-[#1F5C55] to-teal-600 rounded-lg shadow-lg mb-8 p-6 text-white">
-        <h1 class="text-3xl font-bold text-center mb-2">Tableau de bord administrateur</h1>
-            <% if Current.user && (Current.user.first_name || Current.user.last_name) %>
-                <p class="text-center text-white/80">
-                    Bienvenue, <%= Current.user.first_name %> <%= Current.user.last_name %>
-                </p>
-            <% end %>
+<div class="min-h-screen py-4">
+  <div class="max-w-7xl mx-auto">
+    <!-- Breadcrumbs -->
+    <%= render 'shared/breadcrumbs' %>
+    
+    <!-- Header -->
+    <div class="bg-white shadow-lg rounded-lg overflow-hidden mb-4">
+      <div class="bg-gradient-to-r from-[#1F5C55] to-[#194A45] px-6 py-6 relative">
+        <div class="text-center">
+          <h1 class="text-2xl font-bold text-white mb-1">Tableau de bord administrateur</h1>
+          <% if Current.user && (Current.user.first_name || Current.user.last_name) %>
+            <p class="text-white/80 text-base">
+              Bienvenue, <%= Current.user.first_name %> <%= Current.user.last_name %>
+            </p>
+          <% end %>
+        </div>
+        
+        <!-- Action Button - Top Right -->
+        <div class="absolute top-4 right-4">
+          <%= link_to new_admin_user_path, class: "group bg-white/20 hover:bg-white/30 text-white px-4 py-2 rounded-lg shadow-lg transition-all duration-200 flex items-center" do %>
+            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path>
+            </svg>
+            <span class="text-sm font-medium">Nouvel adhérent</span>
+          <% end %>
+        </div>
+      </div>
     </div>
 
     <!-- Main statistics -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-8">
-        <div class="bg-white rounded-lg shadow-md p-4 border-l-4 border-blue-500">
-            <div class="flex items-center">
-                <div class="p-3 rounded-full bg-blue-100 mr-4">
-                    <i class="fas fa-users text-blue-500 text-xl"></i>
-                </div>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
+        <%= link_to admin_users_path, class: "group bg-white rounded-lg shadow-lg p-4 border border-gray-200 hover:shadow-xl hover:border-[#1F5C55] transition-all duration-200 cursor-pointer" do %>
+            <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-sm text-gray-500">Utilisateurs</p>
-                    <p class="text-2xl font-bold text-gray-800"><%= User.count %></p>
-                    <p class="text-xs text-gray-500">Nouveaux hier: <%= User.where("created_at >= ? AND created_at <= ?", 1.day.ago.beginning_of_day, 1.day.ago.end_of_day).count %></p>
+                    <p class="text-sm font-medium text-gray-600 group-hover:text-[#1F5C55] transition-colors">Personnes</p>
+                    <p class="text-2xl font-bold text-gray-900 group-hover:text-[#1F5C55] transition-colors"><%= Person.count %></p>
+                    <p class="text-xs text-gray-500 mt-1">Nouveaux hier: <%= Person.where("created_at >= ? AND created_at <= ?", 1.day.ago.beginning_of_day, 1.day.ago.end_of_day).count %></p>
+                </div>
+                <div class="p-2 rounded-full bg-gradient-to-br from-[#1F5C55] to-[#194A45] group-hover:from-[#194A45] group-hover:to-[#1F5C55] transition-all duration-200">
+                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                    </svg>
+                </div>
+            </div>
+            <div class="mt-2 flex items-center text-xs text-gray-500 group-hover:text-[#1F5C55] transition-colors">
+                <span>Voir la liste</span>
+                <svg class="w-3 h-3 ml-1 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                </svg>
+            </div>
+        <% end %>
+
+        <div class="bg-white rounded-lg shadow-lg p-4 border border-gray-200 hover:shadow-xl transition-shadow duration-200">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm font-medium text-gray-600">Utilisateurs</p>
+                    <p class="text-2xl font-bold text-gray-900"><%= User.count %></p>
+                    <p class="text-xs text-gray-500 mt-1">Nouveaux hier: <%= User.where("created_at >= ? AND created_at <= ?", 1.day.ago.beginning_of_day, 1.day.ago.end_of_day).count %></p>
+                </div>
+                <div class="p-2 rounded-full bg-blue-100">
+                    <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"></path>
+                    </svg>
                 </div>
             </div>
         </div>
 
-        <div class="bg-white rounded-lg shadow-md p-4 border-l-4 border-indigo-500">
-            <div class="flex items-center">
-                <div class="p-3 rounded-full bg-indigo-100 mr-4">
-                    <i class="fas fa-user-friends text-indigo-500 text-xl"></i>
-                </div>
+        <div class="bg-white rounded-lg shadow-lg p-4 border border-gray-200 hover:shadow-xl transition-shadow duration-200">
+            <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-sm text-gray-500">Personnes</p>
-                    <p class="text-2xl font-bold text-gray-800"><%= Person.count %></p>
-                    <p class="text-xs text-gray-500">Nouveaux hier: <%= Person.where("created_at >= ? AND created_at <= ?", 1.day.ago.beginning_of_day, 1.day.ago.end_of_day).count %></p>
+                    <p class="text-sm font-medium text-gray-600">Adhésions Basic</p>
+                    <p class="text-2xl font-bold text-gray-900"><%= Membership.joins(:membership_type).where(membership_types: { category: 'basic' }, status: 'active').count %></p>
+                </div>
+                <div class="p-2 rounded-full bg-green-100">
+                    <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
                 </div>
             </div>
         </div>
 
-        <div class="bg-white rounded-lg shadow-md p-4 border-l-4 border-green-500">
-            <div class="flex items-center">
-                <div class="p-3 rounded-full bg-green-100 mr-4">
-                    <i class="fas fa-ticket-alt text-green-500 text-xl"></i>
-                </div>
+        <div class="bg-white rounded-lg shadow-lg p-4 border border-gray-200 hover:shadow-xl transition-shadow duration-200">
+            <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-sm text-gray-500">Adhésions Basic</p>
-                    <p class="text-2xl font-bold text-gray-800"><%= Membership.joins(:membership_type).where(membership_types: { category: 'basic' }, status: 'active').count %></p>
+                    <p class="text-sm font-medium text-gray-600">Adhésions Circus</p>
+                    <p class="text-2xl font-bold text-gray-900"><%= Membership.joins(:membership_type).where(membership_types: { category: ['circus_full', 'circus_reduced'] }, status: 'active').count %></p>
+                </div>
+                <div class="p-2 rounded-full bg-purple-100">
+                    <svg class="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0m-5 8a2 2 0 100-4 2 2 0 000 4zm0 0c1.306 0 2.417.835 2.83 2M9 14a3.001 3.001 0 00-2.83 2M15 11h3m-3 4h2"></path>
+                    </svg>
                 </div>
             </div>
         </div>
 
-        <div class="bg-white rounded-lg shadow-md p-4 border-l-4 border-purple-500">
-            <div class="flex items-center">
-                <div class="p-3 rounded-full bg-purple-100 mr-4">
-                    <i class="fas fa-id-card text-purple-500 text-xl"></i>
-                </div>
+        <div class="bg-white rounded-lg shadow-lg p-4 border border-gray-200 hover:shadow-xl transition-shadow duration-200">
+            <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-sm text-gray-500">Adhésions Circus</p>
-                    <p class="text-2xl font-bold text-gray-800"><%= Membership.joins(:membership_type).where(membership_types: { category: ['circus_full', 'circus_reduced'] }, status: 'active').count %></p>
+                    <p class="text-sm font-medium text-gray-600">Adhésions actives</p>
+                    <p class="text-2xl font-bold text-gray-900"><%= Membership.where(status: 'active').count %></p>
                 </div>
-            </div>
-        </div>
-
-        <div class="bg-white rounded-lg shadow-md p-4 border-l-4 border-amber-500">
-            <div class="flex items-center">
-                <div class="p-3 rounded-full bg-amber-100 mr-4">
-                    <i class="fas fa-id-badge text-amber-500 text-xl"></i>
-                </div>
-                <div>
-                    <p class="text-sm text-gray-500">Adhésions actives</p>
-                    <p class="text-2xl font-bold text-gray-800"><%= Membership.where(status: 'active').count %></p>
+                <div class="p-2 rounded-full bg-amber-100">
+                    <svg class="w-5 h-5 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"></path>
+                    </svg>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Main action buttons -->
-    <div class="flex justify-center gap-4 mb-8 flex-wrap">
-        <%= link_to edit_admin_opening_hours_path, class: "flex items-center bg-[#1F5C55] hover:bg-[#194A45] text-white px-6 py-3 rounded-lg shadow transition-colors duration-200" do %>
-            <i class="fas fa-clock mr-2"></i> Modifier les horaires
-        <% end %>
-        
-        <%= link_to admin_users_path, class: "flex items-center bg-[#1F5C55] hover:bg-[#194A45] text-white px-6 py-3 rounded-lg shadow transition-colors duration-200" do %>
-            <i class="fas fa-user-friends mr-2"></i> Gérer les adhérents
-        <% end %>
-        
-        <%= link_to new_admin_user_path, class: "flex items-center bg-[#1F5C55] hover:bg-[#194A45] text-white px-6 py-3 rounded-lg shadow transition-colors duration-200" do %>
-            <i class="fas fa-user-plus mr-2"></i> Nouvel adhérent
-        <% end %>
-        
-        <%= link_to admin_payments_path, class: "flex items-center bg-[#1F5C55] hover:bg-[#194A45] text-white px-6 py-3 rounded-lg shadow transition-colors duration-200" do %>
-            <i class="fas fa-credit-card mr-2"></i> Gérer les paiements
-        <% end %>
-        
-        <%= link_to admin_attendance_lists_path, class: "flex items-center bg-[#1F5C55] hover:bg-[#194A45] text-white px-6 py-3 rounded-lg shadow transition-colors duration-200" do %>
-            <i class="fas fa-clipboard-list mr-2"></i> Listes de présence
-        <% end %>
-    </div>
 
     <!-- Main content -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 2xl:grid-cols-3 gap-6">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         <!-- Section Timetable with improved display -->
-        <div class="col-span-1">
-            <div class="bg-white rounded-lg shadow-md overflow-hidden h-full">
-                <div class="border-b border-gray-200 px-6 py-4 flex justify-between items-center">
-                    <h3 class="text-lg font-semibold text-gray-800">Horaires d'ouverture</h3>
-                    <%= link_to edit_admin_opening_hours_path, class: "text-[#1F5C55] hover:text-[#194A45]", title: "Modifier les horaires" do %>
-                        <i class="fas fa-edit"></i>
-                    <% end %>
-                </div>
-                <div class="p-4">
-                    <% @horaires = Rails.cache.fetch("opening_hours") || OpeningHoursHelper.default_opening_hours %>
-                    <%= render 'shared/opening_hours' %>
-                </div>
+        <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+            <div class="bg-gradient-to-r from-[#1F5C55] to-[#194A45] px-4 py-3">
+                <h3 class="text-base font-semibold text-white flex items-center">
+                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    Horaires d'ouverture
+                </h3>
+            </div>
+            <div class="p-4">
+                <% @horaires = Rails.cache.fetch("opening_hours") || OpeningHoursHelper.default_opening_hours %>
+                <%= render 'shared/opening_hours' %>
             </div>
         </div>
 
         <!-- Notepad Section -->
-        <div class="col-span-1">
-            <div class="bg-white rounded-lg shadow-md overflow-hidden h-full">
-                <div class="border-b border-gray-200 px-6 py-4 flex justify-between items-center">
-                    <h3 class="text-lg font-semibold text-gray-800">Bloc-note</h3>
-                    <%= link_to edit_admin_notepad_path, class: "text-[#1F5C55] hover:text-[#194A45]", title: "Modifier le bloc-note" do %>
-                        <i class="fas fa-edit"></i>
-                    <% end %>
-                </div>
-                <div class="p-4">
-                    <div class="bg-gray-50 rounded-lg p-4 mb-4 min-h-[200px] max-h-[250px] overflow-y-auto">
-                        <%= render "shared/notepad" %>
-                    </div>
+        <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+            <div class="bg-gradient-to-r from-[#1F5C55] to-[#194A45] px-4 py-3">
+                <h3 class="text-base font-semibold text-white flex items-center">
+                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path>
+                    </svg>
+                    Bloc-note
+                </h3>
+            </div>
+            <div class="p-4">
+                <div class="bg-gray-50 rounded-lg p-3 min-h-[150px] max-h-[180px] overflow-y-auto border border-gray-200">
+                    <%= render "shared/notepad" %>
                 </div>
             </div>
         </div>
 
         <!-- Recent Activity Section -->
-        <div class="col-span-1">
-            <div class="bg-white rounded-lg shadow-md overflow-hidden h-full">
-                <div class="border-b border-gray-200 px-6 py-4">
-                    <h3 class="text-lg font-semibold text-gray-800">Activité récente</h3>
-                </div>
-                <div class="overflow-y-auto max-h-[400px]">
-                    <ul class="divide-y divide-gray-200">
-                        <% Person.order(created_at: :desc).limit(3).each do |person| %>
-                        <li class="p-4 hover:bg-gray-50">
-                            <div class="flex items-center">
-                            <div class="flex-shrink-0 h-10 w-10 rounded-full bg-indigo-100 flex items-center justify-center">
-                                <span class="text-indigo-600 font-medium">
-                                <%= "#{person.first_name&.first}#{person.last_name&.first}".strip.presence || "?" %>
+        <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+            <div class="bg-gradient-to-r from-[#1F5C55] to-[#194A45] px-4 py-3">
+                <h3 class="text-base font-semibold text-white flex items-center">
+                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                    </svg>
+                    Activité récente
+                </h3>
+            </div>
+            <div class="p-4">
+                <ul class="space-y-2">
+                    <% Person.order(created_at: :desc).limit(3).each do |person| %>
+                    <li class="p-2 hover:bg-gray-50 transition-colors rounded">
+                        <div class="flex items-center">
+                            <div class="flex-shrink-0 h-7 w-7 rounded-full bg-indigo-100 flex items-center justify-center">
+                                <span class="text-indigo-600 font-medium text-xs">
+                                    <%= "#{person.first_name&.first}#{person.last_name&.first}".strip.presence || "?" %>
                                 </span>
                             </div>
-                            <div class="ml-4">
+                            <div class="ml-3">
                                 <p class="text-sm font-medium text-gray-900">
-                                Nouvel adhérent : <%= person.full_name %>
+                                    Nouvel adhérent : <%= person.full_name %>
                                 </p>
                                 <p class="text-xs text-gray-500"><%= time_ago_in_words(person.created_at) %></p>
                             </div>
-                            </div>
-                        </li>
-                        <% end %>
-                        <% User.order(created_at: :desc).limit(2).each do |user| %>
-                        <li class="p-4 hover:bg-gray-50">
-                            <div class="flex items-center">
-                            <div class="flex-shrink-0 h-10 w-10 rounded-full bg-[#1F5C55]/10 flex items-center justify-center">
-                                <span class="text-[#1F5C55] font-medium">
-                                <%= "#{user.first_name&.first}#{user.last_name&.first}".strip.presence || "?" %>
+                        </div>
+                    </li>
+                    <% end %>
+                    <% User.order(created_at: :desc).limit(2).each do |user| %>
+                    <li class="p-2 hover:bg-gray-50 transition-colors rounded">
+                        <div class="flex items-center">
+                            <div class="flex-shrink-0 h-7 w-7 rounded-full bg-[#1F5C55]/10 flex items-center justify-center">
+                                <span class="text-[#1F5C55] font-medium text-xs">
+                                    <%= "#{user.first_name&.first}#{user.last_name&.first}".strip.presence || "?" %>
                                 </span>
                             </div>
-                            <div class="ml-4">
+                            <div class="ml-3">
                                 <p class="text-sm font-medium text-gray-900">
-                                Nouvel utilisateur : <%= [user.first_name, user.last_name].compact.join(" ") %>
+                                    Nouvel utilisateur : <%= [user.first_name, user.last_name].compact.join(" ") %>
                                 </p>
                                 <p class="text-xs text-gray-500"><%= time_ago_in_words(user.created_at) %></p>
                             </div>
+                        </div>
+                    </li>
+                    <% end %>
+                    <% Event.order(created_at: :desc).limit(2).each do |event| %>
+                        <li class="p-2 hover:bg-gray-50 transition-colors rounded">
+                            <div class="flex items-center">
+                                <div class="flex-shrink-0 h-7 w-7 rounded-full bg-purple-100 flex items-center justify-center">
+                                    <svg class="w-3 h-3 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                    </svg>
+                                </div>
+                                <div class="ml-3">
+                                    <p class="text-sm font-medium text-gray-900">Nouvel événement : <%= event.name %></p>
+                                    <p class="text-xs text-gray-500"><%= time_ago_in_words(event.created_at) %></p>
+                                </div>
                             </div>
                         </li>
-                        <% end %>
-                        <% Event.order(created_at: :desc).limit(2).each do |event| %>
-                            <li class="p-4 hover:bg-gray-50">
-                                <div class="flex items-center">
-                                    <div class="flex-shrink-0 h-10 w-10 rounded-full bg-purple-100 flex items-center justify-center">
-                                        <i class="fas fa-calendar text-purple-500"></i>
-                                    </div>
-                                    <div class="ml-4">
-                                        <p class="text-sm font-medium text-gray-900">Nouvel événement : <%= event.name %></p>
-                                        <p class="text-xs text-gray-500"><%= time_ago_in_words(event.created_at) %></p>
-                                    </div>
-                                </div>
-                            </li>
-                        <% end %>
-                    </ul>
-                </div>
+                    <% end %>
+                </ul>
             </div>
         </div>
     </div>

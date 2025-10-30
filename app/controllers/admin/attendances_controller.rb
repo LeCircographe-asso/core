@@ -43,17 +43,21 @@ module Admin
     end
 
     def create
-      # Utiliser le service Attendances::CheckIn
-      check_in_service = Attendances::CheckIn.new(attendance_params)
-      result = check_in_service.call
+      begin
+        # Créer la présence directement
+        attendance = Attendance.create!(
+          person_id: attendance_params[:person_id],
+          event_id: attendance_params[:event_id],
+          attended_at: attendance_params[:attended_at] || Time.current,
+          notes: attendance_params[:notes]
+        )
 
-      if result.success?
-        redirect_to admin_attendance_path(result.attendance), notice: "Présence enregistrée avec succès"
-      else
+        redirect_to admin_attendance_path(attendance), notice: "Présence enregistrée avec succès"
+      rescue => e
         @attendance = Attendance.new(attendance_params)
         @people = Person.order(:first_name, :last_name)
         @events = Event.upcoming.order(:date)
-        flash.now[:alert] = "Erreur: #{result.message}"
+        flash.now[:alert] = "Erreur: #{e.message}"
         render :new
       end
     end

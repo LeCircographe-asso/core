@@ -1,26 +1,34 @@
 <div class="w-full relative p-8">
     <div class="swiper multiple-slide-carousel swiper-container relative">
         <div class="swiper-wrapper mb-16">
-            <div class="swiper-slide h-auto flex justify-center items-center">
-                <div class="rounded-2xl h-96 flex justify-center items-center">
-                    <%= render "shared/event_card", event: @events.second %>
+            <% if @events.present? && @events.size > 1 %>
+                <div class="swiper-slide h-auto flex justify-center items-center">
+                    <div class="rounded-2xl h-96 flex justify-center items-center">
+                        <%= render "shared/event_card", event: @events.second %>
+                    </div>
                 </div>
-            </div>
-            <div class="swiper-slide h-auto flex justify-center items-center">
-                <div class="rounded-2xl h-auto flex justify-center items-center">
-                    <%= render "shared/event_card", event: @events.third %>
+            <% end %>
+            <% if @events.present? && @events.size > 2 %>
+                <div class="swiper-slide h-auto flex justify-center items-center">
+                    <div class="rounded-2xl h-auto flex justify-center items-center">
+                        <%= render "shared/event_card", event: @events.third %>
+                    </div>
                 </div>
-            </div>
-            <div class="swiper-slide h-auto flex justify-center items-center">
-                <div class="rounded-2xl h-96 flex justify-center items-center">
-                    <%= render "shared/event_card", event: @events.fourth %>
+            <% end %>
+            <% if @events.present? && @events.size > 3 %>
+                <div class="swiper-slide h-auto flex justify-center items-center">
+                    <div class="rounded-2xl h-96 flex justify-center items-center">
+                        <%= render "shared/event_card", event: @events.fourth %>
+                    </div>
                 </div>
-            </div>
-            <div class="swiper-slide h-auto flex justify-center items-center">
-                <div class="rounded-2xl h-auto flex justify-center items-center">
-                    <%= render "shared/event_card", event: @events.first %>
+            <% end %>
+            <% if @events.present? && @events.size > 0 %>
+                <div class="swiper-slide h-auto flex justify-center items-center">
+                    <div class="rounded-2xl h-auto flex justify-center items-center">
+                        <%= render "shared/event_card", event: @events.first %>
+                    </div>
                 </div>
-            </div>
+            <% end %>
         </div>
 
         <div class="absolute flex justify-between items-center w-full -translate-x-1/2 left-1/2 top-1/2 -translate-y-1/2 z-50">

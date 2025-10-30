@@ -1,10 +1,12 @@
 class PaymentLine < ApplicationRecord
+  include Priceable
+  
   # Relations
   belongs_to :payment
   belongs_to :item, polymorphic: true
 
   # Validations
-  validates :amount_cents, presence: true, numericality: { greater_than: 0 }
+  validates :amount_cents, presence: true, numericality: { greater_than_or_equal_to: 0 }
   validates :item_type, presence: true
   validates :item_id, presence: true
   validates :payment_id, uniqueness: { scope: [ :item_type, :item_id ] }
@@ -13,23 +15,23 @@ class PaymentLine < ApplicationRecord
   def item_description
     case item_type
     when "Membership"
-      "Adhésion #{item.membership_type&.name}"
+      item.membership_type&.name || "Adhésion"
     when "SubscriptionPlan"
-      "#{item.name} (#{item.duration})"
+      item.duration_humanized
     when "MembershipType"
-      "Adhésion #{item.name}"
+      item.name
+    when "BookOfEntry"
+      if item.subscription_plan
+        item.subscription_plan.duration_humanized
+      else
+        "Cotisation"
+      end
     else
       item_type.humanize
     end
   end
 
-  def amount_euros
-    amount_cents / 100.0
-  end
-
-  def amount_euros=(value)
-    self.amount_cents = (value.to_f * 100).round
-  end
+  # (amount_euros maintenant dans le module Priceable)
 
   # Scopes
   scope :memberships, -> { where(item_type: "Membership") }

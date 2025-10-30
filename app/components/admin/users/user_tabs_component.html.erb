@@ -1,0 +1,13 @@
+<!-- Mobile-First Tabs Navigation -->
+<div class="border-b border-gray-200 mb-3">
+  <nav class="flex w-full" aria-label="Tabs">
+    <% tabs.each do |tab| %>
+      <button type="button" 
+              class="<%= tab_class(tab[:id]) %> w-full" 
+              data-tab="<%= tab[:id] %>">
+        <span class="sm:inline"><%= tab[:icon] %> </span>
+        <span class="ml-1"><%= tab[:label] %></span>
+      </button>
+    <% end %>
+  </nav>
+</div>
