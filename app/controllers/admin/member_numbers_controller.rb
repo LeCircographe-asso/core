@@ -1,4 +1,4 @@
-class Admin::MemberNumbersController < BaseController
+class Admin::MemberNumbersController < Admin::BaseController
   before_action :set_person, only: [:suggest, :change]
 
   # POST /admin/member_numbers/suggest
