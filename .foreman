@@ -1,0 +1,5 @@
+# Configuration Foreman pour afficher les logs Rails
+# Utiliser: foreman start -f Procfile.dev
+
+# Configuration pour afficher les logs en couleur
+# Ajouter dans .foreman ou utiliser les options de ligne de commande
