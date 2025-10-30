@@ -1,3 +1,5 @@
-<div class="prose max-w-none">
-  <%= @notepad&.html_safe %>
+<%# Remove leading newlines while preserving internal line breaks %>
+<% sanitized_notepad = (@notepad || "").to_s.sub(/\A[\r\n]+/, "") %>
+<div class="prose max-w-none whitespace-pre-line">
+  <%= sanitized_notepad.html_safe %>
 </div>

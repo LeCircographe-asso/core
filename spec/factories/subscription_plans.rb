@@ -5,6 +5,9 @@ FactoryBot.define do
     duration { [ :day, :trimester, :annual, :pack10 ].sample }
     price_cents { [ 800, 6000, 20000, 7000 ].sample }
     description { Faker::Lorem.paragraph }
+    version { 1 }
+    effective_from { Date.current }
+    effective_until { nil }
     sessions_count { duration == :pack10 ? 10 : nil }
     validity_days { duration == :pack10 ? 365 : nil }
 

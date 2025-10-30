@@ -18,10 +18,10 @@ puts %(
 )
 puts "\n🎪 Bienvenue dans la seed du Circographe! 🎪\n\n"
 
-# Nettoyage des données existantes
+# Nettoyage des données existantes (dans l'ordre des dépendances)
 puts "🧹 Cleaning existing data..."
-[ Person, User, Membership, MembershipType, SubscriptionPlan,
- Payment, PaymentLine, BookOfEntry, Attendance, Event ].each do |model|
+[ PaymentLine, Payment, Attendance, BookOfEntry, Membership,
+  Event, SubscriptionPlan, MembershipType, User, Person ].each do |model|
   count = model.count
   model.delete_all if count > 0
   puts "  - Deleted #{count} #{model.name.pluralize.downcase}"
@@ -45,6 +45,9 @@ load Rails.root.join('db', 'seeds', 'events.rb')
 # 4. Personnes de test avec numéros d'adhérent et historiques
 load Rails.root.join('db', 'seeds', 'sample_people.rb')
 
+# 5. Création de 75 utilisateurs supplémentaires pour les tests
+load Rails.root.join('db', 'seeds', 'bulk_users.rb')
+
 puts "\n🎉 Seeds completed successfully!"
 puts "=" * 60
 puts "📊 Summary:"
@@ -58,8 +61,10 @@ puts "  - #{BookOfEntry.count} carnets d'entrées"
 puts "  - #{Payment.count} paiements"
 puts "=" * 60
 
-puts "\n🔑 Compte de test:"
-puts "  👑 Super Admin: admin@rails.com / 123456"
+puts "\n🔑 Comptes de test:"
+puts "  👑 Super Admin: super-admin@rails.com / 123456"
+puts "  👨‍💼 Admin: admin@rails.com / 123456"
+puts "  🤝 Volunteer: volunteer@rails.com / 123456"
 
 puts "\n📈 Articles disponibles:"
 puts "  📋 Adhésions:"

@@ -4,7 +4,7 @@ class MemberManagementService
     loop do
       # Format: YYTNNN (ex: 25C001, 25U400)
       year = Date.current.year.to_s.last(2) # 2025 -> 25
-      type_code = membership_type.upcase == 'CIRQUE' ? 'C' : 'U'
+      type_code = (membership_type.upcase == 'CIRQUE' || membership_type.upcase == 'C') ? 'C' : 'U'
       
       # Chercher le dernier numéro pour cette année et ce type
       # Utiliser l'historique ET les numéros actuels pour éviter les conflits

@@ -71,14 +71,18 @@ Rails.application.configure do
     protocol: "https"
   }
 
+  # TEMPORAIRE : Utiliser le mode test pour les emails en production
+  config.action_mailer.delivery_method = :test
+  config.action_mailer.perform_deliveries = true
+
   # Specify outgoing SMTP server. Remember to add smtp/* credentials via rails credentials:edit.
-  config.action_mailer.smtp_settings = {
-    user_name: Rails.application.credentials.dig(:smtp, :user_name),
-    password: Rails.application.credentials.dig(:smtp, :password),
-    address: "smtp.example.com",
-    port: 587,
-    authentication: :plain
-  }
+  # config.action_mailer.smtp_settings = {
+  #   user_name: Rails.application.credentials.dig(:smtp, :user_name),
+  #   password: Rails.application.credentials.dig(:smtp, :password),
+  #   address: "smtp.example.com",
+  #   port: 587,
+  #   authentication: :plain
+  # }
 
   # Enable locale fallbacks for I18n (makes lookups for any locale fall back to
   # the I18n.default_locale when a translation cannot be found).

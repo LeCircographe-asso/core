@@ -1,6 +1,6 @@
 module Admin
   class MembershipTypesController < BaseController
-    before_action :set_membership_type, only: [:show, :edit, :update, :destroy]
+    before_action :set_membership_type, only: [ :show, :edit, :update, :destroy ]
     before_action :set_breadcrumbs
 
     def index
@@ -14,7 +14,11 @@ module Admin
     end
 
     def new
-      @membership_type = MembershipType.new
+      @membership_type = MembershipType.new(
+        effective_from: Date.current,
+        version: 1,
+        created_by_user: Current.user
+      )
       add_breadcrumb "Nouveau type d'adhésion", nil
     end
 
@@ -22,7 +26,10 @@ module Admin
       @membership_type = MembershipType.new(membership_type_params)
 
       if @membership_type.save
-        redirect_to admin_membership_type_path(@membership_type), notice: "Type d'adhésion créé avec succès !"
+        respond_to do |format|
+          format.html { redirect_to admin_membership_types_path, notice: "Type d'adhésion créé avec succès !" }
+          format.turbo_stream { redirect_to admin_membership_types_path, notice: "Type d'adhésion créé avec succès !" }
+        end
       else
         render :new, status: :unprocessable_entity
       end
@@ -34,13 +41,22 @@ module Admin
 
     def update
       if @membership_type.update(membership_type_params)
-        redirect_to admin_membership_type_path(@membership_type), notice: "Type d'adhésion mis à jour avec succès !"
+        respond_to do |format|
+          format.html { redirect_to admin_membership_types_path, notice: "Type d'adhésion mis à jour avec succès !" }
+          format.turbo_stream { redirect_to admin_membership_types_path, notice: "Type d'adhésion mis à jour avec succès !" }
+        end
       else
         render :edit, status: :unprocessable_entity
       end
     end
 
     def destroy
+      # Seul le super_admin peut supprimer des types d'adhésion
+      unless Current.user&.system_role == "super_admin"
+        redirect_to admin_membership_types_path, alert: "Seul le super-admin peut supprimer des types d'adhésion."
+        return
+      end
+
       if @membership_type.memberships.any?
         redirect_to admin_membership_types_path, alert: "Impossible de supprimer ce type d'adhésion car il est utilisé par des membres."
       else
@@ -61,7 +77,7 @@ module Admin
     end
 
     def membership_type_params
-      params.require(:membership_type).permit(:name, :category, :price_cents, :description)
+      params.require(:membership_type).permit(:name, :category, :price_cents, :description, :effective_from, :version, :created_by_user_id)
     end
   end
 end

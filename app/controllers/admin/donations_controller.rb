@@ -3,24 +3,17 @@ module Admin
     def create
       @user = User.find(params[:user_id])
       @person = @user.person
-      
-      # Créer un paiement directement (plus besoin d'Order)
-      @payment = Payment.new(
-        person: @person,
-        recorded_by: Current.user,
-        total_cents: payment_params[:payment_amount].to_f * 100,
-        payment_method: :cash,
-        status: :success,
-        notes: "Donation"
-      )
 
       begin
-        if @payment.save
-          redirect_to admin_payment_path(@payment), notice: "Donation prise en compte"
-        else
-          flash[:alert] = "Échec de la création du paiement"
-          render :new
-        end
+        # Créer la donation directement via le modèle Person
+        payment = @person.create_donation!(
+          amount_cents: payment_params[:payment_amount].to_f * 100,
+          payment_method: :cash,
+          recorded_by: Current.user,
+          notes: "Donation"
+        )
+
+        redirect_to admin_payment_path(payment), notice: "Donation prise en compte"
       rescue => e
         flash[:alert] = "Erreur lors de la création de la donation: #{e.message}"
         render :new

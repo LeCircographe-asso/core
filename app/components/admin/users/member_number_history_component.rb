@@ -1,33 +1,56 @@
-module Admin
-  module Users
-    class MemberNumberHistoryComponent < ViewComponent::Base
-      def initialize(person:)
-        @person = person
+class Admin::Users::MemberNumberHistoryComponent < ViewComponent::Base
+  def initialize(person:, current_user:)
+    @person = person
+    @current_user = current_user
+  end
+
+  private
+
+  attr_reader :person, :current_user
+
+  def can_edit?
+    current_user&.can_edit_member_numbers?
+  end
+
+  def member_number_history
+    person.member_number_history.order(:assigned_at)
+  end
+
+  def current_member_number
+    person.member_number
+  end
+
+  def has_history?
+    member_number_history.count > 1
+  end
+
+  def format_date(date)
+    date.strftime("%d/%m/%Y à %H:%M")
+  end
+
+  def duration_display(history_item)
+    if history_item.current?
+      "Actuel"
+    elsif history_item.replaced_at.present?
+      duration = history_item.duration
+      days = (duration / 1.day).round
+      if days < 1
+        "Moins d'un jour"
+      elsif days == 1
+        "1 jour"
+      else
+        "#{days} jours"
       end
+    else
+      "En cours"
+    end
+  end
 
-      def render?
-        person.member_number_history.exists?
-      end
-
-      private
-
-      attr_reader :person
-
-      def history_items
-        person.member_number_history.order(:assigned_at).map do |history|
-          status = history.current? ? "ACTUEL" : "PRÉCÉDENT"
-          duration = history.duration / 1.day
-          duration_text = history.current? ? "" : " (#{duration.round(1)}j)"
-          
-          content_tag :div, class: "history-item text-xs py-1 border-b border-gray-100 last:border-b-0" do
-            content_tag(:span, "#{history.member_number} (#{status})", class: "font-mono font-semibold") +
-            content_tag(:br) +
-            content_tag(:span, history.notes, class: "text-gray-600") +
-            content_tag(:br) +
-            content_tag(:span, "Assigné le #{history.assigned_at.strftime('%d/%m/%Y %H:%M')}#{duration_text}", class: "text-gray-500")
-          end
-        end.join.html_safe
-      end
+  def status_class(history_item)
+    if history_item.current?
+      "bg-green-100 text-green-800"
+    else
+      "bg-gray-100 text-gray-600"
     end
   end
 end

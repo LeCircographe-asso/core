@@ -1,8 +1,13 @@
 class MembershipType < ApplicationRecord
+  include Priceable
+  include Humanizable
+  include Versionable
+  include Categorizable
+  
   # Relations
   has_many :memberships, dependent: :restrict_with_error
   has_many :subscription_plans, dependent: :destroy
-  belongs_to :created_by_user, class_name: 'User', optional: true
+  belongs_to :created_by_user, class_name: "User", optional: true
 
   # Validations
   validates :name, presence: true, uniqueness: { scope: :version }
@@ -26,28 +31,12 @@ class MembershipType < ApplicationRecord
   def basic?
     category == "basic"
   end
-
-  def price_euros
-    price_cents / 100.0
-  end
-
-  def price_euros=(value)
-    self.price_cents = (value.to_f * 100).round
-  end
-
-  def name_with_price
-    "#{name} - #{price_euros}€"
-  end
-
-  # Méthodes d'audit et versioning
-  def current_version?
-    effective_until.nil?
-  end
+  # (price_euros, category_display_name, current_version? maintenant dans les modules)
 
   def create_price_change!(new_price_cents, effective_from: Date.current, reason: nil, user: nil)
     # Fermer la version actuelle
     update!(effective_until: effective_from - 1.day)
-    
+
     # Créer la nouvelle version
     new_version = dup
     new_version.assign_attributes(
@@ -59,7 +48,7 @@ class MembershipType < ApplicationRecord
       change_reason: reason
     )
     new_version.save!
-    
+
     new_version
   end
 
@@ -71,9 +60,9 @@ class MembershipType < ApplicationRecord
   def price_change_percentage(from_date, to_date)
     old_price = MembershipType.where(name: name, effective_from: from_date).first&.price_cents
     new_price = MembershipType.where(name: name, effective_from: to_date).first&.price_cents
-    
+
     return nil unless old_price && new_price && old_price > 0
-    
+
     ((new_price - old_price).to_f / old_price * 100).round(2)
   end
 
@@ -83,7 +72,7 @@ class MembershipType < ApplicationRecord
   scope :by_price, -> { order(:price_cents) }
   scope :active, -> { joins(:memberships).distinct }
   scope :current_versions, -> { where(effective_until: nil) }
-  scope :effective_on, ->(date) { where('effective_from <= ? AND (effective_until IS NULL OR effective_until >= ?)', date, date) }
+  scope :effective_on, ->(date) { where("effective_from <= ? AND (effective_until IS NULL OR effective_until >= ?)", date, date) }
   scope :price_history, -> { order(:effective_from, :version) }
 
   # Méthodes de classe pour créer les types par défaut

@@ -1,0 +1,74 @@
+<div class="space-y-4">
+  <!-- Current Membership Card - Simplified -->
+  <div class="bg-white rounded-lg border border-gray-200 p-4">
+    <div class="flex items-center justify-between mb-3">
+      <h3 class="text-lg font-semibold text-gray-900">Adhésion</h3>
+      <% if has_active_membership? %>
+        <%= render MembershipStatusBadgeComponent.new(person: person) %>
+      <% end %>
+    </div>
+    
+    <% if has_active_membership? %>
+      <div class="flex items-center justify-between text-sm">
+        <div class="text-gray-600">
+          <span class="font-medium"><%= membership_type_name %></span>
+          <span class="text-gray-400 ml-2">•</span>
+          <span class="text-gray-500"><%= membership_price %>€</span>
+        </div>
+        <div class="text-gray-500">
+          <%= membership_start_date %> - <%= membership_end_date %>
+        </div>
+      </div>
+    <% else %>
+      <div class="text-center py-3">
+        <p class="text-gray-500 mb-3">Aucune adhésion active</p>
+        <%= link_to "Créer une adhésion", new_admin_membership_path(person_id: person.id), 
+            class: "inline-flex items-center px-3 py-1 text-sm font-medium text-white bg-[#1F5C55] hover:bg-[#194A45] rounded-md" %>
+      </div>
+    <% end %>
+  </div>
+
+  <!-- Active Subscriptions - Simplified -->
+  <% if person.book_of_entries&.active&.any? %>
+    <div class="bg-white rounded-lg border border-gray-200 p-4">
+      <h3 class="text-lg font-semibold text-gray-900 mb-3">Cotisations Actives</h3>
+      <div class="space-y-2">
+        <% person.book_of_entries.active.each do |book| %>
+          <div class="flex items-center justify-between py-2 px-3 bg-gray-50 rounded-md">
+            <div class="text-sm">
+              <span class="font-medium text-gray-900"><%= book.subscription_plan.name %></span>
+              <span class="text-gray-500 ml-2">
+                <%= book.sessions_remaining %> séance<%= 's' if book.sessions_remaining > 1 %> restante<%= 's' if book.sessions_remaining > 1 %>
+              </span>
+            </div>
+            <% if book.expires_at %>
+              <div class="text-xs text-gray-500">
+                Expire le <%= book.expires_at.strftime("%d/%m/%Y") %>
+              </div>
+            <% end %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  <% elsif can_purchase_subscriptions? %>
+    <div class="bg-white rounded-lg border border-gray-200 p-4">
+      <div class="text-center">
+        <p class="text-gray-500 mb-3">Aucune cotisation active</p>
+        <%= link_to "Ajouter une cotisation", new_admin_subscription_plan_path(person_id: person.id), 
+            class: "inline-flex items-center px-3 py-1 text-sm font-medium text-white bg-[#1F5C55] hover:bg-[#194A45] rounded-md" %>
+      </div>
+    </div>
+  <% else %>
+    <div class="bg-yellow-50 rounded-lg border border-yellow-200 p-4">
+      <div class="flex items-center">
+        <svg class="w-5 h-5 text-yellow-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.732-.833-2.5 0L4.268 16.5c-.77.833.192 2.5 1.732 2.5z" />
+        </svg>
+        <div class="text-sm text-yellow-700">
+          <span class="font-medium">Adhésion Cirque requise</span> pour les cotisations
+        </div>
+      </div>
+    </div>
+  <% end %>
+
+</div>

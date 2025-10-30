@@ -7,8 +7,12 @@
 
         <div class="bg-white/95 rounded-lg shadow-md p-6 mb-8 fade-in">
             <div class="featured-events grid grid-cols-1 md:grid-cols-2 gap-6 fade-in">
-                <%= render "shared/event_card", event: @events.last if @events.present? && @events.size > 0 %>
-                <%= render "shared/event_card", event: @events[-2] if @events.present? && @events.size > 1 %>
+                <% if @events.present? && @events.size > 0 %>
+                    <%= render "shared/event_card", event: @events.last %>
+                <% end %>
+                <% if @events.present? && @events.size > 1 %>
+                    <%= render "shared/event_card", event: @events[-2] %>
+                <% end %>
             </div>
         </div>
 

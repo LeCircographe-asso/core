@@ -86,9 +86,9 @@ class UsersController < ApplicationController
 
   # Handle token-based unsubscription (public access)
   def unsubscribe_by_token
-    @user = User.find_by(unsubscribe_token: params[:token])
-    if @user && @user.person
-      @user.person.update(newsletter_subscribed: false)
+    @person = Person.find_by(newsletter_unsubscribe_token: params[:token])
+    if @person
+      @person.update(newsletter_subscribed: false)
       redirect_to page_path("newsletter_unsubscribe_success")
     else
       redirect_to root_path, alert: "Token de désinscription invalide."

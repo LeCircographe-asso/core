@@ -13,17 +13,17 @@
       
       <!-- Formulaire de création de cotisation -->
       <div class="bg-white shadow-lg rounded-lg p-6 mb-6">
-        <h2 class="text-xl font-semibold text-gray-900 mb-4">Sélectionner un Plan d'Abonnement</h2>
+        <h2 class="text-xl font-semibold text-gray-900 mb-4">Sélectionner un plan de cotisation</h2>
         
         <%= form_with url: create_subscription_admin_user_path(@person), method: :post, local: true, class: "space-y-4" do |form| %>
           <div>
-            <%= form.label :subscription_plan_id, "Plan d'abonnement", class: "block text-sm font-medium text-gray-700" %>
+            <%= form.label :subscription_plan_id, "Plan de cotisation", class: "block text-sm font-medium text-gray-700" %>
             <%= form.select :subscription_plan_id, 
                 options_from_collection_for_select(@subscription_plans, :id, :name_with_price), 
-                { prompt: "Sélectionner un plan d'abonnement" },
+                { prompt: "Sélectionner un plan de cotisation" },
                 { class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#1F5C55] focus:ring-[#1F5C55] sm:text-sm", required: true } %>
             <% if @subscription_plans.empty? %>
-              <p class="text-red-500 text-sm mt-1">⚠️ Aucun plan d'abonnement disponible</p>
+              <p class="text-red-500 text-sm mt-1">⚠️ Aucun plan de cotisation disponible</p>
             <% end %>
           </div>
           
