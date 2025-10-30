@@ -26,7 +26,7 @@ gem "puma", ">= 5.0"  # Web server
 gem "thruster", require: false  # HTTP asset caching for Puma
 
 # Background Jobs and Caching
-gem "solid_queue"  # Database-backed job queue
+gem "solid_queue", "1.2.3"  # Database-backed job queue (1.2.4 has frozen array bug with Ruby 3.3.x)
 gem "solid_cache"  # Database-backed cache
 gem "solid_cable"  # Database-backed Action Cable
 
