@@ -1,3 +1,18 @@
 {
-  "packageManager": "yarn@4.5.3"
+  "packageManager": "yarn@4.5.3",
+  "name": "core",
+  "version": "1.0.0",
+  "description": "<div align=\"center\">   <img src=\"docs/documentations/assets/screenshots/logo.png\" alt=\"Logo Le Circographe\" width=\"200\"/>   <p><i>Une application de gestion complète pour association de cirque</i></p>",
+  "main": "tailwind.config.js",
+  "directories": {
+    "lib": "lib"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+  }
 }
