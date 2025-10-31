@@ -20,6 +20,7 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
       with:
+        ref: dev
         fetch-depth: 0
     
     - name: Configure Git
@@ -30,22 +31,25 @@ jobs:
     - name: Check if staging needs update
       id: check-branches
       run: |
-        echo "Current branch: $(git rev-parse --abbrev-ref HEAD)"
-        echo "Dev HEAD: $(git rev-parse dev)"
-        echo "Staging HEAD: $(git rev-parse staging || echo 'staging does not exist')"
+        # Fetch all branches
+        git fetch origin
         
-        # Check if staging exists
-        if ! git rev-parse --verify staging >/dev/null 2>&1; then
+        # Get current dev HEAD
+        DEV_HEAD=$(git rev-parse HEAD)
+        echo "Dev HEAD: ${DEV_HEAD}"
+        
+        # Check if staging exists on remote
+        if ! git rev-parse --verify origin/staging >/dev/null 2>&1; then
           echo "create_staging=true" >> $GITHUB_OUTPUT
           echo "📦 Staging branch does not exist, will create it"
           exit 0
         fi
         
-        # Check if staging is behind dev
-        git fetch origin staging:staging || true
-        STAGING_HEAD=$(git rev-parse staging)
-        DEV_HEAD=$(git rev-parse dev)
+        # Get staging HEAD
+        STAGING_HEAD=$(git rev-parse origin/staging)
+        echo "Staging HEAD: ${STAGING_HEAD}"
         
+        # Check if staging is behind dev
         if [ "$STAGING_HEAD" != "$DEV_HEAD" ]; then
           echo "needs_update=true" >> $GITHUB_OUTPUT
           echo "📦 Staging branch needs update (behind dev)"
@@ -57,13 +61,21 @@ jobs:
     - name: Create or update staging branch
       if: ${{ steps.check-branches.outputs.create_staging == 'true' || steps.check-branches.outputs.needs_update == 'true' }}
       run: |
-        git fetch origin dev:dev
-        if git rev-parse --verify staging >/dev/null 2>&1; then
-          git checkout staging
-          git reset --hard dev
+        # We're already on dev from checkout, fetch to ensure latest
+        git fetch origin
+        git reset --hard origin/dev
+        
+        # Create or update staging branch from current dev
+        if git rev-parse --verify origin/staging >/dev/null 2>&1; then
+          # Staging exists, update it
+          git checkout -B staging origin/staging
+          git reset --hard origin/dev
         else
-          git checkout -B staging dev
+          # Staging doesn't exist, create it from dev
+          git checkout -B staging
         fi
+        
+        # Push staging branch
         git push origin staging --force-with-lease
         
         echo "✅ Staging branch updated from dev"
