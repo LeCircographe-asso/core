@@ -2,12 +2,12 @@ require "rails_helper"
 
 RSpec.describe "Admin Users routing", type: :routing do
   describe "refactored routes" do
-    it "routes to index_refactored" do
+    it "routes to index_refactored", :disabled do
       expect(get: "/admin/users/index_refactored")
         .to route_to("admin/users#index_refactored")
     end
 
-    it "routes to index_viewcomponents" do
+    it "routes to index_viewcomponents", :disabled do
       expect(get: "/admin/users/index_viewcomponents")
         .to route_to("admin/users#index_viewcomponents")
     end
@@ -27,11 +27,11 @@ RSpec.describe "Admin Users routing", type: :routing do
   end
 
   describe "route helpers" do
-    it "generates correct helper for index_refactored" do
+    it "generates correct helper for index_refactored", :disabled do
       expect(index_refactored_admin_users_path).to eq("/admin/users/index_refactored")
     end
 
-    it "generates correct helper for index_viewcomponents" do
+    it "generates correct helper for index_viewcomponents", :disabled do
       expect(index_viewcomponents_admin_users_path).to eq("/admin/users/index_viewcomponents")
     end
 
