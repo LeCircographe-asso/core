@@ -15,8 +15,11 @@ namespace :db do
       puts "  ❌ Basic membership type not found"
     end
     
-    # Adhésion Cirque : 10€
-    circus_full_type = MembershipType.find_by(category: :circus_full)
+    # Adhésion Cirque : types multiples maintenant (category = circus, différenciés par nom/prix)
+    circus_types = MembershipType.where(category: :circus).order(price_cents: :desc)
+    
+    # Tarif Plein (le plus cher)
+    circus_full_type = circus_types.first
     if circus_full_type
       circus_full_type.update!(price_cents: 1000) # 10€
       puts "  ✅ #{circus_full_type.name}: #{circus_full_type.price_euros}€"
@@ -24,7 +27,8 @@ namespace :db do
       puts "  ❌ Circus full membership type not found"
     end
     
-    circus_reduced_type = MembershipType.find_by(category: :circus_reduced)
+    # Tarif Réduit (le moins cher)
+    circus_reduced_type = circus_types.last
     if circus_reduced_type
       circus_reduced_type.update!(price_cents: 800) # 8€ (réduit)
       puts "  ✅ #{circus_reduced_type.name}: #{circus_reduced_type.price_euros}€"

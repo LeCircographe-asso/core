@@ -9,8 +9,8 @@ module Categorizable
     when "volunteering" then "Bénévolat"
     when "other" then "Autre"
     when "basic" then "Basique"
-    when "circus_full" then "Tarif Plein"
-    when "circus_reduced" then "Tarif Réduit"
+    when "circus" then "Cirque"
+    when "event" then "Événement"
     else category.humanize
     end
   end
@@ -36,16 +36,8 @@ module Categorizable
     category == "basic"
   end
 
-  def circus_full?
-    category == "circus_full"
-  end
-
-  def circus_reduced?
-    category == "circus_reduced"
-  end
-
   def circus?
-    circus_full? || circus_reduced?
+    category == "circus"
   end
 
   # Méthodes de classe pour les humanizations
@@ -57,8 +49,8 @@ module Categorizable
       when "volunteering" then "Bénévolat"
       when "other" then "Autre"
       when "basic" then "Basique"
-      when "circus_full" then "Tarif Plein"
-      when "circus_reduced" then "Tarif Réduit"
+      when "circus" then "Cirque"
+      when "event" then "Événement"
       else category.to_s.humanize
       end
     end
@@ -70,8 +62,8 @@ module Categorizable
       when "volunteering" then "bg-green-100 text-green-800"
       when "other" then "bg-gray-100 text-gray-800"
       when "basic" then "bg-blue-100 text-blue-800"
-      when "circus_full" then "bg-green-100 text-green-800"
-      when "circus_reduced" then "bg-yellow-100 text-yellow-800"
+      when "circus" then "bg-green-100 text-green-800"
+      when "event" then "bg-yellow-100 text-yellow-800"
       else "bg-gray-100 text-gray-800"
       end
     end

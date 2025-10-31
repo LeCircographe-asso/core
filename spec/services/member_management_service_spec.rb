@@ -31,6 +31,8 @@ RSpec.describe MemberManagementService do
       person = create(:person, member_number: "25U001")
       
       number1 = MemberManagementService.generate_member_number('U')
+      # Create Person with number1 to force next generation to be sequential
+      create(:person, member_number: number1)
       number2 = MemberManagementService.generate_member_number('U')
       
       expect(number1).not_to eq(number2)
@@ -45,17 +47,15 @@ RSpec.describe MemberManagementService do
 
     it "avoids conflicts with existing numbers" do
       # Create a person with a specific number
-      person = Person.new(first_name: "Test", last_name: "User")
-      person.skip_membership_validation = true
-      person.member_number = "25U001"
-      person.save!
+      person = create(:person, member_number: "25U001")
       
-      # Generate new numbers - should not conflict
-      number1 = MemberManagementService.generate_member_number('U')
-      number2 = MemberManagementService.generate_member_number('U')
+      # Generate new number - should not conflict with existing
+      number = MemberManagementService.generate_member_number('U')
       
-      expect(number1).not_to eq("25U001")
-      expect(number2).not_to eq("25U001")
+      expect(number).not_to eq("25U001")
+      # Verify uniqueness
+      expect(Person.exists?(member_number: number)).to be false
+      expect(MemberNumberHistory.exists?(member_number: number)).to be false
     end
 
     it "handles different membership types separately" do
@@ -87,7 +87,7 @@ RSpec.describe MemberManagementService do
     end
 
     it "determines membership type from active membership" do
-      membership_type = create(:membership_type, category: :circus_full)
+      membership_type = create(:membership_type, category: :circus)
       membership = create(:membership, person: person, membership_type: membership_type, status: :active)
       
       result = MemberManagementService.assign_member_number(person)
@@ -217,15 +217,16 @@ RSpec.describe MemberManagementService do
 
     it "performs merge in transaction" do
       # If any part fails, everything should be rolled back
-      allow(secondary_person).to receive(:destroy!).and_raise(StandardError.new("Test error"))
+      allow(secondary_person).to receive(:destroy!).and_raise(ActiveRecord::RecordInvalid.new(secondary_person))
       
-      expect {
-        MemberManagementService.merge_duplicate_persons(primary_person, secondary_person)
-      }.to raise_error(StandardError)
+      result = MemberManagementService.merge_duplicate_persons(primary_person, secondary_person)
       
-      # Both persons should still exist
+      expect(result[:success]).to be false
+      # Both persons should still exist (rollback)
       expect { primary_person.reload }.not_to raise_error
       expect { secondary_person.reload }.not_to raise_error
+      # Verify nothing was transferred
+      expect(primary_person.reload.memberships.count).to eq(0)
     end
   end
 

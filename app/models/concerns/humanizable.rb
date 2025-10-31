@@ -43,8 +43,8 @@ module Humanizable
   def membership_category_humanized
     case category
     when "basic" then "Basique"
-    when "circus_full" then "Tarif Plein"
-    when "circus_reduced" then "Tarif Réduit"
+    when "circus" then "Cirque"
+    when "event" then "Événement"
     else category.humanize
     end
   end
@@ -100,8 +100,8 @@ module Humanizable
     def humanize_membership_category(category)
       case category.to_s
       when "basic" then "Basique"
-      when "circus_full" then "Tarif Plein"
-      when "circus_reduced" then "Tarif Réduit"
+      when "circus" then "Cirque"
+      when "event" then "Événement"
       else category.to_s.humanize
       end
     end

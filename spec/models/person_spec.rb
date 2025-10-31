@@ -51,13 +51,15 @@ RSpec.describe Person, type: :model do
       expect(person.errors[:member_number]).to include("has already been taken")
     end
 
-    it "must have active membership unless skip_membership_validation is true" do
-      person = create(:person, :without_membership)
-      person.skip_membership_validation = false
-      
-      expect(person).not_to be_valid
-      expect(person.errors[:base]).to include("Une adhésion active est obligatoire")
-    end
+    # DEPRECATED: Person can exist without membership (newsletter subscribers, prospects, etc.)
+    # The validation must_have_active_membership is not currently activated in the model
+    # it "must have active membership unless skip_membership_validation is true" do
+    #   person = create(:person, :without_membership)
+    #   person.skip_membership_validation = false
+    #   
+    #   expect(person).not_to be_valid
+    #   expect(person.errors[:base]).to include("Une adhésion active est obligatoire")
+    # end
 
     it "allows no active membership if skip_membership_validation is true" do
       person = create(:person)

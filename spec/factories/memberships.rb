@@ -29,11 +29,11 @@ FactoryBot.define do
     end
 
     trait :circus_full do
-      association :membership_type, category: :circus_full
+      association :membership_type, category: :circus, name: "Adhésion Cirque Complète", price_cents: 2500
     end
 
     trait :circus_reduced do
-      association :membership_type, category: :circus_reduced
+      association :membership_type, category: :circus, name: "Adhésion Cirque Réduite", price_cents: 2000
     end
 
     trait :current do

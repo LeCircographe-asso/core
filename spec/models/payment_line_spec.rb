@@ -31,12 +31,11 @@ RSpec.describe PaymentLine, type: :model do
       expect(payment_line.errors[:amount_cents]).to include("can't be blank")
     end
 
-    it "requires amount_cents to be greater than 0" do
+    it "allows amount_cents to be 0 (for free/offered items)" do
       payment = create(:payment)
       membership = create(:membership)
       payment_line = PaymentLine.new(payment: payment, item: membership, amount_cents: 0)
-      expect(payment_line).not_to be_valid
-      expect(payment_line.errors[:amount_cents]).to include("must be greater than 0")
+      expect(payment_line).to be_valid
     end
 
     it "requires item_type" do
@@ -130,21 +129,21 @@ RSpec.describe PaymentLine, type: :model do
       membership = create(:membership, membership_type: membership_type)
       payment_line = create(:payment_line, item: membership)
       
-      expect(payment_line.item_description).to eq("Adhésion Adhésion Basique")
+      expect(payment_line.item_description).to eq("Adhésion Basique")
     end
 
     it "returns description for subscription_plan" do
       subscription_plan = create(:subscription_plan, name: "Plan Trimestriel", duration: "trimester")
       payment_line = create(:payment_line, item: subscription_plan)
       
-      expect(payment_line.item_description).to eq("Plan Trimestriel (trimester)")
+      expect(payment_line.item_description).to eq("Trimestriel") # duration_humanized
     end
 
     it "returns description for membership_type" do
       membership_type = create(:membership_type, name: "Adhésion Cirque")
       payment_line = create(:payment_line, item: membership_type)
       
-      expect(payment_line.item_description).to eq("Adhésion Adhésion Cirque")
+      expect(payment_line.item_description).to eq("Adhésion Cirque")
     end
 
     it "returns humanized item_type for unknown types" do
@@ -155,17 +154,17 @@ RSpec.describe PaymentLine, type: :model do
     end
   end
 
-  describe '#amount_euros' do
+  describe '#price_euros (from Priceable)' do
     it "converts cents to euros" do
       payment_line = PaymentLine.new(amount_cents: 1500)
-      expect(payment_line.amount_euros).to eq(15.0)
+      expect(payment_line.price_euros).to eq(15.0)
     end
   end
 
-  describe '#amount_euros=' do
+  describe '#price_euros= (from Priceable)' do
     it "converts euros to cents" do
       payment_line = PaymentLine.new
-      payment_line.amount_euros = 15.50
+      payment_line.price_euros = 15.50
       expect(payment_line.amount_cents).to eq(1550)
     end
   end

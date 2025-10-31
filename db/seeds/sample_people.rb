@@ -3,8 +3,10 @@ puts "\n👥 Creating sample people..."
 
 # Récupérer les types d'adhésion
 basic_membership = MembershipType.find_by(category: "basic")
-circus_full_membership = MembershipType.find_by(category: "circus_full")
-circus_reduced_membership = MembershipType.find_by(category: "circus_reduced")
+# Récupérer tous les types Circus (maintenant category = "circus", différenciés par nom/prix)
+circus_types = MembershipType.where(category: "circus").order(price_cents: :desc)
+circus_full_membership = circus_types.first  # Le plus cher (Tarif Plein)
+circus_reduced_membership = circus_types.last # Le moins cher (Tarif Réduit)
 
 # Récupérer les comptes système pour les créations par admin/volunteer
 admin_user = User.find_by(system_role: "admin")

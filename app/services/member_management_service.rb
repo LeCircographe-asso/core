@@ -49,7 +49,7 @@ class MemberManagementService
       if active_membership
         # Utiliser la catégorie pour déterminer le type
         case active_membership.membership_type.category
-        when 'circus_full', 'circus_reduced'
+        when 'circus'
           membership_type = 'CIRQUE'
         when 'basic'
           membership_type = 'BASIQUE'
@@ -122,20 +122,24 @@ class MemberManagementService
       transferred_count = 0
       
       # Transférer les adhésions
+      memberships_count = secondary_person.memberships.count
       secondary_person.memberships.update_all(person_id: primary_person.id)
-      transferred_count += secondary_person.memberships.count
+      transferred_count += memberships_count
       
       # Transférer les paiements
+      payments_count = secondary_person.payments.count
       secondary_person.payments.update_all(person_id: primary_person.id)
-      transferred_count += secondary_person.payments.count
+      transferred_count += payments_count
       
       # Transférer les présences
+      attendances_count = secondary_person.attendances.count
       secondary_person.attendances.update_all(person_id: primary_person.id)
-      transferred_count += secondary_person.attendances.count
+      transferred_count += attendances_count
       
       # Transférer les carnets
+      book_of_entries_count = secondary_person.book_of_entries.count
       secondary_person.book_of_entries.update_all(person_id: primary_person.id)
-      transferred_count += secondary_person.book_of_entries.count
+      transferred_count += book_of_entries_count
 
       # 3. Supprimer la Person secondaire
       secondary_person.destroy!
@@ -161,8 +165,9 @@ class MemberManagementService
     # Doublons par nom
     Person.group(:first_name, :last_name)
           .having('COUNT(*) > 1')
-          .each do |person|
-      group = Person.where(first_name: person.first_name, last_name: person.last_name)
+          .pluck(:first_name, :last_name)
+          .each do |first_name, last_name|
+      group = Person.where(first_name: first_name, last_name: last_name)
       
       # Déterminer la Person principale (avec User ou plus récente)
       primary = group.joins(:user).first || group.order(:created_at).last
@@ -172,7 +177,7 @@ class MemberManagementService
         type: :name_duplicate,
         primary_person: primary,
         secondary_persons: secondary.to_a,
-        description: "Personnes avec le même nom: #{person.full_name}"
+        description: "Personnes avec le même nom: #{primary.full_name}"
       }
     end
     
@@ -235,6 +240,7 @@ class MemberManagementService
       temp_person = Person.new(first_name: 'Test', last_name: 'User')
       temp_person.skip_membership_validation = true
       temp_person.member_number = generate_member_number(membership_type)
+      temp_person.save! # Save to ensure sequential generation
       temp_people << temp_person.member_number
     end
     temp_people

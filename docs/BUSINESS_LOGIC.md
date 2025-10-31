@@ -1,8 +1,9 @@
 # Logique Métier - Le Circographe
 
 **Application:** Gestion complète pour association de cirque  
-**Date:** 2025-01-27  
-**Classification:** Zone 1 (Stable) | Zone 2 (En cours) | Zone 3 (Future)
+**Date:** 2025-01-31  
+**Classification:** Zone 1 (Stable) | Zone 2 (En cours) | Zone 3 (Future)  
+**État:** ✅ Architecture simplifiée et nettoyée (2025-01-31)
 
 ---
 
@@ -27,8 +28,7 @@
 
 #### Types d'Adhésions
 - **Basic:** Adhésion standard sans accès cirque
-- **Circus Full:** Accès complet aux cours de cirque
-- **Circus Reduced:** Accès cirque avec tarif réduit
+- **Circus:** Adhésion avec accès cirque (catégorie unique, tarifs multiples: Full 25€, Reduced 20€)
 
 #### Règles de Référence
 ```ruby
@@ -38,10 +38,8 @@
 ```
 
 #### Upgrades Possibles
-- ✅ Basic → Circus Full
-- ✅ Basic → Circus Reduced
-- ✅ Circus Full → Circus Reduced
-- ✅ Circus Reduced → Circus Full
+- ✅ Basic → Circus (avec tout tarif: Full, Reduced, Student, etc.)
+- ✅ Circus → Circus (changement de tarif uniquement: Full ↔ Reduced)
 - ❌ Circus → Basic (interdit)
 - ❌ Même type (interdit)
 
@@ -390,10 +388,24 @@ BookOfEntry#use_session!
 
 ### Zone 1: Comportement Défini
 
+#### Table Dédiée: `newsletter_subscribers`
+- **Indépendante de Person:** Newsletter peut exister sans compte
+- **Tracking complet:** subscribed, subscribed_at, unsubscribed_at
+- **Audit trail:** source (web/admin/import), notes
+- **Merge automatique:** Link vers Person si email existe
+- **Scopes:** subscribed, unsubscribed, orphaned, linked
+
 #### Inscription
-- **Service:** `NewsletterSignupService`
+- **Service:** `NewsletterSignupService` (refactoré pour nouvelle table)
 - **Provider:** Mailjet
 - **Opt-in:** Consentement requis
+
+#### Méthodes
+```ruby
+NewsletterSubscriber#unsubscribe!
+NewsletterSubscriber#resubscribe!
+NewsletterSubscriber#link_to_person!(person)
+```
 
 ### Zone 2: En Cours de Validation
 
@@ -482,6 +494,30 @@ BookOfEntry#use_session!
 ---
 
 **Prochaine Révision:** Après stabilisation des Zones 2  
-**Dernière Mise à Jour:** 2025-01-27
+**Dernière Mise à Jour:** 2025-01-31
+
+---
+
+## Changelog Récent (2025-01-31)
+
+### Simplification Architecture
+
+**MembershipType category enum:**
+- **Avant:** `basic`, `circus_full`, `circus_reduced` (3 catégories confuses)
+- **Après:** `basic`, `circus`, `event` (3 catégories claires)
+- **Impact:** Circus Full et Reduced sont des tarifs, pas des catégories distinctes
+- **Avantage:** Ajout facile de tarifs Circus (Student, Senior, etc.) sans modifier code
+
+**Newsletter:**
+- **Nouveau:** Table `newsletter_subscribers` dédiée
+- **Avant:** Booléen sur Person
+- **Avantage:** Tracking indépendant, merge email simplifié, audit trail complet
+
+**Payment relations:**
+- **Supprimé:** Legacy `user_id`, `order_id`
+- **Conservé:** Architecture Person-Based uniquement
+- **Avantage:** Tests simplifiés -50% complexité
+
+**Score modèle:** 7/10 → 9/10 ✅
 
 

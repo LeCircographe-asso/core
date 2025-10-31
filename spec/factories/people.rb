@@ -15,6 +15,7 @@ FactoryBot.define do
     get_involved { [ true, false ].sample }
     newsletter_subscribed { [ true, false ].sample }
     dyslexic_font { [ true, false ].sample }
+    is_minor { false }
 
     trait :with_user do
       association :user
@@ -39,7 +40,7 @@ FactoryBot.define do
 
     trait :with_circus_membership do
       after(:create) do |person|
-        membership_type = create(:membership_type, category: :circus_full)
+        membership_type = create(:membership_type, category: :circus)
         create(:membership, person: person, membership_type: membership_type, status: :active)
       end
     end
