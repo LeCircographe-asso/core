@@ -17,7 +17,7 @@ gem "propshaft"  # Modern asset pipeline
 gem "importmap-rails"  # JavaScript module imports
 gem "turbo-rails"  # Hotwire's SPA accelerator
 gem "stimulus-rails"  # Hotwire's JavaScript framework
-gem "tailwindcss-rails", "~> 4.4"  # CSS framework
+gem "tailwindcss-rails", "~> 4.2"  # CSS framework
 gem "image_processing", "~> 1.2"  # For Active Storage image processing
 gem "view_component"  # Modular UI components
 
