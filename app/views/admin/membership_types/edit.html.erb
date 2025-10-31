@@ -49,15 +49,15 @@
             <%= form.select :category, 
                 options_for_select([
                   ['Basique', 'basic'],
-                  ['Cirque Complète', 'circus_full'],
-                  ['Cirque Réduite', 'circus_reduced']
+                  ['Cirque', 'circus'],
+                  ['Événement', 'event']
                 ], @membership_type.category),
                 {},
                 { class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#1F5C55] focus:ring-[#1F5C55] sm:text-sm" } %>
             <p class="mt-1 text-sm text-gray-500">
               <strong>Basique</strong> : Accès de base à l'association<br>
-              <strong>Cirque Complète</strong> : Accès aux cours de cirque (tarif normal)<br>
-              <strong>Cirque Réduite</strong> : Accès aux cours de cirque (tarif réduit)
+              <strong>Cirque</strong> : Accès aux cours de cirque (tarifs différenciés selon nom/prix)<br>
+              <strong>Événement</strong> : Pour événements spéciaux
             </p>
           </div>
 

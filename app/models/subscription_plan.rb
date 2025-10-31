@@ -110,7 +110,7 @@ class SubscriptionPlan < ApplicationRecord
   end
 
   # Scopes
-  scope :for_circus_members, -> { joins(:membership_type).where(membership_types: { category: [ :circus_full, :circus_reduced ] }) }
+  scope :for_circus_members, -> { joins(:membership_type).where(membership_types: { category: :circus }) }
   scope :day_plans, -> { where(duration: :day) }
   scope :trimester_plans, -> { where(duration: :trimester) }
   scope :annual_plans, -> { where(duration: :annual) }

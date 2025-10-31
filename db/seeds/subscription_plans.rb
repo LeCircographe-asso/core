@@ -10,7 +10,7 @@ subscription_plans = [
     duration: "day",
     price_cents: 400, # 4€
     description: "Accès pour une journée complète",
-    membership_type: MembershipType.find_by(category: "circus_full"),
+    membership_type: MembershipType.find_by(category: "circus"),
     sessions_count: nil,
     validity_days: 1,
     version: 1,
@@ -24,7 +24,7 @@ subscription_plans = [
     duration: "trimester",
     price_cents: 6000, # 60€
     description: "Accès pour un trimestre (3 mois)",
-    membership_type: MembershipType.find_by(category: "circus_full"),
+    membership_type: MembershipType.find_by(category: "circus"),
     sessions_count: nil,
     validity_days: 90,
     version: 1,
@@ -38,7 +38,7 @@ subscription_plans = [
     duration: "annual",
     price_cents: 12000, # 120€
     description: "Accès pour une année complète",
-    membership_type: MembershipType.find_by(category: "circus_full"),
+    membership_type: MembershipType.find_by(category: "circus"),
     sessions_count: nil,
     validity_days: 365,
     version: 1,
@@ -52,7 +52,7 @@ subscription_plans = [
     duration: "pack10",
     price_cents: 3000, # 30€
     description: "10 séances valables 1 an",
-    membership_type: MembershipType.find_by(category: "circus_full"),
+    membership_type: MembershipType.find_by(category: "circus"),
     sessions_count: 10,
     validity_days: 365,
     version: 1,

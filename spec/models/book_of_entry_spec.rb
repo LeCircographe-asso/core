@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe BookOfEntry, type: :model do
-  let(:circus_membership_type) { create(:membership_type, :circus_full) }
+    let(:circus_membership_type) { create(:membership_type, category: :circus) }
   let(:basic_membership_type) { create(:membership_type, :basic) }
   let(:person) { create(:person, :with_active_membership) }
   let(:pack10_plan) { create(:subscription_plan, :pack10, membership_type: circus_membership_type) }

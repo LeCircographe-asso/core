@@ -27,7 +27,7 @@ module Admin
       # Filtrer les plans de cotisation selon le type d'adhésion de la personne
       if @person&.current_membership&.membership_type&.circus?
         @subscription_plans = SubscriptionPlan.joins(:membership_type)
-                                            .where(membership_types: { category: [ :circus_full, :circus_reduced ] })
+                                            .where(membership_types: { category: :circus })
                                             .current_versions
                                             .order(:duration, :price_cents)
       else

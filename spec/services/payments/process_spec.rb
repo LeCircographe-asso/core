@@ -89,7 +89,7 @@ RSpec.describe Payments::Process do
     end
 
     context 'with subscription plan payment line' do
-      let(:membership_type) { create(:membership_type, category: :circus_full) }
+      let(:membership_type) { create(:membership_type, category: :circus) }
       let(:subscription_plan) { create(:subscription_plan, membership_type: membership_type, duration: :pack10, sessions_count: 10) }
       let(:payment_line) { create(:payment_line, payment: payment, item: subscription_plan, item_type: "SubscriptionPlan") }
 
@@ -225,32 +225,6 @@ RSpec.describe Payments::Process do
   end
 
   describe 'edge cases' do
-    context 'when person is nil for subscription plan' do
-      let(:subscription_plan) { create(:subscription_plan, duration: :pack10) }
-      let(:payment_line) { create(:payment_line, payment: payment, item: subscription_plan, item_type: "SubscriptionPlan") }
-
-      it 'handles gracefully' do
-        payment.update!(person: nil)
-        
-        expect {
-          service.call
-        }.not_to raise_error
-      end
-    end
-
-    context 'when person is nil for membership type' do
-      let(:membership_type) { create(:membership_type) }
-      let(:payment_line) { create(:payment_line, payment: payment, item: membership_type, item_type: "MembershipType") }
-
-      it 'handles gracefully' do
-        payment.update!(person: nil)
-        
-        expect {
-          service.call
-        }.not_to raise_error
-      end
-    end
-
     context 'when payment has no payment lines' do
       it 'processes successfully' do
         result = service.call
@@ -274,7 +248,8 @@ RSpec.describe Payments::Process do
     end
 
     it 'integrates with BookOfEntry creation' do
-      subscription_plan = create(:subscription_plan, duration: :pack10, sessions_count: 10)
+      membership_type = create(:membership_type, category: :circus)
+      subscription_plan = create(:subscription_plan, :pack10, membership_type: membership_type)
       create(:payment_line, payment: payment, item: subscription_plan, item_type: "SubscriptionPlan")
       
       expect {

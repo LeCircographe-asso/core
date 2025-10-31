@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe SubscriptionPlan, type: :model do
   describe 'validations' do
-    let(:circus_membership_type) { create(:membership_type, :circus_full) }
+    let(:circus_membership_type) { create(:membership_type, category: :circus) }
 
     it "can be created" do
       plan = SubscriptionPlan.new(
@@ -144,7 +144,7 @@ RSpec.describe SubscriptionPlan, type: :model do
   end
 
   describe 'associations' do
-    let(:circus_membership_type) { create(:membership_type, :circus_full) }
+    let(:circus_membership_type) { create(:membership_type, category: :circus) }
     let(:plan) { create(:subscription_plan, membership_type: circus_membership_type) }
 
     it "belongs to a membership_type" do
@@ -170,7 +170,7 @@ RSpec.describe SubscriptionPlan, type: :model do
   end
 
   describe 'enums' do
-    let(:circus_membership_type) { create(:membership_type, :circus_full) }
+    let(:circus_membership_type) { create(:membership_type, category: :circus) }
 
     it "has correct duration enum values" do
       day_plan = build(:subscription_plan, membership_type: circus_membership_type, duration: :day)
@@ -188,7 +188,7 @@ RSpec.describe SubscriptionPlan, type: :model do
   end
 
   describe 'instance methods' do
-    let(:circus_membership_type) { create(:membership_type, :circus_full) }
+    let(:circus_membership_type) { create(:membership_type, category: :circus) }
     let(:basic_membership_type) { create(:membership_type, :basic) }
 
     describe 'type checkers' do
@@ -420,8 +420,8 @@ RSpec.describe SubscriptionPlan, type: :model do
   end
 
   describe 'scopes' do
-    let(:circus_full_type) { create(:membership_type, :circus_full) }
-    let(:circus_reduced_type) { create(:membership_type, :circus_reduced) }
+      let(:circus_full_type) { create(:membership_type, category: :circus, name: "Adhésion Cirque Complète", price_cents: 2500) }
+      let(:circus_reduced_type) { create(:membership_type, category: :circus, name: "Adhésion Cirque Réduite", price_cents: 2000) }
     let(:basic_type) { create(:membership_type, :basic) }
 
     describe '.for_circus_members' do
@@ -528,7 +528,7 @@ RSpec.describe SubscriptionPlan, type: :model do
   end
 
   describe 'Priceable concern' do
-    let(:circus_membership_type) { create(:membership_type, :circus_full) }
+    let(:circus_membership_type) { create(:membership_type, category: :circus) }
 
     describe '#price_euros' do
       it "converts price_cents to euros correctly" do
@@ -567,7 +567,7 @@ RSpec.describe SubscriptionPlan, type: :model do
   end
 
   describe 'Versionable concern' do
-    let(:circus_membership_type) { create(:membership_type, :circus_full) }
+    let(:circus_membership_type) { create(:membership_type, category: :circus) }
 
     describe '#current_version?' do
       it "returns true when effective_until is nil" do
@@ -618,8 +618,8 @@ RSpec.describe SubscriptionPlan, type: :model do
 
   describe 'class methods' do
     describe '.create_default_plans!' do
-      let!(:circus_full_type) { create(:membership_type, :circus_full) }
-      let!(:circus_reduced_type) { create(:membership_type, :circus_reduced) }
+      let!(:circus_full_type) { create(:membership_type, category: :circus, name: "Adhésion Cirque Complète", price_cents: 2500) }
+      let!(:circus_reduced_type) { create(:membership_type, category: :circus, name: "Adhésion Cirque Réduite", price_cents: 2000) }
 
       context 'when no plans exist' do
         it "creates all default plans for circus_full" do

@@ -3,8 +3,8 @@ require 'rails_helper'
 RSpec.describe Memberships::Upgrade do
   let(:person) { create(:person) }
   let(:basic_membership_type) { create(:membership_type, category: :basic) }
-  let(:circus_full_membership_type) { create(:membership_type, category: :circus_full) }
-  let(:circus_reduced_membership_type) { create(:membership_type, category: :circus_reduced) }
+  let(:circus_full_membership_type) { create(:membership_type, category: :circus, name: "Adhésion Cirque Complète", price_cents: 2500) }
+  let(:circus_reduced_membership_type) { create(:membership_type, category: :circus, name: "Adhésion Cirque Réduite", price_cents: 2000) }
   let(:basic_membership) { create(:membership, person: person, membership_type: basic_membership_type, status: :active) }
 
   describe '#call' do

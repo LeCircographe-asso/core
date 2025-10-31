@@ -3,7 +3,7 @@ require 'rails_helper'
 RSpec.describe Attendance, type: :model do
   let(:person) { create(:person) }
   let(:event) { create(:event) }
-  let(:circus_membership_type) { create(:membership_type, :circus_full) }
+  let(:circus_membership_type) { create(:membership_type, category: :circus) }
   let(:pack10_plan) { create(:subscription_plan, :pack10, membership_type: circus_membership_type) }
 
   describe "associations" do

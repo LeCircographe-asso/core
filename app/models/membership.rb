@@ -25,7 +25,13 @@ class Membership < ApplicationRecord
   # Attribut pour skip validation dans certains cas (upgrades, tests)
   attr_accessor :skip_overlap_validation
 
-  # (expired? maintenant dans le module Statusable)
+  # Status methods from Statusable module
+  # expired? checks status == "expired"
+  # expired_by_date? checks if ended_at is in the past
+  
+  def expired_by_date?
+    Date.current > ended_at
+  end
 
   def can_upgrade_to?(membership_type)
     # Un membre Basic peut passer à Circus
@@ -51,30 +57,32 @@ class Membership < ApplicationRecord
     # Préserver la date de première adhésion
     first_joined = first_joined_at || started_at
 
-    # Créer la nouvelle adhésion
-    new_membership = person.memberships.build(
-      membership_type: new_membership_type,
-      started_at: started_at,
-      ended_at: started_at + 1.year,
-      status: :active,
-      first_joined_at: first_joined,
-      skip_overlap_validation: true
-    )
-    new_membership.save!
+    # Perform upgrade in transaction for atomicity
+    transaction do
+      # 1. Mark current membership as inactive FIRST
+      update!(status: :inactive)
 
-    # Marquer l'ancienne comme inactive
-    update!(status: :inactive)
+      # 2. Create new membership (won't overlap since old one is now inactive)
+      new_membership = person.memberships.create!(
+        membership_type: new_membership_type,
+        started_at: started_at,
+        ended_at: started_at + 1.year,
+        status: :active,
+        first_joined_at: first_joined
+      )
 
-    new_membership
+      new_membership
+    end
   end
 
   # Scopes
   scope :current, -> { where("started_at <= ? AND ended_at >= ?", Date.current, Date.current) }
   scope :active, -> { where(status: :active) }
   scope :expired, -> { where(status: :expired) }
+  scope :expired_by_date, -> { where("ended_at < ?", Date.current) }
   scope :inactive, -> { where(status: :inactive) }
   scope :basic, -> { joins(:membership_type).where(membership_types: { category: :basic }) }
-  scope :circus, -> { joins(:membership_type).where(membership_types: { category: [ :circus_full, :circus_reduced ] }) }
+  scope :circus, -> { joins(:membership_type).where(membership_types: { category: :circus }) }
 
   private
 

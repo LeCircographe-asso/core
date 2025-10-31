@@ -3,9 +3,10 @@ namespace :db do
   task create_subscription_plans: :environment do
     puts "🎫 Creating subscription plans..."
     
-    # Récupérer les types d'adhésion
-    circus_full_type = MembershipType.find_by(category: :circus_full)
-    circus_reduced_type = MembershipType.find_by(category: :circus_reduced)
+    # Récupérer les types d'adhésion Circus (maintenant category = circus, différenciés par nom/prix)
+    circus_types = MembershipType.where(category: :circus).order(price_cents: :desc)
+    circus_full_type = circus_types.first  # Le plus cher (Tarif Plein)
+    circus_reduced_type = circus_types.last # Le moins cher (Tarif Réduit)
     
     if circus_full_type.nil? || circus_reduced_type.nil?
       puts "❌ Membership types not found. Please run rails db:seed first."

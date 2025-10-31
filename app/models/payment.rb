@@ -7,11 +7,6 @@ class Payment < ApplicationRecord
   belongs_to :person
   belongs_to :recorded_by, class_name: "User"
   has_many :payment_lines, dependent: :destroy
-
-  # Relations conservées pour compatibilité (à supprimer progressivement)
-  belongs_to :user, optional: true
-  belongs_to :order, optional: true
-  has_many :product_orders, through: :order
   has_many :payment_audit_logs, dependent: :destroy
 
   enum :status, %i[success pending cancel], default: :pending
@@ -31,7 +26,7 @@ class Payment < ApplicationRecord
   # Class method to get total successful payments amount
   def self.total_successful_amount
     Rails.cache.fetch("total_successful_payments", expires_in: 1.hour) do
-      where(status: :success).distinct.sum(:total_cents)
+      where(status: :success).sum(:total_cents)
     end
   end
 
@@ -87,9 +82,9 @@ class Payment < ApplicationRecord
   end
 
   def process_payment
-    # Cette méthode sera appelée par le service PaymentProcessing::PaymentProcessor
+    # Cette méthode est déléguée au service Payments::Process
     # pour traiter les callbacks complexes
-    PaymentProcessing::PaymentProcessor.new(self).call
+    Payments::Process.new(self).call
   end
 
   # Generate a UUID for the payment

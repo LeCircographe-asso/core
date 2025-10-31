@@ -142,20 +142,17 @@ RSpec.describe Membership, type: :model do
   end
 
   describe '#expired?' do
-    it "returns true when ended_at is in the past" do
-      membership = create(:membership, started_at: Date.current - 1.year, ended_at: Date.current - 1.day)
+    it "returns true when status is expired" do
+      membership = create(:membership, status: :expired)
       expect(membership.expired?).to be true
     end
 
-    it "returns false when ended_at is in the future" do
-      membership = create(:membership, started_at: Date.current, ended_at: Date.current + 1.day)
+    it "returns false when status is active" do
+      membership = create(:membership, status: :active)
       expect(membership.expired?).to be false
     end
 
-    it "returns false when ended_at is today" do
-      membership = create(:membership, started_at: Date.current - 1.month, ended_at: Date.current)
-      expect(membership.expired?).to be false
-    end
+    # Note: expired? checks status, not dates. Date-based expiry is handled by scopes
   end
 
   describe '#basic?' do
@@ -166,21 +163,21 @@ RSpec.describe Membership, type: :model do
     end
 
     it "returns false for circus membership type" do
-      membership_type = create(:membership_type, category: :circus_full)
+      membership_type = create(:membership_type, category: :circus)
       membership = create(:membership, membership_type: membership_type)
       expect(membership.basic?).to be false
     end
   end
 
   describe '#circus?' do
-    it "returns true for circus_full membership type" do
-      membership_type = create(:membership_type, category: :circus_full)
+    it "returns true for circus membership type (Full tarif)" do
+      membership_type = create(:membership_type, :circus)
       membership = create(:membership, membership_type: membership_type)
       expect(membership.circus?).to be true
     end
 
-    it "returns true for circus_reduced membership type" do
-      membership_type = create(:membership_type, category: :circus_reduced)
+    it "returns true for circus membership type (Reduced tarif)" do
+      membership_type = create(:membership_type, :circus_reduced)
       membership = create(:membership, membership_type: membership_type)
       expect(membership.circus?).to be true
     end
@@ -195,25 +192,25 @@ RSpec.describe Membership, type: :model do
   describe '#can_upgrade_to?' do
     let(:person) { create(:person) }
     let(:basic_type) { create(:membership_type, category: :basic) }
-    let(:circus_full_type) { create(:membership_type, category: :circus_full) }
-    let(:circus_reduced_type) { create(:membership_type, category: :circus_reduced) }
+    let(:circus_full_type) { create(:membership_type, :circus) }
+    let(:circus_reduced_type) { create(:membership_type, :circus_reduced) }
 
-    it "allows basic to upgrade to circus_full" do
+    it "allows basic to upgrade to circus (Full tarif)" do
       membership = create(:membership, person: person, membership_type: basic_type)
       expect(membership.can_upgrade_to?(circus_full_type)).to be true
     end
 
-    it "allows basic to upgrade to circus_reduced" do
+    it "allows basic to upgrade to circus (Reduced tarif)" do
       membership = create(:membership, person: person, membership_type: basic_type)
       expect(membership.can_upgrade_to?(circus_reduced_type)).to be true
     end
 
-    it "allows circus_full to upgrade to circus_reduced" do
+    it "allows circus Full to upgrade to circus Reduced" do
       membership = create(:membership, person: person, membership_type: circus_full_type)
       expect(membership.can_upgrade_to?(circus_reduced_type)).to be true
     end
 
-    it "allows circus_reduced to upgrade to circus_full" do
+    it "allows circus Reduced to upgrade to circus Full" do
       membership = create(:membership, person: person, membership_type: circus_reduced_type)
       expect(membership.can_upgrade_to?(circus_full_type)).to be true
     end
@@ -232,7 +229,7 @@ RSpec.describe Membership, type: :model do
   describe '#upgrade_to!' do
     let(:person) { create(:person) }
     let(:basic_type) { create(:membership_type, category: :basic) }
-    let(:circus_type) { create(:membership_type, category: :circus_full) }
+    let(:circus_type) { create(:membership_type, category: :circus) }
     let(:original_first_joined_at) { Date.current - 6.months }
 
     it "upgrades membership successfully" do

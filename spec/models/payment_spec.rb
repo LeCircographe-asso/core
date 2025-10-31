@@ -126,11 +126,16 @@ RSpec.describe Payment, type: :model do
   end
 
   describe 'class methods' do
-    let!(:success_payment1) { create(:payment, status: :success, total_cents: 1500) }
-    let!(:success_payment2) { create(:payment, status: :success, total_cents: 2500) }
-    let!(:pending_payment) { create(:payment, status: :pending, total_cents: 1000) }
-
     describe '.total_successful_amount' do
+      before do
+        # Clear cache before test
+        Rails.cache.clear
+      end
+
+      let!(:success_payment1) { create(:payment, status: :success, total_cents: 1500) }
+      let!(:success_payment2) { create(:payment, status: :success, total_cents: 2500) }
+      let!(:pending_payment) { create(:payment, status: :pending, total_cents: 1000) }
+
       it "returns total amount of successful payments" do
         expect(Payment.total_successful_amount).to eq(4000) # 1500 + 2500
       end
@@ -173,10 +178,10 @@ RSpec.describe Payment, type: :model do
     end
 
     it "returns item description when payment has other lines" do
-      membership_type = create(:membership_type)
+      membership_type = create(:membership_type, name: "Adhésion Cirque")
       create(:payment_line, payment: payment, item: membership_type, item_type: "MembershipType")
       
-      expect(payment.payment_type).to eq("Adhésion #{membership_type.name}")
+      expect(payment.payment_type).to eq("Adhésion Cirque")
     end
 
     it "returns 'Autre' when payment has no lines" do
@@ -184,17 +189,17 @@ RSpec.describe Payment, type: :model do
     end
   end
 
-  describe '#total_euros' do
+  describe '#price_euros (from Priceable)' do
     it "converts cents to euros" do
       payment = Payment.new(total_cents: 1500)
-      expect(payment.total_euros).to eq(15.0)
+      expect(payment.price_euros).to eq(15.0)
     end
   end
 
-  describe '#total_euros=' do
+  describe '#price_euros= (from Priceable)' do
     it "converts euros to cents" do
       payment = Payment.new
-      payment.total_euros = 15.50
+      payment.price_euros = 15.50
       expect(payment.total_cents).to eq(1550)
     end
   end
@@ -293,14 +298,14 @@ RSpec.describe Payment, type: :model do
     let(:payment) { create(:payment, person: person, recorded_by: user) }
 
     it "returns true when payment has pack subscription plan lines" do
-      subscription_plan = create(:subscription_plan, duration: :pack10)
+      subscription_plan = create(:subscription_plan, :pack10)
       create(:payment_line, payment: payment, item: subscription_plan, item_type: "SubscriptionPlan")
       
       expect(payment.carnet_related?).to be true
     end
 
     it "returns false when payment has no pack subscription plan lines" do
-      subscription_plan = create(:subscription_plan, duration: :annual)
+      subscription_plan = create(:subscription_plan, :annual)
       create(:payment_line, payment: payment, item: subscription_plan, item_type: "SubscriptionPlan")
       
       expect(payment.carnet_related?).to be false

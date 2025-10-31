@@ -120,7 +120,8 @@ class Person < ApplicationRecord
 
   def can_buy_subscription_plans?
     # Seuls les membres Circus peuvent acheter des plans d'abonnement
-    current_membership&.membership_type&.circus?
+    return false unless current_membership
+    current_membership.membership_type.circus?
   end
 
   def minor?
@@ -251,7 +252,7 @@ class Person < ApplicationRecord
       if member_number.blank?
         # Normaliser la catégorie pour la génération du numéro
         normalized_category = case membership_type.category
-        when 'circus_full', 'circus_reduced'
+        when 'circus'
           'CIRQUE'
         when 'basic'
           'BASIQUE'
@@ -465,7 +466,7 @@ class Person < ApplicationRecord
   # Obtenir le code de type d'adhésion pour la génération de numéro
   def get_membership_type_code(membership_type)
     case membership_type.category
-    when 'circus_full', 'circus_reduced'
+    when 'circus'
       'CIRQUE'
     when 'basic'
       'BASIQUE'
@@ -477,7 +478,7 @@ class Person < ApplicationRecord
   # Obtenir le nom de type d'adhésion pour l'historique
   def get_membership_type_name(membership_type)
     case membership_type.category
-    when 'circus_full', 'circus_reduced'
+    when 'circus'
       'Cirque'
     when 'basic'
       'Basique'
