@@ -1,19 +1,19 @@
 FactoryBot.define do
   factory :subscription_plan do
     association :membership_type
-    name { "#{duration.to_s.humanize} Plan" }
-    duration { [ :day, :trimester, :annual, :pack10 ].sample }
-    price_cents { [ 800, 6000, 20000, 7000 ].sample }
+    sequence(:name) { |n| "Test Plan #{n}" }
+    duration { :day }
+    price_cents { 800 }
     description { Faker::Lorem.paragraph }
     version { 1 }
     effective_from { Date.current }
     effective_until { nil }
-    sessions_count { duration == :pack10 ? 10 : nil }
-    validity_days { duration == :pack10 ? 365 : nil }
+    sessions_count { nil }
+    validity_days { nil }
 
     trait :day do
       duration { :day }
-      name { "Journée" }
+      sequence(:name) { |n| "Journée #{n}" }
       price_cents { 800 }
       sessions_count { nil }
       validity_days { nil }
@@ -21,7 +21,7 @@ FactoryBot.define do
 
     trait :trimester do
       duration { :trimester }
-      name { "Trimestre" }
+      sequence(:name) { |n| "Trimestre #{n}" }
       price_cents { 6000 }
       sessions_count { nil }
       validity_days { nil }
@@ -29,7 +29,7 @@ FactoryBot.define do
 
     trait :annual do
       duration { :annual }
-      name { "Annuel" }
+      sequence(:name) { |n| "Annuel #{n}" }
       price_cents { 20000 }
       sessions_count { nil }
       validity_days { nil }
@@ -37,7 +37,7 @@ FactoryBot.define do
 
     trait :pack10 do
       duration { :pack10 }
-      name { "Pack 10 séances" }
+      sequence(:name) { |n| "Pack 10 séances #{n}" }
       price_cents { 7000 }
       sessions_count { 10 }
       validity_days { 365 }

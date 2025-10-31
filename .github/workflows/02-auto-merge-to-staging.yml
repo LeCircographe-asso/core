@@ -1,0 +1,80 @@
+name: 02 - Auto Merge to Staging
+
+on:
+  workflow_run:
+    workflows: ["01 - CI & Tests"]
+    types:
+      - completed
+    branches:
+      - dev
+
+permissions:
+  contents: write
+
+jobs:
+  merge-to-staging:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+    
+    - name: Configure Git
+      run: |
+        git config user.name "GitHub Actions Bot"
+        git config user.email "actions@github.com"
+    
+    - name: Check if staging needs update
+      id: check-branches
+      run: |
+        echo "Current branch: $(git rev-parse --abbrev-ref HEAD)"
+        echo "Dev HEAD: $(git rev-parse dev)"
+        echo "Staging HEAD: $(git rev-parse staging || echo 'staging does not exist')"
+        
+        # Check if staging exists
+        if ! git rev-parse --verify staging >/dev/null 2>&1; then
+          echo "create_staging=true" >> $GITHUB_OUTPUT
+          echo "📦 Staging branch does not exist, will create it"
+          exit 0
+        fi
+        
+        # Check if staging is behind dev
+        git fetch origin staging:staging || true
+        STAGING_HEAD=$(git rev-parse staging)
+        DEV_HEAD=$(git rev-parse dev)
+        
+        if [ "$STAGING_HEAD" != "$DEV_HEAD" ]; then
+          echo "needs_update=true" >> $GITHUB_OUTPUT
+          echo "📦 Staging branch needs update (behind dev)"
+        else
+          echo "needs_update=false" >> $GITHUB_OUTPUT
+          echo "✅ Staging is already up to date"
+        fi
+    
+    - name: Create or update staging branch
+      if: ${{ steps.check-branches.outputs.create_staging == 'true' || steps.check-branches.outputs.needs_update == 'true' }}
+      run: |
+        git fetch origin dev:dev
+        if git rev-parse --verify staging >/dev/null 2>&1; then
+          git checkout staging
+          git reset --hard dev
+        else
+          git checkout -B staging dev
+        fi
+        git push origin staging --force-with-lease
+        
+        echo "✅ Staging branch updated from dev"
+    
+    - name: Summary
+      run: |
+        echo "## ✅ Auto-merge Summary" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "- **Source:** dev branch" >> $GITHUB_STEP_SUMMARY
+        echo "- **Target:** staging branch" >> $GITHUB_STEP_SUMMARY
+        echo "- **Trigger:** CI tests passed" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "🚀 Staging deployment will be triggered automatically"
+

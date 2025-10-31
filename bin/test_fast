@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# bin/test_fast - Run fast tests only (models + services, no integration)
+#
+# Usage:
+#   bin/test_fast                 # Run fast tests only
+
+APP_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+cd "$APP_ROOT"
+
+echo "⚡ Running fast tests (models + services only)..."
+
+# Run only model and service specs (fast tests)
+bundle exec rspec spec/models spec/services --exclude-pattern="spec/disabled/**/*_spec.rb" --format documentation --format progress
+
+echo "✅ Fast tests completed"
+

@@ -1,37 +1,200 @@
 require 'rails_helper'
 
 RSpec.describe Event, type: :model do
-  it "can be created" do
-    event = Event.new(name: "Test Event", date: Date.today, category: :show)
-    expect(event).to be_present
+  let(:creator) { create(:user) }
+  let(:event) { create(:event, creator: creator) }
+  let(:person) { create(:person) }
+
+  describe "associations" do
+    it { should belong_to(:creator).class_name("User") }
+    it { should have_many(:attendances).dependent(:destroy) }
+    it { should have_many(:people).through(:attendances) }
   end
 
-  it "requires a name" do
-    event = Event.new(date: Date.today, category: :show)
-    expect(event).not_to be_valid
-    expect(event.errors[:name]).to include("can't be blank")
+  describe "validations" do
+    it "validates presence of name" do
+      event = build(:event, name: nil)
+      expect(event).not_to be_valid
+      expect(event.errors[:name]).to include("can't be blank")
+    end
+
+    it "validates presence of date" do
+      event = build(:event, date: nil)
+      expect(event).not_to be_valid
+      expect(event.errors[:date]).to include("can't be blank")
+    end
+
+    it "validates presence of category" do
+      event = build(:event, category: nil)
+      expect(event).not_to be_valid
+      expect(event.errors[:category]).to include("can't be blank")
+    end
   end
 
-  it "requires a date" do
-    event = Event.new(name: "Test Event", category: :show)
-    expect(event).not_to be_valid
-    expect(event.errors[:date]).to include("can't be blank")
+  describe "enums" do
+    it "defines category enum" do
+      expect(Event.categories).to eq({
+        'show' => 0,
+        'workshop' => 1,
+        'volunteering' => 2,
+        'other' => 3
+      })
+    end
+
+    it "can be created with show category" do
+      event = create(:event, :show)
+      expect(event.show?).to be true
+    end
+
+    it "can be created with workshop category" do
+      event = create(:event, :workshop)
+      expect(event.workshop?).to be true
+    end
+
+    it "can be created with volunteering category" do
+      event = create(:event, :volunteering)
+      expect(event.volunteering?).to be true
+    end
+
+    it "can be created with other category" do
+      event = create(:event, :other)
+      expect(event.other?).to be true
+    end
   end
 
-  it "has a default category" do
-    event = Event.new(name: "Test Event", date: Date.today)
-    # Les enums Rails ont souvent une valeur par défaut, donc on teste juste qu'il y en a une
-    expect(event.category).to be_present
+  describe "scopes" do
+    let!(:show_event) { create(:event, :show) }
+    let!(:workshop_event) { create(:event, :workshop) }
+    let!(:volunteering_event) { create(:event, :volunteering) }
+    let!(:other_event) { create(:event, :other) }
+    let!(:upcoming_event) { create(:event, :upcoming) }
+    let!(:past_event) { create(:event, :past) }
+
+    describe ".shows" do
+      it "returns only show events" do
+        expect(Event.shows).to include(show_event)
+        expect(Event.shows).not_to include(workshop_event, volunteering_event, other_event)
+      end
+    end
+
+    describe ".workshops" do
+      it "returns only workshop events" do
+        expect(Event.workshops).to include(workshop_event)
+        expect(Event.workshops).not_to include(show_event, volunteering_event, other_event)
+      end
+    end
+
+    describe ".volunteering" do
+      it "returns only volunteering events" do
+        expect(Event.volunteering).to include(volunteering_event)
+        expect(Event.volunteering).not_to include(show_event, workshop_event, other_event)
+      end
+    end
+
+    describe ".others" do
+      it "returns only other events" do
+        expect(Event.others).to include(other_event)
+        expect(Event.others).not_to include(show_event, workshop_event, volunteering_event)
+      end
+    end
+
+    describe ".upcoming" do
+      it "returns only future events" do
+        expect(Event.upcoming).to include(upcoming_event)
+        expect(Event.upcoming).not_to include(past_event)
+      end
+    end
+
+    describe ".past" do
+      it "returns only past events" do
+        expect(Event.past).to include(past_event)
+        expect(Event.past).not_to include(upcoming_event)
+      end
+    end
+
+    describe ".by_date" do
+      it "orders events by date" do
+        events = Event.by_date
+        dates = events.pluck(:date)
+        expect(dates).to eq(dates.sort)
+      end
+    end
   end
 
-  it "has valid categories" do
-    event = Event.new(name: "Test Event", date: Date.today, category: :show)
-    expect(event.category).to eq("show")
+  describe "#is_person_registered?" do
+    it "returns false when person is not registered" do
+      expect(event.is_person_registered?(person)).to be false
+    end
+
+    it "returns true when person is registered" do
+      create(:attendance, event: event, person: person)
+      expect(event.is_person_registered?(person)).to be true
+    end
   end
 
-  it "can check if a person is registered" do
-    person = create(:person)
-    event = create(:event)
-    expect(event.is_person_registered?(person)).to be_falsey
+  describe "#is_user_registered?" do
+    context "with user having person" do
+      let(:user_with_person) { create(:user, person: person) }
+
+      it "uses person registration" do
+        create(:attendance, event: event, person: person)
+        expect(event.is_user_registered?(user_with_person)).to be true
+      end
+    end
+
+    context "with user without person" do
+      let(:user_without_person) { create(:user, person: nil) }
+
+      it "returns false (no legacy event_attendees)" do
+        expect(event.is_user_registered?(user_without_person)).to be false
+      end
+    end
+  end
+
+  describe "#title and #title=" do
+    it "aliases name to title" do
+      event = create(:event, name: "Test Event")
+      expect(event.title).to eq("Test Event")
+    end
+
+    it "allows setting name via title=" do
+      event = create(:event)
+      event.title = "New Title"
+      expect(event.name).to eq("New Title")
+    end
+  end
+
+  describe "#full_description" do
+    context "with description present" do
+      it "returns description" do
+        event = create(:event, description: "Main description")
+        expect(event.full_description).to eq("Main description")
+      end
+    end
+
+    context "without description but with upper/middle/bottom" do
+      it "joins all description parts" do
+        event = create(:event, 
+                       description: nil,
+                       upper_description: "Upper",
+                       middle_description: "Middle",
+                       bottom_description: "Bottom")
+        result = event.full_description
+        expect(result).to include("Upper")
+        expect(result).to include("Middle")
+        expect(result).to include("Bottom")
+      end
+    end
+
+    context "with no description at all" do
+      it "returns empty string" do
+        event = create(:event, 
+                       description: nil,
+                       upper_description: nil,
+                       middle_description: nil,
+                       bottom_description: nil)
+        expect(event.full_description).to eq("")
+      end
+    end
   end
 end

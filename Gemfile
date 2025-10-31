@@ -53,9 +53,7 @@ group :development, :test do
   # RSpec testing framework - ESSENTIELS
   gem "rspec-rails", "~> 8.0.2"
   gem "factory_bot_rails"
-  
-  # OPTIONNELS - On peut les ajouter petit à petit
-  # gem "shoulda-matchers"  # Pour tester les validations Rails
+  gem "shoulda-matchers"  # Pour tester les validations Rails
   # gem "database_cleaner-active_record"  # Nettoyage de DB entre tests
   # gem "rails-controller-testing"  # Tests de contrôleurs (rspec le fait déjà)
 end
@@ -73,7 +71,7 @@ group :test do
   # OPTIONNELS - On peut les ajouter petit à petit
   # gem "capybara"  # Tests d'intégration navigateur (Rails a déjà system tests)
   # gem "selenium-webdriver"  # Automatisation navigateur (utilisé par capybara)
-  # gem "simplecov", require: false  # Couverture de code
+  gem "simplecov", require: false  # Couverture de code
 end
 
 # Deployment

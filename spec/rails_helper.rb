@@ -7,7 +7,7 @@ abort("The Rails environment is running in production mode!") if Rails.env.produ
 require 'rspec/rails'
 # Add additional requires below this line. Rails is not loaded until this point!
 require 'factory_bot_rails'
-# require 'shoulda/matchers'  # Commenté - on peut l'ajouter plus tard
+require 'shoulda/matchers'
 # require 'database_cleaner/active_record'  # Commenté - on peut l'ajouter plus tard
 
 # Requires supporting ruby files with custom matchers and macros, etc, in
@@ -86,10 +86,10 @@ RSpec.configure do |config|
   # config.filter_gems_from_backtrace("gem name")
 end
 
-# Configure Shoulda Matchers - Commenté pour simplifier
-# Shoulda::Matchers.configure do |config|
-#   config.integrate do |with|
-#     with.test_framework :rspec
-#     with.library :rails
-#   end
-# end
+# Configure Shoulda Matchers
+Shoulda::Matchers.configure do |config|
+  config.integrate do |with|
+    with.test_framework :rspec
+    with.library :rails
+  end
+end

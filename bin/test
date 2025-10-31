@@ -1,0 +1,48 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# bin/test - Run all tests with coverage report
+#
+# Usage:
+#   bin/test                    # Run all tests
+#   bin/test spec/models        # Run specific specs
+#   bin/test --no-coverage      # Run without coverage
+
+APP_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+cd "$APP_ROOT"
+
+# Check if SimpleCov coverage is enabled
+COVERAGE="${COVERAGE:-true}"
+
+# Parse arguments
+SPECS=""
+NO_COVERAGE=false
+
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --no-coverage)
+      NO_COVERAGE=true
+      shift
+      ;;
+    *)
+      SPECS="$SPECS $1"
+      shift
+      ;;
+  esac
+done
+
+# Default to all specs if none provided
+SPECS="${SPECS:-spec/}"
+
+# Set coverage environment variable
+if [ "$NO_COVERAGE" = true ]; then
+  export COVERAGE=false
+  echo "🧪 Running tests without coverage..."
+else
+  export COVERAGE=true
+  echo "🧪 Running tests with coverage..."
+fi
+
+# Run the tests
+exec bundle exec rspec $SPECS --exclude-pattern="spec/disabled/**/*_spec.rb" --format documentation
+

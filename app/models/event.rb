@@ -6,6 +6,7 @@ class Event < ApplicationRecord
   belongs_to :creator, class_name: "User"
   has_many :attendances, dependent: :destroy
   has_many :people, through: :attendances
+  has_many :event_attendees, dependent: :destroy  # Legacy support
   # Validations
   validates :name, :date, presence: true
   validates :category, presence: true
