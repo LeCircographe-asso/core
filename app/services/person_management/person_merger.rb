@@ -3,17 +3,18 @@ require "ostruct"
 module PersonManagement
   class PersonMerger
     include ActiveModel::Model
-    include ActiveModel::Attributes
 
-    attribute :source, :object # Person à fusionner (supprimée)
-    attribute :target, :object # Person cible (conservée)
-    attribute :actor, :object # User qui effectue la fusion
-    attribute :merge_type, :string, default: "admin_merge"
+    attr_accessor :source, :target, :actor
+    attr_writer :merge_type
 
     validates :source, presence: true
     validates :target, presence: true
     validates :actor, presence: true
     validates :merge_type, inclusion: { in: %w[admin_merge duplicate_cleanup] }
+    
+    def merge_type
+      @merge_type ||= "admin_merge"
+    end
 
     def call
       return failure("Invalid data: #{errors.full_messages.join(', ')}") unless valid?
