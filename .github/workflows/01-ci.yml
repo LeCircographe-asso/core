@@ -45,7 +45,25 @@ jobs:
       if: ${{ github.event.inputs.test_type == 'all' || github.event.inputs.test_type == 'tests_only' || github.event.inputs.test_type == '' }}
       run: |
         bundle exec rails db:create db:migrate
-        bundle exec rspec --exclude-pattern="spec/disabled/**/*_spec.rb"
+        bundle exec rspec --exclude-pattern="spec/disabled/**/*_spec.rb" --format documentation --format json --out tmp/rspec_results.json
+    
+    - name: Generate coverage report
+      if: ${{ github.event.inputs.test_type == 'all' || github.event.inputs.test_type == 'tests_only' || github.event.inputs.test_type == '' }}
+      run: |
+        echo "📊 Coverage Report"
+        cat coverage/.last_run.json | grep -A 2 '"result"' || echo "No coverage data"
+        
+    - name: Check coverage threshold
+      if: ${{ github.event.inputs.test_type == 'all' || github.event.inputs.test_type == 'tests_only' || github.event.inputs.test_type == '' }}
+      run: |
+        COVERAGE=$(cat coverage/.last_run.json | grep '"line"' | head -1 | cut -d':' -f2 | tr -d ' ,}')
+        echo "Current coverage: ${COVERAGE}%"
+        if (( $(echo "$COVERAGE < 10" | bc -l) )); then
+          echo "❌ Coverage below 10% threshold! Current: ${COVERAGE}%"
+          exit 1
+        else
+          echo "✅ Coverage meets minimum threshold"
+        fi
         
     - name: Run linting
       if: ${{ github.event.inputs.test_type == 'all' || github.event.inputs.test_type == 'lint_only' || github.event.inputs.test_type == '' }}

@@ -35,7 +35,7 @@
 
 /app/assets/builds/*
 !/app/assets/builds/.keep
-/docs
+# /docs - Commented out, we want to track TDD documentation
 /node_modules
 /.cursorrules
 /.cert

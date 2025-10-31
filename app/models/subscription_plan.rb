@@ -127,37 +127,45 @@ class SubscriptionPlan < ApplicationRecord
 
     circus_types.each do |membership_type|
       # Plan journée
-      find_or_create_by(name: "Journée - #{membership_type.name}") do |sp|
+      find_or_create_by(name: "Journée - #{membership_type.name}", version: 1) do |sp|
         sp.membership_type = membership_type
         sp.duration = :day
         sp.price_cents = 800 # 8€
         sp.description = "Accès aux cours pour une journée"
+        sp.version = 1
+        sp.effective_from = Date.current
       end
 
       # Plan trimestre
-      find_or_create_by(name: "Trimestre - #{membership_type.name}") do |sp|
+      find_or_create_by(name: "Trimestre - #{membership_type.name}", version: 1) do |sp|
         sp.membership_type = membership_type
         sp.duration = :trimester
         sp.price_cents = 6000 # 60€
         sp.description = "Accès aux cours pendant 3 mois"
+        sp.version = 1
+        sp.effective_from = Date.current
       end
 
       # Plan annuel
-      find_or_create_by(name: "Annuel - #{membership_type.name}") do |sp|
+      find_or_create_by(name: "Annuel - #{membership_type.name}", version: 1) do |sp|
         sp.membership_type = membership_type
         sp.duration = :annual
         sp.price_cents = 20000 # 200€
         sp.description = "Accès aux cours pendant 1 an"
+        sp.version = 1
+        sp.effective_from = Date.current
       end
 
       # Pack 10 séances
-      find_or_create_by(name: "Pack 10 séances - #{membership_type.name}") do |sp|
+      find_or_create_by(name: "Pack 10 séances - #{membership_type.name}", version: 1) do |sp|
         sp.membership_type = membership_type
         sp.duration = :pack10
         sp.price_cents = 7000 # 70€
         sp.sessions_count = 10
         sp.validity_days = 365
         sp.description = "10 séances valables 1 an"
+        sp.version = 1
+        sp.effective_from = Date.current
       end
     end
   end

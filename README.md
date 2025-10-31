@@ -7,6 +7,7 @@
   ![Version](https://img.shields.io/badge/version-1.3.0-blue)
   ![Rails](https://img.shields.io/badge/Rails-8.1.1-red)
   ![License](https://img.shields.io/badge/license-MIT-green)
+  ![Tests](https://img.shields.io/badge/tests-10.42%25-yellow)
 </div>
 
 ## 🎯 Vue d'ensemble
@@ -42,6 +43,21 @@ http://localhost:3000
 ./scripts/server-pull.sh [staging|production] [SERVER_IP]
 ```
 
+**🧪 Tests :**
+```bash
+# Lancer tous les tests avec couverture
+bin/test
+
+# Tests rapides (models + services)
+bin/test_fast
+
+# Mode watch pour TDD (requiert Guard)
+bin/test_watch
+
+# Sans couverture (plus rapide)
+bin/test --no-coverage
+```
+
 ## 🔧 Environnements
 
 - **Development** : Local (localhost:3000)
@@ -63,6 +79,16 @@ http://localhost:3000
 - **[Configuration Rails 8.1](docs/documentations/technical/RAILS8_CONFIG.md)** - Nouvelles fonctionnalités
 - **[Déploiement](docs/documentations/technical/deployment/)** - Guides de déploiement
 - **[Environnements](docs/documentations/technical/ENVIRONMENTS.md)** - Configuration des environnements
+
+### 🧪 Tests et Qualité
+
+- **[Guide TDD](docs/TDD_WORKFLOW.md)** - Workflow Test-Driven Development
+- **[Rapport d'Audit Tests](docs/TEST_AUDIT_REPORT.md)** - État de la couverture de code
+- **[Approche TDD Réaliste](docs/TDD_REALISTIC_APPROACH.md)** - Stratégie avec logique métier incomplète
+- **[Tests avec Logique Instable](docs/TEST_STRATEGY_UNSTABLE_LOGIC.md)** - ✅ **NOUVEAU** Comment tester quand logique bouge
+- **[Classification Zones](docs/ZONES_CLASSIFICATION.md)** - Zone 1/2/3 pour tests
+- **[Logique Métier](docs/BUSINESS_LOGIC.md)** - Domains et règles immutables
+- **[Stratégie Backend](docs/BACKEND_STRATEGY.md)** - Organisation du développement
 
 ### 📁 Documentation détaillée
 

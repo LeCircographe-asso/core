@@ -1,0 +1,36 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# bin/test_watch - Watch mode for TDD (requires guard)
+#
+# Usage:
+#   bin/test_watch                # Watch all specs
+
+APP_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+cd "$APP_ROOT"
+
+# Check if guard is installed
+if ! bundle show guard > /dev/null 2>&1; then
+  echo "⚠️  Guard gem is not installed"
+  echo "📦 To use watch mode, add guard to your Gemfile:"
+  echo "   gem 'guard', require: false"
+  echo "   gem 'guard-rspec', require: false"
+  echo ""
+  echo "Then run: bundle install && bundle exec guard init rspec"
+  exit 1
+fi
+
+# Check if Guardfile exists
+if [ ! -f Guardfile ]; then
+  echo "⚠️  Guardfile not found"
+  echo "📦 Initialize Guard with: bundle exec guard init rspec"
+  exit 1
+fi
+
+echo "👀 Starting Guard in watch mode..."
+echo "   Press Ctrl+C to stop"
+echo ""
+
+# Run guard
+exec bundle exec guard
+
