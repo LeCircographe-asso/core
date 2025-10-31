@@ -45,6 +45,9 @@ RSpec.configure do |config|
   # Setup factory_bot
   config.include FactoryBot::Syntax::Methods
 
+  # Exclude :disabled specs
+  config.filter_run_excluding :disabled
+
   # Setup database cleaner - Commenté pour simplifier
   # config.before(:suite) do
   #   DatabaseCleaner.clean_with(:truncation)

@@ -312,15 +312,6 @@ RSpec.describe Payment, type: :model do
     end
   end
 
-  describe '#process_payment' do
-    it "calls Payments::Process service" do
-      payment = create(:payment)
-      expect_any_instance_of(Payments::Process).to receive(:call)
-      
-      payment.process_payment
-    end
-  end
-
   describe '#handle_user_deletion' do
     it "cancels payment and logs deletion" do
       payment = create(:payment, status: :success)

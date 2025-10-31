@@ -81,12 +81,6 @@ class Payment < ApplicationRecord
                  .where("subscription_plans.duration = ?", SubscriptionPlan.durations[:pack10]).exists?
   end
 
-  def process_payment
-    # Cette méthode est déléguée au service Payments::Process
-    # pour traiter les callbacks complexes
-    Payments::Process.new(self).call
-  end
-
   # Generate a UUID for the payment
   def generate_uuid
     self.uuid = SecureRandom.uuid
