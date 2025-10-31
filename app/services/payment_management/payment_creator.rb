@@ -16,7 +16,7 @@ module PaymentManagement
 
     validates :person_id, presence: true
     validates :amount_cents, presence: true, numericality: { greater_than: 0 }
-    validates :payment_method, presence: true, inclusion: { in: %w[cash card transfer check] }
+    validates :payment_method, presence: true, inclusion: { in: %w[cash card cheque transfer offered] }
     validates :recorded_by_id, presence: true
     validates :item_type, presence: true
     validates :item_id, presence: true
