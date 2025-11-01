@@ -147,7 +147,7 @@ class Admin::Users::UserActionsComponent < ViewComponent::Base
     button_to "Supprimer",
               admin_user_path(user || "person_#{person.id}"),
               method: :delete,
-              data: { confirm: "Êtes-vous sûr de vouloir supprimer cet utilisateur/cette personne ?" },
+              form: { data: { turbo_confirm: "Êtes-vous sûr de vouloir supprimer cet utilisateur/cette personne ?" } },
               class: "text-red-600 hover:text-red-800 hover:underline bg-transparent border-none cursor-pointer"
   end
 end
