@@ -1,6 +1,6 @@
 # Configuration Kamal pour Staging - VPS Ionos Linux M
 service: circographe-staging
-image: lecircographe-asso/circographe-staging
+image: ghcr.io/lecircographe-asso/circographe-staging
 
 # Serveur VPS Ionos
 servers:
@@ -15,7 +15,7 @@ ssh:
 # Credentials for your image host
 registry:
   server: ghcr.io
-  username: LeCircographe-asso
+  username: AkaKwak
   password:
     - KAMAL_REGISTRY_PASSWORD
 
