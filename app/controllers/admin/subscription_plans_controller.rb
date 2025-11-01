@@ -3,6 +3,7 @@ module Admin
     before_action :set_subscription_plan, only: [ :show, :edit, :update, :destroy ]
     before_action :set_person, only: [ :new, :create ]
     before_action :set_breadcrumbs
+    before_action :require_super_admin, only: [ :edit, :update, :destroy ]
 
     def index
       @subscription_plans = SubscriptionPlan.includes(:membership_type).all.order(:duration, :price_cents)
@@ -50,12 +51,7 @@ module Admin
     end
 
     def destroy
-      # Seul le super_admin peut supprimer des cotisations
-      unless Current.user&.system_role == "super_admin"
-        redirect_to admin_subscription_plans_path, alert: "Seul le super-admin peut supprimer des cotisations."
-        return
-      end
-
+      # Vérifier que le plan n'est pas utilisé
       if @subscription_plan.book_of_entries.any?
         redirect_to admin_subscription_plans_path, alert: "Impossible de supprimer ce plan car il est utilisé par des carnets d'entrées."
       else
@@ -89,6 +85,12 @@ module Admin
     end
 
     private
+
+    def require_super_admin
+      unless Current.user&.super_admin?
+        redirect_to admin_subscription_plans_path, alert: "Seul le super-admin peut modifier ou supprimer des cotisations."
+      end
+    end
 
     def set_subscription_plan
       @subscription_plan = SubscriptionPlan.find(params[:id])

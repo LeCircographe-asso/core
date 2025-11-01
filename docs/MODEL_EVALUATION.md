@@ -435,4 +435,3 @@ add_index :subscription_plans, [:membership_type_id, :duration], name: 'idx_sub_
 ---
 
 **Prochaine action:** Modèle solide et prêt! Focus sur fonctionnalités métier
-

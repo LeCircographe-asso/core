@@ -73,13 +73,14 @@ module Admin
       def cancel_action
         if payment.status != "cancel"
           button_to admin_payment_path(payment), 
-                    method: :delete, 
+                    method: :delete,
+                    form: { 
+                      data: { 
+                        turbo_confirm: "Êtes-vous sûr de vouloir annuler ce paiement ?"
+                      }
+                    },
                     class: "text-red-600 hover:text-red-800", 
-                    title: "Annuler le paiement",
-                    data: { 
-                      confirm: "Êtes-vous sûr de vouloir annuler ce paiement ?",
-                      turbo_method: :delete
-                    } do
+                    title: "Annuler le paiement" do
             content_tag :svg, 
                         class: "h-5 w-5", 
                         fill: "none", 

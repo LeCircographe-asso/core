@@ -1,0 +1,154 @@
+<div class="min-h-screen bg-gray-50 py-6">
+  <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+    <!-- Breadcrumbs -->
+    <%= render 'shared/breadcrumbs' %>
+    
+    <!-- Header -->
+    <div class="bg-gradient-to-r from-[#1F5C55] to-[#194A45] rounded-lg shadow-lg mb-6">
+      <div class="px-6 py-4 flex justify-between items-center">
+        <div>
+          <h1 class="text-2xl font-bold text-white">Détails du plan de cotisation</h1>
+          <p class="text-green-100 mt-1"><%= @subscription_plan.name %></p>
+        </div>
+        <div class="flex space-x-3">
+          <% if Current.user&.system_role == 'super_admin' %>
+            <%= link_to "Modifier", edit_admin_subscription_plan_path(@subscription_plan),
+                class: "inline-flex items-center px-4 py-2 border border-white rounded-md shadow-sm text-sm font-medium text-[#1F5C55] bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-white" %>
+          <% end %>
+        </div>
+      </div>
+    </div>
+
+    <!-- Détails du plan -->
+    <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
+      <h2 class="text-xl font-semibold text-gray-900 mb-4">Informations du plan</h2>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div>
+          <span class="text-sm font-medium text-gray-500">Nom</span>
+          <p class="mt-1 text-sm text-gray-900"><%= @subscription_plan.name %></p>
+        </div>
+        
+        <div>
+          <span class="text-sm font-medium text-gray-500">Type de plan</span>
+          <p class="mt-1">
+            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
+              <%= case @subscription_plan.duration
+                  when 'day' then 'bg-blue-100 text-blue-800'
+                  when 'trimester' then 'bg-green-100 text-green-800'
+                  when 'annual' then 'bg-purple-100 text-purple-800'
+                  when 'pack10' then 'bg-orange-100 text-orange-800'
+                  else 'bg-gray-100 text-gray-800'
+                  end %>">
+              <%= @subscription_plan.duration.humanize %>
+            </span>
+          </p>
+        </div>
+        
+        <div>
+          <span class="text-sm font-medium text-gray-500">Prix</span>
+          <p class="mt-1 text-2xl font-bold text-[#1F5C55]"><%= @subscription_plan.price_euros %>€</p>
+        </div>
+        
+        <div>
+          <span class="text-sm font-medium text-gray-500">Type d'adhésion requis</span>
+          <p class="mt-1 text-sm text-gray-900"><%= @subscription_plan.membership_type.name %></p>
+        </div>
+        
+        <div>
+          <span class="text-sm font-medium text-gray-500">Nombre de séances</span>
+          <p class="mt-1 text-sm text-gray-900">
+            <% if @subscription_plan.sessions_count %>
+              <%= @subscription_plan.sessions_count %> séances
+            <% else %>
+              <span class="text-gray-400">Illimité</span>
+            <% end %>
+          </p>
+        </div>
+        
+        <div>
+          <span class="text-sm font-medium text-gray-500">Validité</span>
+          <p class="mt-1 text-sm text-gray-900">
+            <% if @subscription_plan.duration == 'pack10' %>
+              <span class="text-green-600">Sans expiration</span>
+            <% elsif @subscription_plan.validity_days %>
+              <%= @subscription_plan.validity_days %> jours
+            <% else %>
+              <span class="text-gray-400">-</span>
+            <% end %>
+          </p>
+        </div>
+      </div>
+      
+      <% if @subscription_plan.description.present? %>
+        <div class="mt-6 pt-6 border-t border-gray-200">
+          <span class="text-sm font-medium text-gray-500">Description</span>
+          <p class="mt-1 text-sm text-gray-900"><%= @subscription_plan.description %></p>
+        </div>
+      <% end %>
+    </div>
+
+    <!-- Liste des carnets d'entrées -->
+    <div class="bg-white rounded-lg shadow-lg p-6">
+      <div class="flex justify-between items-center mb-4">
+        <h2 class="text-xl font-semibold text-gray-900">Carnets d'entrées associés</h2>
+        <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-[#1F5C55] text-white">
+          <%= pluralize(@book_of_entries.count, 'carnet') %>
+        </span>
+      </div>
+      
+      <% if @book_of_entries.any? %>
+        <div class="overflow-x-auto">
+          <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">
+              <tr>
+                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Personne</th>
+                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Séances restantes</th>
+                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Statut</th>
+              </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200">
+              <% @book_of_entries.each do |book| %>
+                <tr>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                    <%= link_to book.person.full_name, admin_user_path("person_#{book.person.id}"), 
+                        class: "text-[#1F5C55] hover:underline" %>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <%= book.sessions_remaining || 'N/A' %>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
+                      <%= case book.status
+                          when 'active' then 'bg-green-100 text-green-800'
+                          when 'consumed' then 'bg-red-100 text-red-800'
+                          else 'bg-gray-100 text-gray-800'
+                          end %>">
+                      <%= book.status.humanize %>
+                    </span>
+                  </td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+      <% else %>
+        <p class="text-sm text-gray-500">Aucun carnet d'entrée n'a été créé avec ce plan.</p>
+      <% end %>
+    </div>
+
+    <!-- Actions -->
+    <div class="mt-6 flex justify-end space-x-3">
+      <%= link_to "Retour à la liste", admin_subscription_plans_path,
+          class: "inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1F5C55]" %>
+      
+      <% if Current.user&.system_role == 'super_admin' && @subscription_plan.book_of_entries.empty? %>
+        <%= button_to "Supprimer ce plan", admin_subscription_plan_path(@subscription_plan), 
+            method: :delete,
+            form: { data: { turbo_confirm: "Êtes-vous sûr de vouloir supprimer ce plan de cotisation ?" } },
+            class: "inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500" %>
+      <% end %>
+    </div>
+  </div>
+</div>
+
