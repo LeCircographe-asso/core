@@ -196,7 +196,10 @@ module Admin
         person_id = params[:id].to_s.gsub("person_", "")
         @person = PersonQuery.active.find(person_id)
 
-        if @person.update(person_params)
+        if @person.update(person_params.except(:newsletter_subscribed))
+          # Gérer newsletter via NewsletterSubscriber
+          handle_newsletter_update(@person, person_params[:newsletter_subscribed])
+          
           # Handle AJAX requests for inline editing
           if request.xhr?
             render json: {
@@ -224,6 +227,7 @@ module Admin
         # Séparer les paramètres User des paramètres Person
         user_only_params = user_params.slice(:email_address, :system_role, :created_by_admin, :create_web_account)
         person_params_flat = user_params.except(:email_address, :system_role, :created_by_admin, :create_web_account, :person)
+        newsletter_flag = person_params_flat.delete(:newsletter_subscribed)
 
         # Mettre à jour User et Person séparément
         user_updated = @user.update(user_only_params)
@@ -234,6 +238,11 @@ module Admin
           @user.person.update(person_params_flat)
         else
           true # Pas de Person à mettre à jour
+        end
+
+        # Gérer newsletter via NewsletterSubscriber
+        if person_updated && @user.person.present?
+          handle_newsletter_update(@user.person, newsletter_flag)
         end
 
         if user_updated && person_updated
@@ -499,6 +508,24 @@ module Admin
         :image_rights,
         :is_minor
       )
+    end
+    
+    def handle_newsletter_update(person, newsletter_flag)
+      return unless person.email.present?
+      
+      subscriber = NewsletterSubscriber.find_or_initialize_by(email: person.email)
+      
+      if newsletter_flag == "1" || newsletter_flag == true || newsletter_flag == 1
+        subscriber.update!(
+          person: person,
+          source: 'admin',
+          subscribed: true
+        )
+      else
+        subscriber.update!(
+          subscribed: false
+        )
+      end
     end
   end
 end

@@ -94,8 +94,18 @@ module Admin
 
     def create_person_and_user
       begin
-        # Créer une nouvelle Person directement
-        person = Person.create!(person_attributes)
+        # Créer une nouvelle Person directement (sans newsletter_subscribed)
+        person = Person.create!(person_attributes.except(:newsletter_subscribed))
+
+        # Créer NewsletterSubscriber si demandé (nouvelle logique)
+        if newsletter_subscribed == true && person.email.present?
+          NewsletterSubscriber.create!(
+            email: person.email,
+            person: person,
+            source: 'admin',
+            subscribed: true
+          )
+        end
 
         # Créer le User si compte web demandé
         if create_web_account == true
