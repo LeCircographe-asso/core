@@ -29,8 +29,12 @@ RSpec.configure do |config|
     end
   end
   
-  # Reset Current.session after each test
-  config.after do
+  # Reset Current.session after each test (only for request/controller specs)
+  config.after(:each, type: :request) do
+    logout
+  end
+  
+  config.after(:each, type: :controller) do
     logout
   end
 end
