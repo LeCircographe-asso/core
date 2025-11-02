@@ -21,8 +21,11 @@ class NewsletterSignupService
 
   def handle_existing_subscriber(subscriber)
     if subscriber.subscribed?
-      { success: false, message: "Cette adresse email est déjà inscrite à la newsletter." }
+      # Toggle: Unsubscribe if currently subscribed
+      subscriber.unsubscribe!
+      { success: true, message: "Vous êtes désinscrit de la newsletter." }
     else
+      # Re-subscribe if unsubscribed
       subscriber.resubscribe!
       { success: true, message: "Vous êtes de nouveau inscrit à la newsletter." }
     end
@@ -32,20 +35,23 @@ class NewsletterSignupService
     subscriber = NewsletterSubscriber.new(
       email: @new_email,
       subscribed: true,
-      source: @current_user ? 'authenticated' : 'web'
+      source: determine_source
     )
     
     # Link vers Person si existe
-    person = Person.find_by(email: @new_email)
-    subscriber.person = person if person
+    subscriber.person = @person if @person
     
     if subscriber.save
-      # Sync Person.newsletter_subscribed si lié
-      person&.update(newsletter_subscribed: true)
       { success: true, message: "Inscription à la newsletter réussie !" }
     else
       { success: false, message: "Une erreur s'est produite. Veuillez réessayer." }
     end
+  end
+  
+  def determine_source
+    return 'admin' if @current_user&.admin? || @current_user&.super_admin?
+    return 'authenticated' if @current_user.present?
+    return 'web'
   end
 
 end
