@@ -56,6 +56,9 @@ Rails.application.routes.draw do
 
   # Route for newsletter signup from footer
   post "/newsletter_signup", to: "users#newsletter_signup", as: "newsletter_signup"
+  
+  # Route for newsletter unsubscribe by token (from emails)
+  get "/newsletter/unsubscribe/:token", to: "users#unsubscribe_by_token", as: "newsletter_unsubscribe"
 
   scope "/checkout" do
     post "create", to: "checkout#create", as: "checkout_create"
