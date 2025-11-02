@@ -108,8 +108,9 @@
                     class: "search-input pl-10 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#1F5C55] focus:ring-[#1F5C55] sm:text-sm" %>
                 <% if params[:search].present? %>
                   <button type="button" 
-                          onclick="clearSearch()"
-                          class="absolute inset-y-0 right-0 pr-3 flex items-center">
+                          onclick="clearSearch(event)"
+                          class="absolute inset-y-0 right-0 pr-3 flex items-center"
+                          aria-label="Effacer la recherche">
                     <svg class="h-4 w-4 text-gray-400 hover:text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                     </svg>
@@ -313,9 +314,32 @@ function changeItemsPerPage(items) {
   window.location.href = url.toString();
 }
 
-function clearSearch() {
-  document.getElementById('search').value = '';
-  document.querySelector('form').submit();
+let isClearingSearch = false;
+
+function clearSearch(event) {
+  // Empêcher le double-clic et le comportement par défaut
+  if (event) {
+    event.preventDefault();
+    event.stopPropagation();
+  }
+  
+  // Empêcher l'exécution multiple simultanée
+  if (isClearingSearch) {
+    return;
+  }
+  
+  isClearingSearch = true;
+  
+  // Nettoyer le timeout de l'auto-submit pour éviter les conflits
+  if (typeof searchTimeout !== 'undefined') {
+    clearTimeout(searchTimeout);
+  }
+  
+  // Utiliser une redirection directe au lieu de submit() pour éviter les conflits
+  const url = new URL(window.location);
+  url.searchParams.delete('search');
+  url.searchParams.delete('page'); // Reset à la première page
+  window.location.href = url.toString();
 }
 
 // Raccourci clavier Ctrl+K pour focus sur la recherche

@@ -40,6 +40,11 @@ module Web
 
         person = person_result.person
 
+        # 1.5. Créer NewsletterSubscriber si demandé
+        if newsletter_subscribed == true
+          create_newsletter_subscriber(person)
+        end
+
         # 2. Créer le compte utilisateur
         user_result = create_user_account(person)
         return failure(user_result.errors.join(", ")) unless user_result.success?
@@ -73,12 +78,12 @@ module Web
       # SUPPRIMÉ : candidates = Person.active.where(...)
 
       # 3. Créer nouvelle Person
+      # newsletter_subscribed removed - handled by create_newsletter_subscriber
       Rails.logger.info("[WEB_REGISTRATION] Création nouvelle Person pour #{email}")
       PersonManagement::PersonCreator.new(
         first_name: first_name,
         last_name: last_name,
-        email: email,
-        newsletter_subscribed: newsletter_subscribed
+        email: email
       ).call
     end
 
@@ -105,6 +110,15 @@ module Web
           cgu: cgu,
           privacy_policy: privacy_policy
         ).call
+      end
+    end
+
+    def create_newsletter_subscriber(person)
+      # Créer NewsletterSubscriber avec source 'web' pour inscriptions publiques
+      NewsletterSubscriber.find_or_create_by(email: person.email) do |subscriber|
+        subscriber.person = person
+        subscriber.source = 'web'
+        subscriber.subscribed = true
       end
     end
 
