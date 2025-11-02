@@ -304,4 +304,5 @@ RSpec.describe Person, type: :model do
       expect(person.email).to be_nil
     end
   end
+  
 end

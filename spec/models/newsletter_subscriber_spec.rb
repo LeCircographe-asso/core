@@ -136,21 +136,6 @@ RSpec.describe NewsletterSubscriber, type: :model do
       
       expect(subscriber.person).to eq(person)
     end
-
-    it "updates person newsletter_subscribed if subscriber is subscribed" do
-      subscriber.link_to_person!(person)
-      
-      expect(person.newsletter_subscribed).to be true
-    end
-
-    it "does not update person if subscriber is unsubscribed" do
-      unsubscribed = create(:newsletter_subscriber, :orphaned, subscribed: false)
-      person.update(newsletter_subscribed: false)
-      
-      unsubscribed.link_to_person!(person)
-      
-      expect(person.newsletter_subscribed).to be false
-    end
   end
 end
 

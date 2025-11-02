@@ -114,11 +114,20 @@ module Web
     end
 
     def create_newsletter_subscriber(person)
-      # Créer NewsletterSubscriber avec source 'web' pour inscriptions publiques
-      NewsletterSubscriber.find_or_create_by(email: person.email) do |subscriber|
-        subscriber.person = person
-        subscriber.source = 'web'
-        subscriber.subscribed = true
+      # Si NewsletterSubscriber existe déjà (inscription footer), le lier à cette Person
+      subscriber = NewsletterSubscriber.find_by(email: person.email)
+      
+      if subscriber
+        # Link existing orphaned subscriber to new Person
+        subscriber.update!(person: person, subscribed: true)
+      else
+        # Create new NewsletterSubscriber for this Person
+        NewsletterSubscriber.create!(
+          email: person.email,
+          person: person,
+          source: 'web',
+          subscribed: true
+        )
       end
     end
 

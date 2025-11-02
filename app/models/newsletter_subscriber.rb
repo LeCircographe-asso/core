@@ -23,10 +23,9 @@ class NewsletterSubscriber < ApplicationRecord
   
   # Merge vers Person existante
   def link_to_person!(person)
-    transaction do
-      update!(person_id: person.id)
-      person.update!(newsletter_subscribed: true) if subscribed?
-    end
+    # DEPRECATED: Person.newsletter_subscribed no longer used
+    # Just link the subscriber to the person
+    update!(person_id: person.id)
   end
   
   private
