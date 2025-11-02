@@ -59,7 +59,38 @@ namespace :db do
     puts "📊 Environnement: #{Rails.env}"
     
     begin
-      Rake::Task['db:drop'].invoke
+      # For SQLite, manually delete ALL database files first (main, cache, queue, cable)
+      db_config = Rails.configuration.database_configuration
+      dbs_to_delete = []
+      dbs_to_delete << db_config[Rails.env]['database'] if db_config[Rails.env]['database']
+      dbs_to_delete << db_config[Rails.env + '_cache']['database'] if db_config[Rails.env + '_cache']
+      dbs_to_delete << db_config[Rails.env + '_queue']['database'] if db_config[Rails.env + '_queue']
+      dbs_to_delete << db_config[Rails.env + '_cable']['database'] if db_config[Rails.env + '_cable']
+      dbs_to_delete.compact!
+      
+      dbs_to_delete.each do |db_path|
+        if db_path && File.exist?(db_path)
+          puts "🗑️  Suppression du fichier: #{db_path}"
+          File.delete(db_path)
+        elsif db_path
+          puts "ℹ️  Fichier n'existe pas: #{db_path}"
+        end
+      end
+      
+      # Also delete any journal/WAL files
+      dbs_to_delete.each do |db_path|
+        next unless db_path
+        journal_file = db_path + '-journal'
+        wal_file = db_path + '-wal'
+        shm_file = db_path + '-shm'
+        [journal_file, wal_file, shm_file].each do |extra_file|
+          if File.exist?(extra_file)
+            puts "🗑️  Suppression du fichier temporaire: #{extra_file}"
+            File.delete(extra_file)
+          end
+        end
+      end
+      
       Rake::Task['db:create'].invoke
       Rake::Task['db:migrate'].invoke
       Rake::Task['db:seed'].invoke
@@ -68,6 +99,7 @@ namespace :db do
       
     rescue => e
       puts "❌ Erreur lors du reset forcé: #{e.message}"
+      puts e.backtrace.first(10).join("\n")
       exit 1
     end
   end
