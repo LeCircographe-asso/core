@@ -17,7 +17,7 @@ export default class extends Controller {
     const accordionButtons = this.element.querySelectorAll('[data-accordion-target]');
     
     accordionButtons.forEach(button => {
-      button.addEventListener('click', this.toggleAccordion);
+      button.addEventListener('click', (event) => this.toggleAccordion(event));
     });
   }
   
