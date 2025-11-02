@@ -27,6 +27,12 @@ Rails.application.configure do
 
   # Disable request forgery protection in test environment.
   config.action_controller.allow_forgery_protection = false
+  
+  # Disable modern browser requirement for tests
+  config.action_dispatch.default_enforce_forgery_protection = false
+  
+  # Host Authorization - Allow all hosts in test for RSpec request specs
+  config.hosts.clear
 
   # Store uploaded files on the local file system in a temporary directory.
   config.active_storage.service = :test

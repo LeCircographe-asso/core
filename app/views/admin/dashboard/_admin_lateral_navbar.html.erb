@@ -22,26 +22,37 @@
         Administration
       </div>
       <ul class="sidebar-menu">
+        <% if current_user.can_manage_users? %>
         <li><%= link_to admin_users_path, class: "sidebar-link flex items-center" do %>
               <i class="fas fa-users mr-2 sidebar-icon"></i> <span class="sidebar-text" data-sidebar-target="text">Liste d'adhérents</span>
             <% end %>
         </li>
+        <% end %>
+        <% if current_user.can_manage_events? %>
         <li><%= link_to admin_events_path, class: "sidebar-link flex items-center" do %>
               <i class="fas fa-calendar-alt mr-2 sidebar-icon"></i> <span class="sidebar-text" data-sidebar-target="text">Événements</span>
             <% end %>
         </li>
+        <% end %>
+        <% if current_user.can_manage_notepad? %>
         <li><%= link_to edit_admin_notepad_path, class: "sidebar-link flex items-center" do %>
               <i class="fas fa-sticky-note mr-2 sidebar-icon"></i> <span class="sidebar-text" data-sidebar-target="text">Bloc notes</span>
             <% end %>
         </li>
+        <% end %>
+        <% if current_user.can_manage_attendance_lists? %>
         <li><%= link_to admin_attendance_lists_path, class: "sidebar-link flex items-center" do %>
               <i class="fas fa-clipboard-list mr-2 sidebar-icon"></i> <span class="sidebar-text" data-sidebar-target="text">Liste de présence</span>
             <% end %>
         </li>
+        <% end %>
+        <% if current_user.can_manage_payments? %>
         <li><%= link_to admin_payments_path, class: "sidebar-link flex items-center" do %>
               <i class="fas fa-money-bill-wave mr-2 sidebar-icon"></i> <span class="sidebar-text" data-sidebar-target="text">Paiements</span>
             <% end %>
         </li>
+        <% end %>
+        <% if current_user.has_admin_rights? %>
         <li><%= link_to admin_membership_types_path, class: "sidebar-link flex items-center" do %>
               <i class="fas fa-id-card mr-2 sidebar-icon"></i> <span class="sidebar-text" data-sidebar-target="text">Types d'Adhésion</span>
             <% end %>
@@ -50,14 +61,19 @@
               <i class="fas fa-ticket-alt mr-2 sidebar-icon"></i> <span class="sidebar-text" data-sidebar-target="text">Cotisations</span>
             <% end %>
         </li>
+        <% end %>
+        <% if current_user.can_manage_blogs? %>
         <li><%= link_to admin_blogs_path, class: "sidebar-link flex items-center" do %>
               <i class="fas fa-blog mr-2 sidebar-icon"></i> <span class="sidebar-text" data-sidebar-target="text">Blog</span>
             <% end %>
         </li>
+        <% end %>
+        <% if current_user.can_manage_opening_hours? %>
         <li><%= link_to admin_opening_hours_path, class: "sidebar-link flex items-center" do %>
               <i class="fas fa-clock mr-2 sidebar-icon"></i> <span class="sidebar-text" data-sidebar-target="text">Horaires</span>
             <% end %>
         </li>
+        <% end %>
       </ul>
     </div>
 

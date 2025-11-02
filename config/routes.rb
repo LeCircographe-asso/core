@@ -12,7 +12,7 @@ Rails.application.routes.draw do
               # Actions pour gérer les doublons
               get :duplicates, on: :collection
             end
-    resources :events, only: %i[new create edit destroy index]
+    resources :events, only: %i[new create edit update destroy index]
     resource :session, only: %i[new create destroy]
     resource :notepad, only: %i[edit update]
     resources :attendance_lists do

@@ -49,6 +49,26 @@ module Roleable
     super_admin? || admin?
   end
 
+  def can_manage_attendance_lists?
+    super_admin? || admin? || volunteer?
+  end
+
+  def can_manage_events?
+    super_admin? || admin? || volunteer?
+  end
+
+  def can_manage_blogs?
+    super_admin? || admin?
+  end
+
+  def can_manage_opening_hours?
+    super_admin? || admin?
+  end
+
+  def can_manage_notepad?
+    super_admin? || admin?
+  end
+
   # Méthodes de classe pour les humanizations
   class_methods do
     def humanize_role(role)
