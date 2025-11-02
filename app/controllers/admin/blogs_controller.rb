@@ -1,7 +1,6 @@
 module Admin
-  class BlogsController < ApplicationController
+  class BlogsController < BaseController
     before_action :set_blog, only: %i[ show edit update destroy ]
-    before_action :has_admin?
 
     def index
       @blogs = Blog.all
@@ -65,10 +64,6 @@ module Admin
     end
 
     private
-      def has_admin?
-        redirect_to blogs_path, notice: "vous n'avez pas les droits" if !current_user.has_admin?
-      end
-
       def set_blog
         @blog = Blog.find(params.expect(:id))
       end

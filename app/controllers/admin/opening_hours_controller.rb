@@ -1,6 +1,5 @@
 module Admin
 class OpeningHoursController < BaseController
-  before_action :require_admin_or_super_admin, only: %i[ edit update ]
   before_action :set_opening_hours, only: %i[ show edit ]
   before_action :set_breadcrumbs
   include OpeningHoursHelper
@@ -47,12 +46,6 @@ class OpeningHoursController < BaseController
 
 
   private
-
-  def require_admin_or_super_admin
-    unless Current.user&.system_role.in?(%w[admin super_admin])
-      redirect_to root_path, alert: "Vous n'avez pas accès à cette page."
-    end
-  end
 
   def set_opening_hours
     @opening_hours = Rails.cache.fetch("opening_hours") || default_opening_hours
