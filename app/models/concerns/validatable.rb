@@ -56,13 +56,6 @@ module Validatable
     end
   end
 
-  def validate_email_presence_if_newsletter
-    return unless respond_to?(:newsletter_subscribed?) && newsletter_subscribed?
-    return if email.present?
-
-    errors.add(:email, "est obligatoire pour s'abonner à la newsletter")
-  end
-
   def validate_phone_format
     return if phone.blank?
     return if phone.match?(/\A[\+]?[0-9\s\-\(\)\.]{10,20}\z/)
