@@ -47,7 +47,8 @@ class UsersController < ApplicationController
     if params[:token].present?
       unsubscribe_by_token
     else
-      toggle_newsletter_status
+      # Toggle moved to Settings page
+      redirect_to settings_path, alert: "Gérez votre newsletter depuis vos paramètres."
     end
   end
 
@@ -68,11 +69,16 @@ class UsersController < ApplicationController
       return
     end
 
-    result = NewsletterSignupService.new(email, authenticated? ? Current.user : nil).call_newsletter
+    # If authenticated, redirect to settings (no form for connected users)
+    if authenticated? && Current.user.present?
+      redirect_to settings_path, notice: "Gérez votre newsletter depuis vos paramètres en cochant/décochant la case."
+      return
+    end
+
+    result = NewsletterSignupService.new(email).call_newsletter
 
     if result[:redirect_to]
-      redirect_to new_registration_path
-      session[:newsletter_email] = email
+      redirect_to new_session_path, alert: result[:message]
     elsif result[:success]
       flash[:notice] = result[:message]
       redirect_back fallback_location: root_path
@@ -93,22 +99,6 @@ class UsersController < ApplicationController
     else
       redirect_to root_path, alert: "Token de désinscription invalide."
     end
-  end
-
-  # Toggle newsletter subscription status for authenticated user
-  def toggle_newsletter_status
-    return redirect_to root_path, alert: "Vous devez être connecté" unless @user
-
-    # Use NewsletterSignupService to manage subscription via NewsletterSubscriber model
-    result = NewsletterSignupService.new(@user.email_address, @user).call_newsletter
-    
-    if result[:success]
-      message = result[:message]
-    else
-      message = "Erreur: #{result[:message]}"
-    end
-    
-    redirect_to @user, notice: message
   end
 
   # Set user to current user for profile actions

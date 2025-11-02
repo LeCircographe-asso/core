@@ -709,4 +709,15 @@ class Person < ApplicationRecord
 
     errors.add(:base, "Une adhésion active est obligatoire")
   end
+  
+  # Read-only helper to check newsletter status from NewsletterSubscriber
+  def newsletter_subscribed?
+    return false unless email.present?
+    
+    subscriber = NewsletterSubscriber.find_by(email: email)
+    subscriber&.subscribed? || false
+  end
+  
+  # Make newsletter_subscribed? public (AR makes bool methods private)
+  public :newsletter_subscribed?
 end

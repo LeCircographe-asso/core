@@ -36,8 +36,14 @@ class User < ApplicationRecord
   delegate :first_name, :last_name, :full_name, :phone, :email, :address,
            :birth_date, :emergency_contact_name, :emergency_contact_phone,
            :notes, :occupation, :specialty, :image_rights, :get_involved,
-           :newsletter_subscribed, :dyslexic_font, :zip_code, :town, :country,
+           :dyslexic_font, :zip_code, :town, :country,
            to: :person, prefix: false, allow_nil: true
+           
+  # Override newsletter_subscribed to read from NewsletterSubscriber
+  def newsletter_subscribed
+    return false unless person.present? && person.email.present?
+    person.newsletter_subscribed?
+  end
 
   normalizes :email_address, with: ->(e) { e&.strip&.downcase }
 
