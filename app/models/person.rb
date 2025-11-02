@@ -1,4 +1,19 @@
 class Person < ApplicationRecord
+  # ===================================================================
+  # ⚠️ DEPRECATED: newsletter_subscribed column
+  # ===================================================================
+  # This column is deprecated in favor of NewsletterSubscriber model.
+  # The new table provides better tracking with source ('web', 'admin', 'import')
+  # and supports orphaned emails (without Person).
+  #
+  # Migration plan:
+  # 1. Phase 1 (current): Mark as deprecated, stop writing to it
+  # 2. Phase 2: Migrate data from Person.newsletter_subscribed → NewsletterSubscriber
+  # 3. Phase 3: Remove Person.newsletter_subscribed column
+  #
+  # TODO: Replace all newsletter_subscribed references with NewsletterSubscriber
+  # ===================================================================
+  
   # Relations (MODIFIER dependent pour protéger données financières)
   has_one :user, dependent: :nullify
   has_many :memberships, dependent: :restrict_with_error  # ✅ Empêcher suppression
@@ -6,6 +21,7 @@ class Person < ApplicationRecord
   has_many :attendances, dependent: :destroy
   has_many :book_of_entries, dependent: :destroy
   has_many :member_number_histories, dependent: :destroy
+  has_one :newsletter_subscriber, dependent: :destroy  # ✅ NEW: Link to NewsletterSubscriber
 
   # Attribut pour skip validation dans certains cas (seeds, migrations)
   attr_accessor :skip_membership_validation
@@ -17,6 +33,7 @@ class Person < ApplicationRecord
   validates :phone, uniqueness: true, allow_blank: true
   validates :member_number, uniqueness: true, allow_blank: true
 
+  # DEPRECATED: Use NewsletterSubscriber instead
   # Validation conditionnelle : email obligatoire si newsletter activée
   validates :email, presence: true, if: :newsletter_subscribed?
 
@@ -27,6 +44,7 @@ class Person < ApplicationRecord
   # Normalisation des données
   before_validation :normalize_email
 
+  # DEPRECATED: These callbacks reference newsletter_subscribed column
   # Callbacks newsletter
   before_create :generate_newsletter_token, if: :newsletter_subscribed?
   before_update :generate_newsletter_token, if: -> {

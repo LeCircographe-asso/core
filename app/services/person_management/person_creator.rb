@@ -22,7 +22,7 @@ module PersonManagement
     attribute :specialty, :string
     attribute :image_rights, :boolean, default: false
     attribute :get_involved, :boolean, default: false
-    attribute :newsletter_subscribed, :boolean, default: false
+    # DEPRECATED: newsletter_subscribed removed - use NewsletterSubscriber model instead
     attribute :dyslexic_font, :boolean, default: false
     attribute :is_minor, :boolean, default: false
 
@@ -83,7 +83,7 @@ module PersonManagement
         specialty: specialty,
         image_rights: image_rights,
         get_involved: get_involved,
-        newsletter_subscribed: newsletter_subscribed,
+        # DEPRECATED: newsletter_subscribed removed - use NewsletterSubscriber instead
         dyslexic_font: dyslexic_font,
         is_minor: is_minor
       }.compact
