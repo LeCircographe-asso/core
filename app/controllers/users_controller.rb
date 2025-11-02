@@ -99,12 +99,15 @@ class UsersController < ApplicationController
   def toggle_newsletter_status
     return redirect_to root_path, alert: "Vous devez être connecté" unless @user
 
-    if @user.person
-      @user.person.update(newsletter_subscribed: !@user.person.newsletter_subscribed)
-      message = @user.person.newsletter_subscribed ? "Vous êtes inscrit à la newsletter" : "Vous êtes désinscrit de la newsletter"
+    # Use NewsletterSignupService to manage subscription via NewsletterSubscriber model
+    result = NewsletterSignupService.new(@user.email_address, @user).call_newsletter
+    
+    if result[:success]
+      message = result[:message]
     else
-      message = "Erreur: aucune personne liée à ce compte"
+      message = "Erreur: #{result[:message]}"
     end
+    
     redirect_to @user, notice: message
   end
 
