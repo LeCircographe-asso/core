@@ -3,12 +3,14 @@ class UserMailer < ApplicationMailer
     @user = user
     @reset_password_url = reset_password_url
     @url = "https://lecircographe.fr/"
+    set_unsubscribe_url
     mail(to: @user.email_address, subject: "Bienvenue au Circographe ! ")
   end
 
   def welcome_email(user)
     @user = user
     @url = "https://lecircographe.fr/"
+    set_unsubscribe_url
     mail(to: @user.email_address, subject: "Bienvenue au Circographe ! ")
   end
 

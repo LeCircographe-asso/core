@@ -42,14 +42,9 @@ class UsersController < ApplicationController
     end
   end
 
-  # Newsletter subscription management
+  # Newsletter subscription management (legacy, redirect to settings)
   def change_newsletter_status
-    if params[:token].present?
-      unsubscribe_by_token
-    else
-      # Toggle moved to Settings page
-      redirect_to settings_path, alert: "Gérez votre newsletter depuis vos paramètres."
-    end
+    redirect_to settings_path, alert: "Gérez votre newsletter depuis vos paramètres."
   end
 
   # Handle newsletter signup from footer
@@ -88,9 +83,7 @@ class UsersController < ApplicationController
     end
   end
 
-  private
-
-  # Handle token-based unsubscription (public access)
+  # Handle token-based unsubscription (public access from emails)
   def unsubscribe_by_token
     subscriber = NewsletterSubscriber.find_by(unsubscribe_token: params[:token])
     if subscriber
@@ -100,6 +93,8 @@ class UsersController < ApplicationController
       redirect_to root_path, alert: "Token de désinscription invalide."
     end
   end
+
+  private
 
   # Set user to current user for profile actions
   def set_user
