@@ -34,8 +34,7 @@ class Person < ApplicationRecord
   validates :member_number, uniqueness: true, allow_blank: true
 
   # DEPRECATED: Use NewsletterSubscriber instead
-  # Validation conditionnelle : email obligatoire si newsletter activée
-  validates :email, presence: true, if: :newsletter_subscribed?
+  # Validation removed - handled by NewsletterSubscriber
 
   # Validation d'adhésion obligatoire (sauf cas spéciaux)
   # Une Person peut exister sans adhésion (inscription de base, newsletter, prospects, etc.)
@@ -44,12 +43,7 @@ class Person < ApplicationRecord
   # Normalisation des données
   before_validation :normalize_email
 
-  # DEPRECATED: These callbacks reference newsletter_subscribed column
-  # Callbacks newsletter
-  before_create :generate_newsletter_token, if: :newsletter_subscribed?
-  before_update :generate_newsletter_token, if: -> {
-    newsletter_subscribed? && newsletter_unsubscribe_token.blank?
-  }
+  # DEPRECATED: newsletter token generation removed (now handled by NewsletterSubscriber)
 
   # Méthodes
   def full_name
@@ -714,10 +708,5 @@ class Person < ApplicationRecord
     return if skip_membership_validation # Skip si explicitement demandé
 
     errors.add(:base, "Une adhésion active est obligatoire")
-  end
-
-
-  def generate_newsletter_token
-    self.newsletter_unsubscribe_token ||= SecureRandom.urlsafe_base64(32)
   end
 end
