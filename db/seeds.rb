@@ -48,6 +48,9 @@ load Rails.root.join('db', 'seeds', 'sample_people.rb')
 # 5. Création de 75 utilisateurs supplémentaires pour les tests
 load Rails.root.join('db', 'seeds', 'bulk_users.rb')
 
+# 6. Ajouter des adhésions et paiements avec la nouvelle logique
+load Rails.root.join('db', 'seeds', 'add_memberships_and_payments.rb')
+
 puts "\n🎉 Seeds completed successfully!"
 puts "=" * 60
 puts "📊 Summary:"
