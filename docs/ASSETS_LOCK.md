@@ -5,7 +5,7 @@ Keep these rules to avoid breaking the asset pipeline.
 1) Tailwind
 - Entry: app/assets/tailwind/application.css with `@tailwind base/components/utilities`.
 - Served via: `<%= stylesheet_link_tag "tailwind" %>` (build to app/assets/builds/tailwind.css).
-- Run with `bin/dev` (no extra watcher like watchman).
+- Run with `bin/dev` (uses Tailwind watcher).
 
 2) Flowbite (local)
 - Files: vendor/js/flowbite.css, vendor/js/flowbite.turbo.min.js.
