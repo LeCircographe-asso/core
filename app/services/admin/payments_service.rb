@@ -5,8 +5,9 @@ module Admin
     end
 
     def call
+      @filtered_payments = filtered_payments # Cache to avoid multiple evaluations
       {
-        payments: filtered_payments,
+        payments: @filtered_payments,
         total_amount: calculate_total_amount,
         total_donation: calculate_total_donation,
         pagy: pagy_result
@@ -62,7 +63,7 @@ module Admin
     end
 
     def calculate_total_amount
-      filtered_payments.where(status: :success).sum(:total_cents)
+      @filtered_payments.where(status: :success).sum(:total_cents)
     end
 
     def calculate_total_donation
@@ -73,7 +74,7 @@ module Admin
       # Apply sorting
       sort_column = params[:sort] || "created_at"
       sort_direction = params[:direction] || "desc"
-      sorted_payments = filtered_payments.order("#{sort_column} #{sort_direction}")
+      sorted_payments = @filtered_payments.order("#{sort_column} #{sort_direction}")
 
       # Pagination
       items_per_page = params[:items]&.to_i || 15
