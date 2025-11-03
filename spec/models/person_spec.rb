@@ -371,5 +371,173 @@ RSpec.describe Person, type: :model do
       }.to raise_error(/non autorisé/)
     end
   end
+
+  describe '#safe_to_merge_with?' do
+    let(:person) { create(:person) }
+    let(:other_person) { create(:person) }
+
+    it "returns false when other_person is nil" do
+      expect(person.safe_to_merge_with?(nil)).to be false
+    end
+
+    it "returns false when merging with self" do
+      expect(person.safe_to_merge_with?(person)).to be false
+    end
+
+    it "returns true when both have no user" do
+      expect(person.safe_to_merge_with?(other_person)).to be true
+    end
+
+    it "returns true when only self has user" do
+      create(:user, person: person)
+      expect(person.safe_to_merge_with?(other_person)).to be true
+    end
+
+    it "returns true when only other has user" do
+      create(:user, person: other_person)
+      expect(person.safe_to_merge_with?(other_person)).to be true
+    end
+
+    it "returns true when both have same user" do
+      user = create(:user, person: person)
+      other_person.update(user: user)
+      expect(person.safe_to_merge_with?(other_person)).to be true
+    end
+
+    it "returns false when both have different users" do
+      create(:user, person: person)
+      create(:user, person: other_person)
+      expect(person.safe_to_merge_with?(other_person)).to be false
+    end
+  end
+
+  describe '#can_be_claimed_by?' do
+    let(:person) { create(:person, email: "test@example.com") }
+
+    it "returns false when person has a user" do
+      create(:user, person: person)
+      expect(person.can_be_claimed_by?("test@example.com")).to be false
+    end
+
+    it "returns false when email is blank" do
+      person.update(email: nil)
+      expect(person.can_be_claimed_by?("test@example.com")).to be false
+    end
+
+    it "returns false when email doesn't match" do
+      expect(person.can_be_claimed_by?("different@example.com")).to be false
+    end
+
+    it "returns true when conditions are met" do
+      expect(person.can_be_claimed_by?("test@example.com")).to be true
+    end
+
+    it "handles case-insensitive email matching" do
+      expect(person.can_be_claimed_by?("TEST@EXAMPLE.COM")).to be true
+    end
+  end
+
+  describe '#has_financial_data?' do
+    it "returns false when no payments and no active memberships" do
+      person = create(:person)
+      expect(person.has_financial_data?).to be false
+    end
+
+    it "returns true when person has payments" do
+      person = create(:person)
+      create(:payment, person: person)
+      expect(person.has_financial_data?).to be true
+    end
+
+    it "returns true when person has active membership" do
+      person = create(:person, :with_active_membership)
+      expect(person.has_financial_data?).to be true
+    end
+
+    it "returns false when person has inactive membership but no payments" do
+      person = create(:person)
+      create(:membership, person: person, status: :inactive)
+      expect(person.has_financial_data?).to be false
+    end
+  end
+
+  describe '#archive! and #restore!' do
+    let(:person) { create(:person) }
+
+    it "archives person without financial data" do
+      expect {
+        person.archive!
+      }.to change { person.reload.archived? }.from(false).to(true)
+      expect(person.deleted_at).to be_present
+    end
+
+    it "does not archive person with financial data" do
+      create(:payment, person: person)
+      expect {
+        result = person.archive!
+        expect(result).to be false
+      }.not_to change { person.reload.deleted_at }
+    end
+
+    it "does not archive person with active membership" do
+      create(:membership, person: person, status: :active)
+      expect {
+        result = person.archive!
+        expect(result).to be false
+      }.not_to change { person.reload.deleted_at }
+    end
+
+    it "restores archived person" do
+      person.update(deleted_at: 1.day.ago)
+      expect {
+        person.restore!
+      }.to change { person.reload.deleted_at }.to(nil)
+    end
+  end
+
+  describe 'scopes' do
+    describe '.active' do
+      it "returns only non-archived persons" do
+        active_person = create(:person)
+        archived_person = create(:person, deleted_at: 1.day.ago)
+        
+        expect(Person.active).to include(active_person)
+        expect(Person.active).not_to include(archived_person)
+      end
+    end
+
+    describe '.archived' do
+      it "returns only archived persons" do
+        active_person = create(:person)
+        archived_person = create(:person, deleted_at: 1.day.ago)
+        
+        expect(Person.archived).not_to include(active_person)
+        expect(Person.archived).to include(archived_person)
+      end
+    end
+
+    describe '.with_expiring_membership' do
+      it "returns persons with membership expiring in next 30 days" do
+        person1 = create(:person)
+        person2 = create(:person)
+        
+        create(:membership, person: person1, status: :active, ended_at: 15.days.from_now)
+        create(:membership, person: person2, status: :active, ended_at: 60.days.from_now)
+        
+        expect(Person.with_expiring_membership).to include(person1)
+        expect(Person.with_expiring_membership).not_to include(person2)
+      end
+    end
+
+    describe '.without_membership' do
+      it "returns persons with no memberships" do
+        person_without = create(:person)
+        person_with = create(:person, :with_active_membership)
+        
+        expect(Person.without_membership).to include(person_without)
+        expect(Person.without_membership).not_to include(person_with)
+      end
+    end
+  end
   
 end

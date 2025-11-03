@@ -369,4 +369,151 @@ RSpec.describe BookOfEntry, type: :model do
     end
   end
 
+  describe "#suspend!" do
+    let(:circus_person) { create(:person, :with_circus_membership) }
+    let(:book) { create(:book_of_entry, person: circus_person, subscription_plan: pack10_plan, sessions_remaining: 5) }
+
+    it "changes status to suspended" do
+      expect {
+        book.suspend!(reason: "Upgrade to trimester")
+      }.to change { book.reload.status }.to('suspended')
+    end
+
+    it "sets suspended_at timestamp" do
+      expect {
+        book.suspend!(reason: "Upgrade to trimester")
+      }.to change { book.reload.suspended_at }.from(nil)
+      expect(book.suspended_at).to be_within(1.second).of(Time.current)
+    end
+
+    it "sets suspended_reason" do
+      book.suspend!(reason: "Upgrade to trimester")
+      expect(book.reload.suspended_reason).to eq("Upgrade to trimester")
+    end
+
+    it "does not change sessions_remaining" do
+      expect {
+        book.suspend!(reason: "Upgrade to trimester")
+      }.not_to change { book.reload.sessions_remaining }
+    end
+  end
+
+  describe "#reactivate!" do
+    let(:circus_person) { create(:person, :with_circus_membership) }
+    let(:book) { create(:book_of_entry, person: circus_person, subscription_plan: pack10_plan, 
+                       status: :suspended, sessions_remaining: 5, suspended_at: 1.day.ago, 
+                       suspended_reason: "Upgrade to trimester") }
+
+    it "changes status from suspended to active" do
+      expect {
+        book.reactivate!
+      }.to change { book.reload.status }.from('suspended').to('active')
+    end
+
+    it "clears suspended_at" do
+      expect {
+        book.reactivate!
+      }.to change { book.reload.suspended_at }.to(nil)
+    end
+
+    it "clears suspended_reason" do
+      expect {
+        book.reactivate!
+      }.to change { book.reload.suspended_reason }.to(nil)
+    end
+
+    it "does nothing if book is not suspended" do
+      book.update!(status: :active, suspended_at: nil, suspended_reason: nil)
+      expect {
+        book.reactivate!
+      }.not_to change { book.reload.status }
+    end
+  end
+
+  describe "#suspended?" do
+    it "returns true when status is suspended" do
+      book = create(:book_of_entry, person: person, subscription_plan: pack10_plan, status: :suspended)
+      expect(book.suspended?).to be true
+    end
+
+    it "returns false when status is not suspended" do
+      book = create(:book_of_entry, person: person, subscription_plan: pack10_plan, status: :active)
+      expect(book.suspended?).to be false
+    end
+  end
+
+  describe ".suspended scope" do
+    let!(:active_book) { create(:book_of_entry, :active, person: person, subscription_plan: pack10_plan) }
+    let!(:suspended_book) { create(:book_of_entry, :suspended, person: person, subscription_plan: pack10_plan) }
+    let!(:consumed_book) { create(:book_of_entry, :consumed, person: person, subscription_plan: pack10_plan) }
+
+    it "returns only suspended books" do
+      expect(BookOfEntry.suspended).to include(suspended_book)
+      expect(BookOfEntry.suspended).not_to include(active_book, consumed_book)
+    end
+  end
+
+  describe ".reactivate_suspended_packs_for_person" do
+    let(:circus_person) { create(:person, :with_circus_membership) }
+    let(:trimester_plan) { create(:subscription_plan, :trimester) }
+
+    context "when person has no active non-pack10 plans" do
+      let!(:pack10) { create(:book_of_entry, person: circus_person, subscription_plan: pack10_plan, 
+                            status: :suspended, sessions_remaining: 5) }
+
+      it "reactivates suspended pack10 books" do
+        expect {
+          BookOfEntry.reactivate_suspended_packs_for_person(circus_person)
+        }.to change { pack10.reload.status }.from('suspended').to('active')
+      end
+    end
+
+    context "when person has active trimester plan" do
+      let!(:trimester_book) { create(:book_of_entry, person: circus_person, subscription_plan: trimester_plan, 
+                                     status: :active, expires_at: 1.month.from_now, sessions_remaining: nil) }
+      let!(:pack10) { create(:book_of_entry, person: circus_person, subscription_plan: pack10_plan, 
+                            status: :suspended, sessions_remaining: 5) }
+
+      it "does not reactivate suspended pack10 books" do
+        expect {
+          BookOfEntry.reactivate_suspended_packs_for_person(circus_person)
+        }.not_to change { pack10.reload.status }
+      end
+    end
+
+    context "when person has basic membership" do
+      let(:basic_person) { create(:person, :with_basic_membership) }
+      let!(:pack10) { create(:book_of_entry, person: basic_person, subscription_plan: pack10_plan, 
+                            status: :suspended, sessions_remaining: 5) }
+
+      it "does not reactivate suspended pack10 books" do
+        expect {
+          BookOfEntry.reactivate_suspended_packs_for_person(basic_person)
+        }.not_to change { pack10.reload.status }
+      end
+    end
+
+    context "when multiple pack10 books exist" do
+      let!(:pack10_1) { create(:book_of_entry, person: circus_person, subscription_plan: pack10_plan, 
+                               status: :suspended, sessions_remaining: 3) }
+      let!(:pack10_2) { create(:book_of_entry, person: circus_person, subscription_plan: pack10_plan, 
+                               status: :suspended, sessions_remaining: 7) }
+      let!(:pack10_active) { create(:book_of_entry, person: circus_person, subscription_plan: pack10_plan, 
+                                    status: :active, sessions_remaining: 5) }
+
+      it "reactivates all suspended pack10 books" do
+        expect {
+          BookOfEntry.reactivate_suspended_packs_for_person(circus_person)
+        }.to change { pack10_1.reload.status }.from('suspended').to('active')
+          .and change { pack10_2.reload.status }.from('suspended').to('active')
+      end
+
+      it "does not change already active pack10 books" do
+        expect {
+          BookOfEntry.reactivate_suspended_packs_for_person(circus_person)
+        }.not_to change { pack10_active.reload.status }
+      end
+    end
+  end
+
 end

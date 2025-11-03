@@ -14,6 +14,7 @@ module Web
     # Attributs pour la création de compte utilisateur
     attribute :user_email, :string
     attribute :user_password, :string
+    attribute :user_password_confirmation, :string
     attribute :user_system_role, :string, default: "web_visitor"
     attribute :cgu, :string
     attribute :privacy_policy, :string
@@ -23,12 +24,14 @@ module Web
     validates :last_name, presence: true
     validates :email, presence: true
     validates :user_email, presence: true
-    validates :user_password, presence: true
+    validates :user_password, presence: true, length: { minimum: 6 }
+    validates :user_password_confirmation, presence: true
     validates :user_system_role, inclusion: { in: %w[super_admin admin volunteer web_visitor] }
-    validates :cgu, acceptance: { message: "Vous devez accepter les CGU pour continuer." }
-    validates :privacy_policy, acceptance: { message: "Vous devez accepter la politique de confidentialité pour continuer." }
+    validates :cgu, acceptance: { message: "Vous devez accepter les CGU pour continuer." }, allow_nil: false
+    validates :privacy_policy, acceptance: { message: "Vous devez accepter la politique de confidentialité pour continuer." }, allow_nil: false
     validate :email_uniqueness
     validate :user_email_uniqueness
+    validate :password_confirmation_matches
 
     def call
       return failure("Invalid data: #{errors.full_messages.join(', ')}") unless valid?
@@ -172,6 +175,14 @@ module Web
           # Person existe mais pas de compte web → OK, on va la récupérer
           # Pas d'erreur
         end
+      end
+    end
+
+    def password_confirmation_matches
+      return if user_password.blank? || user_password_confirmation.blank?
+      
+      unless user_password == user_password_confirmation
+        errors.add(:user_password_confirmation, "ne correspond pas au mot de passe")
       end
     end
 

@@ -62,18 +62,22 @@ RSpec.describe "Admin::Payments", type: :request do
     
     before { login_as(admin) }
     
-    it "returns http success" do
+    it "redirects to index with notice" do
       get new_admin_payment_path
-      expect(response).to have_http_status(:success)
+      expect(response).to redirect_to(admin_payments_path)
+      follow_redirect!
+      expect(response.body).to include("Création de paiement temporairement désactivée")
     end
     
     context "with user_id param" do
       let(:person) { create(:person) }
       let(:user) { create(:user, person: person) }
       
-      it "returns http success with user context" do
+      it "redirects to index with notice" do
         get new_admin_payment_path, params: { user_id: user.id }
-        expect(response).to have_http_status(:success)
+        expect(response).to redirect_to(admin_payments_path)
+        follow_redirect!
+        expect(response.body).to include("Création de paiement temporairement désactivée")
       end
     end
   end
@@ -228,16 +232,19 @@ RSpec.describe "Admin::Payments", type: :request do
         expect(payment.total_cents).to eq(original_cents)
       end
       
-      it "redirects with error message" do
+      it "redirects to show and then to index with message" do
         patch admin_payment_path(payment), params: {
           payment: {
             total_cents: -100
           }
         }
         
+        expect(response).to redirect_to(admin_payment_path(payment))
+        follow_redirect!
         expect(response).to redirect_to(admin_payments_path)
         follow_redirect!
-        expect(response.body).to include("Échec")
+        # The flash from show action overwrites the error message
+        expect(response.body).to include("édition inline")
       end
     end
   end

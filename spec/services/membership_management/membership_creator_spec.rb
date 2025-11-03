@@ -47,14 +47,17 @@ RSpec.describe MembershipManagement::MembershipCreator do
           membership_type_id: membership_type.id,
           payment_method: "offered",
           recorded_by_id: admin_user.id,
-          custom_amount_cents: 2500
+          custom_amount_cents: 2500,
+          offer_reason: "Test offer"
         }
       end
 
       it "creates payment with custom amount" do
         creator = described_class.new(params)
         result = creator.call
-
+        
+        expect(result.success?).to be true
+        expect(result.payment).to be_present
         expect(result.payment.total_cents).to eq(2500)
       end
     end
