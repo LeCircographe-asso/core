@@ -1,8 +1,27 @@
-#!/usr/bin/env sh
+#!/usr/bin/env bash
 
-if ! gem list foreman -i --silent; then
-  echo "Installing foreman..."
-  gem install foreman
+# Load RVM if available
+if [[ -s "$HOME/.rvm/scripts/rvm" ]]; then
+  source "$HOME/.rvm/scripts/rvm"
+elif [[ -s "/usr/local/rvm/scripts/rvm" ]]; then
+  source "/usr/local/rvm/scripts/rvm"
+fi
+
+# Check if foreman is available via bundle, otherwise try to install
+if ! command -v foreman &> /dev/null; then
+  if bundle exec which foreman &> /dev/null; then
+    FOREMAN_CMD="bundle exec foreman"
+  else
+    echo "Installing foreman..."
+    if gem install foreman --user-install 2>/dev/null; then
+      FOREMAN_CMD="foreman"
+    else
+      echo "Error: Could not install foreman. Please install it manually: gem install foreman"
+      exit 1
+    fi
+  fi
+else
+  FOREMAN_CMD="foreman"
 fi
 
 # Default to port 3000 if not specified
@@ -13,4 +32,4 @@ export PORT="${PORT:-3000}"
 export RUBY_DEBUG_OPEN="true"
 export RUBY_DEBUG_LAZY="true"
 
-exec foreman start -f Procfile.dev "$@"
+exec $FOREMAN_CMD start -f Procfile.dev "$@"
