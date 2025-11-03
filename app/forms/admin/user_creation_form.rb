@@ -24,6 +24,9 @@ module Admin
     attribute :get_involved, :boolean, default: false
     attribute :newsletter_subscribed, :boolean, default: false
     attribute :dyslexic_font, :boolean, default: false
+    attribute :reduced_rate_eligible, :boolean, default: false
+    attribute :reduced_rate_reason, :string
+    attribute :reduced_rate_proof, :string
 
     # Attributs pour la création de compte utilisateur
     attribute :create_web_account, :boolean, default: false
@@ -157,7 +160,10 @@ module Admin
         image_rights: image_rights,
         get_involved: get_involved,
         newsletter_subscribed: newsletter_subscribed,
-        dyslexic_font: dyslexic_font
+        dyslexic_font: dyslexic_font,
+        reduced_rate_eligible: reduced_rate_eligible,
+        reduced_rate_reason: reduced_rate_reason,
+        reduced_rate_proof: reduced_rate_proof
       }
     end
 

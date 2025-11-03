@@ -431,6 +431,9 @@ module Admin
         :zip_code,
         :town,
         :country,
+        :reduced_rate_eligible,
+        :reduced_rate_reason,
+        :reduced_rate_proof,
         # Paramètres imbriqués (pour compatibilité)
         person: [
           :id,
@@ -451,7 +454,10 @@ module Admin
           :dyslexic_font,
           :zip_code,
           :town,
-          :country
+          :country,
+          :reduced_rate_eligible,
+          :reduced_rate_reason,
+          :reduced_rate_proof
         ]
       )
     end
@@ -479,6 +485,9 @@ module Admin
         get_involved: person_params[:get_involved],
         newsletter_subscribed: person_params[:newsletter_subscribed],
         dyslexic_font: person_params[:dyslexic_font],
+        reduced_rate_eligible: person_params[:reduced_rate_eligible],
+        reduced_rate_reason: person_params[:reduced_rate_reason],
+        reduced_rate_proof: person_params[:reduced_rate_proof],
         create_web_account: params.dig(:user, :create_web_account),
         email_address: params.dig(:user, :email_address),
         system_role: params.dig(:user, :system_role),
@@ -506,7 +515,10 @@ module Admin
         :newsletter_subscribed,
         :get_involved,
         :image_rights,
-        :is_minor
+        :is_minor,
+        :reduced_rate_eligible,
+        :reduced_rate_reason,
+        :reduced_rate_proof
       )
     end
     

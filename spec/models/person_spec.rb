@@ -306,5 +306,70 @@ RSpec.describe Person, type: :model do
       expect(person.email).to be_nil
     end
   end
+
+  describe '#upgrade_subscription!' do
+    let(:person) { create(:person, :with_circus_membership) }
+    let(:pack10_plan) { create(:subscription_plan, :pack10) }
+    let(:trimester_plan) { create(:subscription_plan, :trimester) }
+    let(:annual_plan) { create(:subscription_plan, :annual) }
+    let(:admin_user) { create(:user, system_role: :admin) }
+    let!(:book) { create(:book_of_entry, person: person, subscription_plan: pack10_plan, status: :active) }
+
+    it "upgrades pack10 to trimester with suspension" do
+      result = person.upgrade_subscription!(
+        from_book_id: book.id,
+        to_plan_id: trimester_plan.id,
+        payment_method: :cash,
+        recorded_by: admin_user
+      )
+
+      expect(result[:old_book].reload.status).to eq('suspended')
+      expect(result[:new_book]).to be_persisted
+      expect(result[:payment]).to be_persisted
+      expect(result[:credit_applied]).to eq(0) # Pack10 no credit
+    end
+
+    it "upgrades trimester to annual with prorata" do
+      trimester_book = create(:book_of_entry, person: person, subscription_plan: trimester_plan, 
+                            status: :active, expires_at: Date.current + 30.days, sessions_remaining: nil)
+      
+      result = person.upgrade_subscription!(
+        from_book_id: trimester_book.id,
+        to_plan_id: annual_plan.id,
+        payment_method: :cash,
+        recorded_by: admin_user
+      )
+
+      expect(result[:old_book].reload.status).to eq('suspended')
+      expect(result[:new_book]).to be_persisted
+      expect(result[:payment]).to be_persisted
+      expect(result[:credit_applied]).to be > 0 # Prorata credit
+    end
+
+    it "raises error if no circus membership" do
+      basic_person = create(:person, :with_basic_membership)
+      basic_book = create(:book_of_entry, person: basic_person, subscription_plan: pack10_plan)
+
+      expect {
+        basic_person.upgrade_subscription!(
+          from_book_id: basic_book.id,
+          to_plan_id: trimester_plan.id,
+          payment_method: :cash,
+          recorded_by: admin_user
+        )
+      }.to raise_error("Adhésion Cirque active requise")
+    end
+
+    it "raises error for invalid upgrade path" do
+      expect {
+        person.upgrade_subscription!(
+          from_book_id: book.id,
+          to_plan_id: pack10_plan.id, # Can't upgrade to same type
+          payment_method: :cash,
+          recorded_by: admin_user
+        )
+      }.to raise_error(/non autorisé/)
+    end
+  end
   
 end
