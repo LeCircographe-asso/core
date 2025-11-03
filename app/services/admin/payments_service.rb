@@ -27,23 +27,25 @@ module Admin
       # Filter by person if person_id is provided
       if params[:person_id].present?
         person = Person.find_by(id: params[:person_id])
-        query = PaymentQuery.by_person(person.id) if person
+        query = query.where(person_id: person.id) if person
       end
 
       # Filter by user if user_id is provided (compatibility)
       if params[:user_id].present?
         user = User.find_by(id: params[:user_id])
-        query = PaymentQuery.by_user(user.id) if user
+        query = query.where(person_id: user.person.id) if user&.person
       end
 
       # Apply status filter
-      query = PaymentQuery.by_status(params[:status]) if params[:status].present?
+      if params[:status].present?
+        query = query.where(status: params[:status])
+      end
 
       # Apply date range filter
       if params[:start_date].present? && params[:end_date].present?
         start_date = Date.parse(params[:start_date])
         end_date = Date.parse(params[:end_date])
-        query = PaymentQuery.by_date_range(start_date, end_date)
+        query = query.where(created_at: start_date.beginning_of_day..end_date.end_of_day)
       end
 
       # Apply search filter
