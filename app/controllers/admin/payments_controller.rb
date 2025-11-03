@@ -31,21 +31,8 @@ module Admin
     end
 
     def new
-      @payment = Payment.new
-
-      # Set breadcrumb
-      if params[:user_id].present?
-        @user = User.find_by(id: params[:user_id])
-        if @user
-          add_breadcrumb "Liste d'adhérents", admin_users_path
-          add_breadcrumb @user.full_name.present? ? @user.full_name : "Utilisateur ##{@user.id}", admin_user_path(@user)
-          add_breadcrumb "Historique des paiements", admin_payments_path(user_id: @user.id)
-          add_breadcrumb "Nouveau paiement", nil
-        end
-      else
-        add_breadcrumb "Historique des paiements", admin_payments_path
-        add_breadcrumb "Nouveau paiement", nil
-      end
+      # Payment creation is currently disabled, redirect to index
+      redirect_to admin_payments_path, notice: "Création de paiement temporairement désactivée"
     end
 
     def show

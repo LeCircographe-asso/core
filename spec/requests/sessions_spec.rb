@@ -40,8 +40,9 @@ RSpec.describe "Sessions", type: :request do
           password: "password123"
         }
         
-        expect(response.headers["Set-Cookie"]).to be_present
-        expect(response.headers["Set-Cookie"]).to include("session_id")
+        cookie_header = response.headers["Set-Cookie"]
+        expect(cookie_header).to be_present
+        expect(cookie_header.is_a?(Array) ? cookie_header.first : cookie_header).to include("session_id")
       end
       
       it "redirects to root with success notice" do

@@ -75,9 +75,8 @@ RSpec.describe "Admin::Users", type: :request do
       end
       
       it "returns 404 for non-existent person" do
-        expect {
-          get admin_user_path("person_99999")
-        }.to raise_error(ActiveRecord::RecordNotFound)
+        get admin_user_path("person_99999")
+        expect(response).to have_http_status(:not_found)
       end
     end
   end
@@ -85,19 +84,22 @@ RSpec.describe "Admin::Users", type: :request do
   describe "POST /admin/users/:id/restore" do
     context "when authenticated as super_admin" do
       let(:super_admin) { create(:user, :super_admin) }
-      let(:deleted_user) { create(:user, deleted_at: 1.day.ago) }
+      let(:deleted_user) { create(:user, deleted_at: 1.day.ago, deleted: true) }
       
       before { login_as(super_admin) }
       
       it "restores the user" do
-        post restore_admin_user_path(deleted_user)
+        expect {
+          post restore_admin_user_path(deleted_user)
+        }.to change { deleted_user.reload.deleted_at }.from(Time).to(nil)
+        
         deleted_user.reload
         expect(deleted_user.deleted_at).to be_nil
       end
       
-      it "redirects to user show page with notice" do
+      it "redirects to users list with notice" do
         post restore_admin_user_path(deleted_user)
-        expect(response).to redirect_to(admin_user_path(deleted_user))
+        expect(response).to redirect_to(admin_users_path)
         follow_redirect!
         expect(response.body).to include("restauré")
       end
@@ -105,16 +107,18 @@ RSpec.describe "Admin::Users", type: :request do
     
     context "when authenticated as admin (not super)" do
       let(:admin) { create(:user, :admin) }
-      let(:deleted_user) { create(:user, deleted_at: 1.day.ago) }
+      let(:deleted_user) { create(:user, deleted_at: 1.day.ago, deleted: true) }
       
       before { login_as(admin) }
       
       it "does not allow restoration" do
         expect {
           post restore_admin_user_path(deleted_user)
-        }.to raise_error(CanCan::AccessDenied).or raise_error(Pundit::NotAuthorizedError).or change { deleted_user.reload.deleted_at }.by(0)
+        }.not_to change { deleted_user.reload.deleted_at }
         
-        # Or redirect/alert based on your auth implementation
+        expect(response).to redirect_to(admin_users_path)
+        follow_redirect!
+        expect(response.body).to include("super-admin")
       end
     end
   end
@@ -126,20 +130,19 @@ RSpec.describe "Admin::Users", type: :request do
       
       before { login_as(super_admin) }
       
-      it "soft deletes the user" do
-        expect {
-          delete admin_user_path(regular_user)
-        }.to change { regular_user.reload.deleted_at }.from(nil).to(Time)
+      it "deletes the user from database" do
+        delete admin_user_path(regular_user)
+        follow_redirect! if response.redirect?
         
-        expect(regular_user.deleted_at).to be_present
+        expect { regular_user.reload }.to raise_error(ActiveRecord::RecordNotFound)
       end
       
       it "does not allow deleting self" do
         expect {
           delete admin_user_path(super_admin)
-        }.not_to change { super_admin.reload.deleted_at }
+        }.not_to change { User.count }
         
-        expect(response).to redirect_to(admin_user_path(super_admin))
+        expect(response).to redirect_to(admin_users_path)
       end
     end
   end

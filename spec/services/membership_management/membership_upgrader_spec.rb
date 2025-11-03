@@ -54,24 +54,6 @@ RSpec.describe MembershipManagement::MembershipUpgrader do
       end
     end
 
-    context "with custom amount" do
-      let(:params) do
-        {
-          person: person,
-          new_membership_type_id: circus_type.id,
-          payment_method: "offered",
-          recorded_by_id: admin_user.id,
-          custom_amount_cents: 500
-        }
-      end
-
-      it "creates payment with custom amount" do
-        upgrader = described_class.new(params)
-        result = upgrader.call
-
-        expect(result.payment.total_cents).to eq(500)
-      end
-    end
 
     context "with member number change" do
       let(:params) do

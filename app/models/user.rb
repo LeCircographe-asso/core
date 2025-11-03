@@ -2,7 +2,7 @@ class User < ApplicationRecord
   include Roleable
   include Dateable
   
-  attr_accessor :cgu, :privacy_policy, :created_by_admin
+  attr_accessor :cgu, :privacy_policy
   after_create :generate_password_reset_token
   after_create :welcome_send
 
@@ -127,7 +127,7 @@ class User < ApplicationRecord
   end
 
   def created_by_admin?
-    @created_by_admin == true
+    created_by_admin == true
   end
   def has_higher_permissions?(other_user)
     Rails.logger.debug "has_higher_permissions? called with other_user: #{other_user.inspect}"

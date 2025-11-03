@@ -7,9 +7,10 @@ module Admin
   # The public UsersController in contrast only handles self-service actions
   # for individual users managing their own profiles.
   class UsersController < BaseController
-    before_action :set_user, only: %i[ show edit update destroy ]
+    before_action :set_user, only: %i[ edit update destroy ]
     before_action :set_breadcrumbs, except: %i[ index new ]
     before_action :check_deletion_permissions, only: [ :destroy ]
+    before_action :require_super_admin, only: [ :restore ]
 
     # GET /admin/users or /admin/users.json
     def index
@@ -316,11 +317,7 @@ module Admin
     def restore
       @user = User.unscoped.find(params[:id])
 
-      if @user.update(
-        deleted: false,
-        deleted_at: nil,
-        email_address: params[:email_address]
-      )
+      if @user.update(deleted: false, deleted_at: nil)
         redirect_to admin_users_path, notice: "Utilisateur restauré avec succès."
       else
         redirect_to admin_users_path, alert: "Impossible de restaurer cet utilisateur."
@@ -537,6 +534,26 @@ module Admin
         subscriber.update!(
           subscribed: false
         )
+      end
+    end
+
+    def available_roles_for_user(user)
+      return [] if user.nil?
+      
+      # Un super_admin peut assigner tous les rôles sauf super_admin
+      if Current.user&.super_admin?
+        User.system_roles.keys.reject { |role| role == 'super_admin' }
+      # Un admin peut assigner volunteer et web_visitor
+      elsif Current.user&.admin?
+        %w[volunteer web_visitor]
+      else
+        []
+      end
+    end
+
+    def require_super_admin
+      unless Current.user&.super_admin?
+        redirect_to admin_users_path, alert: "Seul le super-admin peut restaurer des utilisateurs."
       end
     end
   end
