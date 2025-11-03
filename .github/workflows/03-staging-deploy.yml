@@ -98,12 +98,12 @@ jobs:
       run: |
         COVERAGE=$(cat coverage/.last_run.json | grep '"line"' | head -1 | cut -d':' -f2 | tr -d ' ,}')
         echo "Current coverage: ${COVERAGE}%"
-        if (( $(echo "$COVERAGE < 10" | bc -l) )); then
-          echo "❌ Coverage below 10% threshold! Current: ${COVERAGE}%"
+        if (( $(echo "$COVERAGE < 40" | bc -l) )); then
+          echo "❌ Coverage below 40% threshold! Current: ${COVERAGE}%"
           echo "⚠️  Staging deploy blocked due to low coverage"
           exit 1
         else
-          echo "✅ Coverage meets minimum threshold for staging"
+          echo "✅ Coverage meets minimum threshold for staging (40%)"
         fi
         
     - name: Set up Docker Buildx
