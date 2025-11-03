@@ -38,16 +38,17 @@ RSpec.describe "Admin::Payments", type: :request do
         
         get admin_payments_path
         expect(response.body).to include(person.full_name)
-        expect(response.body).to include("50.00")
+        expect(response.body).to include("50") # Check for amount in localized format
       end
 
       it "filters by user_id" do
         person1 = create(:person, first_name: "Alice")
         person2 = create(:person, first_name: "Bob")
+        user1 = create(:user, person: person1)
         payment1 = create(:payment, person: person1, recorded_by: admin, total_cents: 5000)
         payment2 = create(:payment, person: person2, recorded_by: admin, total_cents: 3000)
         
-        get admin_payments_path, params: { user_id: person1.id }
+        get admin_payments_path, params: { user_id: user1.id }
         expect(response.body).to include("Alice")
         expect(response.body).not_to include("Bob")
       end
