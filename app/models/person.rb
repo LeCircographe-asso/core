@@ -716,12 +716,12 @@ class Person < ApplicationRecord
     when 'trimester'
       # Prorata temporel (jours restants)
       total_days = 90
-      days_remaining = (book_of_entry.expires_at - Date.current).to_i
+      days_remaining = ((book_of_entry.expires_at.to_date - Date.current).to_i)
       (plan.price_cents * days_remaining / total_days.to_f).round
     when 'annual'
       # Prorata temporel (jours restants)
       total_days = 365
-      days_remaining = (book_of_entry.expires_at - Date.current).to_i
+      days_remaining = ((book_of_entry.expires_at.to_date - Date.current).to_i)
       (plan.price_cents * days_remaining / total_days.to_f).round
     else
       0

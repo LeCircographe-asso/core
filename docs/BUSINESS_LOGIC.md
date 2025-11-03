@@ -1,9 +1,9 @@
 # Logique Métier - Le Circographe
 
 **Application:** Gestion complète pour association de cirque  
-**Date:** 2025-01-31  
+**Date:** 2025-11-03  
 **Classification:** Zone 1 (Stable) | Zone 2 (En cours) | Zone 3 (Future)  
-**État:** ✅ Architecture simplifiée et nettoyée (2025-01-31)
+**État:** ✅ Logique métier complètement réécrite selon vraies règles business (2025-11-03)
 
 ---
 
@@ -27,8 +27,9 @@
 - **Activation:** Immédiate après paiement réussi
 
 #### Types d'Adhésions
-- **Basic:** Adhésion standard sans accès cirque
-- **Circus:** Adhésion avec accès cirque (catégorie unique, tarifs multiples: Full 25€, Reduced 20€)
+- **Basic:** 1€ - Adhésion standard sans accès cirque
+- **Circus Plein:** 10€ - Adhésion avec accès cirque tarif normal
+- **Circus Réduit:** 7€ - Adhésion avec accès cirque tarif réduit (RSA, Mineur, Handicap, Étudiant)
 
 #### Règles de Référence
 ```ruby
@@ -38,10 +39,12 @@
 ```
 
 #### Upgrades Possibles
-- ✅ Basic → Circus (avec tout tarif: Full, Reduced, Student, etc.)
-- ✅ Circus → Circus (changement de tarif uniquement: Full ↔ Reduced)
+- ✅ Basic → Circus (avec tout tarif: Plein, Réduit, etc.)
+- ✅ Circus → Circus (changement de tarif uniquement: Plein ↔ Réduit)
 - ❌ Circus → Basic (interdit)
 - ❌ Même type (interdit)
+
+**RÈGLE CRITIQUE:** Upgrade = **plein tarif** du nouveau type (pas de prorata)
 
 #### Logique Métier
 ```ruby
@@ -49,12 +52,14 @@ Membership#can_upgrade_to?(membership_type)
 Membership#upgrade_to!(new_type, started_at)
 Membership#basic?
 Membership#circus?
+Person#create_membership!(membership_type, ...) # Crée + paiement + numéro
+Person#upgrade_membership!(new_type, ...) # Full price du nouveau type
+Person#renew_membership!(membership_type, ...) # Nouveau numéro chaque année
 ```
 
 ### Zone 2: En Cours de Validation
 
 - [ ] Renouvellement automatique
-- [ ] Prorata sur adhésion annuelle
 - [ ] Gestion des abonnements suspendus
 
 ### Zone 3: Future
@@ -79,12 +84,12 @@ Membership#circus?
 - **SubscriptionPlan:** Abonnement (pack10, annual, etc.)
 - **MembershipType:** Nouvelle adhésion
 
-#### Traitement Automatique
+#### Logique Métier Person-Based
 ```ruby
-Payments::Process#call
-  - Active pending membership si payée
-  - Crée BookOfEntry pour pack10
-  - Assigne member_number si absent
+Person#create_membership!(...) # Crée membership + payment + payment_line
+Person#upgrade_membership!(...) # Crée payment full price + payment_line
+Person#create_subscription!(...) # Crée book_of_entry + payment + payment_line
+Person#upgrade_subscription!(...) # Prorata + payment + payment_line
 ```
 
 #### Payment Lines
@@ -92,11 +97,14 @@ Payments::Process#call
 - Chaque ligne référence un item (Membership, Plan, etc.)
 - Traitement séquentiel de toutes les lignes
 
+#### Anonymisation RGPD
+```ruby
+Payment#anonymize! # Person_id → NULL, garde hash traçabilité
+```
+
 ### Zone 2: En Cours de Validation
 
-- [ ] Politique de remboursement (refunds)
 - [ ] Paiements en plusieurs fois
-- [ ] Prorata sur remboursements
 
 ### Zone 3: Future
 
@@ -130,6 +138,11 @@ enum system_role: [:super_admin, :admin, :volunteer, :web_visitor]
 - **User → Person:** Relation 1-to-1
 - **Délégation:** User délègue attributs à Person
 - **Attributs:** name, phone, email, address, birth_date, etc.
+
+#### Tarifs Réduits
+- **Attributs:** `reduced_rate_eligible`, `reduced_rate_reason`, `reduced_rate_proof`
+- **Justificatifs:** RSA, Mineur, Situation Handicap, Étudiant, Autre
+- **Usage:** Tracking pour statistiques et audit
 
 ### Zone 2: En Cours de Validation
 
@@ -209,11 +222,22 @@ BookOfEntry#use_session!
 - **Never expires:** Pack10 n'a pas expires_at
 - **Non-pack:** Expire selon validité
 
+#### Suspension & Réactivation
+```ruby
+BookOfEntry#suspend!(reason:) # Statut suspended (upgrades)
+BookOfEntry#reactivate! # Statut active
+BookOfEntry.reactivate_suspended_packs_for_person(person) # Auto après expiration Trimestre/Année
+```
+
+**RÈGLES UPGRADE Cotisations:**
+- Pack10 → Trimestre/Année OK (suspension Pack10, pas de crédit)
+- Trimestre → Année OK (crédit prorata temporel)
+- Day interdit
+
 ### Zone 2: En Cours de Validation
 
 - [ ] Transfert de séances entre carnets
 - [ ] Extension de validité
-- [ ] Remboursement partiel
 
 ### Zone 3: Future
 
@@ -285,17 +309,27 @@ BookOfEntry#use_session!
 ### Zone 1: Comportement Défini
 
 #### Format
-- **Pattern:** "25U001" (année + U + séquence)
-- **Assignment:** Automatique à l'activation membership
-- **Service:** `MemberManagementService#assign_member_number`
+- **Pattern:** "25U001" (année + U/B + séquence)
+  - U = Basique
+  - C = Cirque
+- **Assignment:** Automatique à la création membership via `Person#create_membership!`
+- **Renouvellement:** Nouveau numéro chaque année (incrémenté depuis le début d'année)
 
 #### History
 - **Audit:** Tous les changements tracés dans MemberNumberHistory
-- **Person:** Un numéro par personne (identifiant unique)
+- **Person:** Un numéro par personne (identifiant unique par année)
+- **Changement:** Numéro change si changement catégorie (Basic ↔ Circus)
+
+#### Méthodes
+```ruby
+MemberManagementService.assign_member_number(person, category) # Génération auto
+MemberManagementService.generate_member_number(category) # Génération nouvelle
+Person#handle_member_number_change!(old_type, new_type, recorded_by) # Upgrade
+```
 
 ### Zone 2: En Cours de Validation
 
-- [ ] Réassignation de numéros
+- [x] Réassignation de numéros ✅ (via upgrade)
 - [ ] Numéros spéciaux
 
 ### Zone 3: Future
@@ -424,22 +458,31 @@ NewsletterSubscriber#link_to_person!(person)
 ## Services Zone 1 (Testés)
 
 ✅ `MemberManagementService` - Assignation numéros  
-✅ `Payments::Process` - Traitement paiements  
-✅ `Memberships::Upgrade` - Upgrades membres  
+✅ `MembershipManagement::MembershipCreator` - Création adhésions  
+✅ `MembershipManagement::MembershipUpgrader` - Upgrades membres  
 ✅ `Admin::PaymentsService` - Filtrage/query paiements  
 ✅ `NewsletterSignupService` - Inscriptions newsletter  
+
+## Modèles Zone 1 (Testés)
+
+✅ `Person#create_membership!` - Création adhésion + paiement + numéro  
+✅ `Person#upgrade_membership!` - Upgrade plein tarif  
+✅ `Person#renew_membership!` - Renouvellement avec nouveau numéro  
+✅ `Person#create_subscription!` - Création cotisation + paiement  
+✅ `Person#upgrade_subscription!` - Upgrade cotisation avec prorata  
+✅ `BookOfEntry#suspend!` / `reactivate!` - Suspension cotisations  
+✅ `Payment#anonymize!` - Anonymisation RGPD  
 
 ## Services Zone 2 (En Exploration)
 
 ⚠️ `UserManagement::UserCreator` - Création utilisateurs  
 ⚠️ `PersonManagement::PersonCreator` - Création personnes  
-⚠️ `PaymentManagement::*` - Gestion paiements  
 ⚠️ `EventManagement::*` - Gestion événements  
 
-## Services Zone 3 (Futurs)
+## Services Zone 3 (Obsolètes/Supprimés)
 
-❓ `PaymentManagement::RefundCreator` - Remboursements  
-❓ `UserManagement::AccountMerger` - Fusion comptes  
+❌ `Payments::Process` - OBSOLÈTE (remplacé par Person-based logic)  
+❌ `Memberships::Upgrade` - OBSOLÈTE (remplacé par MembershipManagement::MembershipUpgrader)  
 
 ---
 
@@ -494,13 +537,44 @@ NewsletterSubscriber#link_to_person!(person)
 ---
 
 **Prochaine Révision:** Après stabilisation des Zones 2  
-**Dernière Mise à Jour:** 2025-01-31
+**Dernière Mise à Jour:** 2025-11-03
 
 ---
 
-## Changelog Récent (2025-01-31)
+## Changelog Récent
 
-### Simplification Architecture
+### Réécriture Complète Logique Métier (2025-11-03)
+
+**Upgrades d'Adhésions:**
+- **Changement:** Upgrade = **plein tarif** du nouveau type (pas de prorata)
+- **Impact:** Basic 1€ → Circus Réduit 7€ = payer 7€ (pas 6€)
+- **Méthode:** `Person#upgrade_membership!` - Facture new_type.price_cents
+
+**Renouvellements:**
+- **Nouveau:** `Person#renew_membership!` - Crée nouvelle adhésion + **nouveau numéro d'adhérent**
+- **Impact:** Chaque année, incrémente numéro (25U001 → 25U002 → ...)
+- **Historique:** Tous changements tracés dans MemberNumberHistory
+
+**Prorata Cotisations:**
+- **Nouveau:** `Person#upgrade_subscription!` - Upgrade Pack10/Trimestre/Année
+- **Pack10 → Trimestre/Année:** Suspension Pack10, pas de crédit
+- **Trimestre → Année:** Crédit prorata temporel (jours restants)
+- **Réactivation:** Auto Pack10 quand Trimestre/Année expire
+
+**Tarifs Réduits:**
+- **Nouveau:** Attributs `reduced_rate_eligible`, `reduced_rate_reason`, `reduced_rate_proof` sur Person
+- **UI:** Formulaire Stimulus toggle pour justificatif
+- **Affichage:** Carte bleue dans UserInfoComponent si éligible
+
+**Anonymisation RGPD:**
+- **Nouveau:** `Payment#anonymize!` - Person_id → NULL, garde hash traçabilité
+- **Usage:** Suppression données personnelles tout en gardant compta
+
+**Seed Amélioré:**
+- **Nouveau:** `db/seeds/add_memberships_and_payments.rb` - Utilise logique métier complète
+- **Résultat:** 53 membres avec numéros + paiements + historique correct
+
+### Simplification Architecture (2025-01-31)
 
 **MembershipType category enum:**
 - **Avant:** `basic`, `circus_full`, `circus_reduced` (3 catégories confuses)
