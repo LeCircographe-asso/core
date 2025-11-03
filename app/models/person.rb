@@ -378,6 +378,55 @@ class Person < ApplicationRecord
     end
   end
 
+  # Méthode métier pour les upgrades de cotisation avec prorata
+  def upgrade_subscription!(from_book_id:, to_plan_id:, payment_method: :cash, recorded_by:)
+    ActiveRecord::Base.transaction do
+      # Vérifier adhésion Circus active
+      raise "Adhésion Cirque active requise" unless can_buy_subscription_plans?
+
+      from_book = book_of_entries.find(from_book_id)
+      to_plan = SubscriptionPlan.find(to_plan_id)
+
+      # Validation upgrades autorisés
+      validate_subscription_upgrade!(from_book, to_plan)
+
+      # Calculer crédit du plan actuel
+      credit_cents = calculate_subscription_credit(from_book)
+
+      # Suspendre ancien plan
+      from_book.suspend!(reason: "Upgrade vers #{to_plan.name}")
+
+      # Créer nouveau plan
+      new_book_result = create_subscription!(to_plan, payment_method: payment_method, recorded_by: recorded_by)
+
+      # Calculer montant à payer (prix nouveau - crédit ancien)
+      amount_to_pay = [to_plan.price_cents - credit_cents, 0].max
+
+      # Créer paiement upgrade avec crédit
+      payment = payments.create!(
+        total_cents: amount_to_pay,
+        payment_method: payment_method,
+        status: :success,
+        recorded_by: recorded_by,
+        notes: "Upgrade cotisation: #{from_book.subscription_plan.name} → #{to_plan.name}. Crédit: #{credit_cents/100.0}€"
+      )
+
+      payment.payment_lines.create!(
+        item_type: "BookOfEntry",
+        item_id: new_book_result[:book_of_entry].id,
+        amount_cents: amount_to_pay,
+        description: "Upgrade avec crédit prorata"
+      )
+
+      {
+        old_book: from_book,
+        new_book: new_book_result[:book_of_entry],
+        payment: payment,
+        credit_applied: credit_cents
+      }
+    end
+  end
+
   # Méthodes métier pour la création de donations
   def create_donation!(amount_cents, payment_method: :cash, recorded_by:, notes: "Donation")
     ActiveRecord::Base.transaction do
@@ -417,8 +466,8 @@ class Person < ApplicationRecord
       # Sauvegarder l'ancienne adhésion
       old_membership_type = current_membership.membership_type
       
-      # Calculer la différence de prix
-      price_difference = new_membership_type.price_cents - old_membership_type.price_cents
+      # CHANGEMENT: Plein tarif du nouveau type, pas de différence
+      amount_to_pay = new_membership_type.price_cents
 
       # Effectuer l'upgrade
       new_membership = current_membership.upgrade_to!(new_membership_type)
@@ -427,13 +476,15 @@ class Person < ApplicationRecord
       old_member_number = member_number
       new_member_number = handle_member_number_change!(old_membership_type, new_membership_type, recorded_by)
 
-      # Gérer le paiement selon le type
-      payment = case payment_method.to_s
-      when "offered"
-        handle_offered_upgrade_payment!(price_difference, custom_amount_cents, recorded_by, old_membership_type, new_membership_type, new_membership)
-      else
-        handle_standard_upgrade_payment!(price_difference, payment_method, recorded_by, old_membership_type, new_membership_type, new_membership)
-      end
+      # Paiement plein tarif
+      payment = create_payment_with_line!(
+        amount_cents: amount_to_pay,
+        payment_method: payment_method,
+        recorded_by: recorded_by,
+        item_type: "Membership",
+        item_id: new_membership.id,
+        description: "Upgrade d'adhésion de #{old_membership_type.name} vers #{new_membership_type.name} (plein tarif)"
+      )
 
       { 
         membership: new_membership, 
@@ -442,6 +493,44 @@ class Person < ApplicationRecord
         old_member_number: old_member_number,
         new_member_number: new_member_number
       }
+    end
+  end
+
+  # Méthode métier pour les renouvellements d'adhésion
+  def renew_membership!(membership_type, payment_method: :cash, recorded_by:, custom_amount_cents: nil, offer_reason: nil)
+    ActiveRecord::Base.transaction do
+      # Vérifier adhésion expirée
+      current = self.current_membership
+      if current&.active?
+        raise "Adhésion encore active jusqu'au #{current.ended_at}. Renouvellement impossible."
+      end
+
+      # Marquer ancienne adhésion comme expired
+      current&.update!(status: :expired) if current
+
+      # Créer nouvelle adhésion
+      result = create_membership!(membership_type, payment_method: payment_method, recorded_by: recorded_by, custom_amount_cents: custom_amount_cents, offer_reason: offer_reason)
+
+      # NOUVEAU NUMÉRO D'ADHÉRENT À CHAQUE RENOUVELLEMENT
+      old_number = member_number
+      new_number = MemberManagementService.generate_member_number(get_membership_type_code(membership_type))
+      
+      # Historique changement
+      create_member_number_change_history!(
+        old_member_number: old_number,
+        new_member_number: new_number,
+        old_type: current ? get_membership_type_code(current.membership_type) : 'AUCUN',
+        new_type: get_membership_type_code(membership_type),
+        recorded_by: recorded_by
+      )
+      
+      update!(member_number: new_number)
+
+      result.merge(
+        renewed: true,
+        old_member_number: old_number,
+        new_member_number: new_number
+      )
     end
   end
 
@@ -579,48 +668,6 @@ class Person < ApplicationRecord
     Rails.logger.info "OFFER AUDIT: #{recorded_by.email} offered #{offer_type} to #{full_name} (#{id}) - Reason: #{offer_reason}"
   end
 
-  # Gérer le paiement d'un upgrade offert
-  def handle_offered_upgrade_payment!(price_difference, custom_amount_cents, recorded_by, old_membership_type, new_membership_type, new_membership)
-    amount = calculate_amount_cents("offered", 0, custom_amount_cents)
-    
-    # Toujours créer un paiement pour la traçabilité, même si montant = 0
-    create_payment_with_line!(
-      amount_cents: amount,
-      payment_method: "offered",
-      recorded_by: recorded_by,
-      item_type: "Membership",
-      item_id: new_membership.id,
-      description: "Upgrade offert d'adhésion de #{old_membership_type.name} vers #{new_membership_type.name} - Montant: #{(amount / 100.0).round(2)}€"
-    )
-  end
-
-  # Gérer le paiement d'un upgrade standard
-  def handle_standard_upgrade_payment!(price_difference, payment_method, recorded_by, old_membership_type, new_membership_type, new_membership)
-    if price_difference > 0
-      # Paiement de la différence
-      create_payment_with_line!(
-        amount_cents: price_difference,
-        payment_method: payment_method,
-        recorded_by: recorded_by,
-        item_type: "Membership",
-        item_id: new_membership.id,
-        description: "Upgrade d'adhésion de #{old_membership_type.name} vers #{new_membership_type.name}"
-      )
-    elsif price_difference < 0
-      # Crédit/remboursement
-      create_payment_with_line!(
-        amount_cents: price_difference.abs,
-        payment_method: "refund",
-        recorded_by: recorded_by,
-        item_type: "Membership",
-        item_id: new_membership.id,
-        description: "Crédit pour upgrade d'adhésion de #{old_membership_type.name} vers #{new_membership_type.name}"
-      )
-    else
-      nil # Pas de différence de prix
-    end
-  end
-
   # Méthode utilitaire pour créer un paiement avec sa ligne
   def create_payment_with_line!(amount_cents:, payment_method:, recorded_by:, item_type:, item_id:, description:)
     payment = payments.create!(
@@ -639,6 +686,46 @@ class Person < ApplicationRecord
     )
 
     payment
+  end
+
+  # Validation des upgrades de cotisations autorisés
+  def validate_subscription_upgrade!(from_book, to_plan)
+    from_duration = from_book.subscription_plan.duration
+    to_duration = to_plan.duration
+
+    # Pack10 → Trimestre/Année OK
+    # Trimestre → Année OK
+    # Day interdit
+    valid_upgrades = {
+      'pack10' => ['trimester', 'annual'],
+      'trimester' => ['annual']
+    }
+
+    allowed = valid_upgrades[from_duration]
+    raise "Upgrade #{from_duration} → #{to_duration} non autorisé" unless allowed&.include?(to_duration)
+  end
+
+  # Calculer le crédit prorata pour upgrade cotisation
+  def calculate_subscription_credit(book_of_entry)
+    plan = book_of_entry.subscription_plan
+    
+    case plan.duration
+    when 'pack10'
+      # Pas de crédit, suspension seulement (selon 11.c)
+      0
+    when 'trimester'
+      # Prorata temporel (jours restants)
+      total_days = 90
+      days_remaining = (book_of_entry.expires_at - Date.current).to_i
+      (plan.price_cents * days_remaining / total_days.to_f).round
+    when 'annual'
+      # Prorata temporel (jours restants)
+      total_days = 365
+      days_remaining = (book_of_entry.expires_at - Date.current).to_i
+      (plan.price_cents * days_remaining / total_days.to_f).round
+    else
+      0
+    end
   end
 
   # Méthodes pour les statistiques et la traçabilité

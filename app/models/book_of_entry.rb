@@ -16,7 +16,8 @@ class BookOfEntry < ApplicationRecord
     inactive: 0,
     active: 1,
     expired: 2,
-    consumed: 3
+    consumed: 3,
+    suspended: 4
   }
 
   # Callbacks
@@ -86,6 +87,7 @@ class BookOfEntry < ApplicationRecord
   scope :active, -> { where(status: :active) }
   scope :expired, -> { where(status: :expired) }
   scope :consumed, -> { where(status: :consumed) }
+  scope :suspended, -> { where(status: :suspended) }
   
   # Scope utilisable : actif, pas expiré par date, et avec séances restantes (si applicable)
   scope :usable, -> { 
@@ -95,6 +97,29 @@ class BookOfEntry < ApplicationRecord
   }
 
   # Méthodes de classe
+  def self.reactivate_suspended_packs_for_person(person)
+    return unless person.can_buy_subscription_plans?
+    
+    # Si aucun plan actif (Trimestre/Année), réactiver Pack10 suspendus
+    active_plans = person.book_of_entries.active.joins(:subscription_plan).where.not(subscription_plans: { duration: 'pack10' })
+    
+    if active_plans.empty?
+      person.book_of_entries.suspended.joins(:subscription_plan).where(subscription_plans: { duration: 'pack10' }).each(&:reactivate!)
+    end
+  end
+
+  # Instance methods
+  def suspend!(reason:)
+    update!(status: :suspended, suspended_at: Time.current, suspended_reason: reason)
+  end
+
+  def reactivate!
+    update!(status: :active, suspended_at: nil, suspended_reason: nil) if suspended?
+  end
+
+  def suspended?
+    status == 'suspended'
+  end
 
   private
 

@@ -119,8 +119,8 @@ RSpec.describe "Admin::Memberships", type: :request do
       end
       
       context "for upgrade" do
-        let(:basic_type) { create(:membership_type, category: :basic) }
-        let(:circus_type) { create(:membership_type, category: :circus) }
+        let(:basic_type) { create(:membership_type, :basic, price_cents: 1000) }
+        let(:circus_type) { create(:membership_type, :circus, price_cents: 2500) }
         let!(:basic_membership) { create(:membership, person: person, membership_type: basic_type, status: :active) }
         
         it "upgrades membership" do
@@ -136,7 +136,7 @@ RSpec.describe "Admin::Memberships", type: :request do
           }.to change { person.reload.current_membership.membership_type_id }.from(basic_type.id).to(circus_type.id)
         end
         
-        it "creates payment for price difference" do
+        it "creates payment for full price of new type" do
           expect {
             post admin_memberships_path, params: {
               membership: {
@@ -184,7 +184,7 @@ RSpec.describe "Admin::Memberships", type: :request do
             }
           }
           
-          expect(response).to redirect_to(admin_membership_path(person))
+          expect(response).to redirect_to(admin_user_path("person_#{person.id}"))
         end
       end
     end
