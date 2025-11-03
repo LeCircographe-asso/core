@@ -34,6 +34,13 @@ jobs:
         persist-credentials: true
         submodules: false
     
+    - name: Remove watchman submodule reference
+      continue-on-error: true
+      run: |
+        echo "🧹 Cleaning up invalid submodule reference..."
+        git config --local --remove-section submodule.watchman 2>/dev/null || true
+        rm -f .git/modules/watchman/config 2>/dev/null || true
+    
     - name: Set up Ruby
       uses: ruby/setup-ruby@v1
       with:
@@ -49,6 +56,13 @@ jobs:
       run: |
         bundle install
         npm install
+    
+    - name: Build Tailwind CSS assets
+      if: ${{ github.event.inputs.test_type == 'all' || github.event.inputs.test_type == 'tests_only' || github.event.inputs.test_type == '' }}
+      run: |
+        echo "🎨 Building Tailwind CSS assets..."
+        bin/rails tailwindcss:build
+        ls -la app/assets/builds/ || echo "No builds directory found"
         
     - name: Run tests
       if: ${{ github.event.inputs.test_type == 'all' || github.event.inputs.test_type == 'tests_only' || github.event.inputs.test_type == '' }}
