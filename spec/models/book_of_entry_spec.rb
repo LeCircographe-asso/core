@@ -83,7 +83,8 @@ RSpec.describe BookOfEntry, type: :model do
         'inactive' => 0,
         'active' => 1,
         'expired' => 2,
-        'consumed' => 3
+        'consumed' => 3,
+        'suspended' => 4
       })
     end
   end

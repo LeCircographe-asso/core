@@ -149,4 +149,16 @@ class Payment < ApplicationRecord
 
     super
   end
+
+  # Anonymization for GDPR compliance
+  def anonymize!
+    return if anonymized_at.present?
+    
+    self.original_person_identifier = "ANON_#{Digest::SHA256.hexdigest("#{person_id}_#{id}_#{created_at}")}"
+    self.person_id = nil
+    self.anonymized_at = Time.current
+    save!
+  end
+
+  scope :anonymized, -> { where.not(anonymized_at: nil) }
 end

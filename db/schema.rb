@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_10_31_161634) do
+ActiveRecord::Schema[8.0].define(version: 2025_11_03_020443) do
   create_table "account_claims", force: :cascade do |t|
     t.integer "person_id", null: false
     t.integer "user_id"
@@ -103,6 +103,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_31_161634) do
     t.integer "status", default: 0, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.datetime "suspended_at"
+    t.text "suspended_reason"
     t.index ["expires_at"], name: "index_book_of_entries_on_expires_at"
     t.index ["person_id", "status", "expires_at"], name: "idx_boe_person_status_exp"
     t.index ["person_id", "status"], name: "index_book_of_entries_on_person_id_and_status"
@@ -254,6 +256,9 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_31_161634) do
     t.string "uuid"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.datetime "anonymized_at"
+    t.string "original_person_identifier"
+    t.index ["anonymized_at"], name: "index_payments_on_anonymized_at"
     t.index ["person_id", "payment_method"], name: "index_payments_on_person_id_and_payment_method"
     t.index ["person_id"], name: "index_payments_on_person_id"
     t.index ["recorded_by_id"], name: "index_payments_on_recorded_by_id"
@@ -287,6 +292,9 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_31_161634) do
     t.string "member_number"
     t.datetime "deleted_at"
     t.string "newsletter_unsubscribe_token"
+    t.boolean "reduced_rate_eligible", default: false, null: false
+    t.string "reduced_rate_reason"
+    t.string "reduced_rate_proof"
     t.index ["deleted_at"], name: "index_people_on_deleted_at"
     t.index ["email"], name: "index_people_on_email", unique: true, where: "email IS NOT NULL AND email != ''"
     t.index ["first_name", "last_name"], name: "index_people_on_first_name_and_last_name"

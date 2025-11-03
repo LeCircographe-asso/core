@@ -47,9 +47,6 @@ module Admin
           # Utiliser le service MembershipManagement::MembershipUpgrader
           custom_amount = membership_purchase_params[:payment_method] == "offered" ? 
                          (membership_purchase_params[:custom_amount_cents]&.to_i || 0) : nil
-
-          # Conserver l'ancien type AVANT l'upgrade pour un calcul fiable de la différence
-          old_membership_type = @person.current_membership.membership_type
           
           upgrader = MembershipManagement::MembershipUpgrader.new(
             person: @person,
@@ -63,13 +60,11 @@ module Admin
           result = upgrader.call
 
           if result.success?
-            # Construire le message de succès
+            # Construire le message de succès (plein tarif du nouveau type)
             message = if membership_purchase_params[:payment_method] == "offered"
               "Adhésion upgradée avec succès ! #{membership_type.name} - Offert"
             else
-              # IMPORTANT: utiliser l'ancien type conservé avant l'upgrade
-              price_difference = membership_type.price_cents - old_membership_type.price_cents
-              "Adhésion upgradée avec succès ! #{membership_type.name} - Différence: #{(price_difference / 100.0).round(2)}€"
+              "Adhésion upgradée avec succès ! #{membership_type.name} - Montant: #{(membership_type.price_cents / 100.0).round(2)}€"
             end
 
             # Ajouter l'information sur le changement de numéro d'adhérent
@@ -126,7 +121,7 @@ module Admin
         ended_at: membership_params[:ended_at] || @membership.ended_at
       )
 
-      redirect_to admin_membership_path(@membership), notice: "Adhésion mise à jour avec succès"
+      redirect_to admin_user_path("person_#{@person.id}"), notice: "Adhésion mise à jour avec succès"
     rescue => e
       flash[:alert] = "Erreur lors de la mise à jour: #{e.message}"
       redirect_to edit_admin_membership_path(@membership)

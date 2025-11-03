@@ -303,6 +303,11 @@ RSpec.describe MemberManagementService do
   end
 
   describe '.assign_missing_member_numbers' do
+    before do
+      # Clean up any persons without member numbers from previous tests
+      Person.where(member_number: [nil, ""]).destroy_all
+    end
+    
     it "assigns numbers to persons without member numbers" do
       person1 = create(:person, member_number: nil)
       person2 = create(:person, member_number: "")
