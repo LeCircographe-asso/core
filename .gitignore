@@ -73,3 +73,6 @@ db/schema_clean.rb
 
 # IDE files
 /.idea
+
+# Watchman (not used - we use Tailwind watcher instead)
+/watchman

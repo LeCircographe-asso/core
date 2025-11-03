@@ -34,13 +34,6 @@ jobs:
         persist-credentials: true
         submodules: false
     
-    - name: Remove watchman submodule reference
-      continue-on-error: true
-      run: |
-        echo "🧹 Cleaning up invalid submodule reference..."
-        git config --local --remove-section submodule.watchman 2>/dev/null || true
-        rm -f .git/modules/watchman/config 2>/dev/null || true
-    
     - name: Set up Ruby
       uses: ruby/setup-ruby@v1
       with:
