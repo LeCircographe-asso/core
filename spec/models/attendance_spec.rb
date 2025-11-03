@@ -58,20 +58,20 @@ RSpec.describe Attendance, type: :model do
 
   describe "scopes" do
     let!(:today_attendance) { create(:attendance, date: Date.current) }
-    let!(:yesterday_attendance) { create(:attendance, date: Date.yesterday) }
-    let!(:last_week_attendance) { create(:attendance, date: 1.week.ago) }
+    let!(:this_week_attendance) { create(:attendance, date: Date.current.beginning_of_week + 1.day) } # A day this week
+    let!(:last_week_attendance) { create(:attendance, date: Date.current - 1.week) }
 
     describe ".today" do
       it "returns only today's attendances" do
         expect(Attendance.today).to include(today_attendance)
-        expect(Attendance.today).not_to include(yesterday_attendance, last_week_attendance)
+        expect(Attendance.today).not_to include(this_week_attendance, last_week_attendance)
       end
     end
 
     describe ".this_week" do
       it "returns attendances from this week" do
         this_week = Attendance.this_week
-        expect(this_week).to include(today_attendance, yesterday_attendance)
+        expect(this_week).to include(today_attendance, this_week_attendance)
         expect(this_week).not_to include(last_week_attendance)
       end
     end
@@ -80,7 +80,7 @@ RSpec.describe Attendance, type: :model do
       it "returns attendances from this month", :disabled do
         # Temporarily disabled due to timezone/date boundary issues
         this_month = Attendance.this_month
-        expect(this_month).to include(today_attendance, yesterday_attendance, last_week_attendance)
+        expect(this_month).to include(today_attendance, this_week_attendance, last_week_attendance)
       end
     end
 
