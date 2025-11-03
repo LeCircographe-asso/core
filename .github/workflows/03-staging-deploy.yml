@@ -83,6 +83,12 @@ jobs:
         bundle audit check --update
         echo "✅ No security vulnerabilities found"
     
+    - name: Build Tailwind CSS assets
+      run: |
+        echo "🎨 Building Tailwind CSS assets..."
+        bin/rails tailwindcss:build
+        ls -la app/assets/builds/ || echo "No builds directory found"
+    
     - name: Run full test suite
       run: |
         echo "🧪 Running full test suite before deployment..."
