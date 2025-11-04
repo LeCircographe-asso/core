@@ -1,9 +1,5 @@
-require "ostruct"
-
 module PaymentManagement
-  class PaymentUpdater
-    include ActiveModel::Model
-    include ActiveModel::Attributes
+  class PaymentUpdater < BaseService
 
     attribute :payment_id, :integer
     attribute :total_cents, :integer
@@ -13,10 +9,11 @@ module PaymentManagement
     attribute :updated_by_id, :integer
 
     validates :payment_id, presence: true
-    validates :total_cents, presence: true, numericality: { greater_than: 0 }
-    validates :payment_method, presence: true, inclusion: { in: %w[cash card transfer check offered] }
-    validates :status, presence: true, inclusion: { in: %w[pending success failed cancelled] }
     validates :updated_by_id, presence: true
+    # total_cents, payment_method, status, notes sont optionnels (update partiel)
+    validates :total_cents, numericality: { greater_than: 0 }, allow_nil: true
+    validates :payment_method, inclusion: { in: %w[cash card transfer check offered] }, allow_nil: true
+    validates :status, inclusion: { in: %w[pending success failed cancelled] }, allow_nil: true
 
     def call
       return failure("Invalid payment data: #{errors.full_messages.join(', ')}") unless valid?
@@ -32,13 +29,14 @@ module PaymentManagement
             return failure("Insufficient permissions to update payment")
           end
 
-          # Update payment
-          if payment.update!(
-            total_cents: total_cents,
-            payment_method: payment_method,
-            status: status,
-            notes: notes
-          )
+          # Update payment (only update provided attributes)
+          update_attrs = {}
+          update_attrs[:total_cents] = total_cents if total_cents.present?
+          update_attrs[:payment_method] = payment_method if payment_method.present?
+          update_attrs[:status] = status if status.present?
+          update_attrs[:notes] = notes if notes.present?
+          
+          if payment.update!(update_attrs)
             # Instrumentation pour audit
             ActiveSupport::Notifications.instrument(
               "payment.updated",
@@ -48,7 +46,7 @@ module PaymentManagement
               changes: payment.previous_changes
             )
 
-            success(payment)
+            success(payment: payment, message: "Payment updated successfully")
           else
             failure("Failed to update payment: #{payment.errors.full_messages.join(', ')}")
           end
@@ -65,20 +63,6 @@ module PaymentManagement
 
     private
 
-    def success(payment)
-      OpenStruct.new(
-        success?: true,
-        payment: payment,
-        message: "Payment updated successfully"
-      )
-    end
-
-    def failure(message)
-      OpenStruct.new(
-        success?: false,
-        errors: [message],
-        message: message
-      )
-    end
+    # success et failure hérités de BaseService
   end
 end

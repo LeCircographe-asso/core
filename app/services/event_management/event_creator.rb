@@ -1,9 +1,5 @@
-require "ostruct"
-
 module EventManagement
-  class EventCreator
-    include ActiveModel::Model
-    include ActiveModel::Attributes
+  class EventCreator < BaseService
 
     attribute :name, :string
     attribute :upper_description, :string
@@ -39,7 +35,7 @@ module EventManagement
             category: category
           )
 
-          success(event: event)
+          success(event: event, message: "Event created successfully")
         end
       rescue ActiveRecord::RecordNotFound => e
         failure("Creator not found: #{e.message}")
@@ -52,12 +48,6 @@ module EventManagement
 
     private
 
-    def success(data = {})
-      OpenStruct.new(success?: true, **data)
-    end
-
-    def failure(message)
-      OpenStruct.new(success?: false, message: message)
-    end
+    # success et failure hérités de BaseService
   end
 end

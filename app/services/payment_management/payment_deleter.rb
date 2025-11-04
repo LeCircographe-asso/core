@@ -1,9 +1,5 @@
-require "ostruct"
-
 module PaymentManagement
-  class PaymentDeleter
-    include ActiveModel::Model
-    include ActiveModel::Attributes
+  class PaymentDeleter < BaseService
 
     attribute :payment_id, :integer
     attribute :deleted_by_id, :integer
@@ -46,7 +42,7 @@ module PaymentManagement
               reason: reason
             )
 
-            success(payment)
+            success(payment: payment, message: "Payment cancelled successfully")
           else
             failure("Failed to cancel payment: #{payment.errors.full_messages.join(', ')}")
           end
@@ -79,20 +75,6 @@ module PaymentManagement
       Rails.logger.info "Cache fragment expired: #{pattern}"
     end
 
-    def success(payment)
-      OpenStruct.new(
-        success?: true,
-        payment: payment,
-        message: "Payment cancelled successfully"
-      )
-    end
-
-    def failure(message)
-      OpenStruct.new(
-        success?: false,
-        errors: [message],
-        message: message
-      )
-    end
+    # success et failure hérités de BaseService
   end
 end

@@ -1,9 +1,5 @@
-require "ostruct"
-
 module PersonManagement
-  class PersonCreator
-    include ActiveModel::Model
-    include ActiveModel::Attributes
+  class PersonCreator < BaseService
 
     # Attributs de base
     attribute :first_name, :string
@@ -53,7 +49,7 @@ module PersonManagement
             full_name: person.full_name
           )
 
-          success(person)
+          success(person: person, message: "Person created successfully")
         end
       rescue ActiveRecord::RecordInvalid => e
         failure("Validation error: #{e.message}")
@@ -97,20 +93,6 @@ module PersonManagement
       end
     end
 
-    def success(person)
-      OpenStruct.new(
-        success?: true,
-        person: person,
-        message: "Person created successfully"
-      )
-    end
-
-    def failure(message)
-      OpenStruct.new(
-        success?: false,
-        errors: [message],
-        message: message
-      )
-    end
+    # success et failure hérités de BaseService
   end
 end

@@ -1,9 +1,5 @@
-require "ostruct"
-
 module UserManagement
-  class AccountCreator
-    include ActiveModel::Model
-    include ActiveModel::Attributes
+  class AccountCreator < BaseService
 
     attribute :person
     attribute :user_email, :string
@@ -59,7 +55,7 @@ module UserManagement
             created_by_admin: created_by_admin
           )
 
-          success(user)
+          success(user: user, message: "User account created successfully")
         end
       rescue ActiveRecord::RecordInvalid => e
         failure("Validation error: #{e.message}")
@@ -79,20 +75,6 @@ module UserManagement
       end
     end
 
-    def success(user)
-      OpenStruct.new(
-        success?: true,
-        user: user,
-        message: "User account created successfully"
-      )
-    end
-
-    def failure(message)
-      OpenStruct.new(
-        success?: false,
-        errors: [message],
-        message: message
-      )
-    end
+    # success et failure hérités de BaseService
   end
 end
