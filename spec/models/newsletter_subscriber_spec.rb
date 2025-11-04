@@ -137,5 +137,62 @@ RSpec.describe NewsletterSubscriber, type: :model do
       expect(subscriber.person).to eq(person)
     end
   end
+
+  describe "Dateable concern methods" do
+    let(:subscriber) { create(:newsletter_subscriber, subscribed_at: Date.current.beginning_of_day + 12.hours) }
+
+    describe "#formatted_date" do
+      it "formats subscribed_at date" do
+        formatted = subscriber.formatted_date(:subscribed_at)
+        expect(formatted).to match(/\d{2}\/\d{2}\/\d{4}/)
+      end
+
+      it "formats unsubscribed_at date" do
+        unsubscribed = create(:newsletter_subscriber, :unsubscribed, unsubscribed_at: Date.current.beginning_of_day + 14.hours)
+        formatted = unsubscribed.formatted_date(:unsubscribed_at)
+        expect(formatted).to match(/\d{2}\/\d{2}\/\d{4}/)
+      end
+    end
+
+    describe "#formatted_datetime" do
+      it "formats subscribed_at datetime" do
+        formatted = subscriber.formatted_datetime(:subscribed_at)
+        expect(formatted).to match(/\d{2}\/\d{2}\/\d{4} à \d{2}:\d{2}/)
+      end
+    end
+
+    describe "#today?" do
+      it "returns true for subscriber subscribed today" do
+        expect(subscriber.today?(:subscribed_at)).to be true
+      end
+
+      it "returns false for subscriber subscribed yesterday" do
+        old_subscriber = create(:newsletter_subscriber, subscribed_at: Date.yesterday.beginning_of_day + 12.hours)
+        expect(old_subscriber.today?(:subscribed_at)).to be false
+      end
+    end
+
+    describe "#this_week?" do
+      it "returns true for subscriber subscribed this week" do
+        expect(subscriber.this_week?(:subscribed_at)).to be true
+      end
+    end
+
+    describe "#this_month?" do
+      it "returns true for subscriber subscribed this month" do
+        expect(subscriber.this_month?(:subscribed_at)).to be true
+      end
+    end
+
+    describe "#duration_days" do
+      it "calculates duration between subscribed_at and unsubscribed_at" do
+        subscriber = create(:newsletter_subscriber, 
+          subscribed_at: Date.current - 30.days,
+          unsubscribed_at: Date.current
+        )
+        expect(subscriber.duration_days(:subscribed_at, :unsubscribed_at)).to eq(30)
+      end
+    end
+  end
 end
 

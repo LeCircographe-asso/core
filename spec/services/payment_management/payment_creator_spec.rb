@@ -64,6 +64,7 @@ RSpec.describe PaymentManagement::PaymentCreator do
           creator = described_class.new(donation_attributes)
           result = creator.call
 
+          expect(result.success?).to be true
           line = result.payment.payment_lines.first
           expect(line.item_type).to eq("Payment")
           expect(line.item_id).to eq(result.payment.id)
