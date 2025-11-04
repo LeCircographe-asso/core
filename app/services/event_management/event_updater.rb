@@ -1,9 +1,5 @@
-require "ostruct"
-
 module EventManagement
-  class EventUpdater
-    include ActiveModel::Model
-    include ActiveModel::Attributes
+  class EventUpdater < BaseService
 
     attribute :event_id, :integer
     attribute :name, :string
@@ -40,7 +36,7 @@ module EventManagement
 
           # Update event
           if event.update!(update_attrs)
-            success(event: event)
+            success(event: event, message: "Event updated successfully")
           else
             failure("Failed to update event: #{event.errors.full_messages.join(', ')}")
           end
@@ -56,12 +52,6 @@ module EventManagement
 
     private
 
-    def success(data = {})
-      OpenStruct.new(success?: true, **data)
-    end
-
-    def failure(message)
-      OpenStruct.new(success?: false, message: message)
-    end
+    # success et failure hérités de BaseService
   end
 end

@@ -1,9 +1,5 @@
-require "ostruct"
-
 module MembershipManagement
-  class MembershipUpgrader
-    include ActiveModel::Model
-    include ActiveModel::Attributes
+  class MembershipUpgrader < BaseService
 
     attribute :person
     attribute :new_membership_type_id, :integer
@@ -48,7 +44,14 @@ module MembershipManagement
           new_member_number: result[:new_member_number]
         )
 
-        success(result[:membership], result[:payment], result)
+        success(
+          membership: result[:membership],
+          payment: result[:payment],
+          member_number_changed: result[:member_number_changed],
+          old_member_number: result[:old_member_number],
+          new_member_number: result[:new_member_number],
+          message: "Membership upgraded successfully"
+        )
       rescue ActiveRecord::RecordNotFound => e
         failure("Record not found: #{e.message}")
       rescue => e
@@ -59,24 +62,6 @@ module MembershipManagement
 
     private
 
-    def success(membership, payment, full_result)
-      OpenStruct.new(
-        success?: true,
-        membership: membership,
-        payment: payment,
-        member_number_changed: full_result[:member_number_changed],
-        old_member_number: full_result[:old_member_number],
-        new_member_number: full_result[:new_member_number],
-        message: "Membership upgraded successfully"
-      )
-    end
-
-    def failure(message)
-      OpenStruct.new(
-        success?: false,
-        errors: [message],
-        message: message
-      )
-    end
+    # success et failure hérités de BaseService
   end
 end

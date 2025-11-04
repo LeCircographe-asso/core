@@ -1,9 +1,5 @@
-require "ostruct"
-
 module MembershipManagement
-  class MembershipCreator
-    include ActiveModel::Model
-    include ActiveModel::Attributes
+  class MembershipCreator < BaseService
 
     attribute :person
     attribute :membership_type_id, :integer
@@ -44,7 +40,7 @@ module MembershipManagement
           amount_cents: result[:payment].total_cents
         )
 
-        success(result[:membership], result[:payment])
+        success(membership: result[:membership], payment: result[:payment], message: "Membership created successfully")
       rescue ActiveRecord::RecordNotFound => e
         failure("Record not found: #{e.message}")
       rescue => e
@@ -55,21 +51,6 @@ module MembershipManagement
 
     private
 
-    def success(membership, payment)
-      OpenStruct.new(
-        success?: true,
-        membership: membership,
-        payment: payment,
-        message: "Membership created successfully"
-      )
-    end
-
-    def failure(message)
-      OpenStruct.new(
-        success?: false,
-        errors: [message],
-        message: message
-      )
-    end
+    # success et failure hérités de BaseService
   end
 end

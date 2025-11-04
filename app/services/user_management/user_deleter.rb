@@ -1,9 +1,5 @@
-require "ostruct"
-
 module UserManagement
-  class UserDeleter
-    include ActiveModel::Model
-    include ActiveModel::Attributes
+  class UserDeleter < BaseService
 
     attribute :person_id, :integer
     attribute :deleted_by_id, :integer
@@ -35,7 +31,7 @@ module UserManagement
           # Archive the person (soft delete)
           person.archive!
 
-          success(person: person)
+          success(person: person, message: "User deleted successfully")
         end
       rescue ActiveRecord::RecordNotFound => e
         failure("Person or User not found: #{e.message}")
@@ -48,12 +44,6 @@ module UserManagement
 
     private
 
-    def success(data = {})
-      OpenStruct.new(success?: true, **data)
-    end
-
-    def failure(message)
-      OpenStruct.new(success?: false, message: message)
-    end
+    # success et failure hérités de BaseService
   end
 end

@@ -45,7 +45,7 @@ module PaymentManagement
             notes: notes
           )
 
-          success(refund: refund)
+          success(refund: refund, message: "Refund created successfully")
         end
       rescue ActiveRecord::RecordNotFound => e
         failure("Payment or User not found: #{e.message}")
@@ -58,12 +58,6 @@ module PaymentManagement
 
     private
 
-    def success(data = {})
-      OpenStruct.new(success?: true, **data)
-    end
-
-    def failure(message)
-      OpenStruct.new(success?: false, message: message)
-    end
+    # success et failure hérités de BaseService
   end
 end
