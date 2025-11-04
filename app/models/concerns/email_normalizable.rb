@@ -8,8 +8,13 @@ module EmailNormalizable
   private
 
   def normalize_email
-    return unless email.present?
+    # Normalize blank emails to nil
+    if email.blank?
+      self.email = nil
+      return
+    end
 
+    # Normalize non-blank emails (strip and downcase)
     self.email = email.strip.downcase
   end
 end
