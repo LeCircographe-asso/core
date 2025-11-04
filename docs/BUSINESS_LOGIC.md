@@ -13,6 +13,27 @@
 - **Zone 2 (En cours)** - Logique temporaire/exploration → Tests après stabilisation
 - **Zone 3 (Future)** - Non implémenté → Pas de tests
 
+**Voir `docs/ZONES_CLASSIFICATION.md` pour détails complets.**
+
+### Stratégie Backend - Logique Métier Immuable
+
+**Objectif:** Comprendre, documenter et rendre immuable la logique métier.
+
+**Problème:** Logique métier encore en mouvement → Pas clair ce qui doit être testé → Risque de tests sur code instable
+
+**Solution: 3 Zones**
+
+1. **Zone 1: Logique Définie (Maintenant)** - Fonctionnel et stable → Tests immédiats
+2. **Zone 2: Logique En Cours (Prototype)** - Fonctionnel mais pourrait changer → Tests après stabilisation
+3. **Zone 3: Logique Future (À Définir)** - Non implémenté → Documentation seulement
+
+**Workflow:**
+1. Documenter la logique métier dans `docs/BUSINESS_LOGIC.md`
+2. Classifier le code par zone
+3. Tester Zone 1 immédiatement
+4. Attendre stabilisation pour Zone 2
+5. Documenter seulement pour Zone 3
+
 ---
 
 # Domaines Métier
@@ -593,5 +614,65 @@ NewsletterSubscriber#link_to_person!(person)
 - **Avantage:** Tests simplifiés -50% complexité
 
 **Score modèle:** 7/10 → 9/10 ✅
+
+### Architecture Services (2025-01)
+
+**Pattern:** Controller → Service → Model
+
+**Services créés (44 services dans 15 domaines):**
+- `MembershipManagement::*` (4 services)
+- `SubscriptionManagement::*` (2 services)
+- `PaymentManagement::*` (6 services)
+- `AccountClaimManagement::*` (2 services)
+- `AttendanceManagement::*` (1 service)
+- `AttendanceListManagement::*` (3 services)
+- `BlogManagement::*` (3 services)
+- `MembershipTypeManagement::*` (2 services)
+- `OpeningHoursManagement::*` (1 service)
+- `NewsletterManagement::*` (1 service)
+- `SubscriptionPlanManagement::*` (2 services)
+- `UserManagement::*` (3 services)
+- `PersonManagement::*` (3 services)
+- `EventManagement::*` (3 services)
+- `MemberNumberManagement::*` (2 services)
+
+**Bénéfices:**
+- Controllers minimalistes (délégation pure)
+- Logique métier extraite et testable
+- Instrumentation pour audit (ActiveSupport::Notifications)
+- Cohérence et maintenabilité
+
+**Documentation:** Voir `docs/ARCHITECTURE_SERVICES.md` pour détails complets.
+
+### Historique des Refactorings (2025-01-31)
+
+#### Simplification Architecture
+
+**MembershipType category enum:**
+- **Avant:** `basic`, `circus_full`, `circus_reduced` (3 catégories confuses)
+- **Après:** `basic`, `circus`, `event` (3 catégories claires)
+- **Impact:** Circus Full et Reduced sont des tarifs, pas des catégories distinctes
+- **Avantage:** Ajout facile de tarifs Circus (Student, Senior, etc.) sans modifier code
+
+**Newsletter:**
+- **Nouveau:** Table `newsletter_subscribers` dédiée
+- **Avant:** Booléen sur Person
+- **Avantage:** Tracking indépendant, merge email simplifié, audit trail complet
+
+**Payment relations:**
+- **Supprimé:** Legacy `user_id`, `order_id`
+- **Conservé:** Architecture Person-Based uniquement
+- **Avantage:** Tests simplifiés -50% complexité
+
+**Score modèle:** 7/10 → 9/10 ✅
+
+## 📚 Documentation liée
+
+- **Architecture Services:** `docs/ARCHITECTURE_SERVICES.md` - Pattern Controller → Service → Model (44 services)
+- **Concerns:** `docs/CONCERNS_ANALYSIS.md` - Analyse complète des concerns (10 concerns)
+- **Audit Controllers:** `docs/CONTROLLERS_AUDIT.md` - État des tests et stratégie TDD
+- **Zones Classification:** `docs/ZONES_CLASSIFICATION.md` - Classification Zone 1/2/3
+- **TDD Guide:** `docs/TDD_GUIDE.md` - Guide complet TDD
+- **Testing Guide:** `docs/TESTING_GUIDE.md` - Guide tests et couverture
 
 
