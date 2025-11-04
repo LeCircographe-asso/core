@@ -43,41 +43,62 @@ module Admin
     end
 
     def update
-      if @subscription_plan.update(subscription_plan_params)
-        redirect_to admin_subscription_plans_path, notice: "Plan de cotisation mis à jour avec succès !"
+      updater = SubscriptionPlanManagement::SubscriptionPlanUpdater.new(
+        subscription_plan_id: @subscription_plan.id,
+        attributes: subscription_plan_params,
+        updated_by_id: Current.user.id
+      )
+
+      result = updater.call
+
+      if result.success?
+        redirect_to admin_subscription_plans_path, notice: result.message
       else
+        flash.now[:alert] = result.message
         render :edit, status: :unprocessable_entity
       end
     end
 
     def destroy
-      # Vérifier que le plan n'est pas utilisé
-      if @subscription_plan.book_of_entries.any?
-        redirect_to admin_subscription_plans_path, alert: "Impossible de supprimer ce plan car il est utilisé par des carnets d'entrées."
+      deleter = SubscriptionPlanManagement::SubscriptionPlanDeleter.new(
+        subscription_plan_id: @subscription_plan.id,
+        deleted_by_id: Current.user.id
+      )
+
+      result = deleter.call
+
+      if result.success?
+        redirect_to admin_subscription_plans_path, notice: result.message
       else
-        @subscription_plan.destroy
-        redirect_to admin_subscription_plans_path, notice: "Plan de cotisation supprimé avec succès !"
+        redirect_to admin_subscription_plans_path, alert: result.message
       end
     end
 
     def create
       @person = Person.find(subscription_purchase_params[:person_id])
-      subscription_plan = SubscriptionPlan.find(subscription_purchase_params[:subscription_plan_id])
-
+      
       begin
         custom_amount = subscription_purchase_params[:payment_method] == "offered" ? 
                        (subscription_purchase_params[:custom_amount_cents]&.to_i || 0) : nil
         
-        @person.create_subscription!(
-          subscription_plan,
+        creator = SubscriptionManagement::SubscriptionCreator.new(
+          person: @person,
+          subscription_plan_id: subscription_purchase_params[:subscription_plan_id],
           payment_method: (subscription_purchase_params[:payment_method].presence || "cash"),
-          recorded_by: Current.user,
+          recorded_by_id: Current.user.id,
           record_attendance: false,
           custom_amount_cents: custom_amount,
           offer_reason: subscription_purchase_params[:offer_reason]
         )
+        
+        result = creator.call
 
-        redirect_to admin_user_path("person_#{@person.id}"), notice: "Plan de cotisation acheté avec succès !"
+        if result.success?
+          redirect_to admin_user_path("person_#{@person.id}"), notice: "Plan de cotisation acheté avec succès !"
+        else
+          redirect_to new_admin_subscription_plan_path(person_id: @person.id),
+                      alert: "Erreur lors de l'achat du plan: #{result.message}"
+        end
       rescue => e
         flash[:alert] = "Erreur lors de l'achat du plan: #{e.message}"
         redirect_to new_admin_subscription_plan_path(person_id: @person.id)

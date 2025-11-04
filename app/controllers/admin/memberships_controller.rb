@@ -112,26 +112,41 @@ module Admin
 
     def update
       @membership = @person.current_membership
-      @membership_type = MembershipType.find(membership_params[:membership_type_id])
 
-      # Mettre à jour l'adhésion
-      @membership.update!(
-        membership_type: @membership_type,
-        started_at: membership_params[:started_at] || @membership.started_at,
-        ended_at: membership_params[:ended_at] || @membership.ended_at
+      updater = MembershipManagement::MembershipUpdater.new(
+        membership_id: @membership.id,
+        membership_type_id: membership_params[:membership_type_id],
+        started_at: membership_params[:started_at],
+        ended_at: membership_params[:ended_at],
+        updated_by_id: Current.user.id
       )
 
-      redirect_to admin_user_path("person_#{@person.id}"), notice: "Adhésion mise à jour avec succès"
-    rescue => e
-      flash[:alert] = "Erreur lors de la mise à jour: #{e.message}"
-      redirect_to edit_admin_membership_path(@membership)
+      result = updater.call
+
+      if result.success?
+        redirect_to admin_user_path("person_#{@person.id}"), notice: result.message
+      else
+        flash[:alert] = result.message
+        redirect_to edit_admin_membership_path(@membership)
+      end
     end
 
     def destroy
       @membership = @person.current_membership
-      @membership.update!(status: :inactive)
 
-      redirect_to admin_memberships_path, notice: "Adhésion désactivée avec succès"
+      deactivator = MembershipManagement::MembershipDeactivator.new(
+        membership_id: @membership.id,
+        deactivated_by_id: Current.user.id,
+        reason: "Désactivation via interface admin"
+      )
+
+      result = deactivator.call
+
+      if result.success?
+        redirect_to admin_memberships_path, notice: result.message
+      else
+        redirect_to admin_memberships_path, alert: result.message
+      end
     end
 
     private

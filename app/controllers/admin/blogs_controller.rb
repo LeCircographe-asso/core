@@ -20,46 +20,63 @@ module Admin
     end
 
     def create
-      @blog = Blog.new(blog_params)
-      if params[:blog][:tag_ids]
-        params[:blog][:tag_ids].each do |i|
-          @blog.tags << Tag.find(i)
-        end
-      end
+      creator = BlogManagement::BlogCreator.new(
+        title: blog_params[:title],
+        content: blog_params[:content],
+        tag_ids: params[:blog][:tag_ids] || []
+      )
 
-      if @blog.save
-        redirect_to admin_blog_path(@blog), notice: "blog créé avec sucée"
+      result = creator.call
+
+      if result.success?
+        redirect_to admin_blog_path(result.blog), notice: "Blog créé avec succès"
       else
-        render :new
+        @blog = Blog.new(blog_params)
+        @tags = Tag.all
+        flash.now[:alert] = result.message
+        render :new, status: :unprocessable_entity
       end
     end
 
     def update
-      @blog.tags.clear
-      if params[:blog][:tag_ids]
-        params[:blog][:tag_ids].each do |i|
-          @blog.tags << Tag.find(i)
-        end
-      end
+      updater = BlogManagement::BlogUpdater.new(
+        blog_id: @blog.id,
+        title: blog_params[:title],
+        content: blog_params[:content],
+        tag_ids: params[:blog][:tag_ids] || [],
+        updated_by_id: Current.user.id
+      )
+
+      result = updater.call
 
       respond_to do |format|
-        if @blog.update(blog_params)
-          format.html { redirect_to admin_blogs_path(@blog), notice: "Blog was successfully updated." }
+        if result.success?
+          format.html { redirect_to admin_blogs_path, notice: "Blog mis à jour avec succès" }
           format.json { render :show, status: :ok, location: @blog }
         else
-          format.html { render :edit, status: :unprocessable_entity }
-          format.json { render json: @blog.errors, status: :unprocessable_entity }
+          @tags = Tag.all
+          format.html { render :edit, status: :unprocessable_entity, alert: result.message }
+          format.json { render json: { errors: result.errors }, status: :unprocessable_entity }
         end
       end
     end
 
     def destroy
-      @blog.tags.clear
-      @blog.destroy!
+      deleter = BlogManagement::BlogDeleter.new(
+        blog_id: @blog.id,
+        deleted_by_id: Current.user.id
+      )
+
+      result = deleter.call
 
       respond_to do |format|
-        format.html { redirect_to admin_blogs_path, status: :see_other, notice: "Blog was successfully destroyed." }
-        format.json { head :no_content }
+        if result.success?
+          format.html { redirect_to admin_blogs_path, status: :see_other, notice: "Blog supprimé avec succès" }
+          format.json { head :no_content }
+        else
+          format.html { redirect_to admin_blogs_path, alert: result.message }
+          format.json { render json: { errors: result.errors }, status: :unprocessable_entity }
+        end
       end
     end
 

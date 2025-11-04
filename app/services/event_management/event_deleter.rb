@@ -1,9 +1,5 @@
-require "ostruct"
-
 module EventManagement
-  class EventDeleter
-    include ActiveModel::Model
-    include ActiveModel::Attributes
+  class EventDeleter < BaseService
 
     attribute :event_id, :integer
     attribute :deleted_by_id, :integer
@@ -35,7 +31,7 @@ module EventManagement
           # Delete the event
           event.destroy!
 
-          success(event: event)
+          success(event: event, message: "Event deleted successfully")
         end
       rescue ActiveRecord::RecordNotFound => e
         failure("Event or User not found: #{e.message}")
@@ -48,12 +44,6 @@ module EventManagement
 
     private
 
-    def success(data = {})
-      OpenStruct.new(success?: true, **data)
-    end
-
-    def failure(message)
-      OpenStruct.new(success?: false, message: message)
-    end
+    # success et failure hérités de BaseService
   end
 end

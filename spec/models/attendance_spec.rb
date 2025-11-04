@@ -57,9 +57,39 @@ RSpec.describe Attendance, type: :model do
   end
 
   describe "scopes" do
-    let!(:today_attendance) { create(:attendance, date: Date.current) }
-    let!(:this_week_attendance) { create(:attendance, date: Date.current.beginning_of_week + 1.day) } # A day this week
-    let!(:last_week_attendance) { create(:attendance, date: Date.current - 1.week) }
+    let(:person1) { create(:person) }
+    let(:person2) { create(:person) }
+    let(:person3) { create(:person) }
+    let(:event1) { create(:event) }
+    let(:event2) { create(:event) }
+    let(:event3) { create(:event) }
+    
+    let!(:today_attendance) { create(:attendance, person: person1, event: event1, date: Date.current) }
+    # Use a date in this week but different from today
+    # Find a day in this week that's not today
+    let!(:this_week_attendance) do
+      week_date = if Date.current.beginning_of_week != Date.current
+        Date.current.beginning_of_week
+      elsif Date.current.end_of_week != Date.current
+        Date.current.end_of_week
+      else
+        # If we're the only day in the week (shouldn't happen), use tomorrow
+        Date.current + 1.day
+      end
+      create(:attendance, person: person2, event: event2, date: week_date)
+    end
+    # Use a date from last week, but adjust if it's in a different month
+    let!(:last_week_attendance) do
+      last_week_date = Date.current - 1.week
+      # If last week is in a different month, use a date from earlier this month (but not this week)
+      attendance_date = if last_week_date.month != Date.current.month
+        # Use a date from earlier in the month, but not in current week
+        [Date.current.beginning_of_month, Date.current.beginning_of_week - 1.day].max
+      else
+        last_week_date
+      end
+      create(:attendance, person: person3, event: event3, date: attendance_date)
+    end
 
     describe ".today" do
       it "returns only today's attendances" do

@@ -119,6 +119,61 @@ RSpec.describe Event, type: :model do
         expect(dates).to eq(dates.sort)
       end
     end
+
+    describe "date scopes" do
+      let(:creator1) { create(:user) }
+      let(:creator2) { create(:user) }
+      let(:creator3) { create(:user) }
+      
+      # Create events with specific dates
+      let!(:today_event) { create(:event, creator: creator1, date: Date.current.beginning_of_day + 12.hours) }
+      let!(:this_week_event) do
+        week_date = if Date.current.beginning_of_week != Date.current
+          Date.current.beginning_of_week.beginning_of_day + 12.hours
+        else
+          Date.current.end_of_week.beginning_of_day + 12.hours
+        end
+        create(:event, creator: creator2, date: week_date)
+      end
+      let!(:last_week_event) do
+        last_week_date = Date.current - 1.week
+        # If last week is in a different month, use a date from earlier this month (but not this week)
+        event_date = if last_week_date.month != Date.current.month
+          [Date.current.beginning_of_month, Date.current.beginning_of_week - 1.day].max.beginning_of_day + 12.hours
+        else
+          last_week_date.beginning_of_day + 12.hours
+        end
+        create(:event, creator: creator3, date: event_date)
+      end
+
+      describe ".today" do
+        it "returns only today's events" do
+          expect(Event.today).to include(today_event)
+          expect(Event.today).not_to include(this_week_event, last_week_event)
+        end
+      end
+
+      describe ".this_week" do
+        it "returns events from this week" do
+          this_week = Event.this_week
+          expect(this_week).to include(today_event, this_week_event)
+          expect(this_week).not_to include(last_week_event)
+        end
+      end
+
+      describe ".this_month" do
+        it "returns events from this month" do
+          this_month = Event.this_month
+          expect(this_month).to include(today_event, this_week_event)
+          # last_week_event should be included if it's in the same month
+          if last_week_event.date.to_date.month == Date.current.month
+            expect(this_month).to include(last_week_event)
+          else
+            expect(this_month).not_to include(last_week_event)
+          end
+        end
+      end
+    end
   end
 
   describe "#is_person_registered?" do

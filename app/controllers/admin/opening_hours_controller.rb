@@ -34,12 +34,18 @@ class OpeningHoursController < BaseController
       end
     end
 
-    if valid_hours?(updated_hours)
-      Rails.cache.write("opening_hours", updated_hours)
-      redirect_to admin_opening_hours_path, notice: "Les horaires ont été mis à jour avec succès."
+    updater = OpeningHoursManagement::OpeningHoursUpdater.new(
+      opening_hours: updated_hours,
+      updated_by_id: Current.user.id
+    )
+
+    result = updater.call
+
+    if result.success?
+      redirect_to admin_opening_hours_path, notice: result.message
     else
       @opening_hours = updated_hours
-      @error_message = "Erreur : l'heure de fermeture doit être après l'heure d'ouverture pour tous les jours ouverts."
+      @error_message = result.message
       render :edit, status: :unprocessable_entity
     end
   end
@@ -53,27 +59,6 @@ class OpeningHoursController < BaseController
 
   def set_breadcrumbs
     # No need to add dashboard breadcrumb as it's already in the partial
-  end
-
-  def valid_hours?(hours)
-    hours.values.all? do |time|
-      if time.downcase == "fermé"
-        true
-      elsif time.match?(/\A(?:[0-9]|[01][0-9]|2[0-3]):[0-5][0-9] - (?:[0-9]|[01][0-9]|2[0-3]):[0-5][0-9]\z/)
-        # Validation logique : fermeture > ouverture
-        open_time, close_time = time.split(" - ")
-        open_minutes = time_to_minutes(open_time)
-        close_minutes = time_to_minutes(close_time)
-        close_minutes > open_minutes
-      else
-        false
-      end
-    end
-  end
-
-  def time_to_minutes(time_str)
-    hour, minute = time_str.split(":").map(&:to_i)
-    hour * 60 + minute
   end
 end
 end
