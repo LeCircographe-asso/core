@@ -23,14 +23,26 @@ module Admin
     end
 
     def create
-      @membership_type = MembershipType.new(membership_type_params)
+      creator = MembershipTypeManagement::MembershipTypeCreator.new(
+        name: membership_type_params[:name],
+        category: membership_type_params[:category],
+        price_cents: membership_type_params[:price_cents],
+        description: membership_type_params[:description],
+        effective_from: membership_type_params[:effective_from] || Date.current,
+        version: membership_type_params[:version] || 1,
+        created_by_user_id: Current.user.id
+      )
 
-      if @membership_type.save
+      result = creator.call
+
+      if result.success?
         respond_to do |format|
           format.html { redirect_to admin_membership_types_path, notice: "Type d'adhésion créé avec succès !" }
           format.turbo_stream { redirect_to admin_membership_types_path, notice: "Type d'adhésion créé avec succès !" }
         end
       else
+        @membership_type = MembershipType.new(membership_type_params)
+        flash.now[:alert] = result.message
         render :new, status: :unprocessable_entity
       end
     end
@@ -40,28 +52,41 @@ module Admin
     end
 
     def update
-      if @membership_type.update(membership_type_params)
+      updater = MembershipTypeManagement::MembershipTypeUpdater.new(
+        membership_type_id: @membership_type.id,
+        name: membership_type_params[:name],
+        category: membership_type_params[:category],
+        price_cents: membership_type_params[:price_cents],
+        description: membership_type_params[:description],
+        effective_from: membership_type_params[:effective_from],
+        updated_by_id: Current.user.id
+      )
+
+      result = updater.call
+
+      if result.success?
         respond_to do |format|
           format.html { redirect_to admin_membership_types_path, notice: "Type d'adhésion mis à jour avec succès !" }
           format.turbo_stream { redirect_to admin_membership_types_path, notice: "Type d'adhésion mis à jour avec succès !" }
         end
       else
+        flash.now[:alert] = result.message
         render :edit, status: :unprocessable_entity
       end
     end
 
     def destroy
-      # Seul le super_admin peut supprimer des types d'adhésion
-      unless Current.user&.system_role == "super_admin"
-        redirect_to admin_membership_types_path, alert: "Seul le super-admin peut supprimer des types d'adhésion."
-        return
-      end
+      deleter = MembershipTypeManagement::MembershipTypeDeleter.new(
+        membership_type_id: @membership_type.id,
+        deleted_by_id: Current.user.id
+      )
 
-      if @membership_type.memberships.any?
-        redirect_to admin_membership_types_path, alert: "Impossible de supprimer ce type d'adhésion car il est utilisé par des membres."
-      else
-        @membership_type.destroy
+      result = deleter.call
+
+      if result.success?
         redirect_to admin_membership_types_path, notice: "Type d'adhésion supprimé avec succès !"
+      else
+        redirect_to admin_membership_types_path, alert: result.message
       end
     end
 
