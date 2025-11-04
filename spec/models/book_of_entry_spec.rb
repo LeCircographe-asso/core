@@ -347,17 +347,130 @@ RSpec.describe BookOfEntry, type: :model do
         expect(BookOfEntry.with_expiration).to include(expired_book)
       end
     end
+  end
+
+  describe "Statusable concern methods" do
+    let(:book) { create(:book_of_entry, status: :active) }
+
+    describe "#status_humanized" do
+      it "returns humanized status" do
+        expect(book.status_humanized).to eq("Actif")
+      end
+
+      it "returns humanized status for expired" do
+        expired_book = create(:book_of_entry, status: :expired)
+        expect(expired_book.status_humanized).to eq("Expiré")
+      end
+
+      it "returns humanized status for consumed" do
+        consumed_book = create(:book_of_entry, status: :consumed)
+        expect(consumed_book.status_humanized).to eq("Consommé")
+      end
+    end
+
+    describe "#active?" do
+      it "returns true for active status" do
+        expect(book.active?).to be true
+      end
+
+      it "returns false for inactive status" do
+        inactive_book = create(:book_of_entry, status: :inactive)
+        expect(inactive_book.active?).to be false
+      end
+    end
+
+    describe "#inactive?" do
+      it "returns true for inactive status" do
+        inactive_book = create(:book_of_entry, status: :inactive)
+        expect(inactive_book.inactive?).to be true
+      end
+    end
+
+    describe "#status_badge_class" do
+      it "returns badge class for active status" do
+        expect(book.status_badge_class).to eq("bg-green-100 text-green-800")
+      end
+
+      it "returns badge class for expired status" do
+        expired_book = create(:book_of_entry, status: :expired)
+        expect(expired_book.status_badge_class).to eq("bg-red-100 text-red-800")
+      end
+    end
+  end
+
+  describe "Dateable concern methods" do
+    let(:book) { create(:book_of_entry, purchased_at: Date.current.beginning_of_day + 12.hours, expires_at: Date.current + 1.month) }
+
+    describe "#formatted_date" do
+      it "formats purchased_at date" do
+        formatted = book.formatted_date(:purchased_at)
+        expect(formatted).to match(/\d{2}\/\d{2}\/\d{4}/)
+      end
+
+      it "formats expires_at date" do
+        formatted = book.formatted_date(:expires_at)
+        expect(formatted).to match(/\d{2}\/\d{2}\/\d{4}/)
+      end
+    end
+
+    describe "#formatted_datetime" do
+      it "formats purchased_at datetime" do
+        formatted = book.formatted_datetime(:purchased_at)
+        expect(formatted).to match(/\d{2}\/\d{2}\/\d{4} à \d{2}:\d{2}/)
+      end
+    end
+
+    describe "#today?" do
+      it "returns true for book purchased today" do
+        expect(book.today?(:purchased_at)).to be true
+      end
+
+      it "returns false for book purchased yesterday" do
+        old_book = create(:book_of_entry, purchased_at: Date.yesterday.beginning_of_day + 12.hours)
+        expect(old_book.today?(:purchased_at)).to be false
+      end
+    end
+
+    describe "#this_week?" do
+      it "returns true for book purchased this week" do
+        expect(book.this_week?(:purchased_at)).to be true
+      end
+    end
+
+    describe "#this_month?" do
+      it "returns true for book purchased this month" do
+        expect(book.this_month?(:purchased_at)).to be true
+      end
+    end
+
+    describe "#expired? (custom method - checks date, not status)" do
+      it "overrides Statusable expired? method" do
+        # BookOfEntry's expired? checks expires_at date, not status
+        future_book = create(:book_of_entry, expires_at: Date.current + 1.month, status: :active)
+        expect(future_book.expired?).to be false
+
+        past_book = create(:book_of_entry, expires_at: Date.current - 1.day, status: :active)
+        expect(past_book.expired?).to be true
+      end
+    end
 
     describe ".without_expiration" do
+      let!(:active_book_no_exp) { create(:book_of_entry, :active, person: person, subscription_plan: pack10_plan, sessions_remaining: 5, expires_at: nil) }
+      let!(:consumed_book_no_exp) { create(:book_of_entry, :consumed, person: person, subscription_plan: pack10_plan, sessions_remaining: 0, expires_at: nil) }
+      
       it "returns books without expiration date" do
-        expect(BookOfEntry.without_expiration).to include(active_book, consumed_book)
+        expect(BookOfEntry.without_expiration).to include(active_book_no_exp, consumed_book_no_exp)
       end
     end
 
     describe ".usable" do
+      let!(:usable_book) { create(:book_of_entry, :active, person: person, subscription_plan: pack10_plan, sessions_remaining: 5, expires_at: nil) }
+      let!(:consumed_book) { create(:book_of_entry, :consumed, person: person, subscription_plan: pack10_plan, sessions_remaining: 0, expires_at: nil) }
+      let!(:expired_book) { create(:book_of_entry, :expired, person: person, subscription_plan: day_plan, expires_at: 1.week.ago) }
+      
       it "returns books that can be used" do
         usable = BookOfEntry.usable
-        expect(usable).to include(active_book)
+        expect(usable).to include(usable_book)
         expect(usable).not_to include(consumed_book, expired_book)
       end
 
