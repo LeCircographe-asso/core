@@ -40,8 +40,7 @@ class Person < ApplicationRecord
   # Une Person peut exister sans adhésion (inscription de base, newsletter, prospects, etc.)
   # L'adhésion sera ajoutée plus tard selon les besoins
 
-  # Normalisation des données
-  before_validation :normalize_email
+  # Normalisation des données (via EmailNormalizable concern)
 
   # DEPRECATED: newsletter token generation removed (now handled by NewsletterSubscriber)
 
@@ -144,9 +143,7 @@ class Person < ApplicationRecord
     !is_minor
   end
 
-  # Scopes
-  scope :active, -> { where(deleted_at: nil) }
-  scope :archived, -> { where.not(deleted_at: nil) }
+  # Scopes (active and archived are provided by SoftDeletable concern)
   scope :with_user_account, -> { joins(:user) }
   scope :without_user_account, -> { left_joins(:user).where(users: { id: nil }) }
   scope :by_name, ->(query) { where("first_name LIKE ? OR last_name LIKE ?",
@@ -188,36 +185,23 @@ class Person < ApplicationRecord
           "%#{query}%", "%#{query}%", "%#{query}%", "%#{query}%")
   }
 
+  # Soft delete via SoftDeletable concern
+  # Concerns
+  include SoftDeletable
+  include Humanizable
+  include Dateable
+  include EmailNormalizable
+
   # Vérifier si la personne a des données financières
   def has_financial_data?
     payments.exists? || memberships.where(status: :active).exists?
   end
 
-  # Soft delete
+  # Override archive! to add financial data check
   def archive!
     return false if has_financial_data?
-    update!(deleted_at: Time.current)
+    super # Call SoftDeletable's archive!
   end
-
-  def restore!
-    update!(deleted_at: nil)
-  end
-
-  def archived?
-    deleted_at.present?
-  end
-
-  # Scopes
-  scope :active, -> { where(deleted_at: nil) }
-  scope :archived, -> { where.not(deleted_at: nil) }
-  scope :with_user_account, -> { joins(:user) }
-  scope :without_user_account, -> { left_joins(:user).where(users: { id: nil }) }
-  scope :by_name, ->(query) { where("first_name LIKE ? OR last_name LIKE ?",
-                                        "%#{query}%", "%#{query}%") }
-  scope :with_email, -> { where.not(email: [ nil, "" ]) }
-  scope :with_phone, -> { where.not(phone: [ nil, "" ]) }
-  scope :minors, -> { where(is_minor: true) }
-  scope :adults, -> { where(is_minor: false) }
 
   # Méthodes utilitaires pour la sécurité des fusions
   def safe_to_merge_with?(other_person)
@@ -439,9 +423,9 @@ class Person < ApplicationRecord
         notes: notes
       )
 
-      # Créer la ligne de paiement
+      # Créer la ligne de paiement (utiliser Payment comme item_type pour cohérence avec PaymentCreator)
       payment.payment_lines.create!(
-        item_type: "Donation",
+        item_type: "Payment",
         item_id: payment.id, # Lié au paiement lui-même pour les donations simples
         amount_cents: amount_cents,
         description: notes
@@ -785,9 +769,7 @@ class Person < ApplicationRecord
       .count
   end
 
-  def normalize_email
-    self.email = nil if email.blank?
-  end
+  # normalize_email maintenant dans EmailNormalizable concern
 
   def must_have_active_membership
     return if new_record? # Skip à la création

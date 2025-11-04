@@ -1,10 +1,13 @@
 class NewsletterSubscriber < ApplicationRecord
+  include Dateable
+  include EmailNormalizable
+  
   belongs_to :person, optional: true
   
   validates :email, presence: true, uniqueness: true, format: { with: URI::MailTo::EMAIL_REGEXP }
   validates :unsubscribe_token, uniqueness: true, allow_nil: true
   
-  before_validation :normalize_email
+  # normalize_email maintenant dans EmailNormalizable concern (before_validation automatique)
   before_create :generate_unsubscribe_token
   before_create :set_subscribed_at
   
@@ -30,9 +33,7 @@ class NewsletterSubscriber < ApplicationRecord
   
   private
   
-  def normalize_email
-    self.email = email&.strip&.downcase
-  end
+  # normalize_email maintenant dans EmailNormalizable concern
   
   def generate_unsubscribe_token
     self.unsubscribe_token ||= SecureRandom.urlsafe_base64(32)
