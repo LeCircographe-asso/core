@@ -1,8 +1,5 @@
-require "ostruct"
-
 module PersonManagement
-  class PersonMerger
-    include ActiveModel::Model
+  class PersonMerger < BaseService
 
     attr_accessor :source, :target, :actor
     attr_writer :merge_type
@@ -41,7 +38,12 @@ module PersonManagement
               merged_fields: result[:merged_fields]
             )
 
-            success(result)
+            success(
+              primary_person: result[:primary_person],
+              transferred_count: result[:transferred_count],
+              merged_fields: result[:merged_fields],
+              message: "Persons merged successfully"
+            )
           else
             failure(result[:error] || "Merge failed")
           end
@@ -54,22 +56,6 @@ module PersonManagement
 
     private
 
-    def success(result)
-      OpenStruct.new(
-        success?: true,
-        primary_person: result[:primary_person],
-        transferred_count: result[:transferred_count],
-        merged_fields: result[:merged_fields],
-        message: "Persons merged successfully"
-      )
-    end
-
-    def failure(message)
-      OpenStruct.new(
-        success?: false,
-        errors: [message],
-        message: message
-      )
-    end
+    # success et failure hérités de BaseService
   end
 end

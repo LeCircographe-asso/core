@@ -4,7 +4,7 @@
   <img src="docs/documentations/assets/screenshots/logo.png" alt="Logo Le Circographe" width="200"/>
   <p><i>Une application de gestion complète pour association de cirque</i></p>
   
-  ![Version](https://img.shields.io/badge/version-1.3.0-blue)
+  ![Version](https://img.shields.io/badge/version-0.5.9.1-blue)
   ![Rails](https://img.shields.io/badge/Rails-8.1.1-red)
   ![License](https://img.shields.io/badge/license-MIT-green)
   ![Tests](https://img.shields.io/badge/tests-10.42%25-yellow)

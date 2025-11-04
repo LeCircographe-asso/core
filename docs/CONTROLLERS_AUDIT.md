@@ -14,6 +14,8 @@
 **Zone 2 (En cours):** 10 contrôleurs  
 **Zone 3 (Non prioritaire):** 15 contrôleurs
 
+**Architecture actuelle (2025-01):** ✅ Tous les controllers admin utilisent des services (voir `docs/ARCHITECTURE_SERVICES.md`)
+
 ---
 
 ## 🎯 Stratégie de Test par Zone

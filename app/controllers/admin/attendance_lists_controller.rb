@@ -25,34 +25,57 @@ module Admin
     end
 
     def create
-      attendance_list = AttendanceList.new(attendance_list_params)
+      creator = AttendanceListManagement::AttendanceListCreator.new(
+        name: attendance_list_params[:name],
+        status: attendance_list_params[:status],
+        list_type: attendance_list_params[:list_type],
+        start_date: attendance_list_params[:start_date],
+        created_by_id: Current.user.id
+      )
 
-      # Set default start date to current time if not provided
-      attendance_list.start_date = Time.current if attendance_list.start_date.blank?
+      result = creator.call
 
-      # Set end date to end of the day
-      attendance_list.end_date = attendance_list.start_date.change(hour: 23, min: 59, sec: 59)
-
-      if attendance_list.save
-        redirect_to admin_attendance_lists_path, notice: "Liste de présence créée avec succès !"
+      if result.success?
+        redirect_to admin_attendance_lists_path, notice: result.message
       else
-        flash.now[:error] = "Erreur lors de la création de la liste : #{attendance_list.errors.full_messages.join(', ')}"
+        flash.now[:error] = result.message
         render :new, status: :unprocessable_entity
       end
     end
 
     def update
-      if @attendance_list.update(attendance_list_params)
-        redirect_to admin_attendance_lists_path, notice: "Liste de présence mise à jour avec succès !"
+      updater = AttendanceListManagement::AttendanceListUpdater.new(
+        attendance_list_id: @attendance_list.id,
+        name: attendance_list_params[:name],
+        status: attendance_list_params[:status],
+        list_type: attendance_list_params[:list_type],
+        start_date: attendance_list_params[:start_date],
+        updated_by_id: Current.user.id
+      )
+
+      result = updater.call
+
+      if result.success?
+        redirect_to admin_attendance_lists_path, notice: result.message
       else
-        flash.now[:error] = "Erreur lors de la mise à jour de la liste : #{@attendance_list.errors.full_messages.join(', ')}"
+        flash.now[:error] = result.message
         render :edit, status: :unprocessable_entity
       end
     end
 
     def destroy
-      @attendance_list.destroy
-      redirect_to admin_attendance_lists_path, notice: "La liste a été supprimée avec succès."
+      deleter = AttendanceListManagement::AttendanceListDeleter.new(
+        attendance_list_id: @attendance_list.id,
+        deleted_by_id: Current.user.id
+      )
+
+      result = deleter.call
+
+      if result.success?
+        redirect_to admin_attendance_lists_path, notice: result.message
+      else
+        redirect_to admin_attendance_lists_path, alert: result.message
+      end
     end
 
     private

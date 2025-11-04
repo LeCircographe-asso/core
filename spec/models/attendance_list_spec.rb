@@ -93,5 +93,84 @@ RSpec.describe AttendanceList, type: :model do
       expect(list.meeting?).to be true
     end
   end
+
+  describe "Statusable concern methods" do
+    let(:list) { create(:attendance_list, status: :open) }
+
+    describe "#status_humanized" do
+      it "returns humanized status" do
+        # Statusable uses .humanize as fallback for unknown statuses
+        expect(list.status_humanized).to be_present
+      end
+
+      it "returns humanized status for closed" do
+        closed_list = create(:attendance_list, status: :close)
+        expect(closed_list.status_humanized).to be_present
+      end
+
+      it "returns humanized status for archived" do
+        archived_list = create(:attendance_list, status: :archived)
+        expect(archived_list.status_humanized).to be_present
+      end
+    end
+
+    describe "#status_badge_class" do
+      it "returns badge class for open status" do
+        expect(list.status_badge_class).to be_present
+      end
+    end
+  end
+
+  describe "Dateable concern methods" do
+    let(:list) { create(:attendance_list, start_date: Date.current.beginning_of_day + 12.hours, end_date: Date.current + 1.day) }
+
+    describe "#formatted_date" do
+      it "formats start_date" do
+        formatted = list.formatted_date(:start_date)
+        expect(formatted).to match(/\d{2}\/\d{2}\/\d{4}/)
+      end
+
+      it "formats end_date" do
+        formatted = list.formatted_date(:end_date)
+        expect(formatted).to match(/\d{2}\/\d{2}\/\d{4}/)
+      end
+    end
+
+    describe "#formatted_datetime" do
+      it "formats start_date datetime" do
+        formatted = list.formatted_datetime(:start_date)
+        expect(formatted).to match(/\d{2}\/\d{2}\/\d{4} à \d{2}:\d{2}/)
+      end
+    end
+
+    describe "#today?" do
+      it "returns true for list starting today" do
+        expect(list.today?(:start_date)).to be true
+      end
+
+      it "returns false for list starting yesterday" do
+        old_list = create(:attendance_list, start_date: Date.yesterday.beginning_of_day + 12.hours)
+        expect(old_list.today?(:start_date)).to be false
+      end
+    end
+
+    describe "#this_week?" do
+      it "returns true for list starting this week" do
+        expect(list.this_week?(:start_date)).to be true
+      end
+    end
+
+    describe "#this_month?" do
+      it "returns true for list starting this month" do
+        expect(list.this_month?(:start_date)).to be true
+      end
+    end
+
+    describe "#duration_days" do
+      it "calculates duration between start_date and end_date" do
+        expect(list.duration_days(:start_date, :end_date)).to eq(1)
+      end
+    end
+  end
 end
 

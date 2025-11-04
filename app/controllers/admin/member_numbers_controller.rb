@@ -3,75 +3,49 @@ class Admin::MemberNumbersController < Admin::BaseController
 
   # POST /admin/member_numbers/suggest
   def suggest
-    membership_type = params[:membership_type] || 'BASIQUE'
-    
-    begin
-      suggested_number = MemberManagementService.generate_member_number(membership_type)
-      
+    suggester = MemberNumberManagement::MemberNumberSuggester.new(
+      membership_type: params[:membership_type] || 'BASIQUE'
+    )
+
+    result = suggester.call
+
+    if result.success?
       render json: {
         success: true,
-        suggested_number: suggested_number,
-        membership_type: membership_type
+        suggested_number: result.suggested_number,
+        membership_type: result.membership_type
       }
-    rescue => e
+    else
       render json: {
         success: false,
-        error: e.message
+        error: result.message
       }, status: :unprocessable_entity
     end
   end
 
   # PATCH /admin/member_numbers/:person_id/change
   def change
-    new_member_number = params[:member_number]
-    new_membership_type = params[:new_membership_type]
-    change_notes = params[:change_notes]
+    changer = MemberNumberManagement::MemberNumberChanger.new(
+      person_id: @person.id,
+      new_member_number: params[:member_number],
+      new_membership_type: params[:new_membership_type],
+      change_notes: params[:change_notes],
+      changed_by_id: Current.user.id
+    )
 
-    begin
-      # Valider le format du numéro
-      unless MemberManagementService.valid_member_number_format?(new_member_number)
-        raise "Format de numéro invalide. Utilisez le format YYTNNN (ex: 25C001)"
-      end
+    result = changer.call
 
-      # Vérifier l'unicité
-      if Person.exists?(member_number: new_member_number) || 
-         MemberNumberHistory.exists?(member_number: new_member_number)
-        raise "Ce numéro d'adhérent est déjà utilisé"
-      end
-
-      # Changer le numéro d'adhérent
-      old_number = @person.member_number
-      result = @person.change_member_number(new_membership_type, change_notes)
-      
-      if result
-        # Mettre à jour le numéro actuel
-        @person.update!(member_number: new_member_number)
-        
-        # Mettre à jour l'historique avec le bon numéro
-        current_history = @person.current_member_number_history
-        if current_history
-          current_history.update!(
-            member_number: new_member_number,
-            notes: change_notes.present? ? change_notes : "Changement manuel de #{old_number} vers #{new_member_number}"
-          )
-        end
-
-        render json: {
-          success: true,
-          message: "Numéro d'adhérent changé avec succès",
-          old_number: old_number,
-          new_number: new_member_number
-        }
-      else
-        render json: {
-          success: false,
-          error: "Impossible de changer le numéro d'adhérent"
-        }, status: :unprocessable_entity
-      end
-    rescue => e
+    if result.success?
+      render json: {
+        success: true,
+        message: result.message,
+        old_number: result.old_number,
+        new_number: result.new_number
+      }
+    else
       render json: {
         success: false,
-        error: e.message
+        error: result.message
       }, status: :unprocessable_entity
     end
   end
