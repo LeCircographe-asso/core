@@ -42,6 +42,15 @@ RSpec.configure do |config|
   # instead of true.
   config.use_transactional_fixtures = true  # Utilise les transactions Rails par défaut
 
+  config.before(:suite) do
+    ActiveRecord::Base.connection.disable_referential_integrity do
+      tables = ActiveRecord::Base.connection.tables - %w[schema_migrations ar_internal_metadata sqlite_sequence]
+      tables.each { |table| ActiveRecord::Base.connection.execute("DELETE FROM #{table}") }
+    end
+
+    Faker::UniqueGenerator.clear
+  end
+
   # Setup factory_bot
   config.include FactoryBot::Syntax::Methods
 
