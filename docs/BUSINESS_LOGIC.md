@@ -43,9 +43,11 @@
 ### Zone 1: Comportement Défini
 
 #### Durée et Statuts
-- **Durée standard:** 1 an depuis date de souscription (`started_at` → `ended_at`)
+- **Durée standard:** 1 an, calculée de `started_at` à `ended_at` (dates inclusives)
 - **Statuts:** `pending` → `active` → `inactive` → `expired`
 - **Activation:** Immédiate après paiement réussi
+- **Expiration:** Quand `ended_at < Date.current` → passage en `expired`
+- **Renouvellement:** Crée une nouvelle adhésion datée à partir de la nouvelle souscription
 
 #### Types d'Adhésions
 - **Basic:** 1€ - Adhésion standard sans accès cirque
@@ -57,6 +59,7 @@
 # Validation: ended_at > started_at
 # Validation: Pas d'overlapping active memberships (sauf si skip_overlap_validation)
 # Enum status: pending(0), inactive(1), active(2), expired(3)
+# Expiration automatique: status passe à expired si Date.current > ended_at
 ```
 
 #### Upgrades Possibles
@@ -156,9 +159,15 @@ enum system_role: [:super_admin, :admin, :volunteer, :web_visitor]
 ```
 
 #### Person Architecture (Nouvelle)
-- **User → Person:** Relation 1-to-1
-- **Délégation:** User délègue attributs à Person
-- **Attributs:** name, phone, email, address, birth_date, etc.
+- **Entity / Account pattern:**
+  - **Person = Entity CRM** (identité unique, historique financier, soft delete via `SoftDeletable`).
+  - **User = Account** (accès web optionnel) qui référence une `Person` existante (`belongs_to :person`).
+- **Conséquences :**
+  - Création front : on `find_or_create_by` Person avant de créer User.
+  - Création admin : Person d’abord (`PersonManagement::PersonCreator`), puis User via `UserManagement::UserCreator` si espace web nécessaire.
+  - Suppression User : coupe l’accès web (`destroy`), la Person et ses paiements restent.
+  - Suppression Person : passe par `UserManagement::UserDeleter` qui archive la Person (`Person#archive!`) seulement si aucune donnée financière (sauf super_admin).
+- **Délégation:** User délègue attributs à Person (`delegate :full_name, :phone, ...`).
 
 #### Tarifs Réduits
 - **Attributs:** `reduced_rate_eligible`, `reduced_rate_reason`, `reduced_rate_proof`
@@ -577,10 +586,19 @@ NewsletterSubscriber#link_to_person!(person)
 - **Historique:** Tous changements tracés dans MemberNumberHistory
 
 **Prorata Cotisations:**
-- **Nouveau:** `Person#upgrade_subscription!` - Upgrade Pack10/Trimestre/Année
-- **Pack10 → Trimestre/Année:** Suspension Pack10, pas de crédit
-- **Trimestre → Année:** Crédit prorata temporel (jours restants)
-- **Réactivation:** Auto Pack10 quand Trimestre/Année expire
+- **Contrôleur:** `Person#upgrade_subscription!`
+- **Jour → autre plan:** interdit (journée non cumulable, pas d’upgrade possible)
+- **Pack10 → Trimestre/Année:** pack suspendu (sessions conservées), **pas** de prorata — on paie le nouveau plan plein tarif
+- **Trimestre → Année:** prorata temporel appliqué (montant Année – valeur temps restant sur Trimestre)
+- **Réactivation automatique:** Pack10 suspendu se réactive une fois le Trimestre/Année arrivé à expiration
+- **Durées:**
+  - `day` : `purchased_at` à fin de journée (`end_of_day`)
+  - `trimester` : 3 mois (≈90 jours) à partir de `purchased_at`
+  - `annual` : 1 an à partir de `purchased_at`
+  - `pack10` : pas d’expiration (`expires_at` nil) ; suspendu si upgrade
+- **Suspension/Expiration:**
+  - Si l’adhésion (`membership`) expire, tous les carnets associés (book_of_entries) sont suspendus jusqu’à renouvellement/adherence active.
+  - Réactivation automatique quand une nouvelle adhésion circus redevient active.
 
 **Tarifs Réduits:**
 - **Nouveau:** Attributs `reduced_rate_eligible`, `reduced_rate_reason`, `reduced_rate_proof` sur Person
