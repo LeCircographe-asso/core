@@ -39,6 +39,14 @@ RSpec.describe SubscriptionManagement::SubscriptionCreator do
 
         expect(result.book_of_entry.status).to eq("active")
       end
+
+      it "creates a pack10 book_of_entry without expiration" do
+        result = described_class.new(params).call
+
+        expect(result.book_of_entry.is_pack10?).to be true
+        expect(result.book_of_entry.sessions_remaining).to eq(subscription_plan.sessions_count)
+        expect(result.book_of_entry.expires_at).to be_nil
+      end
     end
 
     context "with offered payment" do
