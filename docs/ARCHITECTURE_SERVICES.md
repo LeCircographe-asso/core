@@ -17,6 +17,21 @@ Les services suivent le pattern **Service Object avec ActiveModel::Model** :
 - Instrumentation pour audit (ActiveSupport::Notifications)
 - Gestion d'erreurs standardisée
 
+### Person (Entity) vs User (Account)
+
+- **Person = Entity CRM** : fiche métier unique qui contient l'identité, l'historique financier (adhésions, cotisations, paiements) et tous les attributs d’usage.
+- **User = Account** : accès web optionnel (email, mot de passe, rôle) qui délègue tous ses attributs de profil à `Person` via `delegate`.
+- **Règles clés** :
+  - Toujours créer/éditer la fiche métier via `PersonManagement::*` ; le compte web est créé ensuite via `UserManagement::UserCreator` si besoin.
+  - Supprimer un `User` ne détruit pas la `Person` (relation `has_one :user, dependent: :nullify`).
+  - Supprimer une `Person` passe par `SoftDeletable` (`Person#archive!`) avec garde-fous financiers (`has_financial_data?`).
+  - Toutes les opérations financières (services `MembershipManagement::*`, `SubscriptionManagement::*`, `PaymentManagement::*`) travaillent **exclusivement** sur `Person`.
+
+Cette séparation “Entity / Account” garantit :
+- pas de perte d’historique quand un utilisateur supprime son compte web,
+- la possibilité de gérer des personnes sans compte web (inscriptions papier, mineurs, bénévoles),
+- une liaison safe quand un compte web est créé après coup ou par l’admin.
+
 ## Organisation par Domaine
 
 ### ✅ MembershipManagement (Stable)
