@@ -53,7 +53,7 @@ module PaymentManagement
             lines_count: payment_lines.length
           )
 
-          success(payment)
+          success(payment: payment, message: "Payment created successfully")
         end
       rescue ActiveRecord::RecordNotFound => e
         failure("Person or User not found: #{e.message}")

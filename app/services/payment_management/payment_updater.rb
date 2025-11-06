@@ -12,8 +12,8 @@ module PaymentManagement
     validates :updated_by_id, presence: true
     # total_cents, payment_method, status, notes sont optionnels (update partiel)
     validates :total_cents, numericality: { greater_than: 0 }, allow_nil: true
-    validates :payment_method, inclusion: { in: %w[cash card transfer check offered] }, allow_nil: true
-    validates :status, inclusion: { in: %w[pending success failed cancelled] }, allow_nil: true
+    validates :payment_method, inclusion: { in: %w[cash card cheque transfer offered] }, allow_nil: true
+    validates :status, inclusion: { in: %w[pending success cancel] }, allow_nil: true
 
     def call
       return failure("Invalid payment data: #{errors.full_messages.join(', ')}") unless valid?
