@@ -1,15 +1,9 @@
 require 'rails_helper'
 
 RSpec.describe SubscriptionManagement::SubscriptionCreator do
-  let(:person) { create(:person) }
-  let(:membership_type) { create(:membership_type, category: :circus) }
-  let(:membership) { create(:membership, person: person, membership_type: membership_type, status: :active) }
+  let(:person) { create(:person, :with_circus_membership) }
   let(:subscription_plan) { create(:subscription_plan, :pack10) }
-  let(:admin_user) { create(:user, system_role: :admin) }
-  
-  before do
-    membership # Ensure membership is created
-  end
+  let(:admin_user) { create(:user, :admin, person: create(:person)) }
 
   describe "#call" do
     context "with valid attributes" do
@@ -47,51 +41,67 @@ RSpec.describe SubscriptionManagement::SubscriptionCreator do
       end
     end
 
-    context "with custom amount" do
-      let(:params) do
-        {
+    context "with offered payment" do
+      it "requires offer_reason" do
+        creator = described_class.new(
           person: person,
           subscription_plan_id: subscription_plan.id,
           payment_method: "offered",
-          recorded_by_id: admin_user.id,
-          record_attendance: false,
-          custom_amount_cents: 1500,
-          offer_reason: "Test offer"
-        }
+          recorded_by_id: admin_user.id
+        )
+        result = creator.call
+
+        expect(result.success?).to be false
+        expect(result.message).to include("raison doit être fournie")
       end
 
-      it "creates payment with custom amount" do
-        creator = described_class.new(params)
+      it "succeeds for super_admin with offer_reason" do
+        super_admin = create(:user, :super_admin, person: create(:person))
+        creator = described_class.new(
+          person: person,
+          subscription_plan_id: subscription_plan.id,
+          payment_method: "offered",
+          recorded_by_id: super_admin.id,
+          offer_reason: "Solidarity"
+        )
+
         result = creator.call
-        
         expect(result.success?).to be true
-        expect(result.payment).to be_present
-        expect(result.payment.total_cents).to eq(1500)
+        expect(result.payment.total_cents).to eq(0)
       end
     end
 
     context "with invalid attributes" do
       it "returns failure when person is missing" do
-        params = { subscription_plan_id: subscription_plan.id, payment_method: "cash", recorded_by_id: admin_user.id }
-        creator = described_class.new(params)
-        
+        creator = described_class.new(
+          subscription_plan_id: subscription_plan.id,
+          payment_method: "cash",
+          recorded_by_id: admin_user.id
+        )
+
         result = creator.call
         expect(result.success?).to be false
         expect(result.message).to include("Invalid data")
       end
 
       it "returns failure when subscription_plan_id is missing" do
-        params = { person: person, payment_method: "cash", recorded_by_id: admin_user.id }
-        creator = described_class.new(params)
-        
+        creator = described_class.new(
+          person: person,
+          payment_method: "cash",
+          recorded_by_id: admin_user.id
+        )
+
         result = creator.call
         expect(result.success?).to be false
       end
 
       it "returns failure when recorded_by_id is missing" do
-        params = { person: person, subscription_plan_id: subscription_plan.id, payment_method: "cash" }
-        creator = described_class.new(params)
-        
+        creator = described_class.new(
+          person: person,
+          subscription_plan_id: subscription_plan.id,
+          payment_method: "cash"
+        )
+
         result = creator.call
         expect(result.success?).to be false
       end
@@ -99,18 +109,26 @@ RSpec.describe SubscriptionManagement::SubscriptionCreator do
 
     context "with record not found" do
       it "returns failure when subscription_plan doesn't exist" do
-        params = { person: person, subscription_plan_id: 99999, payment_method: "cash", recorded_by_id: admin_user.id }
-        creator = described_class.new(params)
-        
+        creator = described_class.new(
+          person: person,
+          subscription_plan_id: 999_999,
+          payment_method: "cash",
+          recorded_by_id: admin_user.id
+        )
+
         result = creator.call
         expect(result.success?).to be false
         expect(result.message).to include("Record not found")
       end
 
       it "returns failure when user doesn't exist" do
-        params = { person: person, subscription_plan_id: subscription_plan.id, payment_method: "cash", recorded_by_id: 99999 }
-        creator = described_class.new(params)
-        
+        creator = described_class.new(
+          person: person,
+          subscription_plan_id: subscription_plan.id,
+          payment_method: "cash",
+          recorded_by_id: 999_999
+        )
+
         result = creator.call
         expect(result.success?).to be false
         expect(result.message).to include("Record not found")
@@ -118,18 +136,17 @@ RSpec.describe SubscriptionManagement::SubscriptionCreator do
     end
 
     context "with person without circus membership" do
-      let(:person_without_circus) { create(:person) }
-      let!(:basic_membership) { create(:membership, person: person_without_circus, membership_type: create(:membership_type, category: :basic), status: :active) }
-      
+      let(:basic_person) { create(:person) }
+      let!(:basic_membership) { create(:membership, person: basic_person, membership_type: create(:membership_type, category: :basic), status: :active) }
+
       it "returns failure when person cannot buy subscription plans" do
-        params = {
-          person: person_without_circus,
+        creator = described_class.new(
+          person: basic_person,
           subscription_plan_id: subscription_plan.id,
           payment_method: "cash",
           recorded_by_id: admin_user.id
-        }
-        creator = described_class.new(params)
-        
+        )
+
         result = creator.call
         expect(result.success?).to be false
         expect(result.message).to include("adhésion Cirque")
@@ -149,8 +166,7 @@ RSpec.describe SubscriptionManagement::SubscriptionCreator do
 
       it "fires subscription.created notification" do
         expect {
-          creator = described_class.new(params)
-          creator.call
+          described_class.new(params).call
         }.to instrument("subscription.created")
       end
     end
