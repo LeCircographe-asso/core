@@ -145,7 +145,7 @@ RSpec.describe SubscriptionPlan, type: :model do
 
   describe 'associations' do
     let(:circus_membership_type) { create(:membership_type, category: :circus) }
-    let(:plan) { create(:subscription_plan, membership_type: circus_membership_type) }
+    let(:plan) { create(:subscription_plan, :pack10, membership_type: circus_membership_type) }
 
     it "belongs to a membership_type" do
       expect(plan.membership_type).to eq(circus_membership_type)

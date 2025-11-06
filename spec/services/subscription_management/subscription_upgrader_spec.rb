@@ -29,7 +29,17 @@ RSpec.describe SubscriptionManagement::SubscriptionUpgrader do
     end
 
     context "trimester to annual" do
-      let(:trimester_book) { create(:book_of_entry, person: person, subscription_plan: trimester_plan, status: :active, purchased_at: 15.days.ago, sessions_remaining: nil) }
+      let(:trimester_book) do
+        create(
+          :book_of_entry,
+          person: person,
+          subscription_plan: trimester_plan,
+          status: :active,
+          purchased_at: 15.days.ago,
+          sessions_remaining: nil,
+          expires_at: 3.months.from_now
+        )
+      end
 
       it "applies prorated credit" do
         params = {
@@ -44,7 +54,7 @@ RSpec.describe SubscriptionManagement::SubscriptionUpgrader do
 
         expect(result.success?).to be true
         expect(result.credit_applied).to be > 0
-        expect(result.payment.total_cents).to eq(0)
+        expect(result.payment.total_cents).to eq(annual_plan.price_cents - result.credit_applied)
       end
     end
 

@@ -1,13 +1,23 @@
 require 'rails_helper'
 
 RSpec.describe BookOfEntry, type: :model do
-    let(:circus_membership_type) { create(:membership_type, category: :circus) }
+  let(:circus_membership_type) { create(:membership_type, category: :circus) }
   let(:basic_membership_type) { create(:membership_type, :basic) }
   let(:person) { create(:person, :with_active_membership) }
   let(:pack10_plan) { create(:subscription_plan, :pack10, membership_type: circus_membership_type) }
   let(:day_plan) { create(:subscription_plan, :day, membership_type: circus_membership_type) }
   let(:trimester_plan) { create(:subscription_plan, :trimester, membership_type: circus_membership_type) }
   let(:annual_plan) { create(:subscription_plan, :annual, membership_type: circus_membership_type) }
+
+  describe "business defaults" do
+    it "instantiates pack10 books by default" do
+      book = create(:book_of_entry)
+
+      expect(book.subscription_plan.duration).to eq("pack10")
+      expect(book.sessions_remaining).to eq(book.subscription_plan.sessions_count)
+      expect(book.expires_at).to be_nil
+    end
+  end
 
   describe "validations" do
     it "validates presence of status" do
@@ -52,12 +62,22 @@ RSpec.describe BookOfEntry, type: :model do
 
       context "for trimester/annual plans (unlimited)" do
         it "does not require sessions_remaining" do
-          book_of_entry = build(:book_of_entry, subscription_plan: trimester_plan, sessions_remaining: nil)
+          book_of_entry = build(
+            :book_of_entry,
+            subscription_plan: trimester_plan,
+            sessions_remaining: nil,
+            expires_at: 3.months.from_now
+          )
           expect(book_of_entry).to be_valid
         end
 
         it "prevents sessions_remaining from being set" do
-          book_of_entry = build(:book_of_entry, subscription_plan: annual_plan, sessions_remaining: 10)
+          book_of_entry = build(
+            :book_of_entry,
+            subscription_plan: annual_plan,
+            sessions_remaining: 10,
+            expires_at: 1.year.from_now
+          )
           expect(book_of_entry).not_to be_valid
           expect(book_of_entry.errors[:sessions_remaining]).to include("doit être vide pour les abonnements illimités")
         end
@@ -217,7 +237,7 @@ RSpec.describe BookOfEntry, type: :model do
     end
 
     context "with non-pack10 plan" do
-      let(:book_of_entry) { create(:book_of_entry, person: person, subscription_plan: day_plan) }
+      let(:book_of_entry) { create(:book_of_entry, person: person, subscription_plan: day_plan, expires_at: 1.day.from_now) }
 
       it "returns false" do
         expect(book_of_entry.is_pack10?).to be false
@@ -446,10 +466,10 @@ RSpec.describe BookOfEntry, type: :model do
     describe "#expired? (custom method - checks date, not status)" do
       it "overrides Statusable expired? method" do
         # BookOfEntry's expired? checks expires_at date, not status
-        future_book = create(:book_of_entry, expires_at: Date.current + 1.month, status: :active)
+        future_book = create(:book_of_entry, subscription_plan: day_plan, expires_at: Date.current + 1.day, status: :active)
         expect(future_book.expired?).to be false
 
-        past_book = create(:book_of_entry, expires_at: Date.current - 1.day, status: :active)
+        past_book = create(:book_of_entry, subscription_plan: day_plan, expires_at: Date.current - 1.day, status: :active)
         expect(past_book.expired?).to be true
       end
     end

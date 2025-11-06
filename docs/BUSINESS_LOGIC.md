@@ -231,10 +231,12 @@ enum duration: {
 
 ### Zone 1: Comportement Défini
 
+> **NOTE BUSINESS:** Dans l’usage actuel de l’association, *BookOfEntry* ne matérialise **que** les carnets Pack 10 séances. Le modèle conserve des attributs (expiration, illimité, etc.) pour rester compatible avec d’anciens prototypes, mais cette logique n’est plus exploitée. Tout test/implémentation doit partir du principe « BookOfEntry = Pack 10 ».
+
 #### Création
-- **Trigger:** Paiement d'un SubscriptionPlan pack10
+- **Trigger:** Paiement d'un SubscriptionPlan pack10 (unique offre à carnet)
 - **Person:** Assigné au propriétaire
-- **Sessions:** Nombre initial = sessions_count du plan
+- **Sessions:** Nombre initial = sessions_count du plan (par défaut 10)
 
 #### Utilisation
 ```ruby
@@ -249,8 +251,8 @@ BookOfEntry#use_session!
 ```
 
 #### Expiration (Pack10 uniquement)
-- **Never expires:** Pack10 n'a pas expires_at
-- **Non-pack:** Expire selon validité
+- **Never expires:** Pack10 n'a pas expires_at (les autres durées ne sont plus utilisées)
+- **Non-pack (legacy):** Expire selon validité — gardé pour compatibilité mais hors périmètre actuel
 
 #### Suspension & Réactivation
 ```ruby
