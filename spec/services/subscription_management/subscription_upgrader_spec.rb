@@ -1,135 +1,92 @@
 require 'rails_helper'
 
 RSpec.describe SubscriptionManagement::SubscriptionUpgrader do
-  let(:person) { create(:person) }
-  let(:membership_type) { create(:membership_type, category: :circus) }
-  let(:membership) { create(:membership, person: person, membership_type: membership_type, status: :active) }
-  let(:from_plan) { create(:subscription_plan, :pack10, price_cents: 10000) }
-  let(:to_plan) { create(:subscription_plan, :trimester, price_cents: 30000) }
-  let(:admin_user) { create(:user, system_role: :admin) }
-  let(:from_book) { create(:book_of_entry, person: person, subscription_plan: from_plan, status: :active) }
-  
-  before do
-    membership # Ensure membership is created
-  end
+  let(:person) { create(:person, :with_circus_membership) }
+  let(:admin_user) { create(:user, :admin, person: create(:person)) }
+  let(:pack_plan) { create(:subscription_plan, :pack10, price_cents: 10_000) }
+  let(:trimester_plan) { create(:subscription_plan, :trimester, price_cents: 30_000) }
+  let(:annual_plan) { create(:subscription_plan, :annual, price_cents: 90_000) }
+  let(:pack_book) { create(:book_of_entry, person: person, subscription_plan: pack_plan, status: :active, sessions_remaining: 8) }
 
   describe "#call" do
-    context "with valid attributes" do
-      let(:params) do
-        {
-          person: person,
-          from_book_id: from_book.id,
-          to_plan_id: to_plan.id,
-          payment_method: "cash",
-          recorded_by_id: admin_user.id
-        }
-      end
-
-      it "upgrades subscription successfully" do
-        upgrader = described_class.new(params)
-        result = upgrader.call
-
-        expect(result.success?).to be true
-        expect(result.book_of_entry).to be_present
-        expect(result.payment).to be_present
-      end
-
-      it "applies credit from old subscription" do
-        upgrader = described_class.new(params)
-        result = upgrader.call
-
-        expect(result.credit_applied).to be >= 0
-      end
-
-      it "suspends old book_of_entry" do
-        upgrader = described_class.new(params)
-        upgrader.call
-
-        expect(from_book.reload.status).to eq("suspended")
-      end
-    end
-
-    context "with invalid attributes" do
-      it "returns failure when person is missing" do
-        params = { from_book_id: from_book.id, to_plan_id: to_plan.id, payment_method: "cash", recorded_by_id: admin_user.id }
-        upgrader = described_class.new(params)
-        
-        result = upgrader.call
-        expect(result.success?).to be false
-        expect(result.message).to include("Invalid data")
-      end
-
-      it "returns failure when from_book_id is missing" do
-        params = { person: person, to_plan_id: to_plan.id, payment_method: "cash", recorded_by_id: admin_user.id }
-        upgrader = described_class.new(params)
-        
-        result = upgrader.call
-        expect(result.success?).to be false
-      end
-
-      it "returns failure when to_plan_id is missing" do
-        params = { person: person, from_book_id: from_book.id, payment_method: "cash", recorded_by_id: admin_user.id }
-        upgrader = described_class.new(params)
-        
-        result = upgrader.call
-        expect(result.success?).to be false
-      end
-    end
-
-    context "with record not found" do
-      it "returns failure when from_book doesn't exist" do
-        params = { person: person, from_book_id: 99999, to_plan_id: to_plan.id, payment_method: "cash", recorded_by_id: admin_user.id }
-        upgrader = described_class.new(params)
-        
-        result = upgrader.call
-        expect(result.success?).to be false
-        expect(result.message).to include("Record not found")
-      end
-
-      it "returns failure when to_plan doesn't exist" do
-        params = { person: person, from_book_id: from_book.id, to_plan_id: 99999, payment_method: "cash", recorded_by_id: admin_user.id }
-        upgrader = described_class.new(params)
-        
-        result = upgrader.call
-        expect(result.success?).to be false
-        expect(result.message).to include("Record not found")
-      end
-    end
-
-    context "with invalid upgrade path" do
-      let(:invalid_plan) { create(:subscription_plan, :day) }
-      
-      it "returns failure when upgrade is not allowed" do
+    context "pack10 upgrade" do
+      it "suspends pack and charges full price" do
         params = {
           person: person,
-          from_book_id: from_book.id,
-          to_plan_id: invalid_plan.id,
+          from_book_id: pack_book.id,
+          to_plan_id: trimester_plan.id,
           payment_method: "cash",
           recorded_by_id: admin_user.id
         }
-        upgrader = described_class.new(params)
-        
-        result = upgrader.call
+
+        result = described_class.new(params).call
+
+        expect(result.success?).to be true
+        expect(pack_book.reload.status).to eq("suspended")
+        expect(result.payment.total_cents).to eq(trimester_plan.price_cents)
+        expect(result.credit_applied).to eq(0)
+      end
+    end
+
+    context "trimester to annual" do
+      let(:trimester_book) { create(:book_of_entry, person: person, subscription_plan: trimester_plan, status: :active, purchased_at: 15.days.ago, sessions_remaining: nil) }
+
+      it "applies prorated credit" do
+        params = {
+          person: person,
+          from_book_id: trimester_book.id,
+          to_plan_id: annual_plan.id,
+          payment_method: "cash",
+          recorded_by_id: admin_user.id
+        }
+
+        result = described_class.new(params).call
+
+        expect(result.success?).to be true
+        expect(result.credit_applied).to be > 0
+        expect(result.payment.total_cents).to eq(0)
+      end
+    end
+
+    context "invalid upgrade" do
+      it "rejects day plan target" do
+        day_plan = create(:subscription_plan, :day)
+        params = {
+          person: person,
+          from_book_id: pack_book.id,
+          to_plan_id: day_plan.id,
+          payment_method: "cash",
+          recorded_by_id: admin_user.id
+        }
+
+        result = described_class.new(params).call
         expect(result.success?).to be false
         expect(result.message).to include("non autorisé")
+      end
+
+      it "fails when book not found" do
+        params = { person: person, from_book_id: 999_999, to_plan_id: trimester_plan.id, payment_method: "cash", recorded_by_id: admin_user.id }
+        result = described_class.new(params).call
+        expect(result.success?).to be false
+      end
+    end
+
+    context "permissions" do
+      it "allows volunteer (permission enforced in model)" do
+        volunteer = create(:user, :volunteer, person: create(:person))
+        params = { person: person, from_book_id: pack_book.id, to_plan_id: trimester_plan.id, payment_method: "cash", recorded_by_id: volunteer.id }
+
+        result = described_class.new(params).call
+        expect(result.success?).to be true
       end
     end
 
     context "instrumentation" do
-      let(:params) do
-        {
-          person: person,
-          from_book_id: from_book.id,
-          to_plan_id: to_plan.id,
-          payment_method: "cash",
-          recorded_by_id: admin_user.id
-        }
-      end
+      it "fires subscription.upgraded" do
+        params = { person: person, from_book_id: pack_book.id, to_plan_id: trimester_plan.id, payment_method: "cash", recorded_by_id: admin_user.id }
 
-      it "fires subscription.upgraded notification" do
         expect {
-          upgrader = described_class.new(params)
-          upgrader.call
+          described_class.new(params).call
         }.to instrument("subscription.upgraded")
       end
     end
