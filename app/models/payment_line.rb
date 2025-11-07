@@ -1,6 +1,6 @@
 class PaymentLine < ApplicationRecord
   include Priceable
-  
+
   # Relations
   belongs_to :payment
   belongs_to :item, polymorphic: true

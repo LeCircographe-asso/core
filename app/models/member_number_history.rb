@@ -46,7 +46,7 @@ class MemberNumberHistory < ApplicationRecord
   def formatted_number
     parsed = parsed_number
     return member_number unless parsed
-    
+
     "#{parsed[:year]} - #{parsed[:type]} - ##{parsed[:number]}"
   end
 end

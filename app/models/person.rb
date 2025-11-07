@@ -13,7 +13,7 @@ class Person < ApplicationRecord
   #
   # TODO: Replace all newsletter_subscribed references with NewsletterSubscriber
   # ===================================================================
-  
+
   # Relations (MODIFIER dependent pour protéger données financières)
   has_one :user, dependent: :nullify
   has_many :memberships, dependent: :restrict_with_error  # ✅ Empêcher suppression
@@ -264,14 +264,14 @@ class Person < ApplicationRecord
       if member_number.blank?
         # Normaliser la catégorie pour la génération du numéro
         normalized_category = case membership_type.category
-        when 'circus'
-          'CIRQUE'
-        when 'basic'
-          'BASIQUE'
+        when "circus"
+          "CIRQUE"
+        when "basic"
+          "BASIQUE"
         else
-          'BASIQUE'
+          "BASIQUE"
         end
-        
+
         MemberManagementService.assign_member_number(self, normalized_category)
       end
 
@@ -400,7 +400,7 @@ class Person < ApplicationRecord
       new_book_result = create_subscription!(to_plan, payment_method: payment_method, recorded_by: recorded_by)
 
       # Calculer montant à payer (prix nouveau - crédit ancien)
-      amount_to_pay = [to_plan.price_cents - credit_cents, 0].max
+      amount_to_pay = [ to_plan.price_cents - credit_cents, 0 ].max
 
       # Créer paiement upgrade avec crédit
       payment = payments.create!(
@@ -465,7 +465,7 @@ class Person < ApplicationRecord
 
       # Sauvegarder l'ancienne adhésion
       old_membership_type = current_membership.membership_type
-      
+
       # CHANGEMENT: Plein tarif du nouveau type, pas de différence
       amount_to_pay = new_membership_type.price_cents
 
@@ -486,8 +486,8 @@ class Person < ApplicationRecord
         description: "Upgrade d'adhésion de #{old_membership_type.name} vers #{new_membership_type.name} (plein tarif)"
       )
 
-      { 
-        membership: new_membership, 
+      {
+        membership: new_membership,
         payment: payment,
         member_number_changed: old_member_number != new_member_number,
         old_member_number: old_member_number,
@@ -514,16 +514,16 @@ class Person < ApplicationRecord
       # NOUVEAU NUMÉRO D'ADHÉRENT À CHAQUE RENOUVELLEMENT
       old_number = member_number
       new_number = MemberManagementService.generate_member_number(get_membership_type_code(membership_type))
-      
+
       # Historique changement
       create_member_number_change_history!(
         old_member_number: old_number,
         new_member_number: new_number,
-        old_type: current ? get_membership_type_code(current.membership_type) : 'AUCUN',
+        old_type: current ? get_membership_type_code(current.membership_type) : "AUCUN",
         new_type: get_membership_type_code(membership_type),
         recorded_by: recorded_by
       )
-      
+
       update!(member_number: new_number)
 
       result.merge(
@@ -541,22 +541,22 @@ class Person < ApplicationRecord
     # Déterminer si un changement de numéro est nécessaire
     old_type_code = get_membership_type_code(old_membership_type)
     new_type_code = get_membership_type_code(new_membership_type)
-    
+
     # Si le type de numéro change, générer un nouveau numéro
     if old_type_code != new_type_code
       # Générer le nouveau numéro selon le type d'adhésion
       new_member_number = MemberManagementService.generate_member_number(new_type_code)
-      
+
       # Créer l'historique du changement
-      create_member_number_change_history!(old_member_number: member_number, 
+      create_member_number_change_history!(old_member_number: member_number,
                                          new_member_number: new_member_number,
                                          old_type: old_type_code,
                                          new_type: new_type_code,
                                          recorded_by: recorded_by)
-      
+
       # Mettre à jour le numéro actuel
       update!(member_number: new_member_number)
-      
+
       new_member_number
     else
       # Pas de changement nécessaire, retourner le numéro actuel
@@ -567,24 +567,24 @@ class Person < ApplicationRecord
   # Obtenir le code de type d'adhésion pour la génération de numéro
   def get_membership_type_code(membership_type)
     case membership_type.category
-    when 'circus'
-      'CIRQUE'
-    when 'basic'
-      'BASIQUE'
+    when "circus"
+      "CIRQUE"
+    when "basic"
+      "BASIQUE"
     else
-      'BASIQUE' # Par défaut
+      "BASIQUE" # Par défaut
     end
   end
 
   # Obtenir le nom de type d'adhésion pour l'historique
   def get_membership_type_name(membership_type)
     case membership_type.category
-    when 'circus'
-      'Cirque'
-    when 'basic'
-      'Basique'
+    when "circus"
+      "Cirque"
+    when "basic"
+      "Basique"
     else
-      'Basique' # Par défaut
+      "Basique" # Par défaut
     end
   end
 
@@ -597,8 +597,8 @@ class Person < ApplicationRecord
     end
 
     # Convertir les codes en noms pour l'historique
-    old_type_name = old_type == 'CIRQUE' ? 'Cirque' : 'Basique'
-    new_type_name = new_type == 'CIRQUE' ? 'Cirque' : 'Basique'
+    old_type_name = old_type == "CIRQUE" ? "Cirque" : "Basique"
+    new_type_name = new_type == "CIRQUE" ? "Cirque" : "Basique"
 
     # Créer l'historique pour le nouveau numéro
     member_number_histories.create!(
@@ -697,8 +697,8 @@ class Person < ApplicationRecord
     # Trimestre → Année OK
     # Day interdit
     valid_upgrades = {
-      'pack10' => ['trimester', 'annual'],
-      'trimester' => ['annual']
+      "pack10" => [ "trimester", "annual" ],
+      "trimester" => [ "annual" ]
     }
 
     allowed = valid_upgrades[from_duration]
@@ -708,17 +708,17 @@ class Person < ApplicationRecord
   # Calculer le crédit prorata pour upgrade cotisation
   def calculate_subscription_credit(book_of_entry)
     plan = book_of_entry.subscription_plan
-    
+
     case plan.duration
-    when 'pack10'
+    when "pack10"
       # Pas de crédit, suspension seulement (selon 11.c)
       0
-    when 'trimester'
+    when "trimester"
       # Prorata temporel (jours restants)
       total_days = 90
       days_remaining = ((book_of_entry.expires_at.to_date - Date.current).to_i)
       (plan.price_cents * days_remaining / total_days.to_f).round
-    when 'annual'
+    when "annual"
       # Prorata temporel (jours restants)
       total_days = 365
       days_remaining = ((book_of_entry.expires_at.to_date - Date.current).to_i)
@@ -796,15 +796,15 @@ class Person < ApplicationRecord
 
     errors.add(:base, "Une adhésion active est obligatoire")
   end
-  
+
   # Read-only helper to check newsletter status from NewsletterSubscriber
   def newsletter_subscribed?
     return false unless email.present?
-    
+
     subscriber = NewsletterSubscriber.find_by(email: email)
     subscriber&.subscribed? || false
   end
-  
+
   # Make newsletter_subscribed? public (AR makes bool methods private)
   public :newsletter_subscribed?
 end

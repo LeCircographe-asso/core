@@ -35,7 +35,7 @@ module Dateable
     date = send(date_attr)
     return false unless date
 
-    date.to_date >= Date.current.beginning_of_week && 
+    date.to_date >= Date.current.beginning_of_week &&
     date.to_date <= Date.current.end_of_week
   end
 
@@ -43,7 +43,7 @@ module Dateable
     date = send(date_attr)
     return false unless date
 
-    date.to_date >= Date.current.beginning_of_month && 
+    date.to_date >= Date.current.beginning_of_month &&
     date.to_date <= Date.current.end_of_month
   end
 
@@ -74,26 +74,26 @@ module Dateable
   # Méthodes de classe pour les scopes temporels
   class_methods do
     def today(date_attr = :created_at)
-      where("#{date_attr} >= ? AND #{date_attr} < ?", 
-            Date.current.beginning_of_day, 
+      where("#{date_attr} >= ? AND #{date_attr} < ?",
+            Date.current.beginning_of_day,
             Date.current.end_of_day)
     end
 
     def this_week(date_attr = :created_at)
-      where("#{date_attr} >= ? AND #{date_attr} <= ?", 
-            Date.current.beginning_of_week, 
+      where("#{date_attr} >= ? AND #{date_attr} <= ?",
+            Date.current.beginning_of_week,
             Date.current.end_of_week)
     end
 
     def this_month(date_attr = :created_at)
-      where("#{date_attr} >= ? AND #{date_attr} <= ?", 
-            Date.current.beginning_of_month, 
+      where("#{date_attr} >= ? AND #{date_attr} <= ?",
+            Date.current.beginning_of_month,
             Date.current.end_of_month)
     end
 
     def this_year(date_attr = :created_at)
-      where("#{date_attr} >= ? AND #{date_attr} <= ?", 
-            Date.current.beginning_of_year, 
+      where("#{date_attr} >= ? AND #{date_attr} <= ?",
+            Date.current.beginning_of_year,
             Date.current.end_of_year)
     end
 

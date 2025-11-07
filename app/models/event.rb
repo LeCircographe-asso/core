@@ -1,7 +1,7 @@
 class Event < ApplicationRecord
   include Categorizable
   include Dateable
-  
+
   # Relations selon le domain_model_circographe.md
   belongs_to :creator, class_name: "User"
   has_many :attendances, dependent: :destroy

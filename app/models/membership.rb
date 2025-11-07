@@ -1,7 +1,7 @@
 class Membership < ApplicationRecord
   include Statusable
   include Dateable
-  
+
   # Relations selon le domain_model_circographe.md
   belongs_to :person
   belongs_to :membership_type
@@ -28,7 +28,7 @@ class Membership < ApplicationRecord
   # Status methods from Statusable module
   # expired? checks status == "expired"
   # expired_by_date? checks if ended_at is in the past
-  
+
   def expired_by_date?
     Date.current > ended_at
   end
