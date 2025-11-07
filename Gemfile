@@ -67,10 +67,10 @@ end
 group :test do
   # UTILES POUR CI/CD
   gem "rspec_junit_formatter"  # JUnit XML output for CI/CD integration
-  
-  # OPTIONNELS - On peut les ajouter petit à petit
-  # gem "capybara"  # Tests d'intégration navigateur (Rails a déjà system tests)
-  # gem "selenium-webdriver"  # Automatisation navigateur (utilisé par capybara)
+
+  # Tests système / Capybara
+  gem "capybara"
+  gem "selenium-webdriver"
   gem "simplecov", require: false  # Couverture de code
 end
 

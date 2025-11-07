@@ -6,9 +6,73 @@ class PagesController < ApplicationController
 
 
   def show
+    redirect_mapping = {
+      "circus_details" => { page: "association", anchor: "le-cirque" },
+      "graphic_arts_details" => { page: "association", anchor: "les-arts-graphiques" }
+    }
+
+    if (target = redirect_mapping[params[:id]])
+      return redirect_to page_path(target[:page], anchor: target[:anchor]), status: :moved_permanently
+    end
+
     @opening_hours = Rails.cache.fetch("opening_hours") || default_opening_hours
     @notepad = Rails.cache.fetch("notepad") || default_notepad
     @blogs = Blog.order(created_at: :desc).limit(3)
+
+    if params[:id] == "news"
+      @upcoming_events = Event.upcoming.by_date.limit(6)
+      @past_events = Event.past.order(date: :desc).limit(6)
+      @latest_posts = Blog.order(created_at: :desc).limit(6)
+    end
+
+    if params[:id] == "contact_us"
+      @contact = {}
+      @faqs = contact_faq_entries
+    end
+
+    if params[:id] == "become_member"
+      @adhesion_faqs = adhesion_faq_entries
+    end
+
+    if params[:id] == "faq"
+      @contact_faqs = contact_faq_entries
+      @adhesion_faqs = adhesion_faq_entries
+      @general_faqs = general_faq_entries
+    end
+
+    if params[:id] == "about"
+      @partners = PartnersCatalog.public_partners
+    end
+
     render template: "pages/#{params[:id]}"
+  end
+
+  private
+
+  def contact_faq_entries
+    [
+      { question: "Comment adhérer au Circographe ?", answer: "Passe sur un créneau d'ouverture : on remplit la fiche ensemble et on t'explique le fonctionnement." },
+      { question: "Puis-je réserver un créneau de résidence ?", answer: "Oui, écris-nous via la catégorie 'Résidence'. Nous te recontacterons avec les disponibilités et modalités." },
+      { question: "Le lieu est-il accessible aux débutant·es ?", answer: "Les entraînements libres sont destinés aux personnes autonomes. Pour débuter, on recommande une école partenaire : contacte-nous pour des conseils." },
+      { question: "Proposez-vous des prestations ou des partenariats ?", answer: "Oui, nous travaillons avec des structures culturelles, établissements scolaires et entreprises. Sélectionne la catégorie 'Partenariat' pour en discuter." }
+    ]
+  end
+
+  def adhesion_faq_entries
+    [
+      { question: "Puis-je adhérer en ligne ?", answer: "L'inscription se fait uniquement sur place afin de te présenter le lieu et les règles d'autogestion." },
+      { question: "Quels moyens de paiement acceptez-vous ?", answer: "Carte bancaire et espèces. Une adhésion de soutien peut également être effectuée par virement sur demande." },
+      { question: "Faut-il être autonome pour les entraînements libres ?", answer: "Oui, les créneaux libres s'adressent aux pratiquant·es autonomes. Pour débuter, on peut te recommander des écoles partenaires." },
+      { question: "Puis-je proposer un atelier ou un événement ?", answer: "Tout est possible ! Passe nous voir avec ton idée, on regardera ensemble comment l'inscrire dans la programmation." }
+    ]
+  end
+
+  def general_faq_entries
+    [
+      { question: "Où se situe le Circographe ?", answer: "Au 27 bis allée Maurice Sarraut, Toulouse — dans le quartier de la Cartoucherie. Consulte la page Contact pour la carte et l'accès." },
+      { question: "Quels sont les horaires d'ouverture ?", answer: "Les créneaux publics évoluent chaque saison ; on les met à jour sur les pages Accueil, Adhérer et Contact. Pense à vérifier avant de te déplacer." },
+      { question: "Comment soutenir financièrement le projet ?", answer: "En adhérant, en souscrivant à l'adhésion soutien ou en faisant un don ponctuel. Écris-nous si tu souhaites devenir partenaire." },
+      { question: "J'ai une question administrative, qui contacter ?", answer: "Utilise le formulaire de contact (catégorie 'Question générale') ou écris à contact@circographe.fr ; l'équipe bénévole te répondra rapidement." }
+    ]
   end
 end

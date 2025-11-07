@@ -1,0 +1,24 @@
+<section class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6">
+  <% partners.each do |partner| %>
+    <article class="bg-white border border-gray-100 rounded-2xl p-4 shadow-sm flex flex-col items-center text-center space-y-3">
+      <% if partner[:logo].present? %>
+        <div class="w-32 h-32 rounded-xl overflow-hidden bg-gray-100 flex items-center justify-center">
+          <%= image_tag partner[:logo], alt: partner[:name], class: "object-contain w-full h-full" %>
+        </div>
+      <% else %>
+        <div class="w-32 h-32 rounded-xl bg-[#1F5C55]/10 border border-[#1F5C55]/20 flex items-center justify-center text-sm font-semibold text-[#1F5C55]">
+          <%= partner[:name].first %>
+        </div>
+      <% end %>
+      <div>
+        <h3 class="text-base font-semibold text-gray-800"><%= partner[:name] %></h3>
+        <% if partner[:description].present? %>
+          <p class="text-xs text-gray-600 mt-1"><%= partner[:description] %></p>
+        <% end %>
+      </div>
+      <% if partner[:link].present? %>
+        <%= link_to "Voir le site", partner[:link], target: "_blank", rel: "noopener", class: "text-sm text-[#1F5C55] underline" %>
+      <% end %>
+    </article>
+  <% end %>
+</section>

@@ -50,7 +50,9 @@
         <header>
             <%= render 'shared/navbar' %>
         </header>
+        <%= turbo_frame_tag "flash" do %>
         <%= render 'shared/flash' %>
+        <% end %>
         <%= yield %>
     </div>
     
@@ -60,7 +62,9 @@
         <%= render 'shared/navbar' %>
     </header>
     <div class="flex-grow bg-no-repeat bg-cover bg-center <%= 'parallax-bg' if controller_name == 'home' && action_name == 'index' %>" style="background-image: url('<%= asset_path(content_for(:background_image) || 'background_temp.webp') %>'); background-attachment: fixed; background-position: center; background-repeat: no-repeat; background-size: cover;">
+        <%= turbo_frame_tag "flash" do %>
         <%= render 'shared/flash' %>
+        <% end %>
         <main class="w-full mx-auto space-y-6 px-4 sm:px-6 lg:px-8 pt-8">
         <div class="max-w-6xl mx-auto">
             <%= yield %>

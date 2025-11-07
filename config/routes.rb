@@ -39,13 +39,19 @@ Rails.application.routes.draw do
     end
   end
 
-  resources :events, only: %i[show index]
+  resources :events, only: %i[show index] do
+    get :upcoming, on: :collection
+    get :past, on: :collection
+  end
   resources :pages, only: %i[show]
   resource :session, only: %i[new create destroy]
   resources :passwords, only: %i[new create edit update], param: :token
   resource :registration, only: %i[new create]
   resources :event_interests, only: %i[create destroy]
-  resources :blogs, only: %i[show ]
+  resources :blogs, only: %i[show ] do
+    get :latest, on: :collection
+  end
+  resources :partners, only: %i[index]
   get "/blog-newsletter", to: "blogs#index"
   resources :users, only: %i[show edit update destroy] do
     post "change_newsletter_status", on: :member
@@ -59,7 +65,7 @@ Rails.application.routes.draw do
 
   # Route for newsletter signup from footer
   post "/newsletter_signup", to: "users#newsletter_signup", as: "newsletter_signup"
-  
+
   # Route for newsletter unsubscribe by token (from emails)
   get "/newsletter/unsubscribe/:token", to: "users#unsubscribe_by_token", as: "newsletter_unsubscribe"
 

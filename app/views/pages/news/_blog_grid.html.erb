@@ -1,0 +1,31 @@
+<% blogs ||= [] %>
+
+<div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+  <% blogs.each do |blog| %>
+    <article class="group flex flex-col h-full bg-white/95 border border-gray-200 hover:border-transparent hover:shadow-lg transition duration-300 rounded-2xl p-5">
+      <% if blog.cover_image_url.present? %>
+        <div class="aspect-w-16 aspect-h-11 mb-4 overflow-hidden rounded-xl">
+          <%= image_tag blog.cover_image_url, alt: blog.title, class: "w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" %>
+        </div>
+      <% end %>
+      <div class="flex flex-col flex-1 space-y-4">
+        <div class="space-y-2">
+          <p class="text-sm uppercase tracking-[0.2em] text-[#1F5C55]/70">
+            <%= l(blog.created_at.to_date, format: :long) %>
+          </p>
+          <h3 class="text-xl font-semibold text-gray-900"><%= blog.title %></h3>
+        </div>
+        <p class="text-gray-600 flex-1"><%= truncate(blog.content.to_plain_text, length: 180) %></p>
+        <div>
+          <%= link_to "Lire la suite", blog_path(blog), class: "inline-flex items-center justify-center w-full px-4 py-2 tracking-wide text-white font-semibold bg-[#1F5C55] border-2 border-[#1F5C55] rounded-full shadow hover:bg-gray-100 hover:text-[#1F5C55] hover:border-[#1F5C55] transition-colors duration-300" %>
+        </div>
+      </div>
+    </article>
+  <% end %>
+</div>
+
+<% if blogs.blank? %>
+  <div class="bg-white/95 border border-dashed border-gray-200 rounded-2xl p-10 text-center text-gray-500">
+    Aucune actualité publiée pour l'instant. Suivez-nous sur les réseaux ou abonnez-vous à la newsletter pour rester informé·e.
+  </div>
+<% end %>

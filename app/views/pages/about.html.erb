@@ -1,135 +1,124 @@
-<section class="py-6 mb-12 text-center bg-white/95 rounded-lg shadow-md max-w-6xl mx-auto fade-in">
-    <h1 class="font-circographe text-3xl sm:text-4xl lg:text-5xl font-bold text-black">À Propos</h1>
+<% content_for :title, "Le Circographe - À propos" %>
+
+<section class="relative overflow-hidden rounded-[32px] shadow-2xl mb-14">
+  <div class="absolute inset-0 bg-cover bg-center brightness-50" style="background-image: url('<%= asset_path('home3.webp') %>')"></div>
+  <div class="relative px-6 sm:px-10 lg:px-16 py-20 text-white space-y-6">
+    <p class="text-sm uppercase tracking-[0.4em] text-white/70">L'histoire du Circographe</p>
+    <h1 class="font-circographe text-3xl sm:text-4xl lg:text-5xl font-bold">À propos du Circographe</h1>
+    <p class="max-w-3xl text-lg text-white/85 leading-relaxed">Le Circographe est un laboratoire de pratiques artistiques où se croisent disciplines circassiennes, arts graphiques et vie associative. Nous inventons, ensemble, une manière de faire vivre un lieu partagé : autogestion, entraide, transmission.</p>
+    <div class="flex flex-wrap gap-4">
+      <%= link_to "Nous rejoindre", page_path('become_member'), class: "inline-flex items-center gap-2 px-5 py-3 text-sm font-semibold text-white bg-[#1F5C55] border-2 border-[#1F5C55] rounded-full shadow-lg hover:bg-white hover:text-[#1F5C55] transition" %>
+      <%= link_to "Découvrir le lieu", page_path('association'), class: "inline-flex items-center gap-2 px-5 py-3 text-sm font-semibold text-[#1F5C55] bg-white/95 border-2 border-white rounded-full shadow-lg hover:bg-[#1F5C55] hover:text-white transition" %>
+    </div>
+  </div>
 </section>
 
-<!-- Mission Section -->
-<section class="py-6 bg-white/95 rounded-lg shadow-md mx-auto my-10 max-w-6xl backdrop-blur-sm fade-in">
-    <div class="px-10 fade-in">
-        <h2 class="text-3xl font-semibold mb-8">Mission de l'association</h2>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-10 fade-in">
-            <div>
-                <p class="text-gray-700 mb-4">
-                    Sollicitant homines non sunt nisi quam formae rerum principis optiones. Mors enim est
-                    terribilis ut dolorri ataut eise apparet. Sed famse mortis est nasto terribils.
-                </p>
-            </div>
-            <div>
-                <p class="text-gray-700 mb-4">
-                    Sollicitant homines non sunt nisi quam formae rerum principis optiones. Mors enim est terribilis ut
-                    dolorri ataut eise apparet. Sed famse mortis est nasto terribilis. Cum qatur impelluntur turbuntur attl
-                    duinos viacamus. Mitis non bibequr nisi nobilc hoc est, in principis inustia.
-                </p>
-                <p class="text-gray-700 mb-4">
-                    Ponam in culpa idiota alitis prevelatis. Principium ponere culpam in se ipatum praeciptum. Neque
-                    improperes et alis qui non perfecte ipse docut.
-                </p>
-                <p class="text-gray-700 mb-4">
-                    Quod Enchinrion Epictetus stoici scripist. Indrigo Abela et Technologiae apud Massiachusetts instituta
-                    Opera collectio. Ex anglicus Latine transiata sunt.
-                </p>
-                <p class="text-gray-700">
-                    Quidam ais sunt, et non est in nostra poteslate. Quae omnia in nostra sententia, pursut, cupisitatem.
-                </p>
-            </div>
-        </div>
+<section class="bg-white/95 rounded-[28px] shadow-lg p-6 sm:p-10 fade-in border border-white/80">
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <div class="lg:col-span-2 space-y-4">
+      <p class="text-sm uppercase tracking-[0.3em] text-[#1F5C55]/70">Notre mission</p>
+      <h2 class="text-3xl font-semibold text-gray-900">Un espace de création partagé et accessible</h2>
+      <p class="text-gray-700 leading-relaxed">Le Circographe fait cohabiter pratique du cirque, expérimentation graphique et convivialité. L’ambition : offrir un lieu ouvert où chacun peut pratiquer, apprendre, transmettre et inventer, qu’il soit amateur curieux ou professionnel en résidence.</p>
+      <p class="text-gray-700 leading-relaxed">La gouvernance est autogérée : les adhérent·es choisissent des missions bénévoles, partagent les clés du lieu et imaginent la programmation. On croit au pouvoir du collectif et à la mutualisation des ressources.</p>
     </div>
+    <div class="bg-[#1F5C55]/5 border border-[#1F5C55]/20 rounded-3xl p-6 space-y-4">
+      <p class="text-sm uppercase tracking-[0.3em] text-[#1F5C55]/70">Nos valeurs</p>
+      <ul class="space-y-4 text-gray-700">
+        <li>
+          <h3 class="font-semibold text-gray-900">Accessibilité</h3>
+          <p class="text-sm">Un lieu inclusif pour les publics du quartier, les artistes de passage et les compagnies en création.</p>
+        </li>
+        <li>
+          <h3 class="font-semibold text-gray-900">Transmission</h3>
+          <p class="text-sm">Stages, résidences, ateliers croisés : on apprend autant qu’on donne.</p>
+        </li>
+        <li>
+          <h3 class="font-semibold text-gray-900">Expérimentation</h3>
+          <p class="text-sm">Croiser les disciplines, détourner les formats, inventer de nouvelles rencontres entre chapiteaux et pinceaux.</p>
+        </li>
+        <li>
+          <h3 class="font-semibold text-gray-900">Solidarité</h3>
+          <p class="text-sm">Autogestion, prix adaptés, soutien mutuel entre bénévoles et résidents.</p>
+        </li>
+      </ul>
+    </div>
+  </div>
 </section>
 
-<!-- Team Section -->
-<section class="py-12 bg-white/95 rounded-lg mx-auto my-10 max-w-6xl backdrop-blur-sm fade-in">
-    <div class="text-center mb-12 fade-in">
-        <h2 class="text-3xl font-semibold">Présentation de l'équipe</h2>
-        <h3 class="text-xl text-gray-700 mt-2">Le Conseil d'Administration</h3>
-    </div>
-    <!-- Thank you text -->
-    <div class="px-10 mb-12 fade-in">
-        <div class="text-gray-700 text-center max-w-4xl mx-auto">
-            <p class="mb-4 text-lg">
-                Nous tenons à remercier chaleureusement tous les membres de notre conseil d'administration 
-                pour leur engagement, leur dévouement et leur contribution précieuse au développement de notre association.
-            </p>
-            <p class="mb-4">
-                Leur travail bénévole, leur expertise et leur passion sont essentiels à la réussite de nos projets 
-                et à la réalisation de notre mission. Sans leur implication constante, rien ne serait possible.
-            </p>
-            <p>
-                C'est grâce à leur engagement que nous pouvons offrir un environnement riche et stimulant 
-                où chacun peut s'épanouir et développer ses talents artistiques.
-            </p>
-        </div>
-    </div>
-
-    <!-- Team members grid -->
-    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-6 px-10 fade-in">
-        <% ["John Doe", "Amelie Anderson", "Arthur Malo", "Olivia Watson", "Sophie Martin", "Pierre Dubois", "Marie Lefebvre"].each do |name| %>
-        <div class="transition-transform duration-300 hover:-translate-y-1 text-center fade-in">
-            <div class="mx-auto mb-4 rounded-full overflow-hidden w-32 h-32 bg-gray-200 shadow-md fade-in">
-                <%= image_tag "placeholder_avatar.webp", alt: name, class: "w-full h-full object-cover" %>
+<section class="bg-white/95 rounded-[28px] shadow-lg p-6 sm:p-10 mt-12 fade-in">
+  <header class="text-center mb-10 space-y-3">
+    <p class="text-sm uppercase tracking-[0.3em] text-[#1F5C55]/70">Le Conseil d'administration</p>
+    <h2 class="text-3xl font-semibold text-gray-900">Celles et ceux qui font tourner le Circographe</h2>
+    <p class="text-gray-600 max-w-2xl mx-auto leading-relaxed">Technicien·nes plateau, artistes, médiateurs culturels, communicant·es… Le conseil d’administration coordonne l’autogestion du lieu et accompagne les bénévoles au quotidien.</p>
+  </header>
+  <div class="swiper multiple-slide-carousel swiper-container relative" data-controller="slider" data-slider-options-value='{"breakpoints":{"640":{"slidesPerView":1.5},"768":{"slidesPerView":2.2},"1280":{"slidesPerView":3.5}},"spaceBetween":24}'>
+    <div class="swiper-wrapper mb-10">
+      <% [
+        { name: "Léa Martin", role: "Présidente", bio: "Trapéziste et coordinatrice d'événements culturels." },
+        { name: "Sofiane Dupont", role: "Vice-président", bio: "Graphiste et scénographe, passionné par la typographie." },
+        { name: "Anouk Vidal", role: "Trésorière", bio: "Responsable administratif et jongleuse multi-instrument." },
+        { name: "Marc Lemaire", role: "Secrétaire", bio: "Technicien plateau et photographe de la scène toulousaine." },
+        { name: "Julie Carmes", role: "Membre CA", bio: "Illustratrice et animatrice d'ateliers jeune public." },
+        { name: "Marius Conti", role: "Membre CA", bio: "Voltigeur, responsable sécurité et planning." }
+      ].each do |member| %>
+        <div class="swiper-slide">
+          <article class="bg-white rounded-3xl border border-gray-200 shadow-md px-6 py-8 h-full flex flex-col items-center text-center space-y-4">
+            <div class="w-32 h-32 rounded-full overflow-hidden bg-gray-100 shadow-inner">
+              <%= image_tag "placeholder_avatar.webp", alt: member[:name], class: "w-full h-full object-cover" %>
             </div>
-            <h4 class="font-semibold"><%= name %></h4>
-            <p class="text-gray-600 text-sm">Rôle dans l'association</p>
-            <div class="flex justify-center space-x-2 mt-2 fade-in">
-                <a href="#" class="text-gray-500 hover:text-gray-800 transition-colors duration-200">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M9 8h-3v4h3v12h5v-12h3.642l.358-4h-4v-1.667c0-.955.192-1.333 1.115-1.333h2.885v-5h-3.808c-3.596 0-5.192 1.583-5.192 4.615v3.385z" />
-                    </svg>
-                </a>
-                <a href="#" class="text-gray-500 hover:text-gray-800 transition-colors duration-200">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z" />
-                    </svg>
-                </a>
-                <a href="#" class="text-gray-500 hover:text-gray-800 transition-colors duration-200">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M4.98 3.5c0 1.381-1.11 2.5-2.48 2.5s-2.48-1.119-2.48-2.5c0-1.38 1.11-2.5 2.48-2.5s2.48 1.12 2.48 2.5zm.02 4.5h-5v16h5v-16zm7.982 0h-4.968v16h4.969v-8.399c0-4.67 6.029-5.052 6.029 0v8.399h4.988v-10.131c0-7.88-8.922-7.593-11.018-3.714v-2.155z" />
-                    </svg>
-                </a>
+            <div class="space-y-1">
+              <h3 class="text-lg font-semibold text-gray-900"><%= member[:name] %></h3>
+              <p class="text-sm uppercase tracking-[0.2em] text-[#1F5C55]"><%= member[:role] %></p>
             </div>
+            <p class="text-sm text-gray-600 leading-relaxed flex-1"><%= member[:bio] %></p>
+            <span class="text-xs text-gray-400">Bénévole engagé·e</span>
+          </article>
         </div>
-        <% end %>
+      <% end %>
     </div>
+    <div class="absolute flex justify-between items-center w-full -translate-x-1/2 left-1/2 top-1/2 -translate-y-1/2 z-50">
+      <button class="swiper-button-prev !border-[#1F5C55] !text-[#1F5C55] hover:!bg-[#1F5C55] hover:!text-white"></button>
+      <button class="swiper-button-next !border-[#1F5C55] !text-[#1F5C55] hover:!bg-[#1F5C55] hover:!text-white"></button>
+    </div>
+  </div>
 </section>
 
-<!-- Historical Section -->
-<section class="py-12 bg-white/95 rounded-lg shadow-md mx-auto my-10 max-w-6xl backdrop-blur-sm fade-in">
-    <div class="px-10 fade-in">
-        <h2 class="text-3xl font-semibold text-center mb-6">Historique de l'association</h2>
-        <h3 class="text-xl text-gray-700 text-center mb-8">Membres fondateurs</h3>
-        <div class="mb-8 fade-in">
-            <p class="text-gray-700 text-center max-w-3xl mx-auto">
-                Tenete ergo quod si servitus quae natura liber, et aliena tua tunc impeditur. Doloris, et
-                turbabuntur, et inveniatis, cum culpa tam de hominibusque. Quod si fibi tantum sit
-                propria et aliena quale sit, nemo uniquam vel invitum te continebis.
-            </p>
+<section class="bg-white/95 rounded-[28px] shadow-lg p-6 sm:p-10 mt-12 fade-in border border-white/80"
+         data-controller="timeline">
+  <header class="text-center mb-6 space-y-2">
+    <p class="text-sm uppercase tracking-[0.3em] text-[#1F5C55]/70">Notre histoire</p>
+    <h2 class="text-3xl font-semibold text-gray-800">Points de repère</h2>
+  </header>
+  <div class="space-y-6 relative timeline-line">
+    <% [
+      { year: "2021", title: "Naissance du projet", body: "Un groupe d'artistes imagine un lieu de pratique partagé mêlant cirque et arts visuels." },
+      { year: "2022", title: "Ouverture du hangar", body: "Installation dans la Cartoucherie, premiers entraînements libres et résidences." },
+      { year: "2023", title: "Premiers événements publics", body: "Organisation de plateaux partagés, expositions et ateliers ouverts au quartier." },
+      { year: "2024", title: "Autogestion consolidée", body: "Mise en place d'un conseil d'administration élargi et d'équipes bénévoles thématiques." },
+      { year: "2025", title: "Vers de nouveaux horizons", body: "Développement d'actions hors les murs, partenariats écoles & compagnies, projets européens." }
+    ].each do |entry| %>
+      <div class="timeline-step relative pl-12 md:pl-16" data-timeline-target="step">
+        <div class="absolute left-0 top-1 w-10 h-10 rounded-full bg-[#1F5C55] text-white flex items-center justify-center font-semibold shadow"><%= entry[:year] %></div>
+        <div class="bg-white/95 rounded-2xl border border-gray-100 shadow-md p-5 md:p-6">
+          <h3 class="text-xl font-semibold text-gray-800 mb-2"><%= entry[:title] %></h3>
+          <p class="text-gray-600"><%= entry[:body] %></p>
         </div>
-        <div class="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-3 gap-6 justify-items-center mt-12 fade-in">
-            <!-- Founding members -->
-            <% 3.times do |i| %>
-            <div class="transition-transform duration-300 hover:-translate-y-1 text-center fade-in">
-                <div class="mx-auto mb-4 rounded-full overflow-hidden w-24 h-24 bg-gray-200 shadow-md fade-in">
-                    <%= image_tag "placeholder_avatar.webp", alt: "Membre fondateur", class: "w-full h-full object-cover" %>
-                </div>
-                <h4 class="font-semibold text-sm"><%= ["John Doe", "Amelie Anderson", "Arthur Malo"][i] %></h4>
-                <p class="text-gray-600 text-xs">Rôle fondateur</p>
-                <div class="flex justify-center space-x-2 mt-2 fade-in">
-                    <a href="#" class="text-gray-500 hover:text-gray-800 transition-colors duration-200">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
-                            <path d="M9 8h-3v4h3v12h5v-12h3.642l.358-4h-4v-1.667c0-.955.192-1.333 1.115-1.333h2.885v-5h-3.808c-3.596 0-5.192 1.583-5.192 4.615v3.385z" />
-                        </svg>
-                    </a>
-                    <a href="#" class="text-gray-500 hover:text-gray-800 transition-colors duration-200">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
-                            <path d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z" />
-                        </svg>
-                    </a>
-                    <a href="#" class="text-gray-500 hover:text-gray-800 transition-colors duration-200">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
-                            <path d="M4.98 3.5c0 1.381-1.11 2.5-2.48 2.5s-2.48-1.119-2.48-2.5c0-1.38 1.11-2.5 2.48-2.5s2.48 1.12 2.48 2.5zm.02 4.5h-5v16h5v-16zm7.982 0h-4.968v16h4.969v-8.399c0-4.67 6.029-5.052 6.029 0v8.399h4.988v-10.131c0-7.88-8.922-7.593-11.018-3.714v-2.155z" />
-                        </svg>
-                    </a>
-                </div>
-            </div>
-            <% end %>
-        </div>
-    </div>
+      </div>
+    <% end %>
+  </div>
+</section>
+
+<section class="bg-white/95 rounded-[28px] shadow-lg p-6 sm:p-10 mt-12 fade-in border border-white/80">
+  <header class="text-center mb-6 space-y-2">
+    <p class="text-sm uppercase tracking-[0.3em] text-[#1F5C55]/70">Partenaires & soutiens</p>
+    <h2 class="text-3xl font-semibold text-gray-800">Ils rendent l'aventure possible</h2>
+    <p class="text-gray-600 max-w-2xl mx-auto">Collectivités, structures culturelles, écoles de cirque, ateliers d'artistes et sponsors solidaires : merci à celles et ceux qui nous accompagnent.</p>
+  </header>
+  <%= turbo_frame_tag "partners", src: partners_path(format: :turbo_stream) do %>
+    <%= render "shared/partners", partners: @partners %>
+  <% end %>
+</section>
+
+<section class="text-center mt-12 mb-12 fade-in">
+  <%= link_to "Nous contacter", page_path('contact_us'), class: "inline-flex items-center gap-2 px-8 py-4 tracking-wide text-white font-bold bg-[#1F5C55] border-2 border-[#1F5C55] rounded-full shadow-lg hover:bg-gray-100 hover:text-[#1F5C55] hover:border-[#1F5C55] transition-all duration-300" %>
 </section>

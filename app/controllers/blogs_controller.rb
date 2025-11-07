@@ -15,6 +15,11 @@ class BlogsController < ApplicationController
     @blogs = Blog.all
   end
 
+  def latest
+    @blogs = Blog.order(created_at: :desc).limit(6)
+    render partial: "pages/news/blog_grid", locals: { blogs: @blogs }
+  end
+
   def show
     @tags=@blog.tags
   end

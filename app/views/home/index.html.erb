@@ -1,65 +1,61 @@
 <% content_for :title, "Le Circographe - Accueil" %>
 <% content_for :background_image, "background_temp.webp" %>
 
-<!-- Main container with proper spacing for parallax effect -->
 <div class="relative w-full">
+  <section class="relative w-full flex flex-col items-center text-center px-4 sm:px-6 pt-24 sm:pt-28 pb-16 sm:pb-20">
+    <h1 id="title" class="font-circographe text-5xl sm:text-6xl md:text-7xl font-bold text-white opacity-0 transition-opacity duration-500 tracking-[0.08em] leading-tight">Le Circographe</h1>
 
-    <!-- The main content -->
-    <div id="content" class="relative w-full flex flex-col items-center justify-start text-center px-2 sm:px-6">
-
-        <!-- Large empty space at the top -->
-        <div class="h-36 sm:h-45"></div>
-
-        <!-- Main title with more responsive sizing -->
-        <h1 id="title" class="font-circographe text-5xl sm:text-6xl md:text-7xl font-bold text-white opacity-0 transition-opacity duration-500 mx-2 sm:mx-4 break-words p-2 sm:p-4 rounded">Le Circographe</h1>
-
-        <!-- Large space between title and button - reduced to h-32 -->
-        <div class="h-24 sm:h-32"></div>
-
-        <!-- Button with large space after the title -->
-        <div class="main-button opacity-0 transition-opacity duration-500">
-            <%= link_to "Découvrir l'association", page_path('association'),
-                class: "px-6 sm:px-8 py-3 sm:py-4 text-lg sm:text-xl font-semibold text-gray-800 bg-white border border-gray-300 rounded-full hover:bg-gray-100 shadow-md" %>
-        </div>
-
-        <!-- Animated arrow scrolling to main content -->
-        <div class="mt-12 sm:mt-20 opacity-0 transition-opacity duration-500 scroll-arrow-container">
-            <a href="#main-content" class="scroll-arrow">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-12 sm:w-14 h-12 sm:h-14 text-white">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
-                </svg>
-            </a>
-        </div>
-
-        <!-- Space before content, reduced to h-32 -->
-        <div class="h-24 sm:h-32"></div>
-
-        <!-- Contents section with reduced padding on mobile -->
-        <div id="main-content" class="grid grid-cols-1 md:grid-cols-2 gap-8 sm:gap-32 max-w-4xl mb-12 sm:mb-24 opacity-0 transition-opacity duration-500 bg-white/80 p-3 sm:p-8 rounded-lg shadow-lg">
-
-            <!-- Article (without white background) -->
-            <div class="p-2 sm:p-4 flex flex-col">
-                <%= render "shared/event_card", event: @events.last if @events.present? %>
-            </div>
-
-            <!-- Schedules -->
-            <div>
-                <% @horaires = Rails.cache.fetch("opening_hours") || OpeningHoursHelper.default_opening_hours %>
-                <%= render 'shared/opening_hours' %>
-            </div>
-        </div>
-        <div class="flex justify-center items-center w-full mt-6 map opacity-0 transition-opacity duration-500 bg-white/80 p-2 sm:p-6 rounded-lg shadow-lg" id="map">
-            <div class="w-full overflow-hidden rounded-lg">
-                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d858.7320762106817!2d1.422364267936696!3d43.618639564522674!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x12aebb1b7b5096ef%3A0x710f3096ea206f0!2sLe%20Circographe!5e0!3m2!1sfr!2sfr!4v1745437455061!5m2!1sfr!2sfr" width="100%" height="350" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
-            </div>
-        </div>
-        <!-- Extra space before the footer, less on mobile -->
-        <div class="h-16 sm:h-24"></div>
+    <div class="main-button mt-10 sm:mt-12 opacity-0 transition-opacity duration-500">
+      <%= link_to "Découvrir l'association", page_path('association'),
+                  class: "px-6 sm:px-8 py-3 sm:py-4 text-lg sm:text-xl font-semibold text-gray-800 bg-white/95 border border-white/80 rounded-full hover:bg-white shadow-md transition" %>
     </div>
+
+    <div class="mt-14 sm:mt-16 opacity-0 transition-opacity duration-500 scroll-arrow-container"
+         data-controller="scroll-hint"
+         data-scroll-hint-section-id-value="main-content">
+      <div data-scroll-hint-target="arrow">
+        <a href="#main-content" class="scroll-arrow inline-flex items-center justify-center rounded-full border border-white/60 bg-white/10 backdrop-blur px-4 py-3">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-10 sm:w-12 h-10 sm:h-12 text-white">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
+          </svg>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <section class="w-full px-4 sm:px-6 lg:px-8 flex justify-center">
+    <div id="main-content" class="w-full max-w-5xl space-y-12 opacity-0 transition-opacity duration-500">
+      <section class="bg-white/95 rounded-[28px] shadow-lg p-6 sm:p-8" aria-labelledby="upcoming-events">
+        <turbo-frame id="events_upcoming" loading="lazy" src="<%= upcoming_events_path %>">
+          <%= render "home/upcoming_events", events: @upcoming_events %>
+        </turbo-frame>
+      </section>
+
+      <section class="bg-white/95 rounded-[28px] shadow-lg p-6 sm:p-8" aria-labelledby="opening-hours">
+        <header class="text-center mb-6">
+          <p class="text-sm uppercase tracking-[0.3em] text-[#1F5C55]/70">Horaires</p>
+          <h2 id="opening-hours" class="text-2xl font-semibold text-gray-800">Quand passer nous voir ?</h2>
+        </header>
+        <%= render "shared/opening_hours", horaires: @opening_hours %>
+      </section>
+
+      <section class="bg-white/95 rounded-[28px] shadow-lg p-6 sm:p-8 space-y-4" aria-labelledby="find-us">
+        <header class="text-center space-y-2">
+          <p class="text-sm uppercase tracking-[0.3em] text-[#1F5C55]/70">Nous trouver</p>
+          <h2 id="find-us" class="text-2xl font-semibold text-gray-800">Le Circographe sur la carte</h2>
+          <p class="text-gray-600 max-w-2xl mx-auto">Chapiteau, ateliers graphiques et convivialité : pousse la porte au 27 bis Allée Maurice Sarraut, Toulouse.</p>
+        </header>
+        <div class="rounded-2xl overflow-hidden border border-gray-200 shadow-inner">
+          <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d858.7320762106817!2d1.422364267936696!3d43.618639564522674!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x12aebb1b7b5096ef%3A0x710f3096ea206f0!2sLe%20Circographe!5e0!3m2!1sfr!2sfr!4v1745437455061!5m2!1sfr!2sfr" width="100%" height="340" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+        </div>
+      </section>
+    </div>
+  </section>
+
+  <div class="h-16 sm:h-24"></div>
 </div>
 
 <style>
-  /* Add a light text shadow to improve readability over background */
   #title {
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
   }
