@@ -53,5 +53,19 @@ else
   exit 1
 fi
 
+# 8. Rendre accessibles les modules ES téléchargés (ex: swiper)
+modules_dir="public/assets/_"
+if [ -d "$modules_dir" ]; then
+  echo "8️⃣ Normalisation des modules ES (copie sans fingerprint)..."
+  find "$modules_dir" -maxdepth 1 -type f -name '*-*.js' | while read -r file; do
+    base=$(basename "$file")
+    short="${base%-*}.js"
+    if [ ! -f "$modules_dir/$short" ]; then
+      cp "$file" "$modules_dir/$short"
+      echo "   ↳ $short"
+    fi
+  done
+fi
+
 echo "✅ Reset des assets terminé !"
 echo "💡 Utilisez 'bin/dev' pour redémarrer"
