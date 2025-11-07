@@ -1,0 +1,44 @@
+<% label = local_assigns[:label] %>
+<% title = local_assigns.fetch(:title) %>
+<% subtitle = local_assigns[:subtitle] %>
+<% footer = local_assigns[:footer] %>
+<% id = local_assigns.fetch(:id, "faq-section") %>
+<% faqs = local_assigns.fetch(:faqs, []) %>
+
+<section class="bg-white/95 rounded-[28px] shadow-lg p-6 sm:p-8" aria-labelledby="<%= id %>" data-controller="accordion">
+  <header class="text-center mb-6 space-y-2">
+    <% if label.present? %>
+      <p class="text-sm uppercase tracking-[0.3em] text-[#1F5C55]/70"><%= label %></p>
+    <% end %>
+    <h2 id="<%= id %>" class="text-2xl font-semibold text-gray-800"><%= title %></h2>
+    <% if subtitle.present? %>
+      <p class="text-gray-600 max-w-2xl mx-auto"><%= subtitle %></p>
+    <% end %>
+  </header>
+
+  <div class="space-y-4">
+    <% faqs.each_with_index do |faq, index| %>
+      <div class="p-4 bg-white border border-gray-100 rounded-2xl shadow-sm">
+        <h3>
+          <button type="button"
+                  class="flex items-center justify-between w-full text-left text-lg font-semibold text-gray-800"
+                  data-accordion-target="#<%= id %>-body-<%= index %>"
+                  aria-expanded="false"
+                  aria-controls="<%= id %>-body-<%= index %>">
+            <span><%= faq[:question] %></span>
+            <svg data-accordion-icon class="w-4 h-4 rotate-180 shrink-0 transition-transform" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
+              <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5 5 1 1 5" />
+            </svg>
+          </button>
+        </h3>
+        <div id="<%= id %>-body-<%= index %>" class="hidden mt-3 text-gray-600" aria-labelledby="<%= id %>-heading-<%= index %>">
+          <p><%= faq[:answer] %></p>
+        </div>
+      </div>
+    <% end %>
+  </div>
+
+  <% if footer.present? %>
+    <p class="mt-4 text-sm text-gray-500 text-center"><%= footer %></p>
+  <% end %>
+</section>

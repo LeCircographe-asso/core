@@ -1,21 +1,21 @@
 class ContactsController < ApplicationController
   def create
-    @contact = params[:contact]
+    @contact = params.expect(contact: %i[name email message category])
 
-    if @contact.nil? || @contact[:name].blank? || @contact[:email].blank? || @contact[:message].blank? || @contact[:category].blank?
-      flash[:alert] = "Veuillez remplir tous les champs du formulaire."
-      return redirect_to page_path("contact")
+    if @contact.values.any?(&:blank?)
+      respond_with_error("Veuillez remplir tous les champs du formulaire.")
+      return
     end
 
     recipient_email = case @contact[:category]
     when "technical"
-        ENV["CONTACT_EMAIL_TECHNICAL"]
+      ENV["CONTACT_EMAIL_TECHNICAL"]
     when "residence"
-        ENV["CONTACT_EMAIL_RESIDENCE"]
+      ENV["CONTACT_EMAIL_RESIDENCE"]
     when "partnership"
-        ENV["CONTACT_EMAIL_PARTNERSHIP"]
+      ENV["CONTACT_EMAIL_PARTNERSHIP"]
     else
-        ENV["CONTACT_EMAIL_GENERAL"]
+      ENV["CONTACT_EMAIL_GENERAL"]
     end
 
     begin
@@ -27,12 +27,34 @@ class ContactsController < ApplicationController
         recipient_email
       ).deliver_later
 
-      flash[:notice] = "Votre message a été envoyé avec succès! Nous vous répondrons dans les plus brefs délais."
-      redirect_to page_path("contact")
+      respond_to do |format|
+        format.turbo_stream do
+          flash.now[:notice] = "Votre message a été envoyé avec succès ! Nous revenons vers vous rapidement."
+          render turbo_stream: turbo_stream.update("contact_form", partial: "pages/contact/form", locals: { contact: {}, status: :success })
+        end
+        format.html do
+          flash[:notice] = "Votre message a été envoyé avec succès ! Nous revenons vers vous rapidement."
+          redirect_to page_path("contact_us")
+        end
+      end
     rescue => e
       Rails.logger.error("Échec d'envoi d'email: #{e.message}")
-      flash[:alert] = "Une erreur est survenue lors de l'envoi de votre message. Veuillez réessayer ultérieurement."
-      redirect_to page_path("contact")
+      respond_with_error("Une erreur est survenue lors de l'envoi. Réessaie dans quelques instants.")
+    end
+  end
+
+  private
+
+  def respond_with_error(message)
+    respond_to do |format|
+      format.turbo_stream do
+        flash.now[:alert] = message
+        render turbo_stream: turbo_stream.update("contact_form", partial: "pages/contact/form", locals: { contact: @contact, status: :error })
+      end
+      format.html do
+        flash[:alert] = message
+        redirect_to page_path("contact_us")
+      end
     end
   end
 end

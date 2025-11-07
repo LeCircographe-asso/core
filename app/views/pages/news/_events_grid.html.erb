@@ -1,0 +1,15 @@
+<% events ||= [] %>
+
+<section class="space-y-6">
+  <% if events.present? %>
+    <div class="grid sm:grid-cols-2 xl:grid-cols-3 gap-6">
+      <% events.each do |event| %>
+        <%= render "shared/event_card", event: event %>
+      <% end %>
+    </div>
+  <% else %>
+    <div class="bg-white/95 border border-dashed border-gray-200 rounded-2xl p-10 text-center text-gray-500">
+      Aucun événement pour le moment. Reviens bientôt ou inscris-toi à la newsletter pour être averti·e des prochaines dates.
+    </div>
+  <% end %>
+</section>

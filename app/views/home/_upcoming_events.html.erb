@@ -1,0 +1,24 @@
+<% events ||= [] %>
+
+<div class="bg-white/80 rounded-lg shadow-lg p-4 sm:p-8 space-y-6">
+  <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+    <div>
+      <h2 class="text-2xl font-semibold text-gray-800">Événements à venir</h2>
+      <p class="text-gray-600 mt-1">Découvrez les prochaines dates à ne pas manquer au Circographe.</p>
+    </div>
+    <%= link_to "Voir tous les événements", events_path,
+                class: "inline-flex items-center justify-center px-4 py-2 text-sm font-semibold text-white bg-[#1F5C55] border-2 border-[#1F5C55] rounded-full shadow-sm hover:bg-gray-100 hover:text-[#1F5C55] hover:border-[#1F5C55] transition-colors duration-300" %>
+  </div>
+
+  <% if events.present? %>
+    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
+      <% events.each do |event| %>
+        <%= render "shared/event_card", event: event %>
+      <% end %>
+    </div>
+  <% else %>
+    <div class="bg-white rounded-lg border border-dashed border-gray-200 p-6 text-center text-gray-500">
+      Aucun événement n'est planifié pour le moment. Revenez bientôt ou abonnez-vous à la newsletter !
+    </div>
+  <% end %>
+</div>

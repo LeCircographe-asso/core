@@ -5,15 +5,12 @@ class ApplicationController < ActionController::Base
   # Only allow modern browsers supporting webp images, web push, badges, import maps, CSS nesting, and CSS :has.
   allow_browser versions: :modern
 
-  # rescue_from ActiveRecord::RecordNotFound, with: :url_not_found
-  # rescue_from ActionController::RoutingError, with: :url_not_found
+  private
 
-  # def url_not_found
-  #   case controller_name
-  #   when "users"
-  #     redirect_to root_path, alert: "L'utilisateur n'existe pas."
-  #   else
-  #     redirect_to root_path, alert: "La page que vous cherchez n'existe pas."
-  #   end
-  # end
+  def navigation_streams
+    [
+      turbo_stream.replace("navigation", render_to_string(partial: "shared/navbar")),
+      turbo_stream.replace("flash", render_to_string(partial: "shared/flash"))
+    ]
+  end
 end

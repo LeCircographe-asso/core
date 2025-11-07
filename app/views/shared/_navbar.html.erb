@@ -1,9 +1,10 @@
-<nav class="bg-white border-gray-200 sticky top-0 z-50">
+<%= turbo_frame_tag "navigation", target: "_top" do %>
+<nav class="bg-white border-gray-200 sticky top-0 z-50" data-controller="nav-active">
     <div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto">
         <!-- Logo and profile combined for mobile -->
         <div class="flex items-center justify-between w-full md:w-auto">
             <!-- Logo -->
-            <%= link_to root_path, class: "flex items-center space-x-3 rtl:space-x-reverse" do %>
+            <%= link_to root_path, class: "flex items-center space-x-3 rtl:space-x-reverse", data: { 'nav-active-target': 'link', 'nav-active-path': root_path, 'nav-active-active-classes': 'nav-active-link', 'nav-active-starts-with': 'true' } do %>
             <%= image_tag("Le-Circographe-crop.webp", alt: "le-circographe Logo", class: "w-40 h-auto") %>
             <% end %>
 
@@ -30,51 +31,37 @@
             <ul class="flex flex-row space-x-8 font-medium">
                 <!-- The association -->
                 <li class="group relative">
-                    <%= link_to page_path('association'), class: "block py-2 text-gray-900 hover:text-indigo-700 group-hover:text-indigo-700" do %>
+                    <%= link_to page_path('association'),
+                                class: "block py-2 text-gray-900 hover:text-indigo-700 group-hover:text-indigo-700",
+                                data: { 'nav-active-target': 'link', 'nav-active-path': page_path('association'), 'nav-active-active-classes': 'nav-active-link', 'nav-active-starts-with': 'true' } do %>
                     Le Lieu
                     <% end %>
                     <div class="hidden group-hover:block absolute left-0 top-full z-10 w-48 bg-white rounded-lg shadow-lg">
                         <ul class="py-2 text-sm text-gray-700">
                             <li>
-                                <%= link_to "Le Cirque", page_path('circus_details'), class: "block px-4 py-2 hover:bg-gray-100" %>
+                                <%= link_to "Le Cirque", page_path('association', anchor: 'le-cirque'), class: "block px-4 py-2 hover:bg-gray-100", data: { 'nav-active-target': 'link', 'nav-active-path': page_path('association'), 'nav-active-anchor': 'le-cirque', 'nav-active-active-classes': 'nav-active-link' } %>
                             </li>
                             <li>
-                                <%= link_to "Les Arts Graphiques", page_path('graphic_arts_details'), class: "block px-4 py-2 hover:bg-gray-100" %>
+                                <%= link_to "Les Arts Graphiques", page_path('association', anchor: 'les-arts-graphiques'), class: "block px-4 py-2 hover:bg-gray-100", data: { 'nav-active-target': 'link', 'nav-active-path': page_path('association'), 'nav-active-anchor': 'les-arts-graphiques', 'nav-active-active-classes': 'nav-active-link' } %>
+                            </li>
+                            <li>
+                                <%= link_to "Fonctionnement", page_path('association', anchor: 'fonctionnement'), class: "block px-4 py-2 hover:bg-gray-100", data: { 'nav-active-target': 'link', 'nav-active-path': page_path('association'), 'nav-active-anchor': 'fonctionnement', 'nav-active-active-classes': 'nav-active-link' } %>
                             </li>
                         </ul>
                     </div>
                 </li>
 
-                <!-- Our news -->
-                <li class="group relative">
-                    <%= link_to page_path("news"), class: "block py-2 text-gray-900 hover:text-indigo-700 group-hover:text-indigo-700" do %>
-                    Nos actualités
-                    <% end %>
-                    <div class="hidden group-hover:block absolute left-0 top-full z-10 w-48 bg-white rounded-lg shadow-lg">
-                        <ul class="py-2 text-sm text-gray-700">
-                            <li>
-                                <%= link_to "Blog & Newsletters", page_path("blog_newsletter"), class: "block px-4 py-2 hover:bg-gray-100" %>
-                            </li>
-                            <li>
-                                <%= link_to "Galerie Photos", page_path("gallery"), class: "block px-4 py-2 hover:bg-gray-100" %>
-                            </li>
-                        </ul>
-                    </div>
+                <li>
+                    <%= link_to "Nos Activités", page_path('news'), class: "block py-2 text-gray-900 hover:text-indigo-700", data: { 'nav-active-target': 'link', 'nav-active-path': page_path('news'), 'nav-active-active-classes': 'nav-active-link' } %>
                 </li>
 
-                <!-- Our events -->
                 <li>
-                    <%= link_to "Nos Événements", events_path, class: "block py-2 text-gray-900 hover:text-indigo-700" %>
-                </li>
-
-                <!-- Become a Member -->
-                <li>
-                    <%= link_to "Devenir Membre", page_path("become_member"), class: "block py-2 text-gray-900 hover:text-indigo-700" %>
+                    <%= link_to "Devenir Membre", page_path('become_member'), class: "block py-2 text-gray-900 hover:text-indigo-700", data: { 'nav-active-target': 'link', 'nav-active-path': page_path('become_member'), 'nav-active-active-classes': 'nav-active-link' } %>
                 </li>
 
                 <!-- About -->
                 <li class="group relative">
-                    <%= link_to page_path('about'), class: "block py-2 text-gray-900 hover:text-indigo-700 group-hover:text-indigo-700" do %>
+                    <%= link_to page_path('about'), class: "block py-2 text-gray-900 hover:text-indigo-700 group-hover:text-indigo-700", data: { 'nav-active-target': 'link', 'nav-active-path': page_path('about'), 'nav-active-active-classes': 'nav-active-link', 'nav-active-starts-with': 'true' } do %>
                     À Propos
                     <% end %>
                     <div class="hidden group-hover:block absolute left-0 top-full z-10 w-48 bg-white rounded-lg shadow-lg">
@@ -182,10 +169,13 @@
                                     <%= link_to "L'Association", page_path('association'), class: "block" %>
                                 </li>
                                 <li>
-                                    <%= link_to "Le Cirque", page_path('circus_details'), class: "block" %>
+                                    <%= link_to "Le Cirque", page_path('association', anchor: 'le-cirque'), class: "block", data: { 'nav-active-target': 'link', 'nav-active-path': page_path('association'), 'nav-active-anchor': 'le-cirque', 'nav-active-active-classes': 'nav-active-link' } %>
                                 </li>
                                 <li>
-                                    <%= link_to "Les Arts Graphiques", page_path('graphic_arts_details'), class: "block" %>
+                                    <%= link_to "Les Arts Graphiques", page_path('association', anchor: 'les-arts-graphiques'), class: "block", data: { 'nav-active-target': 'link', 'nav-active-path': page_path('association'), 'nav-active-anchor': 'les-arts-graphiques', 'nav-active-active-classes': 'nav-active-link' } %>
+                                </li>
+                                <li>
+                                    <%= link_to "Fonctionnement", page_path('association', anchor: 'fonctionnement'), class: "block", data: { 'nav-active-target': 'link', 'nav-active-path': page_path('association'), 'nav-active-anchor': 'fonctionnement', 'nav-active-active-classes': 'nav-active-link' } %>
                                 </li>
                             </ul>
                         </div>
@@ -206,7 +196,7 @@
                         <div class="pb-4 pl-4">
                             <ul class="space-y-2">
                                 <li>
-                                    <%= link_to "Nos Actualités", page_path("news"), class: "block text-indigo-700 font-medium" %>
+                                    <%= link_to "Nos actualités", page_path("news"), class: "flex items-center w-full py-4 font-medium text-left text-gray-900", data: { 'nav-active-target': 'link', 'nav-active-path': page_path('news'), 'nav-active-active-classes': 'nav-active-link' } %>
                                 </li>
                                 <li>
                                     <%= link_to "Blog & Newsletters", page_path("blog_newsletter"), class: "block" %>
@@ -221,12 +211,12 @@
 
                 <!-- Our events (simple link) -->
                 <div class="border-b border-gray-200">
-                    <%= link_to "Nos Événements", events_path, class: "flex items-center w-full py-4 font-medium text-left text-gray-900" %>
+                    <%= link_to "Nos Événements", events_path, class: "flex items-center w-full py-4 font-medium text-left text-gray-900", data: { 'nav-active-target': 'link', 'nav-active-path': events_path, 'nav-active-active-classes': 'text-[#1F5C55] font-semibold' } %>
                 </div>
 
                 <!-- Become a Member (simple link) -->
                 <div class="border-b border-gray-200">
-                    <%= link_to "Devenir Membre", page_path("become_member"), class: "flex items-center w-full py-4 font-medium text-left text-gray-900" %>
+                    <%= link_to "Devenir Membre", page_path("become_member"), class: "flex items-center w-full py-4 font-medium text-left text-gray-900", data: { 'nav-active-target': 'link', 'nav-active-path': page_path('become_member'), 'nav-active-active-classes': 'nav-active-link' } %>
                 </div>
 
                 <!-- About accordion -->
@@ -258,7 +248,7 @@
 
                 <!-- F.A.Q (link simple) -->
                 <div class="border-b border-gray-200">
-                    <%= link_to "F.A.Q", page_path("faq"), class: "flex items-center w-full py-4 font-medium text-left text-gray-900" %>
+                    <%= link_to "F.A.Q", page_path("faq"), class: "flex items-center w-full py-4 font-medium text-left text-gray-900", data: { 'nav-active-target': 'link', 'nav-active-path': page_path('faq'), 'nav-active-active-classes': 'text-[#1F5C55] font-semibold' } %>
                 </div>
             </div>
 
@@ -304,3 +294,4 @@
         </div>
     </div>
 </nav>
+<% end %>

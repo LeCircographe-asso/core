@@ -1,124 +1,106 @@
-<!-- Section Blog -->
-    <!-- Card Blog -->
-        <!-- Title -->
+<% content_for :title, "Le Circographe - Nos activités" %>
+
         <section class="text-center mb-12 bg-white/95 py-6 rounded-lg shadow-md fade-in">
-            <h1 class="font-circographe text-3xl sm:text-4xl lg:text-5xl font-bold text-black">Nos actualités</h1>
+  <h1 class="font-circographe text-3xl sm:text-4xl lg:text-5xl font-bold text-black">Nos activités</h1>
+  <p class="mt-3 max-w-2xl mx-auto text-gray-600">Événements, actualités, ateliers et résidences : toutes les expériences qui font vibrer le Circographe au quotidien.</p>
         </section>
-    <!-- End Title -->
-<!-- Grid -->
-<div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 fade-in">
-    <!-- Card 1 -->
-    <div class="group flex flex-col h-full bg-white/95 border border-gray-200 hover:border-transparent hover:shadow-lg focus:outline-hidden focus:border-transparent focus:shadow-lg transition duration-300 rounded-xl p-5 fade-in">
-        <div class="aspect-w-16 aspect-h-11 fade-in">
-            <img class="w-full object-cover rounded-xl" src="https://images.unsplash.com/photo-1633114128174-2f8aa49759b0?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=560&q=80" alt="Blog Image">
+
+<section class="bg-white/95 rounded-[28px] shadow-lg p-6 sm:p-8 space-y-8 fade-in"
+         data-controller="tabs"
+         data-tabs-initial-value="tous"
+         data-tabs-active-class="activities-tab--active">
+  <header class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+    <div class="text-left">
+      <p class="text-sm uppercase tracking-[0.3em] text-[#1F5C55]/70">Programmation</p>
+      <h2 class="text-2xl font-semibold text-gray-800">Filtre les activités qui t'intéressent</h2>
         </div>
-        <div class="my-6 flex-1 flex flex-col fade-in">
-            <h3 class="text-xl font-semibold text-black">
-                Concessum sit coepit patriae ut.
-            </h3>
-            <p class="mt-5 mb-6 text-black">
-                Advecticiis interpatet a et primis planitiem cui planitiem speciosam internis Syria et Syria internis copiis copiis Seleucia et non speciosam et hanc Antiochia advecticiis certaverit Apamia et speciosam et per.
-            </p>
-            <div class="mt-auto fade-in">
-                <%= link_to "Lire la suite", "", class: "w-full px-4 py-2 tracking-wide text-white font-bold bg-[#1F5C55] border-2 border-[#1F5C55] rounded-lg shadow-lg hover:bg-gray-100 hover:text-[#1F5C55] hover:border-[#1F5C55] hover:shadow-lg transition-colors duration-300" %>
+    <div role="tablist" class="flex flex-wrap gap-2" aria-label="Filtres des activités">
+      <button type="button" role="tab" data-tabs-target="trigger" data-tabs-name-value="tous"
+              class="activities-tab inline-flex items-center px-4 py-2 rounded-full border border-[#1F5C55]/40 text-sm font-medium text-gray-700 bg-white hover:bg-[#1F5C55]/10 transition-colors"
+              data-action="tabs#select">
+        Tous
+      </button>
+      <button type="button" role="tab" data-tabs-target="trigger" data-tabs-name-value="avenir"
+              class="activities-tab inline-flex items-center px-4 py-2 rounded-full border border-[#1F5C55]/40 text-sm font-medium text-gray-700 bg-white hover:bg-[#1F5C55]/10 transition-colors"
+              data-action="tabs#select">
+        À venir
+      </button>
+      <button type="button" role="tab" data-tabs-target="trigger" data-tabs-name-value="passes"
+              class="activities-tab inline-flex items-center px-4 py-2 rounded-full border border-[#1F5C55]/40 text-sm font-medium text-gray-700 bg-white hover:bg-[#1F5C55]/10 transition-colors"
+              data-action="tabs#select">
+        Passés
+      </button>
+      <button type="button" role="tab" data-tabs-target="trigger" data-tabs-name-value="actus"
+              class="activities-tab inline-flex items-center px-4 py-2 rounded-full border border-[#1F5C55]/40 text-sm font-medium text-gray-700 bg-white hover:bg-[#1F5C55]/10 transition-colors"
+              data-action="tabs#select">
+        Actualités
+      </button>
             </div>
+  </header>
+
+  <div class="space-y-6">
+    <div data-tabs-target="panel" data-tabs-name-value="tous" class="space-y-6" role="tabpanel">
+      <%= render "pages/news/events_grid", events: (@upcoming_events + @past_events).uniq.first(9) %>
         </div>
+
+    <div data-tabs-target="panel" data-tabs-name-value="avenir" class="space-y-6 hidden" role="tabpanel" aria-hidden="true">
+      <turbo-frame id="activities-upcoming" loading="lazy" src="<%= upcoming_events_path %>">
+        <%= render "pages/news/events_grid", events: @upcoming_events %>
+      </turbo-frame>
     </div>
-    <!-- Card 2 -->
-    <div class="group flex flex-col h-full bg-white/95 border border-gray-200 hover:border-transparent hover:shadow-lg focus:outline-hidden focus:border-transparent focus:shadow-lg transition duration-300 rounded-xl p-5 fade-in">
-        <div class="aspect-w-16 aspect-h-11">
-            <img class="w-full object-cover rounded-xl" src="https://images.unsplash.com/photo-1562851529-c370841f6536?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=560&q=80" alt="Blog Image">
-        </div>
-        <div class="my-6 flex-1 flex flex-col fade-in">
-            <h3 class="text-xl font-semibold text-black">
-                Matreque sorore Constantio anno vicensimo.
-            </h3>
-            <p class="mt-5 mb-6 text-black">
-                Nomenclatores eruditos adsueti quoque adsueti accedente mercede et obscuros infaustos venditare accedente et et talia eruditos accedente subditicios prandiis prandiis et quosdam inserunt nomenclatores quoque mercede eo infaustos quosdam obscuros.
-            </p>
-            <div class="mt-auto fade-in">
-                <%= link_to "Lire la suite", "", class: "w-full px-4 py-2 tracking-wide text-white font-bold bg-[#1F5C55] border-2 border-[#1F5C55] rounded-lg shadow-lg hover:bg-gray-100 hover:text-[#1F5C55] hover:border-[#1F5C55] hover:shadow-lg transition-colors duration-300" %>
-            </div>
-        </div>
+
+    <div data-tabs-target="panel" data-tabs-name-value="passes" class="space-y-6 hidden" role="tabpanel" aria-hidden="true">
+      <turbo-frame id="activities-past" loading="lazy" src="<%= past_events_path %>">
+        <%= render "pages/news/events_grid", events: @past_events %>
+      </turbo-frame>
     </div>
-    <!-- Card 3 -->
-    <div class="group flex flex-col h-full bg-white/95 border border-gray-200 hover:border-transparent hover:shadow-lg focus:outline-hidden focus:border-transparent focus:shadow-lg transition duration-300 rounded-xl p-5 fade-in">
-        <div class="aspect-w-16 aspect-h-11">
-            <img class="w-full object-cover rounded-xl" src="https://images.unsplash.com/photo-1521321205814-9d673c65c167?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=560&q=80" alt="Blog Image">
-        </div>
-        <div class="my-6 flex-1 flex flex-col fade-in">
-            <h3 class="text-xl font-semibold text-black">
-                Super supra quondam referente timore.
-            </h3>
-            <p class="mt-5 mb-6 text-black">
-                Palatii Clematius cuiusdam non per comitem contactus flagrans Honoratum Alexandrini non repentina impetraret supergressa pretioso Clematius pseudothyrum Alexandrini oblato impotentia permissus nullo cum iam cuius cum permissus nullo letali loqui.
-            </p>
-            <div class="mt-auto fade-in">
-                <%= link_to "Lire la suite", "", class: "w-full px-4 py-2 tracking-wide text-white font-bold bg-[#1F5C55] border-2 border-[#1F5C55] rounded-lg shadow-lg hover:bg-gray-100 hover:text-[#1F5C55] hover:border-[#1F5C55] hover:shadow-lg transition-colors duration-300" %>
-            </div>
-        </div>
+
+    <div data-tabs-target="panel" data-tabs-name-value="actus" class="space-y-6 hidden" role="tabpanel" aria-hidden="true">
+      <turbo-frame id="activities-blogs" loading="lazy" src="<%= latest_blogs_path %>">
+        <%= render "pages/news/blog_grid", blogs: @latest_posts %>
+      </turbo-frame>
     </div>
 </div>
-<!-- End Grid -->
+</section>
 
-<!-- See all articles -->
-<div class="mt-9 mb-9 text-center fade-in">
-    <a class="py-3 px-4 inline-flex items-center gap-x-1 text-sm font-medium rounded-full border-2 border-[#1F5C55] bg-[#1F5C55] text-white shadow-2xs hover:bg-white hover:text-[#1F5C55] focus:outline-none focus:bg-[#1F5C55] focus:text-white transition-colors duration-300" href="#">
-        Voir tous les articles
-        <svg class="shrink-0 size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="m9 18 6-6-6-6" />
+<section class="py-16 bg-white/95 rounded-[28px] shadow-lg mt-12 fade-in">
+  <div class="max-w-xl mx-auto px-4 md:px-8 text-center space-y-6">
+    <svg xmlns="http://www.w3.org/2000/svg" class="h-14 w-14 mx-auto text-[#1F5C55]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 19v-8.93a2 2 0 01.89-1.664l7-4.666a2 2 0 012.22 0l7 4.666A2 2 0 0121 10.07V19M3 19a2 2 0 002 2h14a2 2 0 002-2M3 19l6.75-4.5M21 19l-6.75-4.5M3 10l6.75 4.5M21 10l-6.75 4.5m0 0l-1.14.76a2 2 0 01-2.22 0l-1.14-.76"></path>
         </svg>
-    </a>
+    <div class="space-y-3">
+      <p class="text-sm uppercase tracking-[0.3em] text-[#1F5C55]/70">Lettre d'information</p>
+      <h3 class="text-3xl text-gray-800 font-bold">Abonne-toi à la newsletter</h3>
+      <p class="text-black leading-relaxed">Stages, résidences, événements : reçois les actualités chaudes du Circographe directement dans ta boîte mail.</p>
 </div>
-
-    <!-- End Card Blog -->
-
-    <!-- Newsletter Section -->
-    <div class="py-16 bg-white fade-in">
-        <div class="max-w-xl mx-auto px-4 md:px-8 fade-in">
-            <div class="space-y-3 text-center">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-14 w-14 mx-auto text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" stroke-width="2" d="M3 19v-8.93a2 2 0 01.89-1.664l7-4.666a2 2 0 012.22 0l7 4.666A2 2 0 0121 10.07V19M3 19a2 2 0 002 2h14a2 2 0 002-2M3 19l6.75-4.5M21 19l-6.75-4.5M3 10l6.75 4.5M21 10l-6.75 4.5m0 0l-1.14.76a2 2 0 01-2.22 0l-1.14-.76"></path>
-                </svg>
-                <h3 class="text-3xl text-gray-800 font-bold">
-                    Abonnez-vous à notre newsletter
-                </h3>
-                <p class="text-black leading-relaxed">
-                    Restez informé des événements à venir, des actualités et des offres exclusives en vous inscrivant avec votre email.
-                </p>
-            </div>
-            <div class="mt-6 fade-in">
-                <%= form_with scope: :user, url: newsletter_signup_path, method: :post, local: true, class: "items-center justify-center sm:flex" do |form| %>
-                    <%= form.email_field :email_address, placeholder: "Entrez votre email", required: true, class: "text-gray-500 w-full p-3 rounded-md border outline-none focus:border-[#1F5C55]" %>
+    <div>
+      <%= form_with scope: :user, url: newsletter_signup_path, method: :post, data: { controller: "form-feedback" }, class: "items-center justify-center sm:flex gap-4" do |form| %>
+        <%= form.email_field :email_address, placeholder: "Entrez votre email", required: true, class: "text-gray-500 w-full p-3 rounded-full border outline-none focus:border-[#1F5C55]" %>
                     <%= form.hidden_field :website, value: "" %>
-                    <%= form.submit "S'abonner", class: "w-full mt-3 px-5 py-3 rounded-md text-white bg-[#1F5C55] hover:bg-gray-100 hover:text-[#1F5C55] hover:border-[#1F5C55] border-2 border-[#1F5C55] transition-colors duration-300 sm:mt-0 sm:ml-3 sm:w-auto cursor-pointer" %>
+        <%= form.submit "S'abonner", class: "w-full sm:w-auto mt-3 sm:mt-0 px-6 py-3 rounded-full text-white bg-[#1F5C55] hover:bg-gray-100 hover:text-[#1F5C55] hover:border-[#1F5C55] border-2 border-[#1F5C55] transition-colors duration-300 cursor-pointer" %>
+        <p data-form-feedback-target="message" class="hidden mt-3 text-sm text-[#1F5C55]"></p>
                 <% end %>
-                <p class="mt-3 mx-auto text-center max-w-lg text-[15px] text-black">
-                    Pas de spam, nous prenons soin de vos données.
-                    Consultez notre <a class="text-[#1F5C55] underline" href="<%= page_path('privacy_policy') %>">Politique de confidentialité</a>
+      <p class="mt-3 mx-auto text-center max-w-lg text-sm text-black">
+        Pas de spam, juste les infos importantes. Consulte notre <%= link_to "Politique de confidentialité", page_path('privacy_policy'), class: "text-[#1F5C55] underline" %>.
                 </p>
             </div>
         </div>
-    </div>
+</section>
 
-    <!-- Carrousel Section -->
-    <div class="py-16 fade-in">
+<section class="py-16 fade-in">
         <div class="w-full relative">
-            <div class="swiper multiple-slide-carousel swiper-container relative">
+    <div class="swiper multiple-slide-carousel swiper-container relative" data-controller="slider" data-slider-options-value='{"breakpoints":{"768":{"slidesPerView":2},"1280":{"slidesPerView":3}}}'>
                 <div class="swiper-wrapper mb-12">
-                    <!-- Slide 1 -->
                     <div class="swiper-slide">
                         <div class="rounded-2xl h-96 flex justify-center items-center overflow-hidden">
                             <%= image_tag "home1.webp", alt: "Carousel Image 1", class: "object-cover w-full h-full" %>
                         </div>
                     </div>
-                    <!-- Slide 2 -->
                     <div class="swiper-slide">
                         <div class="rounded-2xl h-96 flex justify-center items-center overflow-hidden">
                             <%= image_tag "home2.webp", alt: "Carousel Image 2", class: "object-cover w-full h-full" %>
                         </div>
                     </div>
-                    <!-- Slide 3 -->
                     <div class="swiper-slide">
                         <div class="rounded-2xl h-96 flex justify-center items-center overflow-hidden">
                             <%= image_tag "home3.webp", alt: "Carousel Image 3", class: "object-cover w-full h-full" %>
@@ -140,40 +122,20 @@
             </div>
         </div>
 
-        <div class="mt-4 text-center fade-in">
-            <%= link_to page_path("gallery"), class: "py-3 px-4 inline-flex items-center gap-x-1 text-sm font-medium rounded-full border-2 border-[#1F5C55] bg-[#1F5C55] text-white shadow-2xs hover:bg-gray-100 hover:text-[#1F5C55] hover:border-[#1F5C55] focus:outline-hidden focus:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none transition-colors duration-300" do %>
+  <div class="mt-6 text-center fade-in">
+    <%= link_to page_path("gallery"), class: "py-3 px-4 inline-flex items-center gap-x-2 text-sm font-medium rounded-full border-2 border-[#1F5C55] bg-[#1F5C55] text-white shadow-2xs hover:bg-gray-100 hover:text-[#1F5C55] hover:border-[#1F5C55] transition-colors duration-300" do %>
                 Voir toutes les photos
                 <svg class="shrink-0 w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
                     <path d="M9 18l6-6-6-6" />
                 </svg>
             <% end %>
         </div>
-            </a>
-        </div>
-    </div>
+</section>
 
-<script>
-    var swiper = new Swiper(".multiple-slide-carousel", {
-        loop: true,
-        slidesPerView: 3,
-        spaceBetween: 20,
-        navigation: {
-            nextEl: ".multiple-slide-carousel .swiper-button-next",
-            prevEl: ".multiple-slide-carousel .swiper-button-prev",
-        },
-        breakpoints: {
-            1920: {
-                slidesPerView: 3,
-                spaceBetween: 30
-            },
-            1028: {
-                slidesPerView: 2,
-                spaceBetween: 30
-            },
-            990: {
-                slidesPerView: 1,
-                spaceBetween: 0
-            }
-        }
-    });
-</script>
+<style>
+  .activities-tab--active {
+    background-color: #1F5C55;
+    color: #fff;
+    border-color: transparent;
+  }
+</style>

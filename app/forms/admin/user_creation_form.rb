@@ -105,7 +105,7 @@ module Admin
           NewsletterSubscriber.create!(
             email: person.email,
             person: person,
-            source: 'admin',
+            source: "admin",
             subscribed: true
           )
         end

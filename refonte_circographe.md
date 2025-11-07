@@ -227,6 +227,30 @@ Ce document compile :
 
 ---
 
+## ❓ 7. FAQ
+
+**Objectif :** offrir un hub éditorial qui raconte le parcours visiteur (découverte → adhésion → participation) et renvoie vers les pages détaillées.
+
+### Structure proposée :
+1. Hero éditorial avec visuel plein écran, storytelling sur l’esprit du lieu et CTA principaux
+2. Introduction éditoriale “3 portes d’entrée” (Découvrir, Adhérer, Proposer un projet)
+3. Trois blocs FAQ empilés :
+   - **Adhésion en pratique** (rappels des étapes, liens vers `become_member`)
+   - **Avant d’écrire / résidences** (préparer son message, partenariats, formulaire Turbo)
+   - **Vie du Circographe** (horaires, localisation, soutien)
+4. Bloc éditorial final mettant en avant l’autogestion, la transmission et l’invitation à venir sur place
+
+**JS / Stimulus :**
+- `accordion_controller` via `shared/faq_section`
+- `scroll_controller` pour ancrage doux sur les sections
+
+**Actions réalisées / à maintenir :**
+- Partials partagés `shared/faq_section` injectés dans Contact + Adhérer pour garantir la cohérence.
+- Page FAQ enrichie d’un hero storytelling, CTA contextuels et sections éditoriales alimentées par les mêmes données (`PagesController#contact_faq_entries`, `#adhesion_faq_entries`, `#general_faq_entries`).
+- Suppression d’arbitraire Tailwind pour les backgrounds au profit de `asset_path` afin d’éviter les assets manquants en production.
+
+---
+
 ## ⚙️ Stimulus Controllers recommandés
 
 | Fonction | Controller |
@@ -368,272 +392,3 @@ L’expérience utilisateur devient fluide, claire, et fidèle à l’esprit du 
 
 **WIREFRAME**
 
-# 🧭 Wireframe éditorial & UX/UI — **Le Circographe**
-*(Document global — 2025-11-06)*
-
----
-
-## 🎯 Objectif global
-
-Refonte complète du site du **Circographe** : architecture, parcours utilisateur, logique UX/UI et structure éditoriale.  
-Ce document compile **toutes les pages** dans un format clair pour le développement et la rédaction dans **Cursor**.
-
-**Ton :** humain, chaleureux, professionnel  
-**Style :** textes courts et structurés  
-**Technos front :** Rails 8 + Hotwire / Stimulus  
-**Design :** minimaliste, atoms existants conservés  
-
----
-
-# 🏠 Page 1 — Accueil
-
-## 🎯 Objectif
-Accueillir, orienter, et inviter à découvrir le lieu.  
-Page courte, impactante, CTA vers “Le Lieu” et “Adhérer”.
-
-### Structure
-```
-[HERO]
-  ↓
-[Événements à venir]
-  ↓
-[Horaires & infos]
-  ↓
-[Carte Google Maps]
-  ↓
-[Footer]
-```
-
-### Contenu
-**Titre :** “Le Circographe”  
-**Sous-titre :** “Où le cirque et les arts graphiques se rencontrent.”  
-**Texte :**
-> Un lieu associatif, ouvert à tous, où la création prend vie entre chapiteaux et pinceaux.
-
-**CTA principal :** [Découvrir l’association → /le-lieu]  
-**Bloc événements :** Cards dynamiques (3–4 max)  
-**Bloc horaires :** partial `_schedule.html.erb` partagé  
-**Bloc carte :** GMap embed + adresse
-
-**JS / Stimulus :**
-- `reveal_controller` (fade au scroll)
-- `infinite_scroll_controller` (événements)
-- `scroll_hint_controller` (scroll down visuel)
-
----
-
-# 🎪 Page 2 — Le Lieu
-
-## 🎯 Objectif
-Présenter le cœur du projet : pratique artistique, autogestion, rencontre humaine.
-
-### Structure
-```
-[HERO]
-  ↓
-[Le Cirque]
-  ↓
-[Les Arts Graphiques]
-  ↓
-[Fonctionnement du lieu]
-  ↓
-[Bénévoles]
-  ↓
-[Galerie]
-  ↓
-[CTA final]
-```
-
-### Contenu résumé
-- **HERO :** “Bienvenue au Circographe” — court texte de présentation  
-- **Le Cirque :** entraînement libre, résidences, stages  
-- **Arts Graphiques :** créations libres, expositions, résidences visuelles  
-- **Fonctionnement :** autogestion, adhésion sur place, participation collective  
-- **Bénévoles :** appel à rejoindre l’équipe  
-- **Galerie :** carousel mixte  
-- **CTA final :** “Tout commence par une rencontre — passe nous voir.”
-
-**JS / Stimulus :**
-- `accordion_controller`
-- `modal_controller`
-- `slider_controller`
-- `reveal_controller`
-
----
-
-# 🗓️ Page 3 — Nos Activités
-
-## 🎯 Objectif
-Regrouper tout ce qui fait vivre le lieu : événements, actus, stages, expositions.
-
-### Structure
-```
-[Filtres dynamiques]
-  ↓
-[Grid d’événements]
-  ↓
-[Newsletter]
-  ↓
-[CTA final]
-```
-
-### Contenu
-**Filtres :** “Tous | À venir | Passés | Actualités”  
-**Cards :** titre, image, date, court résumé, bouton [En savoir +]  
-**Newsletter :** “Abonnez-vous pour suivre les stages et expositions.”
-
-**JS / Stimulus :**
-- `tabs_controller` (filtres dynamiques)
-- `infinite_scroll_controller`
-- `modal_controller`
-- `form_feedback_controller`
-
----
-
-# 🤝 Page 4 — Adhérer
-
-## 🎯 Objectif
-Expliquer simplement le processus d’adhésion, sur place uniquement.  
-Page pratique, fluide, centrée sur la rencontre et la transparence.
-
-### Structure
-```
-[HERO]
-  ↓
-[Pourquoi adhérer]
-  ↓
-[Comment ça marche]
-  ↓
-[Tarifs & types]
-  ↓
-[Documents requis]
-  ↓
-[Horaires + carte]
-  ↓
-[CTA final]
-```
-
-### Contenu
-**HERO :** “Adhérer au Circographe — tout commence par une poignée de main.”  
-**Pourquoi adhérer :** 3 cards (Pratiquer / Créer / Faire vivre le lieu)  
-**Comment ça marche :** ① Passer nous voir → ② Adhérer au bureau → ③ Participer  
-**Tarifs :** Standard / Solidaire (accordéon réductions)  
-**Documents :** checklist interactive (identité, domicile, photo, justificatif)  
-**Horaires :** partial `_schedule.html.erb` + carte Google  
-**CTA final :** “Passer nous voir”
-
-**JS / Stimulus :**
-- `timeline_controller`
-- `accordion_controller`
-- `checklist_controller`
-- `scroll_controller`
-- `form_feedback_controller`
-
----
-
-# 🧑‍🎨 Page 5 — À propos
-
-## 🎯 Objectif
-Présenter les valeurs, l’équipe et l’histoire du lieu.
-
-### Structure
-```
-[Mission & valeurs]
-  ↓
-[Équipe]
-  ↓
-[Historique]
-  ↓
-[Partenaires / Presse]
-  ↓
-[CTA Contact]
-```
-
-### Contenu
-**Mission :** rendre la création accessible, décloisonner les disciplines.  
-**Équipe :** slider horizontal portraits + rôles  
-**Historique :** timeline 2023–2025 (ouverture, projets accueillis, évolution)  
-**Partenaires :** grille logos avec hover infos
-
-**JS / Stimulus :**
-- `slider_controller`
-- `timeline_controller`
-- `reveal_controller`
-
----
-
-# 📬 Page 6 — Contact
-
-## 🎯 Objectif
-Faciliter le contact et l’accès au lieu.  
-
-### Structure
-```
-[HERO]
-  ↓
-[Formulaire de contact]
-  ↓
-[FAQ rapide]
-  ↓
-[Infos pratiques]
-  ↓
-[CTA final]
-```
-
-### Contenu
-**Formulaire :** Nom, Email, Sujet, Message, CTA [Envoyer]  
-**FAQ :** 4–5 questions (accordéons)  
-**Infos pratiques :** Adresse, horaires, plan, liens réseaux  
-**CTA :** [Venir nous voir]
-
-**JS / Stimulus :**
-- `form_feedback_controller`
-- `accordion_controller`
-- `scroll_controller`
-
----
-
-# ⚙️ Stimulus Controllers communs
-
-| Fonction | Controller |
-|-----------|-------------|
-| Accordéons / FAQ | `accordion_controller.js` |
-| Modals dynamiques | `modal_controller.js` |
-| Reveal au scroll | `reveal_controller.js` |
-| Smooth scroll / anchors | `scroll_controller.js` |
-| Infinite scroll | `infinite_scroll_controller.js` |
-| Navigation active | `nav_active_controller.js` |
-| Carousel / slider | `slider_controller.js` |
-| Timeline animée | `timeline_controller.js` |
-| Checklists interactives | `checklist_controller.js` |
-| Form feedback / AJAX | `form_feedback_controller.js` |
-
----
-
-# 🔁 Parcours utilisateur
-
-```
-[ACCUEIL]
-   ↓
-[LE LIEU]
-   ↓
-[ADHÉRER] ←→ [NOS ACTIVITÉS]
-   ↓
-[À PROPOS] ←→ [CONTACT]
-```
-
-**Micro-flux dynamiques :**
-- “Découvrir l’association” → Le Lieu  
-- “Voir le fonctionnement” → Adhérer  
-- “Passer nous voir” → Contact  
-- “Rejoindre l’équipe” → Contact formulaire
-
----
-
-# 🧠 Résumé stratégique
-
-✅ Scroll limité (2–3 écrans par page)  
-✅ Parcours fluide et cohérent  
-✅ Composants réutilisables (horaires, modals, galerie)  
-✅ Dynamique moderne via Stimulus + Turbo  
-✅ Fidélité à l’esprit du lieu : accessible, collectif, vivant
