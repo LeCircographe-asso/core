@@ -21,11 +21,11 @@ module Admin
         date: event_params[:date],
         location: event_params[:location],
         creator_id: current_user.id,
-        category: 'other' # Default category, can be enhanced later
+        category: "other" # Default category, can be enhanced later
       )
-      
+
       result = creator.call
-      
+
       respond_to do |format|
         if result.success?
           format.html { redirect_to admin_events_path, notice: "Événement créé avec succès" }
@@ -43,7 +43,7 @@ module Admin
     end
     def update
       @event = Event.find params[:id]
-      
+
       updater = EventManagement::EventUpdater.new(
         event_id: @event.id,
         name: event_params[:title],
@@ -54,9 +54,9 @@ module Admin
         location: event_params[:location],
         updated_by_id: current_user.id
       )
-      
+
       result = updater.call
-      
+
       if result.success?
         redirect_to event_path(@event), notice: "Événement modifié avec succès"
       else

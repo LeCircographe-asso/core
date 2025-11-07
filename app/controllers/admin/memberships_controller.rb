@@ -45,9 +45,9 @@ module Admin
         # Vérifier si c'est un upgrade
         if membership_purchase_params[:upgrade] == "true" && @person.current_membership&.basic?
           # Utiliser le service MembershipManagement::MembershipUpgrader
-          custom_amount = membership_purchase_params[:payment_method] == "offered" ? 
+          custom_amount = membership_purchase_params[:payment_method] == "offered" ?
                          (membership_purchase_params[:custom_amount_cents]&.to_i || 0) : nil
-          
+
           upgrader = MembershipManagement::MembershipUpgrader.new(
             person: @person,
             new_membership_type_id: membership_type.id,
@@ -56,7 +56,7 @@ module Admin
             custom_amount_cents: custom_amount,
             offer_reason: membership_purchase_params[:offer_reason]
           )
-          
+
           result = upgrader.call
 
           if result.success?
@@ -79,9 +79,9 @@ module Admin
           end
         else
           # Création d'une nouvelle adhésion
-          custom_amount = membership_purchase_params[:payment_method] == "offered" ? 
+          custom_amount = membership_purchase_params[:payment_method] == "offered" ?
                          (membership_purchase_params[:custom_amount_cents]&.to_i || 0) : nil
-          
+
           creator = MembershipManagement::MembershipCreator.new(
             person: @person,
             membership_type_id: membership_type.id,
@@ -90,7 +90,7 @@ module Admin
             custom_amount_cents: custom_amount,
             offer_reason: membership_purchase_params[:offer_reason]
           )
-          
+
           result = creator.call
 
           if result.success?

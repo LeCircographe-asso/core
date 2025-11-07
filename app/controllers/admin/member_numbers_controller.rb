@@ -1,13 +1,13 @@
 class Admin::MemberNumbersController < Admin::BaseController
-  before_action :set_person, only: [:suggest, :change]
+  before_action :set_person, only: [ :suggest, :change ]
 
   # POST /admin/member_numbers/suggest
   def suggest
-    membership_type = params[:membership_type] || 'BASIQUE'
-    
+    membership_type = params[:membership_type] || "BASIQUE"
+
     begin
       suggested_number = MemberManagementService.generate_member_number(membership_type)
-      
+
       render json: {
         success: true,
         suggested_number: suggested_number,
@@ -34,7 +34,7 @@ class Admin::MemberNumbersController < Admin::BaseController
       end
 
       # Vérifier l'unicité
-      if Person.exists?(member_number: new_member_number) || 
+      if Person.exists?(member_number: new_member_number) ||
          MemberNumberHistory.exists?(member_number: new_member_number)
         raise "Ce numéro d'adhérent est déjà utilisé"
       end
@@ -42,11 +42,11 @@ class Admin::MemberNumbersController < Admin::BaseController
       # Changer le numéro d'adhérent
       old_number = @person.member_number
       result = @person.change_member_number(new_membership_type, change_notes)
-      
+
       if result
         # Mettre à jour le numéro actuel
         @person.update!(member_number: new_member_number)
-        
+
         # Mettre à jour l'historique avec le bon numéro
         current_history = @person.current_member_number_history
         if current_history
