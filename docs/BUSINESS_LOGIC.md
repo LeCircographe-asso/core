@@ -13,6 +13,27 @@
 - **Zone 2 (En cours)** - Logique temporaire/exploration → Tests après stabilisation
 - **Zone 3 (Future)** - Non implémenté → Pas de tests
 
+**Voir `docs/ZONES_CLASSIFICATION.md` pour détails complets.**
+
+### Stratégie Backend - Logique Métier Immuable
+
+**Objectif:** Comprendre, documenter et rendre immuable la logique métier.
+
+**Problème:** Logique métier encore en mouvement → Pas clair ce qui doit être testé → Risque de tests sur code instable
+
+**Solution: 3 Zones**
+
+1. **Zone 1: Logique Définie (Maintenant)** - Fonctionnel et stable → Tests immédiats
+2. **Zone 2: Logique En Cours (Prototype)** - Fonctionnel mais pourrait changer → Tests après stabilisation
+3. **Zone 3: Logique Future (À Définir)** - Non implémenté → Documentation seulement
+
+**Workflow:**
+1. Documenter la logique métier dans `docs/BUSINESS_LOGIC.md`
+2. Classifier le code par zone
+3. Tester Zone 1 immédiatement
+4. Attendre stabilisation pour Zone 2
+5. Documenter seulement pour Zone 3
+
 ---
 
 # Domaines Métier
@@ -22,9 +43,11 @@
 ### Zone 1: Comportement Défini
 
 #### Durée et Statuts
-- **Durée standard:** 1 an depuis date de souscription (`started_at` → `ended_at`)
+- **Durée standard:** 1 an, calculée de `started_at` à `ended_at` (dates inclusives)
 - **Statuts:** `pending` → `active` → `inactive` → `expired`
 - **Activation:** Immédiate après paiement réussi
+- **Expiration:** Quand `ended_at < Date.current` → passage en `expired`
+- **Renouvellement:** Crée une nouvelle adhésion datée à partir de la nouvelle souscription
 
 #### Types d'Adhésions
 - **Basic:** 1€ - Adhésion standard sans accès cirque
@@ -36,6 +59,7 @@
 # Validation: ended_at > started_at
 # Validation: Pas d'overlapping active memberships (sauf si skip_overlap_validation)
 # Enum status: pending(0), inactive(1), active(2), expired(3)
+# Expiration automatique: status passe à expired si Date.current > ended_at
 ```
 
 #### Upgrades Possibles
@@ -135,9 +159,15 @@ enum system_role: [:super_admin, :admin, :volunteer, :web_visitor]
 ```
 
 #### Person Architecture (Nouvelle)
-- **User → Person:** Relation 1-to-1
-- **Délégation:** User délègue attributs à Person
-- **Attributs:** name, phone, email, address, birth_date, etc.
+- **Entity / Account pattern:**
+  - **Person = Entity CRM** (identité unique, historique financier, soft delete via `SoftDeletable`).
+  - **User = Account** (accès web optionnel) qui référence une `Person` existante (`belongs_to :person`).
+- **Conséquences :**
+  - Création front : on `find_or_create_by` Person avant de créer User.
+  - Création admin : Person d’abord (`PersonManagement::PersonCreator`), puis User via `UserManagement::UserCreator` si espace web nécessaire.
+  - Suppression User : coupe l’accès web (`destroy`), la Person et ses paiements restent.
+  - Suppression Person : passe par `UserManagement::UserDeleter` qui archive la Person (`Person#archive!`) seulement si aucune donnée financière (sauf super_admin).
+- **Délégation:** User délègue attributs à Person (`delegate :full_name, :phone, ...`).
 
 #### Tarifs Réduits
 - **Attributs:** `reduced_rate_eligible`, `reduced_rate_reason`, `reduced_rate_proof`
@@ -201,10 +231,12 @@ enum duration: {
 
 ### Zone 1: Comportement Défini
 
+> **NOTE BUSINESS:** Dans l’usage actuel de l’association, *BookOfEntry* ne matérialise **que** les carnets Pack 10 séances. Le modèle conserve des attributs (expiration, illimité, etc.) pour rester compatible avec d’anciens prototypes, mais cette logique n’est plus exploitée. Tout test/implémentation doit partir du principe « BookOfEntry = Pack 10 ».
+
 #### Création
-- **Trigger:** Paiement d'un SubscriptionPlan pack10
+- **Trigger:** Paiement d'un SubscriptionPlan pack10 (unique offre à carnet)
 - **Person:** Assigné au propriétaire
-- **Sessions:** Nombre initial = sessions_count du plan
+- **Sessions:** Nombre initial = sessions_count du plan (par défaut 10)
 
 #### Utilisation
 ```ruby
@@ -219,8 +251,8 @@ BookOfEntry#use_session!
 ```
 
 #### Expiration (Pack10 uniquement)
-- **Never expires:** Pack10 n'a pas expires_at
-- **Non-pack:** Expire selon validité
+- **Never expires:** Pack10 n'a pas expires_at (les autres durées ne sont plus utilisées)
+- **Non-pack (legacy):** Expire selon validité — gardé pour compatibilité mais hors périmètre actuel
 
 #### Suspension & Réactivation
 ```ruby
@@ -289,6 +321,30 @@ BookOfEntry.reactivate_suspended_packs_for_person(person) # Auto après expirati
 #### Book of Entry Integration
 - **Auto-decrement:** Décrémente sessions_remaining si book_of_entry lié
 - **Can_use check:** Vérifie logique can_use? avant
+- **Daily free training list:** `AttendanceListManagement::DailyListGenerator` crée chaque jour (hors lundi) la liste d'émargement « training » pour l'entraînement libre.
+
+#### Check-in Entraînement Libre (Zone 1)
+- **Service principal:** `AttendanceManagement::CheckInService`
+  - Résout la personne (`person_id` ou `Current.user.person`).
+  - Garantit l’existence d’une liste d’entraînement libre via `DailyListGenerator` (skip lundi).
+  - Choisit automatiquement le carnet utilisable (`pack10` prioritaire, sinon day pass, puis illimité) si `book_of_entry_id` absent.
+  - Délègue la création d’une présence à `AttendanceCreator`.
+- **Instrumentation:** déclenche les événements `attendance.created`, `attendance.deleted`, `attendance_list.daily_created`.
+- **Rôle du carnet:**
+  - `use_session!` lors du check-in (décrément).
+  - `refund_session!` via `AttendanceManagement::AttendanceRemover` en cas de suppression.
+- **Présentations quotidiennes:** `AttendanceManagement::DailyFreeTrainingPresenter` assemble les métriques (total, pack10, day pass) pour le dashboard.
+- **Flux utilisateur:**
+  1. L’admin clique « check-in » → service check-in.
+  2. La présence apparaît sur la liste du jour (Turbo stream).
+  3. En cas d’annulation, `AttendanceRemover` détruit la présence + recrédite le carnet si applicable.
+  4. Le dashboard consomme le presenter pour les stats.
+
+> **Tests clés:**
+> - `spec/services/attendance_management/check_in_service_spec.rb`
+> - `spec/services/attendance_management/daily_list_generator_spec.rb`
+> - `spec/services/attendance_management/attendance_remover_spec.rb`
+> - `spec/services/attendance_management/daily_free_training_presenter_spec.rb`
 
 ### Zone 2: En Cours de Validation
 
@@ -556,10 +612,19 @@ NewsletterSubscriber#link_to_person!(person)
 - **Historique:** Tous changements tracés dans MemberNumberHistory
 
 **Prorata Cotisations:**
-- **Nouveau:** `Person#upgrade_subscription!` - Upgrade Pack10/Trimestre/Année
-- **Pack10 → Trimestre/Année:** Suspension Pack10, pas de crédit
-- **Trimestre → Année:** Crédit prorata temporel (jours restants)
-- **Réactivation:** Auto Pack10 quand Trimestre/Année expire
+- **Contrôleur:** `Person#upgrade_subscription!`
+- **Jour → autre plan:** interdit (journée non cumulable, pas d’upgrade possible)
+- **Pack10 → Trimestre/Année:** pack suspendu (sessions conservées), **pas** de prorata — on paie le nouveau plan plein tarif
+- **Trimestre → Année:** prorata temporel appliqué (montant Année – valeur temps restant sur Trimestre)
+- **Réactivation automatique:** Pack10 suspendu se réactive une fois le Trimestre/Année arrivé à expiration
+- **Durées:**
+  - `day` : `purchased_at` à fin de journée (`end_of_day`)
+  - `trimester` : 3 mois (≈90 jours) à partir de `purchased_at`
+  - `annual` : 1 an à partir de `purchased_at`
+  - `pack10` : pas d’expiration (`expires_at` nil) ; suspendu si upgrade
+- **Suspension/Expiration:**
+  - Si l’adhésion (`membership`) expire, tous les carnets associés (book_of_entries) sont suspendus jusqu’à renouvellement/adherence active.
+  - Réactivation automatique quand une nouvelle adhésion circus redevient active.
 
 **Tarifs Réduits:**
 - **Nouveau:** Attributs `reduced_rate_eligible`, `reduced_rate_reason`, `reduced_rate_proof` sur Person
@@ -593,5 +658,65 @@ NewsletterSubscriber#link_to_person!(person)
 - **Avantage:** Tests simplifiés -50% complexité
 
 **Score modèle:** 7/10 → 9/10 ✅
+
+### Architecture Services (2025-01)
+
+**Pattern:** Controller → Service → Model
+
+**Services créés (44 services dans 15 domaines):**
+- `MembershipManagement::*` (4 services)
+- `SubscriptionManagement::*` (2 services)
+- `PaymentManagement::*` (6 services)
+- `AccountClaimManagement::*` (2 services)
+- `AttendanceManagement::*` (1 service)
+- `AttendanceListManagement::*` (3 services)
+- `BlogManagement::*` (3 services)
+- `MembershipTypeManagement::*` (2 services)
+- `OpeningHoursManagement::*` (1 service)
+- `NewsletterManagement::*` (1 service)
+- `SubscriptionPlanManagement::*` (2 services)
+- `UserManagement::*` (3 services)
+- `PersonManagement::*` (3 services)
+- `EventManagement::*` (3 services)
+- `MemberNumberManagement::*` (2 services)
+
+**Bénéfices:**
+- Controllers minimalistes (délégation pure)
+- Logique métier extraite et testable
+- Instrumentation pour audit (ActiveSupport::Notifications)
+- Cohérence et maintenabilité
+
+**Documentation:** Voir `docs/ARCHITECTURE_SERVICES.md` pour détails complets.
+
+### Historique des Refactorings (2025-01-31)
+
+#### Simplification Architecture
+
+**MembershipType category enum:**
+- **Avant:** `basic`, `circus_full`, `circus_reduced` (3 catégories confuses)
+- **Après:** `basic`, `circus`, `event` (3 catégories claires)
+- **Impact:** Circus Full et Reduced sont des tarifs, pas des catégories distinctes
+- **Avantage:** Ajout facile de tarifs Circus (Student, Senior, etc.) sans modifier code
+
+**Newsletter:**
+- **Nouveau:** Table `newsletter_subscribers` dédiée
+- **Avant:** Booléen sur Person
+- **Avantage:** Tracking indépendant, merge email simplifié, audit trail complet
+
+**Payment relations:**
+- **Supprimé:** Legacy `user_id`, `order_id`
+- **Conservé:** Architecture Person-Based uniquement
+- **Avantage:** Tests simplifiés -50% complexité
+
+**Score modèle:** 7/10 → 9/10 ✅
+
+## 📚 Documentation liée
+
+- **Architecture Services:** `docs/ARCHITECTURE_SERVICES.md` - Pattern Controller → Service → Model (44 services)
+- **Concerns:** `docs/CONCERNS_ANALYSIS.md` - Analyse complète des concerns (10 concerns)
+- **Audit Controllers:** `docs/CONTROLLERS_AUDIT.md` - État des tests et stratégie TDD
+- **Zones Classification:** `docs/ZONES_CLASSIFICATION.md` - Classification Zone 1/2/3
+- **TDD Guide:** `docs/TDD_GUIDE.md` - Guide complet TDD
+- **Testing Guide:** `docs/TESTING_GUIDE.md` - Guide tests et couverture
 
 

@@ -1,7 +1,5 @@
 module UserManagement
-  class UserCreator
-    include ActiveModel::Model
-    include ActiveModel::Attributes
+  class UserCreator < BaseService
 
     attribute :email, :string
     attribute :password, :string
@@ -43,7 +41,7 @@ module UserManagement
           # Update person with user reference
           person.update!(user: user)
 
-          success(user: user)
+          success(user: user, message: "User created successfully")
         end
       rescue ActiveRecord::RecordNotFound => e
         failure("Person or User not found: #{e.message}")
@@ -81,12 +79,6 @@ module UserManagement
       end
     end
 
-    def success(data = {})
-      OpenStruct.new(success?: true, **data)
-    end
-
-    def failure(message)
-      OpenStruct.new(success?: false, message: message)
-    end
+    # success et failure hérités de BaseService
   end
 end

@@ -135,7 +135,6 @@ RSpec.describe "Registrations", type: :request do
             privacy_policy: "1"
           }
         }
-
         expect(response).to have_http_status(:unprocessable_entity)
         expect(response.body).to include("S'inscrire")
       end
@@ -155,7 +154,6 @@ RSpec.describe "Registrations", type: :request do
             }
           }
         }.not_to change { User.count }
-
         expect(response).to have_http_status(:unprocessable_entity)
         expect(response.body).to include("CGU")
       end
@@ -175,7 +173,6 @@ RSpec.describe "Registrations", type: :request do
             }
           }
         }.not_to change { User.count }
-
         expect(response).to have_http_status(:unprocessable_entity)
         expect(response.body).to include("confidentialité")
       end
@@ -196,7 +193,6 @@ RSpec.describe "Registrations", type: :request do
             }
           }
         }.not_to change { User.count }
-
         expect(response).to have_http_status(:unprocessable_entity)
       end
     end

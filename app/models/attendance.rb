@@ -25,12 +25,14 @@ class Attendance < ApplicationRecord
   before_create :set_date_if_missing
   after_create :decrement_book_of_entry, if: -> { attendance_list_id.present? }
 
-  # Scopes
+  # Scopes spécifiques
+  scope :by_person, ->(person) { where(person: person) }
+  scope :by_event, ->(event) { where(event: event) }
+  
+  # Date scopes (using explicit :date column)
   scope :today, -> { where(date: Date.current) }
   scope :this_week, -> { where(date: Date.current.beginning_of_week..Date.current.end_of_week) }
   scope :this_month, -> { where(date: Date.current.beginning_of_month..Date.current.end_of_month) }
-  scope :by_person, ->(person) { where(person: person) }
-  scope :by_event, ->(event) { where(event: event) }
 
 private
 

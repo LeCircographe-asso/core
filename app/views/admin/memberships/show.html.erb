@@ -7,6 +7,9 @@
     
     <!-- Main content -->
     <div id="membership-container" data-controller="membership-container">
+      <div class="mb-4">
+        <h1 class="text-2xl font-bold text-gray-900"><%= @person.full_name %></h1>
+      </div>
       <div id="membership-container">
         <% if @person.has_active_membership? %>
           <%= render "membership_details" %>

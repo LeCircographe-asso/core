@@ -1,9 +1,5 @@
-require "ostruct"
-
 module Web
-  class UserRegistration
-    include ActiveModel::Model
-    include ActiveModel::Attributes
+  class UserRegistration < BaseService
 
     # Attributs pour la création de personne
     attribute :first_name, :string
@@ -52,7 +48,7 @@ module Web
         user_result = create_user_account(person)
         return failure(user_result.errors.join(", ")) unless user_result.success?
 
-        success(person, user_result.user)
+        success(person: person, user: user_result.user, message: "Web user registration successful")
       end
     rescue ActiveRecord::RecordInvalid => e
       failure(e.message)
@@ -101,7 +97,7 @@ module Web
           password_confirmation: user_password,
           system_role: user_system_role
         )
-        success(person.user, "User account updated")
+        success(person: person.user.person, user: person.user, message: "User account updated")
       else
         # Créer un nouveau User
         UserManagement::AccountCreator.new(
@@ -186,21 +182,6 @@ module Web
       end
     end
 
-    def success(person, user, message = "Web user registration successful")
-      OpenStruct.new(
-        success?: true,
-        person: person,
-        user: user,
-        message: message
-      )
-    end
-
-    def failure(message)
-      OpenStruct.new(
-        success?: false,
-        errors: [ message ],
-        message: message
-      )
-    end
+    # success et failure hérités de BaseService
   end
 end
