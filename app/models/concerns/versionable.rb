@@ -43,7 +43,7 @@ module Versionable
       transaction do
         # Fermer la version actuelle
         current_versions.update_all(effective_until: effective_from - 1.day)
-        
+
         # Créer la nouvelle version
         create!(attributes.merge(
           effective_from: effective_from,

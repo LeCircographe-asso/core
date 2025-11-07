@@ -2,7 +2,7 @@ class SubscriptionPlan < ApplicationRecord
   include Priceable
   include Humanizable
   include Versionable
-  
+
   # Relations
   belongs_to :membership_type
   has_many :book_of_entries, dependent: :destroy

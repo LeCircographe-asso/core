@@ -7,7 +7,7 @@ class BookOfEntry < ApplicationRecord
   validates :status, presence: true
   validates :purchased_at, presence: true
   validates :expires_at, presence: true, unless: :is_pack10?
-  
+
   # Validation personnalisée pour les séances
   validate :sessions_remaining_validation
 
@@ -88,9 +88,9 @@ class BookOfEntry < ApplicationRecord
   scope :expired, -> { where(status: :expired) }
   scope :consumed, -> { where(status: :consumed) }
   scope :suspended, -> { where(status: :suspended) }
-  
+
   # Scope utilisable : actif, pas expiré par date, et avec séances restantes (si applicable)
-  scope :usable, -> { 
+  scope :usable, -> {
     active
       .where("expires_at IS NULL OR expires_at > ?", Date.current)
       .where("sessions_remaining IS NULL OR sessions_remaining > 0")
@@ -99,12 +99,12 @@ class BookOfEntry < ApplicationRecord
   # Méthodes de classe
   def self.reactivate_suspended_packs_for_person(person)
     return unless person.can_buy_subscription_plans?
-    
+
     # Si aucun plan actif (Trimestre/Année), réactiver Pack10 suspendus
-    active_plans = person.book_of_entries.active.joins(:subscription_plan).where.not(subscription_plans: { duration: 'pack10' })
-    
+    active_plans = person.book_of_entries.active.joins(:subscription_plan).where.not(subscription_plans: { duration: "pack10" })
+
     if active_plans.empty?
-      person.book_of_entries.suspended.joins(:subscription_plan).where(subscription_plans: { duration: 'pack10' }).each(&:reactivate!)
+      person.book_of_entries.suspended.joins(:subscription_plan).where(subscription_plans: { duration: "pack10" }).each(&:reactivate!)
     end
   end
 
@@ -118,14 +118,14 @@ class BookOfEntry < ApplicationRecord
   end
 
   def suspended?
-    status == 'suspended'
+    status == "suspended"
   end
 
   private
 
   def sessions_remaining_validation
     # Pour les abonnements illimités (trimester, annual), sessions_remaining doit être nil
-    if subscription_plan&.duration.in?(['trimester', 'annual'])
+    if subscription_plan&.duration.in?([ "trimester", "annual" ])
       if sessions_remaining.present?
         errors.add(:sessions_remaining, "doit être vide pour les abonnements illimités")
       end

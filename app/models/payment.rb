@@ -2,7 +2,7 @@ class Payment < ApplicationRecord
   include Priceable
   include Humanizable
   include Statusable
-  
+
   # Relations selon le domain_model_circographe.md
   belongs_to :person
   belongs_to :recorded_by, class_name: "User"
@@ -153,7 +153,7 @@ class Payment < ApplicationRecord
   # Anonymization for GDPR compliance
   def anonymize!
     return if anonymized_at.present?
-    
+
     self.original_person_identifier = "ANON_#{Digest::SHA256.hexdigest("#{person_id}_#{id}_#{created_at}")}"
     self.person_id = nil
     self.anonymized_at = Time.current
