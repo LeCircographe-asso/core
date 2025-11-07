@@ -74,7 +74,7 @@ module MembershipManagement
     def failure(message)
       OpenStruct.new(
         success?: false,
-        errors: [message],
+        errors: [ message ],
         message: message
       )
     end

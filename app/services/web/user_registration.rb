@@ -119,7 +119,7 @@ module Web
     def create_newsletter_subscriber(person)
       # Si NewsletterSubscriber existe déjà (inscription footer), le lier à cette Person
       subscriber = NewsletterSubscriber.find_by(email: person.email)
-      
+
       if subscriber
         # Link existing orphaned subscriber to new Person
         subscriber.update!(person: person, subscribed: true)
@@ -128,7 +128,7 @@ module Web
         NewsletterSubscriber.create!(
           email: person.email,
           person: person,
-          source: 'web',
+          source: "web",
           subscribed: true
         )
       end
@@ -180,7 +180,7 @@ module Web
 
     def password_confirmation_matches
       return if user_password.blank? || user_password_confirmation.blank?
-      
+
       unless user_password == user_password_confirmation
         errors.add(:user_password_confirmation, "ne correspond pas au mot de passe")
       end
