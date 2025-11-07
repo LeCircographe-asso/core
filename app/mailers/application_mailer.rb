@@ -1,9 +1,9 @@
 class ApplicationMailer < ActionMailer::Base
   default from: "no-reply@lecircographe.fr"
   layout "mailer"
-  
+
   private
-  
+
   # Set unsubscribe URL for newsletter emails
   def set_unsubscribe_url
     if @user&.email.present?
