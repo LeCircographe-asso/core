@@ -11,7 +11,7 @@ module PersonManagement
     validates :target, presence: true
     validates :actor, presence: true
     validates :merge_type, inclusion: { in: %w[admin_merge duplicate_cleanup] }
-    
+
     def merge_type
       @merge_type ||= "admin_merge"
     end
@@ -67,7 +67,7 @@ module PersonManagement
     def failure(message)
       OpenStruct.new(
         success?: false,
-        errors: [message],
+        errors: [ message ],
         message: message
       )
     end

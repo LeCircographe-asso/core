@@ -58,7 +58,7 @@ module UserManagement
 
     def passwords_match
       return unless password.present? && password_confirmation.present?
-      
+
       if password != password_confirmation
         errors.add(:password_confirmation, "doesn't match Password")
       end
@@ -66,7 +66,7 @@ module UserManagement
 
     def person_exists
       return unless person_id.present?
-      
+
       unless Person.exists?(person_id)
         errors.add(:person_id, "Person not found")
       end
@@ -74,7 +74,7 @@ module UserManagement
 
     def person_has_no_user_account
       return unless person_id.present?
-      
+
       person = Person.find_by(id: person_id)
       if person&.user.present?
         errors.add(:person_id, "Person already has a user account")
