@@ -481,7 +481,7 @@ module Admin
         reduced_rate_reason: person_params[:reduced_rate_reason],
         reduced_rate_proof: person_params[:reduced_rate_proof],
         create_web_account: params.dig(:user, :create_web_account),
-        email_address: params.dig(:user, :email_address),
+        email_address: params.dig(:user, :email_address) || person_params[:email],
         system_role: params.dig(:user, :system_role),
         create_membership: params.dig(:user, :create_membership),
         membership_type_id: params.dig(:user, :membership_type_id),
