@@ -85,11 +85,11 @@ module Admin
         history_items
       end
     end
-    
+
     # Affichage du statut newsletter via NewsletterSubscriber (nouvelle logique)
     def display_newsletter_subscription(person)
       subscriber = NewsletterSubscriber.find_by(email: person.email)
-      
+
       if subscriber&.subscribed?
         content_tag :span, "Oui", class: "px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800"
       else

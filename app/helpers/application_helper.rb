@@ -58,5 +58,4 @@ module ApplicationHelper
     # Format: +33 6 12 34 56 78
     phone.gsub(/(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})/, '\1 \2 \3 \4 \5')
   end
-
 end
