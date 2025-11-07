@@ -1,6 +1,5 @@
 import { Controller } from "@hotwired/stimulus"
-import Swiper from "swiper"
-import { Navigation, Autoplay } from "swiper/modules"
+import Swiper from "swiper/bundle"
 
 // Connects to data-controller="slider"
 export default class extends Controller {
@@ -20,7 +19,6 @@ export default class extends Controller {
     if (this.slider) return
 
     const defaultOptions = {
-      modules: [Navigation, Autoplay],
       loop: true,
       slidesPerView: 1,
       spaceBetween: 16,
