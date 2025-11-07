@@ -31,26 +31,24 @@ begin
   ActiveRecord::Base.transaction do
     # Étape 1: Désactiver les validations temporairement
     person_with_user.skip_membership_validation = true
-    
+
     # Étape 2: Supprimer l'email de Person 11 pour éviter le conflit
     person_with_user.update!(email: nil)
     puts "✅ Email de Person 11 supprimé"
-    
+
     # Étape 3: Déplacer le User vers Person 10
     user.update!(person_id: 10)
     puts "✅ User déplacé vers Person 10"
-    
+
     # Étape 4: Supprimer la Person vide
     person_with_user.destroy
     puts "✅ Person 11 supprimée"
-    
+
     puts "\n🎉 RÉPARATION TERMINÉE!"
     puts "Person 10: #{person_with_data.reload.memberships.count} adhésions, #{person_with_data.payments.count} paiements"
     puts "User ID #{user.id} lié à Person: #{user.reload.person_id}"
-    
   end
 rescue => e
   puts "❌ ERREUR: #{e.message}"
   puts "Rollback effectué"
 end
-
