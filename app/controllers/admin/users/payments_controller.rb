@@ -27,28 +27,48 @@ module Admin
     # POST /admin/users/person_1/payments
     def create
       begin
-        # Créer le paiement directement via le modèle Person
-        payment = @person.payments.create!(
-          total_cents: payment_params[:total_cents],
-          payment_method: payment_params[:payment_method] || "cash",
-          status: :success,
-          recorded_by: Current.user,
-          notes: payment_params[:notes]
-        )
-
-        # Ajouter les lignes de paiement si spécifiées
-        if params[:payment_lines].present?
-          params[:payment_lines].each do |line_params|
-            payment.payment_lines.create!(
-              item_type: line_params[:item_type],
-              item_id: line_params[:item_id],
-              amount_cents: line_params[:amount_cents],
-              description: line_params[:description]
-            )
-          end
+        # Calculer le total si plusieurs lignes
+        total_cents = if params[:payment_lines].present? && params[:payment_lines].any?
+          params[:payment_lines].sum { |line| line[:amount_cents].to_i }
+        else
+          payment_params[:total_cents].to_i
         end
 
-        redirect_to admin_user_path("person_#{@person.id}"), notice: "Paiement créé avec succès"
+        # Utiliser PaymentCreatorWithLines pour paiements multiples, PaymentCreator pour paiement simple
+        if params[:payment_lines].present? && params[:payment_lines].length > 1
+          creator = PaymentManagement::PaymentCreatorWithLines.new(
+            person_id: @person.id,
+            total_cents: total_cents,
+            payment_method: payment_params[:payment_method] || "cash",
+            recorded_by_id: Current.user.id,
+            payment_lines: params[:payment_lines],
+            notes: payment_params[:notes]
+          )
+        else
+          # Paiement simple (1 ligne ou donation)
+          first_line = params[:payment_lines]&.first
+          creator = PaymentManagement::PaymentCreator.new(
+            person_id: @person.id,
+            amount_cents: total_cents,
+            payment_method: payment_params[:payment_method] || "cash",
+            recorded_by_id: Current.user.id,
+            item_type: first_line ? first_line[:item_type] : "Donation",
+            item_id: first_line ? first_line[:item_id] : @person.id,
+            description: first_line ? first_line[:description] : "Paiement",
+            notes: payment_params[:notes]
+          )
+        end
+
+        result = creator.call
+
+        if result.success?
+          redirect_to admin_user_path("person_#{@person.id}"), notice: "Paiement créé avec succès"
+        else
+          @membership_types = MembershipType.all
+          @subscription_plans = SubscriptionPlan.all
+          flash.now[:alert] = "Erreur lors de la création du paiement: #{result.message}"
+          render :new, status: :unprocessable_entity
+        end
       rescue => e
         @membership_types = MembershipType.all
         @subscription_plans = SubscriptionPlan.all
@@ -65,22 +85,46 @@ module Admin
       # PATCH /admin/users/person_1/payments/1
       def update
         @payment = @person.payments.find(params[:id])
-
-        if @payment.update(payment_params)
+        
+        # Utiliser le service PaymentManagement::PaymentUpdater pour cohérence
+        total_cents = payment_params[:total_cents]
+        total_cents = (total_cents.to_f * 100).to_i if total_cents.present?
+        
+        updater = PaymentManagement::PaymentUpdater.new(
+          payment_id: @payment.id,
+          total_cents: total_cents || @payment.total_cents,
+          payment_method: payment_params[:payment_method] || @payment.payment_method,
+          status: payment_params[:status] || @payment.status,
+          notes: payment_params[:notes] || @payment.notes,
+          updated_by_id: Current.user.id
+        )
+        
+        result = updater.call
+        
+        if result.success?
           redirect_to admin_user_path("person_#{@person.id}"), notice: "Paiement mis à jour avec succès"
         else
-          redirect_to admin_user_path("person_#{@person.id}"), alert: "Erreur lors de la mise à jour: #{@payment.errors.full_messages.join(', ')}"
+          redirect_to admin_user_path("person_#{@person.id}"), alert: "Erreur lors de la mise à jour: #{result.message}"
         end
       end
 
       # DELETE /admin/users/person_1/payments/1
       def destroy
         @payment = @person.payments.find(params[:id])
-
-        if @payment.destroy
+        
+        # Utiliser le service PaymentManagement::PaymentDeleter pour cohérence
+        deleter = PaymentManagement::PaymentDeleter.new(
+          payment_id: @payment.id,
+          deleted_by_id: Current.user.id,
+          reason: "Suppression via interface admin"
+        )
+        
+        result = deleter.call
+        
+        if result.success?
           redirect_to admin_user_path("person_#{@person.id}"), notice: "Paiement supprimé avec succès"
         else
-          redirect_to admin_user_path("person_#{@person.id}"), alert: "Erreur lors de la suppression du paiement"
+          redirect_to admin_user_path("person_#{@person.id}"), alert: "Erreur lors de la suppression: #{result.message}"
         end
       end
 
@@ -89,10 +133,24 @@ module Admin
       @payment = @person.payments.find(params[:id])
 
       begin
-        # Traiter le paiement (marquer comme success s'il ne l'est pas déjà)
-        @payment.update!(status: :success) if @payment.pending?
-
-        redirect_to admin_user_path("person_#{@person.id}"), notice: "Paiement traité avec succès"
+        # Utiliser le service PaymentManagement::PaymentUpdater pour traiter le paiement
+        if @payment.pending?
+          updater = PaymentManagement::PaymentUpdater.new(
+            payment_id: @payment.id,
+            status: "success",
+            updated_by_id: Current.user.id
+          )
+          
+          result = updater.call
+          
+          if result.success?
+            redirect_to admin_user_path("person_#{@person.id}"), notice: "Paiement traité avec succès"
+          else
+            redirect_to admin_user_path("person_#{@person.id}"), alert: "Erreur lors du traitement: #{result.message}"
+          end
+        else
+          redirect_to admin_user_path("person_#{@person.id}"), notice: "Paiement déjà traité"
+        end
       rescue => e
         redirect_to admin_user_path("person_#{@person.id}"), alert: "Erreur lors du traitement: #{e.message}"
       end
@@ -101,8 +159,16 @@ module Admin
       private
 
       def set_person
-        person_id = params[:person_id].to_s.gsub("person_", "")
-        @person = Person.find(person_id)
+        identifier = params[:person_id].presence || params[:user_id].presence
+        raise ActiveRecord::RecordNotFound, "person identifier missing" if identifier.blank?
+
+        if identifier.to_s.start_with?("person_")
+          person_id = identifier.to_s.delete_prefix("person_")
+          @person = Person.find(person_id)
+        else
+          user = User.find(identifier)
+          @person = user.person || Person.find(identifier)
+        end
       end
 
       def set_breadcrumbs

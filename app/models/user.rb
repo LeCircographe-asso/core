@@ -189,6 +189,11 @@ class User < ApplicationRecord
     self[:system_role]
   end
 
+  # Date scopes (using created_at via Dateable)
+  scope :today, -> { where("created_at >= ? AND created_at < ?", Date.current.beginning_of_day, Date.current.end_of_day) }
+  scope :this_week, -> { where("created_at >= ? AND created_at <= ?", Date.current.beginning_of_week.beginning_of_day, Date.current.end_of_week.end_of_day) }
+  scope :this_month, -> { where("created_at >= ? AND created_at <= ?", Date.current.beginning_of_month.beginning_of_day, Date.current.end_of_month.end_of_day) }
+
   # Class method to find or create a user with the same email
   def self.find_or_create_with_identity(email:, **attributes)
     existing_user = with_deleted.find_by(email_address: email.strip.downcase)

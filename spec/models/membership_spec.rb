@@ -313,4 +313,73 @@ RSpec.describe Membership, type: :model do
       expect(new_membership.ended_at).to eq(custom_start_date + 1.year)
     end
   end
+
+  describe "Dateable instance methods" do
+    let(:membership) { create(:membership, started_at: Date.current, ended_at: Date.current + 1.year) }
+
+    describe "#formatted_date" do
+      it "formats started_at date" do
+        formatted = membership.formatted_date(:started_at)
+        expect(formatted).to match(/\d{2}\/\d{2}\/\d{4}/)
+      end
+
+      it "formats ended_at date" do
+        formatted = membership.formatted_date(:ended_at)
+        expect(formatted).to match(/\d{2}\/\d{2}\/\d{4}/)
+      end
+    end
+
+    describe "#today?" do
+      it "returns true for membership started today" do
+        expect(membership.today?(:started_at)).to be true
+      end
+
+      it "returns false for membership started yesterday" do
+        old_membership = create(:membership, started_at: Date.yesterday)
+        expect(old_membership.today?(:started_at)).to be false
+      end
+    end
+
+    describe "#this_week?" do
+      it "returns true for membership started this week" do
+        expect(membership.this_week?(:started_at)).to be true
+      end
+    end
+
+    describe "#this_month?" do
+      it "returns true for membership started this month" do
+        expect(membership.this_month?(:started_at)).to be true
+      end
+    end
+
+    describe "#duration_days" do
+      it "calculates duration in days between started_at and ended_at" do
+        membership = create(:membership, 
+          started_at: Date.current, 
+          ended_at: Date.current + 365.days
+        )
+        expect(membership.duration_days(:started_at, :ended_at)).to eq(365)
+      end
+
+      it "returns nil if dates are missing" do
+        membership = build(:membership, started_at: nil, ended_at: nil)
+        expect(membership.duration_days(:started_at, :ended_at)).to be_nil
+      end
+    end
+
+    describe "#duration_months" do
+      it "calculates duration in months between started_at and ended_at" do
+        membership = create(:membership, 
+          started_at: Date.current, 
+          ended_at: Date.current + 12.months
+        )
+        expect(membership.duration_months(:started_at, :ended_at)).to eq(12)
+      end
+
+      it "returns nil if dates are missing" do
+        membership = build(:membership, started_at: nil, ended_at: nil)
+        expect(membership.duration_months(:started_at, :ended_at)).to be_nil
+      end
+    end
+  end
 end

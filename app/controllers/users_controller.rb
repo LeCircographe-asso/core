@@ -8,7 +8,6 @@ class UsersController < ApplicationController
   # - RegistrationsController: Creating new accounts
   # - UsersController: Managing existing accounts
   # - SessionsController: Handling login/logout
-  include UsersHelper
   before_action :require_authentication, except: [ :change_newsletter_status, :newsletter_signup ]
   before_action :set_user, only: [ :show, :edit, :update, :change_newsletter_status, :destroy ]
 
@@ -22,10 +21,19 @@ class UsersController < ApplicationController
 
   # User profile update
   def update
-    # Mettre à jour les données de la Person liée
-    if @user.person&.update(person_params)
+    # Utiliser le service UserManagement::UserUpdater
+    updater = UserManagement::UserUpdater.new(
+      user_id: @user.id,
+      person_attributes: person_params,
+      updated_by_id: @user.id
+    )
+
+    result = updater.call
+
+    if result.success?
       redirect_to @user, notice: "Votre profil a été mis à jour avec succès."
     else
+      flash.now[:alert] = result.message
       render :edit, status: :unprocessable_entity
     end
   end
@@ -49,6 +57,7 @@ class UsersController < ApplicationController
 
   # Handle newsletter signup from footer
   def newsletter_signup
+    # Extract from UsersHelper (anti-pattern: helpers shouldn't redirect)
     # Check honeypot - if filled, it's likely a bot
     if params[:user][:website].present?
       # Don't show an error, just silently redirect to avoid tipping off bots
@@ -116,25 +125,4 @@ class UsersController < ApplicationController
     )
   end
 
-  # Helper method renamed to avoid conflict
-  def process_newsletter_signup(email)
-    if email.blank?
-      flash[:alert] = "Veuillez entrer une adresse email valide."
-      redirect_back fallback_location: root_path
-      return
-    end
-
-    result = NewsletterSignupService.new(email, authenticated? ? Current.user : nil).call_newsletter
-
-    if result[:redirect_to]
-      redirect_to new_registration_path
-      session[:newsletter_email] = email
-    elsif result[:success]
-      flash[:notice] = result[:message]
-      redirect_back fallback_location: root_path
-    else
-      flash[:alert] = result[:message]
-      redirect_back fallback_location: root_path
-    end
-  end
 end

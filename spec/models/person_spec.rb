@@ -493,6 +493,13 @@ RSpec.describe Person, type: :model do
         person.restore!
       }.to change { person.reload.deleted_at }.to(nil)
     end
+
+    it "uses SoftDeletable concern" do
+      expect(person).to respond_to(:archived?)
+      expect(person).to respond_to(:archive!)
+      expect(person).to respond_to(:restore!)
+      expect(person).to respond_to(:can_be_archived?)
+    end
   end
 
   describe 'scopes' do

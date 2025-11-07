@@ -60,7 +60,7 @@ jobs:
     - name: Run tests
       if: ${{ github.event.inputs.test_type == 'all' || github.event.inputs.test_type == 'tests_only' || github.event.inputs.test_type == '' }}
       run: |
-        bundle exec rails db:create db:migrate
+        bundle exec rails db:create db:migrate RAILS_ENV=test
         bundle exec rspec --exclude-pattern="spec/disabled/**/*_spec.rb" --format documentation --format json --out tmp/rspec_results.json
     
     - name: Generate coverage report

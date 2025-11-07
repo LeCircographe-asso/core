@@ -43,23 +43,31 @@ module Admin
     end
 
     def create
-      begin
-        # Créer la présence directement
-        attendance = Attendance.create!(
-          person_id: attendance_params[:person_id],
-          event_id: attendance_params[:event_id],
-          attended_at: attendance_params[:attended_at] || Time.current,
-          notes: attendance_params[:notes]
-        )
-
-        redirect_to admin_attendance_path(attendance), notice: "Présence enregistrée avec succès"
-      rescue => e
+      creator = AttendanceManagement::AttendanceCreator.new(
+        person_id: attendance_params[:person_id],
+        event_id: attendance_params[:event_id],
+        attendance_list_id: attendance_params[:attendance_list_id],
+        book_of_entry_id: attendance_params[:book_of_entry_id],
+        date: attendance_params[:date]
+      )
+      
+      result = creator.call
+      
+      if result.success?
+        redirect_to admin_attendance_path(result.attendance), notice: "Présence enregistrée avec succès"
+      else
         @attendance = Attendance.new(attendance_params)
         @people = Person.order(:first_name, :last_name)
         @events = Event.upcoming.order(:date)
-        flash.now[:alert] = "Erreur: #{e.message}"
+        flash.now[:alert] = "Erreur: #{result.message}"
         render :new
       end
+    rescue => e
+      @attendance = Attendance.new(attendance_params)
+      @people = Person.order(:first_name, :last_name)
+      @events = Event.upcoming.order(:date)
+      flash.now[:alert] = "Erreur: #{e.message}"
+      render :new
     end
 
     def destroy
@@ -77,7 +85,7 @@ module Admin
     end
 
     def attendance_params
-      params.require(:attendance).permit(:person_id, :event_id, :date, :book_of_entry_id)
+      params.require(:attendance).permit(:person_id, :event_id, :date, :book_of_entry_id, :attendance_list_id, :notes)
     end
   end
 end

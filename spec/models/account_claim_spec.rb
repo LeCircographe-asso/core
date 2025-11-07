@@ -89,4 +89,93 @@ RSpec.describe AccountClaim, type: :model do
       expect(claim.status).to eq("expired")
     end
   end
+
+  describe "Statusable concern methods" do
+    let(:claim) { create(:account_claim, status: :pending) }
+
+    describe "#status_humanized" do
+      it "returns humanized status" do
+        expect(claim.status_humanized).to be_present
+      end
+
+      it "returns humanized status for confirmed" do
+        confirmed_claim = create(:account_claim, status: :confirmed)
+        expect(confirmed_claim.status_humanized).to be_present
+      end
+
+      it "returns humanized status for rejected" do
+        rejected_claim = create(:account_claim, status: :rejected)
+        expect(rejected_claim.status_humanized).to be_present
+      end
+    end
+
+    describe "#pending?" do
+      it "returns true for pending status" do
+        expect(claim.pending?).to be true
+      end
+    end
+
+    describe "#status_badge_class" do
+      it "returns badge class for pending status" do
+        expect(claim.status_badge_class).to eq("bg-yellow-100 text-yellow-800")
+      end
+
+      it "returns badge class for confirmed status" do
+        confirmed_claim = create(:account_claim, status: :confirmed)
+        expect(confirmed_claim.status_badge_class).to be_present
+      end
+    end
+  end
+
+  describe "Dateable concern methods" do
+    let(:claim) { create(:account_claim, expires_at: Date.current.end_of_week.beginning_of_day + 12.hours) }
+
+    describe "#formatted_date" do
+      it "formats expires_at date" do
+        formatted = claim.formatted_date(:expires_at)
+        expect(formatted).to match(/\d{2}\/\d{2}\/\d{4}/)
+      end
+    end
+
+    describe "#formatted_datetime" do
+      it "formats expires_at datetime" do
+        formatted = claim.formatted_datetime(:expires_at)
+        expect(formatted).to match(/\d{2}\/\d{2}\/\d{4} à \d{2}:\d{2}/)
+      end
+    end
+
+    describe "#today?" do
+      it "returns true for claim expiring today" do
+        today_claim = create(:account_claim, expires_at: Date.current.beginning_of_day + 12.hours)
+        expect(today_claim.today?(:expires_at)).to be true
+      end
+
+      it "returns false for claim expiring this week (but not today)" do
+        expect(claim.today?(:expires_at)).to be false
+      end
+    end
+
+    describe "#this_week?" do
+      it "returns true for claim expiring this week" do
+        expect(claim.this_week?(:expires_at)).to be true
+      end
+    end
+
+    describe "#this_month?" do
+      it "returns true for claim expiring this month" do
+        expect(claim.this_month?(:expires_at)).to be true
+      end
+    end
+
+    describe "#expired? (custom method - checks expires_at, not status)" do
+      it "overrides Statusable expired? method" do
+        # AccountClaim's expired? checks expires_at date, not status
+        future_claim = create(:account_claim, expires_at: 1.week.from_now, status: :pending)
+        expect(future_claim.expired?).to be false
+
+        past_claim = create(:account_claim, expires_at: 1.day.ago, status: :pending)
+        expect(past_claim.expired?).to be true
+      end
+    end
+  end
 end

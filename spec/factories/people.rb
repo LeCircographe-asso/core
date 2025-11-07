@@ -22,7 +22,7 @@ FactoryBot.define do
     end
 
     trait :with_member_number do
-      member_number { "25U#{rand(100..999)}" }
+      sequence(:member_number) { |n| format("%02dU%03d", Date.current.year % 100, n + 100) }
     end
 
     trait :with_active_membership do

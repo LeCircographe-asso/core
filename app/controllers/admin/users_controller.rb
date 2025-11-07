@@ -35,7 +35,16 @@ module Admin
       @pagy, @people = pagy(@people, items: items_per_page)
 
       # Statistiques pour le dashboard (basées sur les Person principales)
-      load_dashboard_statistics
+      statistics_service = Admin::DashboardStatisticsService.new(base_people: @people)
+      statistics = statistics_service.call
+      @total_people = statistics[:total_people]
+      @people_with_user = statistics[:people_with_user]
+      @people_without_user = statistics[:people_without_user]
+      @new_users_yesterday = statistics[:new_users_yesterday]
+      @basic_memberships = statistics[:basic_memberships]
+      @circus_memberships = statistics[:circus_memberships]
+      @active_memberships = statistics[:active_memberships]
+      @users_this_month = statistics[:users_this_month]
 
       add_breadcrumb "Liste d'adhérents", nil
     end
@@ -197,27 +206,36 @@ module Admin
         person_id = params[:id].to_s.gsub("person_", "")
         @person = PersonQuery.active.find(person_id)
 
-        if @person.update(person_params.except(:newsletter_subscribed))
-          # Gérer newsletter via NewsletterSubscriber
-          handle_newsletter_update(@person, person_params[:newsletter_subscribed])
+        # Utiliser le service PersonManagement::PersonUpdater
+        updater = PersonManagement::PersonUpdater.new(
+          person_id: @person.id,
+          attributes: person_params.except(:newsletter_subscribed),
+          newsletter_subscribed: (person_params[:newsletter_subscribed] == "1" || person_params[:newsletter_subscribed] == true || person_params[:newsletter_subscribed] == 1),
+          updated_by_id: Current.user.id
+        )
 
+        result = updater.call
+
+        if result.success?
+          updated_person = result.person || @person
           # Handle AJAX requests for inline editing
           if request.xhr?
             render json: {
               success: true,
-              member_number: @person.member_number,
-              message: "Numéro d'adhérent mis à jour avec succès."
+              member_number: updated_person.reload.member_number,
+              message: "Informations mises à jour avec succès."
             }
           else
-            redirect_to admin_user_path("person_#{@person.id}"), notice: "Informations mises à jour avec succès."
+            redirect_to admin_user_path("person_#{updated_person.id}"), notice: "Informations mises à jour avec succès."
           end
         else
           if request.xhr?
             render json: {
               success: false,
-              errors: @person.errors.full_messages
+              errors: result.errors
             }, status: :unprocessable_entity
           else
+            flash.now[:alert] = result.message
             render :edit_person, status: :unprocessable_entity
           end
         end
@@ -230,23 +248,19 @@ module Admin
         person_params_flat = user_params.except(:email_address, :system_role, :created_by_admin, :create_web_account, :person)
         newsletter_flag = person_params_flat.delete(:newsletter_subscribed)
 
-        # Mettre à jour User et Person séparément
-        user_updated = @user.update(user_only_params)
+        # Utiliser le service UserManagement::UserUpdater
+        updater = UserManagement::UserUpdater.new(
+          user_id: @user.id,
+          email_address: user_only_params[:email_address],
+          system_role: user_only_params[:system_role],
+          person_attributes: person_params_flat,
+          newsletter_subscribed: (newsletter_flag == "1" || newsletter_flag == true || newsletter_flag == 1),
+          updated_by_id: Current.user.id
+        )
 
-        # Pour les comptes avec Person, désactiver temporairement la validation d'adhésion
-        person_updated = if @user.person.present?
-          @user.person.skip_membership_validation = true
-          @user.person.update(person_params_flat)
-        else
-          true # Pas de Person à mettre à jour
-        end
+        result = updater.call
 
-        # Gérer newsletter via NewsletterSubscriber
-        if person_updated && @user.person.present?
-          handle_newsletter_update(@user.person, newsletter_flag)
-        end
-
-        if user_updated && person_updated
+        if result.success?
           format.html { redirect_to admin_user_path(@user), notice: "Utilisateur mis à jour avec succès." }
           format.json { render json: @user }
           format.turbo_stream {
@@ -257,18 +271,13 @@ module Admin
             ]
           }
         else
-          # Collecter les erreurs
-          errors = []
-          errors.concat(@user.errors.full_messages) if @user.errors.any?
-          errors.concat(@user.person.errors.full_messages) if @user.person&.errors&.any?
-
-          format.html { render :show, status: :unprocessable_entity }
-          format.json { render json: @user.errors, status: :unprocessable_entity }
+          format.html { render :show, status: :unprocessable_entity, alert: result.message }
+          format.json { render json: { errors: result.errors }, status: :unprocessable_entity }
           format.turbo_stream {
             render turbo_stream: turbo_stream.replace(
               "error_explanation",
               partial: "shared/error_messages",
-              locals: { resource: @user }
+              locals: { resource: @user, errors: result.errors }
             )
           }
         end
@@ -388,19 +397,6 @@ module Admin
       @people = @people.search_by_contact(params[:search]) if params[:search].present?
     end
 
-    def load_dashboard_statistics
-      # Utiliser les mêmes filtres que la pagination pour la cohérence
-      base_people = PersonQuery.active.main_people
-
-      @total_people = base_people.count
-      @people_with_user = base_people.joins(:user).count
-      @people_without_user = base_people.left_joins(:user).where(users: { id: nil }).count
-      @new_users_yesterday = User.where(created_at: 1.day.ago.beginning_of_day..1.day.ago.end_of_day).count
-      @basic_memberships = Membership.joins(:membership_type).where(membership_types: { name: "Basic" }).count
-      @circus_memberships = Membership.joins(:membership_type).where(membership_types: { name: "Cirque" }).count
-      @active_memberships = Membership.active.count
-      @users_this_month = User.where(created_at: Date.current.beginning_of_month..Date.current.end_of_month).count
-    end
 
     # Only allow a list of trusted parameters through.
     def user_params
@@ -486,7 +482,7 @@ module Admin
         reduced_rate_reason: person_params[:reduced_rate_reason],
         reduced_rate_proof: person_params[:reduced_rate_proof],
         create_web_account: params.dig(:user, :create_web_account),
-        email_address: params.dig(:user, :email_address),
+        email_address: params.dig(:user, :email_address) || person_params[:email],
         system_role: params.dig(:user, :system_role),
         create_membership: params.dig(:user, :create_membership),
         membership_type_id: params.dig(:user, :membership_type_id),
@@ -518,25 +514,6 @@ module Admin
         :reduced_rate_proof
       )
     end
-
-    def handle_newsletter_update(person, newsletter_flag)
-      return unless person.email.present?
-
-      subscriber = NewsletterSubscriber.find_or_initialize_by(email: person.email)
-
-      if newsletter_flag == "1" || newsletter_flag == true || newsletter_flag == 1
-        subscriber.update!(
-          person: person,
-          source: "admin",
-          subscribed: true
-        )
-      else
-        subscriber.update!(
-          subscribed: false
-        )
-      end
-    end
-
     def available_roles_for_user(user)
       return [] if user.nil?
 

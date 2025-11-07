@@ -33,8 +33,19 @@ module Admin
 
       # Filter by user if user_id is provided (compatibility)
       if params[:user_id].present?
-        user = User.find_by(id: params[:user_id])
-        query = query.where(person_id: user.person.id) if user&.person
+        user_ids = Array(params[:user_id]).reject(&:blank?)
+
+        if user_ids.any?
+          person_ids = User.where(id: user_ids).where.not(person_id: nil).pluck(:person_id)
+
+          query = if person_ids.any?
+                    query.where(person_id: person_ids)
+                  else
+                    query.none
+                  end
+        else
+          query = query.none
+        end
       end
 
       # Apply status filter

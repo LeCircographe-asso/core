@@ -1,9 +1,5 @@
-require "ostruct"
-
 module PaymentManagement
-  class PaymentCreator
-    include ActiveModel::Model
-    include ActiveModel::Attributes
+  class PaymentCreator < BaseService
 
     attribute :person_id, :integer
     attribute :amount_cents, :integer
@@ -19,10 +15,10 @@ module PaymentManagement
     validates :payment_method, presence: true, inclusion: { in: %w[cash card cheque transfer offered] }
     validates :recorded_by_id, presence: true
     validates :item_type, presence: true
-    validates :item_id, presence: true
+    # item_id optionnel pour donations (utilise payment.id)
 
     def call
-      return failure("Invalid payment data") unless valid?
+      return failure("Invalid payment data: #{errors.full_messages.join(', ')}") unless valid?
 
       begin
         ActiveRecord::Base.transaction do
@@ -34,15 +30,16 @@ module PaymentManagement
           payment = person.payments.create!(
             total_cents: amount_cents,
             payment_method: payment_method,
+            status: :success,
             recorded_by: recorded_by,
             notes: notes
           )
 
           # Create payment line
           if item_type == "Donation"
-            # Pour les donations, lier au paiement lui-même
+            # Pour les donations, lier au paiement lui-même (comme Person#create_donation!)
             payment.payment_lines.create!(
-              item_type: "Payment",
+              item_type: "Payment", # PaymentLine utilise Payment comme item_type pour donations
               item_id: payment.id,
               amount_cents: amount_cents,
               description: description || "Donation"
@@ -57,7 +54,7 @@ module PaymentManagement
             )
           end
 
-          success(payment: payment)
+          success(payment: payment, payment_lines: payment.payment_lines, message: "Payment created successfully")
         end
       rescue ActiveRecord::RecordNotFound => e
         failure("Person or User not found: #{e.message}")
@@ -70,12 +67,6 @@ module PaymentManagement
 
     private
 
-    def success(data = {})
-      OpenStruct.new(success?: true, **data)
-    end
-
-    def failure(message)
-      OpenStruct.new(success?: false, message: message)
-    end
+    # success et failure hérités de BaseService
   end
 end

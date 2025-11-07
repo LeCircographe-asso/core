@@ -1,9 +1,5 @@
-require "ostruct"
-
 module PaymentManagement
-  class PaymentRestorer
-    include ActiveModel::Model
-    include ActiveModel::Attributes
+  class PaymentRestorer < BaseService
 
     attribute :payment_id, :integer
     attribute :restored_by_id, :integer
@@ -46,7 +42,7 @@ module PaymentManagement
               reason: reason
             )
 
-            success(payment)
+            success(payment: payment, message: "Payment restored successfully")
           else
             failure("Failed to restore payment: #{payment.errors.full_messages.join(', ')}")
           end
@@ -78,21 +74,6 @@ module PaymentManagement
       # For now, we'll just log it
       Rails.logger.info "Cache fragment expired: #{pattern}"
     end
-
-    def success(payment)
-      OpenStruct.new(
-        success?: true,
-        payment: payment,
-        message: "Payment restored successfully"
-      )
-    end
-
-    def failure(message)
-      OpenStruct.new(
-        success?: false,
-        errors: [ message ],
-        message: message
-      )
-    end
+    # success et failure hérités de BaseService
   end
 end

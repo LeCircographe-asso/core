@@ -5,15 +5,26 @@ module Admin
       @person = @user.person
 
       begin
-        # Créer la donation directement via le modèle Person
-        payment = @person.create_donation!(
-          amount_cents: payment_params[:payment_amount].to_f * 100,
-          payment_method: :cash,
-          recorded_by: Current.user,
+        # Utiliser le service PaymentManagement::PaymentCreator pour cohérence
+        creator = PaymentManagement::PaymentCreator.new(
+          person_id: @person.id,
+          amount_cents: (payment_params[:payment_amount].to_f * 100).to_i,
+          payment_method: "cash",
+          recorded_by_id: Current.user.id,
+          item_type: "Donation",
+          item_id: @person.id, # Pour donations, item_id = person_id
+          description: "Donation",
           notes: "Donation"
         )
 
-        redirect_to admin_payment_path(payment), notice: "Donation prise en compte"
+        result = creator.call
+
+        if result.success?
+          redirect_to admin_payment_path(result.payment), notice: "Donation prise en compte"
+        else
+          flash[:alert] = "Erreur lors de la création de la donation: #{result.message}"
+          render :new
+        end
       rescue => e
         flash[:alert] = "Erreur lors de la création de la donation: #{e.message}"
         render :new

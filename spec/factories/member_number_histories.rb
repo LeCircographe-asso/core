@@ -1,7 +1,7 @@
 FactoryBot.define do
   factory :member_number_history do
     association :person
-    member_number { "25U001" }
+    sequence(:member_number) { |n| format("%02dU%03d", Date.current.year % 100, n) }
     membership_type { "Basique" }
     year { Date.current.year }
     notes { "Numéro d'adhérent initial" }
@@ -20,12 +20,12 @@ FactoryBot.define do
     end
 
     trait :circus do
-      member_number { "25C001" }
+      sequence(:member_number) { |n| format("%02dC%03d", Date.current.year % 100, n) }
       membership_type { "Cirque" }
     end
 
     trait :basic do
-      member_number { "25U001" }
+      sequence(:member_number) { |n| format("%02dU%03d", Date.current.year % 100, n + 500) }
       membership_type { "Basique" }
     end
   end

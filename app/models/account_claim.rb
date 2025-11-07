@@ -1,4 +1,7 @@
 class AccountClaim < ApplicationRecord
+  include Statusable
+  include Dateable
+  
   belongs_to :person
   belongs_to :user, optional: true
 
@@ -11,6 +14,7 @@ class AccountClaim < ApplicationRecord
 
   scope :active, -> { where(status: :pending).where("expires_at > ?", Time.current) }
 
+  # Override Dateable's expired? method to check expires_at instead of status
   def expired?
     Time.current > expires_at
   end

@@ -1,13 +1,23 @@
 require 'rails_helper'
 
 RSpec.describe BookOfEntry, type: :model do
-    let(:circus_membership_type) { create(:membership_type, category: :circus) }
+  let(:circus_membership_type) { create(:membership_type, category: :circus) }
   let(:basic_membership_type) { create(:membership_type, :basic) }
   let(:person) { create(:person, :with_active_membership) }
   let(:pack10_plan) { create(:subscription_plan, :pack10, membership_type: circus_membership_type) }
   let(:day_plan) { create(:subscription_plan, :day, membership_type: circus_membership_type) }
   let(:trimester_plan) { create(:subscription_plan, :trimester, membership_type: circus_membership_type) }
   let(:annual_plan) { create(:subscription_plan, :annual, membership_type: circus_membership_type) }
+
+  describe "business defaults" do
+    it "instantiates pack10 books by default" do
+      book = create(:book_of_entry)
+
+      expect(book.subscription_plan.duration).to eq("pack10")
+      expect(book.sessions_remaining).to eq(book.subscription_plan.sessions_count)
+      expect(book.expires_at).to be_nil
+    end
+  end
 
   describe "validations" do
     it "validates presence of status" do
@@ -52,12 +62,22 @@ RSpec.describe BookOfEntry, type: :model do
 
       context "for trimester/annual plans (unlimited)" do
         it "does not require sessions_remaining" do
-          book_of_entry = build(:book_of_entry, subscription_plan: trimester_plan, sessions_remaining: nil)
+          book_of_entry = build(
+            :book_of_entry,
+            subscription_plan: trimester_plan,
+            sessions_remaining: nil,
+            expires_at: 3.months.from_now
+          )
           expect(book_of_entry).to be_valid
         end
 
         it "prevents sessions_remaining from being set" do
-          book_of_entry = build(:book_of_entry, subscription_plan: annual_plan, sessions_remaining: 10)
+          book_of_entry = build(
+            :book_of_entry,
+            subscription_plan: annual_plan,
+            sessions_remaining: 10,
+            expires_at: 1.year.from_now
+          )
           expect(book_of_entry).not_to be_valid
           expect(book_of_entry.errors[:sessions_remaining]).to include("doit être vide pour les abonnements illimités")
         end
@@ -217,7 +237,7 @@ RSpec.describe BookOfEntry, type: :model do
     end
 
     context "with non-pack10 plan" do
-      let(:book_of_entry) { create(:book_of_entry, person: person, subscription_plan: day_plan) }
+      let(:book_of_entry) { create(:book_of_entry, person: person, subscription_plan: day_plan, expires_at: 1.day.from_now) }
 
       it "returns false" do
         expect(book_of_entry.is_pack10?).to be false
@@ -253,6 +273,44 @@ RSpec.describe BookOfEntry, type: :model do
 
       it "returns false" do
         expect(book_of_entry.use_session!).to be false
+      end
+    end
+
+    context "with day plan" do
+      let(:circus_person) { create(:person, :with_circus_membership) }
+      let(:day_plan) { create(:subscription_plan, :day, membership_type: circus_membership_type) }
+      let(:day_book) do
+        create(:book_of_entry, person: circus_person, subscription_plan: day_plan, sessions_remaining: 1, expires_at: Date.current.end_of_day)
+      end
+
+      it "consumes the pass and marks it consumed" do
+        expect { day_book.use_session! }.to change { day_book.reload.status }.from('active').to('consumed')
+        expect(day_book.sessions_remaining).to eq(0)
+      end
+    end
+
+    context "with trimester plan (unlimited)" do
+      let(:circus_person) { create(:person, :with_circus_membership) }
+      let(:trimester_plan) { create(:subscription_plan, :trimester, membership_type: circus_membership_type) }
+      let(:trimester_book) do
+        create(:book_of_entry, person: circus_person, subscription_plan: trimester_plan, sessions_remaining: nil, expires_at: 3.months.from_now)
+      end
+
+      it "does not alter sessions or status" do
+        expect { trimester_book.use_session! }.not_to change { [trimester_book.reload.sessions_remaining, trimester_book.status] }
+      end
+    end
+
+    context "with annual plan (unlimited)" do
+      let(:circus_person) { create(:person, :with_circus_membership) }
+      let(:annual_plan) { create(:subscription_plan, :annual, membership_type: circus_membership_type) }
+      let(:annual_book) do
+        create(:book_of_entry, person: circus_person, subscription_plan: annual_plan, sessions_remaining: nil, expires_at: 1.year.from_now)
+      end
+
+      it "keeps the book active" do
+        expect { annual_book.use_session! }.not_to change { annual_book.reload.status }
+        expect(annual_book.sessions_remaining).to be_nil
       end
     end
   end
@@ -347,17 +405,130 @@ RSpec.describe BookOfEntry, type: :model do
         expect(BookOfEntry.with_expiration).to include(expired_book)
       end
     end
+  end
+
+  describe "Statusable concern methods" do
+    let(:book) { create(:book_of_entry, status: :active) }
+
+    describe "#status_humanized" do
+      it "returns humanized status" do
+        expect(book.status_humanized).to eq("Actif")
+      end
+
+      it "returns humanized status for expired" do
+        expired_book = create(:book_of_entry, status: :expired)
+        expect(expired_book.status_humanized).to eq("Expiré")
+      end
+
+      it "returns humanized status for consumed" do
+        consumed_book = create(:book_of_entry, status: :consumed)
+        expect(consumed_book.status_humanized).to eq("Consommé")
+      end
+    end
+
+    describe "#active?" do
+      it "returns true for active status" do
+        expect(book.active?).to be true
+      end
+
+      it "returns false for inactive status" do
+        inactive_book = create(:book_of_entry, status: :inactive)
+        expect(inactive_book.active?).to be false
+      end
+    end
+
+    describe "#inactive?" do
+      it "returns true for inactive status" do
+        inactive_book = create(:book_of_entry, status: :inactive)
+        expect(inactive_book.inactive?).to be true
+      end
+    end
+
+    describe "#status_badge_class" do
+      it "returns badge class for active status" do
+        expect(book.status_badge_class).to eq("bg-green-100 text-green-800")
+      end
+
+      it "returns badge class for expired status" do
+        expired_book = create(:book_of_entry, status: :expired)
+        expect(expired_book.status_badge_class).to eq("bg-red-100 text-red-800")
+      end
+    end
+  end
+
+  describe "Dateable concern methods" do
+    let(:book) { create(:book_of_entry, purchased_at: Date.current.beginning_of_day + 12.hours, expires_at: Date.current + 1.month) }
+
+    describe "#formatted_date" do
+      it "formats purchased_at date" do
+        formatted = book.formatted_date(:purchased_at)
+        expect(formatted).to match(/\d{2}\/\d{2}\/\d{4}/)
+      end
+
+      it "formats expires_at date" do
+        formatted = book.formatted_date(:expires_at)
+        expect(formatted).to match(/\d{2}\/\d{2}\/\d{4}/)
+      end
+    end
+
+    describe "#formatted_datetime" do
+      it "formats purchased_at datetime" do
+        formatted = book.formatted_datetime(:purchased_at)
+        expect(formatted).to match(/\d{2}\/\d{2}\/\d{4} à \d{2}:\d{2}/)
+      end
+    end
+
+    describe "#today?" do
+      it "returns true for book purchased today" do
+        expect(book.today?(:purchased_at)).to be true
+      end
+
+      it "returns false for book purchased yesterday" do
+        old_book = create(:book_of_entry, purchased_at: Date.yesterday.beginning_of_day + 12.hours)
+        expect(old_book.today?(:purchased_at)).to be false
+      end
+    end
+
+    describe "#this_week?" do
+      it "returns true for book purchased this week" do
+        expect(book.this_week?(:purchased_at)).to be true
+      end
+    end
+
+    describe "#this_month?" do
+      it "returns true for book purchased this month" do
+        expect(book.this_month?(:purchased_at)).to be true
+      end
+    end
+
+    describe "#expired? (custom method - checks date, not status)" do
+      it "overrides Statusable expired? method" do
+        # BookOfEntry's expired? checks expires_at date, not status
+        future_book = create(:book_of_entry, subscription_plan: day_plan, expires_at: Date.current + 1.day, status: :active)
+        expect(future_book.expired?).to be false
+
+        past_book = create(:book_of_entry, subscription_plan: day_plan, expires_at: Date.current - 1.day, status: :active)
+        expect(past_book.expired?).to be true
+      end
+    end
 
     describe ".without_expiration" do
+      let!(:active_book_no_exp) { create(:book_of_entry, :active, person: person, subscription_plan: pack10_plan, sessions_remaining: 5, expires_at: nil) }
+      let!(:consumed_book_no_exp) { create(:book_of_entry, :consumed, person: person, subscription_plan: pack10_plan, sessions_remaining: 0, expires_at: nil) }
+      
       it "returns books without expiration date" do
-        expect(BookOfEntry.without_expiration).to include(active_book, consumed_book)
+        expect(BookOfEntry.without_expiration).to include(active_book_no_exp, consumed_book_no_exp)
       end
     end
 
     describe ".usable" do
+      let!(:usable_book) { create(:book_of_entry, :active, person: person, subscription_plan: pack10_plan, sessions_remaining: 5, expires_at: nil) }
+      let!(:consumed_book) { create(:book_of_entry, :consumed, person: person, subscription_plan: pack10_plan, sessions_remaining: 0, expires_at: nil) }
+      let!(:expired_book) { create(:book_of_entry, :expired, person: person, subscription_plan: day_plan, expires_at: 1.week.ago) }
+      
       it "returns books that can be used" do
         usable = BookOfEntry.usable
-        expect(usable).to include(active_book)
+        expect(usable).to include(usable_book)
         expect(usable).not_to include(consumed_book, expired_book)
       end
 

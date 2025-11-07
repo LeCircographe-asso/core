@@ -369,4 +369,102 @@ RSpec.describe Payment, type: :model do
       expect(Rails.cache.read("total_donations")).to be_nil
     end
   end
+
+  describe "date scopes (using created_at via Dateable)" do
+    let(:person1) { create(:person) }
+    let(:person2) { create(:person) }
+    let(:person3) { create(:person) }
+    let(:user1) { create(:user) }
+    let(:user2) { create(:user) }
+    let(:user3) { create(:user) }
+    
+    let!(:today_payment) { create(:payment, person: person1, recorded_by: user1, created_at: Date.current.beginning_of_day + 12.hours) }
+    let!(:this_week_payment) do
+      week_date = if Date.current.beginning_of_week != Date.current
+        Date.current.beginning_of_week.beginning_of_day + 12.hours
+      else
+        Date.current.end_of_week.beginning_of_day + 12.hours
+      end
+      create(:payment, person: person2, recorded_by: user2, created_at: week_date)
+    end
+    let!(:last_week_payment) do
+      last_week_date = Date.current - 1.week
+      # If last week is in a different month, use a date from earlier this month (but not this week)
+      payment_date = if last_week_date.month != Date.current.month
+        [Date.current.beginning_of_month, Date.current.beginning_of_week - 1.day].max.beginning_of_day + 12.hours
+      else
+        last_week_date.beginning_of_day + 12.hours
+      end
+      create(:payment, person: person3, recorded_by: user3, created_at: payment_date)
+    end
+
+    describe ".today" do
+      it "returns only payments created today" do
+        expect(Payment.today).to include(today_payment)
+        expect(Payment.today).not_to include(this_week_payment, last_week_payment)
+      end
+    end
+
+    describe ".this_week" do
+      it "returns payments created this week" do
+        this_week = Payment.this_week
+        expect(this_week).to include(today_payment, this_week_payment)
+        expect(this_week).not_to include(last_week_payment)
+      end
+    end
+
+    describe ".this_month" do
+      it "returns payments created this month" do
+        this_month = Payment.this_month
+        expect(this_month).to include(today_payment, this_week_payment)
+        # last_week_payment should be included if it's in the same month
+        if last_week_payment.created_at.to_date.month == Date.current.month
+          expect(this_month).to include(last_week_payment)
+        else
+          expect(this_month).not_to include(last_week_payment)
+        end
+      end
+    end
+  end
+
+  describe "Dateable instance methods" do
+    let(:payment) { create(:payment, created_at: Date.current.beginning_of_day + 14.hours) }
+
+    describe "#today?" do
+      it "returns true for payment created today" do
+        expect(payment.today?(:created_at)).to be true
+      end
+
+      it "returns false for payment created yesterday" do
+        old_payment = create(:payment, created_at: Date.yesterday.beginning_of_day + 14.hours)
+        expect(old_payment.today?(:created_at)).to be false
+      end
+    end
+
+    describe "#this_week?" do
+      it "returns true for payment created this week" do
+        expect(payment.this_week?(:created_at)).to be true
+      end
+    end
+
+    describe "#this_month?" do
+      it "returns true for payment created this month" do
+        expect(payment.this_month?(:created_at)).to be true
+      end
+    end
+
+    describe "#formatted_date" do
+      it "formats created_at date" do
+        formatted = payment.formatted_date(:created_at)
+        expect(formatted).to match(/\d{2}\/\d{2}\/\d{4}/)
+      end
+    end
+
+    describe "#formatted_datetime" do
+      it "formats created_at datetime" do
+        formatted = payment.formatted_datetime(:created_at)
+        expect(formatted).to match(/\d{2}\/\d{2}\/\d{4} à \d{2}:\d{2}/)
+      end
+    end
+  end
 end
