@@ -28,7 +28,7 @@ class SettingsController < ApplicationController
       redirect_to user_path(@user), status: :see_other
     else
       flash.now[:alert] = result.message
-      render :show, status: :unprocessable_entity
+      render :show, status: :unprocessable_content
     end
   end
 

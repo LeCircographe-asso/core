@@ -18,7 +18,7 @@ class SessionsController < ApplicationController
       else
         format.turbo_stream do
           flash.now[:alert] = "Email ou mot de passe invalide"
-          render turbo_stream: turbo_stream.replace("flash", render_to_string(partial: "shared/flash")), status: :unprocessable_entity
+          render turbo_stream: turbo_stream.replace("flash", render_to_string(partial: "shared/flash")), status: :unprocessable_content
         end
         format.html { redirect_to new_session_path, alert: "Email ou mot de passe invalide" }
       end

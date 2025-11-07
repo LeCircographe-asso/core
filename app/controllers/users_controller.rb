@@ -34,7 +34,7 @@ class UsersController < ApplicationController
       redirect_to @user, notice: "Votre profil a été mis à jour avec succès."
     else
       flash.now[:alert] = result.message
-      render :edit, status: :unprocessable_entity
+      render :edit, status: :unprocessable_content
     end
   end
 

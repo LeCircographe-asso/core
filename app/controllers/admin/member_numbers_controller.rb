@@ -19,7 +19,7 @@ class Admin::MemberNumbersController < Admin::BaseController
       render json: {
         success: false,
         error: result.message
-      }, status: :unprocessable_entity
+      }, status: :unprocessable_content
     end
   end
 
@@ -46,7 +46,7 @@ class Admin::MemberNumbersController < Admin::BaseController
       render json: {
         success: false,
         error: result.message
-      }, status: :unprocessable_entity
+      }, status: :unprocessable_content
     end
   end
 

@@ -34,7 +34,7 @@ module Admin
         @blog = Blog.new(blog_params)
         @tags = Tag.all
         flash.now[:alert] = result.message
-        render :new, status: :unprocessable_entity
+        render :new, status: :unprocessable_content
       end
     end
 
@@ -55,8 +55,8 @@ module Admin
           format.json { render :show, status: :ok, location: @blog }
         else
           @tags = Tag.all
-          format.html { render :edit, status: :unprocessable_entity, alert: result.message }
-          format.json { render json: { errors: result.errors }, status: :unprocessable_entity }
+          format.html { render :edit, status: :unprocessable_content, alert: result.message }
+          format.json { render json: { errors: result.errors }, status: :unprocessable_content }
         end
       end
     end
@@ -75,7 +75,7 @@ module Admin
           format.json { head :no_content }
         else
           format.html { redirect_to admin_blogs_path, alert: result.message }
-          format.json { render json: { errors: result.errors }, status: :unprocessable_entity }
+          format.json { render json: { errors: result.errors }, status: :unprocessable_content }
         end
       end
     end

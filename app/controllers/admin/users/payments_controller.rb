@@ -67,13 +67,13 @@ module Admin
           @membership_types = MembershipType.all
           @subscription_plans = SubscriptionPlan.all
           flash.now[:alert] = "Erreur lors de la création du paiement: #{result.message}"
-          render :new, status: :unprocessable_entity
+          render :new, status: :unprocessable_content
         end
       rescue => e
         @membership_types = MembershipType.all
         @subscription_plans = SubscriptionPlan.all
         flash.now[:alert] = "Erreur lors de la création du paiement: #{e.message}"
-        render :new, status: :unprocessable_entity
+        render :new, status: :unprocessable_content
       end
     end
 

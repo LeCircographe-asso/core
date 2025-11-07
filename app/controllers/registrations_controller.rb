@@ -46,10 +46,10 @@ class RegistrationsController < ApplicationController
         end
 
         format.turbo_stream do
-          render turbo_stream: turbo_stream.replace("flash", render_to_string(partial: "shared/flash")), status: :unprocessable_entity
+          render turbo_stream: turbo_stream.replace("flash", render_to_string(partial: "shared/flash")), status: :unprocessable_content
         end
         format.html do
-          render :new, status: :unprocessable_entity
+          render :new, status: :unprocessable_content
         end
       end
     end
