@@ -75,4 +75,3 @@ RSpec.describe MembershipManagement::MembershipDeactivator do
     end
   end
 end
-

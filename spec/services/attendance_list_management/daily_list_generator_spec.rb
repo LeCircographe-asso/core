@@ -64,4 +64,3 @@ RSpec.describe AttendanceListManagement::DailyListGenerator do
     end
   end
 end
-

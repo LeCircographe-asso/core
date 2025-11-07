@@ -1,6 +1,5 @@
 module PaymentManagement
   class PaymentCreatorWithLines < BaseService
-
     attribute :person_id, :integer
     attribute :total_cents, :integer
     attribute :payment_method, :string, default: "cash"
@@ -79,4 +78,3 @@ module PaymentManagement
     # success et failure hérités de BaseService
   end
 end
-

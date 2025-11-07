@@ -118,5 +118,3 @@ RSpec.describe PaymentManagement::PaymentRestorer do
     end
   end
 end
-
-

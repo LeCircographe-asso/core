@@ -41,4 +41,3 @@ RSpec.describe AttendanceManagement::DailyFreeTrainingPresenter do
     end
   end
 end
-

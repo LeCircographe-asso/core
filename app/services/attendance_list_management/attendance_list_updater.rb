@@ -1,6 +1,5 @@
 module AttendanceListManagement
   class AttendanceListUpdater < BaseService
-
     attribute :attendance_list_id, :integer
     attribute :name, :string
     attribute :status, :string
@@ -51,5 +50,3 @@ module AttendanceListManagement
     # success et failure hérités de BaseService
   end
 end
-
-

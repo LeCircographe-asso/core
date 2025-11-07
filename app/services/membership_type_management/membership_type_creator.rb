@@ -1,6 +1,5 @@
 module MembershipTypeManagement
   class MembershipTypeCreator < BaseService
-
     attribute :name, :string
     attribute :category, :string
     attribute :price_cents, :integer
@@ -60,5 +59,3 @@ module MembershipTypeManagement
     # success et failure hérités de BaseService
   end
 end
-
-

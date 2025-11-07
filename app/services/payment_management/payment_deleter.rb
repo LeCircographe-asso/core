@@ -1,6 +1,5 @@
 module PaymentManagement
   class PaymentDeleter < BaseService
-
     attribute :payment_id, :integer
     attribute :deleted_by_id, :integer
     attribute :reason, :string

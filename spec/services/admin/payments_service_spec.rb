@@ -17,23 +17,23 @@ RSpec.describe Admin::PaymentsService do
     it 'returns all payments with aggregated amounts by default' do
       result = described_class.new.call
 
-      expect(result[:payments]).to match_array([payment_success, payment_pending, donation_payment])
+      expect(result[:payments]).to match_array([ payment_success, payment_pending, donation_payment ])
       expect(result[:total_amount]).to eq(7_500) # only success payments counted
       expect(result[:total_donation]).to eq(5_000)
-      expect(result[:pagy].last).to match_array([payment_success, payment_pending, donation_payment])
+      expect(result[:pagy].last).to match_array([ payment_success, payment_pending, donation_payment ])
     end
 
     it 'filters payments by person_id' do
       result = described_class.new(person_id: person_two.id).call
 
-      expect(result[:payments]).to match_array([payment_pending])
+      expect(result[:payments]).to match_array([ payment_pending ])
     end
 
     it 'filters payments by user_id (converted to person ids)' do
       user_for_person = create(:user, :volunteer, person: person_two)
       result = described_class.new(user_id: user_for_person.id).call
 
-      expect(result[:payments]).to match_array([payment_pending])
+      expect(result[:payments]).to match_array([ payment_pending ])
     end
 
     it 'ignores user filter when user has no linked person' do
@@ -46,7 +46,7 @@ RSpec.describe Admin::PaymentsService do
     it 'filters by status' do
       result = described_class.new(status: 'pending').call
 
-      expect(result[:payments]).to match_array([payment_pending])
+      expect(result[:payments]).to match_array([ payment_pending ])
     end
 
     it 'filters by date range' do
@@ -57,16 +57,16 @@ RSpec.describe Admin::PaymentsService do
 
       result = described_class.new(params).call
 
-      expect(result[:payments]).to match_array([payment_success])
+      expect(result[:payments]).to match_array([ payment_success ])
     end
 
     it 'filters by search term across person info and amount' do
       result = described_class.new(search: 'alice').call
 
-      expect(result[:payments]).to match_array([payment_success, donation_payment])
+      expect(result[:payments]).to match_array([ payment_success, donation_payment ])
 
       result_amount = described_class.new(search: '1000').call
-      expect(result_amount[:payments]).to match_array([payment_pending])
+      expect(result_amount[:payments]).to match_array([ payment_pending ])
     end
 
     it 'supports pagination order parameters' do
@@ -77,4 +77,3 @@ RSpec.describe Admin::PaymentsService do
     end
   end
 end
-

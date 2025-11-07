@@ -22,9 +22,8 @@ class BaseService
   def failure(message, errors: nil)
     OpenStruct.new(
       success?: false,
-      errors: errors || [message],
+      errors: errors || [ message ],
       message: message
     )
   end
 end
-

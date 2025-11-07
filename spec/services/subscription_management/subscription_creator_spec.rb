@@ -180,4 +180,3 @@ RSpec.describe SubscriptionManagement::SubscriptionCreator do
     end
   end
 end
-

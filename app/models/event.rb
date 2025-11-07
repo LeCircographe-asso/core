@@ -23,7 +23,7 @@ class Event < ApplicationRecord
   scope :workshops, -> { where(category: :workshop) }
   scope :volunteering, -> { where(category: :volunteering) }
   scope :others, -> { where(category: :other) }
-  
+
   # Date scopes (using explicit :date column - datetime type)
   scope :upcoming, -> { where("date >= ?", Date.current) }
   scope :past, -> { where("date < ?", Date.current) }

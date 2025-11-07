@@ -22,7 +22,7 @@ RSpec.describe User, type: :model do
       last_week_date = Date.current - 1.week
       # If last week is in a different month, use a date from earlier this month (but not this week)
       user_date = if last_week_date.month != Date.current.month
-        [Date.current.beginning_of_month, Date.current.beginning_of_week - 1.day].max.beginning_of_day + 12.hours
+        [ Date.current.beginning_of_month, Date.current.beginning_of_week - 1.day ].max.beginning_of_day + 12.hours
       else
         last_week_date.beginning_of_day + 12.hours
       end

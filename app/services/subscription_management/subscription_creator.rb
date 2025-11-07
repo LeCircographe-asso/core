@@ -1,6 +1,5 @@
 module SubscriptionManagement
   class SubscriptionCreator < BaseService
-
     attribute :person
     attribute :subscription_plan_id, :integer
     attribute :payment_method, :string, default: "cash"
@@ -56,5 +55,3 @@ module SubscriptionManagement
     # success et failure hérités de BaseService
   end
 end
-
-

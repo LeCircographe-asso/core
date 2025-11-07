@@ -1,6 +1,5 @@
 module PaymentManagement
   class PaymentRestorer < BaseService
-
     attribute :payment_id, :integer
     attribute :restored_by_id, :integer
     attribute :reason, :string

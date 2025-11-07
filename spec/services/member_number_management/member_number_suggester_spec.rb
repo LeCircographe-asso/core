@@ -27,4 +27,3 @@ RSpec.describe MemberNumberManagement::MemberNumberSuggester do
     end
   end
 end
-

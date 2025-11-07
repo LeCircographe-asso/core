@@ -1,6 +1,5 @@
 module UserManagement
   class UserCreator < BaseService
-
     attribute :email, :string
     attribute :password, :string
     attribute :password_confirmation, :string

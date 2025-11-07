@@ -1,7 +1,7 @@
 class AttendanceList < ApplicationRecord
   include Statusable
   include Dateable
-  
+
   has_many :attendances, dependent: :destroy
   has_many :users, through: :attendances
 

@@ -1,7 +1,7 @@
 class NewsletterSubscriber < ApplicationRecord
   include Dateable
   include EmailNormalizable
-  
+
   belongs_to :person, optional: true
 
   validates :email, presence: true, uniqueness: true, format: { with: URI::MailTo::EMAIL_REGEXP }

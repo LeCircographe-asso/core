@@ -102,4 +102,3 @@ RSpec.describe SubscriptionManagement::SubscriptionUpgrader do
     end
   end
 end
-

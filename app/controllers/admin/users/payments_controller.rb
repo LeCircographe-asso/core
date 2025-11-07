@@ -85,11 +85,11 @@ module Admin
       # PATCH /admin/users/person_1/payments/1
       def update
         @payment = @person.payments.find(params[:id])
-        
+
         # Utiliser le service PaymentManagement::PaymentUpdater pour cohérence
         total_cents = payment_params[:total_cents]
         total_cents = (total_cents.to_f * 100).to_i if total_cents.present?
-        
+
         updater = PaymentManagement::PaymentUpdater.new(
           payment_id: @payment.id,
           total_cents: total_cents || @payment.total_cents,
@@ -98,9 +98,9 @@ module Admin
           notes: payment_params[:notes] || @payment.notes,
           updated_by_id: Current.user.id
         )
-        
+
         result = updater.call
-        
+
         if result.success?
           redirect_to admin_user_path("person_#{@person.id}"), notice: "Paiement mis à jour avec succès"
         else
@@ -111,16 +111,16 @@ module Admin
       # DELETE /admin/users/person_1/payments/1
       def destroy
         @payment = @person.payments.find(params[:id])
-        
+
         # Utiliser le service PaymentManagement::PaymentDeleter pour cohérence
         deleter = PaymentManagement::PaymentDeleter.new(
           payment_id: @payment.id,
           deleted_by_id: Current.user.id,
           reason: "Suppression via interface admin"
         )
-        
+
         result = deleter.call
-        
+
         if result.success?
           redirect_to admin_user_path("person_#{@person.id}"), notice: "Paiement supprimé avec succès"
         else
@@ -140,9 +140,9 @@ module Admin
             status: "success",
             updated_by_id: Current.user.id
           )
-          
+
           result = updater.call
-          
+
           if result.success?
             redirect_to admin_user_path("person_#{@person.id}"), notice: "Paiement traité avec succès"
           else

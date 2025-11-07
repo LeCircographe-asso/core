@@ -11,9 +11,9 @@ RSpec.describe AccountClaimManagement::AccountClaimCreator do
           email: "test@example.com",
           user_id: user.id
         )
-        
+
         result = creator.call
-        
+
         expect(result.success?).to be true
         expect(result.claim).to be_present
         expect(result.claim.person).to eq(person)
@@ -26,9 +26,9 @@ RSpec.describe AccountClaimManagement::AccountClaimCreator do
           email: "test@example.com",
           user_id: user.id
         )
-        
+
         result = creator.call
-        
+
         expect(result.claim.confirmation_token).to be_present
       end
 
@@ -37,9 +37,9 @@ RSpec.describe AccountClaimManagement::AccountClaimCreator do
           email: "test@example.com",
           user_id: user.id
         )
-        
+
         result = creator.call
-        
+
         expect(result.claim.expires_at).to be_within(1.minute).of(24.hours.from_now)
       end
     end
@@ -47,7 +47,7 @@ RSpec.describe AccountClaimManagement::AccountClaimCreator do
     context "with invalid attributes" do
       it "returns failure when email is missing" do
         creator = described_class.new(user_id: user.id)
-        
+
         result = creator.call
         expect(result.success?).to be false
         expect(result.message).to include("Invalid data")
@@ -55,7 +55,7 @@ RSpec.describe AccountClaimManagement::AccountClaimCreator do
 
       it "returns failure when user_id is missing" do
         creator = described_class.new(email: "test@example.com")
-        
+
         result = creator.call
         expect(result.success?).to be false
       end
@@ -65,7 +65,7 @@ RSpec.describe AccountClaimManagement::AccountClaimCreator do
           email: "invalid-email",
           user_id: user.id
         )
-        
+
         result = creator.call
         expect(result.success?).to be false
       end
@@ -75,12 +75,12 @@ RSpec.describe AccountClaimManagement::AccountClaimCreator do
       it "returns failure when person has user" do
         person_with_user = create(:person, email: "claimed@example.com")
         create(:user, person: person_with_user)
-        
+
         creator = described_class.new(
           email: "claimed@example.com",
           user_id: user.id
         )
-        
+
         result = creator.call
         expect(result.success?).to be false
         expect(result.message).to include("déjà lié")
@@ -91,7 +91,7 @@ RSpec.describe AccountClaimManagement::AccountClaimCreator do
           email: "notfound@example.com",
           user_id: user.id
         )
-        
+
         result = creator.call
         expect(result.success?).to be false
         expect(result.message).to include("Aucun compte trouvé")
@@ -111,4 +111,3 @@ RSpec.describe AccountClaimManagement::AccountClaimCreator do
     end
   end
 end
-

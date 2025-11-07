@@ -1,6 +1,5 @@
 module MembershipManagement
   class MembershipUpgrader < BaseService
-
     attribute :person
     attribute :new_membership_type_id, :integer
     attribute :payment_method, :string, default: "cash"

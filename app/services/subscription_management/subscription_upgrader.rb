@@ -1,6 +1,5 @@
 module SubscriptionManagement
   class SubscriptionUpgrader < BaseService
-
     attribute :person
     attribute :from_book_id, :integer
     attribute :to_plan_id, :integer
@@ -58,4 +57,3 @@ module SubscriptionManagement
     # success et failure hérités de BaseService
   end
 end
-

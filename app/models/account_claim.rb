@@ -1,7 +1,7 @@
 class AccountClaim < ApplicationRecord
   include Statusable
   include Dateable
-  
+
   belongs_to :person
   belongs_to :user, optional: true
 

@@ -1,6 +1,5 @@
 module UserManagement
   class AccountCreator < BaseService
-
     attribute :person
     attribute :user_email, :string
     attribute :user_password, :string

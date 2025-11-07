@@ -33,7 +33,6 @@ RSpec.describe AttendanceListManagement::AttendanceListCreator do
           described_class.new(params).call
         }.to instrument('attendance_list.created')
       end
-
     end
 
     context 'with invalid attributes' do
@@ -53,4 +52,3 @@ RSpec.describe AttendanceListManagement::AttendanceListCreator do
     end
   end
 end
-

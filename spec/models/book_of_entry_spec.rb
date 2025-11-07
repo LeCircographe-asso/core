@@ -297,7 +297,7 @@ RSpec.describe BookOfEntry, type: :model do
       end
 
       it "does not alter sessions or status" do
-        expect { trimester_book.use_session! }.not_to change { [trimester_book.reload.sessions_remaining, trimester_book.status] }
+        expect { trimester_book.use_session! }.not_to change { [ trimester_book.reload.sessions_remaining, trimester_book.status ] }
       end
     end
 
@@ -515,7 +515,7 @@ RSpec.describe BookOfEntry, type: :model do
     describe ".without_expiration" do
       let!(:active_book_no_exp) { create(:book_of_entry, :active, person: person, subscription_plan: pack10_plan, sessions_remaining: 5, expires_at: nil) }
       let!(:consumed_book_no_exp) { create(:book_of_entry, :consumed, person: person, subscription_plan: pack10_plan, sessions_remaining: 0, expires_at: nil) }
-      
+
       it "returns books without expiration date" do
         expect(BookOfEntry.without_expiration).to include(active_book_no_exp, consumed_book_no_exp)
       end
@@ -525,7 +525,7 @@ RSpec.describe BookOfEntry, type: :model do
       let!(:usable_book) { create(:book_of_entry, :active, person: person, subscription_plan: pack10_plan, sessions_remaining: 5, expires_at: nil) }
       let!(:consumed_book) { create(:book_of_entry, :consumed, person: person, subscription_plan: pack10_plan, sessions_remaining: 0, expires_at: nil) }
       let!(:expired_book) { create(:book_of_entry, :expired, person: person, subscription_plan: day_plan, expires_at: 1.week.ago) }
-      
+
       it "returns books that can be used" do
         usable = BookOfEntry.usable
         expect(usable).to include(usable_book)

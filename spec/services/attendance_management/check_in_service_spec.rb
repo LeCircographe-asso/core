@@ -37,4 +37,3 @@ RSpec.describe AttendanceManagement::CheckInService do
     end
   end
 end
-

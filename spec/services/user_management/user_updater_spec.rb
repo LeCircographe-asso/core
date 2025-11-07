@@ -68,4 +68,3 @@ RSpec.describe UserManagement::UserUpdater do
     end
   end
 end
-

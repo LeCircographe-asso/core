@@ -15,9 +15,9 @@ RSpec.describe BlogManagement::BlogUpdater do
           content: "Updated Content",
           updated_by_id: admin_user.id
         )
-        
+
         result = updater.call
-        
+
         expect(result.success?).to be true
         expect(blog.reload.title).to eq("Updated Title")
         expect(blog.reload.content.to_plain_text).to eq("Updated Content")
@@ -25,17 +25,17 @@ RSpec.describe BlogManagement::BlogUpdater do
 
       it "updates tags when provided" do
         blog.tags << tag1
-        
+
         updater = described_class.new(
           blog_id: blog.id,
           title: blog.title,
           content: blog.content,
-          tag_ids: [tag2.id],
+          tag_ids: [ tag2.id ],
           updated_by_id: admin_user.id
         )
-        
+
         result = updater.call
-        
+
         expect(result.success?).to be true
         expect(blog.reload.tags).to include(tag2)
         expect(blog.reload.tags).not_to include(tag1)
@@ -43,7 +43,7 @@ RSpec.describe BlogManagement::BlogUpdater do
 
       it "clears tags when tag_ids is empty" do
         blog.tags << tag1
-        
+
         updater = described_class.new(
           blog_id: blog.id,
           title: blog.title,
@@ -51,9 +51,9 @@ RSpec.describe BlogManagement::BlogUpdater do
           tag_ids: [],
           updated_by_id: admin_user.id
         )
-        
+
         result = updater.call
-        
+
         expect(result.success?).to be true
         expect(blog.reload.tags).to be_empty
       end
@@ -65,7 +65,7 @@ RSpec.describe BlogManagement::BlogUpdater do
           title: "Updated Title",
           updated_by_id: admin_user.id
         )
-        
+
         result = updater.call
         expect(result.success?).to be false
       end
@@ -75,20 +75,20 @@ RSpec.describe BlogManagement::BlogUpdater do
           blog_id: blog.id,
           title: "Updated Title"
         )
-        
+
         result = updater.call
         expect(result.success?).to be false
       end
 
       it "returns failure when user doesn't have permissions" do
         volunteer = create(:user, system_role: :volunteer)
-        
+
         updater = described_class.new(
           blog_id: blog.id,
           title: "Updated Title",
           updated_by_id: volunteer.id
         )
-        
+
         result = updater.call
         expect(result.success?).to be false
         expect(result.message).to include("Insufficient permissions")
@@ -110,4 +110,3 @@ RSpec.describe BlogManagement::BlogUpdater do
     end
   end
 end
-

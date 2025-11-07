@@ -50,9 +50,9 @@ module Admin
         book_of_entry_id: attendance_params[:book_of_entry_id],
         date: attendance_params[:date]
       )
-      
+
       result = creator.call
-      
+
       if result.success?
         redirect_to admin_attendance_path(result.attendance), notice: "Présence enregistrée avec succès"
       else

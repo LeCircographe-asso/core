@@ -186,7 +186,7 @@ RSpec.describe NewsletterSubscriber, type: :model do
 
     describe "#duration_days" do
       it "calculates duration between subscribed_at and unsubscribed_at" do
-        subscriber = create(:newsletter_subscriber, 
+        subscriber = create(:newsletter_subscriber,
           subscribed_at: Date.current - 30.days,
           unsubscribed_at: Date.current
         )
