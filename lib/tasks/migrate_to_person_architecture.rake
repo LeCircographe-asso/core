@@ -136,7 +136,7 @@ namespace :migration do
               payment: payment,
               item: item
             )
-            
+
             unless existing_line
               PaymentLine.create!(
                 payment: payment,
@@ -204,7 +204,7 @@ namespace :migration do
         person: person,
         date: attendance.created_at.to_date
       )
-      
+
       unless existing_attendance
         attendance.update!(
           person: person,

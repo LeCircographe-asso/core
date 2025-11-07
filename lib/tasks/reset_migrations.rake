@@ -3,37 +3,37 @@ namespace :db do
   task reset_migrations: :environment do
     puts "🚨 ATTENTION: Cette opération va supprimer TOUTES les données!"
     puts "=" * 60
-    
-    unless ENV['FORCE'] == 'true'
+
+    unless ENV["FORCE"] == "true"
       print "Êtes-vous sûr de vouloir continuer? (y/N) "
       response = STDIN.gets.chomp.downcase
-      unless response == 'y'
+      unless response == "y"
         puts "❌ Opération annulée."
         exit 0
       end
     end
 
     puts "\n🔄 Début du reset des migrations..."
-    
+
     # 1. Supprimer toutes les migrations existantes
     puts "📁 Suppression des migrations existantes..."
-    migration_files = Dir.glob(Rails.root.join('db', 'migrate', '*.rb'))
+    migration_files = Dir.glob(Rails.root.join("db", "migrate", "*.rb"))
     migration_files.each do |file|
       File.delete(file)
       puts "  ❌ Supprimé: #{File.basename(file)}"
     end
-    
+
     # 2. Supprimer le schema.rb actuel
     puts "\n📄 Suppression du schema.rb actuel..."
-    schema_file = Rails.root.join('db', 'schema.rb')
+    schema_file = Rails.root.join("db", "schema.rb")
     if File.exist?(schema_file)
       File.delete(schema_file)
       puts "  ❌ Supprimé: schema.rb"
     end
-    
+
     # 3. Copier le schema propre
     puts "\n📄 Copie du schema propre..."
-    clean_schema = Rails.root.join('db', 'schema_clean.rb')
+    clean_schema = Rails.root.join("db", "schema_clean.rb")
     if File.exist?(clean_schema)
       FileUtils.cp(clean_schema, schema_file)
       puts "  ✅ Copié: schema_clean.rb → schema.rb"
@@ -41,12 +41,12 @@ namespace :db do
       puts "  ❌ Erreur: schema_clean.rb non trouvé!"
       exit 1
     end
-    
+
     # 4. Créer une migration initiale
     puts "\n📝 Création de la migration initiale..."
-    timestamp = Time.current.strftime('%Y%m%d%H%M%S')
-    initial_migration = Rails.root.join('db', 'migrate', "#{timestamp}_initial_schema.rb")
-    
+    timestamp = Time.current.strftime("%Y%m%d%H%M%S")
+    initial_migration = Rails.root.join("db", "migrate", "#{timestamp}_initial_schema.rb")
+
     File.write(initial_migration, <<~RUBY)
       class InitialSchema < ActiveRecord::Migration[8.0]
         def change
@@ -55,9 +55,9 @@ namespace :db do
         end
       end
     RUBY
-    
+
     puts "  ✅ Créé: #{File.basename(initial_migration)}"
-    
+
     # 5. Instructions finales
     puts "\n🎉 Reset des migrations terminé!"
     puts "=" * 60
@@ -76,12 +76,12 @@ namespace :db do
   desc "Créer les migrations essentielles à partir du schema propre"
   task create_essential_migrations: :environment do
     puts "📝 Création des migrations essentielles..."
-    
-    timestamp = Time.current.strftime('%Y%m%d%H%M%S')
+
+    timestamp = Time.current.strftime("%Y%m%d%H%M%S")
     base_time = Time.current
-    
+
     # Migration 1: Core Tables
-    migration1 = Rails.root.join('db', 'migrate', "#{timestamp}_01_create_core_tables.rb")
+    migration1 = Rails.root.join("db", "migrate", "#{timestamp}_01_create_core_tables.rb")
     File.write(migration1, <<~RUBY)
       class CreateCoreTables < ActiveRecord::Migration[8.0]
         def change
@@ -136,9 +136,9 @@ namespace :db do
         end
       end
     RUBY
-    
+
     # Migration 2: Membership System
-    migration2 = Rails.root.join('db', 'migrate', "#{(base_time + 1.minute).strftime('%Y%m%d%H%M%S')}_02_create_membership_system.rb")
+    migration2 = Rails.root.join("db", "migrate", "#{(base_time + 1.minute).strftime('%Y%m%d%H%M%S')}_02_create_membership_system.rb")
     File.write(migration2, <<~RUBY)
       class CreateMembershipSystem < ActiveRecord::Migration[8.0]
         def change
@@ -171,9 +171,9 @@ namespace :db do
         end
       end
     RUBY
-    
+
     # Migration 3: Payment System
-    migration3 = Rails.root.join('db', 'migrate', "#{(base_time + 2.minutes).strftime('%Y%m%d%H%M%S')}_03_create_payment_system.rb")
+    migration3 = Rails.root.join("db", "migrate", "#{(base_time + 2.minutes).strftime('%Y%m%d%H%M%S')}_03_create_payment_system.rb")
     File.write(migration3, <<~RUBY)
       class CreatePaymentSystem < ActiveRecord::Migration[8.0]
         def change
@@ -211,7 +211,7 @@ namespace :db do
         end
       end
     RUBY
-    
+
     puts "✅ Migrations essentielles créées:"
     puts "  📄 #{File.basename(migration1)}"
     puts "  📄 #{File.basename(migration2)}"
