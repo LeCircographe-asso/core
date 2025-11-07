@@ -321,6 +321,7 @@ BookOfEntry.reactivate_suspended_packs_for_person(person) # Auto après expirati
 #### Book of Entry Integration
 - **Auto-decrement:** Décrémente sessions_remaining si book_of_entry lié
 - **Can_use check:** Vérifie logique can_use? avant
+- **Daily free training list:** `AttendanceListManagement::DailyListGenerator` crée chaque jour (hors lundi) la liste d'émargement « training » pour l'entraînement libre.
 
 ### Zone 2: En Cours de Validation
 
