@@ -109,4 +109,3 @@ RSpec.describe MembershipManagement::MembershipUpdater do
     end
   end
 end
-

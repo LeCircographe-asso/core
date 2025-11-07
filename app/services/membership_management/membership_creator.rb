@@ -1,6 +1,5 @@
 module MembershipManagement
   class MembershipCreator < BaseService
-
     attribute :person
     attribute :membership_type_id, :integer
     attribute :payment_method, :string, default: "cash"

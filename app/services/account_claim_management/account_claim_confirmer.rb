@@ -1,6 +1,5 @@
 module AccountClaimManagement
   class AccountClaimConfirmer < BaseService
-
     attribute :confirmation_token, :string
 
     validates :confirmation_token, presence: true
@@ -22,11 +21,11 @@ module AccountClaimManagement
         ActiveRecord::Base.transaction do
           # Fusionner les données Person admin → User actuel
           admin_person = claim.person
-          
+
           # Utiliser PersonManagement::PersonMerger pour fusionner correctement
           # Si user a déjà une Person, fusionner. Sinon, transférer admin_person vers user
           user_person = claim.user.person
-          
+
           if user_person.nil?
             # Pas de Person pour user : transférer admin_person vers user
             admin_person.update!(user: claim.user)
@@ -39,20 +38,20 @@ module AccountClaimManagement
               actor: claim.user,
               merge_type: "admin_merge"
             )
-            
+
             merger_result = merger.call
-            
+
             unless merger_result.success?
               return failure("Erreur lors de la fusion: #{merger_result.message}")
             end
-            
+
             # Après fusion, user_person reste la Person principale
             user_person.reload
           end
-          
+
           # Marquer la réclamation comme confirmée
           claim.update!(status: :confirmed)
-          
+
           # Instrumentation pour audit
           ActiveSupport::Notifications.instrument(
             "account_claim.confirmed",
@@ -83,4 +82,3 @@ module AccountClaimManagement
     # success et failure hérités de BaseService
   end
 end
-

@@ -119,4 +119,3 @@ RSpec.describe Admin::UserCreationForm do
     end
   end
 end
-

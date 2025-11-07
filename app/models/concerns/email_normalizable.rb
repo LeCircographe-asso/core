@@ -18,4 +18,3 @@ module EmailNormalizable
     self.email = email.strip.downcase
   end
 end
-

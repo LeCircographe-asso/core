@@ -1,6 +1,5 @@
 module Web
   class UserRegistration < BaseService
-
     # Attributs pour la création de personne
     attribute :first_name, :string
     attribute :last_name, :string

@@ -1,6 +1,5 @@
 module EventManagement
   class EventDeleter < BaseService
-
     attribute :event_id, :integer
     attribute :deleted_by_id, :integer
     attribute :reason, :string

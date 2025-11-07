@@ -23,7 +23,7 @@ class Payment < ApplicationRecord
 
   # Scope to get active (non-cancelled) payments
   scope :active, -> { where.not(status: :cancel) }
-  
+
   # Date scopes (using created_at via Dateable)
   scope :today, -> { where("created_at >= ? AND created_at < ?", Date.current.beginning_of_day, Date.current.end_of_day) }
   scope :this_week, -> { where("created_at >= ? AND created_at <= ?", Date.current.beginning_of_week.beginning_of_day, Date.current.end_of_week.end_of_day) }

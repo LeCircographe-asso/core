@@ -1,6 +1,5 @@
 module PaymentManagement
   class PaymentUpdater < BaseService
-
     attribute :payment_id, :integer
     attribute :total_cents, :integer
     attribute :payment_method, :string
@@ -35,7 +34,7 @@ module PaymentManagement
           update_attrs[:payment_method] = payment_method if payment_method.present?
           update_attrs[:status] = status if status.present?
           update_attrs[:notes] = notes if notes.present?
-          
+
           if payment.update!(update_attrs)
             # Instrumentation pour audit
             ActiveSupport::Notifications.instrument(

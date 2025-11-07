@@ -40,9 +40,9 @@ module Admin
 
           query = if person_ids.any?
                     query.where(person_id: person_ids)
-                  else
+          else
                     query.none
-                  end
+          end
         else
           query = query.none
         end

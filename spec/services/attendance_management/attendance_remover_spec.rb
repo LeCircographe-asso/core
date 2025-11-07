@@ -68,4 +68,3 @@ RSpec.describe AttendanceManagement::AttendanceRemover do
     end
   end
 end
-

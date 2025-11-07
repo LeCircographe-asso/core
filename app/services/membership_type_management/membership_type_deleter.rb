@@ -1,6 +1,5 @@
 module MembershipTypeManagement
   class MembershipTypeDeleter < BaseService
-
     attribute :membership_type_id, :integer
     attribute :deleted_by_id, :integer
 
@@ -49,5 +48,3 @@ module MembershipTypeManagement
     # success et failure hérités de BaseService
   end
 end
-
-

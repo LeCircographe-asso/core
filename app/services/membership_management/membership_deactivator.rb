@@ -1,6 +1,5 @@
 module MembershipManagement
   class MembershipDeactivator < BaseService
-
     attribute :membership_id, :integer
     attribute :deactivated_by_id, :integer
     attribute :reason, :string
@@ -55,5 +54,3 @@ module MembershipManagement
     # success et failure hérités de BaseService
   end
 end
-
-

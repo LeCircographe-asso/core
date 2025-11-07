@@ -83,7 +83,7 @@ module Dateable
           date_attr = :created_at
         end
       end
-      
+
       # For date columns, use simple equality; for datetime columns, use range
       if date_attr == :date && columns_hash.key?("date") && columns_hash["date"].type == :date
         where(date: Date.current)
@@ -103,7 +103,7 @@ module Dateable
           date_attr = :created_at
         end
       end
-      
+
       if date_attr == :date && columns_hash.key?("date") && columns_hash["date"].type == :date
         where(date: Date.current.beginning_of_week..Date.current.end_of_week)
       else
@@ -122,7 +122,7 @@ module Dateable
           date_attr = :created_at
         end
       end
-      
+
       if date_attr == :date && columns_hash.key?("date") && columns_hash["date"].type == :date
         where(date: Date.current.beginning_of_month..Date.current.end_of_month)
       else

@@ -1,6 +1,5 @@
 module AttendanceManagement
   class AttendanceRemover < BaseService
-
     attribute :attendance_id, :integer
     attribute :deleted_by_id, :integer
 
@@ -37,4 +36,3 @@ module AttendanceManagement
     end
   end
 end
-

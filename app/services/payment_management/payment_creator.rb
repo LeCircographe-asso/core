@@ -1,6 +1,5 @@
 module PaymentManagement
   class PaymentCreator < BaseService
-
     attribute :person_id, :integer
     attribute :amount_cents, :integer
     attribute :payment_method, :string

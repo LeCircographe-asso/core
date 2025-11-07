@@ -1,6 +1,5 @@
 module AttendanceListManagement
   class DailyListGenerator < BaseService
-
     attribute :date, :date
     attribute :created_by_id, :integer
 
@@ -52,4 +51,3 @@ module AttendanceListManagement
     end
   end
 end
-

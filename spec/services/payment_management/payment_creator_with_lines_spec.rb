@@ -93,5 +93,3 @@ RSpec.describe PaymentManagement::PaymentCreatorWithLines do
     end
   end
 end
-
-

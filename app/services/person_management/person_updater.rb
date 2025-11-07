@@ -1,6 +1,5 @@
 module PersonManagement
   class PersonUpdater < BaseService
-
     attribute :person_id, :integer
     attribute :attributes, hash: true
     attribute :newsletter_subscribed, :boolean
@@ -73,7 +72,7 @@ module PersonManagement
         person_id: person.id,
         email: person.email,
         subscribed: newsletter_subscribed,
-        source: 'admin',
+        source: "admin",
         updated_by_id: updated_by_id
       )
 
@@ -83,5 +82,3 @@ module PersonManagement
     # success et failure hérités de BaseService
   end
 end
-
-

@@ -118,4 +118,3 @@ RSpec.describe MemberNumberManagement::MemberNumberChanger do
     end
   end
 end
-

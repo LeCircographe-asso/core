@@ -1,6 +1,5 @@
 module PersonManagement
   class PersonMerger < BaseService
-
     attr_accessor :source, :target, :actor
     attr_writer :merge_type
 

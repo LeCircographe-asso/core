@@ -141,5 +141,3 @@ RSpec.describe PaymentManagement::PaymentUpdater do
     end
   end
 end
-
-

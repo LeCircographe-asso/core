@@ -28,7 +28,7 @@ class Attendance < ApplicationRecord
   # Scopes spécifiques
   scope :by_person, ->(person) { where(person: person) }
   scope :by_event, ->(event) { where(event: event) }
-  
+
   # Date scopes (using explicit :date column)
   scope :today, -> { where(date: Date.current) }
   scope :this_week, -> { where(date: Date.current.beginning_of_week..Date.current.end_of_week) }

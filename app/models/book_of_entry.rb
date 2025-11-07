@@ -1,7 +1,7 @@
 class BookOfEntry < ApplicationRecord
   include Statusable
   include Dateable
-  
+
   # Relations selon le domain_model_circographe.md
   belongs_to :person
   belongs_to :subscription_plan
@@ -67,7 +67,7 @@ class BookOfEntry < ApplicationRecord
     max_sessions ||= is_pack10? ? 10 : 1
 
     self.sessions_remaining ||= 0
-    self.sessions_remaining = [sessions_remaining + 1, max_sessions].min
+    self.sessions_remaining = [ sessions_remaining + 1, max_sessions ].min
     self.status = :active if sessions_remaining.positive?
     save!
   end

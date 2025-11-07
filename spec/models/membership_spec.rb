@@ -354,8 +354,8 @@ RSpec.describe Membership, type: :model do
 
     describe "#duration_days" do
       it "calculates duration in days between started_at and ended_at" do
-        membership = create(:membership, 
-          started_at: Date.current, 
+        membership = create(:membership,
+          started_at: Date.current,
           ended_at: Date.current + 365.days
         )
         expect(membership.duration_days(:started_at, :ended_at)).to eq(365)
@@ -369,8 +369,8 @@ RSpec.describe Membership, type: :model do
 
     describe "#duration_months" do
       it "calculates duration in months between started_at and ended_at" do
-        membership = create(:membership, 
-          started_at: Date.current, 
+        membership = create(:membership,
+          started_at: Date.current,
           ended_at: Date.current + 12.months
         )
         expect(membership.duration_months(:started_at, :ended_at)).to eq(12)

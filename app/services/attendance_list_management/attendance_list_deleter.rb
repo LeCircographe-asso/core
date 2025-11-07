@@ -1,6 +1,5 @@
 module AttendanceListManagement
   class AttendanceListDeleter < BaseService
-
     attribute :attendance_list_id, :integer
     attribute :deleted_by_id, :integer
 
@@ -40,5 +39,3 @@ module AttendanceListManagement
     # success et failure hérités de BaseService
   end
 end
-
-

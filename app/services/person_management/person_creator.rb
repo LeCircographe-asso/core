@@ -1,6 +1,5 @@
 module PersonManagement
   class PersonCreator < BaseService
-
     # Attributs de base
     attribute :first_name, :string
     attribute :last_name, :string

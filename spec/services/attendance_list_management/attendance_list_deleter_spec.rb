@@ -48,4 +48,3 @@ RSpec.describe AttendanceListManagement::AttendanceListDeleter do
     end
   end
 end
-

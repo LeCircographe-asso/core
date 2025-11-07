@@ -60,4 +60,3 @@ RSpec.describe AttendanceListManagement::AttendanceListUpdater do
     end
   end
 end
-

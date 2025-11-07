@@ -1,6 +1,5 @@
 module AttendanceManagement
   class AttendanceCreator < BaseService
-
     attribute :person_id, :integer
     attribute :event_id, :integer
     attribute :attendance_list_id, :integer
@@ -14,7 +13,7 @@ module AttendanceManagement
 
       begin
         person = Person.find(person_id)
-        
+
         attendance = Attendance.create!(
           person: person,
           event_id: event_id,
@@ -50,4 +49,3 @@ module AttendanceManagement
     # success et failure hérités de BaseService
   end
 end
-

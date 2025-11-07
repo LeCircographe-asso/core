@@ -1,6 +1,5 @@
 module MembershipTypeManagement
   class MembershipTypeUpdater < BaseService
-
     attribute :membership_type_id, :integer
     attribute :name, :string
     attribute :category, :string
@@ -56,5 +55,3 @@ module MembershipTypeManagement
     # success et failure hérités de BaseService
   end
 end
-
-

@@ -1,6 +1,5 @@
 module AttendanceManagement
   class DailyFreeTrainingPresenter < BaseService
-
     attribute :date, :date
 
     def call
@@ -14,7 +13,7 @@ module AttendanceManagement
 
       attendances = list.attendances.includes(:person, :book_of_entry)
       pack10_sessions = attendances.select { |att| att.book_of_entry&.is_pack10? }.count
-      day_passes = attendances.select { |att| att.book_of_entry&.subscription_plan&.duration == 'day' }.count
+      day_passes = attendances.select { |att| att.book_of_entry&.subscription_plan&.duration == "day" }.count
 
       success(
         attendance_list: list,
@@ -26,4 +25,3 @@ module AttendanceManagement
     end
   end
 end
-

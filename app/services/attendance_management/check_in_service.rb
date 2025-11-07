@@ -1,6 +1,5 @@
 module AttendanceManagement
   class CheckInService < BaseService
-
     attribute :person_id, :integer
     attribute :book_of_entry_id, :integer
     attribute :attendance_list_date, :date
@@ -56,4 +55,3 @@ module AttendanceManagement
     end
   end
 end
-

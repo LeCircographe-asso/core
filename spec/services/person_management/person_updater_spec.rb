@@ -71,4 +71,3 @@ RSpec.describe PersonManagement::PersonUpdater do
     end
   end
 end
-

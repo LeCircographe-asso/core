@@ -1,6 +1,5 @@
 module AttendanceListManagement
   class AttendanceListCreator < BaseService
-
     attribute :name, :string
     attribute :status, :string
     attribute :list_type, :string
@@ -55,4 +54,3 @@ module AttendanceListManagement
     # success et failure hérités de BaseService
   end
 end
-

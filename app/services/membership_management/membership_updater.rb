@@ -1,6 +1,5 @@
 module MembershipManagement
   class MembershipUpdater < BaseService
-
     attribute :membership_id, :integer
     attribute :membership_type_id, :integer
     attribute :started_at, :date
@@ -63,5 +62,3 @@ module MembershipManagement
     # success et failure hérités de BaseService
   end
 end
-
-

@@ -124,5 +124,4 @@ class UsersController < ApplicationController
       :dyslexic_font
     )
   end
-
 end

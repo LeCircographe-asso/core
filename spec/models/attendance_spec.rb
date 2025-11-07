@@ -63,7 +63,7 @@ RSpec.describe Attendance, type: :model do
     let(:event1) { create(:event) }
     let(:event2) { create(:event) }
     let(:event3) { create(:event) }
-    
+
     let!(:today_attendance) { create(:attendance, person: person1, event: event1, date: Date.current) }
     # Use a date in this week but different from today
     # Find a day in this week that's not today
@@ -84,7 +84,7 @@ RSpec.describe Attendance, type: :model do
       # If last week is in a different month, use a date from earlier this month (but not this week)
       attendance_date = if last_week_date.month != Date.current.month
         # Use a date from earlier in the month, but not in current week
-        [Date.current.beginning_of_month, Date.current.beginning_of_week - 1.day].max
+        [ Date.current.beginning_of_month, Date.current.beginning_of_week - 1.day ].max
       else
         last_week_date
       end

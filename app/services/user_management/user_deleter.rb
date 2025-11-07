@@ -1,6 +1,5 @@
 module UserManagement
   class UserDeleter < BaseService
-
     attribute :person_id, :integer
     attribute :deleted_by_id, :integer
     attribute :reason, :string

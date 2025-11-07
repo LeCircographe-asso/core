@@ -377,7 +377,7 @@ RSpec.describe Payment, type: :model do
     let(:user1) { create(:user) }
     let(:user2) { create(:user) }
     let(:user3) { create(:user) }
-    
+
     let!(:today_payment) { create(:payment, person: person1, recorded_by: user1, created_at: Date.current.beginning_of_day + 12.hours) }
     let!(:this_week_payment) do
       week_date = if Date.current.beginning_of_week != Date.current
@@ -391,7 +391,7 @@ RSpec.describe Payment, type: :model do
       last_week_date = Date.current - 1.week
       # If last week is in a different month, use a date from earlier this month (but not this week)
       payment_date = if last_week_date.month != Date.current.month
-        [Date.current.beginning_of_month, Date.current.beginning_of_week - 1.day].max.beginning_of_day + 12.hours
+        [ Date.current.beginning_of_month, Date.current.beginning_of_week - 1.day ].max.beginning_of_day + 12.hours
       else
         last_week_date.beginning_of_day + 12.hours
       end

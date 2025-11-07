@@ -1,6 +1,5 @@
 module UserManagement
   class UserUpdater < BaseService
-
     attribute :user_id, :integer
     attribute :email_address, :string
     attribute :system_role, :string
@@ -28,7 +27,7 @@ module UserManagement
           user_attrs = {}
           user_attrs[:email_address] = email_address if email_address.present?
           user_attrs[:system_role] = system_role if system_role.present?
-          
+
           user_updated = user_attrs.empty? ? true : user.update(user_attrs)
 
           # Mettre à jour Person si présente
@@ -89,7 +88,7 @@ module UserManagement
         person_id: person.id,
         email: person.email,
         subscribed: newsletter_subscribed,
-        source: 'authenticated',
+        source: "authenticated",
         updated_by_id: updated_by_id
       )
 
@@ -99,4 +98,3 @@ module UserManagement
     # success et failure hérités de BaseService
   end
 end
-
