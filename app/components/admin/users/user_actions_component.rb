@@ -138,8 +138,8 @@ class Admin::Users::UserActionsComponent < ViewComponent::Base
 
     # Vérifier si la personne a des données financières
     if person.has_financial_data?
-      return content_tag(:span, 
-                        "❌ Suppression impossible (données financières)", 
+      return content_tag(:span,
+                        "❌ Suppression impossible (données financières)",
                         class: "text-gray-400 text-sm italic cursor-not-allowed",
                         title: "Cette personne a des adhésions actives ou des paiements. Annulez d'abord les adhésions pour pouvoir la supprimer.")
     end
