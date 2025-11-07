@@ -159,8 +159,16 @@ module Admin
       private
 
       def set_person
-        person_id = params[:person_id].to_s.gsub("person_", "")
-        @person = Person.find(person_id)
+        identifier = params[:person_id].presence || params[:user_id].presence
+        raise ActiveRecord::RecordNotFound, "person identifier missing" if identifier.blank?
+
+        if identifier.to_s.start_with?("person_")
+          person_id = identifier.to_s.delete_prefix("person_")
+          @person = Person.find(person_id)
+        else
+          user = User.find(identifier)
+          @person = user.person || Person.find(identifier)
+        end
       end
 
       def set_breadcrumbs

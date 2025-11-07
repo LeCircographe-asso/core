@@ -144,6 +144,26 @@ RSpec.describe "Admin::Payments", type: :request do
         follow_redirect!
         expect(response.body).to include("succès")
       end
+
+      it "creates a donation payment line via PaymentCreator" do
+        post admin_payments_path, params: {
+          payment: {
+            person_id: person.id,
+            total_cents: 15.00,
+            payment_method: "card",
+            notes: "Donation test"
+          }
+        }
+
+        payment = Payment.order(:created_at).last
+        expect(payment.total_cents).to eq(1500)
+        expect(payment.payment_lines.count).to eq(1)
+        line = payment.payment_lines.first
+        expect(line.item_type).to eq("Payment")
+        expect(line.item_id).to eq(payment.id)
+        expect(line.amount_cents).to eq(1500)
+        expect(line.description).to eq("Paiement direct")
+      end
     end
     
     context "with invalid attributes" do
@@ -282,6 +302,39 @@ RSpec.describe "Admin::Payments", type: :request do
       expect(response).to redirect_to(admin_payments_path)
       follow_redirect!
       expect(response.body).to include("annulé")
+    end
+  end
+
+  describe "POST /admin/payments/:id/restore" do
+    let(:admin) { create(:user, :admin) }
+    let(:person) { create(:person) }
+
+    before { login_as(admin) }
+
+    it "restores a cancelled payment and returns success" do
+      payment = create(:payment, person: person, recorded_by: admin, total_cents: 3200, status: :cancel, notes: "Cancelled earlier")
+
+      expect {
+        post restore_admin_payment_path(payment)
+      }.to change { payment.reload.status }.from("cancel").to("success")
+        .and change { PaymentAuditLog.count }.by(1)
+
+      expect(response).to redirect_to(admin_payment_path(payment))
+
+      payment.reload
+      expect(payment.notes).to include("Restored")
+    end
+
+    it "fails gracefully when payment is not cancelled" do
+      payment = create(:payment, person: person, recorded_by: admin, total_cents: 2500, status: :success)
+
+      expect {
+        post restore_admin_payment_path(payment)
+      }.not_to change { payment.reload.status }
+
+      expect(response).to redirect_to(admin_payments_path)
+      follow_redirect!
+      expect(response.body).to include("Échec")
     end
   end
 

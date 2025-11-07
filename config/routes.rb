@@ -5,20 +5,26 @@ Rails.application.routes.draw do
     resources :dashboard, only: %i[index], path: "dashboard"
     resource :opening_hours, only: %i[show edit update]
     resources :donations, only: %i[create]
-            resources :users do
-              post :restore, on: :member
-              # Actions pour gérer Person
-              get :edit_person, on: :member
-              # Actions pour gérer les doublons
-              get :duplicates, on: :collection
-            end
+    resources :users do
+      post :restore, on: :member
+      # Actions pour gérer Person
+      get :edit_person, on: :member
+      # Actions pour gérer les doublons
+      get :duplicates, on: :collection
+
+      resources :payments, module: :users, only: %i[index new create show update destroy] do
+        post :process_payment, on: :member
+      end
+    end
     resources :events, only: %i[new create edit update destroy index]
     resource :session, only: %i[new create destroy]
     resource :notepad, only: %i[edit update]
     resources :attendance_lists do
       resources :attendances, only: %i[new index create show edit update]
     end
-    resources :payments, only: %i[show create new edit update index destroy]
+    resources :payments, only: %i[show create new edit update index destroy] do
+      post :restore, on: :member
+    end
     resources :attendances, only: %i[index show new create destroy]
     resources :memberships, only: %i[index show new create edit update destroy]
     resources :membership_types, only: %i[index show new create edit update destroy]

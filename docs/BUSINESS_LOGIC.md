@@ -323,6 +323,29 @@ BookOfEntry.reactivate_suspended_packs_for_person(person) # Auto après expirati
 - **Can_use check:** Vérifie logique can_use? avant
 - **Daily free training list:** `AttendanceListManagement::DailyListGenerator` crée chaque jour (hors lundi) la liste d'émargement « training » pour l'entraînement libre.
 
+#### Check-in Entraînement Libre (Zone 1)
+- **Service principal:** `AttendanceManagement::CheckInService`
+  - Résout la personne (`person_id` ou `Current.user.person`).
+  - Garantit l’existence d’une liste d’entraînement libre via `DailyListGenerator` (skip lundi).
+  - Choisit automatiquement le carnet utilisable (`pack10` prioritaire, sinon day pass, puis illimité) si `book_of_entry_id` absent.
+  - Délègue la création d’une présence à `AttendanceCreator`.
+- **Instrumentation:** déclenche les événements `attendance.created`, `attendance.deleted`, `attendance_list.daily_created`.
+- **Rôle du carnet:**
+  - `use_session!` lors du check-in (décrément).
+  - `refund_session!` via `AttendanceManagement::AttendanceRemover` en cas de suppression.
+- **Présentations quotidiennes:** `AttendanceManagement::DailyFreeTrainingPresenter` assemble les métriques (total, pack10, day pass) pour le dashboard.
+- **Flux utilisateur:**
+  1. L’admin clique « check-in » → service check-in.
+  2. La présence apparaît sur la liste du jour (Turbo stream).
+  3. En cas d’annulation, `AttendanceRemover` détruit la présence + recrédite le carnet si applicable.
+  4. Le dashboard consomme le presenter pour les stats.
+
+> **Tests clés:**
+> - `spec/services/attendance_management/check_in_service_spec.rb`
+> - `spec/services/attendance_management/daily_list_generator_spec.rb`
+> - `spec/services/attendance_management/attendance_remover_spec.rb`
+> - `spec/services/attendance_management/daily_free_training_presenter_spec.rb`
+
 ### Zone 2: En Cours de Validation
 
 - [ ] Présences groupées

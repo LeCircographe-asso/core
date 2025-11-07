@@ -10,6 +10,9 @@ require 'factory_bot_rails'
 require 'shoulda/matchers'
 # require 'database_cleaner/active_record'  # Commenté - on peut l'ajouter plus tard
 
+# Ensure URL helpers have a default host in tests (needed for *_url helpers)
+Rails.application.routes.default_url_options[:host] ||= "www.example.com"
+
 # Requires supporting ruby files with custom matchers and macros, etc, in
 # spec/support/ and its subdirectories. Files matching `spec/**/*_spec.rb` are
 # run as spec files by default. This means that files in spec/support that end
