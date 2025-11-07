@@ -195,7 +195,7 @@ module Admin
         @user = User.new
         @user.person = result.person if result.person
         flash.now[:alert] = result.message
-        render :new, status: :unprocessable_entity
+        render :new, status: :unprocessable_content
       end
     end
 
@@ -233,10 +233,10 @@ module Admin
             render json: {
               success: false,
               errors: result.errors
-            }, status: :unprocessable_entity
+            }, status: :unprocessable_content
           else
             flash.now[:alert] = result.message
-            render :edit_person, status: :unprocessable_entity
+            render :edit_person, status: :unprocessable_content
           end
         end
         return
@@ -271,8 +271,8 @@ module Admin
             ]
           }
         else
-          format.html { render :show, status: :unprocessable_entity, alert: result.message }
-          format.json { render json: { errors: result.errors }, status: :unprocessable_entity }
+          format.html { render :show, status: :unprocessable_content, alert: result.message }
+          format.json { render json: { errors: result.errors }, status: :unprocessable_content }
           format.turbo_stream {
             render turbo_stream: turbo_stream.replace(
               "error_explanation",

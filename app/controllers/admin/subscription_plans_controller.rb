@@ -55,7 +55,7 @@ module Admin
         redirect_to admin_subscription_plans_path, notice: result.message
       else
         flash.now[:alert] = result.message
-        render :edit, status: :unprocessable_entity
+        render :edit, status: :unprocessable_content
       end
     end
 

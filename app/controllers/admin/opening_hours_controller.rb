@@ -46,7 +46,7 @@ class OpeningHoursController < BaseController
     else
       @opening_hours = updated_hours
       @error_message = result.message
-      render :edit, status: :unprocessable_entity
+      render :edit, status: :unprocessable_content
     end
   end
 

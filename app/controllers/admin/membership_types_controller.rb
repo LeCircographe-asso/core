@@ -43,7 +43,7 @@ module Admin
       else
         @membership_type = MembershipType.new(membership_type_params)
         flash.now[:alert] = result.message
-        render :new, status: :unprocessable_entity
+        render :new, status: :unprocessable_content
       end
     end
 
@@ -71,7 +71,7 @@ module Admin
         end
       else
         flash.now[:alert] = result.message
-        render :edit, status: :unprocessable_entity
+        render :edit, status: :unprocessable_content
       end
     end
 
