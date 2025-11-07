@@ -1,4 +1,5 @@
 #!/bin/bash
+set -euo pipefail
 # Script de reset complet des assets avec PID
 # Usage: bin/rails_assets_reset
 
@@ -33,15 +34,23 @@ rm -f public/assets/.manifest.json
 
 # 6. Précompiler les assets
 echo "6️⃣ Précompilation des assets..."
-bundle exec rails assets:precompile
+if bundle exec rails assets:precompile; then
+  echo "✅ Précompilation terminée"
+else
+  echo "❌ Échec de la précompilation des assets"
+  exit 1
+fi
 
 # 7. Vérifier la compilation
 echo "7️⃣ Vérification de la compilation..."
-if [ -f "public/assets/application.css" ]; then
-    echo "✅ CSS compilé avec succès"
+manifest_path="public/assets/.manifest.json"
+css_asset=$(find public/assets -maxdepth 1 -name 'application-*.css' -print -quit)
+
+if [ -f "$manifest_path" ] && [ -n "$css_asset" ]; then
+  echo "✅ Assets compilés avec succès"
 else
-    echo "❌ Erreur de compilation CSS"
-    exit 1
+  echo "❌ Les assets compilés sont introuvables (manifest ou CSS manquant)"
+  exit 1
 fi
 
 echo "✅ Reset des assets terminé !"
