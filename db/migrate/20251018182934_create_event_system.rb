@@ -14,9 +14,9 @@ class CreateEventSystem < ActiveRecord::Migration[8.0]
       t.text "description"
       t.datetime "created_at", null: false
       t.datetime "updated_at", null: false
-      t.index ["category"], name: "index_events_on_category"
-      t.index ["creator_id"], name: "index_events_on_creator_id"
-      t.index ["date"], name: "index_events_on_date"
+      t.index [ "category" ], name: "index_events_on_category"
+      t.index [ "creator_id" ], name: "index_events_on_creator_id"
+      t.index [ "date" ], name: "index_events_on_date"
     end
 
     create_table "event_attendees", force: :cascade do |t|
@@ -26,9 +26,9 @@ class CreateEventSystem < ActiveRecord::Migration[8.0]
       t.boolean "interested", default: false
       t.datetime "created_at", null: false
       t.datetime "updated_at", null: false
-      t.index ["event_id"], name: "index_event_attendees_on_event_id"
-      t.index ["payment_id"], name: "index_event_attendees_on_payment_id"
-      t.index ["user_id"], name: "index_event_attendees_on_user_id"
+      t.index [ "event_id" ], name: "index_event_attendees_on_event_id"
+      t.index [ "payment_id" ], name: "index_event_attendees_on_payment_id"
+      t.index [ "user_id" ], name: "index_event_attendees_on_user_id"
     end
 
     # Foreign Keys

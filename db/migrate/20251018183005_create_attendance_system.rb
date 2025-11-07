@@ -17,9 +17,9 @@ class CreateAttendanceSystem < ActiveRecord::Migration[8.0]
       t.date "date", null: false
       t.datetime "created_at", null: false
       t.datetime "updated_at", null: false
-      t.index ["person_id", "date"], name: "index_attendances_on_person_id_and_date", unique: true
-      t.index ["person_id"], name: "index_attendances_on_person_id"
-      t.index ["event_id"], name: "index_attendances_on_event_id"
+      t.index [ "person_id", "date" ], name: "index_attendances_on_person_id_and_date", unique: true
+      t.index [ "person_id" ], name: "index_attendances_on_person_id"
+      t.index [ "event_id" ], name: "index_attendances_on_event_id"
     end
 
     # Foreign Keys
