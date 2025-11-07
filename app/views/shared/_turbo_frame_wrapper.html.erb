@@ -1,0 +1,8 @@
+<% frame_id ||= "frame" %>
+<% partial_locals ||= {} %>
+
+<%= turbo_frame_tag frame_id do %>
+  <%= render partial_path, partial_locals %>
+<% end %>
+
+

@@ -15,7 +15,12 @@ class EventsController < ApplicationController
     respond_to do |format|
       format.html do
         if turbo_frame_request?
-          render partial: "events/upcoming_frame", locals: { events: @events }
+          render partial: "shared/turbo_frame_wrapper",
+                 locals: {
+                   frame_id: turbo_frame_request_id || "events_upcoming",
+                   partial_path: "home/upcoming_events",
+                   partial_locals: { events: @events }
+                 }
         else
           render :upcoming
         end
@@ -25,6 +30,19 @@ class EventsController < ApplicationController
 
   def past
     @events = Event.past.order(date: :desc).limit(9)
-    render partial: "pages/news/events_grid", locals: { events: @events }
+    respond_to do |format|
+      format.html do
+        if turbo_frame_request?
+          render partial: "shared/turbo_frame_wrapper",
+                 locals: {
+                   frame_id: turbo_frame_request_id || "events_past",
+                   partial_path: "pages/news/events_grid",
+                   partial_locals: { events: @events }
+                 }
+        else
+          render partial: "pages/news/events_grid", locals: { events: @events }
+        end
+      end
+    end
   end
 end
