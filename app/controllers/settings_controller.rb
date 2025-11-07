@@ -50,16 +50,16 @@ class SettingsController < ApplicationController
       :dyslexic_font
     )
   end
-  
+
   def handle_newsletter_update(person, newsletter_flag)
     return unless person.email.present?
-    
+
     subscriber = NewsletterSubscriber.find_or_initialize_by(email: person.email)
-    
+
     if newsletter_flag == "1" || newsletter_flag == true || newsletter_flag == 1
       subscriber.update!(
         person: person,
-        source: 'authenticated',
+        source: "authenticated",
         subscribed: true
       )
     else

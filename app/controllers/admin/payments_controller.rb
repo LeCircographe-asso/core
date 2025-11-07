@@ -42,11 +42,11 @@ module Admin
 
     def edit
       @payment = Payment.find(params[:id])
-      
+
       respond_to do |format|
         format.html { render partial: "edit_form", locals: { payment: @payment } }
-        format.turbo_stream { 
-          render turbo_stream: turbo_stream.replace("payment_#{@payment.id}_actions", partial: "edit_form", locals: { payment: @payment }) 
+        format.turbo_stream {
+          render turbo_stream: turbo_stream.replace("payment_#{@payment.id}_actions", partial: "edit_form", locals: { payment: @payment })
         }
       end
     end
@@ -56,7 +56,7 @@ module Admin
       # Convertir le montant en centimes si fourni en euros
       total_cents = payment_params[:total_cents]
       total_cents = (total_cents.to_f * 100).to_i if total_cents.present?
-      
+
       creator = PaymentManagement::PaymentCreator.new(
         person_id: payment_params[:person_id],
         amount_cents: total_cents,
@@ -67,9 +67,9 @@ module Admin
         description: "Paiement direct",
         notes: payment_params[:notes]
       )
-      
+
       result = creator.call
-      
+
       respond_to do |format|
         if result.success?
           format.html { redirect_to admin_payments_path, notice: "Paiement créé avec succès" }
@@ -77,10 +77,10 @@ module Admin
             # Recalculer les totaux
             payments_service = Admin::PaymentsService.new({})
             service_result = payments_service.call
-            
+
             render turbo_stream: [
               turbo_stream.append("payments", partial: "payment_row", locals: { payment: result.payment }),
-              turbo_stream.replace("payment-summary", partial: "payment_summary", locals: { 
+              turbo_stream.replace("payment-summary", partial: "payment_summary", locals: {
                 payments: Payment.includes(:person, :recorded_by, :payment_lines).order(created_at: :desc),
                 total_amount: Payment.total_successful_amount,
                 total_donation: Payment.total_donations
@@ -117,7 +117,7 @@ module Admin
       # Convertir le montant en centimes si fourni en euros
       total_cents = payment_params[:total_cents]
       total_cents = (total_cents.to_f * 100).to_i if total_cents.present?
-      
+
       updater = PaymentManagement::PaymentUpdater.new(
         payment_id: params[:id],
         total_cents: total_cents,
@@ -126,9 +126,9 @@ module Admin
         notes: payment_params[:notes],
         updated_by_id: Current.user.id
       )
-      
+
       result = updater.call
-      
+
       respond_to do |format|
         if result.success?
           format.html { redirect_to admin_payments_path, notice: "Mise à jour réussie" }
@@ -136,11 +136,11 @@ module Admin
             # Recalculer les totaux
             payments_service = Admin::PaymentsService.new({})
             service_result = payments_service.call
-            
+
             render turbo_stream: [
               turbo_stream.replace("payment_#{result.payment.id}_actions", partial: "payment_actions", locals: { payment: result.payment }),
               turbo_stream.replace("payment_row_#{result.payment.id}", partial: "payment_row", locals: { payment: result.payment }),
-              turbo_stream.replace("payment-summary", partial: "payment_summary", locals: { 
+              turbo_stream.replace("payment-summary", partial: "payment_summary", locals: {
                 payments: Payment.includes(:person, :recorded_by, :payment_lines).order(created_at: :desc),
                 total_amount: Payment.total_successful_amount,
                 total_donation: Payment.total_donations
@@ -173,9 +173,9 @@ module Admin
         deleted_by_id: Current.user.id,
         reason: "Suppression via interface admin"
       )
-      
+
       result = deleter.call
-      
+
       respond_to do |format|
         if result.success?
           format.html { redirect_to admin_payments_path, notice: "Paiement annulé avec succès" }
@@ -183,10 +183,10 @@ module Admin
             # Recalculer les totaux
             payments_service = Admin::PaymentsService.new({})
             service_result = payments_service.call
-            
+
             render turbo_stream: [
               turbo_stream.remove("payment_row_#{result.payment.id}"),
-              turbo_stream.replace("payment-summary", partial: "payment_summary", locals: { 
+              turbo_stream.replace("payment-summary", partial: "payment_summary", locals: {
                 payments: Payment.includes(:person, :recorded_by, :payment_lines).order(created_at: :desc),
                 total_amount: Payment.total_successful_amount,
                 total_donation: Payment.total_donations
@@ -223,9 +223,9 @@ module Admin
         restored_by_id: Current.user.id,
         reason: "Restauration via interface admin"
       )
-      
+
       result = restorer.call
-      
+
       if result.success?
         redirect_to admin_payment_path(result.payment), notice: "Paiement restauré avec succès"
       else

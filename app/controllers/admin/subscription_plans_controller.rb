@@ -65,9 +65,9 @@ module Admin
       subscription_plan = SubscriptionPlan.find(subscription_purchase_params[:subscription_plan_id])
 
       begin
-        custom_amount = subscription_purchase_params[:payment_method] == "offered" ? 
+        custom_amount = subscription_purchase_params[:payment_method] == "offered" ?
                        (subscription_purchase_params[:custom_amount_cents]&.to_i || 0) : nil
-        
+
         @person.create_subscription!(
           subscription_plan,
           payment_method: (subscription_purchase_params[:payment_method].presence || "cash"),

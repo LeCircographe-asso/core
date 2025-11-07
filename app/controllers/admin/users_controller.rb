@@ -200,7 +200,7 @@ module Admin
         if @person.update(person_params.except(:newsletter_subscribed))
           # Gérer newsletter via NewsletterSubscriber
           handle_newsletter_update(@person, person_params[:newsletter_subscribed])
-          
+
           # Handle AJAX requests for inline editing
           if request.xhr?
             render json: {
@@ -281,22 +281,22 @@ module Admin
       if params[:id].to_s.start_with?("person_")
         # Supprimer la Person (déjà chargée dans set_user)
         person = @person
-        
+
         # Debug: vérifier si @person est défini
         if person.nil?
           Rails.logger.error "DEBUG: @person is nil for params[:id] = #{params[:id]}"
           redirect_to admin_users_path, alert: "Personne non trouvée." and return
         end
-        
+
         # Utiliser le service UserManagement::UserDeleter
         deleter = UserManagement::UserDeleter.new(
           person_id: person.id,
           deleted_by_id: current_user.id,
           reason: "Suppression via interface admin"
         )
-        
+
         result = deleter.call
-        
+
         if result.success?
           redirect_to admin_users_path, status: :see_other, notice: "Personne supprimée avec succès."
         else
@@ -334,12 +334,12 @@ module Admin
         # Pour les Person, charger la Person
         person_id = params[:id].gsub("person_", "")
         @person = Person.find_by(id: person_id)
-        
+
         # If person not found, redirect to index with alert
         if @person.nil?
           redirect_to admin_users_path, alert: "Utilisateur non trouvé." and return
         end
-        
+
         @user = @person.user # Peut être nil si pas de compte utilisateur
       else
         # Pour les User classiques
@@ -518,16 +518,16 @@ module Admin
         :reduced_rate_proof
       )
     end
-    
+
     def handle_newsletter_update(person, newsletter_flag)
       return unless person.email.present?
-      
+
       subscriber = NewsletterSubscriber.find_or_initialize_by(email: person.email)
-      
+
       if newsletter_flag == "1" || newsletter_flag == true || newsletter_flag == 1
         subscriber.update!(
           person: person,
-          source: 'admin',
+          source: "admin",
           subscribed: true
         )
       else
@@ -539,10 +539,10 @@ module Admin
 
     def available_roles_for_user(user)
       return [] if user.nil?
-      
+
       # Un super_admin peut assigner tous les rôles sauf super_admin
       if Current.user&.super_admin?
-        User.system_roles.keys.reject { |role| role == 'super_admin' }
+        User.system_roles.keys.reject { |role| role == "super_admin" }
       # Un admin peut assigner volunteer et web_visitor
       elsif Current.user&.admin?
         %w[volunteer web_visitor]

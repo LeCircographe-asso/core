@@ -9,7 +9,7 @@ class AccountClaimsController < ApplicationController
     begin
       # Chercher une Person existante par email
       person = Person.find_by(email: params[:email])
-      
+
       if person&.can_be_claimed_by?(params[:email])
         # Créer la demande de réclamation
         claim = AccountClaim.create!(
@@ -18,10 +18,10 @@ class AccountClaimsController < ApplicationController
           confirmation_token: SecureRandom.urlsafe_base64(32),
           expires_at: 24.hours.from_now
         )
-        
+
         # Envoyer l'email de confirmation
         # TODO: Implémenter l'envoi d'email
-        
+
         redirect_to root_path, notice: "Demande de réclamation envoyée. Vérifiez vos emails."
       else
         redirect_to root_path, alert: "Aucun compte trouvé avec cet email ou déjà lié."
@@ -43,7 +43,7 @@ class AccountClaimsController < ApplicationController
       # Fusionner les données Person admin → User actuel
       admin_person = claim.person
       user_person = claim.user.person || claim.user.build_person
-      
+
       # Copier les données de l'admin vers l'utilisateur
       user_person.update!(
         first_name: admin_person.first_name,
@@ -65,13 +65,13 @@ class AccountClaimsController < ApplicationController
         newsletter_subscribed: admin_person.newsletter_subscribed,
         dyslexic_font: admin_person.dyslexic_font
       )
-      
+
       # Supprimer l'ancienne Person admin
       admin_person.destroy!
-      
+
       # Marquer la réclamation comme confirmée
       claim.update!(status: :confirmed)
-      
+
       redirect_to user_path(claim.user), notice: "✅ Compte revendiqué ! Votre historique est maintenant disponible."
     rescue => e
       redirect_to root_path, alert: "Erreur lors de la réclamation: #{e.message}"
