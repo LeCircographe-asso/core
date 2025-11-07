@@ -6,7 +6,9 @@ module FontHelper
     "circographe" => "Circographe",
     "rough-typewriter" => "Rough Typewriter",
     "jetbrains" => "JetBrains Mono",
-    "dyslexic" => "OpenDyslexic"
+
+    "dyslexic" => "OpenDyslexic",
+    "roboto" => "Roboto"
   }.freeze
 
   # Classes CSS pour les fonts
@@ -15,7 +17,8 @@ module FontHelper
     "circographe" => "font-circographe",
     "rough-typewriter" => "font-rough-typewriter",
     "jetbrains" => "font-jetbrains",
-    "dyslexic" => "font-dyslexic"
+    "dyslexic" => "font-dyslexic",
+    "roboto" => "font-roboto"
   }.freeze
 
   # Typography scale classes
