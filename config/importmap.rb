@@ -9,3 +9,5 @@ pin "home_animations", to: "home_animations.js"
 pin "trix"
 pin "@rails/actiontext", to: "actiontext.esm.js"
 pin "global_animations", to: "global_animations.js"
+pin "swiper" # @12.0.3
+pin "swiper/bundle", to: "swiper--bundle.js" # @12.0.3
