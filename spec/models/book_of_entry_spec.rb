@@ -275,6 +275,44 @@ RSpec.describe BookOfEntry, type: :model do
         expect(book_of_entry.use_session!).to be false
       end
     end
+
+    context "with day plan" do
+      let(:circus_person) { create(:person, :with_circus_membership) }
+      let(:day_plan) { create(:subscription_plan, :day, membership_type: circus_membership_type) }
+      let(:day_book) do
+        create(:book_of_entry, person: circus_person, subscription_plan: day_plan, sessions_remaining: 1, expires_at: Date.current.end_of_day)
+      end
+
+      it "consumes the pass and marks it consumed" do
+        expect { day_book.use_session! }.to change { day_book.reload.status }.from('active').to('consumed')
+        expect(day_book.sessions_remaining).to eq(0)
+      end
+    end
+
+    context "with trimester plan (unlimited)" do
+      let(:circus_person) { create(:person, :with_circus_membership) }
+      let(:trimester_plan) { create(:subscription_plan, :trimester, membership_type: circus_membership_type) }
+      let(:trimester_book) do
+        create(:book_of_entry, person: circus_person, subscription_plan: trimester_plan, sessions_remaining: nil, expires_at: 3.months.from_now)
+      end
+
+      it "does not alter sessions or status" do
+        expect { trimester_book.use_session! }.not_to change { [trimester_book.reload.sessions_remaining, trimester_book.status] }
+      end
+    end
+
+    context "with annual plan (unlimited)" do
+      let(:circus_person) { create(:person, :with_circus_membership) }
+      let(:annual_plan) { create(:subscription_plan, :annual, membership_type: circus_membership_type) }
+      let(:annual_book) do
+        create(:book_of_entry, person: circus_person, subscription_plan: annual_plan, sessions_remaining: nil, expires_at: 1.year.from_now)
+      end
+
+      it "keeps the book active" do
+        expect { annual_book.use_session! }.not_to change { annual_book.reload.status }
+        expect(annual_book.sessions_remaining).to be_nil
+      end
+    end
   end
 
   describe "#remaining_entries" do
