@@ -166,4 +166,3 @@ RSpec.describe PaymentManagement::PaymentCreator do
     end
   end
 end
-

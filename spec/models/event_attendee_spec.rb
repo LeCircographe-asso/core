@@ -22,4 +22,3 @@ RSpec.describe EventAttendee, type: :model do
     end
   end
 end
-

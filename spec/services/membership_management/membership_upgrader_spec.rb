@@ -69,7 +69,7 @@ RSpec.describe MembershipManagement::MembershipUpgrader do
         upgrader = described_class.new(params)
         result = upgrader.call
 
-        expect(result.member_number_changed).to be_in([true, false])
+        expect(result.member_number_changed).to be_in([ true, false ])
         expect(result.old_member_number).to be_present
         expect(result.new_member_number).to be_present
       end
@@ -79,7 +79,7 @@ RSpec.describe MembershipManagement::MembershipUpgrader do
       it "returns failure when person is missing" do
         params = { new_membership_type_id: circus_type.id, payment_method: "cash", recorded_by_id: admin_user.id }
         upgrader = described_class.new(params)
-        
+
         result = upgrader.call
         expect(result.success?).to be false
       end
@@ -87,7 +87,7 @@ RSpec.describe MembershipManagement::MembershipUpgrader do
       it "returns failure when new_membership_type_id is missing" do
         params = { person: person, payment_method: "cash", recorded_by_id: admin_user.id }
         upgrader = described_class.new(params)
-        
+
         result = upgrader.call
         expect(result.success?).to be false
       end
@@ -97,7 +97,7 @@ RSpec.describe MembershipManagement::MembershipUpgrader do
       it "returns failure when membership_type doesn't exist" do
         params = { person: person, new_membership_type_id: 99999, payment_method: "cash", recorded_by_id: admin_user.id }
         upgrader = described_class.new(params)
-        
+
         result = upgrader.call
         expect(result.success?).to be false
         expect(result.message).to include("Record not found")
@@ -123,4 +123,3 @@ RSpec.describe MembershipManagement::MembershipUpgrader do
     end
   end
 end
-

@@ -15,4 +15,3 @@ RSpec.describe Blog, type: :model do
     end
   end
 end
-

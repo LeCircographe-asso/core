@@ -10,7 +10,7 @@ RSpec.describe NewsletterSignupService do
 
         expect(result[:success]).to be true
         expect(result[:message]).to eq("Inscription à la newsletter réussie !")
-        
+
         subscriber = NewsletterSubscriber.find_by(email: email)
         expect(subscriber).to be_present
         expect(subscriber.subscribed).to be true
@@ -19,7 +19,7 @@ RSpec.describe NewsletterSignupService do
 
       it 'normalizes email' do
         NewsletterSignupService.new('  NEW@EXAMPLE.COM  ').call_newsletter
-        
+
         subscriber = NewsletterSubscriber.find_by(email: 'new@example.com')
         expect(subscriber).to be_present
       end
@@ -32,7 +32,7 @@ RSpec.describe NewsletterSignupService do
           result = NewsletterSignupService.new(auto_link_email).call_newsletter
 
           expect(result[:success]).to be true
-          
+
           subscriber = NewsletterSubscriber.find_by(email: auto_link_email)
           expect(subscriber.person).to eq(person)
         end
@@ -43,7 +43,7 @@ RSpec.describe NewsletterSignupService do
           result = NewsletterSignupService.new(email).call_newsletter
 
           expect(result[:success]).to be true
-          
+
           subscriber = NewsletterSubscriber.find_by(email: email)
           expect(subscriber.person).to be_nil
         end
@@ -60,7 +60,7 @@ RSpec.describe NewsletterSignupService do
           expect(result[:success]).to be false
           expect(result[:redirect_to]).to be true
           expect(result[:message]).to include("déjà dans notre liste")
-          
+
           subscriber.reload
           expect(subscriber.subscribed).to be true # Still subscribed
         end
@@ -75,7 +75,7 @@ RSpec.describe NewsletterSignupService do
           expect(result[:success]).to be false
           expect(result[:redirect_to]).to be true
           expect(result[:message]).to include("déjà dans notre liste")
-          
+
           subscriber.reload
           expect(subscriber.subscribed).to be false # Still unsubscribed
         end

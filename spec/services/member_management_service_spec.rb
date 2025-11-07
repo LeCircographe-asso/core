@@ -21,7 +21,7 @@ RSpec.describe MemberManagementService do
     it "generates 'C' type for circus membership" do
       # Create a person with a circus member number to ensure correct generation
       create(:person, member_number: "25C001")
-      
+
       number = MemberManagementService.generate_member_number('CIRQUE')
       expect(number).to match(/^\d{2}C\d{3}$/)
     end
@@ -29,18 +29,18 @@ RSpec.describe MemberManagementService do
     it "generates sequential numbers" do
       # Create a person with a member number to ensure sequential generation
       person = create(:person, member_number: "25U001")
-      
+
       number1 = MemberManagementService.generate_member_number('U')
       # Create Person with number1 to force next generation to be sequential
       create(:person, member_number: number1)
       number2 = MemberManagementService.generate_member_number('U')
-      
+
       expect(number1).not_to eq(number2)
-      
+
       # Extract numbers from format YYTNNN
       num1 = number1.gsub(/^\d{2}U/, '').to_i
       num2 = number2.gsub(/^\d{2}U/, '').to_i
-      
+
       # The second number should be greater than the first
       expect(num2).to be > num1
     end
@@ -48,10 +48,10 @@ RSpec.describe MemberManagementService do
     it "avoids conflicts with existing numbers" do
       # Create a person with a specific number
       person = create(:person, member_number: "25U001")
-      
+
       # Generate new number - should not conflict with existing
       number = MemberManagementService.generate_member_number('U')
-      
+
       expect(number).not_to eq("25U001")
       # Verify uniqueness
       expect(Person.exists?(member_number: number)).to be false
@@ -61,7 +61,7 @@ RSpec.describe MemberManagementService do
     it "handles different membership types separately" do
       number_u = MemberManagementService.generate_member_number('U')
       number_c = MemberManagementService.generate_member_number('C')
-      
+
       expect(number_u).to match(/^\d{2}U\d{3}$/)
       expect(number_c).to match(/^\d{2}C\d{3}$/)
     end
@@ -72,7 +72,7 @@ RSpec.describe MemberManagementService do
 
     it "assigns member number to person" do
       result = MemberManagementService.assign_member_number(person)
-      
+
       expect(result).to be_present
       expect(person.reload.member_number).to eq(result)
       expect(result).to match(/^\d{2}[UC]\d{3}$/)
@@ -80,33 +80,33 @@ RSpec.describe MemberManagementService do
 
     it "returns existing member number if already assigned" do
       person.update!(member_number: "25U001", skip_membership_validation: true)
-      
+
       result = MemberManagementService.assign_member_number(person)
-      
+
       expect(result).to eq("25U001")
     end
 
     it "determines membership type from active membership" do
       membership_type = create(:membership_type, category: :circus)
       membership = create(:membership, person: person, membership_type: membership_type, status: :active)
-      
+
       result = MemberManagementService.assign_member_number(person)
-      
+
       expect(result).to match(/^\d{2}C\d{3}$/)
     end
 
     it "uses basic type for basic membership" do
       membership_type = create(:membership_type, category: :basic)
       membership = create(:membership, person: person, membership_type: membership_type, status: :active)
-      
+
       result = MemberManagementService.assign_member_number(person)
-      
+
       expect(result).to match(/^\d{2}U\d{3}$/)
     end
 
     it "uses 'U' as default when no active membership" do
       result = MemberManagementService.assign_member_number(person)
-      
+
       expect(result).to match(/^\d{2}U\d{3}$/)
     end
 
@@ -114,7 +114,7 @@ RSpec.describe MemberManagementService do
       expect {
         MemberManagementService.assign_member_number(person)
       }.to change(person.member_number_histories, :count).by(1)
-      
+
       history = person.member_number_histories.first
       expect(history.member_number).to eq(person.member_number)
       expect(history.membership_type).to eq("Basique")
@@ -125,11 +125,11 @@ RSpec.describe MemberManagementService do
     it "skips membership validation during assignment" do
       # Remove any existing memberships
       person.memberships.destroy_all
-      
+
       expect {
         MemberManagementService.assign_member_number(person)
       }.not_to raise_error
-      
+
       expect(person.reload.member_number).to be_present
     end
   end
@@ -147,7 +147,7 @@ RSpec.describe MemberManagementService do
 
     it "merges persons successfully" do
       result = MemberManagementService.merge_duplicate_persons(primary_person, secondary_person)
-      
+
       expect(result[:success]).to be true
       expect(result[:primary_person]).to eq(primary_person)
       expect(result[:transferred_count]).to eq(3) # membership + payment + attendance
@@ -155,9 +155,9 @@ RSpec.describe MemberManagementService do
 
     it "transfers email from secondary to primary", :disabled do
       primary_person.update!(email: nil, newsletter_subscribed: false, skip_membership_validation: true)
-      
+
       result = MemberManagementService.merge_duplicate_persons(primary_person, secondary_person)
-      
+
       expect(result[:success]).to be true
       expect(primary_person.reload.email).to eq("secondary@example.com")
       expect(result[:merged_fields]).to include(:email)
@@ -165,9 +165,9 @@ RSpec.describe MemberManagementService do
 
     it "transfers phone from secondary to primary", :disabled do
       primary_person.update!(phone: nil, skip_membership_validation: true)
-      
+
       result = MemberManagementService.merge_duplicate_persons(primary_person, secondary_person)
-      
+
       expect(result[:success]).to be true
       expect(primary_person.reload.phone).to eq("2222222222")
       expect(result[:merged_fields]).to include(:phone)
@@ -182,9 +182,9 @@ RSpec.describe MemberManagementService do
         country: "France",
         skip_membership_validation: true
       )
-      
+
       result = MemberManagementService.merge_duplicate_persons(primary_person, secondary_person)
-      
+
       expect(result[:success]).to be true
       expect(primary_person.reload.address).to eq("123 Test St")
       expect(primary_person.zip_code).to eq("12345")
@@ -195,12 +195,12 @@ RSpec.describe MemberManagementService do
 
     it "transfers all related records" do
       result = MemberManagementService.merge_duplicate_persons(primary_person, secondary_person)
-      
+
       # Check that records were transferred
       expect(primary_person.reload.memberships.count).to eq(1)
       expect(primary_person.payments.count).to eq(1)
       expect(primary_person.attendances.count).to eq(1)
-      
+
       # Check that secondary person no longer exists
       expect { secondary_person.reload }.to raise_error(ActiveRecord::RecordNotFound)
     end
@@ -208,9 +208,9 @@ RSpec.describe MemberManagementService do
     it "handles errors gracefully", :disabled do
       # Make the merge fail by causing a validation error
       allow(primary_person).to receive(:update!).and_raise(ActiveRecord::RecordInvalid.new(primary_person))
-      
+
       result = MemberManagementService.merge_duplicate_persons(primary_person, secondary_person)
-      
+
       expect(result[:success]).to be false
       expect(result[:error]).to be_present
     end
@@ -218,9 +218,9 @@ RSpec.describe MemberManagementService do
     it "performs merge in transaction" do
       # If any part fails, everything should be rolled back
       allow(secondary_person).to receive(:destroy!).and_raise(ActiveRecord::RecordInvalid.new(secondary_person))
-      
+
       result = MemberManagementService.merge_duplicate_persons(primary_person, secondary_person)
-      
+
       expect(result[:success]).to be false
       # Both persons should still exist (rollback)
       expect { primary_person.reload }.not_to raise_error
@@ -235,12 +235,12 @@ RSpec.describe MemberManagementService do
       person1 = create(:person, first_name: "John", last_name: "Doe")
       person2 = create(:person, first_name: "John", last_name: "Doe")
       person3 = create(:person, first_name: "Jane", last_name: "Smith")
-      
+
       duplicates = MemberManagementService.identify_duplicates
-      
+
       expect(duplicates.length).to eq(1)
       expect(duplicates.first[:type]).to eq(:name_duplicate)
-      expect(duplicates.first[:primary_person]).to be_in([person1, person2])
+      expect(duplicates.first[:primary_person]).to be_in([ person1, person2 ])
       expect(duplicates.first[:secondary_persons]).to contain_exactly(person1, person2)
     end
 
@@ -248,9 +248,9 @@ RSpec.describe MemberManagementService do
       person_without_user = create(:person, first_name: "John", last_name: "Doe")
       person_with_user = create(:person, first_name: "John", last_name: "Doe")
       create(:user, person: person_with_user)
-      
+
       duplicates = MemberManagementService.identify_duplicates
-      
+
       expect(duplicates.first[:primary_person]).to eq(person_with_user)
       expect(duplicates.first[:secondary_persons]).to contain_exactly(person_without_user)
     end
@@ -258,18 +258,18 @@ RSpec.describe MemberManagementService do
     it "selects most recent person as primary when no user accounts" do
       older_person = create(:person, first_name: "John", last_name: "Doe", created_at: 2.days.ago)
       newer_person = create(:person, first_name: "John", last_name: "Doe", created_at: 1.day.ago)
-      
+
       duplicates = MemberManagementService.identify_duplicates
-      
+
       expect(duplicates.first[:primary_person]).to eq(newer_person)
       expect(duplicates.first[:secondary_persons]).to contain_exactly(older_person)
     end
 
     it "does not identify single persons as duplicates" do
       create(:person, first_name: "John", last_name: "Doe")
-      
+
       duplicates = MemberManagementService.identify_duplicates
-      
+
       expect(duplicates).to be_empty
     end
   end
@@ -280,9 +280,9 @@ RSpec.describe MemberManagementService do
       person2 = create(:person, first_name: "John", last_name: "Doe")
       person3 = create(:person, first_name: "Jane", last_name: "Smith")
       person4 = create(:person, first_name: "Jane", last_name: "Smith")
-      
+
       results = MemberManagementService.cleanup_duplicates
-      
+
       expect(results.length).to eq(2) # Two groups of duplicates
       expect(results.all? { |r| r[:result][:success] }).to be true
     end
@@ -290,12 +290,12 @@ RSpec.describe MemberManagementService do
     it "handles cleanup errors gracefully" do
       person1 = create(:person, first_name: "John", last_name: "Doe")
       person2 = create(:person, first_name: "John", last_name: "Doe")
-      
+
       # Make the merge fail
       allow(MemberManagementService).to receive(:merge_duplicate_persons).and_return({ success: false, error: "Test error" })
-      
+
       results = MemberManagementService.cleanup_duplicates
-      
+
       expect(results.length).to eq(1)
       expect(results.first[:result][:success]).to be false
       expect(results.first[:result][:error]).to eq("Test error")
@@ -305,18 +305,18 @@ RSpec.describe MemberManagementService do
   describe '.assign_missing_member_numbers' do
     before do
       # Clean up any persons without member numbers from previous tests
-      Person.where(member_number: [nil, ""]).destroy_all
+      Person.where(member_number: [ nil, "" ]).destroy_all
     end
-    
+
     it "assigns numbers to persons without member numbers" do
       person1 = create(:person, member_number: nil)
       person2 = create(:person, member_number: "")
       person3 = create(:person, member_number: "25U001") # Already has number
-      
+
       expect {
         MemberManagementService.assign_missing_member_numbers
-      }.to change { Person.where(member_number: [nil, ""]).count }.by(-2)
-      
+      }.to change { Person.where(member_number: [ nil, "" ]).count }.by(-2)
+
       expect(person1.reload.member_number).to be_present
       expect(person2.reload.member_number).to be_present
       expect(person3.reload.member_number).to eq("25U001") # Unchanged
@@ -326,7 +326,7 @@ RSpec.describe MemberManagementService do
   describe '.parse_member_number' do
     it "parses valid member number" do
       result = MemberManagementService.parse_member_number("25U001")
-      
+
       expect(result).to eq({
         year: "2025",
         type: "Basique",
@@ -338,7 +338,7 @@ RSpec.describe MemberManagementService do
 
     it "parses circus member number" do
       result = MemberManagementService.parse_member_number("25C001")
-      
+
       expect(result).to eq({
         year: "2025",
         type: "Cirque",
@@ -385,7 +385,7 @@ RSpec.describe MemberManagementService do
   describe '.generate_test_numbers' do
     it "generates specified number of test numbers", :disabled do
       numbers = MemberManagementService.generate_test_numbers(3, 'U')
-      
+
       expect(numbers.length).to eq(3)
       numbers.each do |number|
         expect(number).to match(/^\d{2}U\d{3}$/)
@@ -395,19 +395,19 @@ RSpec.describe MemberManagementService do
     it "generates sequential test numbers", :disabled do
       # Create a person with a circus member number to ensure correct generation
       create(:person, member_number: "25C001")
-      
+
       numbers = MemberManagementService.generate_test_numbers(3, 'C')
-      
+
       expect(numbers.length).to eq(3)
       numbers.each do |number|
         expect(number).to match(/^\d{2}C\d{3}$/)
       end
-      
+
       # Check they are sequential
       num1 = numbers[0].gsub(/^\d{2}C/, '').to_i
       num2 = numbers[1].gsub(/^\d{2}C/, '').to_i
       num3 = numbers[2].gsub(/^\d{2}C/, '').to_i
-      
+
       expect(num2).to be > num1
       expect(num3).to be > num2
     end

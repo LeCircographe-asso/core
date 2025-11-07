@@ -41,4 +41,3 @@ RSpec.describe PaymentAuditLog, type: :model do
     end
   end
 end
-

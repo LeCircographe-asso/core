@@ -55,7 +55,7 @@ RSpec.describe MembershipManagement::MembershipCreator do
       it "creates payment with custom amount" do
         creator = described_class.new(params)
         result = creator.call
-        
+
         expect(result.success?).to be true
         expect(result.payment).to be_present
         expect(result.payment.total_cents).to eq(2500)
@@ -66,7 +66,7 @@ RSpec.describe MembershipManagement::MembershipCreator do
       it "returns failure when person is missing" do
         params = { membership_type_id: membership_type.id, payment_method: "cash", recorded_by_id: admin_user.id }
         creator = described_class.new(params)
-        
+
         result = creator.call
         expect(result.success?).to be false
         expect(result.message).to include("Invalid data")
@@ -75,7 +75,7 @@ RSpec.describe MembershipManagement::MembershipCreator do
       it "returns failure when membership_type_id is missing" do
         params = { person: person, payment_method: "cash", recorded_by_id: admin_user.id }
         creator = described_class.new(params)
-        
+
         result = creator.call
         expect(result.success?).to be false
       end
@@ -83,7 +83,7 @@ RSpec.describe MembershipManagement::MembershipCreator do
       it "returns failure when recorded_by_id is missing" do
         params = { person: person, membership_type_id: membership_type.id, payment_method: "cash" }
         creator = described_class.new(params)
-        
+
         result = creator.call
         expect(result.success?).to be false
       end
@@ -93,7 +93,7 @@ RSpec.describe MembershipManagement::MembershipCreator do
       it "returns failure when membership_type doesn't exist" do
         params = { person: person, membership_type_id: 99999, payment_method: "cash", recorded_by_id: admin_user.id }
         creator = described_class.new(params)
-        
+
         result = creator.call
         expect(result.success?).to be false
         expect(result.message).to include("Record not found")
@@ -102,7 +102,7 @@ RSpec.describe MembershipManagement::MembershipCreator do
       it "returns failure when user doesn't exist" do
         params = { person: person, membership_type_id: membership_type.id, payment_method: "cash", recorded_by_id: 99999 }
         creator = described_class.new(params)
-        
+
         result = creator.call
         expect(result.success?).to be false
         expect(result.message).to include("Record not found")
@@ -128,4 +128,3 @@ RSpec.describe MembershipManagement::MembershipCreator do
     end
   end
 end
-

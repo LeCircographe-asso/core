@@ -123,7 +123,7 @@ RSpec.describe SubscriptionPlan, type: :model do
       end
 
       context 'when duration is not pack10' do
-        [:day, :trimester, :annual].each do |duration|
+        [ :day, :trimester, :annual ].each do |duration|
           it "does not require sessions_count for #{duration}" do
             plan = build(:subscription_plan, membership_type: circus_membership_type, duration: duration, sessions_count: nil)
             expect(plan).to be_valid
@@ -155,14 +155,14 @@ RSpec.describe SubscriptionPlan, type: :model do
       person = create(:person)
       entry1 = create(:book_of_entry, person: person, subscription_plan: plan)
       entry2 = create(:book_of_entry, person: person, subscription_plan: plan)
-      
+
       expect(plan.book_of_entries).to include(entry1, entry2)
     end
 
     it "destroys book_of_entries when deleted" do
       person = create(:person)
       entry = create(:book_of_entry, person: person, subscription_plan: plan)
-      
+
       expect {
         plan.destroy
       }.to change(BookOfEntry, :count).by(-1)
@@ -175,13 +175,13 @@ RSpec.describe SubscriptionPlan, type: :model do
     it "has correct duration enum values" do
       day_plan = build(:subscription_plan, membership_type: circus_membership_type, duration: :day)
       expect(day_plan.duration).to eq("day")
-      
+
       trimester_plan = build(:subscription_plan, membership_type: circus_membership_type, duration: :trimester)
       expect(trimester_plan.duration).to eq("trimester")
-      
+
       annual_plan = build(:subscription_plan, membership_type: circus_membership_type, duration: :annual)
       expect(annual_plan.duration).to eq("annual")
-      
+
       pack_plan = build(:subscription_plan, membership_type: circus_membership_type, duration: :pack10)
       expect(pack_plan.duration).to eq("pack10")
     end
@@ -281,7 +281,7 @@ RSpec.describe SubscriptionPlan, type: :model do
 
       it "creates a new version with incremented version number" do
         new_plan = current_plan.create_price_change!(10000)
-        
+
         expect(new_plan.version).to eq(2)
         expect(new_plan.price_cents).to eq(10000)
         expect(new_plan.name).to eq(current_plan.name)
@@ -290,7 +290,7 @@ RSpec.describe SubscriptionPlan, type: :model do
       it "closes current version with effective_until set to day before new effective_from" do
         new_effective_from = Date.current + 1.week
         current_plan.create_price_change!(10000, effective_from: new_effective_from)
-        
+
         current_plan.reload
         expect(current_plan.effective_until).to eq(new_effective_from - 1.day)
       end
@@ -298,26 +298,26 @@ RSpec.describe SubscriptionPlan, type: :model do
       it "sets effective_from for new version" do
         new_effective_from = Date.current + 1.week
         new_plan = current_plan.create_price_change!(10000, effective_from: new_effective_from)
-        
+
         expect(new_plan.effective_from).to eq(new_effective_from)
       end
 
       it "sets effective_until to nil for new version" do
         new_plan = current_plan.create_price_change!(10000)
-        
+
         expect(new_plan.effective_until).to be_nil
       end
 
       it "sets created_by_user when provided" do
         new_plan = current_plan.create_price_change!(10000, user: admin_user)
-        
+
         expect(new_plan.created_by_user).to eq(admin_user)
       end
 
       it "sets change_reason when provided" do
         reason = "Inflation adjustment"
         new_plan = current_plan.create_price_change!(10000, reason: reason)
-        
+
         expect(new_plan.change_reason).to eq(reason)
       end
 
@@ -325,9 +325,9 @@ RSpec.describe SubscriptionPlan, type: :model do
         it "handles same day effective_from correctly" do
           today = Date.current
           plan = create(:subscription_plan, membership_type: circus_membership_type, effective_from: today)
-          
+
           new_plan = plan.create_price_change!(10000, effective_from: today)
-          
+
           plan.reload
           expect(plan.effective_until.to_date).to eq(today - 1.day)
         end
@@ -335,14 +335,14 @@ RSpec.describe SubscriptionPlan, type: :model do
         it "handles past effective_from date" do
           past_date = 1.month.ago.to_date
           new_plan = current_plan.create_price_change!(10000, effective_from: past_date)
-          
+
           current_plan.reload
           expect(current_plan.effective_until.to_date).to eq(past_date - 1.day)
         end
 
         it "duplicates all attributes except version, price, dates, and user fields" do
           new_plan = current_plan.create_price_change!(10000)
-          
+
           expect(new_plan.name).to eq(current_plan.name)
           expect(new_plan.duration).to eq(current_plan.duration)
           expect(new_plan.description).to eq(current_plan.description)
@@ -358,7 +358,7 @@ RSpec.describe SubscriptionPlan, type: :model do
 
       it "returns all versions of plans with same name ordered by effective_from" do
         evolution = plan1.price_evolution
-        
+
         expect(evolution).to include(plan1, plan2, plan3)
         expect(evolution.first).to eq(plan1)
         expect(evolution.last).to eq(plan3)
@@ -366,7 +366,7 @@ RSpec.describe SubscriptionPlan, type: :model do
 
       it "does not include plans with different names" do
         other_plan = create(:subscription_plan, membership_type: circus_membership_type, name: "Other Plan", version: 1)
-        
+
         expect(plan1.price_evolution).not_to include(other_plan)
       end
     end
@@ -378,18 +378,18 @@ RSpec.describe SubscriptionPlan, type: :model do
       it "calculates percentage correctly for price increase" do
         old_date = 1.year.ago
         new_date = Date.current
-        
+
         percentage = old_plan.price_change_percentage(old_date, new_date)
-        
+
         # 7000 - 5000 = 2000, 2000 / 5000 = 0.4, 0.4 * 100 = 40%
         expect(percentage).to eq(40.0)
       end
 
       it "calculates percentage correctly for price decrease" do
         lower_plan = create(:subscription_plan, membership_type: circus_membership_type, name: "Test Plan", version: 3, effective_from: Date.current + 1.day, price_cents: 3000)
-        
+
         percentage = old_plan.price_change_percentage(1.year.ago, Date.current + 1.day)
-        
+
         # 3000 - 5000 = -2000, -2000 / 5000 = -0.4, -0.4 * 100 = -40%
         expect(percentage).to eq(-40.0)
       end
@@ -408,9 +408,9 @@ RSpec.describe SubscriptionPlan, type: :model do
         it "rounds result to 2 decimal places" do
           odd_plan = create(:subscription_plan, membership_type: circus_membership_type, name: "Odd Plan", version: 1, effective_from: 1.year.ago, price_cents: 3333)
           other_plan = create(:subscription_plan, membership_type: circus_membership_type, name: "Odd Plan", version: 2, effective_from: Date.current, price_cents: 5000)
-          
+
           percentage = odd_plan.price_change_percentage(1.year.ago, Date.current)
-          
+
           # 5000 - 3333 = 1667, 1667 / 3333 ~ 0.5001 or 0.5002
           expect(percentage).to be > 50.00
           expect(percentage).to be < 50.10
@@ -546,7 +546,7 @@ RSpec.describe SubscriptionPlan, type: :model do
       it "converts euros to price_cents correctly" do
         plan = build(:subscription_plan, membership_type: circus_membership_type)
         plan.price_euros = 25.50
-        
+
         expect(plan.price_cents).to eq(2550)
       end
     end
@@ -630,7 +630,7 @@ RSpec.describe SubscriptionPlan, type: :model do
 
         it "creates day plan for circus_full" do
           SubscriptionPlan.create_default_plans!
-          
+
           day_plan = SubscriptionPlan.find_by(name: "Journée - #{circus_full_type.name}")
           expect(day_plan).to be_present
           expect(day_plan.duration).to eq("day")
@@ -639,7 +639,7 @@ RSpec.describe SubscriptionPlan, type: :model do
 
         it "creates trimester plan for circus_full" do
           SubscriptionPlan.create_default_plans!
-          
+
           trimester_plan = SubscriptionPlan.find_by(name: "Trimestre - #{circus_full_type.name}")
           expect(trimester_plan).to be_present
           expect(trimester_plan.duration).to eq("trimester")
@@ -648,7 +648,7 @@ RSpec.describe SubscriptionPlan, type: :model do
 
         it "creates annual plan for circus_full" do
           SubscriptionPlan.create_default_plans!
-          
+
           annual_plan = SubscriptionPlan.find_by(name: "Annuel - #{circus_full_type.name}")
           expect(annual_plan).to be_present
           expect(annual_plan.duration).to eq("annual")
@@ -657,7 +657,7 @@ RSpec.describe SubscriptionPlan, type: :model do
 
         it "creates pack10 plan for circus_full" do
           SubscriptionPlan.create_default_plans!
-          
+
           pack_plan = SubscriptionPlan.find_by(name: "Pack 10 séances - #{circus_full_type.name}")
           expect(pack_plan).to be_present
           expect(pack_plan.duration).to eq("pack10")
@@ -668,16 +668,16 @@ RSpec.describe SubscriptionPlan, type: :model do
 
         it "creates plans for circus_reduced" do
           SubscriptionPlan.create_default_plans!
-          
+
           reduced_plan = SubscriptionPlan.find_by(name: "Journée - #{circus_reduced_type.name}")
           expect(reduced_plan).to be_present
         end
 
         it "does not create plans for basic membership types" do
           basic_type = create(:membership_type, :basic)
-          
+
           SubscriptionPlan.create_default_plans!
-          
+
           basic_plan = SubscriptionPlan.find_by("name LIKE ?", "%#{basic_type.name}%")
           expect(basic_plan).to be_nil
         end
@@ -697,9 +697,9 @@ RSpec.describe SubscriptionPlan, type: :model do
         it "keeps existing plan attributes" do
           existing_day_plan = SubscriptionPlan.find_by(name: "Journée - #{circus_full_type.name}")
           original_price = existing_day_plan.price_cents
-          
+
           SubscriptionPlan.create_default_plans!
-          
+
           existing_day_plan.reload
           expect(existing_day_plan.price_cents).to eq(original_price)
         end
@@ -707,4 +707,3 @@ RSpec.describe SubscriptionPlan, type: :model do
     end
   end
 end
-

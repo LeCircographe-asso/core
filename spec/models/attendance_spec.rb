@@ -24,7 +24,7 @@ RSpec.describe Attendance, type: :model do
       it "validates uniqueness of person per event" do
         create(:attendance, person: person, event: event)
         duplicate = build(:attendance, person: person, event: event)
-        
+
         expect(duplicate).not_to be_valid
         expect(duplicate.errors[:person_id]).to include("est déjà intéressé par cet événement")
       end
@@ -33,7 +33,7 @@ RSpec.describe Attendance, type: :model do
         event2 = create(:event)
         create(:attendance, person: person, event: event)
         duplicate = build(:attendance, person: person, event: event2)
-        
+
         expect(duplicate).to be_valid
       end
     end
@@ -42,7 +42,7 @@ RSpec.describe Attendance, type: :model do
       it "validates uniqueness of person per date" do
         create(:attendance, person: person, event: nil, date: Date.current)
         duplicate = build(:attendance, person: person, event: nil, date: Date.current)
-        
+
         expect(duplicate).not_to be_valid
         expect(duplicate.errors[:person_id]).to include("est déjà marqué présent aujourd'hui")
       end
@@ -50,7 +50,7 @@ RSpec.describe Attendance, type: :model do
       it "allows same person on different dates" do
         create(:attendance, person: person, event: nil, date: Date.current)
         different_date = build(:attendance, person: person, event: nil, date: Date.yesterday)
-        
+
         expect(different_date).to be_valid
       end
     end
@@ -88,7 +88,7 @@ RSpec.describe Attendance, type: :model do
       it "returns attendances for specific person" do
         other_person = create(:person)
         create(:attendance, person: other_person)
-        
+
         attendances = Attendance.by_person(person)
         expect(attendances).to all(have_attributes(person: person))
       end
@@ -98,7 +98,7 @@ RSpec.describe Attendance, type: :model do
       it "returns attendances for specific event" do
         other_event = create(:event)
         create(:attendance, event: other_event)
-        
+
         attendances = Attendance.by_event(event)
         expect(attendances).to all(have_attributes(event: event))
       end
@@ -111,7 +111,7 @@ RSpec.describe Attendance, type: :model do
         custom_date = 5.days.ago.to_date
         attendance = build(:attendance, date: custom_date)
         attendance.save!
-        
+
         expect(attendance.date).to eq(custom_date)
       end
     end
@@ -126,24 +126,24 @@ RSpec.describe Attendance, type: :model do
 
         it "decrements book_of_entry sessions when attendance created" do
           attendance = create(:attendance, person: person, attendance_list: attendance_list, book_of_entry: book_of_entry, event: nil)
-          
+
           book_of_entry.reload
           expect(book_of_entry.sessions_remaining).to eq(4)
         end
 
         it "calls use_session! method" do
           allow(book_of_entry).to receive(:use_session!).and_return(true)
-          
+
           create(:attendance, person: person, attendance_list: attendance_list, book_of_entry: book_of_entry, event: nil)
-          
+
           expect(book_of_entry).to have_received(:use_session!)
         end
 
         it "does not decrement if attendance_list is nil" do
           book_of_entry = create(:book_of_entry, person: person, subscription_plan: pack10_plan, sessions_remaining: 5)
-          
+
           create(:attendance, person: person, event: event, book_of_entry: book_of_entry)
-          
+
           book_of_entry.reload
           expect(book_of_entry.sessions_remaining).to eq(5)
         end
@@ -153,7 +153,7 @@ RSpec.describe Attendance, type: :model do
         it "creates attendance successfully" do
           attendance_list = create(:attendance_list)
           attendance = build(:attendance, person: person, attendance_list: attendance_list, book_of_entry: nil, event: nil)
-          
+
           expect { attendance.save! }.not_to raise_error
         end
       end
@@ -169,10 +169,9 @@ RSpec.describe Attendance, type: :model do
     it "handles attendance with both event and attendance_list" do
       attendance_list = create(:attendance_list)
       attendance = build(:attendance, event: event, attendance_list: attendance_list)
-      
+
       # Should be valid, uniqueness based on event_id
       expect(attendance).to be_valid
     end
   end
 end
-
