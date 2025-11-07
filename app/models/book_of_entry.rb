@@ -30,7 +30,11 @@ class BookOfEntry < ApplicationRecord
   # Méthodes
   def can_use?
     # Un carnet peut être utilisé s'il est actif et a des séances restantes
-    return false unless active? && sessions_remaining > 0
+    return false unless active?
+
+    if has_session_limit?
+      return false unless sessions_remaining.present? && sessions_remaining > 0
+    end
 
     # Pour les packs, vérifier qu'il n'est pas expiré (sauf si c'est un pack10)
     return false if expired? && !is_pack10?
@@ -45,10 +49,12 @@ class BookOfEntry < ApplicationRecord
     # Décrémenter une séance et mettre à jour le statut
     return false unless can_use?
 
-    self.sessions_remaining -= 1
+    if has_session_limit?
+      self.sessions_remaining -= 1
 
-    if sessions_remaining == 0
-      self.status = :consumed
+      if sessions_remaining == 0
+        self.status = :consumed
+      end
     end
 
     save!
