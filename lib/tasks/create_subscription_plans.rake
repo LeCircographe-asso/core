@@ -2,17 +2,17 @@ namespace :db do
   desc "Create subscription plans"
   task create_subscription_plans: :environment do
     puts "🎫 Creating subscription plans..."
-    
+
     # Récupérer les types d'adhésion Circus (maintenant category = circus, différenciés par nom/prix)
     circus_types = MembershipType.where(category: :circus).order(price_cents: :desc)
     circus_full_type = circus_types.first  # Le plus cher (Tarif Plein)
     circus_reduced_type = circus_types.last # Le moins cher (Tarif Réduit)
-    
+
     if circus_full_type.nil? || circus_reduced_type.nil?
       puts "❌ Membership types not found. Please run rails db:seed first."
       exit 1
     end
-    
+
     subscription_plans = [
       {
         name: "Pack 10 séances - Cirque Complète",
@@ -42,7 +42,7 @@ namespace :db do
         validity_days: 180
       }
     ]
-    
+
     subscription_plans.each do |attrs|
       subscription_plan = SubscriptionPlan.find_or_create_by(name: attrs[:name]) do |sp|
         sp.duration = attrs[:duration]
@@ -52,10 +52,10 @@ namespace :db do
         sp.sessions_count = attrs[:sessions_count]
         sp.validity_days = attrs[:validity_days]
       end
-      
+
       puts "  ✅ #{subscription_plan.name} (#{subscription_plan.price_euros}€)"
     end
-    
+
     puts "🎉 Created #{SubscriptionPlan.count} subscription plans"
   end
 end
