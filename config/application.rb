@@ -46,7 +46,7 @@ module Circographe
 
     # Insert maintenance mode middleware at the top so it intercepts all requests
     config.middleware.insert_before 0, MaintenanceModeMiddleware
-    
+
     # Insert staging auth middleware (only active when RAILS_ENV=staging or STAGING_MODE=true)
     config.middleware.use StagingAuth
   end
