@@ -15,4 +15,3 @@ RSpec.describe Tag, type: :model do
     end
   end
 end
-

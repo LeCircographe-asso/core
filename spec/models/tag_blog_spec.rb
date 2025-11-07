@@ -16,4 +16,3 @@ RSpec.describe TagBlog, type: :model do
     end
   end
 end
-

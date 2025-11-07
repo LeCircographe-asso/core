@@ -61,7 +61,7 @@ FactoryBot.define do
       transient do
         skip_membership_validation { true }
       end
-      
+
       after(:create) do |person, evaluator|
         person.skip_membership_validation = evaluator.skip_membership_validation
         person.memberships.destroy_all if person.memberships.any?

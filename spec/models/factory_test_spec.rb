@@ -24,7 +24,7 @@ RSpec.describe "Factory Tests", type: :model do
   it "can create a person with a user account" do
     person = create(:person)
     user = create(:user, person: person)
-    
+
     expect(user.person).to eq(person)
     expect(person.user).to eq(user)
   end

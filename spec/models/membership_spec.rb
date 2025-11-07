@@ -51,9 +51,9 @@ RSpec.describe Membership, type: :model do
       person = create(:person)
       membership_type = create(:membership_type)
       membership = Membership.new(
-        person: person, 
-        membership_type: membership_type, 
-        started_at: Date.current + 1.year, 
+        person: person,
+        membership_type: membership_type,
+        started_at: Date.current + 1.year,
         ended_at: Date.current,
         status: :active
       )
@@ -64,11 +64,11 @@ RSpec.describe Membership, type: :model do
     it "prevents overlapping active memberships" do
       person = create(:person)
       membership_type = create(:membership_type)
-      
+
       # Créer une première adhésion active
-      create(:membership, person: person, membership_type: membership_type, status: :active, 
+      create(:membership, person: person, membership_type: membership_type, status: :active,
              started_at: Date.current, ended_at: Date.current + 1.year)
-      
+
       # Tenter de créer une adhésion qui chevauche
       overlapping_membership = Membership.new(
         person: person,
@@ -77,7 +77,7 @@ RSpec.describe Membership, type: :model do
         started_at: Date.current + 6.months,
         ended_at: Date.current + 18.months
       )
-      
+
       expect(overlapping_membership).not_to be_valid
       expect(overlapping_membership.errors[:base]).to include("Person already has an active membership during this period")
     end
@@ -85,11 +85,11 @@ RSpec.describe Membership, type: :model do
     it "allows overlapping memberships with different statuses" do
       person = create(:person)
       membership_type = create(:membership_type)
-      
+
       # Créer une première adhésion inactive
-      create(:membership, person: person, membership_type: membership_type, status: :inactive, 
+      create(:membership, person: person, membership_type: membership_type, status: :inactive,
              started_at: Date.current, ended_at: Date.current + 1.year)
-      
+
       # Créer une nouvelle adhésion active qui chevauche
       new_membership = Membership.new(
         person: person,
@@ -98,7 +98,7 @@ RSpec.describe Membership, type: :model do
         started_at: Date.current + 6.months,
         ended_at: Date.current + 18.months
       )
-      
+
       expect(new_membership).to be_valid
     end
 
@@ -233,9 +233,9 @@ RSpec.describe Membership, type: :model do
     let(:original_first_joined_at) { Date.current - 6.months }
 
     it "upgrades membership successfully" do
-      original_membership = create(:membership, 
-        person: person, 
-        membership_type: basic_type, 
+      original_membership = create(:membership,
+        person: person,
+        membership_type: basic_type,
         status: :active,
         first_joined_at: original_first_joined_at
       )
@@ -250,9 +250,9 @@ RSpec.describe Membership, type: :model do
     end
 
     it "preserves first_joined_at date" do
-      original_membership = create(:membership, 
-        person: person, 
-        membership_type: basic_type, 
+      original_membership = create(:membership,
+        person: person,
+        membership_type: basic_type,
         status: :active,
         first_joined_at: original_first_joined_at
       )
@@ -263,9 +263,9 @@ RSpec.describe Membership, type: :model do
     end
 
     it "marks original membership as inactive" do
-      original_membership = create(:membership, 
-        person: person, 
-        membership_type: basic_type, 
+      original_membership = create(:membership,
+        person: person,
+        membership_type: basic_type,
         status: :active
       )
 
@@ -275,9 +275,9 @@ RSpec.describe Membership, type: :model do
     end
 
     it "sets correct dates for new membership" do
-      original_membership = create(:membership, 
-        person: person, 
-        membership_type: basic_type, 
+      original_membership = create(:membership,
+        person: person,
+        membership_type: basic_type,
         status: :active
       )
 
@@ -288,9 +288,9 @@ RSpec.describe Membership, type: :model do
     end
 
     it "raises error for invalid upgrade" do
-      original_membership = create(:membership, 
-        person: person, 
-        membership_type: basic_type, 
+      original_membership = create(:membership,
+        person: person,
+        membership_type: basic_type,
         status: :active
       )
 
@@ -301,9 +301,9 @@ RSpec.describe Membership, type: :model do
 
     it "uses custom start date when provided" do
       custom_start_date = Date.current + 1.month
-      original_membership = create(:membership, 
-        person: person, 
-        membership_type: basic_type, 
+      original_membership = create(:membership,
+        person: person,
+        membership_type: basic_type,
         status: :active
       )
 

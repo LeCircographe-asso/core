@@ -36,7 +36,7 @@ RSpec.describe PaymentManagement::PaymentDeleter do
       it "returns failure when payment_id is missing" do
         params = { deleted_by_id: admin_user.id, reason: "Test" }
         deleter = described_class.new(params)
-        
+
         result = deleter.call
         expect(result.success?).to be false
       end
@@ -44,7 +44,7 @@ RSpec.describe PaymentManagement::PaymentDeleter do
       it "returns failure when deleted_by_id is missing" do
         params = { payment_id: payment.id, reason: "Test" }
         deleter = described_class.new(params)
-        
+
         result = deleter.call
         expect(result.success?).to be false
       end
@@ -52,7 +52,7 @@ RSpec.describe PaymentManagement::PaymentDeleter do
       it "returns failure when reason is missing" do
         params = { payment_id: payment.id, deleted_by_id: admin_user.id }
         deleter = described_class.new(params)
-        
+
         result = deleter.call
         expect(result.success?).to be false
       end
@@ -62,7 +62,7 @@ RSpec.describe PaymentManagement::PaymentDeleter do
       it "allows admin to delete payment" do
         params = { payment_id: payment.id, deleted_by_id: admin_user.id, reason: "Test" }
         deleter = described_class.new(params)
-        
+
         result = deleter.call
         expect(result.success?).to be true
       end
@@ -70,7 +70,7 @@ RSpec.describe PaymentManagement::PaymentDeleter do
       it "rejects volunteer deletion" do
         params = { payment_id: payment.id, deleted_by_id: volunteer_user.id, reason: "Test" }
         deleter = described_class.new(params)
-        
+
         result = deleter.call
         expect(result.success?).to be false
         expect(result.message).to include("Insufficient permissions")
@@ -82,7 +82,7 @@ RSpec.describe PaymentManagement::PaymentDeleter do
         cancelled_payment = create(:payment, person: person, status: :cancel)
         params = { payment_id: cancelled_payment.id, deleted_by_id: admin_user.id, reason: "Test" }
         deleter = described_class.new(params)
-        
+
         result = deleter.call
         expect(result.success?).to be false
         expect(result.message).to include("already cancelled")
@@ -93,7 +93,7 @@ RSpec.describe PaymentManagement::PaymentDeleter do
       it "returns failure when payment doesn't exist" do
         params = { payment_id: 99999, deleted_by_id: admin_user.id, reason: "Test" }
         deleter = described_class.new(params)
-        
+
         result = deleter.call
         expect(result.success?).to be false
       end
@@ -117,4 +117,3 @@ RSpec.describe PaymentManagement::PaymentDeleter do
     end
   end
 end
-

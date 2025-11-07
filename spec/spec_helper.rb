@@ -7,7 +7,7 @@ SimpleCov.start 'rails' do
   add_filter '/lib/tasks/'
   add_filter '/db/'
   add_filter '/coverage/'
-  
+
   # Group coverage by type
   add_group 'Models', 'app/models'
   add_group 'Controllers', 'app/controllers'
@@ -15,7 +15,7 @@ SimpleCov.start 'rails' do
   add_group 'Helpers', 'app/helpers'
   add_group 'Jobs', 'app/jobs'
   add_group 'Mailers', 'app/mailers'
-  
+
   # Set minimum coverage threshold (will be progressive)
   # Currently at 10%, we'll increase as we add more tests
   minimum_coverage 10

@@ -174,7 +174,7 @@ RSpec.describe Event, type: :model do
 
     context "without description but with upper/middle/bottom" do
       it "joins all description parts" do
-        event = create(:event, 
+        event = create(:event,
                        description: nil,
                        upper_description: "Upper",
                        middle_description: "Middle",
@@ -188,7 +188,7 @@ RSpec.describe Event, type: :model do
 
     context "with no description at all" do
       it "returns empty string" do
-        event = create(:event, 
+        event = create(:event,
                        description: nil,
                        upper_description: nil,
                        middle_description: nil,

@@ -58,7 +58,7 @@ RSpec.describe Person, type: :model do
     # it "must have active membership unless skip_membership_validation is true" do
     #   person = create(:person, :without_membership)
     #   person.skip_membership_validation = false
-    #   
+    #
     #   expect(person).not_to be_valid
     #   expect(person.errors[:base]).to include("Une adhésion active est obligatoire")
     # end
@@ -67,7 +67,7 @@ RSpec.describe Person, type: :model do
       person = create(:person)
       person.skip_membership_validation = true
       person.memberships.destroy_all
-      
+
       expect(person).to be_valid
     end
   end
@@ -83,7 +83,7 @@ RSpec.describe Person, type: :model do
       person = create(:person)
       membership1 = create(:membership, person: person, started_at: 1.year.ago, ended_at: 6.months.ago, status: :inactive)
       membership2 = create(:membership, person: person, started_at: 3.months.ago, ended_at: 9.months.from_now, status: :active)
-      
+
       expect(person.memberships).to include(membership1, membership2)
     end
 
@@ -91,21 +91,21 @@ RSpec.describe Person, type: :model do
       person = create(:person)
       payment1 = create(:payment, person: person)
       payment2 = create(:payment, person: person)
-      
+
       expect(person.payments).to include(payment1, payment2)
     end
 
     it "can have book of entries" do
       person = create(:person)
       book_of_entry = create(:book_of_entry, person: person)
-      
+
       expect(person.book_of_entries).to include(book_of_entry)
     end
 
     it "can have member number histories" do
       person = create(:person, member_number: "25U001")
       history = create(:member_number_history, person: person, member_number: "25U001")
-      
+
       expect(person.member_number_histories).to include(history)
     end
   end
@@ -147,7 +147,7 @@ RSpec.describe Person, type: :model do
 
     it "searches by contact information" do
       person = create(:person, first_name: "John", last_name: "Doe", email: "john@example.com")
-      
+
       expect(Person.search_by_contact("John")).to include(person)
       expect(Person.search_by_contact("Doe")).to include(person)
       expect(Person.search_by_contact("john@example.com")).to include(person)
@@ -155,7 +155,7 @@ RSpec.describe Person, type: :model do
 
     it "filters by name" do
       person = create(:person, first_name: "John", last_name: "Doe")
-      
+
       expect(Person.by_name("John")).to include(person)
       expect(Person.by_name("Doe")).to include(person)
     end
@@ -163,7 +163,7 @@ RSpec.describe Person, type: :model do
     it "filters adults and minors" do
       adult = create(:person, is_minor: false)
       minor = create(:person, is_minor: true)
-      
+
       expect(Person.adults).to include(adult)
       expect(Person.adults).not_to include(minor)
       expect(Person.minors).to include(minor)
@@ -189,7 +189,7 @@ RSpec.describe Person, type: :model do
       allow(MemberManagementService).to receive(:parse_member_number).with("25U001").and_return({
         year: "2025", type: "Basique", number: 1
       })
-      
+
       expect(person.formatted_member_number).to eq("2025 - Basique - #1")
     end
   end
@@ -204,7 +204,7 @@ RSpec.describe Person, type: :model do
       person = Person.new(member_number: "25U001")
       parsed_details = { year: "2025", type: "Basique", number: 1 }
       allow(MemberManagementService).to receive(:parse_member_number).with("25U001").and_return(parsed_details)
-      
+
       expect(person.member_number_details).to eq(parsed_details)
     end
   end
@@ -226,7 +226,7 @@ RSpec.describe Person, type: :model do
       person = create(:person)
       old_membership = create(:membership, person: person, status: :inactive)
       current_membership = create(:membership, person: person, status: :active)
-      
+
       expect(person.current_membership).to eq(current_membership)
     end
 
@@ -274,7 +274,7 @@ RSpec.describe Person, type: :model do
 
     it "changes member number for circus type" do
       new_number = person.change_member_number("CIRQUE", "Upgrade to circus")
-      
+
       expect(new_number).to eq("25C001")
       expect(person.reload.member_number).to eq("25C001")
     end
@@ -283,7 +283,7 @@ RSpec.describe Person, type: :model do
       expect {
         person.change_member_number("CIRQUE", "Upgrade to circus")
       }.to change(person.member_number_histories, :count).by(1)
-      
+
       history = person.member_number_histories.last
       expect(history.member_number).to eq("25C001")
       expect(history.membership_type).to eq("Cirque")
@@ -293,7 +293,7 @@ RSpec.describe Person, type: :model do
     it "returns false when no member number" do
       person.update!(member_number: nil, skip_membership_validation: true)
       result = person.change_member_number("CIRQUE")
-      
+
       expect(result).to be false
     end
   end
@@ -302,7 +302,7 @@ RSpec.describe Person, type: :model do
     it "normalizes blank email to nil" do
       person = Person.new(first_name: "John", last_name: "Doe", email: "")
       person.valid?
-      
+
       expect(person.email).to be_nil
     end
   end
@@ -330,9 +330,9 @@ RSpec.describe Person, type: :model do
     end
 
     it "upgrades trimester to annual with prorata" do
-      trimester_book = create(:book_of_entry, person: person, subscription_plan: trimester_plan, 
+      trimester_book = create(:book_of_entry, person: person, subscription_plan: trimester_plan,
                             status: :active, expires_at: Date.current + 30.days, sessions_remaining: nil)
-      
+
       result = person.upgrade_subscription!(
         from_book_id: trimester_book.id,
         to_plan_id: annual_plan.id,
@@ -500,7 +500,7 @@ RSpec.describe Person, type: :model do
       it "returns only non-archived persons" do
         active_person = create(:person)
         archived_person = create(:person, deleted_at: 1.day.ago)
-        
+
         expect(Person.active).to include(active_person)
         expect(Person.active).not_to include(archived_person)
       end
@@ -510,7 +510,7 @@ RSpec.describe Person, type: :model do
       it "returns only archived persons" do
         active_person = create(:person)
         archived_person = create(:person, deleted_at: 1.day.ago)
-        
+
         expect(Person.archived).not_to include(active_person)
         expect(Person.archived).to include(archived_person)
       end
@@ -520,10 +520,10 @@ RSpec.describe Person, type: :model do
       it "returns persons with membership expiring in next 30 days" do
         person1 = create(:person)
         person2 = create(:person)
-        
+
         create(:membership, person: person1, status: :active, ended_at: 15.days.from_now)
         create(:membership, person: person2, status: :active, ended_at: 60.days.from_now)
-        
+
         expect(Person.with_expiring_membership).to include(person1)
         expect(Person.with_expiring_membership).not_to include(person2)
       end
@@ -533,11 +533,10 @@ RSpec.describe Person, type: :model do
       it "returns persons with no memberships" do
         person_without = create(:person)
         person_with = create(:person, :with_active_membership)
-        
+
         expect(Person.without_membership).to include(person_without)
         expect(Person.without_membership).not_to include(person_with)
       end
     end
   end
-  
 end

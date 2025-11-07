@@ -55,14 +55,14 @@ RSpec.describe Payment, type: :model do
       payment = create(:payment)
       payment_line1 = create(:payment_line, payment: payment)
       payment_line2 = create(:payment_line, payment: payment)
-      
+
       expect(payment.payment_lines).to include(payment_line1, payment_line2)
     end
 
     it "has many payment_audit_logs" do
       payment = create(:payment)
       audit_log = create(:payment_audit_log, payment: payment)
-      
+
       expect(payment.payment_audit_logs).to include(audit_log)
     end
   end
@@ -82,20 +82,20 @@ RSpec.describe Payment, type: :model do
     it "generates uuid before create" do
       payment = build(:payment)
       expect(payment.uuid).to be_nil
-      
+
       payment.save!
-      
+
       expect(payment.uuid).to be_present
       expect(payment.uuid).to match(/\A[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\z/)
     end
 
     it "creates audit log after create" do
       payment = build(:payment)
-      
+
       expect {
         payment.save!
       }.to change(PaymentAuditLog, :count).by(1)
-      
+
       audit_log = PaymentAuditLog.last
       expect(audit_log.payment).to eq(payment)
       expect(audit_log.action).to eq("create")
@@ -104,22 +104,22 @@ RSpec.describe Payment, type: :model do
     it "logs status changes after update" do
       payment = create(:payment, status: :pending)
       payment.save! # Ensure it's persisted with pending status
-      
+
       # Mock the audit log creation to verify it's called
       expect(PaymentAuditLog).to receive(:log).with(payment, payment.recorded_by, "status_change", anything)
-      
+
       payment.update!(status: :success)
     end
 
     it "invalidates cache on status change" do
       payment = create(:payment, status: :pending)
-      
+
       # Set cache first
       Rails.cache.write("total_successful_payments", 1000)
       Rails.cache.write("total_donations", 500)
-      
+
       payment.update!(status: :success)
-      
+
       expect(Rails.cache.read("total_successful_payments")).to be_nil
       expect(Rails.cache.read("total_donations")).to be_nil
     end
@@ -166,21 +166,21 @@ RSpec.describe Payment, type: :model do
     it "returns 'Adhésion' when payment has membership lines" do
       membership = create(:membership)
       create(:payment_line, payment: payment, item: membership, item_type: "Membership")
-      
+
       expect(payment.payment_type).to eq("Adhésion")
     end
 
     it "returns 'Cotisation' when payment has subscription plan lines" do
       subscription_plan = create(:subscription_plan)
       create(:payment_line, payment: payment, item: subscription_plan, item_type: "SubscriptionPlan")
-      
+
       expect(payment.payment_type).to eq("Cotisation")
     end
 
     it "returns item description when payment has other lines" do
       membership_type = create(:membership_type, name: "Adhésion Cirque")
       create(:payment_line, payment: payment, item: membership_type, item_type: "MembershipType")
-      
+
       expect(payment.payment_type).to eq("Adhésion Cirque")
     end
 
@@ -280,14 +280,14 @@ RSpec.describe Payment, type: :model do
     it "returns true when payment has membership lines" do
       membership = create(:membership)
       create(:payment_line, payment: payment, item: membership, item_type: "Membership")
-      
+
       expect(payment.membership_related?).to be true
     end
 
     it "returns false when payment has no membership lines" do
       subscription_plan = create(:subscription_plan)
       create(:payment_line, payment: payment, item: subscription_plan, item_type: "SubscriptionPlan")
-      
+
       expect(payment.membership_related?).to be false
     end
   end
@@ -300,14 +300,14 @@ RSpec.describe Payment, type: :model do
     it "returns true when payment has pack subscription plan lines" do
       subscription_plan = create(:subscription_plan, :pack10)
       create(:payment_line, payment: payment, item: subscription_plan, item_type: "SubscriptionPlan")
-      
+
       expect(payment.carnet_related?).to be true
     end
 
     it "returns false when payment has no pack subscription plan lines" do
       subscription_plan = create(:subscription_plan, :annual)
       create(:payment_line, payment: payment, item: subscription_plan, item_type: "SubscriptionPlan")
-      
+
       expect(payment.carnet_related?).to be false
     end
   end
@@ -315,13 +315,13 @@ RSpec.describe Payment, type: :model do
   describe '#handle_user_deletion' do
     it "cancels payment and logs deletion" do
       payment = create(:payment, status: :success)
-      
+
       expect {
         payment.handle_user_deletion
       }.to change(PaymentAuditLog, :count).by(1)
-      
+
       expect(payment.reload.status).to eq("cancel")
-      
+
       audit_log = PaymentAuditLog.last
       expect(audit_log.payment).to eq(payment)
       expect(audit_log.action).to eq("user_deleted")
@@ -329,12 +329,12 @@ RSpec.describe Payment, type: :model do
 
     it "invalidates cache" do
       payment = create(:payment, status: :success)
-      
+
       Rails.cache.write("total_successful_payments", 1000)
       Rails.cache.write("total_donations", 500)
-      
+
       payment.handle_user_deletion
-      
+
       expect(Rails.cache.read("total_successful_payments")).to be_nil
       expect(Rails.cache.read("total_donations")).to be_nil
     end
@@ -356,15 +356,15 @@ RSpec.describe Payment, type: :model do
     it "logs deletion and invalidates cache" do
       payment = create(:payment)
       initial_count = PaymentAuditLog.count
-      
+
       Rails.cache.write("total_successful_payments", 1000)
       Rails.cache.write("total_donations", 500)
-      
+
       # Mock the audit log creation to verify it's called
       expect(PaymentAuditLog).to receive(:log).with(payment, payment.recorded_by, "delete")
-      
+
       payment.destroy
-      
+
       expect(Rails.cache.read("total_successful_payments")).to be_nil
       expect(Rails.cache.read("total_donations")).to be_nil
     end
