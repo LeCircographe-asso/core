@@ -60,6 +60,18 @@ class BookOfEntry < ApplicationRecord
     save!
   end
 
+  def refund_session!
+    return true unless has_session_limit?
+
+    max_sessions = subscription_plan.sessions_count
+    max_sessions ||= is_pack10? ? 10 : 1
+
+    self.sessions_remaining ||= 0
+    self.sessions_remaining = [sessions_remaining + 1, max_sessions].min
+    self.status = :active if sessions_remaining.positive?
+    save!
+  end
+
   def expired?
     # Les packs10 ne expirent jamais et se réactivent avec une nouvelle adhésion
     return false if is_pack10?
