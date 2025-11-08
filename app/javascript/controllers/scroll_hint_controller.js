@@ -15,6 +15,8 @@ export default class extends Controller {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
           this.hide()
+        } else {
+          this.show()
         }
       })
     }, { threshold: 0.3 })
@@ -31,5 +33,10 @@ export default class extends Controller {
   hide() {
     if (!this.hasArrowTarget) return
     this.arrowTarget.classList.add("opacity-0", "pointer-events-none")
+  }
+
+  show() {
+    if (!this.hasArrowTarget) return
+    this.arrowTarget.classList.remove("opacity-0", "pointer-events-none")
   }
 }
