@@ -36,7 +36,9 @@
     <div class="admin-layout">
         <%= render 'admin/dashboard/admin_lateral_navbar' %>
         <div class="admin-content" data-sidebar-target="content">
+            <%= turbo_frame_tag "flash" do %>
             <%= render 'shared/flash' %>
+            <% end %>
             <main class="admin-main">
                 <%= yield %>
             </main>

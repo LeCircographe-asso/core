@@ -1,5 +1,6 @@
 module Admin
   class EventsController < BaseController
+    include ActionView::RecordIdentifier
     before_action :set_breadcrumbs
 
     def index
@@ -75,8 +76,19 @@ module Admin
       respond_to do |format|
         if result.success?
           format.html { redirect_to admin_events_path, notice: "Événement supprimé avec succès" }
+          format.turbo_stream do
+            flash.now[:notice] = "Événement supprimé avec succès"
+            render turbo_stream: [
+              turbo_stream.remove(dom_id(result.event)),
+              turbo_stream.replace("flash", partial: "shared/flash")
+            ]
+          end
         else
           format.html { redirect_to admin_events_path, alert: result.message }
+          format.turbo_stream do
+            flash.now[:alert] = result.message
+            render turbo_stream: turbo_stream.replace("flash", partial: "shared/flash")
+          end
         end
       end
     end
@@ -85,8 +97,7 @@ module Admin
       # No need to add dashboard breadcrumb as it's already in the partial
     end
     def event_params
-      params.fetch(:event, {})
-      params.require(:event).permit(:title, :upper_description, :middle_description, :bottom_description, :location, :date)
+      params.expect(event: %i[title upper_description middle_description bottom_description location date])
     end
     def event_deletion_reason
       params[:reason].presence || "Deleted from admin dashboard"

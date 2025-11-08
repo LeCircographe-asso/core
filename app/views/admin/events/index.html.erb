@@ -31,42 +31,44 @@
         <!-- Events grid -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           <% @events.each do |event| %>
-            <div class="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-shadow">
-              <div class="p-5">
-                <h3 class="text-lg font-semibold text-gray-900 mb-2"><%= event.title %></h3>
-                
-                <div class="mb-4 space-y-2">
-                  <div class="flex items-center text-sm text-gray-600">
-                    <i class="fas fa-calendar-day mr-2"></i>
-                    <%= event.date.strftime("%d/%m/%Y") %>
+            <%= turbo_frame_tag dom_id(event) do %>
+              <div class="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-shadow">
+                <div class="p-5">
+                  <h3 class="text-lg font-semibold text-gray-900 mb-2"><%= event.title %></h3>
+                  
+                  <div class="mb-4 space-y-2">
+                    <div class="flex items-center text-sm text-gray-600">
+                      <i class="fas fa-calendar-day mr-2"></i>
+                      <%= event.date.strftime("%d/%m/%Y") %>
+                    </div>
+                    
+                    <div class="flex items-center text-sm text-gray-600">
+                      <i class="fas fa-clock mr-2"></i>
+                      <%= event.date.strftime("%H:%M") %>
+                    </div>
+                    
+                    <div class="flex items-center text-sm text-gray-600">
+                      <i class="fas fa-users mr-2"></i>
+                      <%= event.people.length %> participant<%= event.people.length > 1 ? 's' : '' %>
+                    </div>
                   </div>
                   
-                  <div class="flex items-center text-sm text-gray-600">
-                    <i class="fas fa-clock mr-2"></i>
-                    <%= event.date.strftime("%H:%M") %>
+                  <div class="flex justify-between items-center pt-3 border-t border-gray-100">
+                    <%= link_to event_path(event), class: "text-sm text-green-600 hover:text-green-800" do %>
+                      <i class="fas fa-eye mr-1"></i> Voir
+                    <% end %>
+                    
+                    <%= link_to edit_admin_event_path(event), class: "text-sm text-blue-600 hover:text-blue-800" do %>
+                      <i class="fas fa-edit mr-1"></i> Modifier
+                    <% end %>
+                    
+                    <%= button_to admin_event_path(event), method: :delete, class: "text-sm text-red-600 hover:text-red-800", form: { data: { turbo_confirm: "Êtes-vous sûr de vouloir supprimer cet événement ?" } } do %>
+                      <i class="fas fa-trash-alt mr-1"></i> Supprimer
+                    <% end %>
                   </div>
-                  
-                  <div class="flex items-center text-sm text-gray-600">
-                    <i class="fas fa-users mr-2"></i>
-                    <%= event.people.length %> participant<%= event.people.length > 1 ? 's' : '' %>
-                  </div>
-                </div>
-                
-                <div class="flex justify-between items-center pt-3 border-t border-gray-100">
-                  <%= link_to event_path(event), class: "text-sm text-green-600 hover:text-green-800" do %>
-                    <i class="fas fa-eye mr-1"></i> Voir
-                  <% end %>
-                  
-                  <%= link_to edit_admin_event_path(event), class: "text-sm text-blue-600 hover:text-blue-800" do %>
-                    <i class="fas fa-edit mr-1"></i> Modifier
-                  <% end %>
-                  
-                  <%= button_to admin_event_path(event), method: :delete, class: "text-sm text-red-600 hover:text-red-800", form: { data: { turbo_confirm: "Êtes-vous sûr de vouloir supprimer cet événement ?" } } do %>
-                    <i class="fas fa-trash-alt mr-1"></i> Supprimer
-                  <% end %>
                 </div>
               </div>
-            </div>
+            <% end %>
           <% end %>
         </div>
         

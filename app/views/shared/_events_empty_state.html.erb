@@ -1,0 +1,34 @@
+<%
+  default_message = <<~TEXT.squish
+    C'est calme pour le moment. Aucun événement n'est planifié dans l'immédiat,
+    mais nous préparons la suite. Reviens bientôt ou inscris-toi à la newsletter
+    pour être averti·e des prochaines dates.
+  TEXT
+  message = local_assigns.fetch(:message, default_message)
+  variant = local_assigns.fetch(:variant, :default).to_sym
+
+  wrapper_classes, text_classes =
+    case variant
+    when :compact
+      [
+        "bg-white border border-dashed border-gray-200 rounded-2xl p-6 sm:p-7 text-center text-gray-500 shadow-sm",
+        "text-sm sm:text-base leading-relaxed"
+      ]
+    when :inline
+      [
+        "text-center text-gray-500",
+        "text-sm sm:text-base leading-relaxed"
+      ]
+    else
+      [
+        "bg-white/95 border border-dashed border-gray-200 rounded-2xl p-8 sm:p-10 text-center text-gray-500",
+        "text-base sm:text-lg leading-relaxed"
+      ]
+    end
+%>
+
+<div class="<%= wrapper_classes %>">
+  <p class="<%= text_classes %>">
+    <%= message %>
+  </p>
+</div>

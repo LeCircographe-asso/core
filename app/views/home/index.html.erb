@@ -17,20 +17,31 @@
 
   <section class="w-full px-4 sm:px-6 lg:px-8 flex justify-center">
     <div id="main-content" class="w-full max-w-5xl space-y-12 mt-12 sm:mt-16 opacity-0 transition-opacity duration-500">
-      <section class="bg-white/95 rounded-[28px] shadow-lg p-6 sm:p-8" aria-labelledby="community-highlights">
+      <section class="relative bg-transparent" aria-labelledby="community-highlights">
         <h2 id="community-highlights" class="sr-only">Informations clés</h2>
-        <div class="grid gap-10 lg:grid-cols-2">
-          <div>
-            <turbo-frame id="events_upcoming" loading="lazy" src="<%= upcoming_events_path %>">
-              <%= render "home/upcoming_events", events: @upcoming_events, container: false %>
-            </turbo-frame>
-          </div>
-          <div class="space-y-6">
-            <header class="text-center lg:text-left space-y-2">
-              <p class="text-sm uppercase tracking-[0.3em] text-[#1F5C55]/70">Horaires</p>
-              <h2 id="opening-hours" class="text-2xl font-semibold text-gray-800">Quand passer nous voir ?</h2>
+
+        <div class="grid gap-8 lg:gap-10 lg:grid-cols-[minmax(0,1.7fr)_minmax(0,1fr)] items-start">
+          <article class="relative overflow-hidden rounded-[32px] bg-gradient-to-br from-[#1F5C55] via-[#194A45] to-[#0C2F2B] text-white shadow-2xl p-6 sm:p-8 lg:p-10">
+            <header class="space-y-3 text-center lg:text-left">
+              <p class="text-sm uppercase tracking-[0.35em] text-white/75">Horaires</p>
+              <h2 id="opening-hours" class="text-2xl sm:text-3xl font-semibold">Quand passer nous voir ?</h2>
+              <p class="text-white/80 max-w-2xl mx-auto lg:mx-0">
+                Retrouve les créneaux d'accueil de la semaine et prépare ta prochaine visite sous le chapiteau du Circographe.
+              </p>
             </header>
-            <%= render "shared/opening_hours", horaires: @opening_hours, bare: true %>
+
+            <div class="mt-6 sm:mt-7 bg-white/95 text-gray-900 rounded-[20px] shadow-xl p-5 sm:p-6">
+              <%= render "shared/opening_hours", horaires: @opening_hours, bare: true %>
+            </div>
+          </article>
+
+          <div class="flex flex-col gap-5">
+            <turbo-frame id="events_upcoming" loading="lazy" src="<%= upcoming_events_path %>" class="block">
+              <%= render "home/upcoming_events", events: @upcoming_events %>
+            </turbo-frame>
+            <p class="text-xs text-gray-500 text-center lg:text-left">
+              Découvre plus d'activités dans l'onglet « Nos activités » si tu veux planifier ta venue à l'avance.
+            </p>
           </div>
         </div>
       </section>
