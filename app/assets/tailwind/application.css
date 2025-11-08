@@ -1,3 +1,22 @@
+  .btn-navbar {
+    @apply inline-flex items-center justify-center px-6 py-2 text-sm font-semibold rounded-lg shadow-lg transition-colors duration-300;
+    background-color: var(--brand-primary);
+    border: 2px solid var(--brand-primary);
+    color: #fff;
+  }
+
+  .btn-navbar:hover,
+  .btn-navbar:focus-visible {
+    background-color: #fff;
+    color: var(--brand-primary);
+    border-color: var(--brand-primary);
+  }
+
+  .btn-navbar:focus-visible {
+    outline-offset: 0.5rem;
+    outline-color: var(--brand-primary);
+  }
+
 /* Local fonts first (Propshaft rewrites /fonts/... to fingerprinted assets) */
 @font-face {
   font-family: "Circographe";
@@ -145,25 +164,6 @@
   }
 
   .btn-primary:focus-visible {
-    outline-offset: 0.5rem;
-    outline-color: var(--brand-primary);
-  }
-
-  .btn-navbar {
-    @apply inline-flex items-center justify-center px-6 py-2 text-sm font-semibold rounded-lg shadow-lg transition-colors duration-300;
-    background-color: var(--brand-primary);
-    border: 2px solid var(--brand-primary);
-    color: #fff;
-  }
-
-  .btn-navbar:hover,
-  .btn-navbar:focus-visible {
-    background-color: #fff;
-    color: var(--brand-primary);
-    border-color: var(--brand-primary);
-  }
-
-  .btn-navbar:focus-visible {
     outline-offset: 0.5rem;
     outline-color: var(--brand-primary);
   }
