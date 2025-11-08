@@ -40,7 +40,7 @@ class EventsController < ApplicationController
                    partial_locals: { events: @events }
                  }
         else
-          render partial: "pages/news/events_grid", locals: { events: @events }
+    render partial: "pages/news/events_grid", locals: { events: @events }
         end
       end
     end
