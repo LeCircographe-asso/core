@@ -58,4 +58,30 @@ module ApplicationHelper
     # Format: +33 6 12 34 56 78
     phone.gsub(/(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})/, '\1 \2 \3 \4 \5')
   end
+
+  def hero_image(identifier = :default)
+    @hero_image_assignments ||= {}
+    return @hero_image_assignments[identifier] if @hero_image_assignments.key?(identifier)
+
+    images = hero_image_pool
+    @hero_image_assignments[identifier] = images.sample || "home2.webp"
+  end
+
+  private
+
+  def hero_image_pool
+    @hero_image_pool ||= begin
+      files = Dir[Rails.root.join("app/assets/images/hero_*.webp")].map { |path| File.basename(path) }
+      files.select { |file| asset_available?(file) }
+    end
+  end
+
+  def asset_available?(logical_path)
+    return false if logical_path.blank?
+
+    loader = Rails.application.assets&.load_path
+    loader&.find(logical_path).present?
+  rescue StandardError
+    false
+  end
 end
