@@ -4,9 +4,9 @@
   <%= image_tag hero_image(:about_hero), class: "absolute inset-0 w-full h-full object-cover hero-img-filter", alt: "" %>
   <div class="hero-overlay"></div>
   <div class="relative hero-panel space-y-6">
-    <p class="text-sm uppercase tracking-[0.4em] text-white/70">L'histoire du Circographe</p>
+    <p class="text-sm uppercase tracking-[0.4em] text-white/70">Rejoindre la communauté</p>
     <h1 class="font-circographe text-3xl sm:text-4xl lg:text-5xl font-bold">À propos du Circographe</h1>
-    <p class="max-w-3xl text-lg text-white/85 leading-relaxed">Le Circographe est un laboratoire de pratiques artistiques où se croisent disciplines circassiennes, arts graphiques et vie associative. Nous inventons, ensemble, une manière de faire vivre un lieu partagé : autogestion, entraide, transmission.</p>
+    <p class="max-w-3xl text-lg text-white/85 leading-relaxed">Laboratoire de pratiques artistiques partagées où cirque et arts graphiques se rencontrent — autogestion et solidarité.</p>
     <div class="flex flex-wrap gap-4">
       <%= link_to "Nous rejoindre", page_path('become_member'), class: "btn-primary shadow-lg" %>
       <%= link_to "Découvrir le lieu", page_path('association'), class: "btn-secondary shadow-lg" %>
@@ -19,28 +19,16 @@
     <div class="lg:col-span-2 space-y-4">
       <p class="text-sm uppercase tracking-[0.3em] text-brand-primary/70">Notre mission</p>
       <h2 class="text-3xl font-semibold text-gray-900">Un espace de création partagé et accessible</h2>
-      <p class="text-gray-700 leading-relaxed">Le Circographe fait cohabiter pratique du cirque, expérimentation graphique et convivialité. L’ambition : offrir un lieu ouvert où chacun peut pratiquer, apprendre, transmettre et inventer, qu’il soit amateur curieux ou professionnel en résidence.</p>
-      <p class="text-gray-700 leading-relaxed">La gouvernance est autogérée : les adhérent·es choisissent des missions bénévoles, partagent les clés du lieu et imaginent la programmation. On croit au pouvoir du collectif et à la mutualisation des ressources.</p>
+      <p class="text-gray-700 leading-relaxed">Offrir un espace de pratique, de création et de transmission accessible à toutes et tous.</p>
+      <p class="text-gray-700 leading-relaxed">Gouvernance autogérée : les membres s’engagent bénévolement, partagent les clés et co‑programment la vie du lieu.</p>
     </div>
     <div class="bg-brand-primary/5 border border-brand-primary/20 rounded-3xl p-6 space-y-4">
       <p class="text-sm uppercase tracking-[0.3em] text-brand-primary/70">Nos valeurs</p>
-      <ul class="space-y-4 text-gray-700">
-        <li>
-          <h3 class="font-semibold text-gray-900">Accessibilité</h3>
-          <p class="text-sm">Un lieu inclusif pour les publics du quartier, les artistes de passage et les compagnies en création.</p>
-        </li>
-        <li>
-          <h3 class="font-semibold text-gray-900">Transmission</h3>
-          <p class="text-sm">Stages, résidences, ateliers croisés : on apprend autant qu’on donne.</p>
-        </li>
-        <li>
-          <h3 class="font-semibold text-gray-900">Expérimentation</h3>
-          <p class="text-sm">Croiser les disciplines, détourner les formats, inventer de nouvelles rencontres entre chapiteaux et pinceaux.</p>
-        </li>
-        <li>
-          <h3 class="font-semibold text-gray-900">Solidarité</h3>
-          <p class="text-sm">Autogestion, prix adaptés, soutien mutuel entre bénévoles et résidents.</p>
-        </li>
+      <ul class="grid grid-cols-2 gap-3 text-gray-900">
+        <li class="font-semibold">Accessibilité</li>
+        <li class="font-semibold">Transmission</li>
+        <li class="font-semibold">Expérimentation</li>
+        <li class="font-semibold">Solidarité</li>
       </ul>
     </div>
   </div>
@@ -50,7 +38,7 @@
   <header class="text-center mb-10 space-y-3">
     <p class="text-sm uppercase tracking-[0.3em] text-brand-primary/70">Le Conseil d'administration</p>
     <h2 class="text-3xl font-semibold text-gray-900">Celles et ceux qui font tourner le Circographe</h2>
-    <p class="text-gray-600 max-w-2xl mx-auto leading-relaxed">Technicien·nes plateau, artistes, médiateurs culturels, communicant·es… Le conseil d’administration coordonne l’autogestion du lieu et accompagne les bénévoles au quotidien.</p>
+    <p class="text-gray-600 max-w-2xl mx-auto leading-relaxed">Le conseil d’administration coordonne l’autogestion et accompagne les bénévoles au quotidien.</p>
   </header>
   <div class="swiper multiple-slide-carousel swiper-container relative" data-controller="slider" data-slider-options-value='{"breakpoints":{"640":{"slidesPerView":1.5},"768":{"slidesPerView":2.2},"1280":{"slidesPerView":3.5}},"spaceBetween":24}'>
     <div class="swiper-wrapper mb-10">
@@ -92,10 +80,10 @@
   </header>
   <div class="space-y-6 relative timeline-line">
     <% [
-      { year: "2022", title: "Naissance du projet", body: "Le projet prend vie au cœur du hangar en chantier : tandis que l’on façonne les murs, les idées foisonnent déjà et tracent la voie du Circographe." },
-      { year: "2023", title: "Premiers événements publics", body: "Organisation de plateaux partagés, expositions et ateliers ouverts au quartier." },
-      { year: "2024", title: "Autogestion consolidée", body: "Mise en place d'un conseil d'administration élargi et d'équipes bénévoles thématiques." },
-      { year: "2025", title: "Vers de nouveaux horizons", body: "Développement d'actions hors les murs, partenariats écoles & compagnies, projets européens." }
+      { year: "2022", title: "Ouverture du hangar à la Cartoucherie", body: "Lancement des créneaux d'entraînement et installation des ateliers graphiques." },
+      { year: "2023", title: "Premiers événements publics", body: "Plateaux partagés, expositions et ateliers ouverts au quartier." },
+      { year: "2024", title: "Autogestion consolidée", body: "Conseil d'administration élargi et équipes bénévoles structurées." },
+      { year: "2025", title: "Nouveaux partenariats & hors les murs", body: "Actions extérieures, collaborations et projets itinérants." }
     ].each do |entry| %>
       <div class="timeline-step relative pl-12 md:pl-16" data-timeline-target="step">
         <div class="absolute left-0 top-1 w-10 h-10 rounded-full bg-brand-primary text-white flex items-center justify-center font-semibold shadow"><%= entry[:year] %></div>
@@ -120,5 +108,5 @@
 </section>
 
 <section class="text-center mt-12 mb-12 fade-in">
-  <%= link_to "Nous contacter", page_path('contact_us'), class: "btn-primary px-8 py-4 tracking-wide font-bold shadow-lg" %>
+  <%= link_to "Nous rejoindre", page_path('become_member'), class: "btn-primary px-8 py-4 tracking-wide font-bold shadow-lg" %>
 </section>
