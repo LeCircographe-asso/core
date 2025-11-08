@@ -7,8 +7,8 @@
       <h1 id="title" class="font-circographe text-5xl sm:text-6xl md:text-7xl font-bold text-white tracking-[0.08em] leading-tight opacity-0 transition-opacity duration-500">Le Circographe</h1>
 
       <div class="main-button opacity-0 transition-opacity duration-500">
-        <%= link_to "Découvrir l'association", page_path('association'),
-                    class: "px-6 sm:px-8 py-3 sm:py-4 text-lg sm:text-xl font-semibold text-gray-800 bg-white/95 border border-white/80 rounded-full hover:bg-white shadow-md transition" %>
+      <%= link_to "Découvrir l'association", page_path('association'),
+                  class: "px-6 sm:px-8 py-3 sm:py-4 text-lg sm:text-xl font-semibold text-gray-800 bg-white/95 border border-white/80 rounded-full hover:bg-white shadow-md transition" %>
       </div>
     </div>
 
@@ -37,8 +37,8 @@
 
           <div class="flex flex-col gap-5">
             <turbo-frame id="events_upcoming" loading="lazy" src="<%= upcoming_events_path %>" class="block">
-              <%= render "home/upcoming_events", events: @upcoming_events %>
-            </turbo-frame>
+          <%= render "home/upcoming_events", events: @upcoming_events %>
+        </turbo-frame>
             <p class="text-xs text-gray-500 text-center lg:text-left">
               Découvre plus d'activités dans l'onglet « Nos activités » si tu veux planifier ta venue à l'avance.
             </p>

@@ -204,4 +204,16 @@
     margin-top: 2rem !important;
     margin-bottom: 2rem !important;
   }
+
+  .text-shadow-hero {
+    text-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
+  }
+
+  .bg-overlay-dark {
+    background: linear-gradient(135deg, rgba(12, 18, 32, 0.55), rgba(12, 18, 32, 0.15));
+  }
+
+  .outline-contrast-primary {
+    outline-color: rgba(31, 92, 85, 0.85);
+  }
 }

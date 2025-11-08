@@ -106,7 +106,7 @@ function initSmoothScroll() {
                 const header = document.querySelector('header');
                 const offset = header ? header.offsetHeight + 24 : 0;
                 const targetPosition = targetElement.getBoundingClientRect().top + window.pageYOffset - offset;
-
+                
                 window.scrollTo({
                     top: Math.max(targetPosition, 0),
                     behavior: 'smooth'
