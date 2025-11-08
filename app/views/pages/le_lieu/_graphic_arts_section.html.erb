@@ -19,7 +19,13 @@
   </div>
 
   <div class="bg-white/95 rounded-lg shadow-md p-6 fade-in">
-    <%= render "shared/carousel_image", images: ["graff-img1.webp", "graff.jpg", "home3.webp", "home1.webp"] %>
+    <%= render "shared/carousel_image",
+          images: [
+            "graff-img1.webp",
+            "flowersZoomed.webp",
+            hero_image(:graphics_carousel_three),
+            hero_image(:graphics_carousel_four)
+          ] %>
   </div>
 </section>
 
