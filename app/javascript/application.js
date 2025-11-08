@@ -3,6 +3,7 @@ import "@hotwired/turbo-rails"
 import "controllers"
 import "home_animations"
 import "global_animations"
+import "confirm_modal"
 
 // Définir la fonction initFlowbite si elle n'existe pas déjà
 if (typeof window.initFlowbite !== 'function') {
