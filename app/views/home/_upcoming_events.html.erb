@@ -1,6 +1,7 @@
 <% events ||= [] %>
+<% container = local_assigns.fetch(:container, true) %>
 
-<div class="bg-white/80 rounded-lg shadow-lg p-4 sm:p-8 space-y-6">
+<% inner = capture do %>
   <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
     <div>
       <h2 class="text-2xl font-semibold text-gray-800">Événements à venir</h2>
@@ -11,7 +12,7 @@
   </div>
 
   <% if events.present? %>
-    <div class="grid grid-cols-1 max-w-3xl mx-auto">
+    <div class="grid grid-cols-1">
       <% events.first(1).each do |event| %>
         <div class="mx-auto w-full max-w-lg">
           <%= render "shared/event_card", event: event %>
@@ -19,8 +20,16 @@
       <% end %>
     </div>
   <% else %>
-    <div class="bg-white rounded-lg border border-dashed border-gray-200 p-6 text-center text-gray-500">
-      Aucun événement n'est planifié pour le moment. Revenez bientôt ou abonnez-vous à la newsletter !
-    </div>
+    <p class="text-sm text-gray-500 italic">C'est calme pour le moment. Revenez bientôt pour découvrir nos prochains rendez-vous.</p>
   <% end %>
-</div>
+<% end %>
+
+<% if container %>
+  <div class="bg-white/80 rounded-lg shadow-lg p-4 sm:p-8 space-y-6">
+    <%= inner %>
+  </div>
+<% else %>
+  <div class="space-y-6">
+    <%= inner %>
+  </div>
+<% end %>
