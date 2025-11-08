@@ -122,11 +122,10 @@
 
   .hero-panel {
     @apply bg-[#0B1220]/70 backdrop-blur rounded-[28px] shadow-2xl px-6 sm:px-10 py-8 text-white drop-shadow-[0_4px_16px_rgba(0,0,0,0.45)];
+    backdrop-filter: blur(14px);
   }
 
-  .hero-img-filter {
-    @apply brightness-75 saturate-110;
-  }
+  .hero-img-filter { @apply brightness-90 saturate-115; }
 
   .btn-primary {
     @apply inline-flex items-center gap-2 rounded-full border-2 px-5 py-3 text-sm font-semibold transition-colors duration-300;
