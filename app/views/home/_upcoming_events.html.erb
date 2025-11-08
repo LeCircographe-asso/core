@@ -7,7 +7,7 @@
 
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
       <div class="flex items-start gap-4">
-        <div class="flex flex-col items-center justify-center w-16 h-16 rounded-2xl bg-[#1F5C55]/10 text-[#1F5C55] font-semibold uppercase tracking-wider">
+        <div class="flex flex-col items-center justify-center w-16 h-16 rounded-2xl bg-brand-primary/10 text-brand-primary font-semibold uppercase tracking-wider">
           <% if event_time.present? %>
             <span class="text-lg leading-none"><%= event_time.strftime("%d") %></span>
             <span class="text-xs"><%= event_time.strftime("%b") %></span>
@@ -18,7 +18,7 @@
         </div>
         <div class="space-y-2">
           <div class="flex items-center gap-2">
-            <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-[#1F5C55]/10 text-[#1F5C55]">
+            <span class="badge-accent">
               <i class="fas fa-calendar-alt mr-1"></i>
               Prochain événement
             </span>
@@ -33,12 +33,12 @@
       <% if event_time.present? %>
         <div class="hidden sm:flex flex-col items-end text-sm text-gray-600">
           <div class="inline-flex items-center gap-2">
-            <i class="far fa-clock text-[#1F5C55]"></i>
+            <i class="far fa-clock text-brand-primary"></i>
             <span><%= l(event_time, format: "%A %d %B %H:%M") %></span>
           </div>
           <% if upcoming_event.location.present? %>
             <div class="inline-flex items-center gap-2 mt-1">
-              <i class="fas fa-location-dot text-[#1F5C55]"></i>
+              <i class="fas fa-location-dot text-brand-primary"></i>
               <span><%= upcoming_event.location %></span>
             </div>
           <% end %>
@@ -49,13 +49,13 @@
     <div class="flex flex-col gap-3 text-sm text-gray-600 sm:hidden">
       <% if event_time.present? %>
         <div class="inline-flex items-center gap-2">
-          <i class="far fa-clock text-[#1F5C55]"></i>
+          <i class="far fa-clock text-brand-primary"></i>
           <span><%= l(event_time, format: "%A %d %B %H:%M") %></span>
         </div>
       <% end %>
       <% if upcoming_event.location.present? %>
         <div class="inline-flex items-center gap-2">
-          <i class="fas fa-location-dot text-[#1F5C55]"></i>
+          <i class="fas fa-location-dot text-brand-primary"></i>
           <span><%= upcoming_event.location %></span>
         </div>
       <% end %>
@@ -63,18 +63,18 @@
 
     <div class="flex flex-wrap items-center justify-between gap-3">
       <div class="flex items-center gap-2 text-sm text-gray-500">
-        <i class="fas fa-users text-[#1F5C55]"></i>
+        <i class="fas fa-users text-brand-primary"></i>
         <span><%= upcoming_event.people.count %> intéressé<%= upcoming_event.people.count > 1 ? "s" : "" %></span>
       </div>
       <%= link_to "Découvrir l'événement", event_path(upcoming_event),
-                  class: "inline-flex items-center justify-center px-4 py-2 text-sm font-semibold text-white bg-[#1F5C55] border-2 border-[#1F5C55] rounded-full shadow-sm transition-colors duration-300 hover:bg-gray-100 hover:text-[#1F5C55] hover:border-[#1F5C55]",
+                  class: "btn-primary shadow-sm",
                   data: { turbo_frame: "_top" } %>
     </div>
   <% else %>
     <% empty_message = safe_join([
       "C'est calme pour le moment. Aucun événement n'est planifié dans l'immédiat.",
       "Inscris-toi à",
-      link_to("la newsletter", newsletter_signup_path, class: "font-semibold text-[#1F5C55] underline decoration-dotted underline-offset-2"),
+      link_to("la newsletter", newsletter_signup_path, class: "font-semibold text-brand-primary underline decoration-dotted underline-offset-2"),
       "pour être averti·e des prochaines dates."
     ], " ") %>
     <%= render "shared/events_empty_state", variant: :inline, message: empty_message %>

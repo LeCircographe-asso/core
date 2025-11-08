@@ -1,14 +1,15 @@
 <% content_for :title, "Le Circographe - À propos" %>
 
 <section class="relative overflow-hidden rounded-[32px] shadow-2xl mb-14">
-  <div class="absolute inset-0 bg-cover bg-center brightness-50" style="background-image: url('<%= asset_path('home3.webp') %>')"></div>
-  <div class="relative px-6 sm:px-10 lg:px-16 py-20 text-white space-y-6">
+  <%= image_tag "home3.webp", class: "absolute inset-0 w-full h-full object-cover hero-img-filter", alt: "" %>
+  <div class="hero-overlay"></div>
+  <div class="relative hero-panel space-y-6">
     <p class="text-sm uppercase tracking-[0.4em] text-white/70">L'histoire du Circographe</p>
     <h1 class="font-circographe text-3xl sm:text-4xl lg:text-5xl font-bold">À propos du Circographe</h1>
     <p class="max-w-3xl text-lg text-white/85 leading-relaxed">Le Circographe est un laboratoire de pratiques artistiques où se croisent disciplines circassiennes, arts graphiques et vie associative. Nous inventons, ensemble, une manière de faire vivre un lieu partagé : autogestion, entraide, transmission.</p>
     <div class="flex flex-wrap gap-4">
-      <%= link_to "Nous rejoindre", page_path('become_member'), class: "inline-flex items-center gap-2 px-5 py-3 text-sm font-semibold text-white bg-[#1F5C55] border-2 border-[#1F5C55] rounded-full shadow-lg hover:bg-white hover:text-[#1F5C55] transition" %>
-      <%= link_to "Découvrir le lieu", page_path('association'), class: "inline-flex items-center gap-2 px-5 py-3 text-sm font-semibold text-[#1F5C55] bg-white/95 border-2 border-white rounded-full shadow-lg hover:bg-[#1F5C55] hover:text-white transition" %>
+      <%= link_to "Nous rejoindre", page_path('become_member'), class: "btn-primary shadow-lg" %>
+      <%= link_to "Découvrir le lieu", page_path('association'), class: "btn-secondary shadow-lg" %>
     </div>
   </div>
 </section>
@@ -16,13 +17,13 @@
 <section class="bg-white/95 rounded-[28px] shadow-lg p-6 sm:p-10 fade-in border border-white/80">
   <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
     <div class="lg:col-span-2 space-y-4">
-      <p class="text-sm uppercase tracking-[0.3em] text-[#1F5C55]/70">Notre mission</p>
+      <p class="text-sm uppercase tracking-[0.3em] text-brand-primary/70">Notre mission</p>
       <h2 class="text-3xl font-semibold text-gray-900">Un espace de création partagé et accessible</h2>
       <p class="text-gray-700 leading-relaxed">Le Circographe fait cohabiter pratique du cirque, expérimentation graphique et convivialité. L’ambition : offrir un lieu ouvert où chacun peut pratiquer, apprendre, transmettre et inventer, qu’il soit amateur curieux ou professionnel en résidence.</p>
       <p class="text-gray-700 leading-relaxed">La gouvernance est autogérée : les adhérent·es choisissent des missions bénévoles, partagent les clés du lieu et imaginent la programmation. On croit au pouvoir du collectif et à la mutualisation des ressources.</p>
     </div>
-    <div class="bg-[#1F5C55]/5 border border-[#1F5C55]/20 rounded-3xl p-6 space-y-4">
-      <p class="text-sm uppercase tracking-[0.3em] text-[#1F5C55]/70">Nos valeurs</p>
+    <div class="bg-brand-primary/5 border border-brand-primary/20 rounded-3xl p-6 space-y-4">
+      <p class="text-sm uppercase tracking-[0.3em] text-brand-primary/70">Nos valeurs</p>
       <ul class="space-y-4 text-gray-700">
         <li>
           <h3 class="font-semibold text-gray-900">Accessibilité</h3>
@@ -47,7 +48,7 @@
 
 <section class="bg-white/95 rounded-[28px] shadow-lg p-6 sm:p-10 mt-12 fade-in">
   <header class="text-center mb-10 space-y-3">
-    <p class="text-sm uppercase tracking-[0.3em] text-[#1F5C55]/70">Le Conseil d'administration</p>
+    <p class="text-sm uppercase tracking-[0.3em] text-brand-primary/70">Le Conseil d'administration</p>
     <h2 class="text-3xl font-semibold text-gray-900">Celles et ceux qui font tourner le Circographe</h2>
     <p class="text-gray-600 max-w-2xl mx-auto leading-relaxed">Technicien·nes plateau, artistes, médiateurs culturels, communicant·es… Le conseil d’administration coordonne l’autogestion du lieu et accompagne les bénévoles au quotidien.</p>
   </header>
@@ -68,7 +69,7 @@
             </div>
             <div class="space-y-1">
               <h3 class="text-lg font-semibold text-gray-900"><%= member[:name] %></h3>
-              <p class="text-sm uppercase tracking-[0.2em] text-[#1F5C55]"><%= member[:role] %></p>
+              <p class="text-sm uppercase tracking-[0.2em] text-brand-primary"><%= member[:role] %></p>
             </div>
             <p class="text-sm text-gray-600 leading-relaxed flex-1"><%= member[:bio] %></p>
             <span class="text-xs text-gray-400">Bénévole engagé·e</span>
@@ -77,8 +78,8 @@
       <% end %>
     </div>
     <div class="absolute flex justify-between items-center w-full -translate-x-1/2 left-1/2 top-1/2 -translate-y-1/2 z-50">
-      <button class="swiper-button-prev !border-[#1F5C55] !text-[#1F5C55] hover:!bg-[#1F5C55] hover:!text-white"></button>
-      <button class="swiper-button-next !border-[#1F5C55] !text-[#1F5C55] hover:!bg-[#1F5C55] hover:!text-white"></button>
+      <button class="swiper-button-prev !border-brand-primary !text-brand-primary hover:!bg-brand-primary hover:!text-white"></button>
+      <button class="swiper-button-next !border-brand-primary !text-brand-primary hover:!bg-brand-primary hover:!text-white"></button>
     </div>
   </div>
 </section>
@@ -86,7 +87,7 @@
 <section class="bg-white/95 rounded-[28px] shadow-lg p-6 sm:p-10 mt-12 fade-in border border-white/80"
          data-controller="timeline">
   <header class="text-center mb-6 space-y-2">
-    <p class="text-sm uppercase tracking-[0.3em] text-[#1F5C55]/70">Notre histoire</p>
+    <p class="text-sm uppercase tracking-[0.3em] text-brand-primary/70">Notre histoire</p>
     <h2 class="text-3xl font-semibold text-gray-800">Points de repère</h2>
   </header>
   <div class="space-y-6 relative timeline-line">
@@ -98,7 +99,7 @@
       { year: "2025", title: "Vers de nouveaux horizons", body: "Développement d'actions hors les murs, partenariats écoles & compagnies, projets européens." }
     ].each do |entry| %>
       <div class="timeline-step relative pl-12 md:pl-16" data-timeline-target="step">
-        <div class="absolute left-0 top-1 w-10 h-10 rounded-full bg-[#1F5C55] text-white flex items-center justify-center font-semibold shadow"><%= entry[:year] %></div>
+        <div class="absolute left-0 top-1 w-10 h-10 rounded-full bg-brand-primary text-white flex items-center justify-center font-semibold shadow"><%= entry[:year] %></div>
         <div class="bg-white/95 rounded-2xl border border-gray-100 shadow-md p-5 md:p-6">
           <h3 class="text-xl font-semibold text-gray-800 mb-2"><%= entry[:title] %></h3>
           <p class="text-gray-600"><%= entry[:body] %></p>
@@ -110,7 +111,7 @@
 
 <section class="bg-white/95 rounded-[28px] shadow-lg p-6 sm:p-10 mt-12 fade-in border border-white/80">
   <header class="text-center mb-6 space-y-2">
-    <p class="text-sm uppercase tracking-[0.3em] text-[#1F5C55]/70">Partenaires & soutiens</p>
+    <p class="text-sm uppercase tracking-[0.3em] text-brand-primary/70">Partenaires & soutiens</p>
     <h2 class="text-3xl font-semibold text-gray-800">Ils rendent l'aventure possible</h2>
     <p class="text-gray-600 max-w-2xl mx-auto">Collectivités, structures culturelles, écoles de cirque, ateliers d'artistes et sponsors solidaires : merci à celles et ceux qui nous accompagnent.</p>
   </header>
@@ -120,5 +121,5 @@
 </section>
 
 <section class="text-center mt-12 mb-12 fade-in">
-  <%= link_to "Nous contacter", page_path('contact_us'), class: "inline-flex items-center gap-2 px-8 py-4 tracking-wide text-white font-bold bg-[#1F5C55] border-2 border-[#1F5C55] rounded-full shadow-lg hover:bg-gray-100 hover:text-[#1F5C55] hover:border-[#1F5C55] transition-all duration-300" %>
+  <%= link_to "Nous contacter", page_path('contact_us'), class: "btn-primary px-8 py-4 tracking-wide font-bold shadow-lg" %>
 </section>

@@ -1,14 +1,15 @@
 <% content_for :title, "Le Circographe - FAQ" %>
 
 <section class="relative overflow-hidden rounded-[32px] shadow-2xl mb-16">
-  <div class="absolute inset-0 bg-cover bg-center brightness-50" style="background-image: url('<%= asset_path('home2.webp') %>')"></div>
-  <div class="relative px-6 sm:px-10 lg:px-16 py-20 text-white space-y-6">
+  <%= image_tag "home2.webp", class: "absolute inset-0 w-full h-full object-cover hero-img-filter", alt: "" %>
+  <div class="hero-overlay"></div>
+  <div class="relative hero-panel space-y-6">
     <p class="text-sm uppercase tracking-[0.45em] text-white/70">Besoin d'un guide ?</p>
     <h1 class="font-circographe text-3xl sm:text-4xl lg:text-5xl font-bold">Questions fréquentes</h1>
     <p class="max-w-3xl text-lg text-white/85 leading-relaxed">Avant de passer nous voir, d'adhérer ou de proposer un projet, voici tout ce que l'on nous demande le plus souvent. Cette FAQ t'accompagne pas à pas : comprendre notre fonctionnement, rejoindre la communauté, et savoir comment nous écrire.</p>
     <div class="flex flex-wrap gap-4">
-      <%= link_to "Je découvre l'esprit du lieu", page_path("association"), class: "inline-flex items-center gap-2 px-5 py-3 text-sm font-semibold text-white bg-[#1F5C55] border-2 border-[#1F5C55] rounded-full shadow-lg hover:bg-white hover:text-[#1F5C55] transition" %>
-      <%= link_to "Je prépare mon adhésion", page_path("become_member"), class: "inline-flex items-center gap-2 px-5 py-3 text-sm font-semibold text-[#1F5C55] bg-white/95 border-2 border-white/90 rounded-full shadow-lg hover:bg-[#1F5C55] hover:text-white transition" %>
+      <%= link_to "Je découvre l'esprit du lieu", page_path("association"), class: "btn-primary shadow-lg" %>
+      <%= link_to "Je prépare mon adhésion", page_path("become_member"), class: "btn-secondary shadow-lg" %>
     </div>
   </div>
 </section>
@@ -17,27 +18,27 @@
   <article class="grid gap-10 lg:grid-cols-[320px,minmax(0,1fr)] items-start">
     <aside class="bg-white rounded-[28px] shadow-lg p-8 space-y-6 border border-white/60">
       <div class="space-y-3">
-        <p class="text-sm uppercase tracking-[0.3em] text-[#1F5C55]/70">Prépare ta visite</p>
+        <p class="text-sm uppercase tracking-[0.3em] text-brand-primary/70">Prépare ta visite</p>
         <h2 class="text-2xl font-semibold text-gray-900">Trois portes d’entrée</h2>
         <p class="text-gray-600 leading-relaxed">Tu viens pour découvrir, adhérer ou proposer un projet ? Ce guide te montre les étapes clés, avec des liens vers les pages détaillées.</p>
       </div>
       <ul class="space-y-4 text-gray-600">
         <li class="flex gap-3">
-          <span class="w-8 h-8 rounded-full bg-[#1F5C55]/10 text-[#1F5C55] flex items-center justify-center font-semibold">1</span>
+          <span class="w-8 h-8 rounded-full bg-brand-primary/10 text-brand-primary flex items-center justify-center font-semibold">1</span>
           <div>
             <p class="font-semibold text-gray-900">Découvrir le lieu</p>
             <p class="text-sm">Comprendre l’autogestion, les créneaux publics et l’ambiance du hangar.</p>
           </div>
         </li>
         <li class="flex gap-3">
-          <span class="w-8 h-8 rounded-full bg-[#1F5C55]/10 text-[#1F5C55] flex items-center justify-center font-semibold">2</span>
+          <span class="w-8 h-8 rounded-full bg-brand-primary/10 text-brand-primary flex items-center justify-center font-semibold">2</span>
           <div>
             <p class="font-semibold text-gray-900">Adhérer & participer</p>
             <p class="text-sm">Suivre les étapes d’inscription, préparer les documents et rejoindre les bénévoles.</p>
           </div>
         </li>
         <li class="flex gap-3">
-          <span class="w-8 h-8 rounded-full bg-[#1F5C55]/10 text-[#1F5C55] flex items-center justify-center font-semibold">3</span>
+          <span class="w-8 h-8 rounded-full bg-brand-primary/10 text-brand-primary flex items-center justify-center font-semibold">3</span>
           <div>
             <p class="font-semibold text-gray-900">Proposer un projet</p>
             <p class="text-sm">Résidences, ateliers, partenariats : comment formuler ta demande.</p>
@@ -45,16 +46,16 @@
         </li>
       </ul>
       <div class="flex flex-wrap gap-3 pt-2">
-        <a href="#faq-adhesion" class="inline-flex items-center px-4 py-2 text-sm font-semibold text-[#1F5C55] bg-white border border-[#1F5C55]/40 rounded-full hover:border-[#1F5C55] hover:bg-[#1F5C55]/10 transition">Adhésion</a>
-        <a href="#faq-contact" class="inline-flex items-center px-4 py-2 text-sm font-semibold text-[#1F5C55] bg-white border border-[#1F5C55]/40 rounded-full hover:border-[#1F5C55] hover:bg-[#1F5C55]/10 transition">Contact</a>
-        <a href="#faq-general" class="inline-flex items-center px-4 py-2 text-sm font-semibold text-[#1F5C55] bg-white border border-[#1F5C55]/40 rounded-full hover:border-[#1F5C55] hover:bg-[#1F5C55]/10 transition">Vie du lieu</a>
+        <a href="#faq-adhesion" class="btn-tertiary">Adhésion</a>
+        <a href="#faq-contact" class="btn-tertiary">Contact</a>
+        <a href="#faq-general" class="btn-tertiary">Vie du lieu</a>
       </div>
     </aside>
 
-    <div class="space-y-5 text-gray-700 leading-relaxed bg-white border border-[#1F5C55]/15 rounded-[24px] p-6 sm:p-8 shadow-lg">
+    <div class="space-y-5 text-gray-700 leading-relaxed bg-white border border-brand-primary/15 rounded-[24px] p-6 sm:p-8 shadow-lg">
       <p class="text-base sm:text-lg"><strong class="text-gray-900">Le Circographe vit grâce à ses membres</strong> : une structure autogérée, des bénévoles qui se relaient, des artistes en résidence. Cette FAQ regroupe l’essentiel pour faciliter la transmission d’information.</p>
       <p class="text-base sm:text-lg">Lis-la comme une petite histoire : <em>tu viens nous rencontrer</em>, <em>tu adhères</em>, <em>tu participes</em>. Chaque section renvoie vers une page si tu veux creuser les détails (horaires, tarifs, formulaires…)</p>
-      <div class="bg-[#1F5C55]/5 border border-[#1F5C55]/20 rounded-2xl px-6 py-5 text-sm sm:text-base text-gray-600">
+      <div class="bg-brand-primary/5 border border-brand-primary/20 rounded-2xl px-6 py-5 text-sm sm:text-base text-gray-600">
         <p><strong class="text-gray-900">Astuce :</strong> cette page sert aussi de support aux bénévoles. Envoie-la à une personne intéressée, elle y retrouvera l’ensemble des repères clés.</p>
       </div>
     </div>
@@ -62,7 +63,7 @@
 
   <article id="faq-adhesion" class="space-y-6">
     <header class="space-y-3 text-center bg-white border border-white/70 rounded-[24px] px-6 py-6 shadow-lg">
-      <p class="text-sm uppercase tracking-[0.3em] text-[#1F5C55]/70">Étape 1 — Rejoindre la communauté</p>
+      <p class="text-sm uppercase tracking-[0.3em] text-brand-primary/70">Étape 1 — Rejoindre la communauté</p>
       <h2 class="text-3xl font-semibold text-gray-900">Adhérer, comprendre, participer</h2>
       <p class="max-w-3xl mx-auto text-gray-600">On adhère sur place, parce que la rencontre humaine est au cœur du projet. Voici les réponses aux questions les plus courantes avant de franchir le pas.</p>
     </header>
@@ -76,14 +77,14 @@
       footer: "Tu viens d'adhérer ? Retrouve toutes les infos sur la page Adhérer : calendrier, checklist documents et infos bénévolat." %>
 
     <div class="flex flex-wrap justify-center gap-3">
-      <%= link_to "Préparer ma visite", page_path("become_member"), class: "inline-flex items-center px-5 py-3 text-sm font-semibold text-white bg-[#1F5C55] border-2 border-[#1F5C55] rounded-full shadow-lg hover:bg-gray-100 hover:text-[#1F5C55] hover:border-[#1F5C55] transition" %>
-      <%= link_to "Découvrir les créneaux", page_path("association", anchor: "fonctionnement"), class: "inline-flex items-center px-5 py-3 text-sm font-semibold text-[#1F5C55] bg-white border-2 border-[#1F5C55] rounded-full shadow hover:bg-[#1F5C55] hover:text-white transition" %>
+      <%= link_to "Préparer ma visite", page_path("become_member"), class: "btn-primary shadow-lg" %>
+      <%= link_to "Découvrir les créneaux", page_path("association", anchor: "fonctionnement"), class: "btn-tertiary shadow" %>
     </div>
   </article>
 
   <article id="faq-contact" class="space-y-6">
     <header class="space-y-3 text-center bg-white border border-white/70 rounded-[24px] px-6 py-6 shadow-lg">
-      <p class="text-sm uppercase tracking-[0.3em] text-[#1F5C55]/70">Étape 2 — Entrer en contact</p>
+      <p class="text-sm uppercase tracking-[0.3em] text-brand-primary/70">Étape 2 — Entrer en contact</p>
       <h2 class="text-3xl font-semibold text-gray-900">Nous écrire, proposer un projet, demander une résidence</h2>
       <p class="max-w-3xl mx-auto text-gray-600">Le Circographe reçoit des demandes variées : résidences, ateliers, partenariats culturels, questions logistiques. Ce bloc te permet de préparer ton message et de gagner du temps.</p>
     </header>
@@ -97,14 +98,14 @@
       footer: "Quand tu es prêt·e, direction la page Contact pour nous écrire via le formulaire Turbo." %>
 
     <div class="flex flex-wrap justify-center gap-3">
-      <%= link_to "Écrire à l'équipe", page_path("contact_us"), class: "inline-flex items-center px-5 py-3 text-sm font-semibold text-white bg-[#1F5C55] border-2 border-[#1F5C55] rounded-full shadow-lg hover:bg-gray-100 hover:text-[#1F5C55] hover:border-[#1F5C55] transition" %>
-      <%= link_to "Consulter les horaires", page_path("contact_us", anchor: "horaires"), class: "inline-flex items-center px-5 py-3 text-sm font-semibold text-[#1F5C55] bg-white border-2 border-[#1F5C55] rounded-full shadow hover:bg-[#1F5C55] hover:text-white transition" %>
+      <%= link_to "Écrire à l'équipe", page_path("contact_us"), class: "btn-primary shadow-lg" %>
+      <%= link_to "Consulter les horaires", page_path("contact_us", anchor: "horaires"), class: "btn-tertiary shadow" %>
     </div>
   </article>
 
   <article id="faq-general" class="space-y-6">
     <header class="space-y-3 text-center bg-white border border-white/70 rounded-[24px] px-6 py-6 shadow-lg">
-      <p class="text-sm uppercase tracking-[0.3em] text-[#1F5C55]/70">Étape 3 — Vivre le lieu</p>
+      <p class="text-sm uppercase tracking-[0.3em] text-brand-primary/70">Étape 3 — Vivre le lieu</p>
       <h2 class="text-3xl font-semibold text-gray-900">Repères quotidiens & soutien au projet</h2>
       <p class="max-w-3xl mx-auto text-gray-600">Tu veux revenir régulièrement, inviter des proches ou soutenir financièrement ? Ces repères t’aideront à orienter ton entourage et à faire rayonner le lieu.</p>
     </header>
@@ -118,14 +119,14 @@
       footer: "Pour suivre l'actualité, pense à la page Nos Activités et à la newsletter." %>
 
     <div class="flex flex-wrap justify-center gap-3">
-      <%= link_to "Découvrir la programmation", page_path("news"), class: "inline-flex items-center px-5 py-3 text-sm font-semibold text-white bg-[#1F5C55] border-2 border-[#1F5C55] rounded-full shadow-lg hover:bg-gray-100 hover:text-[#1F5C55] hover:border-[#1F5C55] transition" %>
-      <%= link_to "Soutenir l'association", page_path("become_member", anchor: "tarifs"), class: "inline-flex items-center px-5 py-3 text-sm font-semibold text-[#1F5C55] bg-white border-2 border-[#1F5C55] rounded-full shadow hover:bg-[#1F5C55] hover:text-white transition" %>
+      <%= link_to "Découvrir la programmation", page_path("news"), class: "btn-primary shadow-lg" %>
+      <%= link_to "Soutenir l'association", page_path("become_member", anchor: "tarifs"), class: "btn-tertiary shadow" %>
     </div>
   </article>
 
   <article class="bg-white rounded-[28px] shadow-lg p-8 lg:p-12 space-y-8 border border-white/70">
     <header class="space-y-3 text-center">
-      <p class="text-sm uppercase tracking-[0.3em] text-[#1F5C55]/70">Une histoire collective</p>
+      <p class="text-sm uppercase tracking-[0.3em] text-brand-primary/70">Une histoire collective</p>
       <h2 class="text-3xl font-semibold text-gray-900">Pourquoi on prend le temps de répondre</h2>
     </header>
     <div class="grid gap-8 lg:grid-cols-3">
