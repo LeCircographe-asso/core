@@ -12,9 +12,14 @@
   }
 </style>
 
-<section class="text-center mb-12 bg-white/95 py-6 rounded-lg shadow-md fade-in">
-  <h1 class="font-circographe text-3xl sm:text-4xl lg:text-5xl font-bold text-black">Adhérer au Circographe</h1>
-  <p class="mt-3 max-w-2xl mx-auto text-gray-600">Tout commence par une rencontre sur place. Voici comment rejoindre la communauté, participer aux entraînements libres et faire vivre le lieu.</p>
+<section class="relative overflow-hidden rounded-[32px] shadow-2xl mb-14">
+  <%= image_tag hero_image(:become_member_hero), class: "absolute inset-0 w-full h-full object-cover hero-img-filter", alt: "" %>
+  <div class="hero-overlay"></div>
+  <div class="relative hero-panel text-center space-y-4">
+    <p class="text-sm uppercase tracking-[0.35em] text-white/70">Rejoindre la communauté</p>
+    <h1 class="font-circographe text-3xl sm:text-4xl lg:text-5xl font-bold">Adhérer au Circographe</h1>
+    <p class="max-w-3xl mx-auto text-lg text-white/85 leading-relaxed">Tout commence par une rencontre sur place. Voici comment rejoindre la communauté, participer aux entraînements libres et faire vivre le lieu.</p>
+  </div>
 </section>
 
 <section class="grid grid-cols-1 xl:grid-cols-4 gap-6 fade-in">

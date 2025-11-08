@@ -1,8 +1,14 @@
 <% content_for :title, "Le Circographe - L'association" %>
 
-    <section class="text-center mb-12 bg-white/95 py-6 rounded-lg shadow-md fade-in">
-        <h1 class="font-circographe text-3xl sm:text-4xl lg:text-5xl font-bold text-black">Bienvenue au Circographe</h1>
-    </section>
+<section class="relative overflow-hidden rounded-[32px] shadow-2xl mb-14">
+  <%= image_tag hero_image(:association_hero), class: "absolute inset-0 w-full h-full object-cover hero-img-filter", alt: "" %>
+  <div class="hero-overlay"></div>
+  <div class="relative hero-panel text-center space-y-4">
+    <p class="text-sm uppercase tracking-[0.35em] text-white/70">Découvre le lieu</p>
+    <h1 class="font-circographe text-3xl sm:text-4xl lg:text-5xl font-bold">Bienvenue au Circographe</h1>
+    <p class="max-w-3xl mx-auto text-lg text-white/85 leading-relaxed">Un espace partagé où les arts du cirque et les arts graphiques se mêlent pour inventer de nouvelles manières de créer, pratiquer et transmettre.</p>
+  </div>
+</section>
 
     <section class="py-6 sm:py-8 lg:py-10 bg-white/95 rounded-lg backdrop-blur-none sm:backdrop-blur-sm px-4 sm:px-6 lg:px-8 fade-in">
         <h2 class="text-2xl sm:text-3xl font-bold text-black mb-8 text-center">Le lieu</h2>
