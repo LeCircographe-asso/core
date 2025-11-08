@@ -33,6 +33,22 @@ export default class extends Controller {
     }
 
     const options = Object.assign({}, defaultOptions, this.optionsValue || {})
+    const slideCount = this.element.querySelectorAll(".swiper-slide").length
+    const breakpointValues = Object.values(options.breakpoints || {}).map(cfg => cfg.slidesPerView || options.slidesPerView)
+    const maxSlidesPerView = Math.max(options.slidesPerView || 1, ...breakpointValues, 1)
+
+    if (slideCount <= maxSlidesPerView) {
+      options.loop = false
+      options.slidesPerView = Math.min(options.slidesPerView || 1, slideCount || 1)
+      if (options.breakpoints) {
+        Object.keys(options.breakpoints).forEach(breakpoint => {
+          options.breakpoints[breakpoint].slidesPerView = Math.min(options.breakpoints[breakpoint].slidesPerView || 1, slideCount || 1)
+        })
+      }
+    }
+
+    options.allowTouchMove = slideCount > 1
+
     this.slider = new Swiper(this.element, options)
   }
 

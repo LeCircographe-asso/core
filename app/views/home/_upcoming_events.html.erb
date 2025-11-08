@@ -11,9 +11,11 @@
   </div>
 
   <% if events.present? %>
-    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
-      <% events.each do |event| %>
-        <%= render "shared/event_card", event: event %>
+    <div class="grid grid-cols-1 max-w-3xl mx-auto">
+      <% events.first(1).each do |event| %>
+        <div class="mx-auto w-full max-w-lg">
+          <%= render "shared/event_card", event: event %>
+        </div>
       <% end %>
     </div>
   <% else %>

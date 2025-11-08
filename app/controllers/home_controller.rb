@@ -4,7 +4,7 @@ class HomeController < ApplicationController
 
 
   def index
-    @upcoming_events = Event.upcoming.by_date.limit(4)
+    @upcoming_events = Event.upcoming.by_date.limit(1)
     @opening_hours = Rails.cache.fetch("opening_hours") || default_opening_hours
   end
 

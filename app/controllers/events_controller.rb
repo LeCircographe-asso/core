@@ -12,12 +12,13 @@ class EventsController < ApplicationController
 
   def upcoming
     @events = Event.upcoming.by_date.limit(6)
+    frame_id = request.headers["Turbo-Frame"].presence
     respond_to do |format|
       format.html do
         if turbo_frame_request?
           render partial: "shared/turbo_frame_wrapper",
                  locals: {
-                   frame_id: turbo_frame_request_id || "events_upcoming",
+                   frame_id: frame_id || "events_upcoming",
                    partial_path: "home/upcoming_events",
                    partial_locals: { events: @events }
                  }
@@ -30,12 +31,13 @@ class EventsController < ApplicationController
 
   def past
     @events = Event.past.order(date: :desc).limit(9)
+    frame_id = request.headers["Turbo-Frame"].presence
     respond_to do |format|
       format.html do
         if turbo_frame_request?
           render partial: "shared/turbo_frame_wrapper",
                  locals: {
-                   frame_id: turbo_frame_request_id || "events_past",
+                   frame_id: frame_id || "events_past",
                    partial_path: "pages/news/events_grid",
                    partial_locals: { events: @events }
                  }

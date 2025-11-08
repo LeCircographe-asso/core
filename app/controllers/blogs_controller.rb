@@ -17,12 +17,13 @@ class BlogsController < ApplicationController
 
   def latest
     @blogs = Blog.order(created_at: :desc).limit(6)
+    frame_id = request.headers["Turbo-Frame"].presence
     respond_to do |format|
       format.html do
         if turbo_frame_request?
           render partial: "shared/turbo_frame_wrapper",
                  locals: {
-                   frame_id: turbo_frame_request_id || "blogs_latest",
+                   frame_id: frame_id || "blogs_latest",
                    partial_path: "pages/news/blog_grid",
                    partial_locals: { blogs: @blogs }
                  }
