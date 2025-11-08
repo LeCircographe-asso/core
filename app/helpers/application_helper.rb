@@ -68,8 +68,13 @@ module ApplicationHelper
     @hero_image_assignments[identifier] = images.sample || fallback
   end
 
-  def available_hero_images
-    hero_image_pool.dup
+  def available_hero_images(except: [])
+    exclusions = Array(except).map(&:to_s)
+    pool = hero_image_pool.reject { |image| exclusions.include?(image.to_s) }
+    return pool if pool.any?
+
+    fallback = fallback_hero_image
+    fallback && !exclusions.include?(fallback.to_s) ? [ fallback ] : []
   end
 
   private
