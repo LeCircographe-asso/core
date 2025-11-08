@@ -2,13 +2,14 @@
 <% content_for :background_image, "background_temp.webp" %>
 
 <div class="relative w-full">
-  <section class="relative w-full min-h-[calc(100dvh-3.6rem)] sm:min-h-[calc(100dvh-4.2rem)] flex flex-col items-center justify-center text-center px-4 sm:px-6 pt-20 sm:pt-24 pb-12">
-    <div class="flex flex-col items-center gap-8 sm:gap-9 -translate-y-6 sm:-translate-y-10">
-      <h1 id="title" class="font-circographe text-5xl sm:text-6xl md:text-7xl font-bold text-white tracking-[0.08em] leading-tight opacity-0 transition-opacity duration-500">Le Circographe</h1>
+  <section class="relative w-full min-h-[calc(100dvh-3.6rem)] sm:min-h-[calc(100dvh-4.2rem)] flex flex-col items-center justify-center px-4 sm:px-6 pt-20 sm:pt-24 pb-12 text-center">
+    <div class="hero-overlay pointer-events-none"></div>
+    <div class="relative max-w-3xl w-full mx-auto hero-panel flex flex-col items-center gap-8 sm:gap-9 -translate-y-6 sm:-translate-y-10">
+      <h1 id="title" class="font-circographe text-5xl sm:text-6xl md:text-7xl font-bold tracking-[0.08em] leading-tight opacity-0 transition-opacity duration-500">Le Circographe</h1>
 
       <div class="main-button opacity-0 transition-opacity duration-500">
         <%= link_to "Découvrir l'association", page_path('association'),
-                    class: "px-6 sm:px-8 py-3 sm:py-4 text-lg sm:text-xl font-semibold text-gray-800 bg-white/95 border border-white/80 rounded-full hover:bg-white shadow-md transition" %>
+                    class: "btn-secondary text-base sm:text-lg shadow-lg" %>
       </div>
     </div>
 
@@ -21,7 +22,7 @@
         <h2 id="community-highlights" class="sr-only">Informations clés</h2>
 
         <div class="grid gap-8 lg:gap-10 lg:grid-cols-[minmax(0,1.7fr)_minmax(0,1fr)] items-start">
-          <article class="relative overflow-hidden rounded-[32px] bg-gradient-to-br from-[#1F5C55] via-[#194A45] to-[#0C2F2B] text-white shadow-2xl p-6 sm:p-8 lg:p-10">
+          <article class="relative overflow-hidden rounded-[32px] bg-gradient-to-br from-brand-primary via-[#194A45] to-[#0C2F2B] text-white shadow-2xl p-6 sm:p-8 lg:p-10">
             <header class="space-y-3 text-center lg:text-left">
               <p class="text-sm uppercase tracking-[0.35em] text-white/75">Horaires</p>
               <h2 id="opening-hours" class="text-2xl sm:text-3xl font-semibold">Quand passer nous voir ?</h2>
@@ -48,7 +49,7 @@
 
       <section class="bg-white/95 rounded-[28px] shadow-lg p-6 sm:p-8 space-y-4" aria-labelledby="find-us">
         <header class="text-center space-y-2">
-          <p class="text-sm uppercase tracking-[0.3em] text-[#1F5C55]/70">Nous trouver</p>
+          <p class="text-sm uppercase tracking-[0.3em] text-brand-primary/70">Nous trouver</p>
           <h2 id="find-us" class="text-2xl font-semibold text-gray-800">Le Circographe sur la carte</h2>
           <p class="text-gray-600 max-w-2xl mx-auto">Chapiteau, ateliers graphiques et convivialité : pousse la porte au 27 bis Allée Maurice Sarraut, Toulouse.</p>
         </header>

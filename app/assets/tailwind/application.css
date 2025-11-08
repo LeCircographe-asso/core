@@ -45,6 +45,13 @@
 @tailwind utilities;
 
 @layer base {
+  :root {
+    --brand-primary: #1F5C55;
+    --brand-accent: #5836A5;
+  }
+}
+
+@layer base {
   body { @apply font-sans; }
 }
 
@@ -52,6 +59,27 @@
   .font-circographe { font-family: "Circographe", Arial, sans-serif; }
   .font-rough-typewriter { font-family: "Rough Typewriter", monospace; }
   .font-roboto { font-family: "Roboto", "Inter", "Segoe UI", sans-serif; }
+
+  .text-brand-primary { color: #1F5C55; }
+  .text-brand-primary\/70 { color: rgba(31, 92, 85, 0.7); }
+  .bg-brand-primary { background-color: #1F5C55; }
+  .bg-brand-primary\/5 { background-color: rgba(31, 92, 85, 0.05); }
+  .bg-brand-primary\/10 { background-color: rgba(31, 92, 85, 0.1); }
+  .border-brand-primary { border-color: #1F5C55; }
+  .border-brand-primary\/20 { border-color: rgba(31, 92, 85, 0.2); }
+
+  .text-brand-accent { color: #5836A5; }
+  .bg-brand-accent { background-color: #5836A5; }
+  .bg-brand-accent\/10 { background-color: rgba(88, 54, 165, 0.1); }
+  .border-brand-accent { border-color: #5836A5; }
+  .border-brand-accent\/20 { border-color: rgba(88, 54, 165, 0.2); }
+
+  .focus-visible\:outline-brand-primary:focus-visible { outline-color: #1F5C55; }
+  .focus-visible\:outline-brand-accent:focus-visible { outline-color: #5836A5; }
+  .focus\:outline-brand-primary:focus { outline-color: #1F5C55; }
+  .focus\:outline-brand-accent:focus { outline-color: #5836A5; }
+  .focus\:border-brand-primary:focus { border-color: #1F5C55; }
+  .focus\:border-brand-accent:focus { border-color: #5836A5; }
 }
 @import "tailwindcss";
 
@@ -88,6 +116,90 @@
   }
 
 @layer components {
+  .hero-overlay {
+    @apply absolute inset-0 bg-gradient-to-br from-[#0B1220]/80 via-[#4C2D8A]/55 to-transparent mix-blend-multiply;
+  }
+
+  .hero-panel {
+    @apply bg-[#0B1220]/70 backdrop-blur rounded-[28px] shadow-2xl px-6 sm:px-10 py-8 text-white drop-shadow-[0_4px_16px_rgba(0,0,0,0.45)];
+  }
+
+  .hero-img-filter {
+    @apply brightness-75 saturate-110;
+  }
+
+  .btn-primary {
+    @apply inline-flex items-center gap-2 rounded-full border-2 px-5 py-3 text-sm font-semibold transition-colors duration-300;
+    background-color: var(--brand-primary);
+    border-color: var(--brand-primary);
+    color: #fff;
+  }
+
+  .btn-primary:hover {
+    background-color: #fff;
+    color: var(--brand-primary);
+  }
+
+  .btn-primary:hover,
+  .btn-primary:focus-visible {
+    border-color: var(--brand-primary);
+  }
+
+  .btn-primary:focus-visible {
+    outline-offset: 0.5rem;
+    outline-color: var(--brand-primary);
+  }
+
+  .btn-secondary {
+    @apply inline-flex items-center gap-2 rounded-full border-2 px-5 py-3 text-sm font-semibold transition-colors duration-300;
+    background-color: var(--brand-accent);
+    border-color: var(--brand-accent);
+    color: #fff;
+  }
+
+  .btn-secondary:hover {
+    background-color: #fff;
+    color: var(--brand-accent);
+  }
+
+  .btn-secondary:hover,
+  .btn-secondary:focus-visible {
+    border-color: var(--brand-accent);
+  }
+
+  .btn-secondary:focus-visible {
+    outline-offset: 0.5rem;
+    outline-color: var(--brand-accent);
+  }
+
+  .btn-tertiary {
+    @apply inline-flex items-center gap-2 rounded-full border px-5 py-3 text-sm font-semibold transition-colors duration-300;
+    border-color: var(--brand-primary);
+    color: var(--brand-primary);
+    background-color: #fff;
+  }
+
+  .btn-tertiary:hover {
+    background-color: rgba(31, 92, 85, 0.1);
+  }
+
+  .btn-tertiary:focus-visible {
+    outline-offset: 0.5rem;
+    outline-color: var(--brand-primary);
+  }
+
+  .badge-accent {
+    @apply inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold;
+    background-color: rgba(88, 54, 165, 0.1);
+    color: var(--brand-accent);
+    border: 1px solid rgba(88, 54, 165, 0.2);
+  }
+
+  .activities-tab--active {
+    @apply text-white border-transparent;
+    background-color: var(--brand-primary);
+  }
+
   .footer-divider {
     margin-top: 2rem !important;
     margin-bottom: 2rem !important;

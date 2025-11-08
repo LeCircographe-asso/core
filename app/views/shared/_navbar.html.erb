@@ -93,7 +93,7 @@
 
             <!-- My Space button with dropdown -->
             <div class="relative">
-                <button id="dropdownUserButton" data-dropdown-toggle="dropdownUser" class="relative inline-flex items-center px-5 py-2.5 text-sm font-medium text-center text-white bg-[#1F5C55] rounded-lg hover:bg-gray-100 hover:text-[#1F5C55] hover:border-[#1F5C55] hover:border-2 focus:ring-4 focus:outline-none focus:ring-gray-300 transition-colors duration-300 border-2 border-transparent cursor-pointer">
+                <button id="dropdownUserButton" data-dropdown-toggle="dropdownUser" class="relative inline-flex items-center px-5 py-2.5 text-sm font-medium text-center text-white bg-brand-primary rounded-lg hover:bg-gray-100 hover:text-brand-primary hover:border-brand-primary hover:border-2 focus:ring-4 focus:outline-none focus:ring-gray-300 transition-colors duration-300 border-2 border-transparent cursor-pointer">
                     Mon Espace
                     <svg class="w-2.5 h-2.5 ms-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
                         <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4" />
@@ -139,9 +139,7 @@
                 <%= link_to new_session_path, class: "text-gray-900 hover:text-indigo-700 font-medium rounded-lg text-sm px-4 py-2 text-center" do %>
                 Se connecter
                 <% end %>
-                <%= link_to new_registration_path, class: "px-6 py-2 tracking-wide text-white font-bold bg-[#1F5C55] border-2 border-[#1F5C55] rounded-lg shadow-lg hover:bg-gray-100 hover:text-[#1F5C55] hover:border-[#1F5C55] transition-colors duration-300" do %>
-                S'inscrire
-                <% end %>
+                <%= link_to new_registration_path, class: "btn-primary rounded-lg shadow-lg text-center w-full" %>
             </div>
             <% end %>
         </div>
@@ -211,7 +209,7 @@
 
                 <!-- Our events (simple link) -->
                 <div class="border-b border-gray-200">
-                    <%= link_to "Nos Événements", events_path, class: "flex items-center w-full py-4 font-medium text-left text-gray-900", data: { 'nav-active-target': 'link', 'nav-active-path': events_path, 'nav-active-active-classes': 'text-[#1F5C55] font-semibold' } %>
+                    <%= link_to "Nos Événements", events_path, class: "flex items-center w-full py-4 font-medium text-left text-gray-900", data: { 'nav-active-target': 'link', 'nav-active-path': events_path, 'nav-active-active-classes': 'text-brand-primary font-semibold' } %>
                 </div>
 
                 <!-- Become a Member (simple link) -->
@@ -248,7 +246,7 @@
 
                 <!-- F.A.Q (link simple) -->
                 <div class="border-b border-gray-200">
-                    <%= link_to "F.A.Q", page_path("faq"), class: "flex items-center w-full py-4 font-medium text-left text-gray-900", data: { 'nav-active-target': 'link', 'nav-active-path': page_path('faq'), 'nav-active-active-classes': 'text-[#1F5C55] font-semibold' } %>
+                    <%= link_to "F.A.Q", page_path("faq"), class: "flex items-center w-full py-4 font-medium text-left text-gray-900", data: { 'nav-active-target': 'link', 'nav-active-path': page_path('faq'), 'nav-active-active-classes': 'text-brand-primary font-semibold' } %>
                 </div>
             </div>
 
