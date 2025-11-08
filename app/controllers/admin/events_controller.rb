@@ -63,6 +63,23 @@ module Admin
         redirect_to edit_admin_event_path(@event), alert: result.message
       end
     end
+    def destroy
+      deleter = EventManagement::EventDeleter.new(
+        event_id: params.expect(:id),
+        deleted_by_id: current_user.id,
+        reason: event_deletion_reason
+      )
+
+      result = deleter.call
+
+      respond_to do |format|
+        if result.success?
+          format.html { redirect_to admin_events_path, notice: "Événement supprimé avec succès" }
+        else
+          format.html { redirect_to admin_events_path, alert: result.message }
+        end
+      end
+    end
     private
     def set_breadcrumbs
       # No need to add dashboard breadcrumb as it's already in the partial
@@ -70,6 +87,9 @@ module Admin
     def event_params
       params.fetch(:event, {})
       params.require(:event).permit(:title, :upper_description, :middle_description, :bottom_description, :location, :date)
+    end
+    def event_deletion_reason
+      params[:reason].presence || "Deleted from admin dashboard"
     end
   end
 end
