@@ -142,7 +142,7 @@ module Dateable
       if columns_hash.key?(date_attr.to_s) && columns_hash[date_attr.to_s].type == :datetime
         where("#{date_attr} >= ?", Time.zone.now)
       else
-        where("#{date_attr} >= ?", Date.current)
+      where("#{date_attr} >= ?", Date.current)
       end
     end
 
@@ -150,7 +150,7 @@ module Dateable
       if columns_hash.key?(date_attr.to_s) && columns_hash[date_attr.to_s].type == :datetime
         where("#{date_attr} < ?", Time.zone.now)
       else
-        where("#{date_attr} < ?", Date.current)
+      where("#{date_attr} < ?", Date.current)
       end
     end
 

@@ -27,7 +27,7 @@ class BlogsController < ApplicationController
                    partial_locals: { blogs: @blogs }
                  }
         else
-          render partial: "pages/news/blog_grid", locals: { blogs: @blogs }
+    render partial: "pages/news/blog_grid", locals: { blogs: @blogs }
         end
       end
     end
