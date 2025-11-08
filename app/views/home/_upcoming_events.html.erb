@@ -74,7 +74,7 @@
     <% empty_message = safe_join([
       "C'est calme pour le moment. Aucun événement n'est planifié dans l'immédiat.",
       "Inscris-toi à",
-      link_to("la newsletter", newsletter_signup_path, class: "font-semibold text-brand-primary underline decoration-dotted underline-offset-2"),
+      link_to("la newsletter", root_path(anchor: "newsletter-footer"), class: "font-semibold text-brand-primary underline decoration-dotted underline-offset-2", data: { turbo: false }),
       "pour être averti·e des prochaines dates."
     ], " ") %>
     <%= render "shared/events_empty_state", variant: :inline, message: empty_message %>
