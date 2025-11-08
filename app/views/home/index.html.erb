@@ -3,13 +3,12 @@
 
 <div class="relative w-full">
   <section class="relative w-full min-h-[calc(100dvh-3.6rem)] sm:min-h-[calc(100dvh-4.2rem)] flex flex-col items-center justify-center px-4 sm:px-6 pt-20 sm:pt-24 pb-12 text-center">
-    <div class="hero-overlay pointer-events-none"></div>
-    <div class="relative max-w-3xl w-full mx-auto hero-panel flex flex-col items-center gap-8 sm:gap-9 -translate-y-6 sm:-translate-y-10">
-      <h1 id="title" class="font-circographe text-5xl sm:text-6xl md:text-7xl font-bold tracking-[0.08em] leading-tight opacity-0 transition-opacity duration-500">Le Circographe</h1>
+    <div class="flex flex-col items-center gap-8 sm:gap-9 -translate-y-6 sm:-translate-y-10">
+      <h1 id="title" class="font-circographe text-5xl sm:text-6xl md:text-7xl font-bold text-white tracking-[0.08em] leading-tight opacity-0 transition-opacity duration-500">Le Circographe</h1>
 
       <div class="main-button opacity-0 transition-opacity duration-500">
         <%= link_to "Découvrir l'association", page_path('association'),
-                    class: "btn-secondary text-base sm:text-lg shadow-lg" %>
+                    class: "px-6 sm:px-8 py-3 sm:py-4 text-lg sm:text-xl font-semibold text-gray-800 bg-white/95 border border-white/80 rounded-full hover:bg-white shadow-md transition" %>
       </div>
     </div>
 
