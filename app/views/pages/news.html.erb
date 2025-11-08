@@ -66,7 +66,7 @@
 </div>
     <div>
       <%= form_with scope: :user, url: newsletter_signup_path, method: :post, data: { controller: "form-feedback" }, class: "items-center justify-center sm:flex gap-4" do |form| %>
-        <%= form.email_field :email_address, placeholder: "Entrez votre email", required: true, class: "text-gray-500 w-full p-3 rounded-full border outline-none focus:border-brand-primary" %>
+        <%= form.email_field :email_address, placeholder: "Entrez votre email", required: true, class: "text-gray-500 w-full p-3 rounded-full border outline-none focus:border-[#5836A5] focus:ring-[#5836A5] focus:ring-1" %>
                     <%= form.hidden_field :website, value: "" %>
         <%= form.submit "S'abonner", class: "w-full sm:w-auto mt-3 sm:mt-0 btn-primary cursor-pointer" %>
         <p data-form-feedback-target="message" class="hidden mt-3 text-sm text-brand-primary"></p>

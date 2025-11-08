@@ -136,10 +136,8 @@
             <% else %>
             <!-- Visitor buttons -->
             <div class="flex items-center space-x-2">
-                <%= link_to new_session_path, class: "text-gray-900 hover:text-indigo-700 font-medium rounded-lg text-sm px-4 py-2 text-center" do %>
-                Se connecter
-                <% end %>
-                <%= link_to new_registration_path, class: "btn-primary rounded-lg shadow-lg text-center w-full" %>
+                <%= link_to "Se connecter", new_session_path, class: "btn-tertiary text-sm" %>
+                <%= link_to "S'inscrire", new_registration_path, class: "btn-primary text-sm shadow-lg" %>
             </div>
             <% end %>
         </div>
