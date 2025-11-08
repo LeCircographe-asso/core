@@ -542,6 +542,43 @@ NewsletterSubscriber#link_to_person!(person)
 
 ---
 
+# Plan d'Activation People::Register (2025-11-08)
+
+## Objectif
+
+Unifier la création Person → Membership → Payment autour d'un orchestrateur `People::Register` afin de supprimer la logique dupliquée dans les formulaires admin et les services historiques.
+
+## Architecture Cible
+
+```
+Admin::UserCreationForm
+  └── People::Register.call
+        ├── People::PersonCreator
+        ├── People::UserAccountCreator (optionnel)
+        └── People::MembershipCreator (paiement inclus)
+```
+
+## Étapes
+
+1. **Recréer les services** `people/person_creator.rb`, `user_account_creator.rb`, `membership_creator.rb`, `register.rb` conformément aux specs.
+2. **Brancher le dashboard** : remplacer la logique inline de `Admin::UserCreationForm` (et assimilés) par un appel unique à `People::Register`.
+3. **Nettoyer les doublons** : supprimer les créations directes (`Person.create!`, `person.create_membership!`, etc.) hors services People::*.
+4. **Réactiver les tests** : ajouter `shoulda-matchers`, `rails-controller-testing`, puis réhabiliter progressivement `spec/disabled/**`.
+5. **Documenter les flux** : MAJ des diagrammes et du changelog une fois l'activation terminée.
+
+## Contrôles
+
+- Grep régulier sur `app/` pour s'assurer que les créations passent par `People::Register`.
+- Vérification UI : création depuis `/admin/users/new`, upgrade membership, paiement manuel.
+
+## Statut
+
+- **Logique écrite :** en cours de reconstruction
+- **Branchée UI :** non
+- **Tests :** specs existantes désynchronisées → réactivation prévue après branchement
+
+---
+
 # Validation & Tests
 
 ## Stratégie par Zone
