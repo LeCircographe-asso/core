@@ -1,0 +1,149 @@
+# Circographe UI Color System
+
+## 1. Brand Palette
+
+| Role                    | Token                | Hex       | Usage                                                                 |
+|-------------------------|----------------------|-----------|-----------------------------------------------------------------------|
+| Text / Body             | `--color-text-main`  | `#0B1220` | Paragraphs, titles on light surfaces                                 |
+| Text Muted              | `--color-text-muted` | `#1F2937` | Secondary text, labels                                               |
+| Surface Light           | `--color-surface`    | `#F7FAFC` | Section backgrounds, layout wrappers                                 |
+| Surface Card            | `--color-card`       | `#FFFFFF` | Cards, panels, hero content blocks                                   |
+| Overlay Dark            | `--color-overlay`    | `rgba(12,31,43,0.75)` | Text legibility on imagery (hero overlays)            |
+| Brand Primary           | `--color-primary`    | `#1F5C55` | Main CTA, navigation highlights, tags                                |
+| Brand Primary Dark      | `--color-primary-dark` | `#174A44` | Hover/active state, text on light backgrounds                         |
+| Brand Accent (Violet)   | `--color-accent`     | `#5836A5` | Secondary CTA, links, highlights                                     |
+| Brand Accent Dark       | `--color-accent-dark`| `#4C2D8A` | Hover/focus state aligned with violet identity                       |
+| Accent Gradient Light   | `--color-accent-light`| `#6D28D9` | Optional gradient stops, badges                                     |
+| Support Orange          | `--color-support`    | `#FF9119` | Notifications, spotlight accents                                    |
+
+All colors meet WCAG AA contrast (4.5:1) when used as recommended:  
+`#1F5C55` & `#5836A5` on `#FFFFFF` ≥ 6.4:1.  
+For dark overlays, pair with `#FFFFFF` text + drop shadow for readability.
+
+## 2. Tailwind Tokens
+
+Add the palette to `tailwind.config.js`:
+
+```js
+// tailwind.config.js
+module.exports = {
+  theme: {
+    extend: {
+      colors: {
+        'brand-primary': '#1F5C55',
+        'brand-primary-dark': '#174A44',
+        'brand-accent': '#5836A5',
+        'brand-accent-dark': '#4C2D8A',
+        'surface-light': '#F7FAFC',
+        'surface-card': '#FFFFFF',
+        'text-main': '#0B1220',
+        'text-muted': '#1F2937'
+      }
+    }
+  }
+}
+```
+
+## 4. Typography
+
+### Available Fonts
+
+| Font Name          | Font-family reference              | Usage suggestions                                        |
+|--------------------|-------------------------------------|----------------------------------------------------------|
+| Circographe        | `font-circographe` utility          | Hero titles, major headings, brand statements            |
+| Rough Typewriter   | `font-rough-typewriter` utility     | Editorial highlights, quotes, storytelling accents       |
+| Roboto             | Tailwind `font-sans` / `font-roboto` utility | Default body text, forms, navigation copy        |
+
+Notes:
+- Fonts are preloaded in `app/assets/tailwind/application.css`.  
+- Combine `font-circographe` with the hero utilities for a strong brand presence.  
+- Use `font-rough-typewriter` with restraint to maintain legibility; pair with sufficient line-height and contrast.  
+- Default to Roboto (via `font-sans`) for paragraphs and longer content blocks.
+
+## 5. Utility Classes
+
+Create reusable classes in `app/assets/tailwind/application.css` (Tailwind @layer components):
+
+```css
+@layer components {
+  .hero-overlay {
+    @apply absolute inset-0 bg-gradient-to-br from-[#0B1220]/80 via-[#4C2D8A]/55 to-transparent mix-blend-multiply;
+  }
+
+  .hero-panel {
+    @apply bg-[#0B1220]/70 backdrop-blur rounded-[28px] shadow-2xl px-6 sm:px-10 py-8 text-white drop-shadow-[0_4px_16px_rgba(0,0,0,0.45)];
+  }
+
+  .btn-primary {
+    @apply inline-flex items-center gap-2 rounded-full border-2 border-brand-primary bg-brand-primary text-white hover:bg-white hover:text-brand-primary transition;
+  }
+
+  .btn-secondary {
+    @apply inline-flex items-center gap-2 rounded-full border-2 border-brand-accent bg-brand-accent text-white hover:bg-white hover:text-brand-accent transition;
+  }
+
+  .badge-accent {
+    @apply inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-brand-accent/10 text-brand-accent border border-brand-accent/20;
+  }
+}
+```
+
+## 6. Hero Pattern
+
+To guarantee contrast on imagery across pages (`home`, `faq`, `about`, `news`):
+
+```erb
+<section class="relative overflow-hidden rounded-[32px] shadow-2xl">
+  <div class="absolute inset-0 hero-overlay"></div>
+  <%= image_tag "home2.webp", class: "absolute inset-0 w-full h-full object-cover hero-img-filter" %>
+
+  <div class="relative px-6 py-20 hero-panel">
+    ...
+  </div>
+</section>
+```
+
+Add optional image adjustments:
+
+```css
+@layer components {
+  .hero-img-filter {
+    @apply brightness-75 saturate-110;
+  }
+}
+```
+
+## 7. Implementation Playbook
+
+1. **Add Tailwind tokens and utility classes** (see sections 2 & 3).  
+2. **Update components**:
+   - Replace inline `bg-[#1F5C55]`/`hover:text` by `.btn-primary` or `.btn-secondary`.
+   - Use `badge-accent` for tags currently en vert.
+   - Switch hero wrappers (`home`, `faq`, `about`, `news`) to `hero-overlay` + `hero-panel`.
+3. **Refine partials**:
+   - `shared/_navbar`, `shared/footer`, CTA partials → swap hex to tokens.
+   - Introduce violet as secondary CTA (newsletter, call-to-action context).
+4. **Audit forms** (`sessions/new`, `registrations/new`) to use accent violet for focus rings.
+5. **Run Lighthouse / axe** to verify contrast on critical pages.
+6. **Document** usage in README or DESIGN docs (link to this file).
+
+## 8. Branch Strategy
+
+1. Créer une branche dédiée (ex. `feature/ui-color-harmonization`).  
+2. Appliquer les étapes ci-dessus progressivement (commit par step).  
+3. Tester en local :
+   - `bin/dev` + vérifier pages `home`, `faq`, `about`, `news`, formulaires.  
+   - `bin/rails test` pour s’assurer qu’aucune régression JavaScript.  
+4. Ouvrir une PR pour revue, intégrer feedback, merger une fois validé.
+
+## 9. Bonnes Pratiques
+
+- Toujours utiliser les classes Tailwind custom au lieu de hardcoder les hex.  
+- Pour textes sur image : `hero-panel` + `hero-overlay`, jamais du texte brut.  
+- Boutons/violets : `.btn-secondary` pour mettre en avant l’identité tout en respectant le contraste.  
+- Respecter `text-white` + `drop-shadow` sur overlays sombres.  
+- Garder `#FF9119` uniquement pour notifications/accents, pas pour CTA principaux.  
+
+Cette base garantit un style cohérent, accessible et facilement maintenable sur l’ensemble du site. Ajuster au besoin via Tailwind, sans réintroduire d’hex isolés.
+
+
