@@ -195,9 +195,32 @@
     border: 1px solid rgba(88, 54, 165, 0.2);
   }
 
-  .activities-tab--active {
-    @apply text-white border-transparent;
+  .tab-filter {
+    @apply inline-flex items-center px-4 py-2 rounded-full text-sm font-medium transition-colors duration-200;
+    background-color: #ffffff;
+    color: var(--brand-primary);
+    border: 1px solid rgba(31, 92, 85, 0.4);
+  }
+
+  .tab-filter:hover,
+  .tab-filter:focus-visible {
     background-color: var(--brand-primary);
+    color: #ffffff;
+    border-color: var(--brand-primary);
+    outline: none;
+  }
+
+  .activities-tab--active {
+    background-color: var(--brand-primary);
+    color: #ffffff;
+    border-color: transparent;
+  }
+
+  .activities-tab--active:hover,
+  .activities-tab--active:focus-visible {
+    background-color: var(--brand-primary);
+    color: #ffffff;
+    border-color: transparent;
   }
 
   .footer-divider {
