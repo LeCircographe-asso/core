@@ -56,7 +56,7 @@
                 </li>
 
                 <li>
-                    <%= link_to "Devenir Membre", page_path('become_member'), class: "block py-2 text-gray-900 hover:text-indigo-700", data: { 'nav-active-target': 'link', 'nav-active-path': page_path('become_member'), 'nav-active-active-classes': 'nav-active-link' } %>
+                    <%= link_to "Adhérer", page_path('become_member'), class: "block py-2 text-gray-900 hover:text-indigo-700", data: { 'nav-active-target': 'link', 'nav-active-path': page_path('become_member'), 'nav-active-active-classes': 'nav-active-link' } %>
                 </li>
 
                 <!-- About -->
@@ -66,9 +66,6 @@
                     <% end %>
                     <div class="hidden group-hover:block absolute left-0 top-full z-10 w-48 bg-white rounded-lg shadow-lg">
                         <ul class="py-2 text-sm text-gray-700">
-                            <li>
-                                <%= link_to "Informations Utiles", page_path("practical_info"), class: "block px-4 py-2 hover:bg-gray-100" %>
-                            </li>
                             <li>
                                 <%= link_to "Nous contacter", page_path("contact_us"), class: "block px-4 py-2 hover:bg-gray-100" %>
                             </li>
@@ -212,7 +209,7 @@
 
                 <!-- Become a Member (simple link) -->
                 <div class="border-b border-gray-200">
-                    <%= link_to "Devenir Membre", page_path("become_member"), class: "flex items-center w-full py-4 font-medium text-left text-gray-900", data: { 'nav-active-target': 'link', 'nav-active-path': page_path('become_member'), 'nav-active-active-classes': 'nav-active-link' } %>
+            <%= link_to "Adhérer", page_path("become_member"), class: "flex items-center w-full py-4 font-medium text-left text-gray-900", data: { 'nav-active-target': 'link', 'nav-active-path': page_path('become_member'), 'nav-active-active-classes': 'nav-active-link' } %>
                 </div>
 
                 <!-- About accordion -->
@@ -230,9 +227,6 @@
                             <ul class="space-y-2">
                                 <li>
                                     <%= link_to "À Propos", page_path('about'), class: "block text-indigo-700 font-medium" %>
-                                </li>
-                                <li>
-                                    <%= link_to "Informations Utiles", page_path("practical_info"), class: "block" %>
                                 </li>
                                 <li>
                                     <%= link_to "Nous contacter", page_path("contact_us"), class: "block" %>

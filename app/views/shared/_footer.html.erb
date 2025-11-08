@@ -22,56 +22,29 @@
                     <% end %>
                 </div>
             </div>
-            <div class="grid grid-cols-2 gap-4 sm:gap-6 md:grid-cols-3 md:w-3/5">
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6 md:w-3/5">
                 <div>
-                    <h2 class="mb-2 text-sm font-semibold text-gray-900 uppercase">Liens rapides</h2>
-                    <ul class="text-gray-500 text-sm">
-                        <li class="mb-1">
-                            <%= link_to "Nos Actualités", page_path("news"), class: "hover:underline" %>
-                        </li>
-                        <li class="mb-1">
-                            <%= link_to "Devenir Membre", page_path("become_member"), class: "hover:underline" %>
-                        </li>
-                        <li class="mb-1">
-                            <%= link_to "Nous contacter", page_path("contact_us"), class: "hover:underline" %>
-                        </li>
+                    <h2 class="mb-2 text-sm font-semibold text-gray-900 uppercase">Découvrir</h2>
+                    <ul class="text-gray-500 text-sm space-y-1">
+                        <li><%= link_to "À propos", page_path("about"), class: "hover:underline" %></li>
+                        <li><%= link_to "Le Lieu", page_path("association"), class: "hover:underline" %></li>
+                        <li><%= link_to "Nos activités", page_path("news"), class: "hover:underline" %></li>
                     </ul>
                 </div>
                 <div>
-                    <h2 class="mb-2 text-sm font-semibold text-gray-900 uppercase">Informations</h2>
-                    <ul class="text-gray-500 text-sm">
-                        <li>
-                            <%= link_to "Le Lieu", page_path("association"), class: "hover:underline" %>
-                        </li>
-                        <li>
-                            <%= link_to "Le Cirque", page_path("association", anchor: "le-cirque"), class: "hover:underline" %>
-                        </li>
-                        <li>
-                            <%= link_to "Les Arts Graphiques", page_path("association", anchor: "les-arts-graphiques"), class: "hover:underline" %>
-                        </li>
-                        <li class="mb-1">
-                            <%= link_to "Fonctionnement", page_path("association", anchor: "fonctionnement"), class: "hover:underline" %>
-                        </li>
-                        <li class="mb-1">
-                            <%= link_to "Nos Activités", page_path("news"), class: "hover:underline" %>
-                        </li>
-                        <li class="mb-1">
-                            <%= link_to "Adhérer", page_path("become_member"), class: "hover:underline" %>
-                        </li>
+                    <h2 class="mb-2 text-sm font-semibold text-gray-900 uppercase">Participer</h2>
+                    <ul class="text-gray-500 text-sm space-y-1">
+                        <li><%= link_to "Adhérer", page_path("become_member"), class: "hover:underline" %></li>
+                        <li><%= link_to "Nous contacter", page_path("contact_us"), class: "hover:underline" %></li>
+                        <li><%= link_to "Plan d’accès", page_path("contact_us", anchor: "map"), class: "hover:underline" %></li>
                     </ul>
                 </div>
-                <div class="col-span-2 sm:col-span-1">
-                    <h2 class="mb-2 text-sm font-semibold text-gray-900 uppercase text-center sm:text-left">Mentions légales</h2>
-                    <ul class="text-gray-500 text-sm text-center sm:text-left">
-                        <li class="inline-block mr-4 sm:block sm:mr-0 mb-1">
-                            <%= link_to "F.A.Q", page_path("faq"), class: "hover:underline" %>
-                        </li>
-                        <li class="inline-block mr-4 sm:block sm:mr-0 mb-1">
-                            <%= link_to "Politique de confidentialité", page_path("privacy_policy"), class: "hover:underline" %>
-                        </li>
-                        <li class="inline-block sm:block mb-1">
-                            <%= link_to "Conditions générales", page_path("terms"), class: "hover:underline" %>
-                        </li>
+                <div>
+                    <h2 class="mb-2 text-sm font-semibold text-gray-900 uppercase">Ressources</h2>
+                    <ul class="text-gray-500 text-sm space-y-1">
+                        <li><%= link_to "F.A.Q", page_path("faq"), class: "hover:underline" %></li>
+                        <li><%= link_to "Mentions légales", page_path("terms"), class: "hover:underline" %></li>
+                        <li><%= link_to "Politique de confidentialité", page_path("privacy_policy"), class: "hover:underline" %></li>
                     </ul>
                 </div>
             </div>
