@@ -7,53 +7,79 @@
   <div class="relative hero-panel text-center space-y-4">
     <p class="text-sm uppercase tracking-[0.4em] text-white/70">Écris-nous</p>
     <h1 class="font-circographe text-3xl sm:text-4xl lg:text-5xl font-bold">Contact</h1>
-    <p class="max-w-3xl mx-auto text-lg text-white/85 leading-relaxed">Une question, une envie de visite, un projet de résidence ou un partenariat ? Écris-nous ou passe nous voir aux heures d'accueil.</p>
+    <p class="max-w-3xl mx-auto text-lg text-white/85 leading-relaxed">Besoin d’un renseignement ? Une question sur l’adhésion ou la mise à disposition de la salle ? On te répond avec plaisir.</p>
   </div>
 </section>
 
-<section class="grid grid-cols-1 lg:grid-cols-2 gap-8 fade-in">
-  <article class="bg-gradient-to-br from-[#1F5C55] to-[#1F5C55]/80 text-white rounded-[28px] shadow-lg p-6 sm:p-10 space-y-6">
-    <div class="space-y-4">
-      <h2 class="text-3xl font-semibold">Parlons de vive voix</h2>
-      <p>Tu peux passer au hangar sur les créneaux d'ouverture pour découvrir le lieu et parler avec l'équipe bénévole. Pour les questions rapides, notre équipe répond également par email.</p>
-    </div>
+<section id="contact-details" class="fade-in space-y-12">
+  <div class="bg-white/95 border border-white/70 shadow-lg rounded-[28px] p-6 sm:p-10">
+    <header class="mb-8 space-y-2 text-center sm:text-left">
+      <p class="text-sm uppercase tracking-[0.35em] text-[#1F5C55]/70">Infos pratiques</p>
+      <h2 class="text-3xl font-semibold text-gray-900">Passer nous voir ou écrire à l'équipe</h2>
+      <p class="text-gray-600">Viens rencontrer les bénévoles pendant les créneaux ouverts, ou contacte-nous par message : on te répond rapidement.</p>
+    </header>
 
-    <div class="bg-white/10 rounded-2xl p-5 space-y-3">
-      <h3 class="text-lg font-semibold">Infos pratiques</h3>
-      <ul class="space-y-2 text-sm">
-        <li><strong>Adresse :</strong> 27 bis allée Maurice Sarraut – 31300 Toulouse</li>
-        <li><strong>Email général :</strong> <a href="mailto:contact@circographe.fr" class="underline">contact@circographe.fr</a></li>
-        <li><strong>Horaires publics :</strong> consulter ci-dessous</li>
-      </ul>
-    </div>
+    <div class="grid gap-8 lg:grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)]">
+      <div class="space-y-6">
+        <div class="grid gap-4 sm:grid-cols-2">
+          <div class="rounded-2xl border border-[#1F5C55]/20 bg-[#1F5C55]/5 px-5 py-4">
+            <p class="text-xs uppercase tracking-[0.25em] text-[#1F5C55]/70 mb-2">Adresse</p>
+            <p class="font-semibold text-gray-900 leading-relaxed">97 bis Boulevard de Suisse<br>31200 Toulouse</p>
+          </div>
+          <div class="rounded-2xl border border-[#1F5C55]/20 bg-[#1F5C55]/5 px-5 py-4">
+            <p class="text-xs uppercase tracking-[0.25em] text-[#1F5C55]/70 mb-2">Nous écrire</p>
+            <p class="font-semibold text-gray-900">
+              <%= mail_to "contact@lecircographe.fr", "contact@lecircographe.fr", class: "underline text-[#1F5C55] hover:text-[#12433f]" %>
+            </p>
+          </div>
+          <div class="rounded-2xl border border-[#1F5C55]/20 bg-[#1F5C55]/5 px-5 py-4">
+            <p class="text-xs uppercase tracking-[0.25em] text-[#1F5C55]/70 mb-2">Accès</p>
+            <p class="font-semibold text-gray-900 leading-relaxed">Tram T1/T2 – Arrêt Cartoucherie<br>Bus L2/L9 – Arrêt Cartoucherie</p>
+          </div>
+          <div class="rounded-2xl border border-[#1F5C55]/20 bg-[#1F5C55]/5 px-5 py-4">
+            <p class="text-xs uppercase tracking-[0.25em] text-[#1F5C55]/70 mb-2">Suivre l'actu</p>
+            <div class="flex flex-wrap gap-3 text-sm">
+              <%= link_to "Facebook", "https://www.facebook.com/lecircographe/?locale=fr_FR", target: "_blank", class: "inline-flex items-center gap-2 px-3 py-2 rounded-full bg-white border border-[#1F5C55]/30 text-[#1F5C55] hover:bg-[#1F5C55] hover:text-white transition" %>
+              <%= link_to "Instagram", "https://www.instagram.com/lecircographe/", target: "_blank", class: "inline-flex items-center gap-2 px-3 py-2 rounded-full bg-white border border-[#1F5C55]/30 text-[#1F5C55] hover:bg-[#1F5C55] hover:text-white transition" %>
+              <%= link_to "WhatsApp", "https://wa.me/33612345678", target: "_blank", class: "inline-flex items-center gap-2 px-3 py-2 rounded-full bg-white border border-[#1F5C55]/30 text-[#1F5C55] hover:bg-[#1F5C55] hover:text-white transition" %>
+            </div>
+          </div>
+        </div>
 
-    <div class="space-y-2">
-      <h3 class="text-lg font-semibold">Suivez-nous</h3>
-      <div class="flex items-center gap-4 text-white/80">
-        <%= link_to "Facebook", "https://www.facebook.com/lecircographe/?locale=fr_FR", target: "_blank", class: "hover:text-white underline" %>
-        <%= link_to "Instagram", "https://www.instagram.com/lecircographe/", target: "_blank", class: "hover:text-white underline" %>
-        <%= link_to "WhatsApp", "https://wa.me/33612345678", target: "_blank", class: "hover:text-white underline" %>
+        <div class="rounded-2xl border border-[#1F5C55]/20 bg-white/80 px-5 py-6 space-y-3">
+          <p class="text-xs uppercase tracking-[0.25em] text-[#1F5C55]/70">Horaires d'accueil</p>
+          <p class="text-sm text-gray-600">Ouverture du mardi au dimanche selon disponibilité bénévoles — Fermé le lundi.</p>
+          <%= render "shared/opening_hours", horaires: @opening_hours, bare: true %>
+        </div>
+
+        <p class="text-sm text-gray-600">Besoin d’écrire tout de suite ? <%= link_to "Écrire à l’équipe", "#contact-form", class: "underline text-[#1F5C55] hover:text-[#12433f]" %></p>
+      </div>
+
+      <div class="space-y-6">
+        <div class="rounded-2xl border border-[#1F5C55]/10 bg-gradient-to-br from-[#1F5C55]/15 via-white/40 to-white px-6 py-6">
+          <p class="text-xs uppercase tracking-[0.25em] text-[#1F5C55]/70 mb-2">Un doute rapide ?</p>
+          <p class="text-gray-700">Passe pendant un créneau d’ouverture : on t’oriente vers la bonne personne (adhésion, résidence, technique…).</p>
+        </div>
+
+        <div id="contact-form">
+          <%= render "pages/contact/form", contact: @contact || {}, status: nil %>
+        </div>
       </div>
     </div>
+  </div>
 
-    <div class="space-y-3">
-      <p class="text-sm uppercase tracking-[0.3em] text-white/70">Horaires d'accueil</p>
-      <%= render "shared/opening_hours", horaires: @opening_hours %>
-    </div>
-  </article>
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+    <%= render "pages/contact/faq", faqs: @faqs %>
 
-  <%= render "pages/contact/form", contact: @contact || {}, status: nil %>
-</section>
-
-<section class="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-10 fade-in">
-  <%= render "pages/contact/faq", faqs: @faqs %>
-
-  <article class="bg-white/95 rounded-[28px] shadow-lg p-6 sm:p-8 space-y-4">
-    <p class="text-sm uppercase tracking-[0.3em] text-[#1F5C55]/70">Nous trouver</p>
-    <h2 class="text-2xl font-semibold text-gray-800">Le Circographe sur la carte</h2>
-    <div class="rounded-2xl overflow-hidden border border-gray-200 shadow-inner">
-      <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d858.7320762106817!2d1.422364267936696!3d43.618639564522674!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x12aebb1b7b5096ef%3A0x710f3096ea206f0!2sLe%20Circographe!5e0!3m2!1sfr!2sfr!4v1745437455061!5m2!1sfr!2sfr" width="100%" height="320" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
-    </div>
-    <p class="text-sm text-gray-500">Tram T1/T2 – Arrêt Cartoucherie • Bus L2/L9 – Arrêt Cartoucherie</p>
-  </article>
+    <%= turbo_frame_tag "map" do %>
+      <article class="bg-white/95 rounded-[28px] shadow-lg p-6 sm:p-8 space-y-4">
+        <p class="text-sm uppercase tracking-[0.3em] text-[#1F5C55]/70">Nous trouver</p>
+        <h2 class="text-2xl font-semibold text-gray-800">Le Circographe sur la carte</h2>
+        <div class="rounded-2xl overflow-hidden border border-gray-200 shadow-inner">
+          <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d858.7320762106817!2d1.422364267936696!3d43.618639564522674!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x12aebb1b7b5096ef%3A0x710f3096ea206f0!2sLe%20Circographe!5e0!3m2!1sfr!2sfr!4v1745437455061!5m2!1sfr!2sfr" width="100%" height="320" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+        </div>
+        <p class="text-sm text-gray-500">Tram T1/T2 – Arrêt Cartoucherie • Bus L2/L9 – Arrêt Cartoucherie</p>
+      </article>
+    <% end %>
+  </div>
 </section>
