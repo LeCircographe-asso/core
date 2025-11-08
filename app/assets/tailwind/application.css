@@ -78,8 +78,8 @@
   .focus-visible\:outline-brand-accent:focus-visible { outline-color: #5836A5; }
   .focus\:outline-brand-primary:focus { outline-color: #1F5C55; }
   .focus\:outline-brand-accent:focus { outline-color: #5836A5; }
-  .focus\:border-brand-primary:focus { border-color: #1F5C55; }
-  .focus\:border-brand-accent:focus { border-color: #5836A5; }
+  .focus\:border-\[\#1F5C55\]:focus { border-color: #5836A5; }
+  .focus\:ring-\[\#1F5C55\]:focus { --tw-ring-color: #5836A5; }
 }
 @import "tailwindcss";
 
@@ -170,6 +170,18 @@
   .btn-secondary:focus-visible {
     outline-offset: 0.5rem;
     outline-color: var(--brand-accent);
+  }
+
+  .focus-accent {
+    @apply focus:outline-none focus:ring-1 focus:ring-[#5836A5] focus:border-[#5836A5];
+  }
+
+  .focus-accent-strong {
+    @apply focus:outline-none focus:ring-2 focus:ring-[#5836A5] focus:border-[#5836A5];
+  }
+
+  .form-control {
+    @apply block w-full px-4 py-2 text-gray-800 placeholder-gray-400 bg-white border border-gray-200 rounded-lg transition focus:outline-none focus:ring-1 focus:ring-[#5836A5] focus:border-[#5836A5];
   }
 
   .btn-tertiary {

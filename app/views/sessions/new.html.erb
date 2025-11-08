@@ -22,7 +22,7 @@
             <!-- Email field -->
             <div>
                 <label for="email_address" class="block mb-2 text-sm text-gray-800">Adresse Email</label>
-                <%= form.email_field :email_address, required: true, autofocus: true, autocomplete: "username", placeholder: "jean@example.com", value: params[:email_address], id: "email_address", class: "block w-full px-4 py-2 text-black placeholder-gray-400 bg-white border border-gray-200 rounded-lg focus:border-brand-accent focus:outline-none", style: "background-color: white;" %>
+                <%= form.email_field :email_address, required: true, autofocus: true, autocomplete: "username", placeholder: "jean@example.com", value: params[:email_address], id: "email_address", class: "block w-full px-4 py-2 text-black placeholder-gray-400 bg-white border border-gray-200 rounded-lg focus:border-[#5836A5] focus:ring-[#5836A5] focus:ring-1 focus:outline-none", style: "background-color: white;" %>
             </div>
 
             <!-- Password Field -->
@@ -31,7 +31,7 @@
                     <label for="password" class="text-sm text-gray-800">Mot de passe</label>
                     <%= link_to "Mot de passe oublié ?", new_password_path, class: "text-sm text-gray-400 hover:text-brand-accent hover:underline focus:outline-brand-accent outline-offset-1" %>
                 </div>
-                <%= form.password_field :password, required: true, placeholder: "Mot de passe", maxlength: 72, id: "password", class: "block w-full px-4 py-2 text-black placeholder-gray-400 bg-white border border-gray-200 rounded-lg focus:border-brand-accent focus:outline-none password-field", style: "background-color: white;" %>
+                <%= form.password_field :password, required: true, placeholder: "Mot de passe", maxlength: 72, id: "password", class: "block w-full px-4 py-2 text-black placeholder-gray-400 bg-white border border-gray-200 rounded-lg focus:border-[#5836A5] focus:ring-[#5836A5] focus:ring-1 focus:outline-none password-field", style: "background-color: white;" %>
                 <span class="toggle-password absolute inset-y-0 right-0 flex items-center pr-3 mt-7" data-action="click->password#toggle">
                     <i class="fa fa-eye text-gray-500" id="password-icon"></i>
                 </span>

@@ -144,9 +144,26 @@ L’accueil conserve un hero minimaliste (titre + bouton + flèche) sans overlay
 
 Use `.hero-overlay` + `.hero-panel` pour FAQ/About et futures pages publiques qui ont besoin d’un panneau lisible sur fond photo.
 
-## 7. Implementation Playbook
+## 7. Form Controls
 
-1. **Add Tailwind tokens and utility classes** (see sections 2 & 5).  
+| Usage | Classes | Notes |
+|-------|---------|-------|
+| Champ standard | `form-control` (optionnel) + `focus-accent` | Halo violet `#5836A5` 1px, fond blanc, bords arrondis. |
+| Champ accentué | `focus-accent-strong` | Halo violet plus prononcé (anneau 2px). |
+
+> Les projets antérieurs utilisaient `focus:border-[#1F5C55]` / `focus:ring-[#1F5C55]`. Un override dans `application.css` force désormais ces classes à pointer sur `#5836A5`. Pas besoin de réécrire le legacy, mais privilégie `focus-accent` pour les nouveaux écrans.
+
+Exemple :
+
+```erb
+<%= form.email_field :email_address,
+      class: "form-control focus-accent",
+      placeholder: "ex. jean@example.com" %>
+```
+
+## 8. Implementation Playbook
+
+1. **Add Tailwind tokens and utility classes** (see sections 2, 5, 7).  
 2. **Update components**:
    - Replace inline `bg-[#1F5C55]`/`hover:text` by `.btn-primary` or `.btn-secondary`.
    - Use `badge-accent` for tags currently en vert.
@@ -158,7 +175,7 @@ Use `.hero-overlay` + `.hero-panel` pour FAQ/About et futures pages publiques qu
 5. **Run Lighthouse / axe** to verify contrast on critical pages.
 6. **Document** usage in README or DESIGN docs (link to this file).
 
-## 8. Branch Strategy
+## 9. Branch Strategy
 
 1. Créer une branche dédiée (ex. `feature/ui-color-harmonization`).  
 2. Appliquer les étapes ci-dessus progressivement (commit par step).  
@@ -167,7 +184,7 @@ Use `.hero-overlay` + `.hero-panel` pour FAQ/About et futures pages publiques qu
    - `bin/rails test` pour s’assurer qu’aucune régression JavaScript.  
 4. Ouvrir une PR pour revue, intégrer feedback, merger une fois validé.
 
-## 9. Bonnes Pratiques
+## 10. Bonnes Pratiques
 
 - Toujours utiliser les classes Tailwind custom au lieu de hardcoder les hex.  
 - Pour textes sur image : `.hero-panel` + `.hero-overlay`, sauf pour l’accueil qui reste minimal.  
@@ -175,7 +192,7 @@ Use `.hero-overlay` + `.hero-panel` pour FAQ/About et futures pages publiques qu
 - Respecter `text-white` + `text-shadow-hero` si besoin sur backgrounds sombres.  
 - Garder `#FF9119` uniquement pour notifications/accents, pas pour CTA principaux.  
 
-## 10. Contrast Checklist
+## 11. Contrast Checklist
 
 1. **Automatique** : `bin/rails tailwindcss:build` échoue si une classe inconnue est ajoutée. 
 2. **Audit manuel** : utiliser Lighthouse ou `npx @axe-core/cli http://127.0.0.1:3001/` pour vérifier les ratios.

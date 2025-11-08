@@ -39,13 +39,13 @@
             <!-- Email field -->
             <div>
                 <label for="signup_email_address" class="block mb-1 text-sm text-gray-800">Adresse Email</label>
-                <%= form.email_field :email_address, required: true, placeholder: "example@example.com", maxlength: 72, id: "signup_email_address", class: "block w-full px-4 py-2 text-black placeholder-gray-400 bg-white border border-gray-200 rounded-lg focus:border-brand-accent focus:outline-none", style: "background-color: white;" %>
+                <%= form.email_field :email_address, required: true, placeholder: "example@example.com", maxlength: 72, id: "signup_email_address", class: "block w-full px-4 py-2 text-black placeholder-gray-400 bg-white border border-gray-200 rounded-lg focus:border-[#5836A5] focus:ring-[#5836A5] focus:ring-1 focus:outline-none", style: "background-color: white;" %>
             </div>
 
             <!-- Password Field -->
             <div class="relative" data-controller="password">
                 <label for="password" class="block mb-1 text-sm text-gray-800">Mot de passe</label>
-                <%= form.password_field :password, required: true, placeholder: "Votre mot de passe", maxlength: 72, id: "password", class: "block w-full px-4 py-2 text-black placeholder-gray-400 bg-white border border-gray-200 rounded-lg focus:border-brand-accent focus:outline-none password-field", style: "background-color: white;" %>
+                <%= form.password_field :password, required: true, placeholder: "Votre mot de passe", maxlength: 72, id: "password", class: "block w-full px-4 py-2 text-black placeholder-gray-400 bg-white border border-gray-200 rounded-lg focus:border-[#5836A5] focus:ring-[#5836A5] focus:ring-1 focus:outline-none password-field", style: "background-color: white;" %>
                 <span class="toggle-password absolute inset-y-0 right-0 flex items-center pr-3 mt-7" data-action="click->password#toggle">
                     <i class="fa fa-eye text-gray-500" id="password-icon"></i>
                 </span>
@@ -54,7 +54,7 @@
             <!-- Password Confirmation -->
             <div class="relative" data-controller="password">
                 <label for="password_confirmation" class="block mb-1 text-sm text-gray-800">Confirmer votre mot de passe</label>
-                <%= form.password_field :password_confirmation, required: true, placeholder: "Confirmer votre mot de passe", maxlength: 72, id: "password_confirmation", class: "block w-full px-4 py-2 text-black placeholder-gray-400 bg-white border border-gray-200 rounded-lg focus:border-brand-accent focus:outline-none password-field", style: "background-color: white;" %>
+                <%= form.password_field :password_confirmation, required: true, placeholder: "Confirmer votre mot de passe", maxlength: 72, id: "password_confirmation", class: "block w-full px-4 py-2 text-black placeholder-gray-400 bg-white border border-gray-200 rounded-lg focus:border-[#5836A5] focus:ring-[#5836A5] focus:ring-1 focus:outline-none password-field", style: "background-color: white;" %>
                 <span class="toggle-password absolute inset-y-0 right-0 flex items-center pr-3 mt-7" data-action="click->password#toggle">
                     <i class="fa fa-eye text-gray-500" id="password_confirmation-icon"></i>
                 </span>
@@ -64,7 +64,7 @@
                 <!--Combined Checkbox Terms of Service and Privacy Policy -->
                 <div class="flex items-start">
                     <div class="flex items-center h-5">
-                        <%= form.check_box :cgu, id: "cgu", class: "h-4 w-4 text-brand-primary border-gray-300 rounded focus:outline-brand-primary focus:outline-offset-0" %>
+                        <%= form.check_box :cgu, id: "cgu", class: "h-4 w-4 text-[#5836A5] border-gray-300 rounded focus:ring-[#5836A5] focus:ring-offset-0" %>
                         <%= form.hidden_field :privacy_policy, value: '1' %>
                     </div>
                     <div class="ml-2 text-sm">
@@ -78,7 +78,7 @@
                 <!-- Newsletter -->
                 <div class="flex items-start">
                     <div class="flex items-center h-5">
-                        <%= form.check_box :newsletter_subscribed, class: "h-4 w-4 text-brand-primary border-gray-300 rounded focus:outline-brand-primary focus:outline-offset-0" %>
+                        <%= form.check_box :newsletter_subscribed, class: "h-4 w-4 text-[#5836A5] border-gray-300 rounded focus:ring-[#5836A5] focus:ring-offset-0" %>
                     </div>
                     <div class="ml-2 text-sm">
                         <%= form.label :newsletter_subscribed, "S'inscrire à la newsletter", class: "text-sm text-gray-800" %>
