@@ -7,7 +7,7 @@
 
 <section class="bg-white/95 rounded-[28px] shadow-lg p-6 sm:p-8 space-y-8 fade-in"
          data-controller="tabs"
-         data-tabs-initial-value="tous"
+         data-tabs-initial-value="avenir"
          data-tabs-active-class="activities-tab--active">
   <header class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
     <div class="text-left">
@@ -15,11 +15,6 @@
       <h2 class="text-2xl font-semibold text-gray-800">Filtre les activités qui t'intéressent</h2>
         </div>
     <div role="tablist" class="flex flex-wrap gap-2" aria-label="Filtres des activités">
-      <button type="button" role="tab" data-tabs-target="trigger" data-tabs-name-value="tous"
-              class="activities-tab inline-flex items-center px-4 py-2 rounded-full border border-[#1F5C55]/40 text-sm font-medium text-gray-700 bg-white hover:bg-[#1F5C55]/10 transition-colors"
-              data-action="tabs#select">
-        Tous
-      </button>
       <button type="button" role="tab" data-tabs-target="trigger" data-tabs-name-value="avenir"
               class="activities-tab inline-flex items-center px-4 py-2 rounded-full border border-[#1F5C55]/40 text-sm font-medium text-gray-700 bg-white hover:bg-[#1F5C55]/10 transition-colors"
               data-action="tabs#select">
@@ -39,11 +34,7 @@
   </header>
 
   <div class="space-y-6">
-    <div data-tabs-target="panel" data-tabs-name-value="tous" class="space-y-6" role="tabpanel">
-      <%= render "pages/news/events_grid", events: (@upcoming_events + @past_events).uniq.first(9) %>
-        </div>
-
-    <div data-tabs-target="panel" data-tabs-name-value="avenir" class="space-y-6 hidden" role="tabpanel" aria-hidden="true">
+    <div data-tabs-target="panel" data-tabs-name-value="avenir" class="space-y-6" role="tabpanel">
       <turbo-frame id="activities-upcoming" loading="lazy" src="<%= upcoming_events_path %>">
         <%= render "pages/news/events_grid", events: @upcoming_events %>
       </turbo-frame>
