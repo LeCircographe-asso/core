@@ -18,15 +18,15 @@
 
   <div class="space-y-4">
     <% faqs.each_with_index do |faq, index| %>
-      <div class="p-4 bg-white border border-gray-100 rounded-2xl shadow-sm">
-        <h3>
+      <div class="group p-4 bg-white border border-gray-100 rounded-2xl shadow-sm transition hover:border-[#1F5C55]/40 hover:shadow-md focus-within:border-[#1F5C55]/40 focus-within:shadow-md">
+        <h3 id="<%= id %>-heading-<%= index %>">
           <button type="button"
-                  class="flex items-center justify-between w-full text-left text-lg font-semibold text-gray-800"
+                  class="flex items-center justify-between w-full text-left text-lg font-semibold text-gray-800 transition-colors group-hover:text-[#1F5C55] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#5836A5] focus-visible:ring-offset-2 focus-visible:ring-offset-white rounded-xl px-1 py-1"
                   data-accordion-target="#<%= id %>-body-<%= index %>"
                   aria-expanded="false"
                   aria-controls="<%= id %>-body-<%= index %>">
             <span><%= faq[:question] %></span>
-            <svg data-accordion-icon class="w-4 h-4 rotate-180 shrink-0 transition-transform" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
+            <svg data-accordion-icon class="w-4 h-4 rotate-180 shrink-0 transition-transform group-hover:text-[#1F5C55]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
               <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5 5 1 1 5" />
             </svg>
           </button>
