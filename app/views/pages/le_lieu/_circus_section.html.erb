@@ -8,7 +8,13 @@
 
   <section class="bg-white/95 rounded-lg shadow-md p-6 fade-in" aria-labelledby="gallery-section">
     <h2 id="gallery-section" class="sr-only">Galerie d'images</h2>
-    <%= render "shared/carousel_image", images: ["circus-img2.webp", "home2.webp", "home3.webp", "home1.webp"] %>
+    <%= render "shared/carousel_image",
+          images: [
+            "circus-img2.webp",
+            hero_image(:circus_carousel_two),
+            hero_image(:circus_carousel_three),
+            hero_image(:circus_carousel_four)
+          ] %>
   </section>
 
   <section class="grid grid-cols-1 md:grid-cols-2 gap-8" aria-labelledby="training-section">

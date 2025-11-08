@@ -64,7 +64,12 @@ module ApplicationHelper
     return @hero_image_assignments[identifier] if @hero_image_assignments.key?(identifier)
 
     images = hero_image_pool
-    @hero_image_assignments[identifier] = images.sample || "home2.webp"
+    fallback = fallback_hero_image(images)
+    @hero_image_assignments[identifier] = images.sample || fallback
+  end
+
+  def available_hero_images
+    hero_image_pool.dup
   end
 
   private
@@ -72,15 +77,32 @@ module ApplicationHelper
   def hero_image_pool
     @hero_image_pool ||= begin
       files = Dir[Rails.root.join("app/assets/images/hero_*.webp")].map { |path| File.basename(path) }
-      files.select { |file| asset_available?(file) }
+      files.select! { |file| asset_available?(file) }
+      fallback = fallback_hero_image(files)
+      files << fallback if fallback && !files.include?(fallback)
+      files
     end
+  end
+
+  def fallback_hero_image(existing = nil)
+    candidate = "hero_01.webp"
+    return candidate if (existing || hero_image_pool_without_cache).include?(candidate)
+    asset_available?(candidate) ? candidate : existing&.first
+  end
+
+  def hero_image_pool_without_cache
+    Dir[Rails.root.join("app/assets/images/hero_*.webp")].map { |path| File.basename(path) }
   end
 
   def asset_available?(logical_path)
     return false if logical_path.blank?
 
-    loader = Rails.application.assets&.load_path
-    loader&.find(logical_path).present?
+    if (assembly = Rails.application.assets)&.respond_to?(:load_path)
+      return true if assembly.load_path.find(logical_path).present?
+    end
+
+    asset_full_path = Rails.root.join("app/assets/images", logical_path)
+    asset_full_path.exist?
   rescue StandardError
     false
   end

@@ -107,8 +107,8 @@ To guarantee contrast on imagery across pages (`home`, `faq`, `about`, `news`):
 
 ```erb
 <section class="relative overflow-hidden rounded-[32px] shadow-2xl">
-  <div class="absolute inset-0 hero-overlay"></div>
-  <%= image_tag "home2.webp", class: "absolute inset-0 w-full h-full object-cover hero-img-filter" %>
+  <%= image_tag hero_image(:sample_hero), class: "absolute inset-0 w-full h-full object-cover hero-img-filter" %>
+  <div class="hero-overlay"></div>
 
   <div class="relative px-6 py-20 hero-panel">
     ...

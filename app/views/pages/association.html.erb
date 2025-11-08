@@ -26,27 +26,27 @@
 
 <section class="fade-in space-y-8">
   <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-<%= render 'shared/card_reverse', 
-    title: "Le Cirque", 
-      description: "L'activité principale liée au cirque que propose le lieu est l'entraînement libre. Il est destiné aux professionnel·les ainsi qu'aux amateur·es confirmé·es.",
-      description_2: "Nous accueillons aussi des compagnies en création et des stages portés par des artistes professionnels.",
-      description_3: "Prêt·e à grimper, jongler ou voler ? On t'attend sur place pour t'expliquer le fonctionnement.",
-    image: "home3.webp", 
-      alt_text: "Entraînement de cirque au Circographe",
-      link: page_path('association', anchor: 'le-cirque'),
-      button_text: "Explorer le cirque"
-    %>
+<%= render "shared/card_reverse",
+    title: "Le Cirque",
+    description: "L'activité principale liée au cirque que propose le lieu est l'entraînement libre. Il est destiné aux professionnel·les ainsi qu'aux amateur·es confirmé·es.",
+    description_2: "Nous accueillons aussi des compagnies en création et des stages portés par des artistes professionnels.",
+    description_3: "Prêt·e à grimper, jongler ou voler ? On t'attend sur place pour t'expliquer le fonctionnement.",
+    image: hero_image(:association_circus_card),
+    alt_text: "Entraînement de cirque au Circographe",
+    link: page_path("association", anchor: "le-cirque"),
+    button_text: "Explorer le cirque"
+  %>
 
-  <%= render 'shared/card', 
-      title: "Les Arts Graphiques", 
-      description: "Le Circographe ouvre ses portes à la création visuelle : dessin, peinture, illustration, collage, bande dessinée...",
-      description_2: "Résidences d'artistes, temps de création libres et expositions rythment la vie du lieu.",
-      description_3: "Une atmosphère inspirante pour croiser les pratiques et mêler les imaginaires.",
-      image: "home2.webp", 
-      alt_text: "Atelier graphique au Circographe",
-      link: page_path('association', anchor: 'les-arts-graphiques'),
-      button_text: "Explorer les arts graphiques"
-    %>
+<%= render "shared/card",
+    title: "Les Arts Graphiques",
+    description: "Le Circographe ouvre ses portes à la création visuelle : dessin, peinture, illustration, collage, bande dessinée...",
+    description_2: "Résidences d'artistes, temps de création libres et expositions rythment la vie du lieu.",
+    description_3: "Une atmosphère inspirante pour croiser les pratiques et mêler les imaginaires.",
+    image: hero_image(:association_graphics_card),
+    alt_text: "Atelier graphique au Circographe",
+    link: page_path("association", anchor: "les-arts-graphiques"),
+    button_text: "Explorer les arts graphiques"
+  %>
   </div>
 </section>
 
