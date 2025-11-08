@@ -5,7 +5,7 @@
   <% if upcoming_event.present? %>
     <% event_time = upcoming_event.date&.in_time_zone(Time.zone) %>
 
-    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+  <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
       <div class="flex items-start gap-4">
         <div class="flex flex-col items-center justify-center w-16 h-16 rounded-2xl bg-brand-primary/10 text-brand-primary font-semibold uppercase tracking-wider">
           <% if event_time.present? %>
@@ -57,7 +57,7 @@
         <div class="inline-flex items-center gap-2">
           <i class="fas fa-location-dot text-brand-primary"></i>
           <span><%= upcoming_event.location %></span>
-        </div>
+  </div>
       <% end %>
     </div>
 

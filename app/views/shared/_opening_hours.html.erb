@@ -21,7 +21,7 @@
       <tbody>
         <% schedule.each do |day, hours| %>
           <tr class="border-b border-gray-100">
-            <%
+            <% 
               is_weekend = ["samedi", "dimanche"].include?(day.to_s)
               is_today = Time.zone.now.strftime('%A').downcase == day.to_s
               row_classes = "hover:bg-gray-50"
@@ -29,7 +29,7 @@
             %>
             <td class="<%= row_classes %> py-3 text-center">
               <div class="flex items-center justify-center">
-                <%
+                <% 
                   icon_class = case day.to_s
                   when "lundi", "mardi", "mercredi", "jeudi", "vendredi" then "fas fa-briefcase"
                   when "samedi", "dimanche" then "fas fa-umbrella-beach"
@@ -76,5 +76,5 @@
 <% else %>
   <div class="<%= wrapper_classes %>">
     <%= inner %>
-  </div>
+</div> 
 <% end %>
