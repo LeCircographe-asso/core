@@ -42,12 +42,18 @@ Person.includes(:memberships).where.not(memberships: { id: nil }).find_each do |
   # Créer l'adhésion avec la nouvelle logique (créera le paiement et le numéro automatiquement)
   if membership_type
     begin
-      result = person.create_membership!(
-        membership_type,
-        payment_method: :cash,
-        recorded_by: admin_user
-      )
-      puts "  ✅ #{person.full_name}: #{membership_type.name} - Numéro: #{person.reload.member_number}"
+      result = People::MembershipCreator.new(
+        person: person,
+        membership_type_id: membership_type.id,
+        payment_method: "cash",
+        recorded_by_id: admin_user&.id
+      ).call
+
+      if result.success?
+        puts "  ✅ #{person.full_name}: #{membership_type.name} - Numéro: #{person.reload.member_number}"
+      else
+        puts "  ❌ #{person.full_name}: Erreur - #{result.message}"
+      end
     rescue => e
       puts "  ❌ #{person.full_name}: Erreur - #{e.message}"
     end
@@ -71,12 +77,18 @@ Person.left_joins(:memberships).where(memberships: { id: nil }).find_each.with_i
 
   if membership_type
     begin
-      result = person.create_membership!(
-        membership_type,
-        payment_method: :cash,
-        recorded_by: admin_user
-      )
-      puts "  ✅ #{person.full_name}: #{membership_type.name} - Numéro: #{person.reload.member_number}"
+      result = People::MembershipCreator.new(
+        person: person,
+        membership_type_id: membership_type.id,
+        payment_method: "cash",
+        recorded_by_id: admin_user&.id
+      ).call
+
+      if result.success?
+        puts "  ✅ #{person.full_name}: #{membership_type.name} - Numéro: #{person.reload.member_number}"
+      else
+        puts "  ❌ #{person.full_name}: Erreur - #{result.message}"
+      end
     rescue => e
       puts "  ❌ #{person.full_name}: Erreur - #{e.message}"
     end
