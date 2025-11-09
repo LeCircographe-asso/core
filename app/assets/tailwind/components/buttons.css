@@ -1,0 +1,81 @@
+@layer components {
+  .btn-navbar {
+    @apply inline-flex items-center justify-center px-6 py-2 text-sm font-semibold rounded-lg shadow-lg transition-colors duration-300;
+    background-color: var(--brand-primary);
+    border: 2px solid var(--brand-primary);
+    color: #fff;
+  }
+
+  .btn-navbar:hover,
+  .btn-navbar:focus-visible {
+    background-color: #fff;
+    color: var(--brand-primary);
+    border-color: var(--brand-primary);
+  }
+
+  .btn-navbar:focus-visible {
+    outline-offset: 0.5rem;
+    outline-color: var(--brand-primary);
+  }
+
+  .btn-primary {
+    @apply inline-flex items-center gap-2 rounded-full border-2 px-5 py-3 text-sm font-semibold transition-colors duration-300;
+    background-color: var(--brand-primary);
+    border-color: var(--brand-primary);
+    color: #fff;
+  }
+
+  .btn-primary:hover {
+    background-color: #fff;
+    color: var(--brand-primary);
+  }
+
+  .btn-primary:hover,
+  .btn-primary:focus-visible {
+    border-color: var(--brand-primary);
+  }
+
+  .btn-primary:focus-visible {
+    outline-offset: 0.5rem;
+    outline-color: var(--brand-primary);
+  }
+
+  .btn-secondary {
+    @apply inline-flex items-center gap-2 rounded-full border-2 px-5 py-3 text-sm font-semibold transition-colors duration-300;
+    background-color: var(--brand-accent);
+    border-color: var(--brand-accent);
+    color: #fff;
+  }
+
+  .btn-secondary:hover {
+    background-color: #fff;
+    color: var(--brand-accent);
+  }
+
+  .btn-secondary:hover,
+  .btn-secondary:focus-visible {
+    border-color: var(--brand-accent);
+  }
+
+  .btn-secondary:focus-visible {
+    outline-offset: 0.5rem;
+    outline-color: var(--brand-accent);
+  }
+
+  .btn-tertiary {
+    @apply inline-flex items-center gap-2 rounded-full border px-5 py-3 text-sm font-semibold transition-colors duration-300;
+    border-color: var(--brand-primary);
+    color: var(--brand-primary);
+    background-color: #fff;
+  }
+
+  .btn-tertiary:hover {
+    background-color: rgba(31, 92, 85, 0.1);
+  }
+
+  .btn-tertiary:focus-visible {
+    outline-offset: 0.5rem;
+    outline-color: var(--brand-primary);
+  }
+}
+

@@ -1,0 +1,23 @@
+@layer components {
+  .hero-overlay {
+    @apply absolute inset-0 bg-gradient-to-br from-[#0B1220]/80 via-[#4C2D8A]/55 to-transparent mix-blend-multiply;
+  }
+
+  .hero-panel {
+    @apply bg-[#0B1220]/60 backdrop-blur rounded-[28px] shadow-2xl px-6 sm:px-10 py-8 text-white drop-shadow-[0_4px_16px_rgba(0,0,0,0.45)];
+    backdrop-filter: blur(10px);
+  }
+
+  .hero-img-filter {
+    @apply brightness-95 saturate-120;
+  }
+
+  .text-shadow-hero {
+    text-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
+  }
+
+  .bg-overlay-dark {
+    background: linear-gradient(135deg, rgba(12, 18, 32, 0.55), rgba(12, 18, 32, 0.15));
+  }
+}
+
