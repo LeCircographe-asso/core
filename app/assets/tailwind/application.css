@@ -11,6 +11,7 @@
 @import "./components/layout.css";
 @import "./components/dashboard.css";
 @import "./components/timeline.css";
+@import "./components/admin_sidebar.css";
 
 @layer base {
   /* Local fonts first (Propshaft rewrites /fonts/... to fingerprinted assets) */
