@@ -19,6 +19,7 @@
 @import "./components/events.css";
 @import "./components/admin_table.css";
 @import "./components/actiontext.css";
+@import "./components/swiper_overrides.css";
 
 @layer base {
   /* Local fonts first (Propshaft rewrites /fonts/... to fingerprinted assets) */

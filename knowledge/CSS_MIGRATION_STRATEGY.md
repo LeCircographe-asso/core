@@ -45,6 +45,7 @@ Usage pattern:
 - [x] Animations, tooltips, Stripe signup extraits (`animations.css`, `tooltips.css`, `stripe.css`) ; fichier legacy nettoyé.
 - [x] Event carousel layout + admin tables migrés (`events.css`, `admin_table.css`).
 - [x] ActionText overrides portés dans `app/assets/tailwind/components/actiontext.css`.
+- [x] Swiper overrides (navigation/pagination) isolés dans `app/assets/tailwind/components/swiper_overrides.css`.
 - [ ] Move remaining DartSass partials into Tailwind-compatible modules (legacy navbar edge cases, vendor overrides).
 - [ ] Extract Swiper/Flowbite overrides into `app/assets/tailwind/components/*.css`.
 - [ ] Document component recipes (cards, timelines, admin UI) inside `docs/`.

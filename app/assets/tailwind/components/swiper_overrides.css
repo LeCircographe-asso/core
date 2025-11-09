@@ -1,0 +1,19 @@
+@layer components {
+  .swiper-button-next,
+  .swiper-button-prev {
+    color: var(--brand-primary);
+  }
+
+  .swiper-button-next:hover,
+  .swiper-button-prev:hover {
+    color: var(--brand-accent);
+  }
+
+  .swiper-pagination-bullet {
+    background: rgba(31, 92, 85, 0.3);
+  }
+
+  .swiper-pagination-bullet-active {
+    background: var(--brand-primary);
+  }
+}

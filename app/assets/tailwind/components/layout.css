@@ -7,5 +7,10 @@
   .outline-contrast-primary {
     outline-color: rgba(31, 92, 85, 0.85);
   }
+
+  .nav-active-link {
+    color: var(--brand-primary) !important;
+    font-weight: 600;
+  }
 }
 
