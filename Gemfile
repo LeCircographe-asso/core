@@ -72,6 +72,7 @@ group :test do
   gem "capybara"
   gem "selenium-webdriver"
   gem "simplecov", require: false  # Couverture de code
+  gem "rails-controller-testing"
 end
 
 # Deployment
