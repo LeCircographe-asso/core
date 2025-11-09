@@ -41,6 +41,7 @@ Usage pattern:
 - [x] Legacy navbar/contact styles mapped to Tailwind classes.
 - [x] Page refactors (Accueil, Le Lieu, Nos Activités, Adhérer, À propos, Contact, FAQ) follow the new token palette.
 - [x] Core buttons/forms/hero/tabs extracted to `app/assets/tailwind/components/`.
+- [x] Dashboard/timeline patterns migrés (`dashboard.css`, `timeline.css`) et supprimés de `app/assets/stylesheets/application.css`.
 - [ ] Move remaining DartSass partials into Tailwind-compatible modules.
 - [ ] Extract Swiper/Flowbite overrides into `app/assets/tailwind/components/*.css`.
 - [ ] Document component recipes (cards, timelines, admin UI) inside `docs/`.
@@ -48,10 +49,10 @@ Usage pattern:
 ---
 
 ## 🧭 Next Focus
-1. **Component library** — extend the new `app/assets/tailwind/components/` folder with cards, timelines, admin patterns; keep using project tokens.
-2. **Page-level scopes** — add optional `pages/` folder for admin-only layouts once public side is clean.
-3. **Build hygiene** — ensure Tailwind purge paths include `app/views`, `app/components`, `app/javascript`.
-4. **QA** — capture screenshots after each migration step and compare before/after.
+1. **Component library** — terminer la migration des styles restants (admin sidebar, tooltips, Stripe forms) vers `app/assets/tailwind/components/`.
+2. **Page-level scopes** — ajouter un dossier `pages/` pour les styles admin spécifiques si nécessaire.
+3. **Build hygiene** — vérifier que Tailwind purge bien `app/views`, `app/components`, `app/javascript`.
+4. **QA** — capturer des screenshots après chaque étape et comparer avant/après.
 
 ---
 
