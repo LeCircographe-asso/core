@@ -10,7 +10,7 @@ module UserManagement
     validates :email, presence: true, format: { with: URI::MailTo::EMAIL_REGEXP }
     validates :password, presence: true, length: { minimum: 6 }
     validates :password_confirmation, presence: true
-    validates :role, presence: true, inclusion: { in: %w[volunteer admin super_admin] }
+    validates :role, presence: true, inclusion: { in: %w[volunteer admin super_admin web_visitor] }
     validates :person_id, presence: true
     validates :created_by_id, presence: true
 
@@ -21,34 +21,32 @@ module UserManagement
     def call
       return failure("Invalid user data") unless valid?
 
-      begin
-        ActiveRecord::Base.transaction do
-          # Find the person and creator
-          person = Person.find(person_id)
-          created_by = User.find(created_by_id)
+      person = Person.find(person_id)
+      created_by = User.find(created_by_id)
+      validate_creator_permissions!(created_by)
 
-          # Create user account
-          user = User.create!(
-            email: email,
-            password: password,
-            password_confirmation: password_confirmation,
-            role: role,
-            person: person,
-            created_by: created_by
-          )
+      return failure("Insufficient permissions to create accounts") unless creator_can_manage_accounts?(created_by)
 
-          # Update person with user reference
-          person.update!(user: user)
+      result = People::UserAccountCreator.new(
+        person: person,
+        email_address: email,
+        system_role: role,
+        password: password,
+        created_by_admin: created_by.admin? || created_by.super_admin?,
+        cgu: true,
+        privacy_policy: true
+      ).call
 
-          success(user: user, message: "User created successfully")
-        end
-      rescue ActiveRecord::RecordNotFound => e
-        failure("Person or User not found: #{e.message}")
-      rescue ActiveRecord::RecordInvalid => e
-        failure("Validation error: #{e.message}")
-      rescue => e
-        failure("Unexpected error: #{e.message}")
+      if result.success?
+        success(user: result.user, message: result.message)
+      else
+        failure(result.message, errors: result.errors)
       end
+    rescue ActiveRecord::RecordNotFound => e
+      failure("Person or User not found: #{e.message}")
+    rescue => e
+      Rails.logger.error("[UserManagement::UserCreator] #{e.class}: #{e.message}\n#{e.backtrace.take(5).join("\n")}")
+      failure("Unexpected error: #{e.message}")
     end
 
     private
@@ -76,6 +74,17 @@ module UserManagement
       if person&.user.present?
         errors.add(:person_id, "Person already has a user account")
       end
+    end
+
+    def validate_creator_permissions!(created_by)
+      return if created_by.super_admin? || created_by.admin?
+
+      errors.add(:created_by_id, "User does not have permissions to create accounts")
+      raise ActiveRecord::RecordInvalid.new(created_by)
+    end
+
+    def creator_can_manage_accounts?(created_by)
+      created_by.super_admin? || created_by.admin?
     end
 
     # success et failure hérités de BaseService

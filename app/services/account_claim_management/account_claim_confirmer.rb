@@ -18,56 +18,51 @@ module AccountClaimManagement
           return failure("Cette réclamation a déjà été confirmée")
         end
 
-        ActiveRecord::Base.transaction do
-          # Fusionner les données Person admin → User actuel
-          admin_person = claim.person
+        user_person = resolve_user_person(claim)
+        admin_person = claim.person
 
-          # Utiliser PersonManagement::PersonMerger pour fusionner correctement
-          # Si user a déjà une Person, fusionner. Sinon, transférer admin_person vers user
-          user_person = claim.user.person
+        if user_person.nil?
+          link_result = People::AccountLinker.new(
+            user: claim.user,
+            target_person: admin_person,
+            destroy_source_person: false,
+            audit_reason: "account_claim"
+          ).call
 
-          if user_person.nil?
-            # Pas de Person pour user : transférer admin_person vers user
-            admin_person.update!(user: claim.user)
-            user_person = admin_person
-          else
-            # User a déjà une Person : fusionner admin_person → user_person
-            merger = PersonManagement::PersonMerger.new(
-              source: admin_person,
-              target: user_person,
-              actor: claim.user,
-              merge_type: "admin_merge"
-            )
-
-            merger_result = merger.call
-
-            unless merger_result.success?
-              return failure("Erreur lors de la fusion: #{merger_result.message}")
-            end
-
-            # Après fusion, user_person reste la Person principale
-            user_person.reload
+          unless link_result.success?
+            return failure("Erreur lors du rattachement du compte: #{link_result.message}")
           end
 
-          # Marquer la réclamation comme confirmée
-          claim.update!(status: :confirmed)
+          user_person = link_result.target_person
+        else
+          merge_result = People::AccountMerger.new(
+            source_person: admin_person,
+            target_person: user_person,
+            actor_id: claim.user.id,
+            merge_type: "account_claim"
+          ).call
 
-          # Instrumentation pour audit
-          ActiveSupport::Notifications.instrument(
-            "account_claim.confirmed",
-            account_claim_id: claim.id,
-            admin_person_id: admin_person.id,
-            user_id: claim.user.id,
-            user_person_id: user_person.id
-          )
-
-          success(
-            claim: claim,
-            user_person: user_person,
-            user: user_person.user,
-            message: "✅ Compte revendiqué ! Votre historique est maintenant disponible."
-          )
+          unless merge_result.success?
+            return failure("Erreur lors de la fusion: #{merge_result.message}")
+          end
         end
+
+        claim.update!(status: :confirmed)
+
+        ActiveSupport::Notifications.instrument(
+          "account_claim.confirmed",
+          account_claim_id: claim.id,
+          admin_person_id: admin_person.id,
+          user_id: claim.user.id,
+          user_person_id: user_person.id
+        )
+
+        success(
+          claim: claim,
+          user_person: user_person,
+          user: user_person.user,
+          message: "✅ Compte revendiqué ! Votre historique est maintenant disponible."
+        )
       rescue ActiveRecord::RecordNotFound => e
         failure("Account claim not found: #{e.message}")
       rescue => e
@@ -78,6 +73,10 @@ module AccountClaimManagement
     end
 
     private
+
+    def resolve_user_person(claim)
+      claim.user.person
+    end
 
     # success et failure hérités de BaseService
   end
