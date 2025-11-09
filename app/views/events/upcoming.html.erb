@@ -9,7 +9,7 @@
     <%= render "events/upcoming_frame", events: @events %>
 
     <div class="text-center">
-      <%= link_to "Voir tous les événements", events_path,
+      <%= link_to "Voir tous les événements", page_path("news", anchor: "evenements"),
                   class: "inline-flex items-center justify-center px-4 py-2 text-sm font-semibold text-white bg-[#1F5C55] border-2 border-[#1F5C55] rounded-full shadow-sm hover:bg-gray-100 hover:text-[#1F5C55] hover:border-[#1F5C55] transition-colors duration-300" %>
     </div>
   </div>
