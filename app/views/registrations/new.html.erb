@@ -68,7 +68,7 @@
                         <%= form.hidden_field :privacy_policy, value: '1' %>
                     </div>
                     <div class="ml-2 text-sm">
-                        <label for="cgu" class="text-sm text-gray-800">J'accepte les <a href="/pages/cgu" class="text-brand-accent hover:underline focus:outline-brand-accent outline-offset-1" target="_blank">Conditions Générales d'Utilisation</a> et la <a href="/pages/privacy-policy" class="text-brand-accent hover:underline focus:outline-brand-accent outline-offset-1" target="_blank">Politique de Confidentialité</a></label>
+                        <label for="cgu" class="text-sm text-gray-800">J'accepte les <a href="<%= page_path('terms') %>" class="text-brand-accent hover:underline focus:outline-brand-accent outline-offset-1" target="_blank">Conditions Générales d'Utilisation</a> et la <a href="<%= page_path('privacy_policy') %>" class="text-brand-accent hover:underline focus:outline-brand-accent outline-offset-1" target="_blank">Politique de Confidentialité</a></label>
                         <% if @user.errors[:cgu].any? || @user.errors[:privacy_policy].any? %>
                         <p class="text-red-500 text-xs"><%= @user.errors[:cgu].first || @user.errors[:privacy_policy].first %></p>
                         <% end %>
