@@ -212,6 +212,7 @@ enum duration: {
 - **Prix:** En centimes (`price_cents`)
 - **Versioning:** Plans versionnés
 - **Effective from:** Date d'effet
+- **Disponibilité:** `SubscriptionPlan.available_for(person)` retourne les plans autorisés pour la personne (actuellement uniquement si membership Circus actif)
 
 ### Zone 2: En Cours de Validation
 
@@ -283,9 +284,11 @@ BookOfEntry.reactivate_suspended_packs_for_person(person) # Auto après expirati
 ### Zone 1: Comportement Défini
 
 #### Création Événement
-- **Name:** Requis
+- **Name/Title:** Requis (accès via attribut virtuel `title`)
 - **Date:** Requise
 - **Category:** Enum (default: circus)
+  
+> Implémentation admin: CRUD inline dans `Admin::EventsController` (plus de service EventManagement dans le flux admin).
 
 #### Inscription
 - **Person:** Une personne peut s'inscrire à un événement
@@ -489,6 +492,7 @@ Person#handle_member_number_change!(old_type, new_type, recorded_by) # Upgrade
 - **Service:** `People::NewsletterSignup` (remplace `NewsletterSignupService`)
 - **Provider:** Mailjet
 - **Opt-in:** Consentement requis
+- **Instrumentation:** `people.newsletter_signed_up`, `people.newsletter_signup.skipped`, `people.newsletter_signup.failed`
 
 #### Méthodes
 ```ruby
@@ -516,6 +520,8 @@ NewsletterSubscriber#link_to_person!(person)
 ✅ `MemberManagementService` - Assignation numéros  
 ✅ `People::MembershipCreator` - Création adhésions  
 ✅ `People::MembershipUpgrader` - Upgrades membres  
+✅ `People::SubscriptionCreator` - Création cotisations  
+✅ `People::PaymentCreator` - Création paiements  
 ✅ `Admin::PaymentsService` - Filtrage/query paiements  
 ✅ `People::NewsletterSignup` - Inscriptions newsletter  
 
@@ -533,7 +539,7 @@ NewsletterSubscriber#link_to_person!(person)
 
 ⚠️ `UserManagement::UserCreator` - Création utilisateurs  
 ⚠️ `PersonManagement::PersonCreator` - Création personnes  
-⚠️ `EventManagement::*` - Gestion événements  
+⚠️ `EventManagement::*` - Gestion événements (déprécié au profit du CRUD inline du contrôleur admin)  
 
 ## Services Zone 3 (Obsolètes/Supprimés)
 
@@ -681,11 +687,20 @@ Admin::UserCreationForm
 ---
 
 **Prochaine Révision:** Après stabilisation des Zones 2  
-**Dernière Mise à Jour:** 2025-11-03
+**Dernière Mise à Jour:** 2025-11-09
 
 ---
 
 ## Changelog Récent
+
+### Consolidation People + DRY (2025-11-09)
+
+- Admin: CRUD inline pour `MembershipTypes`, `SubscriptionPlans`, `Events` (abandon des services *Management* sur ces flux).
+- Plans: `SubscriptionPlan.available_for(person)` unifie la sélection des plans autorisés.
+- UI: Options de méthode de paiement centralisées via helper.
+- Instrumentation: événements ajoutés pour adhésions, cotisations, newsletter.
+- Seeds/Tasks: migration des Person sans adhésion via `Person#create_membership!`.
+- Nettoyage: suppression des reliques `Payments::Process` (désactivés).
 
 ### Réécriture Complète Logique Métier (2025-11-03)
 
