@@ -37,7 +37,7 @@
   - `--brand-primary` (`#1F5C55`) pour CTA principaux, focus et bordures.
   - `--brand-accent` (`#5836A5`) pour hover, badges et contenus éditoriaux.
   - Utilisation recommandée avec les classes arbitraires Tailwind : `bg-[color:var(--brand-primary)]`, `text-[color:var(--brand-accent)]`, `border-[color:var(--brand-primary)]`.
-- Bibliothèque de composants CSS structurée dans `app/assets/tailwind/components/` (boutons, formulaires, hero, badges, layout, dashboard, timeline, admin sidebar, animations, tooltips, Stripe, events, admin table).
+- Bibliothèque de composants CSS structurée dans `app/assets/tailwind/components/` (boutons, formulaires, hero, badges, layout, dashboard, timeline, admin sidebar, animations, tooltips, Stripe, events, admin table, flash).
 - Tokens utilitaires partagés : `fade-in`, `parallax-background`, `dyslexic-font-enabled`.
 - Garder les vues DRY : privilégier les partials (`shared/*`) et limiter les styles inline ; centraliser les variantes dans Tailwind + variables.
 

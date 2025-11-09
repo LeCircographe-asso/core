@@ -77,5 +77,44 @@
     outline-offset: 0.5rem;
     outline-color: var(--brand-primary);
   }
+
+  .white-button {
+    @apply inline-flex items-center justify-center px-4 py-2 rounded-md text-base font-bold transition-all duration-300 no-underline shadow-sm border;
+    background-color: #fafdff;
+    color: var(--brand-primary);
+    border-color: var(--brand-primary);
+  }
+
+  .white-button:hover {
+    background-color: var(--brand-accent);
+    color: #fafdff;
+    border-color: var(--brand-accent);
+  }
+
+  .purple-button {
+    @apply inline-flex items-center justify-center px-4 py-2 rounded-md text-base font-bold transition-all duration-300 no-underline shadow-sm border border-transparent;
+    background-color: var(--brand-accent);
+    color: #fafdff;
+  }
+
+  .purple-button:hover {
+    background-color: #fafdff;
+    color: var(--brand-primary);
+    border-color: var(--brand-primary);
+  }
+
+  .submit-button,
+  .btn-submit {
+    @apply inline-flex items-center justify-center w-1/2 px-4 py-3 rounded-lg text-base font-bold transition-all duration-300 shadow-lg border border-transparent no-underline;
+    background-color: #6b47b8;
+    color: #ffffff;
+  }
+
+  .submit-button:hover,
+  .btn-submit:hover {
+    background-color: #F2F3F4;
+    color: var(--brand-primary);
+    border-color: var(--brand-primary);
+  }
 }
 
