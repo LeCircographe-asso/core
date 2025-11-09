@@ -43,13 +43,7 @@
     <div>
       <%= form.label :payment_method, "Méthode de paiement", class: "block text-sm font-medium text-gray-700" %>
       <%= form.select :payment_method, 
-          options_for_select([
-            ['Espèces', 'cash'],
-            ['Carte bancaire', 'card'],
-            ['Chèque', 'cheque'],
-            ['Virement', 'transfer'],
-            ['Offert', 'offered']
-          ]),
+          options_for_select(payment_method_options),
           { selected: 'cash' },
           { class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#1F5C55] focus:ring-[#1F5C55] sm:text-sm" } %>
     </div>
