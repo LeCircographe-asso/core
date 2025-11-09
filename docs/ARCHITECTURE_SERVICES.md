@@ -102,7 +102,7 @@ Cette séparation “Entity / Account” garantit :
 **Utilisé dans:**
 - `Admin::MemberNumbersController` (suggest, change)
 
-### ✅ SubscriptionPlanManagement (Stable)
+### ❌ SubscriptionPlanManagement (Removed)
 - `SubscriptionPlanUpdater` - Mise à jour de plan de cotisation (super_admin uniquement)
 - `SubscriptionPlanDeleter` - Suppression de plan de cotisation (avec vérification book_of_entries)
 
@@ -114,10 +114,8 @@ Cette séparation “Entity / Account” garantit :
 - `BlogManagement::BlogUpdater` - Mise à jour de blogs
 - `BlogManagement::BlogDeleter` - Suppression de blogs
 
-### ✅ MembershipTypeManagement (Stable)
-- `MembershipTypeManagement::MembershipTypeCreator` - Création de types d'adhésion
-- `MembershipTypeManagement::MembershipTypeUpdater` - Mise à jour de types d'adhésion
-- `MembershipTypeManagement::MembershipTypeDeleter` - Suppression de types d'adhésion
+### ❌ MembershipTypeManagement (Removed)
+- Géré directement par `Admin::MembershipTypesController` (CRUD inline)
 
 ### ✅ OpeningHoursManagement (Stable)
 - `OpeningHoursManagement::OpeningHoursUpdater` - Mise à jour des horaires d'ouverture
