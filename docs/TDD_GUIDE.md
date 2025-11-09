@@ -1,6 +1,6 @@
 # Guide TDD - Le Circographe
 
-**Date:** 2025-01-31  
+**Date:** 2025-11-09  
 **Status:** ✅ STABLE - Guide complet pour TDD
 
 ---
@@ -63,13 +63,14 @@ end
 
 ## Configuration et Setup
 
-### SimpleCov Activé
+### SimpleCov Activé (mis à jour)
 
 **Fichier:** `spec/spec_helper.rb`
 
 **Configuration:** Groupes par type (Models, Controllers, Services, Helpers, Jobs, Mailers)
 
-**Seuil:** 10% minimum (progressif vers 60%)
+**Seuil:** 12% minimum (progressif vers 60%)  
+Objectif: +5% par itération majeure jusqu'à atteindre ≥60% sur le cœur métier.
 
 **Badge:** Ajouté dans README
 
@@ -123,6 +124,47 @@ end
 ```
 
 **Ces tests sont SACRÉS** - Si tu changes la logique métier ET que ces tests échouent, STOP! Tu as cassé une règle immuable.
+
+### Patterns spécifiques (People::* & Instrumentation)
+
+#### Contrat Result (services People)
+Tous les services `People::*` retournent un objet avec une interface minimale (ex: `success?`, `errors`, `message`, payload).
+```ruby
+result = People::MembershipCreator.new(...).call
+expect(result).to respond_to(:success?)
+expect(result).to respond_to(:errors)
+expect(result).to respond_to(:message)
+expect(result).to respond_to(:membership) # payload spécifique
+```
+
+#### Instrumentation (ActiveSupport::Notifications)
+Les services émettent des événements (`payment.created`, `membership.created`, `membership.upgraded`, `subscription.created`, etc.)
+```ruby
+captured = []
+subscriber = ActiveSupport::Notifications.subscribe("membership.created") do |_name, _start, _finish, _id, payload|
+  captured << payload
+end
+
+People::MembershipCreator.new(person: person, membership_type_id: type.id, recorded_by_id: admin.id).call
+ActiveSupport::Notifications.unsubscribe(subscriber)
+
+expect(captured).not_to be_empty
+expect(captured.first[:person_id]).to eq(person.id)
+```
+
+#### Turbo/Hotwire (request specs)
+Vérifier redirections/statuts et, lorsque pertinent, le contenu Turbo Stream:
+```ruby
+post path, params: params, headers: { "Accept" => "text/vnd.turbo-stream.html" }
+expect(response.media_type).to eq("text/vnd.turbo-stream.html")
+expect(response.body).to include("turbo-stream")
+```
+
+### Request specs CRUD inline (Admin)
+Les contrôleurs admin simplifiés (CRUD inline) se testent comme des flows intégrés:
+- `Admin::EventsController`: création avec `title`, mise à jour partielle (via `compact_blank`), redirections et notices.
+- `Admin::MembershipTypesController`: create/update/destroy et validations (niveau modèle).
+- `Admin::SubscriptionPlansController`: update/destroy inline; `create` délègue à `People::SubscriptionCreator`.
 
 #### 2. Tests de Contrat (Stable Interface)
 
@@ -363,11 +405,11 @@ it { should belong_to(:person) }
 
 ## Couverture de Tests
 
-### Coverage Actuel
+### Coverage Actuel (mis à jour)
 
-- **10.42%** de couverture globale
+- **~52.8%** de couverture globale
 - SimpleCov activé et configuré
-- Seuil minimum: 10% (progressif vers 60%)
+- Seuil minimum: 12% (augmentation progressive prévue)
 
 ### Générer le Rapport
 
@@ -404,16 +446,17 @@ Le rapport est généré dans: `coverage/index.html`
 **Services (21 total):**
 - ✅ 21 testés (100% - tous les services utilisés)
 
-### Priorités
+### Priorités (à jour)
 
 **Phase 1: Critiques (Semaine 1)**
-- SubscriptionPlan (pricing logic)
-- AccountClaim (workflow)
-- Attendance (daily logic)
+- OpeningHoursController (mise à jour via cache)
+- Newsletter (flow authentifié) via `NewsletterManagement::NewsletterUpdater`
+- UserDeleter (suppression/archivage sécurisé)
+- Observabilité: tests d’événements (notifications) sur People::* (membership/payment/subscription/newsletter)
 
 **Phase 2: Admin Complet (Semaine 2)**
-- Controllers admin restants
-- Edge cases modèles
+- Request specs CRUD inline: Events, MembershipTypes, SubscriptionPlans
+- Edge cases modèles (dates, enums, scopes)
 
 **Phase 3: Public & Integration (Semaine 3)**
 - Controllers public
