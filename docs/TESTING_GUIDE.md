@@ -151,10 +151,10 @@ L'application a actuellement une **couverture très faible** à 10.42%. Bien que
 - `AttendanceManagement::*` - 1 service, testé
 - `AttendanceListManagement::*` - 3 services, tous testés
 - `BlogManagement::*` - 3 services, tous testés
-- `MembershipTypeManagement::*` - 2 services, tous testés
+- `Admin::MembershipTypesController` - CRUD inline (remplace services)
+- `Admin::SubscriptionPlansController` - CRUD inline (remplace services)
 - `OpeningHoursManagement::*` - 1 service, testé
 - `NewsletterManagement::*` - 1 service, testé
-- `SubscriptionPlanManagement::*` - 2 services, tous testés
 - `UserManagement::*` - 2 services critiques (Updater, Deleter) testés
 - `EventManagement::*` - 3 services, tous testés
 - `MemberNumberManagement::*` - 2 services, tous testés

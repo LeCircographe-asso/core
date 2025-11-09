@@ -69,8 +69,9 @@
 
 **Services utilisés:**
 - `Admin::UserCreationForm`
-- `UserManagement::UserDeleter`
+- `UserManagement::UserDeleter` (à conserver pour suppression/archivage sécurisée)
 - `PersonQuery`
+- `People::Register`
 
 **Estimation:** 25-30 request specs
 
@@ -83,11 +84,12 @@
 **Actions à tester:**
 - `index` - Liste avec filtres via `Admin::PaymentsService`
 - `new` - Nouveau paiement (optionnel `user_id`)
-- `create` - Utilise `PaymentManagement::PaymentCreator`
+- `create` - Utilise `People::PaymentCreator`
 - `edit` - Édition inline (turbo_stream)
-- `update` - Utilise `PaymentManagement::PaymentUpdater`
-- `destroy` - Utilise `PaymentManagement::PaymentDeleter`
+- `update` - Utilise `People::PaymentUpdater`
+- `destroy` - Utilise `People::PaymentCanceller`
 - `show` - Redirection vers index
+- `restore` - Utilise `People::PaymentRestorer`
 
 **Invariants métier à tester:**
 - ✅ Seuls admin/super_admin peuvent accéder
@@ -98,9 +100,10 @@
 
 **Services utilisés:**
 - `Admin::PaymentsService`
-- `PaymentManagement::PaymentCreator`
-- `PaymentManagement::PaymentUpdater`
-- `PaymentManagement::PaymentDeleter`
+- `People::PaymentCreator`
+- `People::PaymentUpdater`
+- `People::PaymentCanceller`
+- `People::PaymentRestorer`
 
 **Estimation:** 20-25 request specs
 
@@ -115,11 +118,11 @@
 - `show` - Affichage adhésion actuelle
 - `new` - Nouvelle adhésion (optionnel `upgrade=true`)
 - `create` - Création/Upgrade via services
-  - Upgrade: `MembershipManagement::MembershipUpgrader`
-  - Création: `MembershipManagement::MembershipCreator`
+  - Upgrade: `People::MembershipUpgrader`
+  - Création: `People::MembershipCreator`
 - `edit` - Édition adhésion
-- `update` - Mise à jour dates/type
-- `destroy` - Désactivation (status: inactive)
+- `update` - Mise à jour dates/type via `People::MembershipUpdater`
+- `destroy` - Désactivation (status: inactive) via `People::MembershipDeactivator`
 
 **Invariants métier à tester:**
 - ✅ Seuls admin/super_admin peuvent accéder
@@ -129,8 +132,10 @@
 - ✅ Destroy → Status inactive (pas de suppression)
 
 **Services utilisés:**
-- `MembershipManagement::MembershipCreator`
-- `MembershipManagement::MembershipUpgrader`
+- `People::MembershipCreator`
+- `People::MembershipUpgrader`
+- `People::MembershipUpdater`
+- `People::MembershipDeactivator`
 
 **Estimation:** 18-22 request specs
 
@@ -143,9 +148,7 @@
 **Actions à tester:**
 - `index` - Liste tous les événements
 - `new` - Formulaire création
-- `create` - Utilise `EventManagement::EventCreator`
-- `edit` - Édition événement
-- `update` - Utilise `EventManagement::EventUpdater`
+- `create`/`update` - EventManagement conservé (à réévaluer plus tard)
 - `destroy` - Suppression événement
 
 **Invariants métier à tester:**
@@ -255,7 +258,7 @@
 |------------|-----------|---------------|--------------|
 | `AccountClaimsController` | ⭐⭐ | Workflow à finaliser | Après validation business |
 | `PasswordsController` | ⭐⭐ | Feature à stabiliser | Après validation business |
-| `Admin::SubscriptionPlansController` | ⭐⭐⭐ | Configuration en cours | Après stabilisation |
+| `Admin::SubscriptionPlansController` | ⭐⭐⭐ | Flux achat/upgrade via People::Subscription* | Après stabilisation |
 | `Admin::MemberNumbersController` | ⭐⭐ | Admin access | Après stabilisation |
 | `Admin::MembershipTypesController` | ⭐⭐⭐ | CRUD standard | Après stabilisation |
 | `Admin::DonationsController` | ⭐⭐ | CRUD simple | Après stabilisation |
