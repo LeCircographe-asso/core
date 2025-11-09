@@ -18,6 +18,8 @@
 @import "./components/events.css";
 @import "./components/admin_table.css";
 @import "./components/events.css";
+@import "./components/admin_table.css";
+@import "./components/events.css";
 
 @layer base {
   /* Local fonts first (Propshaft rewrites /fonts/... to fingerprinted assets) */
