@@ -1,0 +1,79 @@
+require "ostruct"
+
+module People
+  class MembershipUpgrader
+    include ActiveModel::Model
+    include ActiveModel::Attributes
+
+    Result = Struct.new(:success?, :membership, :payment, :member_number_changed, :old_member_number, :new_member_number, :errors, :message, keyword_init: true)
+
+    attribute :person
+    attribute :new_membership_type_id, :integer
+    attribute :payment_method, :string, default: "cash"
+    attribute :recorded_by_id, :integer
+    attribute :custom_amount_cents, :integer
+    attribute :offer_reason, :string
+
+    validates :person, presence: true
+    validates :new_membership_type_id, presence: true
+    validates :payment_method, inclusion: { in: %w[cash card cheque transfer offered] }
+
+    def call
+      return failure("Invalid data", errors.full_messages) unless valid?
+
+      new_membership_type = MembershipType.find(new_membership_type_id)
+      recorded_by = resolve_recorded_by
+
+      result = person.upgrade_membership!(
+        new_membership_type,
+        payment_method: payment_method.to_sym,
+        recorded_by: recorded_by,
+        custom_amount_cents: custom_amount_cents,
+        offer_reason: offer_reason
+      )
+
+      Result.new(
+        success?: true,
+        membership: result[:membership],
+        payment: result[:payment],
+        member_number_changed: result[:member_number_changed],
+        old_member_number: result[:old_member_number],
+        new_member_number: result[:new_member_number],
+        errors: [],
+        message: "Membership upgraded successfully"
+      )
+    rescue ActiveRecord::RecordNotFound => e
+      failure("Record not found: #{e.message}")
+    rescue => e
+      Rails.logger.error("[People::MembershipUpgrader] #{e.class}: #{e.message}\n#{e.backtrace.take(5).join("\n")}")
+      failure("Error upgrading membership: #{e.message}")
+    end
+
+    private
+
+    def resolve_recorded_by
+      return @recorded_by if defined?(@recorded_by)
+
+      if recorded_by_id.present?
+        @recorded_by = User.find(recorded_by_id)
+      elsif Current.respond_to?(:user) && Current.user.present?
+        @recorded_by = Current.user
+      else
+        raise "A recorded_by user is required to upgrade a membership"
+      end
+    end
+
+    def failure(message, error_list = nil)
+      Result.new(
+        success?: false,
+        membership: nil,
+        payment: nil,
+        member_number_changed: false,
+        old_member_number: nil,
+        new_member_number: nil,
+        errors: Array(error_list || message),
+        message: message
+      )
+    end
+  end
+end
