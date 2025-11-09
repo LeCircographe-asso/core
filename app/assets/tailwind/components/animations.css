@@ -45,13 +45,13 @@
   }
 
   .scroll-arrow {
-    @apply inline-block cursor-pointer transition-opacity duration-300;
+    display: inline-block;
+    cursor: pointer;
+    transition: opacity 0.3s;
     animation: animation-bounce 2s infinite ease-in-out;
   }
 
-  .scroll-arrow:hover {
-    opacity: 0.7;
-  }
+  .scroll-arrow:hover { opacity: 0.7; }
 
   .fade-in {
     opacity: 0;
