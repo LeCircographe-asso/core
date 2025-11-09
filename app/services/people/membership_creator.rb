@@ -22,6 +22,10 @@ module People
       return failure("Invalid data", errors.full_messages) unless valid?
 
       if person.memberships.active.current.exists?
+        ActiveSupport::Notifications.instrument(
+          "membership.skipped",
+          person_id: person.id, reason: "already_active", membership_type_id: membership_type_id
+        )
         return Result.new(success?: true, membership: person.memberships.active.current.first, payment: nil, errors: [], message: "Person already has an active membership", already_existed: true)
       end
 
@@ -36,6 +40,12 @@ module People
         offer_reason: offer_reason
       )
 
+      ActiveSupport::Notifications.instrument(
+        "membership.created",
+        person_id: person.id, membership_id: membership_data[:membership].id, payment_id: membership_data[:payment].id,
+        membership_type_id: membership_type.id, payment_method: payment_method
+      )
+
       Result.new(
         success?: true,
         membership: membership_data[:membership],
@@ -45,11 +55,14 @@ module People
         already_existed: false
       )
     rescue ActiveRecord::RecordNotFound => e
+      ActiveSupport::Notifications.instrument("membership.failed", error: e.message, reason: "record_not_found")
       failure("Record not found: #{e.message}")
     rescue ActiveRecord::RecordInvalid => e
+      ActiveSupport::Notifications.instrument("membership.failed", error: e.message, reason: "validation")
       failure("Validation error: #{e.message}")
     rescue => e
       Rails.logger.error("[People::MembershipCreator] #{e.class}: #{e.message}\n#{e.backtrace.take(5).join("\n")}")
+      ActiveSupport::Notifications.instrument("membership.failed", error: e.message, reason: "exception")
       failure("Error creating membership: #{e.message}")
     end
 
