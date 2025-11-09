@@ -120,6 +120,11 @@ class SubscriptionPlan < ApplicationRecord
   scope :effective_on, ->(date) { where("effective_from <= ? AND (effective_until IS NULL OR effective_until >= ?)", date, date) }
   scope :price_history, -> { order(:effective_from, :version) }
 
+  def self.available_for(person)
+    return none unless person&.current_membership&.membership_type&.circus?
+    for_circus_members.current_versions.order(:duration, :price_cents)
+  end
+
   # Méthodes de classe pour créer les plans par défaut
   def self.create_default_plans!
     # Plans pour membres Circus
