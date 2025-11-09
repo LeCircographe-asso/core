@@ -3,7 +3,7 @@ class MembershipType < ApplicationRecord
   include Humanizable
   include Versionable
   include Categorizable
-  
+
   # Relations
   has_many :memberships, dependent: :restrict_with_error
   has_many :subscription_plans, dependent: :destroy

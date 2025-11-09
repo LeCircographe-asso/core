@@ -124,7 +124,7 @@ RSpec.describe Event, type: :model do
       let(:creator1) { create(:user) }
       let(:creator2) { create(:user) }
       let(:creator3) { create(:user) }
-      
+
       # Create events with specific dates
       let!(:today_event) { create(:event, creator: creator1, date: Date.current.beginning_of_day + 12.hours) }
       let!(:this_week_event) do
@@ -139,7 +139,7 @@ RSpec.describe Event, type: :model do
         last_week_date = Date.current - 1.week
         # If last week is in a different month, use a date from earlier this month (but not this week)
         event_date = if last_week_date.month != Date.current.month
-          [Date.current.beginning_of_month, Date.current.beginning_of_week - 1.day].max.beginning_of_day + 12.hours
+          [ Date.current.beginning_of_month, Date.current.beginning_of_week - 1.day ].max.beginning_of_day + 12.hours
         else
           last_week_date.beginning_of_day + 12.hours
         end
@@ -229,7 +229,7 @@ RSpec.describe Event, type: :model do
 
     context "without description but with upper/middle/bottom" do
       it "joins all description parts" do
-        event = create(:event, 
+        event = create(:event,
                        description: nil,
                        upper_description: "Upper",
                        middle_description: "Middle",
@@ -243,7 +243,7 @@ RSpec.describe Event, type: :model do
 
     context "with no description at all" do
       it "returns empty string" do
-        event = create(:event, 
+        event = create(:event,
                        description: nil,
                        upper_description: nil,
                        middle_description: nil,

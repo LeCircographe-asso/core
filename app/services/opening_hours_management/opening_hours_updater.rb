@@ -1,6 +1,5 @@
 module OpeningHoursManagement
   class OpeningHoursUpdater < BaseService
-
     attribute :opening_hours, hash: true
     attribute :updated_by_id, :integer
 
@@ -68,5 +67,3 @@ module OpeningHoursManagement
     # success et failure hérités de BaseService
   end
 end
-
-

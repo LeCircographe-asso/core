@@ -1,13 +1,23 @@
 require 'rails_helper'
 
 RSpec.describe BookOfEntry, type: :model do
-    let(:circus_membership_type) { create(:membership_type, category: :circus) }
+  let(:circus_membership_type) { create(:membership_type, category: :circus) }
   let(:basic_membership_type) { create(:membership_type, :basic) }
   let(:person) { create(:person, :with_active_membership) }
   let(:pack10_plan) { create(:subscription_plan, :pack10, membership_type: circus_membership_type) }
   let(:day_plan) { create(:subscription_plan, :day, membership_type: circus_membership_type) }
   let(:trimester_plan) { create(:subscription_plan, :trimester, membership_type: circus_membership_type) }
   let(:annual_plan) { create(:subscription_plan, :annual, membership_type: circus_membership_type) }
+
+  describe "business defaults" do
+    it "instantiates pack10 books by default" do
+      book = create(:book_of_entry)
+
+      expect(book.subscription_plan.duration).to eq("pack10")
+      expect(book.sessions_remaining).to eq(book.subscription_plan.sessions_count)
+      expect(book.expires_at).to be_nil
+    end
+  end
 
   describe "validations" do
     it "validates presence of status" do
@@ -52,12 +62,22 @@ RSpec.describe BookOfEntry, type: :model do
 
       context "for trimester/annual plans (unlimited)" do
         it "does not require sessions_remaining" do
-          book_of_entry = build(:book_of_entry, subscription_plan: trimester_plan, sessions_remaining: nil)
+          book_of_entry = build(
+            :book_of_entry,
+            subscription_plan: trimester_plan,
+            sessions_remaining: nil,
+            expires_at: 3.months.from_now
+          )
           expect(book_of_entry).to be_valid
         end
 
         it "prevents sessions_remaining from being set" do
-          book_of_entry = build(:book_of_entry, subscription_plan: annual_plan, sessions_remaining: 10)
+          book_of_entry = build(
+            :book_of_entry,
+            subscription_plan: annual_plan,
+            sessions_remaining: 10,
+            expires_at: 1.year.from_now
+          )
           expect(book_of_entry).not_to be_valid
           expect(book_of_entry.errors[:sessions_remaining]).to include("doit être vide pour les abonnements illimités")
         end
@@ -153,7 +173,7 @@ RSpec.describe BookOfEntry, type: :model do
 
     context "with expired book (not pack10)" do
       let(:circus_person) { create(:person, :with_active_membership) }
-      let(:expired_book) { create(:book_of_entry, person: circus_person, subscription_plan: day_plan, 
+      let(:expired_book) { create(:book_of_entry, person: circus_person, subscription_plan: day_plan,
                                   sessions_remaining: 5, expires_at: 1.week.ago) }
 
       before do
@@ -168,7 +188,7 @@ RSpec.describe BookOfEntry, type: :model do
     context "with pack10 that would be expired but is pack10" do
       let(:circus_person) { create(:person, :with_active_membership) }
       # Pack10 never expires, so even old ones are usable
-      let(:old_pack10) { create(:book_of_entry, person: circus_person, subscription_plan: pack10_plan, 
+      let(:old_pack10) { create(:book_of_entry, person: circus_person, subscription_plan: pack10_plan,
                                sessions_remaining: 5, purchased_at: 5.years.ago) }
 
       before do
@@ -217,7 +237,7 @@ RSpec.describe BookOfEntry, type: :model do
     end
 
     context "with non-pack10 plan" do
-      let(:book_of_entry) { create(:book_of_entry, person: person, subscription_plan: day_plan) }
+      let(:book_of_entry) { create(:book_of_entry, person: person, subscription_plan: day_plan, expires_at: 1.day.from_now) }
 
       it "returns false" do
         expect(book_of_entry.is_pack10?).to be false
@@ -255,6 +275,44 @@ RSpec.describe BookOfEntry, type: :model do
         expect(book_of_entry.use_session!).to be false
       end
     end
+
+    context "with day plan" do
+      let(:circus_person) { create(:person, :with_circus_membership) }
+      let(:day_plan) { create(:subscription_plan, :day, membership_type: circus_membership_type) }
+      let(:day_book) do
+        create(:book_of_entry, person: circus_person, subscription_plan: day_plan, sessions_remaining: 1, expires_at: Date.current.end_of_day)
+      end
+
+      it "consumes the pass and marks it consumed" do
+        expect { day_book.use_session! }.to change { day_book.reload.status }.from('active').to('consumed')
+        expect(day_book.sessions_remaining).to eq(0)
+      end
+    end
+
+    context "with trimester plan (unlimited)" do
+      let(:circus_person) { create(:person, :with_circus_membership) }
+      let(:trimester_plan) { create(:subscription_plan, :trimester, membership_type: circus_membership_type) }
+      let(:trimester_book) do
+        create(:book_of_entry, person: circus_person, subscription_plan: trimester_plan, sessions_remaining: nil, expires_at: 3.months.from_now)
+      end
+
+      it "does not alter sessions or status" do
+        expect { trimester_book.use_session! }.not_to change { [ trimester_book.reload.sessions_remaining, trimester_book.status ] }
+      end
+    end
+
+    context "with annual plan (unlimited)" do
+      let(:circus_person) { create(:person, :with_circus_membership) }
+      let(:annual_plan) { create(:subscription_plan, :annual, membership_type: circus_membership_type) }
+      let(:annual_book) do
+        create(:book_of_entry, person: circus_person, subscription_plan: annual_plan, sessions_remaining: nil, expires_at: 1.year.from_now)
+      end
+
+      it "keeps the book active" do
+        expect { annual_book.use_session! }.not_to change { annual_book.reload.status }
+        expect(annual_book.sessions_remaining).to be_nil
+      end
+    end
   end
 
   describe "#remaining_entries" do
@@ -290,10 +348,10 @@ RSpec.describe BookOfEntry, type: :model do
   describe "#expired? for day plans" do
     it "considers Time.current vs end_of_day for day plans" do
       # Day plan expired 2 days ago should be expired
-      expired_book = create(:book_of_entry, person: person, subscription_plan: day_plan, 
+      expired_book = create(:book_of_entry, person: person, subscription_plan: day_plan,
                            expires_at: 2.days.ago.end_of_day)
       expect(expired_book.expired?).to be true
-      
+
       # Day plan expiring tomorrow should not be expired
       future_book = create(:book_of_entry, person: person, subscription_plan: day_plan,
                           expires_at: 1.day.from_now.end_of_day)
@@ -446,10 +504,10 @@ RSpec.describe BookOfEntry, type: :model do
     describe "#expired? (custom method - checks date, not status)" do
       it "overrides Statusable expired? method" do
         # BookOfEntry's expired? checks expires_at date, not status
-        future_book = create(:book_of_entry, expires_at: Date.current + 1.month, status: :active)
+        future_book = create(:book_of_entry, subscription_plan: day_plan, expires_at: Date.current + 1.day, status: :active)
         expect(future_book.expired?).to be false
 
-        past_book = create(:book_of_entry, expires_at: Date.current - 1.day, status: :active)
+        past_book = create(:book_of_entry, subscription_plan: day_plan, expires_at: Date.current - 1.day, status: :active)
         expect(past_book.expired?).to be true
       end
     end
@@ -457,7 +515,7 @@ RSpec.describe BookOfEntry, type: :model do
     describe ".without_expiration" do
       let!(:active_book_no_exp) { create(:book_of_entry, :active, person: person, subscription_plan: pack10_plan, sessions_remaining: 5, expires_at: nil) }
       let!(:consumed_book_no_exp) { create(:book_of_entry, :consumed, person: person, subscription_plan: pack10_plan, sessions_remaining: 0, expires_at: nil) }
-      
+
       it "returns books without expiration date" do
         expect(BookOfEntry.without_expiration).to include(active_book_no_exp, consumed_book_no_exp)
       end
@@ -467,7 +525,7 @@ RSpec.describe BookOfEntry, type: :model do
       let!(:usable_book) { create(:book_of_entry, :active, person: person, subscription_plan: pack10_plan, sessions_remaining: 5, expires_at: nil) }
       let!(:consumed_book) { create(:book_of_entry, :consumed, person: person, subscription_plan: pack10_plan, sessions_remaining: 0, expires_at: nil) }
       let!(:expired_book) { create(:book_of_entry, :expired, person: person, subscription_plan: day_plan, expires_at: 1.week.ago) }
-      
+
       it "returns books that can be used" do
         usable = BookOfEntry.usable
         expect(usable).to include(usable_book)
@@ -475,7 +533,7 @@ RSpec.describe BookOfEntry, type: :model do
       end
 
       it "excludes books with no sessions remaining" do
-        used_book = create(:book_of_entry, :active, person: person, subscription_plan: pack10_plan, 
+        used_book = create(:book_of_entry, :active, person: person, subscription_plan: pack10_plan,
                           sessions_remaining: 0, expires_at: nil)
         expect(BookOfEntry.usable).not_to include(used_book)
       end
@@ -513,8 +571,8 @@ RSpec.describe BookOfEntry, type: :model do
 
   describe "#reactivate!" do
     let(:circus_person) { create(:person, :with_circus_membership) }
-    let(:book) { create(:book_of_entry, person: circus_person, subscription_plan: pack10_plan, 
-                       status: :suspended, sessions_remaining: 5, suspended_at: 1.day.ago, 
+    let(:book) { create(:book_of_entry, person: circus_person, subscription_plan: pack10_plan,
+                       status: :suspended, sessions_remaining: 5, suspended_at: 1.day.ago,
                        suspended_reason: "Upgrade to trimester") }
 
     it "changes status from suspended to active" do
@@ -571,7 +629,7 @@ RSpec.describe BookOfEntry, type: :model do
     let(:trimester_plan) { create(:subscription_plan, :trimester) }
 
     context "when person has no active non-pack10 plans" do
-      let!(:pack10) { create(:book_of_entry, person: circus_person, subscription_plan: pack10_plan, 
+      let!(:pack10) { create(:book_of_entry, person: circus_person, subscription_plan: pack10_plan,
                             status: :suspended, sessions_remaining: 5) }
 
       it "reactivates suspended pack10 books" do
@@ -582,9 +640,9 @@ RSpec.describe BookOfEntry, type: :model do
     end
 
     context "when person has active trimester plan" do
-      let!(:trimester_book) { create(:book_of_entry, person: circus_person, subscription_plan: trimester_plan, 
+      let!(:trimester_book) { create(:book_of_entry, person: circus_person, subscription_plan: trimester_plan,
                                      status: :active, expires_at: 1.month.from_now, sessions_remaining: nil) }
-      let!(:pack10) { create(:book_of_entry, person: circus_person, subscription_plan: pack10_plan, 
+      let!(:pack10) { create(:book_of_entry, person: circus_person, subscription_plan: pack10_plan,
                             status: :suspended, sessions_remaining: 5) }
 
       it "does not reactivate suspended pack10 books" do
@@ -596,7 +654,7 @@ RSpec.describe BookOfEntry, type: :model do
 
     context "when person has basic membership" do
       let(:basic_person) { create(:person, :with_basic_membership) }
-      let!(:pack10) { create(:book_of_entry, person: basic_person, subscription_plan: pack10_plan, 
+      let!(:pack10) { create(:book_of_entry, person: basic_person, subscription_plan: pack10_plan,
                             status: :suspended, sessions_remaining: 5) }
 
       it "does not reactivate suspended pack10 books" do
@@ -607,11 +665,11 @@ RSpec.describe BookOfEntry, type: :model do
     end
 
     context "when multiple pack10 books exist" do
-      let!(:pack10_1) { create(:book_of_entry, person: circus_person, subscription_plan: pack10_plan, 
+      let!(:pack10_1) { create(:book_of_entry, person: circus_person, subscription_plan: pack10_plan,
                                status: :suspended, sessions_remaining: 3) }
-      let!(:pack10_2) { create(:book_of_entry, person: circus_person, subscription_plan: pack10_plan, 
+      let!(:pack10_2) { create(:book_of_entry, person: circus_person, subscription_plan: pack10_plan,
                                status: :suspended, sessions_remaining: 7) }
-      let!(:pack10_active) { create(:book_of_entry, person: circus_person, subscription_plan: pack10_plan, 
+      let!(:pack10_active) { create(:book_of_entry, person: circus_person, subscription_plan: pack10_plan,
                                     status: :active, sessions_remaining: 5) }
 
       it "reactivates all suspended pack10 books" do
@@ -628,5 +686,4 @@ RSpec.describe BookOfEntry, type: :model do
       end
     end
   end
-
 end

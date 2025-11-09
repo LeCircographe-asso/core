@@ -15,7 +15,7 @@ volunteer_user = User.find_by(system_role: "volunteer")
 Person.includes(:memberships).where.not(memberships: { id: nil }).find_each do |person|
   # Supprimer les anciennes adhésions (créées manuellement sans paiements)
   person.memberships.destroy_all
-  
+
   # Déterminer le type d'adhésion en fonction du nom ou de la situation
   membership_type = case person.email
   when /alice/
@@ -38,16 +38,22 @@ Person.includes(:memberships).where.not(memberships: { id: nil }).find_each do |
       nil # Pas d'adhésion
     end
   end
-  
+
   # Créer l'adhésion avec la nouvelle logique (créera le paiement et le numéro automatiquement)
   if membership_type
     begin
-      result = person.create_membership!(
-        membership_type,
-        payment_method: :cash,
-        recorded_by: admin_user
-      )
-      puts "  ✅ #{person.full_name}: #{membership_type.name} - Numéro: #{person.reload.member_number}"
+      result = People::MembershipCreator.new(
+        person: person,
+        membership_type_id: membership_type.id,
+        payment_method: "cash",
+        recorded_by_id: admin_user&.id
+      ).call
+
+      if result.success?
+        puts "  ✅ #{person.full_name}: #{membership_type.name} - Numéro: #{person.reload.member_number}"
+      else
+        puts "  ❌ #{person.full_name}: Erreur - #{result.message}"
+      end
     rescue => e
       puts "  ❌ #{person.full_name}: Erreur - #{e.message}"
     end
@@ -57,7 +63,7 @@ end
 # Pour les personnes sans adhésion, en créer pour 50% d'entre elles
 Person.left_joins(:memberships).where(memberships: { id: nil }).find_each.with_index do |person, index|
   next if index % 2 == 0 # Skip une personne sur deux
-  
+
   membership_type = case index % 4
   when 0
     basic_membership
@@ -68,15 +74,21 @@ Person.left_joins(:memberships).where(memberships: { id: nil }).find_each.with_i
   else
     nil
   end
-  
+
   if membership_type
     begin
-      result = person.create_membership!(
-        membership_type,
-        payment_method: :cash,
-        recorded_by: admin_user
-      )
-      puts "  ✅ #{person.full_name}: #{membership_type.name} - Numéro: #{person.reload.member_number}"
+      result = People::MembershipCreator.new(
+        person: person,
+        membership_type_id: membership_type.id,
+        payment_method: "cash",
+        recorded_by_id: admin_user&.id
+      ).call
+
+      if result.success?
+        puts "  ✅ #{person.full_name}: #{membership_type.name} - Numéro: #{person.reload.member_number}"
+      else
+        puts "  ❌ #{person.full_name}: Erreur - #{result.message}"
+      end
     rescue => e
       puts "  ❌ #{person.full_name}: Erreur - #{e.message}"
     end
@@ -90,4 +102,3 @@ puts "  - #{Membership.where(status: :active).count} adhésions actives"
 puts "  - #{Payment.count} paiements total"
 puts "  - #{Payment.where(status: :success).count} paiements réussis"
 puts "  - #{Person.where.not(member_number: nil).count} personnes avec numéro d'adhérent"
-

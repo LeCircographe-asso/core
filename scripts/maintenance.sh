@@ -9,6 +9,11 @@
 
 set -euo pipefail
 
+APP_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+LOCAL_FLAG_PATH="${APP_ROOT}/tmp/maintenance.flag"
+LEGACY_FLAG_PATH="/tmp/maintenance"
+REMOTE_FLAG_RELATIVE_PATH="tmp/maintenance.flag"
+
 ACTION=""
 ENVIRONMENT=""
 
@@ -32,7 +37,7 @@ BASE_URL=""
 
 case "$ENVIRONMENT" in
   local)
-    # Local: on manipule /tmp/maintenance en local et on teste le serveur dev
+    # Local: on manipule tmp/maintenance.flag et on teste le serveur dev
     CONFIG_FILE=""
     BASE_URL="http://127.0.0.1:3000"
     ;;
@@ -57,22 +62,30 @@ http_status() {
   curl -s -o /dev/null -w "%{http_code}" "$url" || echo "000"
 }
 
+flag_present_local() {
+  [[ -f "${LOCAL_FLAG_PATH}" ]] || [[ -f "${LEGACY_FLAG_PATH}" ]]
+}
+
+flag_present_remote() {
+  kamal app exec -c "$CONFIG_FILE" "test -f '${REMOTE_FLAG_RELATIVE_PATH}'" 2>/dev/null
+}
+
 show_status() {
   title
   echo "📍 URL: ${BASE_URL}"
   if [[ "$ENVIRONMENT" == "local" ]]; then
-    if [[ -f /tmp/maintenance ]]; then
-      echo "📁 /tmp/maintenance: présent"
+    if flag_present_local; then
+      echo "📁 maintenance flag: présent (${LOCAL_FLAG_PATH})"
     else
-      echo "📁 /tmp/maintenance: absent"
+      echo "📁 maintenance flag: absent (${LOCAL_FLAG_PATH})"
     fi
     echo "🔧 MAINTENANCE_MODE (process local): ${MAINTENANCE_MODE:-non définie}"
   else
     # distant via kamal
-    if kamal app exec -c "$CONFIG_FILE" "test -f /tmp/maintenance" 2>/dev/null; then
-      echo "📁 /tmp/maintenance (remote): présent"
+    if flag_present_remote; then
+      echo "📁 maintenance flag (remote): présent (${REMOTE_FLAG_RELATIVE_PATH})"
     else
-      echo "📁 /tmp/maintenance (remote): absent"
+      echo "📁 maintenance flag (remote): absent (${REMOTE_FLAG_RELATIVE_PATH})"
     fi
     REMOTE_ENV=$(kamal app exec -c "$CONFIG_FILE" "echo \$MAINTENANCE_MODE" 2>/dev/null || true)
     if [[ -z "$REMOTE_ENV" ]]; then REMOTE_ENV="non définie"; fi
@@ -89,20 +102,22 @@ show_status() {
 }
 
 enable_remote() {
-  # Standardise sur un fichier drapeau; la variable d'env peut nécessiter un restart, on évite
-  kamal app exec -c "$CONFIG_FILE" "sh -lc 'echo true > /tmp/maintenance'"
+  kamal app exec -c "$CONFIG_FILE" "sh -lc 'mkdir -p tmp && echo true > ${REMOTE_FLAG_RELATIVE_PATH}'"
 }
 
 disable_remote() {
-  kamal app exec -c "$CONFIG_FILE" "rm -f /tmp/maintenance"
+  kamal app exec -c "$CONFIG_FILE" "rm -f ${REMOTE_FLAG_RELATIVE_PATH}"
 }
 
 enable_local() {
-  echo true > /tmp/maintenance
+  mkdir -p "$(dirname "${LOCAL_FLAG_PATH}")"
+  echo true > "${LOCAL_FLAG_PATH}"
+  echo true > "${LEGACY_FLAG_PATH}"
 }
 
 disable_local() {
-  rm -f /tmp/maintenance || true
+  rm -f "${LOCAL_FLAG_PATH}" || true
+  rm -f "${LEGACY_FLAG_PATH}" || true
 }
 
 toggle_interactive() {
@@ -114,9 +129,9 @@ toggle_interactive() {
     current="on"
   else
     if [[ "$ENVIRONMENT" == "local" ]]; then
-      [[ -f /tmp/maintenance ]] && current="on"
+      flag_present_local && current="on"
     else
-      if kamal app exec -c "$CONFIG_FILE" "test -f /tmp/maintenance" 2>/dev/null; then current="on"; fi
+      if flag_present_remote; then current="on"; fi
     fi
   fi
   echo "\nEtat actuel: $( [[ "$current" == "on" ]] && echo '🚧 maintenance ON' || echo '✅ maintenance OFF' )"

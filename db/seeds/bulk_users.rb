@@ -1,6 +1,59 @@
 # Seed pour créer 75 utilisateurs supplémentaires pour les tests
 puts "\n🎭 Creating 75 additional users for testing..."
 
+# S'assurer que les helpers sont disponibles (si ce fichier est exécuté isolément)
+SEED_DEFAULT_PASSWORD ||= "password123"
+
+unless defined?(seed_register_person)
+  def seed_register_person(person_attributes, create_user: false, user_role: "web_visitor", created_by_admin: true)
+    attrs = person_attributes.dup
+    newsletter_flag = attrs.delete(:newsletter_subscribed)
+
+    result = People::Register.new(
+      person_params: attrs,
+      newsletter_subscribed: newsletter_flag,
+      newsletter_source: created_by_admin ? "admin" : "web",
+      create_user_account: create_user,
+      user_params: create_user ? {
+        email_address: attrs[:email],
+        password: SEED_DEFAULT_PASSWORD,
+        system_role: user_role,
+        created_by_admin: created_by_admin,
+        cgu: true,
+        privacy_policy: true
+      } : {},
+      create_membership: false
+    ).call
+
+    raise "Seed error: #{result.message}" unless result.success?
+
+    result.person
+  end
+end
+
+unless defined?(seed_assign_membership)
+  def seed_assign_membership(person, membership_type, recorded_by_id:, started_at:, ended_at:, first_joined_at:, status: :active)
+    return unless membership_type
+
+    result = People::MembershipCreator.new(
+      person: person,
+      membership_type_id: membership_type.id,
+      payment_method: "cash",
+      recorded_by_id: recorded_by_id
+    ).call
+
+    raise "Seed error: #{result.message}" unless result.success?
+
+    membership = result.membership
+    membership.update!(
+      started_at: started_at,
+      ended_at: ended_at,
+      first_joined_at: first_joined_at,
+      status: status
+    )
+  end
+end
+
 # Récupérer les types d'adhésion
 basic_membership = MembershipType.find_by(category: "basic")
 # Récupérer tous les types Circus (maintenant category = "circus", différenciés par nom/prix)
@@ -54,6 +107,17 @@ cities = [
   "Montauban", "Neuilly-sur-Seine", "Levallois-Perret", "Sarcelles", "Niort", "Chambéry", "Lorient"
 ]
 
+# Helper pour normaliser les identifiants (supprime accents/espaces)
+def normalize_token(value)
+  ActiveSupport::Inflector.transliterate(value.to_s).downcase.gsub(/[^a-z0-9]+/, '-')
+end
+
+def build_email(first_name, last_name, index)
+  base_first = normalize_token(first_name)
+  base_last = normalize_token(last_name)
+  "#{base_first}.#{base_last}.#{index}@example.com"
+end
+
 # Créer 75 utilisateurs supplémentaires
 75.times do |i|
   first_name = first_names[i % first_names.length]
@@ -61,7 +125,7 @@ cities = [
   city = cities[i % cities.length]
 
   # Générer un email unique
-  email = "#{first_name.downcase}.#{last_name.downcase}.#{i+1}@example.com"
+  email = build_email(first_name, last_name, i + 1)
 
   # Déterminer le type de création (admin, volunteer, ou utilisateur)
   creation_type = case i % 3
@@ -95,49 +159,47 @@ cities = [
 
   puts "\n  👤 Creating #{first_name} #{last_name} (#{i+1}/75) - #{creation_type} - #{membership_type&.category || 'no membership'}..."
 
-  # Créer la Person
-  person = Person.create!(
-    first_name: first_name,
-    last_name: last_name,
-    email: email,
-    phone: "+33 6 #{rand(10..99)} #{rand(10..99)} #{rand(10..99)} #{rand(10..99)}",
-    address: "#{rand(1..200)} Rue de #{[ 'la Paix', 'la République', 'Victor Hugo', 'Jean Jaurès', 'Gambetta', 'Clemenceau' ][rand(6)]}",
-    zip_code: "#{rand(10000..99999)}",
-    town: city,
-    country: "France",
-    birth_date: Date.new(rand(1980..2010), rand(1..12), rand(1..28)),
-    newsletter_subscribed: [ true, false ].sample,
-    get_involved: [ true, false ].sample,
-    image_rights: [ true, false ].sample,
-    is_minor: rand(1980..2010) > 2005,
-    notes: "Créée par #{creation_type}"
+  person = seed_register_person(
+    {
+      first_name: first_name,
+      last_name: last_name,
+      email: email,
+      phone: "+33 6 #{rand(10..99)} #{rand(10..99)} #{rand(10..99)} #{rand(10..99)}",
+      address: "#{rand(1..200)} Rue de #{[ 'la Paix', 'la République', 'Victor Hugo', 'Jean Jaurès', 'Gambetta', 'Clemenceau' ][rand(6)]}",
+      zip_code: "#{rand(10000..99999)}",
+      town: city,
+      country: "France",
+      birth_date: Date.new(rand(1980..2010), rand(1..12), rand(1..28)),
+      newsletter_subscribed: [ true, false ].sample,
+      get_involved: [ true, false ].sample,
+      image_rights: [ true, false ].sample,
+      is_minor: rand(1980..2010) > 2005,
+      notes: "Créée par #{creation_type}"
+    },
+    create_user: (creation_type == "user") || system_role == "volunteer",
+    user_role: system_role,
+    created_by_admin: creation_type != "user"
   )
 
-  # Créer l'adhésion si nécessaire
   if membership_type
-    person.memberships.create!(
-      membership_type: membership_type,
-      started_at: rand(1..12).months.ago,
-      ended_at: rand(1..12).months.ago + 1.year,
-      status: [ :active, :expired, :pending ].sample,
-      first_joined_at: rand(1..24).months.ago
+    started_at = rand(1..12).months.ago
+    seed_assign_membership(
+      person,
+      membership_type,
+      recorded_by_id: case creation_type
+                      when "admin" then admin_user&.id
+                      when "volunteer" then volunteer_user&.id
+                      else admin_user&.id
+                      end,
+      started_at: started_at,
+      ended_at: started_at + 1.year,
+      first_joined_at: rand(1..24).months.ago,
+      status: [ :active, :expired, :pending ].sample
     )
   end
 
-  # Créer le User si c'est un compte web ou volontaire
-  if creation_type == "user" || system_role == "volunteer"
-    user = User.create!(
-      person: person,
-      email_address: email,
-      password: "password123",
-      password_confirmation: "password123",
-      system_role: system_role,
-      created_by_admin: creation_type != "user",
-      cgu: true,
-      privacy_policy: true
-    )
-
-    puts "    ✅ #{person.full_name}: #{system_role} account created"
+  if person.user.present?
+    puts "    ✅ #{person.full_name}: #{person.user.system_role} account created"
   else
     puts "    ✅ #{person.full_name}: Person only (no user account)"
   end

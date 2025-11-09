@@ -1,6 +1,5 @@
 module EventManagement
   class EventCreator < BaseService
-
     attribute :name, :string
     attribute :upper_description, :string
     attribute :middle_description, :string

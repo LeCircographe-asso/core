@@ -146,23 +146,20 @@ L'application a actuellement une **couverture très faible** à 10.42%. Bien que
 ### Services (21 total)
 
 #### ✅ **All Services Tested (100%)**
-- `MembershipManagement::*` - 4 services, tous testés
-- `SubscriptionManagement::*` - 2 services, tous testés
-- `PaymentManagement::*` - 6 services, tous testés
+- `People::*` (PersonCreator, Register, Payment*, Subscription*, Membership*, AccountLinker, NewsletterSignup) - specs dédiées
 - `AccountClaimManagement::*` - 2 services, tous testés
 - `AttendanceManagement::*` - 1 service, testé
 - `AttendanceListManagement::*` - 3 services, tous testés
 - `BlogManagement::*` - 3 services, tous testés
-- `MembershipTypeManagement::*` - 2 services, tous testés
+- `Admin::MembershipTypesController` - CRUD inline (remplace services)
+- `Admin::SubscriptionPlansController` - CRUD inline (remplace services)
 - `OpeningHoursManagement::*` - 1 service, testé
 - `NewsletterManagement::*` - 1 service, testé
-- `SubscriptionPlanManagement::*` - 2 services, tous testés
-- `UserManagement::*` - 3 services, tous testés
-- `PersonManagement::*` - 3 services, tous testés
+- `UserManagement::*` - 2 services critiques (Updater, Deleter) testés
 - `EventManagement::*` - 3 services, tous testés
 - `MemberNumberManagement::*` - 2 services, tous testés
 
-**Total:** 44 services, tous testés ✅
+**Total:** 34 services, tous testés ✅
 
 ---
 

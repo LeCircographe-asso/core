@@ -7,4 +7,5 @@ Rails.application.config.assets.version = "1.0"
 # Rails.application.config.assets.paths << Emoji.images_path
 
 Rails.application.config.assets.paths << Rails.root.join("app", "assets", "fonts")
+Rails.application.config.assets.paths << Rails.root.join("app", "assets", "images", "fonts")
 Rails.application.config.assets.precompile += %w[ .svg .eot .woff .ttf .woff2 .otf ]

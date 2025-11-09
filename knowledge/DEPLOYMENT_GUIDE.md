@@ -70,6 +70,17 @@ kamal rollback -c config/deploy.staging.yml
 docker exec -it <container-id> bash
 ```
 
+## Importmap / Swiper Assets
+
+- Depuis avril 2025, la tâche `assets:precompile` déclenche automatiquement `importmap:normalize_modules`.  
+- Ce hook copie chaque module ES fingerprinté (`public/assets/_/Cfv2l5G4-*.js`) vers un alias sans digest (`public/assets/_/Cfv2l5G4.js`).  
+- En local, `bin/rails_assets_reset` continue d'effectuer la même opération (étape 8) pour le confort des développeurs.
+
+### Déploiement
+- **Kamal / Docker build** : rien à ajouter, le hook est exécuté durant `bin/rails assets:precompile` dans l'image.  
+- **VPS / serveurs** : après `kamal deploy`, on peut vérifier que les fichiers existent via `ls public/assets/_/`.  
+- **Fallback manuel** : si besoin de forcer la régénération, exécuter `bin/rails importmap:normalize_modules`.
+
 ## Configuration Kamal Importante
 ```yaml
 # config/deploy.staging.yml

@@ -25,7 +25,7 @@ RSpec.describe NewsletterSubscriber, type: :model do
 
     it "requires unique email" do
       create(:newsletter_subscriber, email: "test@example.com")
-      
+
       duplicate = NewsletterSubscriber.new(email: "test@example.com", subscribed: true, source: 'web')
       expect(duplicate).not_to be_valid
       expect(duplicate.errors[:email]).to include("has already been taken")
@@ -81,25 +81,25 @@ RSpec.describe NewsletterSubscriber, type: :model do
     it "generates unsubscribe_token before create" do
       subscriber = NewsletterSubscriber.new(email: "test@example.com", subscribed: true, source: 'web')
       expect(subscriber.unsubscribe_token).to be_nil
-      
+
       subscriber.save!
-      
+
       expect(subscriber.unsubscribe_token).to be_present
     end
 
     it "sets subscribed_at before create" do
       subscriber = NewsletterSubscriber.new(email: "test@example.com", subscribed: true, source: 'web')
       expect(subscriber.subscribed_at).to be_nil
-      
+
       subscriber.save!
-      
+
       expect(subscriber.subscribed_at).to be_present
     end
 
     it "normalizes email before validation" do
       subscriber = NewsletterSubscriber.new(email: "  TEST@EXAMPLE.COM  ", subscribed: true, source: 'web')
       subscriber.valid?
-      
+
       expect(subscriber.email).to eq("test@example.com")
     end
   end
@@ -107,9 +107,9 @@ RSpec.describe NewsletterSubscriber, type: :model do
   describe '#unsubscribe!' do
     it "marks subscriber as unsubscribed" do
       subscriber = create(:newsletter_subscriber, :subscribed)
-      
+
       subscriber.unsubscribe!
-      
+
       expect(subscriber.subscribed).to be false
       expect(subscriber.unsubscribed_at).to be_present
     end
@@ -118,9 +118,9 @@ RSpec.describe NewsletterSubscriber, type: :model do
   describe '#resubscribe!' do
     it "marks subscriber as subscribed" do
       subscriber = create(:newsletter_subscriber, :unsubscribed)
-      
+
       subscriber.resubscribe!
-      
+
       expect(subscriber.subscribed).to be true
       expect(subscriber.subscribed_at).to be_present
       expect(subscriber.unsubscribed_at).to be_nil
@@ -133,7 +133,7 @@ RSpec.describe NewsletterSubscriber, type: :model do
 
     it "links subscriber to person" do
       subscriber.link_to_person!(person)
-      
+
       expect(subscriber.person).to eq(person)
     end
   end
@@ -186,7 +186,7 @@ RSpec.describe NewsletterSubscriber, type: :model do
 
     describe "#duration_days" do
       it "calculates duration between subscribed_at and unsubscribed_at" do
-        subscriber = create(:newsletter_subscriber, 
+        subscriber = create(:newsletter_subscriber,
           subscribed_at: Date.current - 30.days,
           unsubscribed_at: Date.current
         )
@@ -195,4 +195,3 @@ RSpec.describe NewsletterSubscriber, type: :model do
     end
   end
 end
-

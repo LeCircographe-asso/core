@@ -137,8 +137,9 @@ dev → CI complet + coverage → auto-merge staging → tests re-run → deploy
 - [ ] Admin::PaymentsController request spec
 - [ ] Admin::EventsController request spec
 - [ ] UserManagement::UserCreator service spec
-- [ ] PaymentManagement::PaymentCreator service spec
-- [ ] MembershipManagement::MembershipCreator service spec
+- [ ] PaymentManagement::PaymentCreator service spec (mise à jour continue)
+- [x] People::AccountLinker service spec
+- [ ] People::MembershipCreator service spec
 - [ ] EventManagement::EventCreator service spec
 
 ### Phase 2 (Semaine 2): Admin Complet

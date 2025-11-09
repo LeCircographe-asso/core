@@ -1,6 +1,5 @@
 module BlogManagement
   class BlogCreator < BaseService
-
     attribute :title, :string
     attribute :content, :string
     attribute :tag_ids, array: true, default: []
@@ -47,5 +46,3 @@ module BlogManagement
     # success et failure hérités de BaseService
   end
 end
-
-

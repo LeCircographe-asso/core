@@ -3,4 +3,3 @@ FactoryBot.define do
     title { "Sample Blog Post" }
   end
 end
-

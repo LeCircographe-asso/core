@@ -6,7 +6,7 @@ namespace :migrate do
 
     # Trouver l'adhésion Basic par défaut
     basic_membership_type = MembershipType.find_by(category: :basic)
-    
+
     if basic_membership_type.nil?
       puts "❌ Erreur: Aucune adhésion Basic trouvée!"
       puts "   Créez d'abord les MembershipType avec: rails db:seed"
@@ -14,8 +14,8 @@ namespace :migrate do
     end
 
     # Trouver un admin pour recorded_by
-    admin_user = User.find_by(system_role: [:admin, :super_admin])
-    
+    admin_user = User.find_by(system_role: [ :admin, :super_admin ])
+
     if admin_user.nil?
       puts "❌ Erreur: Aucun admin trouvé pour recorded_by!"
       exit 1
@@ -41,10 +41,10 @@ namespace :migrate do
     # Demander confirmation
     puts "⚠️  Cette opération va créer des adhésions et des paiements pour #{persons_without_membership.count} personnes."
     puts "   Voulez-vous continuer? (y/N)"
-    
-    unless ENV['FORCE'] == 'true'
+
+    unless ENV["FORCE"] == "true"
       response = STDIN.gets.chomp.downcase
-      unless response == 'y' || response == 'yes'
+      unless response == "y" || response == "yes"
         puts "❌ Migration annulée."
         exit 0
       end
@@ -59,31 +59,10 @@ namespace :migrate do
     persons_without_membership.find_each do |person|
       begin
         ActiveRecord::Base.transaction do
-          # Créer l'adhésion
-          membership = person.memberships.create!(
-            membership_type: basic_membership_type,
-            started_at: Date.current,
-            ended_at: 1.year.from_now,
-            status: :active,
-            first_joined_at: Date.current
-          )
-
-          # Créer le paiement
-          payment = Payment.create!(
-            person: person,
-            recorded_by: admin_user,
-            total_cents: basic_membership_type.price_cents,
+          data = person.create_membership!(
+            basic_membership_type,
             payment_method: :cash,
-            status: :success,
-            notes: "Migration automatique - Adhésion #{basic_membership_type.name}"
-          )
-
-          # Créer la ligne de paiement
-          PaymentLine.create!(
-            payment: payment,
-            item: membership,
-            amount_cents: basic_membership_type.price_cents,
-            description: "Adhésion #{basic_membership_type.name}"
+            recorded_by: admin_user
           )
 
           puts "  ✅ #{person.full_name} - Adhésion créée"

@@ -8,7 +8,7 @@ class CreateAccountClaims < ActiveRecord::Migration[8.1]
       t.datetime :expires_at, null: false
       t.timestamps
     end
-    
+
     add_index :account_claims, :confirmation_token, unique: true
     add_index :account_claims, :status
   end

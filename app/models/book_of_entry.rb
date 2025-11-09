@@ -1,7 +1,7 @@
 class BookOfEntry < ApplicationRecord
   include Statusable
   include Dateable
-  
+
   # Relations selon le domain_model_circographe.md
   belongs_to :person
   belongs_to :subscription_plan
@@ -10,7 +10,7 @@ class BookOfEntry < ApplicationRecord
   validates :status, presence: true
   validates :purchased_at, presence: true
   validates :expires_at, presence: true, unless: :is_pack10?
-  
+
   # Validation personnalisée pour les séances
   validate :sessions_remaining_validation
 
@@ -30,7 +30,11 @@ class BookOfEntry < ApplicationRecord
   # Méthodes
   def can_use?
     # Un carnet peut être utilisé s'il est actif et a des séances restantes
-    return false unless active? && sessions_remaining > 0
+    return false unless active?
+
+    if has_session_limit?
+      return false unless sessions_remaining.present? && sessions_remaining > 0
+    end
 
     # Pour les packs, vérifier qu'il n'est pas expiré (sauf si c'est un pack10)
     return false if expired? && !is_pack10?
@@ -45,12 +49,26 @@ class BookOfEntry < ApplicationRecord
     # Décrémenter une séance et mettre à jour le statut
     return false unless can_use?
 
-    self.sessions_remaining -= 1
+    if has_session_limit?
+      self.sessions_remaining -= 1
 
-    if sessions_remaining == 0
-      self.status = :consumed
+      if sessions_remaining == 0
+        self.status = :consumed
+      end
     end
 
+    save!
+  end
+
+  def refund_session!
+    return true unless has_session_limit?
+
+    max_sessions = subscription_plan.sessions_count
+    max_sessions ||= is_pack10? ? 10 : 1
+
+    self.sessions_remaining ||= 0
+    self.sessions_remaining = [ sessions_remaining + 1, max_sessions ].min
+    self.status = :active if sessions_remaining.positive?
     save!
   end
 
@@ -91,9 +109,9 @@ class BookOfEntry < ApplicationRecord
   scope :expired, -> { where(status: :expired) }
   scope :consumed, -> { where(status: :consumed) }
   scope :suspended, -> { where(status: :suspended) }
-  
+
   # Scope utilisable : actif, pas expiré par date, et avec séances restantes (si applicable)
-  scope :usable, -> { 
+  scope :usable, -> {
     active
       .where("expires_at IS NULL OR expires_at > ?", Date.current)
       .where("sessions_remaining IS NULL OR sessions_remaining > 0")
@@ -102,12 +120,12 @@ class BookOfEntry < ApplicationRecord
   # Méthodes de classe
   def self.reactivate_suspended_packs_for_person(person)
     return unless person.can_buy_subscription_plans?
-    
+
     # Si aucun plan actif (Trimestre/Année), réactiver Pack10 suspendus
-    active_plans = person.book_of_entries.active.joins(:subscription_plan).where.not(subscription_plans: { duration: 'pack10' })
-    
+    active_plans = person.book_of_entries.active.joins(:subscription_plan).where.not(subscription_plans: { duration: "pack10" })
+
     if active_plans.empty?
-      person.book_of_entries.suspended.joins(:subscription_plan).where(subscription_plans: { duration: 'pack10' }).each(&:reactivate!)
+      person.book_of_entries.suspended.joins(:subscription_plan).where(subscription_plans: { duration: "pack10" }).each(&:reactivate!)
     end
   end
 
@@ -121,14 +139,14 @@ class BookOfEntry < ApplicationRecord
   end
 
   def suspended?
-    status == 'suspended'
+    status == "suspended"
   end
 
   private
 
   def sessions_remaining_validation
     # Pour les abonnements illimités (trimester, annual), sessions_remaining doit être nil
-    if subscription_plan&.duration.in?(['trimester', 'annual'])
+    if subscription_plan&.duration.in?([ "trimester", "annual" ])
       if sessions_remaining.present?
         errors.add(:sessions_remaining, "doit être vide pour les abonnements illimités")
       end

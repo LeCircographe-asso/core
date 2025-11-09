@@ -1,46 +1,42 @@
 class NewsletterSubscriber < ApplicationRecord
   include Dateable
   include EmailNormalizable
-  
+
   belongs_to :person, optional: true
-  
+
   validates :email, presence: true, uniqueness: true, format: { with: URI::MailTo::EMAIL_REGEXP }
   validates :unsubscribe_token, uniqueness: true, allow_nil: true
-  
+
   # normalize_email maintenant dans EmailNormalizable concern (before_validation automatique)
   before_create :generate_unsubscribe_token
   before_create :set_subscribed_at
-  
+
   scope :subscribed, -> { where(subscribed: true) }
   scope :unsubscribed, -> { where(subscribed: false) }
   scope :orphaned, -> { where(person_id: nil) }
   scope :linked, -> { where.not(person_id: nil) }
-  
+
   def unsubscribe!
     update!(subscribed: false, unsubscribed_at: Time.current)
   end
-  
+
   def resubscribe!
     update!(subscribed: true, subscribed_at: Time.current, unsubscribed_at: nil)
   end
-  
+
   # Merge vers Person existante
   def link_to_person!(person)
     # DEPRECATED: Person.newsletter_subscribed no longer used
     # Just link the subscriber to the person
     update!(person_id: person.id)
   end
-  
+
   private
-  
-  # normalize_email maintenant dans EmailNormalizable concern
-  
   def generate_unsubscribe_token
     self.unsubscribe_token ||= SecureRandom.urlsafe_base64(32)
   end
-  
+
   def set_subscribed_at
     self.subscribed_at ||= Time.current if subscribed?
   end
 end
-

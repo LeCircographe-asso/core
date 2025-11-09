@@ -13,7 +13,7 @@ module Ui
 
     def button_classes
       base_classes = "inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium"
-      
+
       if disabled
         "#{base_classes} disabled-state disabled-state--button"
       else
@@ -27,7 +27,7 @@ module Ui
         class: button_classes,
         type: "button"
       }
-      
+
       if disabled
         attrs.merge!(
           disabled: true,
@@ -38,7 +38,7 @@ module Ui
         attrs.merge!(options[:data] || {})
         attrs[:onclick] = options[:onclick] if options[:onclick]
       end
-      
+
       attrs
     end
   end

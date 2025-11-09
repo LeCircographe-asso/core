@@ -5,20 +5,26 @@ Rails.application.routes.draw do
     resources :dashboard, only: %i[index], path: "dashboard"
     resource :opening_hours, only: %i[show edit update]
     resources :donations, only: %i[create]
-            resources :users do
-              post :restore, on: :member
-              # Actions pour gérer Person
-              get :edit_person, on: :member
-              # Actions pour gérer les doublons
-              get :duplicates, on: :collection
-            end
+    resources :users do
+      post :restore, on: :member
+      # Actions pour gérer Person
+      get :edit_person, on: :member
+      # Actions pour gérer les doublons
+      get :duplicates, on: :collection
+
+      resources :payments, module: :users, only: %i[index new create show update destroy] do
+        post :process_payment, on: :member
+      end
+    end
     resources :events, only: %i[new create edit update destroy index]
     resource :session, only: %i[new create destroy]
     resource :notepad, only: %i[edit update]
     resources :attendance_lists do
       resources :attendances, only: %i[new index create show edit update]
     end
-    resources :payments, only: %i[show create new edit update index destroy]
+    resources :payments, only: %i[show create new edit update index destroy] do
+      post :restore, on: :member
+    end
     resources :attendances, only: %i[index show new create destroy]
     resources :memberships, only: %i[index show new create edit update destroy]
     resources :membership_types, only: %i[index show new create edit update destroy]
@@ -39,13 +45,19 @@ Rails.application.routes.draw do
     end
   end
 
-  resources :events, only: %i[show index]
+  resources :events, only: %i[show index] do
+    get :upcoming, on: :collection
+    get :past, on: :collection
+  end
   resources :pages, only: %i[show]
   resource :session, only: %i[new create destroy]
   resources :passwords, only: %i[new create edit update], param: :token
   resource :registration, only: %i[new create]
   resources :event_interests, only: %i[create destroy]
-  resources :blogs, only: %i[show ]
+  resources :blogs, only: %i[show ] do
+    get :latest, on: :collection
+  end
+  resources :partners, only: %i[index]
   get "/blog-newsletter", to: "blogs#index"
   resources :users, only: %i[show edit update destroy] do
     post "change_newsletter_status", on: :member
@@ -59,7 +71,7 @@ Rails.application.routes.draw do
 
   # Route for newsletter signup from footer
   post "/newsletter_signup", to: "users#newsletter_signup", as: "newsletter_signup"
-  
+
   # Route for newsletter unsubscribe by token (from emails)
   get "/newsletter/unsubscribe/:token", to: "users#unsubscribe_by_token", as: "newsletter_unsubscribe"
 

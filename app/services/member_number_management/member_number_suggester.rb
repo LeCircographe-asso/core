@@ -1,7 +1,6 @@
 module MemberNumberManagement
   class MemberNumberSuggester < BaseService
-
-    attribute :membership_type, :string, default: 'BASIQUE'
+    attribute :membership_type, :string, default: "BASIQUE"
 
     def call
       begin
@@ -23,5 +22,3 @@ module MemberNumberManagement
     # success et failure hérités de BaseService
   end
 end
-
-

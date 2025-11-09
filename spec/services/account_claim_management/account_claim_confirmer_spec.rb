@@ -39,7 +39,7 @@ RSpec.describe AccountClaimManagement::AccountClaimConfirmer do
       it "transfers relations from admin person to user person" do
         membership = create(:membership, person: admin_person)
         payment = create(:payment, person: admin_person)
-        
+
         confirmer = described_class.new(confirmation_token: claim.confirmation_token)
         result = confirmer.call
 
@@ -66,7 +66,7 @@ RSpec.describe AccountClaimManagement::AccountClaimConfirmer do
           user: user,
           expires_at: 1.day.ago
         )
-        
+
         confirmer = described_class.new(confirmation_token: expired_claim.confirmation_token)
         result = confirmer.call
 
@@ -82,7 +82,7 @@ RSpec.describe AccountClaimManagement::AccountClaimConfirmer do
           user: user,
           status: :confirmed
         )
-        
+
         confirmer = described_class.new(confirmation_token: confirmed_claim.confirmation_token)
         result = confirmer.call
 
@@ -111,4 +111,3 @@ RSpec.describe AccountClaimManagement::AccountClaimConfirmer do
     end
   end
 end
-

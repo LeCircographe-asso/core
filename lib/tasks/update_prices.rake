@@ -2,10 +2,10 @@ namespace :db do
   desc "Update membership and subscription prices according to current specifications"
   task update_prices: :environment do
     puts "💰 Updating prices according to current specifications..."
-    
+
     # 1. Mettre à jour les adhésions (MembershipType)
     puts "\n📋 Updating membership types..."
-    
+
     # Adhésion Basique : 1€
     basic_type = MembershipType.find_by(category: :basic)
     if basic_type
@@ -14,10 +14,10 @@ namespace :db do
     else
       puts "  ❌ Basic membership type not found"
     end
-    
+
     # Adhésion Cirque : types multiples maintenant (category = circus, différenciés par nom/prix)
     circus_types = MembershipType.where(category: :circus).order(price_cents: :desc)
-    
+
     # Tarif Plein (le plus cher)
     circus_full_type = circus_types.first
     if circus_full_type
@@ -26,7 +26,7 @@ namespace :db do
     else
       puts "  ❌ Circus full membership type not found"
     end
-    
+
     # Tarif Réduit (le moins cher)
     circus_reduced_type = circus_types.last
     if circus_reduced_type
@@ -35,10 +35,10 @@ namespace :db do
     else
       puts "  ❌ Circus reduced membership type not found"
     end
-    
+
     # 2. Mettre à jour les cotisations (SubscriptionPlan)
     puts "\n🎫 Updating subscription plans..."
-    
+
     # Supprimer les anciens plans (en gérant les contraintes)
     old_count = SubscriptionPlan.count
     if old_count > 0
@@ -48,7 +48,7 @@ namespace :db do
       ActiveRecord::Base.connection.execute("PRAGMA foreign_keys=ON")
       puts "  🗑️ Deleted #{old_count} old subscription plans"
     end
-    
+
     # Créer les nouveaux plans selon tes spécifications
     subscription_plans = [
       {
@@ -88,12 +88,12 @@ namespace :db do
         validity_days: 365
       }
     ]
-    
+
     subscription_plans.each do |attrs|
       subscription_plan = SubscriptionPlan.create!(attrs)
       puts "  ✅ #{subscription_plan.name}: #{subscription_plan.price_euros}€"
     end
-    
+
     puts "\n🎉 Price update completed!"
     puts "=" * 50
     puts "📊 Summary:"

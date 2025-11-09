@@ -1,8 +1,8 @@
 FactoryBot.define do
   factory :membership_type do
-    name { Faker::Company.name + " Membership" }
-    category { [:basic, :circus, :event].sample }
-    price_cents { [1500, 2000, 2500].sample }
+    sequence(:name) { |n| "Membership Type #{n}" }
+    category { %i[basic circus event].sample }
+    price_cents { [ 1500, 2000, 2500 ].sample }
     description { Faker::Lorem.paragraph }
     version { 1 }
     effective_from { Date.current }
@@ -10,19 +10,19 @@ FactoryBot.define do
 
     trait :basic do
       category { :basic }
-      name { "Adhésion Basique" }
+      sequence(:name) { |n| "Adhésion Basique #{n}" }
       price_cents { 1500 }
     end
 
     trait :circus do
       category { :circus }
-      name { "Adhésion Cirque Complète" }
+      sequence(:name) { |n| "Adhésion Cirque Complète #{n}" }
       price_cents { 2500 }
     end
 
     trait :circus_reduced do
       category { :circus }
-      name { "Adhésion Cirque Réduite" }
+      sequence(:name) { |n| "Adhésion Cirque Réduite #{n}" }
       price_cents { 2000 }
     end
 

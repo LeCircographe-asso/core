@@ -10,9 +10,9 @@ class AccountClaimsController < ApplicationController
       email: params[:email],
       user_id: Current.user.id
     )
-    
+
     result = creator.call
-    
+
     if result.success?
       redirect_to root_path, notice: "Demande de réclamation envoyée. Vérifiez vos emails."
     else
@@ -26,9 +26,9 @@ class AccountClaimsController < ApplicationController
     confirmer = AccountClaimManagement::AccountClaimConfirmer.new(
       confirmation_token: params[:token]
     )
-    
+
     result = confirmer.call
-    
+
     if result.success?
       redirect_to user_path(result.user), notice: "✅ Compte revendiqué ! Votre historique est maintenant disponible."
     else

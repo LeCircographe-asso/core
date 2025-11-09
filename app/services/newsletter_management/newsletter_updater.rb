@@ -1,6 +1,5 @@
 module NewsletterManagement
   class NewsletterUpdater < BaseService
-
     attribute :person_id, :integer
     attribute :email, :string
     attribute :subscribed, :boolean
@@ -69,5 +68,3 @@ module NewsletterManagement
     # success et failure hérités de BaseService
   end
 end
-
-

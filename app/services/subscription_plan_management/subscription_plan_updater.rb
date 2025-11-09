@@ -1,6 +1,5 @@
 module SubscriptionPlanManagement
   class SubscriptionPlanUpdater < BaseService
-
     attribute :subscription_plan_id, :integer
     attribute :attributes, hash: true
     attribute :updated_by_id, :integer
@@ -48,5 +47,3 @@ module SubscriptionPlanManagement
     # success et failure hérités de BaseService
   end
 end
-
-

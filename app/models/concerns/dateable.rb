@@ -35,7 +35,7 @@ module Dateable
     date = send(date_attr)
     return false unless date
 
-    date.to_date >= Date.current.beginning_of_week && 
+    date.to_date >= Date.current.beginning_of_week &&
     date.to_date <= Date.current.end_of_week
   end
 
@@ -43,7 +43,7 @@ module Dateable
     date = send(date_attr)
     return false unless date
 
-    date.to_date >= Date.current.beginning_of_month && 
+    date.to_date >= Date.current.beginning_of_month &&
     date.to_date <= Date.current.end_of_month
   end
 
@@ -77,19 +77,19 @@ module Dateable
       # Auto-detect date attribute: prefer :date if it exists, otherwise :created_at
       if date_attr.nil?
         # Check if model has a 'date' column and it's a date type (not datetime)
-        if columns_hash.key?('date') && columns_hash['date'].type == :date
+        if columns_hash.key?("date") && columns_hash["date"].type == :date
           date_attr = :date
         else
           date_attr = :created_at
         end
       end
-      
+
       # For date columns, use simple equality; for datetime columns, use range
-      if date_attr == :date && columns_hash.key?('date') && columns_hash['date'].type == :date
+      if date_attr == :date && columns_hash.key?("date") && columns_hash["date"].type == :date
         where(date: Date.current)
       else
-        where("#{date_attr} >= ? AND #{date_attr} < ?", 
-              Date.current.beginning_of_day, 
+        where("#{date_attr} >= ? AND #{date_attr} < ?",
+              Date.current.beginning_of_day,
               Date.current.end_of_day)
       end
     end
@@ -97,18 +97,18 @@ module Dateable
     def this_week(date_attr = nil)
       # Auto-detect date attribute: prefer :date if it exists, otherwise :created_at
       if date_attr.nil?
-        if columns_hash.key?('date') && columns_hash['date'].type == :date
+        if columns_hash.key?("date") && columns_hash["date"].type == :date
           date_attr = :date
         else
           date_attr = :created_at
         end
       end
-      
-      if date_attr == :date && columns_hash.key?('date') && columns_hash['date'].type == :date
+
+      if date_attr == :date && columns_hash.key?("date") && columns_hash["date"].type == :date
         where(date: Date.current.beginning_of_week..Date.current.end_of_week)
       else
-        where("#{date_attr} >= ? AND #{date_attr} <= ?", 
-              Date.current.beginning_of_week, 
+        where("#{date_attr} >= ? AND #{date_attr} <= ?",
+              Date.current.beginning_of_week,
               Date.current.end_of_week)
       end
     end
@@ -116,34 +116,42 @@ module Dateable
     def this_month(date_attr = nil)
       # Auto-detect date attribute: prefer :date if it exists, otherwise :created_at
       if date_attr.nil?
-        if columns_hash.key?('date') && columns_hash['date'].type == :date
+        if columns_hash.key?("date") && columns_hash["date"].type == :date
           date_attr = :date
         else
           date_attr = :created_at
         end
       end
-      
-      if date_attr == :date && columns_hash.key?('date') && columns_hash['date'].type == :date
+
+      if date_attr == :date && columns_hash.key?("date") && columns_hash["date"].type == :date
         where(date: Date.current.beginning_of_month..Date.current.end_of_month)
       else
-        where("#{date_attr} >= ? AND #{date_attr} <= ?", 
-              Date.current.beginning_of_month, 
+        where("#{date_attr} >= ? AND #{date_attr} <= ?",
+              Date.current.beginning_of_month,
               Date.current.end_of_month)
       end
     end
 
     def this_year(date_attr = :created_at)
-      where("#{date_attr} >= ? AND #{date_attr} <= ?", 
-            Date.current.beginning_of_year, 
+      where("#{date_attr} >= ? AND #{date_attr} <= ?",
+            Date.current.beginning_of_year,
             Date.current.end_of_year)
     end
 
     def upcoming(date_attr = :date)
+      if columns_hash.key?(date_attr.to_s) && columns_hash[date_attr.to_s].type == :datetime
+        where("#{date_attr} >= ?", Time.zone.now)
+      else
       where("#{date_attr} >= ?", Date.current)
+      end
     end
 
     def past(date_attr = :date)
+      if columns_hash.key?(date_attr.to_s) && columns_hash[date_attr.to_s].type == :datetime
+        where("#{date_attr} < ?", Time.zone.now)
+      else
       where("#{date_attr} < ?", Date.current)
+      end
     end
 
     def by_date_range(start_date, end_date, date_attr = :created_at)

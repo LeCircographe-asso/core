@@ -173,4 +173,3 @@ RSpec.describe AttendanceList, type: :model do
     end
   end
 end
-

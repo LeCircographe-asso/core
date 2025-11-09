@@ -1,6 +1,5 @@
 module MemberNumberManagement
   class MemberNumberChanger < BaseService
-
     attribute :person_id, :integer
     attribute :new_member_number, :string
     attribute :new_membership_type, :string
@@ -96,5 +95,3 @@ module MemberNumberManagement
     # success et failure hérités de BaseService
   end
 end
-
-

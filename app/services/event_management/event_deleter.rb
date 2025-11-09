@@ -1,9 +1,8 @@
 module EventManagement
   class EventDeleter < BaseService
-
     attribute :event_id, :integer
     attribute :deleted_by_id, :integer
-    attribute :reason, :string
+    attribute :reason, :string, default: -> { "Deleted from admin dashboard" }
 
     validates :event_id, presence: true
     validates :deleted_by_id, presence: true
@@ -16,17 +15,11 @@ module EventManagement
         ActiveRecord::Base.transaction do
           # Find the event and deleter
           event = Event.find(event_id)
-          deleted_by = User.find(deleted_by_id)
+          User.find(deleted_by_id)
 
-          # Check if event has participants
-          if event.people.any?
-            return failure("Cannot delete event with participants. Please remove participants first.")
-          end
-
-          # Check if event is in the past and completed
-          if event.start_date < Time.current && event.status != "completed"
-            return failure("Cannot delete past events that are not completed.")
-          end
+          # Remove interest links before deletion to keep related data clean
+          event.attendances.destroy_all
+          event.event_attendees.destroy_all
 
           # Delete the event
           event.destroy!

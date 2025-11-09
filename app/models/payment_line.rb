@@ -1,6 +1,6 @@
 class PaymentLine < ApplicationRecord
   include Priceable
-  
+
   # Relations
   belongs_to :payment
   belongs_to :item, polymorphic: true
@@ -15,13 +15,13 @@ class PaymentLine < ApplicationRecord
   def item_description
     case item_type
     when "Membership"
-      item.membership_type&.name || "Adhésion"
+      item&.membership_type&.name || "Adhésion"
     when "SubscriptionPlan"
-      item.duration_humanized
+      item&.duration_humanized || "Cotisation"
     when "MembershipType"
-      item.name
+      item&.name || "Type d'adhésion"
     when "BookOfEntry"
-      if item.subscription_plan
+      if item&.subscription_plan
         item.subscription_plan.duration_humanized
       else
         "Cotisation"

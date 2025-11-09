@@ -19,8 +19,8 @@ class CreateBlogSystem < ActiveRecord::Migration[8.0]
       t.bigint "blog_id", null: false
       t.datetime "created_at", null: false
       t.datetime "updated_at", null: false
-      t.index ["tag_id"], name: "index_tag_blogs_on_tag_id"
-      t.index ["blog_id"], name: "index_tag_blogs_on_blog_id"
+      t.index [ "tag_id" ], name: "index_tag_blogs_on_tag_id"
+      t.index [ "blog_id" ], name: "index_tag_blogs_on_blog_id"
     end
 
     # Foreign Keys

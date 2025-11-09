@@ -22,7 +22,7 @@ FactoryBot.define do
     end
 
     trait :with_member_number do
-      member_number { "25U#{rand(100..999)}" }
+      sequence(:member_number) { |n| format("%02dU%03d", Date.current.year % 100, n + 100) }
     end
 
     trait :with_active_membership do
@@ -61,7 +61,7 @@ FactoryBot.define do
       transient do
         skip_membership_validation { true }
       end
-      
+
       after(:create) do |person, evaluator|
         person.skip_membership_validation = evaluator.skip_membership_validation
         person.memberships.destroy_all if person.memberships.any?

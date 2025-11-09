@@ -1,6 +1,5 @@
 module BlogManagement
   class BlogUpdater < BaseService
-
     attribute :blog_id, :integer
     attribute :title, :string
     attribute :content, :string
@@ -59,5 +58,3 @@ module BlogManagement
     # success et failure hérités de BaseService
   end
 end
-
-

@@ -1,0 +1,38 @@
+<div id="confirm-modal"
+     class="hidden fixed inset-0 z-[120] flex items-center justify-center px-4 py-6"
+     role="dialog"
+     aria-modal="true"
+     aria-labelledby="confirm-modal-title"
+     aria-describedby="confirm-modal-message">
+  <div id="confirm-modal-backdrop" class="absolute inset-0 bg-gray-900/65"></div>
+
+  <div class="relative w-full max-w-md rounded-2xl bg-white shadow-2xl ring-1 ring-gray-200 focus:outline-none"
+       data-confirm-dialog="true"
+       tabindex="-1">
+    <div class="px-6 py-5 space-y-4">
+      <header class="space-y-2">
+        <p class="text-xs uppercase tracking-[0.35em] text-[#1F5C55]/70" id="confirm-modal-title">
+          Confirmation
+        </p>
+        <p id="confirm-modal-message" class="text-base text-gray-700 leading-relaxed">
+          Êtes-vous sûr de vouloir poursuivre cette action&nbsp;?
+        </p>
+      </header>
+
+      <div class="flex flex-col sm:flex-row sm:justify-end gap-3 sm:gap-4 pt-2">
+        <button type="button"
+                id="confirm-modal-cancel"
+                class="inline-flex items-center justify-center rounded-full border border-gray-300 px-4 py-2 text-sm font-semibold text-gray-600 transition hover:border-gray-400 hover:bg-gray-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-400">
+          Annuler
+        </button>
+        <button type="button"
+                id="confirm-modal-confirm"
+                class="inline-flex items-center justify-center rounded-full border border-[#1F5C55] bg-[#1F5C55] px-4 py-2 text-sm font-semibold text-white transition hover:bg-[#174a44] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1F5C55]">
+          Confirmer
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
