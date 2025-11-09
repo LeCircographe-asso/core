@@ -12,6 +12,9 @@
 @import "./components/dashboard.css";
 @import "./components/timeline.css";
 @import "./components/admin_sidebar.css";
+@import "./components/animations.css";
+@import "./components/tooltips.css";
+@import "./components/stripe.css";
 
 @layer base {
   /* Local fonts first (Propshaft rewrites /fonts/... to fingerprinted assets) */
