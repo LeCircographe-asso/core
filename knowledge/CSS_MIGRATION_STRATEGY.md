@@ -51,7 +51,7 @@ Usage pattern:
 ---
 
 ## 🧭 Next Focus
-1. **Component library** — terminer la migration des styles restants (éventuels résidus Sass: flash admin, legacy navbar, actiontext).
+1. **Component library** — terminer la migration des styles restants (éventuels résidus Sass: flash admin, legacy navbar, actiontext) et documenter les classes Tailwind custom.
 2. **Page-level scopes** — ajouter un dossier `pages/` pour les styles admin spécifiques si nécessaire.
 3. **Build hygiene** — vérifier que Tailwind purge bien `app/views`, `app/components`, `app/javascript`.
 4. **QA** — capturer des screenshots après chaque étape et comparer avant/après.

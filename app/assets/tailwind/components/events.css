@@ -12,6 +12,44 @@
     color: #1f2937;
   }
 
+  .event-page hr {
+    border: 1px solid #e5e7eb;
+    margin: 4rem 0;
+  }
+
+  .featured-events {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+    padding: 0 1rem;
+  }
+
+  @media (min-width: 768px) {
+    .featured-events {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 3rem;
+      padding: 0 2rem;
+    }
+  }
+
+  .event-carousel-container {
+    padding: 2rem 0;
+  }
+}
+@layer components {
+  .event-page {
+    min-height: 100vh;
+    background-color: #f8fafc;
+  }
+
+  .event-title {
+    text-align: center;
+    margin-bottom: 3rem;
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #1f2937;
+  }
+
   .event-divider {
     border: 1px solid #e5e7eb;
     margin: 4rem 0;
