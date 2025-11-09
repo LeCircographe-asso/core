@@ -1,0 +1,17 @@
+@layer components {
+  .admin-table-container {
+    max-width: 100%;
+    overflow-x: auto;
+  }
+
+  .user-table {
+    min-width: 680px;
+  }
+
+  body.admin-layout-active,
+  html.admin-layout-active {
+    max-width: 100%;
+    overflow-x: auto;
+  }
+}
+
