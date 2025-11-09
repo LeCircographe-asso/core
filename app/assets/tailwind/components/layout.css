@@ -1,0 +1,11 @@
+@layer components {
+  .footer-divider {
+    margin-top: 2rem !important;
+    margin-bottom: 2rem !important;
+  }
+
+  .outline-contrast-primary {
+    outline-color: rgba(31, 92, 85, 0.85);
+  }
+}
+

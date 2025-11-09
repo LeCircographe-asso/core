@@ -40,14 +40,15 @@ Usage pattern:
 - [x] Tailwind entrypoint adopted across layouts.
 - [x] Legacy navbar/contact styles mapped to Tailwind classes.
 - [x] Page refactors (Accueil, Le Lieu, Nos Activités, Adhérer, À propos, Contact, FAQ) follow the new token palette.
+- [x] Core buttons/forms/hero/tabs extracted to `app/assets/tailwind/components/`.
 - [ ] Move remaining DartSass partials into Tailwind-compatible modules.
 - [ ] Extract Swiper/Flowbite overrides into `app/assets/tailwind/components/*.css`.
-- [ ] Document component recipes (buttons, cards, timelines) inside `docs/`.
+- [ ] Document component recipes (cards, timelines, admin UI) inside `docs/`.
 
 ---
 
 ## 🧭 Next Focus
-1. **Component library** — create `app/assets/tailwind/components/` for buttons, cards, timelines; each file imports tokens and Tailwind `@apply`.
+1. **Component library** — extend the new `app/assets/tailwind/components/` folder with cards, timelines, admin patterns; keep using project tokens.
 2. **Page-level scopes** — add optional `pages/` folder for admin-only layouts once public side is clean.
 3. **Build hygiene** — ensure Tailwind purge paths include `app/views`, `app/components`, `app/javascript`.
 4. **QA** — capture screenshots after each migration step and compare before/after.
