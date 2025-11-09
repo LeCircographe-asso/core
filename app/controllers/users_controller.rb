@@ -79,15 +79,15 @@ class UsersController < ApplicationController
       return
     end
 
-    result = NewsletterSignupService.new(email).call_newsletter
+    result = People::NewsletterSignup.new(email: email, source: "web").call
 
-    if result[:redirect_to]
-      redirect_to new_session_path, alert: result[:message]
-    elsif result[:success]
-      flash[:notice] = result[:message]
+    if result.redirect_to
+      redirect_to new_session_path, alert: result.message
+    elsif result.success?
+      flash[:notice] = result.message
       redirect_back fallback_location: root_path
     else
-      flash[:alert] = result[:message]
+      flash[:alert] = result.message
       redirect_back fallback_location: root_path
     end
   end
