@@ -46,7 +46,14 @@ it "activates a pending membership when payment succeeds" do
   membership = create(:membership, status: :pending)
   payment = create(:payment, membership: membership, status: :success)
   
-  Payments::Process.new(payment).call
+  People::PaymentCreator.new(
+    person: payment.person,
+    amount_cents: payment.total_cents,
+    payment_method: payment.payment_method,
+    recorded_by_id: payment.recorded_by_id,
+    item_type: "Donation",
+    item_id: payment.person_id
+  ).call
   
   expect(membership.reload.status).to eq("active")
 end
@@ -126,7 +133,14 @@ end
 describe "Contract: Response format" do
   it "always returns a result object" do
     payment = create(:payment)
-    result = Payments::Process.new(payment).call
+    result = People::PaymentCreator.new(
+      person: payment.person,
+      amount_cents: payment.total_cents,
+      payment_method: payment.payment_method,
+      recorded_by_id: payment.recorded_by_id,
+      item_type: "Donation",
+      item_id: payment.person_id
+    ).call
     
     expect(result).to respond_to(:success?)
     expect(result).to respond_to(:failure?)
