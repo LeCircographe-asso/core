@@ -19,16 +19,15 @@ RSpec.describe Person, type: :model do
       expect(person.errors[:last_name]).to include("can't be blank")
     end
 
-    it "requires email if newsletter_subscribed is true", :disabled do
-      # DEPRECATED: newsletter_subscribed column is deprecated, use NewsletterSubscriber instead
-      person = Person.new(first_name: "John", last_name: "Doe", newsletter_subscribed: true)
-      expect(person).not_to be_valid
-      expect(person.errors[:email]).to include("can't be blank")
+    it "allows blank email even if newsletter_subscribed is true" do
+      person = build(:person, email: nil, newsletter_subscribed: true)
+
+      expect(person).to be_valid
     end
 
-    it "allows blank email if newsletter_subscribed is false", :disabled do
-      # DEPRECATED: newsletter_subscribed column is deprecated, use NewsletterSubscriber instead
-      person = Person.new(first_name: "John", last_name: "Doe", newsletter_subscribed: false)
+    it "allows blank email when newsletter_subscribed is false" do
+      person = build(:person, email: nil, newsletter_subscribed: false)
+
       expect(person).to be_valid
     end
 

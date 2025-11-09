@@ -1,4 +1,5 @@
 require 'rails_helper'
+require 'cgi'
 
 RSpec.describe "Admin::Memberships", type: :request do
   describe "GET /admin/memberships" do
@@ -41,7 +42,7 @@ RSpec.describe "Admin::Memberships", type: :request do
 
       it "displays current membership" do
         get admin_membership_path(person)
-        expect(response.body).to include(person.full_name)
+        expect(response.body).to include(CGI.escapeHTML(person.full_name))
       end
     end
   end
