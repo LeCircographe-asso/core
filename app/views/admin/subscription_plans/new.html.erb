@@ -41,7 +41,7 @@
                 </div>
                 
                 <div class="mt-4">
-                  <%= form_with url: admin_subscription_plans_path, method: :post, local: true, class: "space-y-3" do |form| %>
+                  <%= form_with url: admin_subscription_plans_path, method: :post, local: true, scope: :subscription_plan, class: "space-y-3" do |form| %>
                     <%= form.hidden_field :subscription_plan_id, value: subscription_plan.id %>
                     <%= form.hidden_field :person_id, value: @person.id %>
                     
