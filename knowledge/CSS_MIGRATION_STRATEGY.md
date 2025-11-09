@@ -43,6 +43,7 @@ Usage pattern:
 - [x] Core buttons/forms/hero/tabs extracted to `app/assets/tailwind/components/`.
 - [x] Dashboard/timeline patterns migrés (`dashboard.css`, `timeline.css`) et supprimés de `app/assets/stylesheets/application.css`.
 - [x] Animations, tooltips, Stripe signup extraits (`animations.css`, `tooltips.css`, `stripe.css`) ; fichier legacy nettoyé.
+- [x] Event carousel layout + admin tables migrés (`events.css`, `admin_table.css`).
 - [ ] Move remaining DartSass partials into Tailwind-compatible modules (homepage, carousel, tooltips, Stripe forms, global animations).
 - [ ] Extract Swiper/Flowbite overrides into `app/assets/tailwind/components/*.css`.
 - [ ] Document component recipes (cards, timelines, admin UI) inside `docs/`.
@@ -50,7 +51,7 @@ Usage pattern:
 ---
 
 ## 🧭 Next Focus
-1. **Component library** — terminer la migration des styles restants (event carousel layout, admin table tweaks, éventuels résidus Sass).
+1. **Component library** — terminer la migration des styles restants (éventuels résidus Sass: flash admin, legacy navbar, actiontext).
 2. **Page-level scopes** — ajouter un dossier `pages/` pour les styles admin spécifiques si nécessaire.
 3. **Build hygiene** — vérifier que Tailwind purge bien `app/views`, `app/components`, `app/javascript`.
 4. **QA** — capturer des screenshots après chaque étape et comparer avant/après.
