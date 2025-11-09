@@ -22,7 +22,7 @@
   </header>
 
   <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-    <article id="le-cirque" class="overflow-hidden rounded-3xl shadow-[0_10px_45px_rgba(31,92,85,0.12)] bg-white">
+    <article id="le-cirque" class="overflow-hidden rounded-2xl bg-gradient-to-br from-[#1F5C55]/10 via-white to-white border border-[#1F5C55]/20 shadow-md">
       <div class="relative h-64 sm:h-72">
         <%= image_tag hero_image(:association_circus_card), class: "w-full h-full object-cover", alt: "Entraînement de cirque au Circographe" %>
         <span class="absolute bottom-4 left-4 bg-[#1F5C55] text-white text-xs font-semibold tracking-widest uppercase px-3 py-1 rounded-full shadow-md">Le Cirque</span>
@@ -40,7 +40,7 @@
       </div>
     </article>
 
-    <article id="les-arts-graphiques" class="overflow-hidden rounded-3xl shadow-[0_10px_45px_rgba(33,64,104,0.12)] bg-white">
+    <article id="les-arts-graphiques" class="overflow-hidden rounded-3xl bg-slate-50 border border-slate-200 shadow-sm md:translate-y-2">
       <div class="relative h-64 sm:h-72">
         <%= image_tag hero_image(:association_graphics_card), class: "w-full h-full object-cover", alt: "Atelier graphique au Circographe" %>
         <span class="absolute bottom-4 left-4 bg-slate-700 text-white text-xs font-semibold tracking-widest uppercase px-3 py-1 rounded-full shadow-md">Les Arts Graphiques</span>
@@ -48,7 +48,7 @@
       <div class="p-6 sm:p-8 space-y-4">
         <p class="text-lg font-semibold text-gray-900">Ateliers libres & croisement des imaginaires</p>
         <p class="text-gray-700 leading-relaxed">Illustrateur·ices, peintres, sérigraphes et collectifs se retrouvent pour pratiquer, exposer et confronter les techniques. Les temps d’atelier sont ouverts, les projets s’épaulent, les murs s’animent.</p>
-        <p class="text-gray-700 leading-relaxed">La mise à disposition de la salle permet d’accueillir des formats hybrides : vernissages fugaces, résidences graphiques express, workshops partagés avec le cirque… bref, on tartine la culture en couleurs.</p>
+        <p class="text-gray-700 leading-relaxed">La mise à disposition ponctuelle de la salle permet d’accueillir des formats hybrides : vernissages fugaces, projets graphiques express, workshops partagés avec le cirque… bref, on tartine la culture en couleurs.</p>
         <div class="pt-2">
           <%= link_to page_path("association", anchor: "les-arts-graphiques"), class: "inline-flex items-center gap-2 text-sm font-semibold text-slate-700 hover:text-slate-900 transition-colors" do %>
             Plonger dans l’atelier graphique
@@ -65,24 +65,33 @@
   </footer>
 </section>
 
-<section class="py-10 sm:py-14 lg:py-16 max-w-5xl mx-auto fade-in">
+<section class="relative overflow-hidden bg-white/95 rounded-[28px] shadow-lg p-6 sm:p-10 fade-in border border-white/80 max-w-5xl mx-auto mt-12 md:mt-16 mb-8 md:mb-12">
+  <div class="pointer-events-none absolute -top-10 -left-16 w-64 h-64 rounded-full bg-brand-primary/10 blur-3xl"></div>
+  <div class="pointer-events-none absolute -bottom-14 -right-20 w-64 h-64 rounded-full bg-slate-700/10 blur-3xl"></div>
   <header class="text-center space-y-2 mb-8">
     <p class="text-sm uppercase tracking-[0.25em] text-gray-500">Histoires de pratique</p>
     <h3 class="text-2xl font-semibold text-gray-900">Quand les disciplines se croisent</h3>
   </header>
+  <div class="h-1 rounded-full bg-gradient-to-r from-[#1F5C55] via-[#4C7C75] to-slate-700 mb-8 opacity-70"></div>
   <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-    <article class="p-6 rounded-2xl bg-white/95 border border-gray-100 shadow-sm">
+    <article class="p-6 rounded-2xl bg-gradient-to-br from-white to-[#1F5C55]/5 border border-[#1F5C55]/20 shadow-sm">
       <p class="text-sm font-semibold text-[#1F5C55] uppercase tracking-wide mb-2">Focus cirque</p>
       <p class="text-gray-700 leading-relaxed">Le mardi soir, on commence par un entraînement aérien partagé : on ajuste les longueurs de tissus, on répète les portés et on se lance des conseils. Les curieux·ses de passage viennent observer avant de se jeter à leur tour.</p>
+      <div class="mt-4">
+        <%= link_to "En savoir plus — Cirque", page_path("circus_details"), class: "inline-flex items-center gap-2 text-sm font-semibold text-[#1F5C55] hover:text-[#15403c] transition-colors" %>
+      </div>
     </article>
-    <article class="p-6 rounded-2xl bg-white/95 border border-gray-100 shadow-sm">
+    <article class="p-6 rounded-xl bg-slate-50/90 border border-slate-200 shadow-sm">
       <p class="text-sm font-semibold text-slate-700 uppercase tracking-wide mb-2">Focus graphique</p>
       <p class="text-gray-700 leading-relaxed">Le jeudi, l’atelier graphique ouvre en mode mixte : sérigraphie, risographie et carnet de croquis prennent place, pendant qu’une compagnie de cirque prépare ses visuels. On imprime les affiches, on accroche aussitôt, la salle vit.</p>
+      <div class="mt-4">
+        <%= link_to "En savoir plus — Arts graphiques", page_path("graphic_arts_details"), class: "inline-flex items-center gap-2 text-sm font-semibold text-slate-700 hover:text-slate-900 transition-colors" %>
+      </div>
     </article>
   </div>
 </section>
 
-<section id="fonctionnement" class="bg-white/95 rounded-lg shadow-md p-8 mt-12 fade-in">
+<section id="fonctionnement" class="bg-white/95 rounded-lg shadow-md p-8 mt-12 mb-12 md:mb-16 fade-in">
   <header class="text-center mb-8 space-y-3">
     <p class="text-sm uppercase tracking-[0.3em] text-[#1F5C55]/70">Autogestion & bénévolat</p>
     <h2 class="text-2xl sm:text-3xl font-bold text-black">Un lieu qui tourne parce qu’on s’implique</h2>
@@ -107,7 +116,7 @@
   </div>
 </section>
 
-<section class="text-center mt-12 space-y-4 fade-in">
+<section class="bg-white rounded-[28px] shadow-md p-8 text-center mt-20 md:mt-24 mb-20 md:mb-24 space-y-4 fade-in border border-gray-200 max-w-4xl mx-auto w-full">
   <p class="text-lg text-gray-700 font-medium">Prêt·e à mêler ton énergie à la nôtre ? Allez viens, on va tartiner de la culture !</p>
   <%= link_to "Adhérer au Circographe", page_path('become_member'), class: "inline-block px-8 py-4 tracking-wide text-white font-bold bg-[#1F5C55] border-2 border-[#1F5C55] rounded-lg shadow-lg hover:bg-gray-100 hover:text-[#1F5C55] hover:border-[#1F5C55] hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1 text-lg" %>
 </section>
