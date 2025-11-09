@@ -24,31 +24,34 @@
 
 ### Analyse
 
-**Fichiers concernés:**
+**Fichiers concernés (après refacto People):**
 - `app/controllers/registrations_controller.rb`
-- `app/services/web/user_registration.rb`
+- `app/services/web/user_registration.rb` (→ `People::Register`)
+- `app/services/people/register.rb`
+- `app/services/people/person_creator.rb`
+- `app/services/people/user_account_creator.rb`
+- `app/services/people/membership_creator.rb`
 - `app/views/registrations/new.html.erb`
 
-### Workflow actuel (TROP LOURD)
+### Nouveau workflow (People::Register)
 
 ```
 Utilisateur → Formulaire inscription
   ↓
 Web::UserRegistration.call
   ↓
-1. create_or_find_person (PersonManagement::PersonCreator)
-   - Check email exists?
-     - OUI + User exists → "Mot de passe oublié"
-     - OUI + no User → "Récupérer mon compte"
-     - NON → Create Person
+People::Register.new(
+  person_params,
+  create_user_account: true,
+  create_membership: false,
+  newsletter_subscribed: ...
+).call
   ↓
-2. create_user_account
-   - Check user_email exists?
-   - Create User
+People::PersonCreator -> crée/maj Person (newsletter incluse)
+People::UserAccountCreator -> crée/maj User
+People::MembershipCreator -> (optionnel si achat immédiat)
   ↓
-3. Success/Error handling
-   - Flash messages
-   - Redirections
+Success/Error (centralisé)
 ```
 
 ### Problèmes identifiés
@@ -58,24 +61,19 @@ Web::UserRegistration.call
 - ❌ Pas de feedback progressif
 - ❌ Conflit entre Person et User
 
-### Plan d'Action
+### Plan d'Action (mis à jour)
 
-**Phase 1: Simplification (Jours 1-3)**
+**Statut actuel :** ✅ Back-end unifié (People::Register). Il reste à reprendre l’interface.
 
-1. **Unifier le formulaire**
-   - Un seul formulaire pour Person + User
-   - Validation en temps réel
-   - Messages d'erreur clairs
+**Phase UX (à faire)**
 
-2. **Améliorer les messages**
-   - Messages spécifiques par cas
-   - Actions suggérées (ex: "Mot de passe oublié?")
-   - Feedback progressif
-
-3. **Simplifier le service**
-   - Un seul appel pour créer Person + User
-   - Gestion d'erreurs centralisée
-   - Rollback automatique en cas d'erreur
+1. **Moderniser le formulaire**
+   - Maintenir l’unicité back-end (People::Register) tout en allégeant le front.
+   - Ajouter feedback progressif + validations client.
+2. **Clarifier les messages**
+   - Réutiliser les messages de `People::Register` tout en proposant des CTA explicites ("Mot de passe oublié", "Récupérer mon compte").
+3. **Journeys visuels**
+   - Ajouter un récapitulatif des étapes (nouvelle Person, compte créé, prochaine action).
 
 ---
 
