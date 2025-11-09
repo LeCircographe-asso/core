@@ -9,9 +9,9 @@
 
 **État actuel:** L'application a une architecture backend solide mais souffre de problèmes UX/UI majeurs qui empêchent une utilisation fluide.
 
-**Blocages identifiés:**
+**Blocages identifiés (mise à jour):**
 1. ⚠️ Procédure d'adhésion complexe et lourde
-2. ⚠️ Newsletter: code legacy + service incomplet
+2. ⚠️ Newsletter: code legacy + service incomplet (public now via People::NewsletterSignup)
 3. ⚠️ Gestion compte web: conflit Person.newsletter_subscribed vs NewsletterSubscriber
 4. ⚠️ Édition "inline" informations personnelles manquante
 5. ⚠️ Workflow validation/erreurs pas clair pour l'utilisateur
@@ -63,7 +63,7 @@ Success/Error (centralisé)
 
 ### Plan d'Action (mis à jour)
 
-**Statut actuel :** ✅ Back-end unifié (People::Register). Il reste à reprendre l’interface.
+**Statut actuel :** ✅ Back-end unifié (People::Register). UI admin branchée sur People::Membership*, People::Payment*, People::Subscription*. Il reste à reprendre l’interface publique.
 
 **Phase UX (à faire)**
 
@@ -77,15 +77,15 @@ Success/Error (centralisé)
 
 ---
 
-## 🔴 Problème 2: Newsletter Legacy
+## 🔴 Problème 2: Newsletter Legacy (mis à jour)
 
 ### Analyse
 
 **Fichiers concernés:**
-- `app/models/person.rb` (newsletter_subscribed - DEPRECATED)
 - `app/models/newsletter_subscriber.rb` (nouveau)
-- `app/services/newsletter_management/newsletter_updater.rb`
-- `app/controllers/users_controller.rb`
+- `app/services/people/newsletter_signup.rb` (public)
+- `app/services/newsletter_management/newsletter_updater.rb` (authentifié)
+- `app/controllers/users_controller.rb` (newsletter_signup → People::NewsletterSignup)
 
 ### Problème identifié
 
@@ -93,10 +93,10 @@ Success/Error (centralisé)
 - `Person.newsletter_subscribed` (legacy, booléen)
 - `NewsletterSubscriber` (nouveau, table dédiée)
 
-**Impact:**
-- Code dupliqué
-- Données incohérentes
-- Service incomplet
+**Impact (résolu en partie):**
+- Code public unifié via `People::NewsletterSignup`
+- Instrumentation: `people.newsletter_signed_up`, `people.newsletter_signup.skipped`, `people.newsletter_signup.failed`
+- Reste: workflow authentifié (paramètres newsletter) à finaliser via `NewsletterManagement::NewsletterUpdater`
 
 ### Plan d'Action
 
