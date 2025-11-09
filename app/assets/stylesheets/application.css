@@ -3,39 +3,6 @@
 /* ===== TAILWIND CSS INTEGRATION ===== */
 /* Les styles Tailwind sont gérés par le gem tailwindcss-rails */
 
-/* ===== Legacy CSS modules inlined to avoid @import 404 ===== */
-/* --- admin_lateral_navbar.css --- */
-.admin-sidebar { position: fixed; top: 0; left: 0; width: 260px; background-color: #fff; overflow-y: auto; box-shadow: 0 0 10px rgba(0, 0, 0, 0.05); min-height: 100vh; height: 100%; z-index: 100; border-right: 1px solid #f0f0f0; display: flex; flex-direction: column; transition: all 0.3s ease-in-out; }
-.sidebar-logo img.image-main { max-width: 50%; z-index: 102; display: block; margin-left: auto; margin-right: auto; }
-.sidebar-menu { list-style: none; padding: 0; margin-bottom: 0; }
-.sidebar-menu li { margin-bottom: 1px; }
-.sidebar-link { text-decoration: none; color: #4b5563; font-size: 0.9rem; font-weight: 500; padding: 8px 12px; display: block; border-radius: 5px; transition: all 0.2s ease; border: none; background: none; width: 100%; text-align: left; }
-.sidebar-link:hover { background-color: #1F5C55; color: white; }
-.sidebar-link:focus { outline: none; box-shadow: 0 0 0 2px rgba(31, 92, 85, 0.3); }
-.admin-layout { display: flex; height: 100vh; overflow: hidden; width: 100%; }
-/* Content pushes itself away from fixed sidebar using padding-left to avoid centering issues */
-.admin-content { width: 100%; overflow-x: auto; background-color: #f9fafb; box-sizing: border-box; }
-/* Décalage du contenu géré au niveau de .admin-main pour éviter un "gutter" visuel entre la sidebar et le contenu */
-.admin-main { padding: 25px; padding-left: calc(25px + 260px); }
-.admin-content.expanded .admin-main { padding-left: calc(25px + 70px); }
-.admin-main { padding: 25px; }
-.admin-sidebar.collapsed { width: 70px; }
-.admin-sidebar.collapsed .sidebar-text { display: none; }
-.admin-sidebar.collapsed .sidebar-icon { margin-right: 0; }
-.admin-sidebar.collapsed .sidebar-logo { display: flex; justify-content: center; }
-.admin-sidebar.collapsed .sidebar-logo img { object-fit: contain; }
-.admin-sidebar.collapsed .fas { margin-right: 0; font-size: 1.2rem; }
-.admin-sidebar.collapsed .sidebar-link { justify-content: center; padding: 0.75rem 0; }
-.admin-sidebar { position: relative; overflow: visible; }
-.admin-sidebar.collapsed .toggle-indicator { right: -20px; }
-.toggle-icon { transition: transform 0.3s ease; }
-.toggle-indicator { position: absolute; right: -20px; top: 50%; transform: translateY(-50%); width: 24px; height: 24px; border-radius: 50%; background-color: white; border: 1px solid #e2e8f0; display: flex; align-items: center; justify-content: center; color: #4a5568; font-size: 0.9rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); z-index: 20; cursor: pointer; transition: all 0.3s ease; }
-.toggle-indicator:hover { transform: translateY(-50%) scale(1.1); box-shadow: 0 2px 5px rgba(0,0,0,0.15); color: #2d3748; }
-.admin-sidebar.collapsed .sidebar-link { display: flex; justify-content: center; align-items: center; padding: 10px 0; }
-.admin-sidebar.collapsed .sidebar-icon, .admin-sidebar.collapsed .fas { margin-right: 0; margin-left: 0; font-size: 1.2rem; }
-.admin-sidebar.collapsed .sidebar-menu li a, .admin-sidebar.collapsed .sidebar-menu li button { display: flex; justify-content: center; align-items: center; padding: 10px 0; }
-.admin-sidebar.collapsed .sidebar-menu li a i, .admin-sidebar.collapsed .sidebar-menu li button i { margin: 0; }
-
 /* --- homepage.css --- */
 @keyframes bounce { 0%, 100% { transform: translateY(0);} 50% { transform: translateY(10px);} }
 .scroll-arrow { display: inline-block; animation: bounce 2s infinite ease-in-out; cursor: pointer; transition: opacity 0.3s; }
