@@ -31,103 +31,48 @@ module Web
     def call
       return failure("Invalid data: #{errors.full_messages.join(', ')}") unless valid?
 
-      ActiveRecord::Base.transaction do
-        # 1. Créer ou trouver la Person
-        person_result = create_or_find_person
-        return failure(person_result.errors.join(", ")) unless person_result.success?
+      existing_person = Person.active.find_by(email: email)
 
-        person = person_result.person
+      if existing_person
+        Rails.logger.warn("[WEB_REGISTRATION] BLOCKED: Email #{email} existe sur Person #{existing_person.id}")
 
-        # 1.5. Créer NewsletterSubscriber si demandé
-        if newsletter_subscribed == true
-          create_newsletter_subscriber(person)
+        if existing_person.user.present?
+          return failure("Cette adresse email est déjà utilisée. Utilisez 'Mot de passe oublié' pour récupérer votre compte.")
+        else
+          return failure("Cette adresse email est associée à une fiche adhérent. Utilisez 'Récupérer mon compte' pour la lier à votre espace web.")
         end
+      end
 
-        # 2. Créer le compte utilisateur
-        user_result = create_user_account(person)
-        return failure(user_result.errors.join(", ")) unless user_result.success?
+      register_result = People::Register.new(
+        person_params: {
+          first_name: first_name,
+          last_name: last_name,
+          email: email
+        },
+        newsletter_subscribed: newsletter_subscribed,
+        newsletter_source: "web",
+        create_user_account: true,
+        user_params: {
+          email_address: user_email,
+          password: user_password,
+          system_role: user_system_role,
+          created_by_admin: false,
+          cgu: cgu,
+          privacy_policy: privacy_policy
+        },
+        create_membership: false
+      ).call
 
-        success(person: person, user: user_result.user, message: "Web user registration successful")
+      if register_result.success?
+        success(person: register_result.person, user: register_result.user, message: "Web user registration successful")
+      else
+        failure(register_result.errors.join(", "))
       end
     rescue ActiveRecord::RecordInvalid => e
       failure(e.message)
     end
 
     private
-
-    def create_or_find_person
-      # 1. Chercher si Person existe avec cet email
-      existing_person = Person.active.find_by(email: email) if email.present?
-
-      if existing_person
-        # Person existe → Bloquer et proposer revendication
-        Rails.logger.warn("[WEB_REGISTRATION] BLOCKED: Email #{email} existe sur Person #{existing_person.id}")
-
-        if existing_person.user.present?
-          # Person a déjà un User → Mot de passe oublié
-          return failure("Cette adresse email est déjà utilisée. Utilisez 'Mot de passe oublié' pour récupérer votre compte.")
-        else
-          # Person sans User → Revendication
-          return failure("Cette adresse email est associée à une fiche adhérent. Utilisez 'Récupérer mon compte' pour la lier à votre espace web.")
-        end
-      end
-
-      # 2. Supprimer la recherche par nom+prénom (trop permissive)
-      # SUPPRIMÉ : candidates = Person.active.where(...)
-
-      # 3. Créer nouvelle Person
-      # newsletter_subscribed removed - handled by create_newsletter_subscriber
-      Rails.logger.info("[WEB_REGISTRATION] Création nouvelle Person pour #{email}")
-      PersonManagement::PersonCreator.new(
-        first_name: first_name,
-        last_name: last_name,
-        email: email
-      ).call
-    end
-
-
-    def create_user_account(person)
-      # Vérifier si la Person a déjà un User
-      if person.user.present?
-        # Mettre à jour le User existant
-        person.user.update!(
-          email_address: user_email,
-          password: user_password,
-          password_confirmation: user_password,
-          system_role: user_system_role
-        )
-        success(person: person.user.person, user: person.user, message: "User account updated")
-      else
-        # Créer un nouveau User
-        UserManagement::AccountCreator.new(
-          person: person,
-          user_email: user_email,
-          user_password: user_password,
-          user_system_role: user_system_role,
-          created_by_admin: false, # Créé par l'utilisateur lui-même
-          cgu: cgu,
-          privacy_policy: privacy_policy
-        ).call
-      end
-    end
-
-    def create_newsletter_subscriber(person)
-      # Si NewsletterSubscriber existe déjà (inscription footer), le lier à cette Person
-      subscriber = NewsletterSubscriber.find_by(email: person.email)
-
-      if subscriber
-        # Link existing orphaned subscriber to new Person
-        subscriber.update!(person: person, subscribed: true)
-      else
-        # Create new NewsletterSubscriber for this Person
-        NewsletterSubscriber.create!(
-          email: person.email,
-          person: person,
-          source: "web",
-          subscribed: true
-        )
-      end
-    end
 
     def email_uniqueness
       return if email.blank?

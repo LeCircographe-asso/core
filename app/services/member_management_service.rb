@@ -115,8 +115,18 @@ class MemberManagementService
         merged_data[:country] = secondary_person.country
       end
 
-      # Mettre à jour la Person principale
-      primary_person.update!(merged_data) if merged_data.any?
+      # Préparer les mises à jour de contact
+      if merged_data.any?
+        if merged_data.key?(:email)
+          secondary_person.update_columns(email: nil)
+        end
+        if merged_data.key?(:phone)
+          secondary_person.update_columns(phone: nil)
+        end
+
+        primary_person.skip_membership_validation = true
+        primary_person.update!(merged_data)
+      end
 
       # 2. Transférer toutes les relations
       transferred_count = 0
@@ -237,10 +247,10 @@ class MemberManagementService
     # Créer des Person temporaires pour tester la séquence
     temp_people = []
     count.times do
-      temp_person = Person.new(first_name: "Test", last_name: "User")
+      temp_person = Person.new(first_name: "Test", last_name: "User", is_minor: false)
       temp_person.skip_membership_validation = true
       temp_person.member_number = generate_member_number(membership_type)
-      temp_person.save! # Save to ensure sequential generation
+      temp_person.save!(validate: false) # Save to ensure sequential generation
       temp_people << temp_person.member_number
     end
     temp_people
