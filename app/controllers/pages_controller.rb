@@ -41,7 +41,8 @@ class PagesController < ApplicationController
     end
 
     if params[:id] == "about"
-      @partners = PartnersCatalog.public_partners
+      @board_members = load_yaml_content("board_members")
+      @partners = load_yaml_content("partners")
     end
 
     render template: "pages/#{params[:id]}"
@@ -74,5 +75,16 @@ class PagesController < ApplicationController
       { question: "Comment soutenir financièrement le projet ?", answer: "En adhérant, en souscrivant à l'adhésion soutien ou en faisant un don ponctuel. Écris-nous si tu souhaites devenir partenaire." },
       { question: "J'ai une question administrative, qui contacter ?", answer: "Utilise le formulaire de contact (catégorie 'Question générale') ou écris à contact@circographe.fr ; l'équipe bénévole te répondra rapidement." }
     ]
+  end
+
+  def load_yaml_content(key)
+    path = Rails.root.join("config/content/#{key}.yml")
+    raw = YAML.load_file(path)
+    Array(raw).each_with_index.map { |entry, idx| entry.to_h.deep_symbolize_keys.merge(_idx: idx) }
+         .sort_by { |entry| [entry[:display_order] || Float::INFINITY, entry[:_idx]] }
+         .map { |entry| entry.except(:_idx) }
+  rescue Errno::ENOENT, Psych::SyntaxError => e
+    Rails.logger.error("Content load failed: #{e.message}")
+    []
   end
 end

@@ -17,7 +17,6 @@
     <link rel="apple-touch-icon" href="/icon.png">
     <%= stylesheet_link_tag "tailwind", "data-turbo-track": "reload" %>
     <%= stylesheet_link_tag "flowbite", "data-turbo-track": "reload" %>
-    <%= stylesheet_link_tag "swiper", "data-turbo-track": "reload" %>
     <%= stylesheet_link_tag "application", media: "all", "data-turbo-track": "reload" %>
     <%# Removed legacy :app stylesheet link to avoid 404/preload issues %>
     <%= javascript_importmap_tags %>
@@ -62,7 +61,7 @@
     <header>
         <%= render 'shared/navbar' %>
     </header>
-    <div class="flex-grow bg-no-repeat bg-cover bg-center <%= 'parallax-bg' if controller_name == 'home' && action_name == 'index' %>" style="background-image: url('<%= asset_path(content_for(:background_image) || 'background_temp.webp') %>'); background-attachment: fixed; background-position: center; background-repeat: no-repeat; background-size: cover;">
+    <div class="flex-grow bg-no-repeat bg-cover bg-center <%= 'parallax-bg' if controller_name == 'home' && action_name == 'index' %>" style="background-image: url('<%= asset_path(content_for(:background_image) || 'background.webp') %>'); background-attachment: fixed; background-position: center; background-repeat: no-repeat; background-size: cover;">
         <%= turbo_frame_tag "flash" do %>
         <%= render 'shared/flash' %>
         <% end %>

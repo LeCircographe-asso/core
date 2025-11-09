@@ -102,7 +102,7 @@ RSpec.describe "Checkout", type: :request do
           allow(Stripe::PaymentIntent).to receive(:retrieve).with("test_intent").and_return(payment_intent)
 
           get checkout_success_path, params: { session_id: "test_session", event_id: event.id }
-          expect(response).to redirect_to(events_path)
+          expect(response).to redirect_to(page_path("news", anchor: "evenements"))
         end
       end
     end
@@ -116,7 +116,7 @@ RSpec.describe "Checkout", type: :request do
 
       it "redirects to events with cancel message" do
         get checkout_cancel_path
-        expect(response).to redirect_to(events_path)
+        expect(response).to redirect_to(page_path("news", anchor: "evenements"))
         follow_redirect!
         expect(response.body).to include("annulé")
       end

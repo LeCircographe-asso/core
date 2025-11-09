@@ -1,14 +1,15 @@
 <% content_for :title, "Le Circographe - À propos" %>
 
 <section class="relative overflow-hidden rounded-[32px] shadow-2xl mb-14">
-  <div class="absolute inset-0 bg-cover bg-center brightness-50" style="background-image: url('<%= asset_path('home3.webp') %>')"></div>
-  <div class="relative px-6 sm:px-10 lg:px-16 py-20 text-white space-y-6">
-    <p class="text-sm uppercase tracking-[0.4em] text-white/70">L'histoire du Circographe</p>
+  <%= image_tag hero_image(:about_hero), class: "absolute inset-0 w-full h-full object-cover hero-img-filter", alt: "" %>
+  <div class="hero-overlay"></div>
+  <div class="relative hero-panel space-y-6">
+    <p class="text-sm uppercase tracking-[0.4em] text-white/70">Rejoindre la communauté</p>
     <h1 class="font-circographe text-3xl sm:text-4xl lg:text-5xl font-bold">À propos du Circographe</h1>
-    <p class="max-w-3xl text-lg text-white/85 leading-relaxed">Le Circographe est un laboratoire de pratiques artistiques où se croisent disciplines circassiennes, arts graphiques et vie associative. Nous inventons, ensemble, une manière de faire vivre un lieu partagé : autogestion, entraide, transmission.</p>
+    <p class="max-w-3xl text-lg text-white/85 leading-relaxed">Laboratoire de pratiques artistiques partagées où cirque et arts graphiques se rencontrent — autogestion et solidarité.</p>
     <div class="flex flex-wrap gap-4">
-      <%= link_to "Nous rejoindre", page_path('become_member'), class: "inline-flex items-center gap-2 px-5 py-3 text-sm font-semibold text-white bg-[#1F5C55] border-2 border-[#1F5C55] rounded-full shadow-lg hover:bg-white hover:text-[#1F5C55] transition" %>
-      <%= link_to "Découvrir le lieu", page_path('association'), class: "inline-flex items-center gap-2 px-5 py-3 text-sm font-semibold text-[#1F5C55] bg-white/95 border-2 border-white rounded-full shadow-lg hover:bg-[#1F5C55] hover:text-white transition" %>
+      <%= link_to "Nous rejoindre", page_path('become_member'), class: "btn-primary shadow-lg" %>
+      <%= link_to "Découvrir le lieu", page_path('association'), class: "btn-secondary shadow-lg" %>
     </div>
   </div>
 </section>
@@ -16,30 +17,18 @@
 <section class="bg-white/95 rounded-[28px] shadow-lg p-6 sm:p-10 fade-in border border-white/80">
   <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
     <div class="lg:col-span-2 space-y-4">
-      <p class="text-sm uppercase tracking-[0.3em] text-[#1F5C55]/70">Notre mission</p>
+      <p class="text-sm uppercase tracking-[0.3em] text-brand-primary/70">Notre mission</p>
       <h2 class="text-3xl font-semibold text-gray-900">Un espace de création partagé et accessible</h2>
-      <p class="text-gray-700 leading-relaxed">Le Circographe fait cohabiter pratique du cirque, expérimentation graphique et convivialité. L’ambition : offrir un lieu ouvert où chacun peut pratiquer, apprendre, transmettre et inventer, qu’il soit amateur curieux ou professionnel en résidence.</p>
-      <p class="text-gray-700 leading-relaxed">La gouvernance est autogérée : les adhérent·es choisissent des missions bénévoles, partagent les clés du lieu et imaginent la programmation. On croit au pouvoir du collectif et à la mutualisation des ressources.</p>
+      <p class="text-gray-700 leading-relaxed">Offrir un espace de pratique, de création et de transmission accessible à toutes et tous.</p>
+      <p class="text-gray-700 leading-relaxed">Gouvernance autogérée : les membres s’engagent bénévolement, partagent les clés et co‑programment la vie du lieu.</p>
     </div>
-    <div class="bg-[#1F5C55]/5 border border-[#1F5C55]/20 rounded-3xl p-6 space-y-4">
-      <p class="text-sm uppercase tracking-[0.3em] text-[#1F5C55]/70">Nos valeurs</p>
-      <ul class="space-y-4 text-gray-700">
-        <li>
-          <h3 class="font-semibold text-gray-900">Accessibilité</h3>
-          <p class="text-sm">Un lieu inclusif pour les publics du quartier, les artistes de passage et les compagnies en création.</p>
-        </li>
-        <li>
-          <h3 class="font-semibold text-gray-900">Transmission</h3>
-          <p class="text-sm">Stages, résidences, ateliers croisés : on apprend autant qu’on donne.</p>
-        </li>
-        <li>
-          <h3 class="font-semibold text-gray-900">Expérimentation</h3>
-          <p class="text-sm">Croiser les disciplines, détourner les formats, inventer de nouvelles rencontres entre chapiteaux et pinceaux.</p>
-        </li>
-        <li>
-          <h3 class="font-semibold text-gray-900">Solidarité</h3>
-          <p class="text-sm">Autogestion, prix adaptés, soutien mutuel entre bénévoles et résidents.</p>
-        </li>
+    <div class="bg-brand-primary/5 border border-brand-primary/20 rounded-3xl p-6 space-y-4">
+      <p class="text-sm uppercase tracking-[0.3em] text-brand-primary/70">Nos valeurs</p>
+      <ul class="grid grid-cols-2 gap-3 text-gray-900">
+        <li class="font-semibold">Accessibilité</li>
+        <li class="font-semibold">Transmission</li>
+        <li class="font-semibold">Expérimentation</li>
+        <li class="font-semibold">Solidarité</li>
       </ul>
     </div>
   </div>
@@ -47,38 +36,56 @@
 
 <section class="bg-white/95 rounded-[28px] shadow-lg p-6 sm:p-10 mt-12 fade-in">
   <header class="text-center mb-10 space-y-3">
-    <p class="text-sm uppercase tracking-[0.3em] text-[#1F5C55]/70">Le Conseil d'administration</p>
+    <p class="text-sm uppercase tracking-[0.3em] text-brand-primary/70">Le Conseil d'administration</p>
     <h2 class="text-3xl font-semibold text-gray-900">Celles et ceux qui font tourner le Circographe</h2>
-    <p class="text-gray-600 max-w-2xl mx-auto leading-relaxed">Technicien·nes plateau, artistes, médiateurs culturels, communicant·es… Le conseil d’administration coordonne l’autogestion du lieu et accompagne les bénévoles au quotidien.</p>
+    <p class="text-gray-600 max-w-2xl mx-auto leading-relaxed">Le conseil d’administration coordonne l’autogestion et accompagne les bénévoles au quotidien.</p>
   </header>
+
+  <% social_icons = {
+    instagram: tag.svg(xmlns: "http://www.w3.org/2000/svg", viewBox: "0 0 24 24", fill: "currentColor", class: "w-5 h-5") do
+      tag.path(d: "M7 2C4.243 2 2 4.243 2 7v10c0 2.757 2.243 5 5 5h10c2.757 0 5-2.243 5-5V7c0-2.757-2.243-5-5-5H7zm10 2a3 3 0 0 1 3 3v10a3 3 0 0 1-3 3H7a3 3 0 0 1-3-3V7a3 3 0 0 1 3-3h10zm-5 3.5A4.5 4.5 0 1 0 16.5 12 4.505 4.505 0 0 0 12 7.5zm0 2A2.5 2.5 0 1 1 9.5 12 2.5 2.5 0 0 1 12 9.5zm5.25-3.75a1.25 1.25 0 1 1-1.25 1.25 1.25 1.25 0 0 1 1.25-1.25z")
+    end,
+    linkedin: tag.svg(xmlns: "http://www.w3.org/2000/svg", viewBox: "0 0 24 24", fill: "currentColor", class: "w-5 h-5") do
+      safe_join([
+        tag.path(d: "M4.98 3.5A2.5 2.5 0 1 1 2.5 6a2.5 2.5 0 0 1 2.48-2.5zM3 8.75h3.96V21H3zm6.75 0H13.5v1.67h.05c.49-.93 1.68-1.9 3.46-1.9C20.4 8.52 21 11 21 14.43V21h-3.96v-5.7c0-1.36-.02-3.11-1.9-3.11-1.9 0-2.19 1.49-2.19 3v5.81H9.75z")
+      ])
+    end,
+    behance: tag.svg(xmlns: "http://www.w3.org/2000/svg", viewBox: "0 0 24 24", fill: "currentColor", class: "w-5 h-5") do
+      tag.path(d: "M4.5 3H11a3.5 3.5 0 0 1 0 7c2.8 0 3.5 1.68 3.5 3.06C14.5 16.61 13.19 18 10.5 18H4.5V3zm3 10.5v2.5H10c1.11 0 1.5-.5 1.5-1.25S11.11 13.5 10 13.5H7.5zm0-6v2.5H10c1.05 0 1.5-.5 1.5-1.25S11.05 7.5 10 7.5H7.5zM17.25 7h4v1.5h-4zm-1.25 5.75A3.25 3.25 0 1 1 22.5 12v.75h-4.75c.1.92.83 1.75 2.25 1.75.93 0 1.88-.39 2.37-.87l1.08 1.92c-.86.79-2.2 1.45-3.7 1.45-2.64 0-4.25-1.73-4.25-3.25z")
+    end
+  } %>
+
   <div class="swiper multiple-slide-carousel swiper-container relative" data-controller="slider" data-slider-options-value='{"breakpoints":{"640":{"slidesPerView":1.5},"768":{"slidesPerView":2.2},"1280":{"slidesPerView":3.5}},"spaceBetween":24}'>
     <div class="swiper-wrapper mb-10">
-      <% [
-        { name: "Léa Martin", role: "Présidente", bio: "Trapéziste et coordinatrice d'événements culturels." },
-        { name: "Sofiane Dupont", role: "Vice-président", bio: "Graphiste et scénographe, passionné par la typographie." },
-        { name: "Anouk Vidal", role: "Trésorière", bio: "Responsable administratif et jongleuse multi-instrument." },
-        { name: "Marc Lemaire", role: "Secrétaire", bio: "Technicien plateau et photographe de la scène toulousaine." },
-        { name: "Julie Carmes", role: "Membre CA", bio: "Illustratrice et animatrice d'ateliers jeune public." },
-        { name: "Marius Conti", role: "Membre CA", bio: "Voltigeur, responsable sécurité et planning." }
-      ].each do |member| %>
+      <% @board_members.each do |member| %>
         <div class="swiper-slide">
           <article class="bg-white rounded-3xl border border-gray-200 shadow-md px-6 py-8 h-full flex flex-col items-center text-center space-y-4">
             <div class="w-32 h-32 rounded-full overflow-hidden bg-gray-100 shadow-inner">
-              <%= image_tag "placeholder_avatar.webp", alt: member[:name], class: "w-full h-full object-cover" %>
+              <%= image_tag member.fetch(:avatar, "placeholder_avatar.webp"), alt: member[:name], class: "w-full h-full object-cover" %>
             </div>
             <div class="space-y-1">
               <h3 class="text-lg font-semibold text-gray-900"><%= member[:name] %></h3>
-              <p class="text-sm uppercase tracking-[0.2em] text-[#1F5C55]"><%= member[:role] %></p>
+              <p class="text-sm uppercase tracking-[0.2em] text-brand-primary"><%= member[:role] %></p>
             </div>
             <p class="text-sm text-gray-600 leading-relaxed flex-1"><%= member[:bio] %></p>
+            <% if member[:socials].present? %>
+              <div class="flex items-center justify-center gap-3 text-gray-400">
+                <% member[:socials].each do |platform, url| %>
+                  <% icon = social_icons[platform.to_sym] %>
+                  <%= link_to url, target: "_blank", rel: "noopener", class: "hover:text-brand-primary transition", aria: { label: "Profil #{platform} de #{member[:name]}" } do %>
+                    <%= icon || tag.svg(xmlns: "http://www.w3.org/2000/svg", viewBox: "0 0 24 24", fill: "currentColor", class: "w-5 h-5") { tag.circle(cx: 12, cy: 12, r: 10) } %>
+                  <% end %>
+                <% end %>
+              </div>
+            <% end %>
             <span class="text-xs text-gray-400">Bénévole engagé·e</span>
           </article>
         </div>
       <% end %>
     </div>
     <div class="absolute flex justify-between items-center w-full -translate-x-1/2 left-1/2 top-1/2 -translate-y-1/2 z-50">
-      <button class="swiper-button-prev !border-[#1F5C55] !text-[#1F5C55] hover:!bg-[#1F5C55] hover:!text-white"></button>
-      <button class="swiper-button-next !border-[#1F5C55] !text-[#1F5C55] hover:!bg-[#1F5C55] hover:!text-white"></button>
+      <button class="swiper-button-prev swiper-arrow"></button>
+      <button class="swiper-button-next swiper-arrow"></button>
     </div>
   </div>
 </section>
@@ -86,19 +93,18 @@
 <section class="bg-white/95 rounded-[28px] shadow-lg p-6 sm:p-10 mt-12 fade-in border border-white/80"
          data-controller="timeline">
   <header class="text-center mb-6 space-y-2">
-    <p class="text-sm uppercase tracking-[0.3em] text-[#1F5C55]/70">Notre histoire</p>
+    <p class="text-sm uppercase tracking-[0.3em] text-brand-primary/70">Notre histoire</p>
     <h2 class="text-3xl font-semibold text-gray-800">Points de repère</h2>
   </header>
   <div class="space-y-6 relative timeline-line">
     <% [
-      { year: "2021", title: "Naissance du projet", body: "Un groupe d'artistes imagine un lieu de pratique partagé mêlant cirque et arts visuels." },
-      { year: "2022", title: "Ouverture du hangar", body: "Installation dans la Cartoucherie, premiers entraînements libres et résidences." },
-      { year: "2023", title: "Premiers événements publics", body: "Organisation de plateaux partagés, expositions et ateliers ouverts au quartier." },
-      { year: "2024", title: "Autogestion consolidée", body: "Mise en place d'un conseil d'administration élargi et d'équipes bénévoles thématiques." },
-      { year: "2025", title: "Vers de nouveaux horizons", body: "Développement d'actions hors les murs, partenariats écoles & compagnies, projets européens." }
+      { year: "2022", title: "Ouverture du hangar à la Cartoucherie", body: "Lancement des créneaux d'entraînement et installation des ateliers graphiques." },
+      { year: "2023", title: "Premiers événements publics", body: "Plateaux partagés, expositions et ateliers ouverts au quartier." },
+      { year: "2024", title: "Autogestion consolidée", body: "Conseil d'administration élargi et équipes bénévoles structurées." },
+      { year: "2025", title: "Nouveaux partenariats & hors les murs", body: "Actions extérieures, collaborations et projets itinérants." }
     ].each do |entry| %>
       <div class="timeline-step relative pl-12 md:pl-16" data-timeline-target="step">
-        <div class="absolute left-0 top-1 w-10 h-10 rounded-full bg-[#1F5C55] text-white flex items-center justify-center font-semibold shadow"><%= entry[:year] %></div>
+        <div class="absolute left-0 top-1 w-10 h-10 rounded-full bg-brand-primary text-white flex items-center justify-center font-semibold shadow"><%= entry[:year] %></div>
         <div class="bg-white/95 rounded-2xl border border-gray-100 shadow-md p-5 md:p-6">
           <h3 class="text-xl font-semibold text-gray-800 mb-2"><%= entry[:title] %></h3>
           <p class="text-gray-600"><%= entry[:body] %></p>
@@ -110,15 +116,34 @@
 
 <section class="bg-white/95 rounded-[28px] shadow-lg p-6 sm:p-10 mt-12 fade-in border border-white/80">
   <header class="text-center mb-6 space-y-2">
-    <p class="text-sm uppercase tracking-[0.3em] text-[#1F5C55]/70">Partenaires & soutiens</p>
+    <p class="text-sm uppercase tracking-[0.3em] text-brand-primary/70">Partenaires & soutiens</p>
     <h2 class="text-3xl font-semibold text-gray-800">Ils rendent l'aventure possible</h2>
     <p class="text-gray-600 max-w-2xl mx-auto">Collectivités, structures culturelles, écoles de cirque, ateliers d'artistes et sponsors solidaires : merci à celles et ceux qui nous accompagnent.</p>
   </header>
-  <%= turbo_frame_tag "partners", src: partners_path(format: :turbo_stream) do %>
-    <%= render "shared/partners", partners: @partners %>
-  <% end %>
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+    <% @partners.each do |partner| %>
+      <article class="bg-white rounded-2xl border border-gray-100 shadow-sm px-6 py-5 flex items-center gap-4">
+        <% if partner[:logo].present? && asset_available?(partner[:logo]) %>
+          <div class="w-16 h-16 rounded-xl bg-gray-100 flex items-center justify-center overflow-hidden">
+            <%= image_tag partner[:logo], alt: partner[:name], class: "max-h-full max-w-full object-contain" %>
+          </div>
+        <% else %>
+          <div class="w-16 h-16 rounded-xl bg-brand-primary/10 text-brand-primary flex items-center justify-center font-semibold text-lg">
+            <%= partner[:name].to_s.first(2).upcase %>
+          </div>
+        <% end %>
+        <div class="flex-1">
+          <p class="text-sm uppercase tracking-[0.2em] text-brand-primary/70"><%= partner[:category] %></p>
+          <h3 class="text-lg font-semibold text-gray-900"><%= partner[:name] %></h3>
+          <% if partner[:url].present? %>
+            <%= link_to "Visiter", partner[:url], class: "text-sm text-brand-primary hover:text-brand-accent", target: "_blank", rel: "noopener" %>
+          <% end %>
+        </div>
+      </article>
+    <% end %>
+  </div>
 </section>
 
 <section class="text-center mt-12 mb-12 fade-in">
-  <%= link_to "Nous contacter", page_path('contact_us'), class: "inline-flex items-center gap-2 px-8 py-4 tracking-wide text-white font-bold bg-[#1F5C55] border-2 border-[#1F5C55] rounded-full shadow-lg hover:bg-gray-100 hover:text-[#1F5C55] hover:border-[#1F5C55] transition-all duration-300" %>
+  <%= link_to "Nous rejoindre", page_path('become_member'), class: "btn-primary px-8 py-4 tracking-wide font-bold shadow-lg" %>
 </section>
