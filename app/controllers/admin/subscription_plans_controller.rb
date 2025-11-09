@@ -43,34 +43,19 @@ module Admin
     end
 
     def update
-      updater = SubscriptionPlanManagement::SubscriptionPlanUpdater.new(
-        subscription_plan_id: @subscription_plan.id,
-        attributes: subscription_plan_params,
-        updated_by_id: Current.user.id
-      )
-
-      result = updater.call
-
-      if result.success?
-        redirect_to admin_subscription_plans_path, notice: result.message
+      if @subscription_plan.update(subscription_plan_params)
+        redirect_to admin_subscription_plans_path, notice: "Plan de cotisation mis à jour avec succès !"
       else
-        flash.now[:alert] = result.message
+        flash.now[:alert] = @subscription_plan.errors.full_messages.to_sentence
         render :edit, status: :unprocessable_content
       end
     end
 
     def destroy
-      deleter = SubscriptionPlanManagement::SubscriptionPlanDeleter.new(
-        subscription_plan_id: @subscription_plan.id,
-        deleted_by_id: Current.user.id
-      )
-
-      result = deleter.call
-
-      if result.success?
-        redirect_to admin_subscription_plans_path, notice: result.message
+      if @subscription_plan.destroy
+        redirect_to admin_subscription_plans_path, notice: "Plan de cotisation supprimé avec succès !"
       else
-        redirect_to admin_subscription_plans_path, alert: result.message
+        redirect_to admin_subscription_plans_path, alert: @subscription_plan.errors.full_messages.to_sentence
       end
     end
 
@@ -81,17 +66,15 @@ module Admin
                         subscription_purchase_params[:custom_amount_cents]&.to_i || 0
       end
 
-      creator = SubscriptionManagement::SubscriptionCreator.new(
+      result = People::SubscriptionCreator.new(
         person: @person,
         subscription_plan_id: subscription_purchase_params[:subscription_plan_id],
         payment_method: subscription_purchase_params[:payment_method].presence || "cash",
-        recorded_by_id: Current.user.id,
+        recorded_by_id: Current.user&.id,
         record_attendance: false,
         custom_amount_cents: custom_amount,
         offer_reason: subscription_purchase_params[:offer_reason]
-      )
-
-      result = creator.call
+      ).call
 
       if result.success?
         redirect_to admin_user_path("person_#{@person.id}"), notice: "Plan de cotisation acheté avec succès !"
