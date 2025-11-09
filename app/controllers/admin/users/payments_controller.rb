@@ -27,39 +27,33 @@ module Admin
     # POST /admin/users/person_1/payments
     def create
       begin
-        # Calculer le total si plusieurs lignes
-        total_cents = if params[:payment_lines].present? && params[:payment_lines].any?
-          params[:payment_lines].sum { |line| line[:amount_cents].to_i }
+        normalized_lines = normalize_payment_lines(params[:payment_lines])
+
+        total_cents = if normalized_lines.any?
+          normalized_lines.sum { |line| line[:amount_cents].to_i }
         else
           payment_params[:total_cents].to_i
         end
 
-        # Utiliser PaymentCreatorWithLines pour paiements multiples, PaymentCreator pour paiement simple
-        if params[:payment_lines].present? && params[:payment_lines].length > 1
-          creator = PaymentManagement::PaymentCreatorWithLines.new(
-            person_id: @person.id,
-            total_cents: total_cents,
-            payment_method: payment_params[:payment_method] || "cash",
-            recorded_by_id: Current.user.id,
-            payment_lines: params[:payment_lines],
-            notes: payment_params[:notes]
-          )
+        service_params = {
+          person: @person,
+          payment_method: payment_params[:payment_method] || "cash",
+          recorded_by_id: Current.user&.id,
+          notes: payment_params[:notes]
+        }
+
+        if normalized_lines.any?
+          service_params[:payment_lines] = normalized_lines
+          service_params[:total_cents] = total_cents
         else
-          # Paiement simple (1 ligne ou donation)
-          first_line = params[:payment_lines]&.first
-          creator = PaymentManagement::PaymentCreator.new(
-            person_id: @person.id,
-            amount_cents: total_cents,
-            payment_method: payment_params[:payment_method] || "cash",
-            recorded_by_id: Current.user.id,
-            item_type: first_line ? first_line[:item_type] : "Donation",
-            item_id: first_line ? first_line[:item_id] : @person.id,
-            description: first_line ? first_line[:description] : "Paiement",
-            notes: payment_params[:notes]
-          )
+          first_line = normalized_lines.first
+          service_params[:amount_cents] = total_cents
+          service_params[:item_type] = first_line ? first_line[:item_type] : "Donation"
+          service_params[:item_id] = first_line ? first_line[:item_id] : @person.id
+          service_params[:description] = first_line ? first_line[:description] : "Paiement"
         end
 
-        result = creator.call
+        result = People::PaymentCreator.new(service_params).call
 
         if result.success?
           redirect_to admin_user_path("person_#{@person.id}"), notice: "Paiement créé avec succès"
@@ -86,20 +80,17 @@ module Admin
       def update
         @payment = @person.payments.find(params[:id])
 
-        # Utiliser le service PaymentManagement::PaymentUpdater pour cohérence
         total_cents = payment_params[:total_cents]
         total_cents = (total_cents.to_f * 100).to_i if total_cents.present?
 
-        updater = PaymentManagement::PaymentUpdater.new(
+        result = People::PaymentUpdater.new(
           payment_id: @payment.id,
           total_cents: total_cents || @payment.total_cents,
           payment_method: payment_params[:payment_method] || @payment.payment_method,
           status: payment_params[:status] || @payment.status,
           notes: payment_params[:notes] || @payment.notes,
           updated_by_id: Current.user.id
-        )
-
-        result = updater.call
+        ).call
 
         if result.success?
           redirect_to admin_user_path("person_#{@person.id}"), notice: "Paiement mis à jour avec succès"
@@ -112,14 +103,11 @@ module Admin
       def destroy
         @payment = @person.payments.find(params[:id])
 
-        # Utiliser le service PaymentManagement::PaymentDeleter pour cohérence
-        deleter = PaymentManagement::PaymentDeleter.new(
+        result = People::PaymentCanceller.new(
           payment_id: @payment.id,
           deleted_by_id: Current.user.id,
           reason: "Suppression via interface admin"
-        )
-
-        result = deleter.call
+        ).call
 
         if result.success?
           redirect_to admin_user_path("person_#{@person.id}"), notice: "Paiement supprimé avec succès"
@@ -133,15 +121,12 @@ module Admin
       @payment = @person.payments.find(params[:id])
 
       begin
-        # Utiliser le service PaymentManagement::PaymentUpdater pour traiter le paiement
         if @payment.pending?
-          updater = PaymentManagement::PaymentUpdater.new(
+          result = People::PaymentUpdater.new(
             payment_id: @payment.id,
             status: "success",
             updated_by_id: Current.user.id
-          )
-
-          result = updater.call
+          ).call
 
           if result.success?
             redirect_to admin_user_path("person_#{@person.id}"), notice: "Paiement traité avec succès"
@@ -185,6 +170,13 @@ module Admin
           :notes,
           :recorded_by_id
         )
+      end
+
+      def normalize_payment_lines(lines_param)
+        Array(lines_param).compact_blank.map do |line|
+          line = line.to_unsafe_h if line.respond_to?(:to_unsafe_h)
+          line.symbolize_keys
+        end
       end
     end
   end

@@ -51,95 +51,30 @@ module Admin
     def call
       return failure("Invalid data: #{errors.full_messages.join(', ')}") unless valid?
 
-      ActiveRecord::Base.transaction do
-        if person_id.present?
-          create_user_for_existing_person
-        else
-          create_person_and_user
-        end
+      existing_person = person_id.present? ? Person.active.find_by(id: person_id) : nil
+      return failure("Person not found") if person_id.present? && existing_person.nil?
+
+      result = People::Register.new(
+        person_params: person_attributes.except(:newsletter_subscribed).compact_blank,
+        existing_person: existing_person,
+        newsletter_subscribed: newsletter_subscribed,
+        newsletter_source: "admin",
+        create_user_account: create_web_account,
+        user_params: user_creation_params(compact: true),
+        create_membership: create_membership,
+        membership_params: membership_creation_params
+      ).call
+
+      if result.success?
+        success(result.person, translate_success_message(result))
+      else
+        failure(translate_error_message(result.message), result.errors)
       end
     rescue ActiveRecord::RecordInvalid => e
       failure(e.message)
     end
 
     private
-
-    def create_user_for_existing_person
-      person = Person.active.find(person_id)
-
-      # Vérifier si cette personne a déjà un compte User
-      if person.user.present?
-        return failure("Cette personne a déjà un compte web. ID User: #{person.user.id}")
-      end
-
-      # Créer le User si compte web demandé
-      if create_web_account == true
-        # Un compte web nécessite un email
-        if person.email.blank? && email_address.blank?
-          return failure("Un email est obligatoire pour créer un compte web.")
-        end
-
-        result = UserManagement::AccountCreator.new(
-          person: person,
-          user_email: email_address.presence || person.email,
-          user_password: SecureRandom.hex(8),
-          user_system_role: system_role,
-          created_by_admin: true,
-          cgu: true,
-          privacy_policy: true
-        ).call
-
-        return failure(result.errors.join(", ")) unless result.success?
-      end
-
-      success(person, "Compte web créé avec succès !")
-    end
-
-    def create_person_and_user
-      begin
-        # Créer une nouvelle Person directement (sans newsletter_subscribed)
-        person = Person.create!(person_attributes.except(:newsletter_subscribed))
-
-        # Créer NewsletterSubscriber si demandé (nouvelle logique)
-        if newsletter_subscribed == true && person.email.present?
-          NewsletterSubscriber.create!(
-            email: person.email,
-            person: person,
-            source: "admin",
-            subscribed: true
-          )
-        end
-
-        # Créer le User si compte web demandé
-        if create_web_account == true
-          user = person.build_user(
-            email_address: email_address,
-            password: SecureRandom.hex(8),
-            system_role: system_role,
-            created_by_admin: true
-          )
-          user.cgu = true
-          user.privacy_policy = true
-          user.save!
-        end
-
-        # Créer l'adhésion si demandée
-        if create_membership == true
-          membership_type = MembershipType.find(membership_type_id)
-          person.create_membership!(
-            membership_type,
-            payment_method: payment_method,
-            recorded_by: Current.user
-          )
-        end
-
-        success(person, "Personne et compte créés avec succès !")
-      rescue ActiveRecord::RecordInvalid => e
-        failure("Erreur de validation: #{e.message}")
-      rescue => e
-        failure("Erreur lors de la création: #{e.message}")
-      end
-    end
 
     def person_attributes
       {
@@ -167,6 +102,25 @@ module Admin
       }
     end
 
+    def user_creation_params(compact: false)
+      payload = {
+        email_address: email_address,
+        system_role: system_role,
+        created_by_admin: true
+      }
+      compact ? payload.compact_blank : payload
+    end
+
+    def membership_creation_params
+      return {} unless create_membership == true
+
+      {
+        membership_type_id: membership_type_id,
+        payment_method: payment_method,
+        recorded_by_id: Current.user&.id
+      }.compact_blank
+    end
+
     def success(person, message)
       OpenStruct.new(
         success?: true,
@@ -175,12 +129,30 @@ module Admin
       )
     end
 
-    def failure(message)
+    def failure(message, error_list = nil)
       OpenStruct.new(
         success?: false,
-        errors: [ message ],
+        errors: Array(error_list || message),
         message: message
       )
+    end
+
+    def translate_success_message(result)
+      if result.user && result.membership
+        "Personne, compte web et adhésion créés avec succès !"
+      elsif result.user
+        "Personne et compte web créés avec succès !"
+      elsif result.membership
+        "Personne et adhésion créées avec succès !"
+      else
+        "Personne créée avec succès !"
+      end
+    end
+
+    def translate_error_message(message)
+      return "Cette personne a déjà un compte web." if message.include?("déjà un compte web") || message.include?("already has a user")
+      return "Un email est obligatoire pour créer un compte web." if message.include?("email is required")
+      message
     end
   end
 end

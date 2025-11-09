@@ -41,66 +41,10 @@ module Admin
       @person = Person.find(membership_purchase_params[:person_id])
       membership_type = MembershipType.find(membership_purchase_params[:membership_type_id])
 
-      begin
-        # Vérifier si c'est un upgrade
-        if membership_purchase_params[:upgrade] == "true" && @person.current_membership&.basic?
-          # Utiliser le service MembershipManagement::MembershipUpgrader
-          custom_amount = membership_purchase_params[:payment_method] == "offered" ?
-                         (membership_purchase_params[:custom_amount_cents]&.to_i || 0) : nil
-
-          upgrader = MembershipManagement::MembershipUpgrader.new(
-            person: @person,
-            new_membership_type_id: membership_type.id,
-            payment_method: membership_purchase_params[:payment_method],
-            recorded_by_id: Current.user.id,
-            custom_amount_cents: custom_amount,
-            offer_reason: membership_purchase_params[:offer_reason]
-          )
-
-          result = upgrader.call
-
-          if result.success?
-            # Construire le message de succès (plein tarif du nouveau type)
-            message = if membership_purchase_params[:payment_method] == "offered"
-              "Adhésion upgradée avec succès ! #{membership_type.name} - Offert"
-            else
-              "Adhésion upgradée avec succès ! #{membership_type.name} - Montant: #{(membership_type.price_cents / 100.0).round(2)}€"
-            end
-
-            # Ajouter l'information sur le changement de numéro d'adhérent
-            if result.member_number_changed
-              message += " | Numéro d'adhérent changé: #{result.old_member_number} → #{result.new_member_number}"
-            end
-
-            redirect_to admin_user_path("person_#{@person.id}"), notice: message
-          else
-            redirect_to new_admin_membership_path(person_id: @person.id, upgrade: membership_purchase_params[:upgrade]),
-                        alert: "Erreur lors de l'upgrade: #{result.message}"
-          end
-        else
-          # Création d'une nouvelle adhésion
-          custom_amount = membership_purchase_params[:payment_method] == "offered" ?
-                         (membership_purchase_params[:custom_amount_cents]&.to_i || 0) : nil
-
-          creator = MembershipManagement::MembershipCreator.new(
-            person: @person,
-            membership_type_id: membership_type.id,
-            payment_method: membership_purchase_params[:payment_method],
-            recorded_by_id: Current.user.id,
-            custom_amount_cents: custom_amount,
-            offer_reason: membership_purchase_params[:offer_reason]
-          )
-
-          result = creator.call
-
-          if result.success?
-            redirect_to admin_user_path("person_#{@person.id}"),
-                        notice: "Adhésion créée avec succès ! Vous pouvez maintenant ajouter une cotisation depuis la fiche utilisateur."
-          else
-            redirect_to new_admin_membership_path(person_id: @person.id),
-                        alert: "Erreur lors de la création de l'adhésion: #{result.message}"
-          end
-        end
+      if membership_purchase_params[:upgrade] == "true" && @person.current_membership&.basic?
+        handle_upgrade_flow(@person, membership_type)
+      else
+        handle_creation_flow(@person, membership_type)
       end
     end
 
@@ -113,18 +57,16 @@ module Admin
     def update
       @membership = @person.current_membership
 
-      updater = MembershipManagement::MembershipUpdater.new(
+      result = People::MembershipUpdater.new(
         membership_id: @membership.id,
         membership_type_id: membership_params[:membership_type_id],
         started_at: membership_params[:started_at],
         ended_at: membership_params[:ended_at],
         updated_by_id: Current.user.id
-      )
-
-      result = updater.call
+      ).call
 
       if result.success?
-        redirect_to admin_user_path("person_#{@person.id}"), notice: result.message
+        redirect_to admin_user_path("person_#{@person.id}"), notice: "Adhésion mise à jour avec succès."
       else
         flash[:alert] = result.message
         redirect_to edit_admin_membership_path(@membership)
@@ -134,16 +76,14 @@ module Admin
     def destroy
       @membership = @person.current_membership
 
-      deactivator = MembershipManagement::MembershipDeactivator.new(
+      result = People::MembershipDeactivator.new(
         membership_id: @membership.id,
         deactivated_by_id: Current.user.id,
         reason: "Désactivation via interface admin"
-      )
-
-      result = deactivator.call
+      ).call
 
       if result.success?
-        redirect_to admin_memberships_path, notice: result.message
+        redirect_to admin_memberships_path, notice: "Adhésion désactivée avec succès."
       else
         redirect_to admin_memberships_path, alert: result.message
       end
@@ -168,9 +108,76 @@ module Admin
     end
 
     def membership_purchase_params
-      params.require(:membership).permit(:person_id, :membership_type_id, :payment_method, :custom_amount_cents, :offer_reason, :upgrade).merge(
-        recorded_by_id: Current.user.id
-      )
+      params.require(:membership).permit(:person_id, :membership_type_id, :payment_method, :custom_amount_cents, :offer_reason, :upgrade)
+    end
+
+    def payment_method_from(params_hash)
+      params_hash[:payment_method].presence || "cash"
+    end
+
+    def custom_amount_from(params_hash)
+      return nil unless params_hash[:payment_method] == "offered"
+
+      params_hash[:custom_amount_cents].to_i
+    end
+
+    def handle_upgrade_flow(person, membership_type)
+      params_hash = membership_purchase_params
+      result = People::MembershipUpgrader.new(
+        person: person,
+        new_membership_type_id: membership_type.id,
+        payment_method: payment_method_from(params_hash),
+        recorded_by_id: Current.user.id,
+        custom_amount_cents: custom_amount_from(params_hash),
+        offer_reason: params_hash[:offer_reason]
+      ).call
+
+      if result.success?
+        redirect_to admin_user_path("person_#{person.id}"), notice: build_upgrade_notice(membership_type, result, payment_method_from(params_hash))
+      else
+        redirect_to new_admin_membership_path(person_id: person.id, upgrade: params_hash[:upgrade]),
+                    alert: "Erreur lors de l'upgrade: #{result.message}"
+      end
+    end
+
+    def handle_creation_flow(person, membership_type)
+      params_hash = membership_purchase_params
+      result = People::MembershipCreator.new(
+        person: person,
+        membership_type_id: membership_type.id,
+        payment_method: payment_method_from(params_hash),
+        recorded_by_id: Current.user.id,
+        custom_amount_cents: custom_amount_from(params_hash),
+        offer_reason: params_hash[:offer_reason]
+      ).call
+
+      if result.success?
+        if result.already_existed
+          redirect_to new_admin_membership_path(person_id: person.id),
+                      alert: "Cette personne possède déjà une adhésion active."
+        else
+          redirect_to admin_user_path("person_#{person.id}"),
+                      notice: "Adhésion créée avec succès ! Vous pouvez maintenant ajouter une cotisation depuis la fiche utilisateur."
+        end
+      else
+        redirect_to new_admin_membership_path(person_id: person.id),
+                    alert: "Erreur lors de la création de l'adhésion: #{result.message}"
+      end
+    end
+
+    def build_upgrade_notice(membership_type, result, payment_method)
+      message = if payment_method == "offered"
+        "Adhésion upgradée avec succès ! #{membership_type.name} - Offert"
+      else
+        amount = result.payment&.total_cents || membership_type.price_cents
+        "Adhésion upgradée avec succès ! #{membership_type.name} - Montant: #{(amount / 100.0).round(2)}€"
+      end
+
+      if result.member_number_changed
+        message += " | Numéro d'adhérent changé: #{result.old_member_number} → #{result.new_member_number}"
+      end
+
+      message
     end
   end
 end

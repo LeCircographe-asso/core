@@ -3,15 +3,13 @@ module Admin
     before_action :set_person
 
     def upgrade
-      upgrader = SubscriptionManagement::SubscriptionUpgrader.new(
+      result = People::SubscriptionUpgrader.new(
         person: @person,
         from_book_id: params[:from_book_id],
         to_plan_id: params[:to_plan_id],
         payment_method: params[:payment_method] || "cash",
         recorded_by_id: Current.user.id
-      )
-
-      result = upgrader.call
+      ).call
 
       if result.success?
         credit_message = result.credit_applied.positive? ? " Crédit appliqué: #{result.credit_applied / 100.0}€" : ""
