@@ -18,9 +18,7 @@
 @import "./components/flash.css";
 @import "./components/events.css";
 @import "./components/admin_table.css";
-@import "./components/events.css";
-@import "./components/admin_table.css";
-@import "./components/events.css";
+@import "./components/actiontext.css";
 
 @layer base {
   /* Local fonts first (Propshaft rewrites /fonts/... to fingerprinted assets) */
