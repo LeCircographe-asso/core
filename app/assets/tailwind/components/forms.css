@@ -1,0 +1,14 @@
+@layer components {
+  .focus-accent {
+    @apply focus:outline-none focus:ring-1 focus:ring-[#5836A5] focus:border-[#5836A5];
+  }
+
+  .focus-accent-strong {
+    @apply focus:outline-none focus:ring-2 focus:ring-[#5836A5] focus:border-[#5836A5];
+  }
+
+  .form-control {
+    @apply block w-full px-4 py-2 text-gray-800 placeholder-gray-400 bg-white border border-gray-200 rounded-lg transition focus:outline-none focus:ring-1 focus:ring-[#5836A5] focus:border-[#5836A5];
+  }
+}
+

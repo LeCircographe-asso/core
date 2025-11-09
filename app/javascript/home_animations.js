@@ -17,21 +17,17 @@ function initAnimations() {
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     
     if (prefersReducedMotion) {
-        // Afficher immédiatement tout le contenu sans animation
         if (titleElement) titleElement.classList.remove('opacity-0');
         if (mainButton) mainButton.classList.remove('opacity-0');
         if (mainContent) mainContent.classList.remove('opacity-0');
         if (map) map.classList.remove('opacity-0');
         if (scrollArrow) scrollArrow.classList.remove('opacity-0');
     } else {
-        // Animation lettre par lettre pour le titre
         if (titleElement) animateTextLetterByLetter(titleElement);
-        
-        // Animation des autres éléments après le titre
         if (mainButton) setTimeout(() => mainButton.classList.remove('opacity-0'), 1500);
         if (scrollArrow) setTimeout(() => scrollArrow.classList.remove('opacity-0'), 1800);
-        if (mainContent) setTimeout(() => mainContent.classList.remove('opacity-0'), 2000);
-        if (map) setTimeout(() => map.classList.remove('opacity-0'), 2000);
+        if (mainContent) mainContent.classList.remove('opacity-0');
+        if (map) map.classList.remove('opacity-0');
     }
     
     // Fallback de sécurité - rendre tout visible si JavaScript échoue partiellement
@@ -106,7 +102,7 @@ function initSmoothScroll() {
                 const header = document.querySelector('header');
                 const offset = header ? header.offsetHeight + 24 : 0;
                 const targetPosition = targetElement.getBoundingClientRect().top + window.pageYOffset - offset;
-
+                
                 window.scrollTo({
                     top: Math.max(targetPosition, 0),
                     behavior: 'smooth'

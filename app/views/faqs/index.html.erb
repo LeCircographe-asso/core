@@ -1,0 +1,56 @@
+<% content_for :title, "Le Circographe - FAQ" %>
+
+<section class="relative overflow-hidden rounded-[32px] shadow-2xl mb-16">
+  <%= image_tag hero_image(:faq_hero), class: "absolute inset-0 w-full h-full object-cover hero-img-filter", alt: "" %>
+  <div class="hero-overlay"></div>
+  <div class="relative hero-panel space-y-6">
+    <p class="text-sm uppercase tracking-[0.35em] text-white/70">Prépare ta venue</p>
+    <h1 class="font-circographe text-3xl sm:text-4xl lg:text-5xl font-bold leading-snug"><%= @hero %></h1>
+    <p class="max-w-3xl text-lg text-white/85 leading-relaxed">
+      Cette page rassemble les réponses les plus demandées avant de franchir les portes du Circographe.
+      Lis-la comme une courte histoire : tu découvres le lieu, tu adhères, tu vis le projet. Et si une question reste, on se retrouve plus bas.
+    </p>
+  </div>
+</section>
+
+<section class="max-w-4xl mx-auto w-full space-y-6 px-6 sm:px-8 lg:px-10 py-10 bg-white/90 border border-white/80 rounded-[28px] shadow-xl backdrop-blur" data-controller="accordion">
+  <header class="text-center space-y-3">
+    <p class="text-sm uppercase tracking-[0.3em] text-brand-primary/70">Questions fréquentes</p>
+    <h2 class="text-3xl font-semibold text-gray-900">Ton passage au Circographe pas à pas</h2>
+    <p class="text-gray-600 leading-relaxed">Chaque réponse éclaire un moment clé : comprendre l’adhésion, sentir l’esprit des entraînements, ou réserver la salle pour ton projet artistique.</p>
+  </header>
+
+  <div class="space-y-3">
+    <% @entries.each_with_index do |entry, index| %>
+      <article class="bg-white border border-gray-100 rounded-2xl shadow-sm transition hover:border-[#1F5C55]/40 hover:shadow-md focus-within:border-[#1F5C55]/40 focus-within:shadow-md">
+        <h3 id="faq-heading-<%= index %>">
+          <button
+            type="button"
+            class="flex items-center justify-between w-full text-left text-lg font-semibold text-gray-900 transition-colors px-4 py-4 rounded-2xl focus:outline-none focus-visible:ring-2 focus-visible:ring-[#5836A5] focus-visible:ring-offset-2 focus-visible:ring-offset-white"
+            data-accordion-target="#faq-panel-<%= index %>"
+            aria-expanded="false"
+            aria-controls="faq-panel-<%= index %>"
+            id="faq-header-<%= index %>">
+            <span><%= entry[:question] %></span>
+            <svg data-accordion-icon class="w-4 h-4 rotate-180 shrink-0 transition-transform text-brand-primary" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
+              <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5 5 1 1 5" />
+            </svg>
+          </button>
+        </h3>
+        <div
+          id="faq-panel-<%= index %>"
+          class="hidden px-4 pb-6 text-base text-gray-700 leading-relaxed space-y-3"
+          role="region"
+          aria-labelledby="faq-header-<%= index %>"
+        >
+          <p><%= entry[:answer] %></p>
+        </div>
+      </article>
+    <% end %>
+  </div>
+</section>
+
+<div class="mt-12 flex justify-center">
+  <%= link_to @cta_label, contact_path, class: "btn-primary shadow-lg" %>
+</div>
+

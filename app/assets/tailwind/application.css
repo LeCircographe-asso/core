@@ -1,95 +1,130 @@
-/* Local fonts first (Propshaft rewrites /fonts/... to fingerprinted assets) */
-@font-face {
-  font-family: "Circographe";
-  src: url("/fonts/Circographe-Regular.woff") format("woff");
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "Rough Typewriter";
-  src: url("/fonts/Rough_typewriter.woff") format("woff");
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "Rough Typewriter";
-  src: url("/fonts/Rough_typewriter-itl.woff") format("woff");
-  font-weight: 400;
-  font-style: italic;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "Rough Typewriter";
-  src: url("/fonts/Rough_typewriter-bld-itl.woff") format("woff");
-  font-weight: 700;
-  font-style: italic;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "Roboto";
-  src: url("/fonts/Roboto-Regular.woff2") format("woff2"),
-       url("/fonts/Roboto-Regular.woff") format("woff");
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-}
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+@import "tailwindcss";
+
+@import "./components/buttons.css";
+@import "./components/forms.css";
+@import "./components/hero.css";
+@import "./components/badges.css";
+@import "./components/layout.css";
+@import "./components/dashboard.css";
+@import "./components/timeline.css";
+@import "./components/admin_sidebar.css";
+@import "./components/animations.css";
+@import "./components/tooltips.css";
+@import "./components/stripe.css";
+@import "./components/flash.css";
+@import "./components/events.css";
+@import "./components/admin_table.css";
+@import "./components/actiontext.css";
+@import "./components/swiper_overrides.css";
+
 @layer base {
-  body { @apply font-sans; }
+  /* Local fonts first (Propshaft rewrites /fonts/... to fingerprinted assets) */
+  @font-face {
+    font-family: "Circographe";
+    src: url("/fonts/Circographe-Regular.woff") format("woff");
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+  }
+
+  @font-face {
+    font-family: "Rough Typewriter";
+    src: url("/fonts/Rough_typewriter.woff") format("woff");
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+  }
+
+  @font-face {
+    font-family: "Rough Typewriter";
+    src: url("/fonts/Rough_typewriter-itl.woff") format("woff");
+    font-weight: 400;
+    font-style: italic;
+    font-display: swap;
+  }
+
+  @font-face {
+    font-family: "Rough Typewriter";
+    src: url("/fonts/Rough_typewriter-bld-itl.woff") format("woff");
+    font-weight: 700;
+    font-style: italic;
+    font-display: swap;
+  }
+
+  @font-face {
+    font-family: "Roboto";
+    src: url("/fonts/Roboto-Regular.woff2") format("woff2"),
+         url("/fonts/Roboto-Regular.woff") format("woff");
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+  }
+
+  :root {
+    --brand-primary: #1F5C55;
+    --brand-accent: #5836A5;
+  }
+
+  body {
+    @apply font-sans;
+  }
+
+  html {
+    @apply h-full;
+    overflow-y: auto;
+  }
+
+  html::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  html::-webkit-scrollbar-thumb {
+    background: #1f5c55;
+    border-radius: 9999px;
+  }
+
+  html::-webkit-scrollbar-thumb:hover {
+    background: #174743;
+  }
+
+  html::-webkit-scrollbar-button {
+    display: none;
+  }
+
+  html::-webkit-scrollbar-track {
+    background-color: #fff8f8;
+    opacity: 0.2;
+  }
 }
 
 @layer utilities {
   .font-circographe { font-family: "Circographe", Arial, sans-serif; }
   .font-rough-typewriter { font-family: "Rough Typewriter", monospace; }
   .font-roboto { font-family: "Roboto", "Inter", "Segoe UI", sans-serif; }
+
+  .text-brand-primary { color: #1F5C55; }
+  .text-brand-primary\/70 { color: rgba(31, 92, 85, 0.7); }
+  .bg-brand-primary { background-color: #1F5C55; }
+  .bg-brand-primary\/5 { background-color: rgba(31, 92, 85, 0.05); }
+  .bg-brand-primary\/10 { background-color: rgba(31, 92, 85, 0.1); }
+  .border-brand-primary { border-color: #1F5C55; }
+  .border-brand-primary\/20 { border-color: rgba(31, 92, 85, 0.2); }
+
+  .text-brand-accent { color: #5836A5; }
+  .bg-brand-accent { background-color: #5836A5; }
+  .bg-brand-accent\/10 { background-color: rgba(88, 54, 165, 0.1); }
+  .border-brand-accent { border-color: #5836A5; }
+  .border-brand-accent\/20 { border-color: rgba(88, 54, 165, 0.2); }
+
+  .focus-visible\:outline-brand-primary:focus-visible { outline-color: #1F5C55; }
+  .focus-visible\:outline-brand-accent:focus-visible { outline-color: #5836A5; }
+  .focus\:outline-brand-primary:focus { outline-color: #1F5C55; }
+  .focus\:outline-brand-accent:focus { outline-color: #5836A5; }
+  .focus\:border-\[\#1F5C55\]:focus { border-color: #5836A5; }
+  .focus\:ring-\[\#1F5C55\]:focus { --tw-ring-color: #5836A5; }
 }
-@import "tailwindcss";
 
-@layer base {
-    /* Appliquer la hauteur pleine et la scrollbar uniquement à html */
-
-    html {
-      @apply h-full;
-      overflow-y: auto; /* Scrollbar uniquement ici */
-    }
-  
-    /* Pour Chrome, Edge, et Safari */
-    html::-webkit-scrollbar {
-      width: 4px; /* largeur de la scrollbar */
-    }
-
-    html::-webkit-scrollbar-thumb {
-      background: #1f5c55; /* Couleur exacte #1f5c55 */
-      border-radius: 9999px; /* Arrondi complet (équivalent à rounded-full) */
-    }
-  
-    html::-webkit-scrollbar-thumb:hover {
-      background: #174743; /* Légère variation pour le hover (assombrissement de #1f5c55) */
-    }
-  
-    /* Supprimer les flèches (boutons) sur Webkit */
-    html::-webkit-scrollbar-button {
-      display: none; /* Masquer les flèches */
-    }
-  }
-  html::-webkit-scrollbar-track {
-    background-color: #fff8f8; /* Exemple: couleur gray-200 de Tailwind */
-    opacity: 0.2; /* Rend ce gris semi-transparent */
-  }
-
-@layer components {
-  .footer-divider {
-    margin-top: 2rem !important;
-    margin-bottom: 2rem !important;
-  }
-}

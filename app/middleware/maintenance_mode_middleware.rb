@@ -47,7 +47,7 @@ class MaintenanceModeMiddleware
   end
 
   def maintenance_response
-    logo_src = inline_asset_data("Le-Circographe-crop.webp") || asset_path("Le-Circographe-crop.webp")
+    logo_src = inline_asset_data("logo.webp") || asset_path("logo.webp")
     body = <<~HTML
       <!DOCTYPE html>
       <html lang="fr">

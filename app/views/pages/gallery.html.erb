@@ -3,9 +3,33 @@
     </section>
 
     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-12 fade-in">
-        <% image_files = ["lelieu1.webp", "lelieu2.webp", "graff-img1.webp", "circus-img2.webp", 
-                     "background.webp", "home1.webp", "home2.webp", "home3.webp", 
-                     "background_temp.webp", "jongleur.jpg", "graff.jpg", "place.jpg"] %>
+    <% base_images = %w[
+         lelieu1.webp
+         lelieu2.webp
+         graff-img1.webp
+         circus-img2.webp
+         background.webp
+         flowersZoomed.webp
+       ] %>
+    <% excluded_images = base_images + %w[
+         users.png
+         userPicture.webp
+         placeholder_avatar.webp
+         memberVolunteer.webp
+         memberWithMembership.webp
+         circusMember.webp
+         super_admin.webp
+         admin.webp
+         adminUser.webp
+         logo.webp
+         logo.webp
+         circo-admin.webp
+         volunteer.webp
+       ] %>
+    <% hero_pool = available_hero_images(except: excluded_images) %>
+    <% needed = [12 - base_images.size, 0].max %>
+    <% dynamic_hero_images = hero_pool.sample([needed, hero_pool.size].min) %>
+    <% image_files = (base_images + dynamic_hero_images).uniq.first(12) %>
 
         <% image_files.each do |image| %>
         <div class="relative fade-in">

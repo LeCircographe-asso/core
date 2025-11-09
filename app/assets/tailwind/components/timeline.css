@@ -1,0 +1,18 @@
+@layer components {
+  .timeline-line::before {
+    content: "";
+    position: absolute;
+    top: 0.75rem;
+    left: 1.1rem;
+    width: 2px;
+    height: 100%;
+    background: linear-gradient(180deg, rgba(31, 92, 85, 0.25), rgba(31, 92, 85, 0));
+  }
+
+  @media (min-width: 768px) {
+    .timeline-line::before {
+      left: 1.3rem;
+    }
+  }
+}
+
