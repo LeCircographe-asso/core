@@ -34,20 +34,9 @@ class OpeningHoursController < BaseController
       end
     end
 
-    updater = OpeningHoursManagement::OpeningHoursUpdater.new(
-      opening_hours: updated_hours,
-      updated_by_id: Current.user.id
-    )
-
-    result = updater.call
-
-    if result.success?
-      redirect_to admin_opening_hours_path, notice: result.message
-    else
-      @opening_hours = updated_hours
-      @error_message = result.message
-      render :edit, status: :unprocessable_content
-    end
+    # Persist via cache for now (can be moved to a Setting model later)
+    Rails.cache.write("opening_hours", updated_hours)
+    redirect_to admin_opening_hours_path, notice: "Horaires mis à jour avec succès"
   end
 
 
