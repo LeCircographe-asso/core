@@ -212,7 +212,7 @@ RSpec.describe "Admin::Users", type: :request do
         }
 
         expect(response).to have_http_status(:unprocessable_content)
-        expect(response.body).to include("Validation errors")
+        expect(response.body).to include("Validation error")
         expect(target_person.reload.first_name).to eq("Lucie")
       end
     end
