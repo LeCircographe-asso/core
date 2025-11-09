@@ -56,15 +56,22 @@ module Admin
           # Adhésion cirque -> peut ajouter des cotisations
           active_book = person.book_of_entries.active.first
 
+          buttons = []
           if active_book && active_book.remaining_entries > 0
-            link_to "Voir cotisation (#{active_book.remaining_entries} restantes)",
-                    admin_user_path(person.user ? person.user.id : "person_#{person.id}"),
-                    class: "inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#1F5C55] hover:bg-[#194A45] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1F5C55]"
-          else
-            link_to "Ajouter une cotisation",
-                    new_admin_subscription_plan_path(person_id: person.id),
-                    class: "inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#1F5C55] hover:bg-[#194A45] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1F5C55]"
+            buttons << link_to(
+              "Voir cotisation (#{active_book.remaining_entries} restantes)",
+              admin_user_path(person.user ? person.user.id : "person_#{person.id}"),
+              class: "inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#1F5C55] hover:bg-[#194A45] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1F5C55] mr-2"
+            )
           end
+
+          buttons << link_to(
+            "Ajouter une cotisation",
+            new_admin_subscription_plan_path(person_id: person.id),
+            class: "inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#1F5C55] hover:bg-[#194A45] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1F5C55]"
+          )
+
+          safe_join(buttons)
         else
           # Autres cas
           content_tag :span, "Non applicable",

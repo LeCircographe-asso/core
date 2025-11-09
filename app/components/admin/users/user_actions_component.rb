@@ -80,15 +80,22 @@ class Admin::Users::UserActionsComponent < ViewComponent::Base
     elsif current_membership.membership_type.circus?
       active_book = person.book_of_entries.active.first
 
+      links = []
       if active_book && active_book.remaining_entries > 0
-        link_to "Voir cotisation (#{active_book.remaining_entries} restantes)",
-                admin_user_path(user ? user.id : "person_#{person.id}") + "#payments",
-                class: "inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#1F5C55] hover:bg-[#194A45] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1F5C55]"
-      else
-        link_to "Ajouter une cotisation",
-                new_admin_subscription_plan_path(person_id: person.id),
-                class: "inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#1F5C55] hover:bg-[#194A45] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1F5C55]"
+        links << link_to(
+          "Voir cotisation (#{active_book.remaining_entries} restantes)",
+          admin_user_path(user ? user.id : "person_#{person.id}") + "#payments",
+          class: "inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#1F5C55] hover:bg-[#194A45] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1F5C55] mr-2"
+        )
       end
+
+      links << link_to(
+        "Ajouter une cotisation",
+        new_admin_subscription_plan_path(person_id: person.id),
+        class: "inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#1F5C55] hover:bg-[#194A45] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1F5C55]"
+      )
+
+      safe_join(links)
     else
       content_tag :span, "Non applicable",
                   class: "inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-500 bg-gray-100"
