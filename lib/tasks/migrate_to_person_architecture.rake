@@ -62,14 +62,18 @@ namespace :migration do
     User.includes(:person).find_each do |user|
       next if user.person.present? # Skip if already migrated
 
-      person = Person.create!(
+      creator = People::PersonCreator.new(
         first_name: user.first_name || "Unknown",
         last_name: user.last_name || "User",
         email: user.email,
-        phone: nil, # Will be filled later if needed
-        created_at: user.created_at,
-        updated_at: user.updated_at
+        allow_blank_attributes: true
       )
+      result = creator.call
+      raise "Failed to create person for user ##{user.id}: #{result.message}" unless result.success?
+
+      person = result.person
+      # Preserve original timestamps
+      person.update_columns(created_at: user.created_at, updated_at: user.updated_at)
 
       user.update!(person: person)
       migrated_count += 1
