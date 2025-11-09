@@ -54,7 +54,7 @@
                   </div>
                   
                   <div class="flex justify-between items-center pt-3 border-t border-gray-100">
-                    <%= link_to event_path(event), class: "text-sm text-green-600 hover:text-green-800" do %>
+                    <%= link_to event_path(event), class: "text-sm text-green-600 hover:text-green-800", data: { turbo_frame: "_top" } do %>
                       <i class="fas fa-eye mr-1"></i> Voir
                     <% end %>
                     

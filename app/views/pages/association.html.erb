@@ -1,71 +1,122 @@
 <% content_for :title, "Le Circographe - L'association" %>
 
-    <section class="text-center mb-12 bg-white/95 py-6 rounded-lg shadow-md fade-in">
-        <h1 class="font-circographe text-3xl sm:text-4xl lg:text-5xl font-bold text-black">Bienvenue au Circographe</h1>
-    </section>
-
-    <section class="py-6 sm:py-8 lg:py-10 bg-white/95 rounded-lg backdrop-blur-none sm:backdrop-blur-sm px-4 sm:px-6 lg:px-8 fade-in">
-        <h2 class="text-2xl sm:text-3xl font-bold text-black mb-8 text-center">Le lieu</h2>
-        
-        <div class="max-w-3xl mx-auto space-y-6 fade-in">
-            <div class="text-base sm:text-lg text-gray-800">
-      Le Circographe est un lieu unique où se rencontrent les arts du cirque et les arts graphiques. Situé au cœur de la ville, notre espace est dédié à la création, l'apprentissage et au partage artistique.
-            </div>
-
-            <div class="text-base sm:text-lg text-gray-800 fade-in">
-      Notre association s'engage à promouvoir ces disciplines à travers des temps de pratique libre, des résidences, des ateliers et des événements ouverts à toutes et tous. Ici, chacun contribue à faire vivre le lieu.
-            </div>
-        </div>
-    </section>
-
-<section class="fade-in space-y-8">
-  <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-<%= render 'shared/card_reverse', 
-    title: "Le Cirque", 
-      description: "L'activité principale liée au cirque que propose le lieu est l'entraînement libre. Il est destiné aux professionnel·les ainsi qu'aux amateur·es confirmé·es.",
-      description_2: "Nous accueillons aussi des compagnies en création et des stages portés par des artistes professionnels.",
-      description_3: "Prêt·e à grimper, jongler ou voler ? On t'attend sur place pour t'expliquer le fonctionnement.",
-    image: "home3.webp", 
-      alt_text: "Entraînement de cirque au Circographe",
-      link: page_path('association', anchor: 'le-cirque'),
-      button_text: "Explorer le cirque"
-    %>
-
-  <%= render 'shared/card', 
-      title: "Les Arts Graphiques", 
-      description: "Le Circographe ouvre ses portes à la création visuelle : dessin, peinture, illustration, collage, bande dessinée...",
-      description_2: "Résidences d'artistes, temps de création libres et expositions rythment la vie du lieu.",
-      description_3: "Une atmosphère inspirante pour croiser les pratiques et mêler les imaginaires.",
-      image: "home2.webp", 
-      alt_text: "Atelier graphique au Circographe",
-      link: page_path('association', anchor: 'les-arts-graphiques'),
-      button_text: "Explorer les arts graphiques"
-    %>
+<section class="relative overflow-hidden rounded-[32px] shadow-2xl mb-14">
+  <%= image_tag hero_image(:association_hero), class: "absolute inset-0 w-full h-full object-cover hero-img-filter", alt: "" %>
+  <div class="hero-overlay"></div>
+  <div class="relative hero-panel text-center space-y-6">
+    <p class="text-sm uppercase tracking-[0.35em] text-white/70">Un lieu pour créer, pratiquer et partager</p>
+    <h1 class="font-circographe text-3xl sm:text-4xl lg:text-5xl font-bold">Bienvenue au Circographe</h1>
+    <p class="max-w-3xl mx-auto text-lg text-white/85 leading-relaxed">Le Circographe est un espace associatif où arts du cirque, arts graphiques et autogestion se répondent. On y pratique, on y invente, on y accueille des projets grâce à une équipe bénévole pleinement engagée.</p>
+    <div>
+      <%= link_to "Découvrir le lieu", page_path("association", anchor: "le-cirque"), class: "inline-block px-6 py-3 tracking-wide text-white font-semibold bg-[#1F5C55] border border-white/40 rounded-lg shadow-lg hover:bg-white hover:text-[#1F5C55] transition-all duration-300 transform hover:-translate-y-1" %>
+    </div>
+    <p class="text-sm sm:text-base text-white/80">Deux pôles complémentaires, une salle partagée, une communauté qui tartine de la culture ensemble.</p>
   </div>
 </section>
 
-<%= render 'pages/le_lieu/circus_section' %>
+<section class="py-10 sm:py-14 lg:py-16 bg-white/95 rounded-[28px] shadow-lg px-4 sm:px-8 fade-in space-y-8">
+  <header class="max-w-4xl mx-auto text-center space-y-4">
+    <p class="text-sm uppercase tracking-[0.3em] text-[#1F5C55]/70">Deux pôles, un même lieu</p>
+    <h2 class="text-2xl sm:text-3xl font-bold text-gray-900">Cirque & arts graphiques se répondent</h2>
+    <p class="text-base sm:text-lg text-gray-700 leading-relaxed">Nos espaces sont pensés pour que voltige, encrage, jonglage et sérigraphie se croisent. Ici, on partage la salle, on se transmet des astuces, on accueille des compagnies et des collectifs en quête d’un terrain de jeu artistique.</p>
+  </header>
 
-<%= render 'pages/le_lieu/graphic_arts_section' %>
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+    <article id="le-cirque" class="overflow-hidden rounded-2xl bg-gradient-to-br from-[#1F5C55]/10 via-white to-white border border-[#1F5C55]/20 shadow-md">
+      <div class="relative h-64 sm:h-72">
+        <%= image_tag hero_image(:association_circus_card), class: "w-full h-full object-cover", alt: "Entraînement de cirque au Circographe" %>
+        <span class="absolute bottom-4 left-4 bg-[#1F5C55] text-white text-xs font-semibold tracking-widest uppercase px-3 py-1 rounded-full shadow-md">Le Cirque</span>
+      </div>
+      <div class="p-6 sm:p-8 space-y-4">
+        <p class="text-lg font-semibold text-gray-900">Entraînements libres & accueils de compagnies</p>
+        <p class="text-gray-700 leading-relaxed">Voltige, jonglage, aérien, équilibre : les amateur·es confirmé·es et professionnel·les y explorent leurs pratiques en autonomie, dans un cadre collectif et bienveillant. On présente la salle, les créneaux et les règles dès ton arrivée.</p>
+        <p class="text-gray-700 leading-relaxed">Besoin de poser ta compagnie ou de répéter un numéro ? On étudie les demandes de mise à disposition de la salle pour soutenir les projets circassiens locaux.</p>
+        <div class="pt-2">
+          <%= link_to page_path("association", anchor: "le-cirque"), class: "inline-flex items-center gap-2 text-sm font-semibold text-[#1F5C55] hover:text-[#15403c] transition-colors" do %>
+            Explorer l’univers cirque
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14m-7-7l7 7-7 7"/></svg>
+          <% end %>
+        </div>
+      </div>
+    </article>
 
-<section id="fonctionnement" class="bg-white/95 rounded-lg shadow-md p-8 mt-12 fade-in">
-  <h2 class="text-2xl sm:text-3xl font-bold text-black mb-6 text-center">Un lieu autogéré et vivant</h2>
-  <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-    <article class="p-6 rounded-lg bg-white shadow-sm border border-gray-100 hover:shadow-lg transition-all duration-300">
-      <h3 class="text-xl font-semibold text-gray-800 mb-3">Auto-gestion collective</h3>
-      <p class="text-gray-600">Le lieu appartient à ses adhérent·es : on décide ensemble des créneaux, des usages et des projets à soutenir.</p>
+    <article id="les-arts-graphiques" class="overflow-hidden rounded-3xl bg-slate-50 border border-slate-200 shadow-sm md:translate-y-2">
+      <div class="relative h-64 sm:h-72">
+        <%= image_tag hero_image(:association_graphics_card), class: "w-full h-full object-cover", alt: "Atelier graphique au Circographe" %>
+        <span class="absolute bottom-4 left-4 bg-slate-700 text-white text-xs font-semibold tracking-widest uppercase px-3 py-1 rounded-full shadow-md">Les Arts Graphiques</span>
+      </div>
+      <div class="p-6 sm:p-8 space-y-4">
+        <p class="text-lg font-semibold text-gray-900">Ateliers libres & croisement des imaginaires</p>
+        <p class="text-gray-700 leading-relaxed">Illustrateur·ices, peintres, sérigraphes et collectifs se retrouvent pour pratiquer, exposer et confronter les techniques. Les temps d’atelier sont ouverts, les projets s’épaulent, les murs s’animent.</p>
+        <p class="text-gray-700 leading-relaxed">La mise à disposition ponctuelle de la salle permet d’accueillir des formats hybrides : vernissages fugaces, projets graphiques express, workshops partagés avec le cirque… bref, on tartine la culture en couleurs.</p>
+        <div class="pt-2">
+          <%= link_to page_path("association", anchor: "les-arts-graphiques"), class: "inline-flex items-center gap-2 text-sm font-semibold text-slate-700 hover:text-slate-900 transition-colors" do %>
+            Plonger dans l’atelier graphique
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14m-7-7l7 7-7 7"/></svg>
+          <% end %>
+        </div>
+      </div>
     </article>
-    <article class="p-6 rounded-lg bg-white shadow-sm border border-gray-100 hover:shadow-lg transition-all duration-300">
-      <h3 class="text-xl font-semibold text-gray-800 mb-3">Bénévolat engagé</h3>
-      <p class="text-gray-600">Les ouvertures, l'accueil et la maintenance existent grâce aux bénévoles. Chacun peut prêter main forte, ponctuellement ou régulièrement.</p>
-    </article>
-    <article class="p-6 rounded-lg bg-white shadow-sm border border-gray-100 hover:shadow-lg transition-all duration-300">
-      <h3 class="text-xl font-semibold text-gray-800 mb-3">Adhésion sur place</h3>
-      <p class="text-gray-600">Pour des raisons d'assurance et de sécurité, toute personne qui profite du lieu adhère à l'association directement sur place.</p>
-    </article>
-</div>
+  </div>
+
+  <footer class="bg-[#1F5C55]/5 border border-[#1F5C55]/10 rounded-2xl px-6 sm:px-8 py-6 text-center space-y-2">
+    <p class="text-base sm:text-lg text-gray-700">Un soir type ? Un duo trapèze en répétition, une sérigraphie qui sèche, des bénévoles qui organisent l’accueil, et toi qui passes dire bonjour.</p>
+    <p class="text-sm uppercase tracking-[0.25em] text-[#1F5C55]">Allez viens, on va tartiner de la culture ensemble !</p>
+  </footer>
 </section>
 
-<section class="text-center mt-12 fade-in">
-  <%= link_to "Passer nous voir", page_path('contact_us'), class: "inline-block px-8 py-4 tracking-wide text-white font-bold bg-[#1F5C55] border-2 border-[#1F5C55] rounded-lg shadow-lg hover:bg-gray-100 hover:text-[#1F5C55] hover:border-[#1F5C55] hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1 text-lg" %>
+<section class="relative overflow-hidden bg-white/95 rounded-[28px] shadow-lg p-6 sm:p-10 fade-in border border-white/80 max-w-5xl mx-auto mt-12 md:mt-16 mb-8 md:mb-12">
+  <div class="pointer-events-none absolute -top-10 -left-16 w-64 h-64 rounded-full bg-brand-primary/10 blur-3xl"></div>
+  <div class="pointer-events-none absolute -bottom-14 -right-20 w-64 h-64 rounded-full bg-slate-700/10 blur-3xl"></div>
+  <header class="text-center space-y-2 mb-8">
+    <p class="text-sm uppercase tracking-[0.25em] text-gray-500">Histoires de pratique</p>
+    <h3 class="text-2xl font-semibold text-gray-900">Quand les disciplines se croisent</h3>
+  </header>
+  <div class="h-1 rounded-full bg-gradient-to-r from-[#1F5C55] via-[#4C7C75] to-slate-700 mb-8 opacity-70"></div>
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <article class="p-6 rounded-2xl bg-gradient-to-br from-white to-[#1F5C55]/5 border border-[#1F5C55]/20 shadow-sm">
+      <p class="text-sm font-semibold text-[#1F5C55] uppercase tracking-wide mb-2">Focus cirque</p>
+      <p class="text-gray-700 leading-relaxed">Le mardi soir, on commence par un entraînement aérien partagé : on ajuste les longueurs de tissus, on répète les portés et on se lance des conseils. Les curieux·ses de passage viennent observer avant de se jeter à leur tour.</p>
+      <div class="mt-4">
+        <%= link_to "En savoir plus — Cirque", page_path("circus_details"), class: "inline-flex items-center gap-2 text-sm font-semibold text-[#1F5C55] hover:text-[#15403c] transition-colors" %>
+      </div>
+    </article>
+    <article class="p-6 rounded-xl bg-slate-50/90 border border-slate-200 shadow-sm">
+      <p class="text-sm font-semibold text-slate-700 uppercase tracking-wide mb-2">Focus graphique</p>
+      <p class="text-gray-700 leading-relaxed">Le jeudi, l’atelier graphique ouvre en mode mixte : sérigraphie, risographie et carnet de croquis prennent place, pendant qu’une compagnie de cirque prépare ses visuels. On imprime les affiches, on accroche aussitôt, la salle vit.</p>
+      <div class="mt-4">
+        <%= link_to "En savoir plus — Arts graphiques", page_path("graphic_arts_details"), class: "inline-flex items-center gap-2 text-sm font-semibold text-slate-700 hover:text-slate-900 transition-colors" %>
+      </div>
+    </article>
+  </div>
+</section>
+
+<section id="fonctionnement" class="bg-white/95 rounded-lg shadow-md p-8 mt-12 mb-12 md:mb-16 fade-in">
+  <header class="text-center mb-8 space-y-3">
+    <p class="text-sm uppercase tracking-[0.3em] text-[#1F5C55]/70">Autogestion & bénévolat</p>
+    <h2 class="text-2xl sm:text-3xl font-bold text-black">Un lieu qui tourne parce qu’on s’implique</h2>
+    <p class="max-w-3xl mx-auto text-gray-700">Chaque adhérent·e participe à sa manière : tenir un créneau, bricoler un agrès, accueillir une compagnie invitée ou chapeauter une expo. La salle reste vivante parce que tout le monde y met du sien.</p>
+  </header>
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+    <article class="p-6 rounded-lg bg-white shadow-sm border border-gray-100 hover:shadow-lg transition-all duration-300">
+      <h3 class="text-xl font-semibold text-gray-800 mb-3">Décider ensemble</h3>
+      <p class="text-gray-600">Commissions, réunions ouvertes, votes en ligne : on choisit collectivement les usages de la salle, les accueils de compagnies et les temps forts à programmer.</p>
+    </article>
+    <article class="p-6 rounded-lg bg-white shadow-sm border border-gray-100 hover:shadow-lg transition-all duration-300">
+      <h3 class="text-xl font-semibold text-gray-800 mb-3">Bénévolat en action</h3>
+      <p class="text-gray-600">Ouvertures, clé de bras sur la maintenance, coups de main pour les ateliers, communication… chacun trouve un créneau ponctuel ou régulier pour faire tourner le lieu.</p>
+    </article>
+    <article class="p-6 rounded-lg bg-white shadow-sm border border-gray-100 hover:shadow-lg transition-all duration-300">
+      <h3 class="text-xl font-semibold text-gray-800 mb-3">Adhérer sur place</h3>
+      <p class="text-gray-600">Pour assurer la sécurité de toutes et tous, l’adhésion se fait en direct lors de ta venue. On en profite pour faire la visite, répondre aux questions et te brancher sur la communauté.</p>
+    </article>
+  </div>
+  <div class="mt-8 bg-[#1F5C55]/5 border border-[#1F5C55]/10 rounded-2xl px-6 py-4 text-center text-sm text-gray-600">
+    Envie de proposer une mise à disposition de la salle ou de rejoindre l’équipe bénévole ? Passe nous voir lors d’un créneau d’ouverture et on construit ça ensemble.
+  </div>
+</section>
+
+<section class="bg-white rounded-[28px] shadow-md p-8 text-center mt-20 md:mt-24 mb-20 md:mb-24 space-y-4 fade-in border border-gray-200 max-w-4xl mx-auto w-full">
+  <p class="text-lg text-gray-700 font-medium">Prêt·e à mêler ton énergie à la nôtre ? Allez viens, on va tartiner de la culture !</p>
+  <%= link_to "Adhérer au Circographe", page_path('become_member'), class: "inline-block px-8 py-4 tracking-wide text-white font-bold bg-[#1F5C55] border-2 border-[#1F5C55] rounded-lg shadow-lg hover:bg-gray-100 hover:text-[#1F5C55] hover:border-[#1F5C55] hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1 text-lg" %>
 </section>
