@@ -1,7 +1,7 @@
 class Event < ApplicationRecord
   include Categorizable
   include Dateable
-  
+
   # Relations selon le domain_model_circographe.md
   belongs_to :creator, class_name: "User"
   has_many :attendances, dependent: :destroy
@@ -23,10 +23,10 @@ class Event < ApplicationRecord
   scope :workshops, -> { where(category: :workshop) }
   scope :volunteering, -> { where(category: :volunteering) }
   scope :others, -> { where(category: :other) }
-  
+
   # Date scopes (using explicit :date column - datetime type)
-  scope :upcoming, -> { where("date >= ?", Date.current) }
-  scope :past, -> { where("date < ?", Date.current) }
+  scope :upcoming, -> { where("date >= ?", Time.zone.now) }
+  scope :past, -> { where("date < ?", Time.zone.now) }
   scope :today, -> { where("date >= ? AND date < ?", Date.current.beginning_of_day, Date.current.end_of_day) }
   scope :this_week, -> { where("date >= ? AND date <= ?", Date.current.beginning_of_week.beginning_of_day, Date.current.end_of_week.end_of_day) }
   scope :this_month, -> { where("date >= ? AND date <= ?", Date.current.beginning_of_month.beginning_of_day, Date.current.end_of_month.end_of_day) }

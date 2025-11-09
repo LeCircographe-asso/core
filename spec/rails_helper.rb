@@ -10,6 +10,9 @@ require 'factory_bot_rails'
 require 'shoulda/matchers'
 # require 'database_cleaner/active_record'  # Commenté - on peut l'ajouter plus tard
 
+# Ensure URL helpers have a default host in tests (needed for *_url helpers)
+Rails.application.routes.default_url_options[:host] ||= "www.example.com"
+
 # Requires supporting ruby files with custom matchers and macros, etc, in
 # spec/support/ and its subdirectories. Files matching `spec/**/*_spec.rb` are
 # run as spec files by default. This means that files in spec/support that end
@@ -41,6 +44,15 @@ RSpec.configure do |config|
   # examples within a transaction, remove the following line or assign false
   # instead of true.
   config.use_transactional_fixtures = true  # Utilise les transactions Rails par défaut
+
+  config.before(:suite) do
+    ActiveRecord::Base.connection.disable_referential_integrity do
+      tables = ActiveRecord::Base.connection.tables - %w[schema_migrations ar_internal_metadata sqlite_sequence]
+      tables.each { |table| ActiveRecord::Base.connection.execute("DELETE FROM #{table}") }
+    end
+
+    Faker::UniqueGenerator.clear
+  end
 
   # Setup factory_bot
   config.include FactoryBot::Syntax::Methods

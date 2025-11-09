@@ -21,21 +21,20 @@ end
 RSpec.configure do |config|
   config.include AuthenticationHelpers, type: :request
   config.include AuthenticationHelpers, type: :controller
-  
+
   # Stub Authentication#find_session_by_cookie to use our test session
   config.before(:each, type: :request) do
     allow_any_instance_of(Authentication).to receive(:find_session_by_cookie) do
       @current_session if defined?(@current_session)
     end
   end
-  
+
   # Reset Current.session after each test (only for request/controller specs)
   config.after(:each, type: :request) do
     logout
   end
-  
+
   config.after(:each, type: :controller) do
     logout
   end
 end
-

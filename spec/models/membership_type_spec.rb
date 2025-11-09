@@ -55,7 +55,7 @@ RSpec.describe MembershipType, type: :model do
 
     it "validates name uniqueness scoped to version" do
       create(:membership_type, name: "Test Type", version: 1)
-      
+
       duplicate = MembershipType.new(name: "Test Type", version: 1, category: :basic, price_cents: 1500, effective_from: Date.current)
       expect(duplicate).not_to be_valid
       expect(duplicate.errors[:name]).to include("has already been taken")
@@ -63,7 +63,7 @@ RSpec.describe MembershipType, type: :model do
 
     it "allows same name with different version" do
       create(:membership_type, name: "Test Type", version: 1)
-      
+
       different_version = MembershipType.new(name: "Test Type", version: 2, category: :basic, price_cents: 1500, effective_from: Date.current)
       expect(different_version).to be_valid
     end
@@ -71,10 +71,10 @@ RSpec.describe MembershipType, type: :model do
     it "has valid category values" do
       membership_type = create(:membership_type, category: :basic)
       expect(membership_type.category).to eq("basic")
-      
+
       membership_type = create(:membership_type, category: :circus)
       expect(membership_type.category).to eq("circus")
-      
+
       membership_type = create(:membership_type, category: :event)
       expect(membership_type.category).to eq("event")
     end
@@ -85,7 +85,7 @@ RSpec.describe MembershipType, type: :model do
       membership_type = create(:membership_type)
       membership1 = create(:membership, membership_type: membership_type)
       membership2 = create(:membership, membership_type: membership_type)
-      
+
       expect(membership_type.memberships).to include(membership1, membership2)
     end
 
@@ -93,7 +93,7 @@ RSpec.describe MembershipType, type: :model do
       membership_type = create(:membership_type)
       plan1 = create(:subscription_plan, membership_type: membership_type)
       plan2 = create(:subscription_plan, membership_type: membership_type)
-      
+
       expect(membership_type.subscription_plans).to include(plan1, plan2)
     end
 
@@ -130,7 +130,7 @@ RSpec.describe MembershipType, type: :model do
     it "orders by price" do
       expensive_type = create(:membership_type, price_cents: 5000)
       cheap_type = create(:membership_type, price_cents: 1000)
-      
+
       ordered_types = MembershipType.by_price
       expect(ordered_types.first).to eq(cheap_type)
       expect(ordered_types.last).to eq(expensive_type)
@@ -149,7 +149,7 @@ RSpec.describe MembershipType, type: :model do
       effective_date = Date.current
       effective_type = create(:membership_type, effective_from: effective_date - 1.day, effective_until: effective_date + 1.day)
       not_effective_type = create(:membership_type, effective_from: effective_date + 1.day)
-      
+
       expect(MembershipType.effective_on(effective_date)).to include(effective_type)
       expect(MembershipType.effective_on(effective_date)).not_to include(not_effective_type)
     end
@@ -158,7 +158,7 @@ RSpec.describe MembershipType, type: :model do
       # Use same name to test price history properly
       old_type = create(:membership_type, name: "History Test", effective_from: Date.current - 1.year)
       new_type = create(:membership_type, name: "History Test", version: 2, effective_from: Date.current)
-      
+
       ordered_history = MembershipType.where(name: "History Test").price_history
       expect(ordered_history.first).to eq(old_type)
       expect(ordered_history.last).to eq(new_type)
@@ -240,12 +240,12 @@ RSpec.describe MembershipType, type: :model do
     it "creates new version with new price" do
       new_effective_date = Date.current + 1.month
       new_version = membership_type.create_price_change!(
-        2000, 
-        effective_from: new_effective_date, 
-        reason: "Price increase", 
+        2000,
+        effective_from: new_effective_date,
+        reason: "Price increase",
         user: user
       )
-      
+
       expect(new_version).to be_persisted
       expect(new_version.price_cents).to eq(2000)
       expect(new_version.version).to eq(2)
@@ -258,13 +258,13 @@ RSpec.describe MembershipType, type: :model do
     it "closes current version" do
       new_effective_date = Date.current + 1.month
       membership_type.create_price_change!(2000, effective_from: new_effective_date)
-      
+
       expect(membership_type.reload.effective_until).to eq(new_effective_date - 1.day)
     end
 
     it "uses current date as default effective_from" do
       new_version = membership_type.create_price_change!(2000)
-      
+
       expect(new_version.effective_from).to eq(Date.current)
     end
   end
@@ -273,7 +273,7 @@ RSpec.describe MembershipType, type: :model do
     it "returns price history for same name" do
       type1 = create(:membership_type, name: "Test Type", version: 1, effective_from: Date.current - 1.year)
       type2 = create(:membership_type, name: "Test Type", version: 2, effective_from: Date.current)
-      
+
       history = type2.price_evolution
       expect(history).to include(type1, type2)
     end
@@ -286,21 +286,21 @@ RSpec.describe MembershipType, type: :model do
     it "calculates price change percentage" do
       old_type = create(:membership_type, name: "Test Type", version: 1, effective_from: from_date, price_cents: 1000)
       new_type = create(:membership_type, name: "Test Type", version: 2, effective_from: to_date, price_cents: 1200)
-      
+
       percentage = new_type.price_change_percentage(from_date, to_date)
       expect(percentage).to eq(20.0) # (1200-1000)/1000 * 100
     end
 
     it "returns nil when old price is missing" do
       new_type = create(:membership_type, name: "Test Type", version: 2, effective_from: to_date, price_cents: 1200)
-      
+
       percentage = new_type.price_change_percentage(from_date, to_date)
       expect(percentage).to be_nil
     end
 
     it "returns nil when new price is missing" do
       old_type = create(:membership_type, name: "Test Type", version: 1, effective_from: from_date, price_cents: 1000)
-      
+
       percentage = old_type.price_change_percentage(from_date, to_date)
       expect(percentage).to be_nil
     end
@@ -316,17 +316,17 @@ RSpec.describe MembershipType, type: :model do
         expect {
           MembershipType.create_default_types!
         }.to change(MembershipType, :count).by(3)
-        
+
         basic_type = MembershipType.find_by(name: "Adhésion Basique")
         expect(basic_type).to be_present
         expect(basic_type.category).to eq("basic")
         expect(basic_type.price_cents).to eq(1500)
-        
+
         circus_full_type = MembershipType.find_by(name: "Adhésion Cirque Complète")
         expect(circus_full_type).to be_present
         expect(circus_full_type.category).to eq("circus")
         expect(circus_full_type.price_cents).to eq(2500)
-        
+
         circus_reduced_type = MembershipType.find_by(name: "Adhésion Cirque Réduite")
         expect(circus_reduced_type).to be_present
         expect(circus_reduced_type.category).to eq("circus")
@@ -335,7 +335,7 @@ RSpec.describe MembershipType, type: :model do
 
       it "does not create duplicates" do
         MembershipType.create_default_types!
-        
+
         expect {
           MembershipType.create_default_types!
         }.not_to change(MembershipType, :count)

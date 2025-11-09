@@ -2,10 +2,9 @@
 
 **Date:** 2025-01-31  
 **Status:** ✅ STABLE - Ne pas modifier sans validation  
-**Dernière mise à jour:** 2025-01-31  
-**Services:** 44 services (40 dans *Management, 4 non-standard)  
-**Domaines:** 15 domaines *Management  
-**Controllers:** 19 controllers admin (13 utilisent services, 6 sans logique métier complexe)
+**Dernière mise à jour:** 2025-11-09  
+**Services:** Consolidés (People::* pour adhésions/paiements/cotisations; plusieurs *Management retirés côté admin)  
+**Controllers:** Admin simplifiés (CRUD inline pour Events, MembershipTypes, SubscriptionPlans)
 
 ## Principe Fondamental
 
@@ -17,54 +16,63 @@ Les services suivent le pattern **Service Object avec ActiveModel::Model** :
 - Instrumentation pour audit (ActiveSupport::Notifications)
 - Gestion d'erreurs standardisée
 
+### Person (Entity) vs User (Account)
+
+- **Person = Entity CRM** : fiche métier unique qui contient l'identité, l'historique financier (adhésions, cotisations, paiements) et tous les attributs d’usage.
+- **User = Account** : accès web optionnel (email, mot de passe, rôle) qui délègue tous ses attributs de profil à `Person` via `delegate`.
+- **Règles clés** :
+  - Créer/éditer la fiche métier via `People::Register` / `People::PersonCreator` ; le compte web est créé via `People::UserAccountCreator` si besoin.
+  - Supprimer un `User` ne détruit pas la `Person` (relation `has_one :user, dependent: :nullify`).
+  - Supprimer une `Person` passe par `SoftDeletable` (`Person#archive!`) avec garde-fous financiers (`has_financial_data?`).
+  - Toutes les opérations financières (`People::Payment*`, `People::Subscription*`, `People::Register`) travaillent **exclusivement** sur `Person`.
+
+Cette séparation “Entity / Account” garantit :
+- pas de perte d’historique quand un utilisateur supprime son compte web,
+- la possibilité de gérer des personnes sans compte web (inscriptions papier, mineurs, bénévoles),
+- une liaison safe quand un compte web est créé après coup ou par l’admin.
+
 ## Organisation par Domaine
 
-### ✅ MembershipManagement (Stable)
-- `MembershipCreator` - Création d'adhésions
-- `MembershipUpgrader` - Upgrade d'adhésions (Basic → Circus)
-- `MembershipUpdater` - Mise à jour d'adhésion (type, dates)
-- `MembershipDeactivator` - Désactivation d'adhésion (status: :inactive)
+### ✅ People::Membership* (Stable)
+- `People::MembershipCreator` - Création d'adhésions
+- `People::MembershipUpgrader` - Upgrade d'adhésions (Basic → Circus)
+- `People::MembershipUpdater` - Mise à jour d'adhésion (type, dates)
+- `People::MembershipDeactivator` - Désactivation d'adhésion (status: :inactive)
 
 **Utilisé dans:** `Admin::MembershipsController` (create, update, destroy)
 
-### ✅ SubscriptionManagement (Stable)
-- `SubscriptionManagement::SubscriptionCreator` - Création de cotisations
-- `SubscriptionManagement::SubscriptionUpgrader` - Upgrade de cotisations
+### ✅ People::Subscription* (Stable)
+- `People::SubscriptionCreator` - Création de cotisations (2025-11)
+- `People::SubscriptionUpgrader` - Upgrade/prorata (2025-11)
 
 **Utilisé dans:** 
 - `Admin::SubscriptionPlansController` (create)
 - `Admin::SubscriptionsController` (upgrade)
 
-### ✅ PaymentManagement (Stable)
-- `PaymentCreator` - Création de paiements simples (1 ligne, incluant donations)
-- `PaymentCreatorWithLines` - Création de paiements avec plusieurs lignes (validation somme)
-- `PaymentUpdater` - Mise à jour de paiements
-- `PaymentDeleter` - Suppression de paiements
-- `PaymentRestorer` - Restauration de paiements
-- `RefundCreator` - Création de remboursements
+### ✅ People::Payment* (Stable)
+- `People::PaymentCreator` utilisé pour donations et paiements multi-lignes (2025-11)
+- `People::PaymentUpdater` / `PaymentCanceller` / `PaymentRestorer` intégrés dans l’admin (2025-11)
 
 **Utilisé dans:** 
 - `Admin::PaymentsController` (create, update, destroy)
 - `Admin::DonationsController` (create)
-- `Admin::Users::PaymentsController` (create, update, destroy via `PaymentCreator` ou `PaymentCreatorWithLines`)
+- `Admin::Users::PaymentsController` (create, update, destroy via `People::PaymentCreator` multi-lignes)
 
-**Note:** Pour les donations, utiliser `item_type: "Donation"` et `item_id: person_id`. Le service créera automatiquement une `PaymentLine` avec `item_type: "Payment"` et `item_id: payment.id` pour cohérence avec le modèle polymorphique. Pour les paiements multiples, utiliser `PaymentCreatorWithLines` avec validation que la somme des lignes = total_cents.
+**Note:** Pour les donations, utiliser `item_type: "Donation"` et `item_id: person_id`. `People::PaymentCreator` ajoutera automatiquement une `PaymentLine` interne avec `item_type: "Payment"` et `item_id: payment.id` pour assurer la cohérence polymorphique. Pour les paiements multiples, fournir `payment_lines` au service ; la validation garantit que la somme des lignes = `total_cents`.
 
-### ✅ PersonManagement (Stable)
-- `PersonCreator` - Création de personnes
-- `PersonMerger` - Fusion de personnes
-- `PersonUpdater` - Mise à jour de personnes (avec gestion newsletter)
+### ✅ People::AccountLinker (Support CRM)
+- `People::AccountLinker` relie un compte web existant à une fiche CRM (`people.account_linked`)
+- Utilisé par scripts de maintenance (`scripts/fix_person_user_merge.rb`)
+
+### ⚠️ PersonManagement (Legacy ciblé)
+- Ancien namespace conservé uniquement pour compatibilité. Les nouvelles fusions doivent passer par `People::AccountLinker` ou `People::AccountMerger`.
 
 ### ✅ UserManagement (Stable)
-- `UserCreator` - Création d'utilisateurs
-- `AccountCreator` - Création de comptes
 - `UserDeleter` - Suppression d'utilisateurs (Person)
-- `UserUpdater` - Mise à jour User/Person (avec gestion newsletter)
+- `UserUpdater` - Mise à jour User/Person (newsletter, rôles)
 
-### ✅ EventManagement (Stable)
-- `EventManagement::EventCreator` - Création d'événements
-- `EventManagement::EventUpdater` - Mise à jour d'événements
-- `EventManagement::EventDeleter` - Suppression d'événements
+### ❌ EventManagement (Retiré côté admin)
+- Flux admin géré en CRUD inline par `Admin::EventsController` (validation au modèle, `Event#title` virtuel)
 
 ### ✅ AccountClaimManagement (Stable)
 - `AccountClaimManagement::AccountClaimCreator` - Création de demandes de réclamation
@@ -91,30 +99,21 @@ Les services suivent le pattern **Service Object avec ActiveModel::Model** :
 **Utilisé dans:**
 - `Admin::MemberNumbersController` (suggest, change)
 
-### ✅ SubscriptionPlanManagement (Stable)
-- `SubscriptionPlanUpdater` - Mise à jour de plan de cotisation (super_admin uniquement)
-- `SubscriptionPlanDeleter` - Suppression de plan de cotisation (avec vérification book_of_entries)
+### ❌ SubscriptionPlanManagement (Removed)
+- Flux admin géré en CRUD inline par `Admin::SubscriptionPlansController`
 
-**Utilisé dans:**
-- `Admin::SubscriptionPlansController` (update, destroy)
+### ❌ BlogManagement (Retiré côté admin)
+- Flux admin géré en CRUD inline par `Admin::BlogsController`
 
-### ✅ BlogManagement (Stable)
-- `BlogManagement::BlogCreator` - Création de blogs
-- `BlogManagement::BlogUpdater` - Mise à jour de blogs
-- `BlogManagement::BlogDeleter` - Suppression de blogs
+### ❌ MembershipTypeManagement (Removed)
+- Géré directement par `Admin::MembershipTypesController` (CRUD inline)
 
-### ✅ MembershipTypeManagement (Stable)
-- `MembershipTypeManagement::MembershipTypeCreator` - Création de types d'adhésion
-- `MembershipTypeManagement::MembershipTypeUpdater` - Mise à jour de types d'adhésion
-- `MembershipTypeManagement::MembershipTypeDeleter` - Suppression de types d'adhésion
+### ⚠️ OpeningHours (Simple cache)
+- Mise à jour via cache dans `Admin::OpeningHoursController` (à migrer vers un modèle `Setting` si besoin)
 
-### ✅ OpeningHoursManagement (Stable)
-- `OpeningHoursManagement::OpeningHoursUpdater` - Mise à jour des horaires d'ouverture
-
-### ✅ NewsletterManagement (Stable)
-- `NewsletterManagement::NewsletterUpdater` - Mise à jour des abonnements newsletter
-
-**Note:** Il existe aussi `NewsletterSignupService` (service legacy) utilisé pour l'inscription web. À terme, migrer vers `NewsletterManagement::NewsletterUpdater`.
+### ✅ Newsletter
+- Public: `People::NewsletterSignup` (instrumentation: `people.newsletter_signed_up`, `people.newsletter_signup.skipped`, `people.newsletter_signup.failed`)
+- Authentifié: `NewsletterManagement::NewsletterUpdater`
 
 ### Autres Services (Non-standard, Legacy)
 
@@ -122,7 +121,7 @@ Les services suivent le pattern **Service Object avec ActiveModel::Model** :
 - `Admin::PaymentsService` - Helper service pour filtres et statistiques (utilisé dans `Admin::PaymentsController#index`)
 - `Admin::DashboardStatisticsService` - Service pour calculer les statistiques du dashboard admin (utilisé dans `Admin::UsersController#index`)
 - `MemberManagementService` - Service legacy pour génération numéros d'adhérent (utilisé par `MemberNumberManagement::*`)
-- `NewsletterSignupService` - Service legacy pour inscription newsletter web (à migrer vers `NewsletterManagement::*`)
+- `People::NewsletterSignup` - Inscription newsletter publique (remplace `NewsletterSignupService`)
 - `Web::UserRegistration` - Service pour inscription web (utilisé dans `RegistrationsController`)
 
 **Note:** Ces services ne suivent pas le pattern DomainManagement standard mais sont acceptables car:
@@ -130,7 +129,7 @@ Les services suivent le pattern **Service Object avec ActiveModel::Model** :
 - Services legacy maintenus pour compatibilité
 - Services web spécifiques (Web::UserRegistration)
 
-## View Components
+## View Components & Helpers
 
 L'application utilise **ViewComponent** pour les composants réutilisables (21 composants actifs).
 
@@ -143,6 +142,9 @@ L'application utilise **ViewComponent** pour les composants réutilisables (21 c
 - Un composant = un fichier Ruby + un template ERB
 - Namespace par domaine (Admin::Users::, Admin::Payments::)
 - Logique de présentation uniquement (pas de logique métier)
+
+**Helpers communs:**
+- `PaymentMethodsHelper#payment_method_options(include_pending: false)` — source unique des options de paiement (réutilisée dans les vues admin).
 
 **Voir:** `ARCHITECTURE_GUIDE.md` pour détails complets sur ViewComponents.
 
@@ -246,121 +248,3 @@ def create
   end
 end
 ```
-
-## Historique et Stabilité
-
-**⚠️ IMPORTANT:** Cette architecture a été stabilisée en 2025-01. Ne pas modifier sans:
-1. Validation de l'impact
-2. Mise à jour de cette documentation
-3. Tests complets
-
-**Architecture stabilisée:** Controller → Service → Model
-
-**Les services sont des wrappers** qui délèguent vers la logique métier dans les modèles (Person#create_membership!, Person#create_subscription!, etc.). Les services ajoutent:
-- Validation des paramètres
-- Instrumentation (audit trail)
-- Gestion d'erreurs standardisée
-- Interface cohérente pour controllers
-
-**Services créés/récemment stabilisés:**
-- `SubscriptionManagement::SubscriptionCreator` (2025-01) ✅
-- `SubscriptionManagement::SubscriptionUpgrader` (2025-01) ✅
-- `PaymentManagement::PaymentCreator` utilisé pour donations (2025-01) ✅
-- `BlogManagement::*` (2025-01) ✅
-- `MembershipTypeManagement::*` (2025-01) ✅
-- `OpeningHoursManagement::OpeningHoursUpdater` (2025-01) ✅
-- `NewsletterManagement::NewsletterUpdater` (2025-01) ✅
-- `MembershipManagement::MembershipUpdater`, `MembershipDeactivator` (2025-01) ✅
-- `SubscriptionPlanManagement::*` (2025-01) ✅
-- `UserManagement::UserUpdater` (2025-01) ✅
-- `PersonManagement::PersonUpdater` (2025-01) ✅
-- `AttendanceListManagement::*` (2025-01) ✅
-- `MemberNumberManagement::*` (2025-01) ✅
-- `PaymentManagement::PaymentCreatorWithLines` (2025-01) ✅
-
-**Tous les controllers utilisent maintenant les services:**
-- ✅ `Admin::MembershipsController` → `MembershipManagement::*` (create, update, destroy)
-- ✅ `Admin::SubscriptionPlansController` → `SubscriptionManagement::SubscriptionCreator` (create), `SubscriptionPlanManagement::*` (update, destroy)
-- ✅ `Admin::SubscriptionsController` → `SubscriptionManagement::SubscriptionUpgrader`
-- ✅ `Admin::PaymentsController` → `PaymentManagement::PaymentCreator`, `PaymentUpdater`, `PaymentDeleter` + `Admin::PaymentsService` (helper)
-- ✅ `Admin::DonationsController` → `PaymentManagement::PaymentCreator`
-- ✅ `Admin::Users::PaymentsController` → `PaymentManagement::PaymentCreator`, `PaymentCreatorWithLines`, `PaymentUpdater`, `PaymentDeleter`
-- ✅ `AccountClaimsController` → `AccountClaimManagement::AccountClaimCreator`, `AccountClaimConfirmer`
-- ✅ `Admin::AttendancesController` → `AttendanceManagement::AttendanceCreator`
-- ✅ `Admin::BlogsController` → `BlogManagement::BlogCreator`, `BlogUpdater`, `BlogDeleter`
-- ✅ `Admin::MembershipTypesController` → `MembershipTypeManagement::*`
-- ✅ `Admin::OpeningHoursController` → `OpeningHoursManagement::OpeningHoursUpdater`
-- ✅ `Admin::UsersController` → `UserManagement::UserDeleter`, `UserManagement::UserUpdater`, `PersonManagement::PersonUpdater`, `NewsletterManagement::NewsletterUpdater`
-- ✅ `Admin::AttendanceListsController` → `AttendanceListManagement::*` (create, update, destroy)
-- ✅ `Admin::MemberNumbersController` → `MemberNumberManagement::MemberNumberSuggester`, `MemberNumberChanger`
-- ✅ `Admin::EventsController` → `EventManagement::EventCreator`, `EventUpdater` (destroy non implémenté)
-- ✅ `SettingsController` → `UserManagement::UserUpdater`
-- ✅ `UsersController` → `UserManagement::UserUpdater`
-- ✅ `RegistrationsController` → `Web::UserRegistration` (service web)
-
-**Controllers admin sans services (acceptable):**
-- `Admin::DashboardController` - Affichage statistiques uniquement (pas de CRUD)
-- `Admin::ExportsController` - Export données (pas de logique métier complexe)
-- `Admin::NotepadsController` - Notes simples (pas de logique métier)
-- `Admin::SessionsController` - Authentification Rails standard
-- `Admin::BaseController` - Controller de base (pas de logique métier)
-
-## Exceptions Acceptables
-
-Certaines opérations simples peuvent être faites directement dans les controllers sans service :
-
-### ✅ Updates simples de statut
-```ruby
-# Acceptable pour des updates simples sans logique métier
-@membership.update!(status: :inactive)
-```
-
-### ✅ Updates directs de champs simples
-```ruby
-# Acceptable pour des updates de champs simples sans validation complexe
-@person.update!(member_number: new_number)
-```
-
-### ❌ Création/Suppression sans service
-**TOUJOURS utiliser les services pour:**
-- Création de ressources (Membership, Payment, Subscription, etc.)
-- Suppression de ressources (sauf soft delete via archive!)
-- Opérations avec logique métier complexe
-- Opérations nécessitant instrumentation/audit
-
-### ✅ Cas particuliers acceptables
-
-**MemberNumbersController** : Utilise maintenant `MemberNumberManagement::MemberNumberSuggester` et `MemberNumberManagement::MemberNumberChanger` ✅
-
-**MembershipsController#update** : Utilise maintenant `MembershipManagement::MembershipUpdater` ✅
-
-**UsersController#destroy (User)** : `User.destroy!` direct - acceptable car User sans logique métier complexe (Person utilise déjà `UserManagement::UserDeleter`).
-
-## Vérification Complète de l'Architecture
-
-**Date:** 2025-01-31  
-**Status:** ✅ **VÉRIFICATION COMPLÈTE ET CORRECTIONS EFFECTUÉES**
-
-### Corrections Effectuées
-
-1. ✅ **Admin::DonationsController** - Utilise maintenant `PaymentManagement::PaymentCreator`
-2. ✅ **Admin::Users::PaymentsController** - Utilise `PaymentManagement::*` (create, update, destroy)
-3. ✅ **PaymentManagement::PaymentUpdater** - Support des updates partiels
-4. ✅ **Person#create_donation!** - Correction `item_type: "Payment"` pour cohérence
-
-### État Final
-
-**Tous les controllers admin utilisent des services ✅**
-
-**Services testés:** 44 services, 100% testés ✅
-
-**Architecture STABILISÉE et VÉRIFIÉE** ✅
-
-## 📚 Documentation liée
-
-- **Logique Métier:** `docs/BUSINESS_LOGIC.md` - Règles business complètes par domaine
-- **Concerns:** `docs/CONCERNS_ANALYSIS.md` - Analyse complète des concerns (10 concerns)
-- **Audit Controllers:** `docs/CONTROLLERS_AUDIT.md` - État des tests et stratégie TDD
-- **Zones Classification:** `docs/ZONES_CLASSIFICATION.md` - Classification Zone 1/2/3
-- **TDD Guide:** `docs/TDD_GUIDE.md` - Guide complet TDD
-- **Testing Guide:** `docs/TESTING_GUIDE.md` - Guide tests et couverture

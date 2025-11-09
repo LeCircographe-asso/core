@@ -26,14 +26,7 @@ module Admin
       end
 
       # Filtrer les plans de cotisation selon le type d'adhésion de la personne
-      if @person&.current_membership&.membership_type&.circus?
-        @subscription_plans = SubscriptionPlan.joins(:membership_type)
-                                            .where(membership_types: { category: :circus })
-                                            .current_versions
-                                            .order(:duration, :price_cents)
-      else
-        @subscription_plans = []
-      end
+      @subscription_plans = SubscriptionPlan.available_for(@person)
 
       add_breadcrumb "Nouvelle cotisation", nil
     end
@@ -43,66 +36,48 @@ module Admin
     end
 
     def update
-      updater = SubscriptionPlanManagement::SubscriptionPlanUpdater.new(
-        subscription_plan_id: @subscription_plan.id,
-        attributes: subscription_plan_params,
-        updated_by_id: Current.user.id
-      )
-
-      result = updater.call
-
-      if result.success?
-        redirect_to admin_subscription_plans_path, notice: result.message
+      if @subscription_plan.update(subscription_plan_params)
+        redirect_to admin_subscription_plans_path, notice: "Plan de cotisation mis à jour avec succès !"
       else
-        flash.now[:alert] = result.message
-        render :edit, status: :unprocessable_entity
+        flash.now[:alert] = @subscription_plan.errors.full_messages.to_sentence
+        render :edit, status: :unprocessable_content
       end
     end
 
     def destroy
-      deleter = SubscriptionPlanManagement::SubscriptionPlanDeleter.new(
-        subscription_plan_id: @subscription_plan.id,
-        deleted_by_id: Current.user.id
-      )
-
-      result = deleter.call
-
-      if result.success?
-        redirect_to admin_subscription_plans_path, notice: result.message
+      if @subscription_plan.destroy
+        redirect_to admin_subscription_plans_path, notice: "Plan de cotisation supprimé avec succès !"
       else
-        redirect_to admin_subscription_plans_path, alert: result.message
+        redirect_to admin_subscription_plans_path, alert: @subscription_plan.errors.full_messages.to_sentence
       end
     end
 
     def create
       @person = Person.find(subscription_purchase_params[:person_id])
-      
-      begin
-        custom_amount = subscription_purchase_params[:payment_method] == "offered" ? 
-                       (subscription_purchase_params[:custom_amount_cents]&.to_i || 0) : nil
-        
-        creator = SubscriptionManagement::SubscriptionCreator.new(
-          person: @person,
-          subscription_plan_id: subscription_purchase_params[:subscription_plan_id],
-          payment_method: (subscription_purchase_params[:payment_method].presence || "cash"),
-          recorded_by_id: Current.user.id,
-          record_attendance: false,
-          custom_amount_cents: custom_amount,
-          offer_reason: subscription_purchase_params[:offer_reason]
-        )
-        
-        result = creator.call
 
-        if result.success?
-          redirect_to admin_user_path("person_#{@person.id}"), notice: "Plan de cotisation acheté avec succès !"
-        else
-          redirect_to new_admin_subscription_plan_path(person_id: @person.id),
-                      alert: "Erreur lors de l'achat du plan: #{result.message}"
-        end
-      rescue => e
-        flash[:alert] = "Erreur lors de l'achat du plan: #{e.message}"
-        redirect_to new_admin_subscription_plan_path(person_id: @person.id)
+      custom_amount = if subscription_purchase_params[:payment_method] == "offered"
+                        subscription_purchase_params[:custom_amount_cents]&.to_i || 0
       end
+
+      result = People::SubscriptionCreator.new(
+        person: @person,
+        subscription_plan_id: subscription_purchase_params[:subscription_plan_id],
+        payment_method: subscription_purchase_params[:payment_method].presence || "cash",
+        recorded_by_id: Current.user&.id,
+        record_attendance: false,
+        custom_amount_cents: custom_amount,
+        offer_reason: subscription_purchase_params[:offer_reason]
+      ).call
+
+      if result.success?
+        redirect_to admin_user_path("person_#{@person.id}"), notice: "Plan de cotisation acheté avec succès !"
+      else
+        redirect_to new_admin_subscription_plan_path(person_id: @person.id),
+                    alert: "Erreur lors de l'achat du plan: #{result.message}"
+      end
+    rescue => e
+      flash[:alert] = "Erreur lors de l'achat du plan: #{e.message}"
+      redirect_to new_admin_subscription_plan_path(person_id: @person.id)
     end
 
     private

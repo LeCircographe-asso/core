@@ -1,15 +1,15 @@
-<div class="bg-white rounded-lg shadow-md p-4">
-  <h3 class="text-lg font-semibold mb-2 text-[#1F5C55] text-center">Horaires d'ouverture</h3>
+<% bare = local_assigns.fetch(:bare, false) %>
+<% wrapper_classes = bare ? "" : "bg-white rounded-lg shadow-md p-4" %>
+<% schedule = local_assigns[:horaires] || @horaires %>
+
+<% inner = capture do %>
   <div class="text-center mb-4">
     <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-[#1F5C55]/10 text-[#1F5C55]">
       <i class="fas fa-calendar-week mr-2"></i>
       Semaine du <%= Date.current.beginning_of_week.strftime("%d/%m") %> au <%= Date.current.end_of_week.strftime("%d/%m/%Y") %>
     </span>
   </div>
-  <% 
-    # Accepts schedules passed as parameters or uses @schedules
-    schedule = local_assigns[:horaires] || @horaires
-  %>
+
   <% if schedule.present? %>
     <table class="w-full border-collapse">
       <thead>
@@ -21,7 +21,7 @@
       <tbody>
         <% schedule.each do |day, hours| %>
           <tr class="border-b border-gray-100">
-            <% 
+            <%
               is_weekend = ["samedi", "dimanche"].include?(day.to_s)
               is_today = Time.zone.now.strftime('%A').downcase == day.to_s
               row_classes = "hover:bg-gray-50"
@@ -29,7 +29,7 @@
             %>
             <td class="<%= row_classes %> py-3 text-center">
               <div class="flex items-center justify-center">
-                <% 
+                <%
                   icon_class = case day.to_s
                   when "lundi", "mardi", "mercredi", "jeudi", "vendredi" then "fas fa-briefcase"
                   when "samedi", "dimanche" then "fas fa-umbrella-beach"
@@ -67,4 +67,14 @@
       <p>Aucun horaire n'est disponible pour le moment.</p>
     </div>
   <% end %>
-</div> 
+<% end %>
+
+<% if bare %>
+  <div class="space-y-4">
+    <%= inner %>
+  </div>
+<% else %>
+  <div class="<%= wrapper_classes %>">
+    <%= inner %>
+  </div>
+<% end %>

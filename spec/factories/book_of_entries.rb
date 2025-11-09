@@ -1,11 +1,11 @@
 FactoryBot.define do
   factory :book_of_entry do
     association :person
-    association :subscription_plan
-    sessions_remaining { 10 }
+    association :subscription_plan, factory: [ :subscription_plan, :pack10 ]
+    sessions_remaining { subscription_plan.sessions_count || 10 }
     status { :active }
     purchased_at { Time.current }
-    expires_at { 1.year.from_now }
+    expires_at { nil }
 
     trait :active do
       status { :active }

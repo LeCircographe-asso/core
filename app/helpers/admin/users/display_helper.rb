@@ -51,7 +51,7 @@ module Admin
       # Formatage de la date
       def format_display_date(date)
         return "-" if date.blank?
-        
+
         if date.is_a?(String)
           Date.parse(date).strftime("%d/%m/%Y")
         else
@@ -64,7 +64,7 @@ module Admin
       # Formatage de la monnaie
       def format_currency(amount)
         return "-" if amount.blank?
-        
+
         number_to_currency(amount, unit: "€", separator: ",", delimiter: " ")
       end
     end

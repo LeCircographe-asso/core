@@ -3,7 +3,7 @@ class Payment < ApplicationRecord
   include Humanizable
   include Statusable
   include Dateable
-  
+
   # Relations selon le domain_model_circographe.md
   belongs_to :person
   belongs_to :recorded_by, class_name: "User"
@@ -23,7 +23,7 @@ class Payment < ApplicationRecord
 
   # Scope to get active (non-cancelled) payments
   scope :active, -> { where.not(status: :cancel) }
-  
+
   # Date scopes (using created_at via Dateable)
   scope :today, -> { where("created_at >= ? AND created_at < ?", Date.current.beginning_of_day, Date.current.end_of_day) }
   scope :this_week, -> { where("created_at >= ? AND created_at <= ?", Date.current.beginning_of_week.beginning_of_day, Date.current.end_of_week.end_of_day) }
@@ -159,7 +159,7 @@ class Payment < ApplicationRecord
   # Anonymization for GDPR compliance
   def anonymize!
     return if anonymized_at.present?
-    
+
     self.original_person_identifier = "ANON_#{Digest::SHA256.hexdigest("#{person_id}_#{id}_#{created_at}")}"
     self.person_id = nil
     self.anonymized_at = Time.current

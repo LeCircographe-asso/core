@@ -1,6 +1,5 @@
 module EventManagement
   class EventUpdater < BaseService
-
     attribute :event_id, :integer
     attribute :name, :string
     attribute :upper_description, :string

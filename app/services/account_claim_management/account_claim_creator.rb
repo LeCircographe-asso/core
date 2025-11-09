@@ -1,6 +1,5 @@
 module AccountClaimManagement
   class AccountClaimCreator < BaseService
-
     attribute :email, :string
     attribute :user_id, :integer
 
@@ -12,10 +11,10 @@ module AccountClaimManagement
 
       begin
         user = User.find(user_id)
-        
+
         # Chercher une Person existante par email
         person = Person.find_by(email: email)
-        
+
         unless person&.can_be_claimed_by?(email)
           return failure("Aucun compte trouvé avec cet email ou déjà lié")
         end
@@ -55,5 +54,3 @@ module AccountClaimManagement
     # success et failure hérités de BaseService
   end
 end
-
-

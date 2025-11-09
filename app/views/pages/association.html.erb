@@ -1,6 +1,5 @@
 <% content_for :title, "Le Circographe - L'association" %>
 
-<!-- Container for "The Association" and the second section -->
     <section class="text-center mb-12 bg-white/95 py-6 rounded-lg shadow-md fade-in">
         <h1 class="font-circographe text-3xl sm:text-4xl lg:text-5xl font-bold text-black">Bienvenue au Circographe</h1>
     </section>
@@ -10,36 +9,63 @@
         
         <div class="max-w-3xl mx-auto space-y-6 fade-in">
             <div class="text-base sm:text-lg text-gray-800">
-                Le Circographe est un lieu unique où se rencontrent les arts du cirque et les arts graphiques. Situé au cœur de la ville, notre espace est dédié à la création, l'apprentissage et le partage artistique.
+      Le Circographe est un lieu unique où se rencontrent les arts du cirque et les arts graphiques. Situé au cœur de la ville, notre espace est dédié à la création, l'apprentissage et au partage artistique.
             </div>
 
             <div class="text-base sm:text-lg text-gray-800 fade-in">
-                Notre association s'engage à promouvoir ces disciplines artistiques à travers des cours, des stages, des événements et des expositions. Nous créons un environnement propice à l'épanouissement créatif et au développement personnel de chacun.
+      Notre association s'engage à promouvoir ces disciplines à travers des temps de pratique libre, des résidences, des ateliers et des événements ouverts à toutes et tous. Ici, chacun contribue à faire vivre le lieu.
             </div>
         </div>
     </section>
 
-<!-- Cards remain below -->
-<div class= "fade-in">
+<section class="fade-in space-y-8">
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
 <%= render 'shared/card_reverse', 
     title: "Le Cirque", 
-    description: "L'activité principale liée au cirque que propose le lieu est l'entraînement libre. Il est destiné au professionelle ainsi qu'au amateur, pour tout débutant nous vous recommandons de vous adresser directement auprès d' école de cirque.",
-    description_2: "Nous proposons également la mise à disposition d'espace de travail au compagnie en cours de création, aujourd'hui c'est déjà plus d'une trentaine de projets accueillis et l'histoire continue encore !",
-    description_3: "Parmis nos événements nous proposons des stages dans plusieurs pratiques de cirque, ils sont tenus et organisés par des artistes professionnels et accessibles techniquement  selon les différents stages proposés.",
+      description: "L'activité principale liée au cirque que propose le lieu est l'entraînement libre. Il est destiné aux professionnel·les ainsi qu'aux amateur·es confirmé·es.",
+      description_2: "Nous accueillons aussi des compagnies en création et des stages portés par des artistes professionnels.",
+      description_3: "Prêt·e à grimper, jongler ou voler ? On t'attend sur place pour t'expliquer le fonctionnement.",
     image: "home3.webp", 
-    alt_text: "hello", 
-    link: page_path('circus_details'), 
-    button_text: "Plus d'infos" %>
-</div>
+      alt_text: "Entraînement de cirque au Circographe",
+      link: page_path('association', anchor: 'le-cirque'),
+      button_text: "Explorer le cirque"
+    %>
 
-<div class="fade-in">
   <%= render 'shared/card', 
       title: "Les Arts Graphiques", 
-      description: "Le Circographe ouvre également ses portes à la création graphique. Dessin, peinture, illustration, collage ou bande dessinée, les pratiques sont multiples et encouragées.",
-      description_2: "Des temps de création libres sont organisés, avec mise à disposition d'un espace adapté, calme et inspirant. Le lieu accueille aussi des résidences d'artistes visuels, en particulier ceux travaillant sur des projets en lien avec le corps, l'espace ou le mouvement.",
-      description_3: "Nous organisons régulièrement des expositions, ateliers collectifs et stages thématiques autour des arts visuels. Ces événements sont animés par des artistes confirmés et ouverts à tous les niveaux, du curieux à l'initié.",
+      description: "Le Circographe ouvre ses portes à la création visuelle : dessin, peinture, illustration, collage, bande dessinée...",
+      description_2: "Résidences d'artistes, temps de création libres et expositions rythment la vie du lieu.",
+      description_3: "Une atmosphère inspirante pour croiser les pratiques et mêler les imaginaires.",
       image: "home2.webp", 
-      alt_text: "illustration d'une fresque murale en cours de création", 
-      link: page_path('graphic_arts_details'), 
-      button_text: "Plus d'infos" %>
+      alt_text: "Atelier graphique au Circographe",
+      link: page_path('association', anchor: 'les-arts-graphiques'),
+      button_text: "Explorer les arts graphiques"
+    %>
+  </div>
+</section>
+
+<%= render 'pages/le_lieu/circus_section' %>
+
+<%= render 'pages/le_lieu/graphic_arts_section' %>
+
+<section id="fonctionnement" class="bg-white/95 rounded-lg shadow-md p-8 mt-12 fade-in">
+  <h2 class="text-2xl sm:text-3xl font-bold text-black mb-6 text-center">Un lieu autogéré et vivant</h2>
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+    <article class="p-6 rounded-lg bg-white shadow-sm border border-gray-100 hover:shadow-lg transition-all duration-300">
+      <h3 class="text-xl font-semibold text-gray-800 mb-3">Auto-gestion collective</h3>
+      <p class="text-gray-600">Le lieu appartient à ses adhérent·es : on décide ensemble des créneaux, des usages et des projets à soutenir.</p>
+    </article>
+    <article class="p-6 rounded-lg bg-white shadow-sm border border-gray-100 hover:shadow-lg transition-all duration-300">
+      <h3 class="text-xl font-semibold text-gray-800 mb-3">Bénévolat engagé</h3>
+      <p class="text-gray-600">Les ouvertures, l'accueil et la maintenance existent grâce aux bénévoles. Chacun peut prêter main forte, ponctuellement ou régulièrement.</p>
+    </article>
+    <article class="p-6 rounded-lg bg-white shadow-sm border border-gray-100 hover:shadow-lg transition-all duration-300">
+      <h3 class="text-xl font-semibold text-gray-800 mb-3">Adhésion sur place</h3>
+      <p class="text-gray-600">Pour des raisons d'assurance et de sécurité, toute personne qui profite du lieu adhère à l'association directement sur place.</p>
+    </article>
 </div>
+</section>
+
+<section class="text-center mt-12 fade-in">
+  <%= link_to "Passer nous voir", page_path('contact_us'), class: "inline-block px-8 py-4 tracking-wide text-white font-bold bg-[#1F5C55] border-2 border-[#1F5C55] rounded-lg shadow-lg hover:bg-gray-100 hover:text-[#1F5C55] hover:border-[#1F5C55] hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1 text-lg" %>
+</section>

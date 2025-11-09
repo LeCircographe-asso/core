@@ -17,6 +17,7 @@
     <link rel="apple-touch-icon" href="/icon.png">
     <%= stylesheet_link_tag "tailwind", "data-turbo-track": "reload" %>
     <%= stylesheet_link_tag "flowbite", "data-turbo-track": "reload" %>
+    <%= stylesheet_link_tag "swiper", "data-turbo-track": "reload" %>
     <%= stylesheet_link_tag "application", media: "all", "data-turbo-track": "reload" %>
     <%# Removed legacy :app stylesheet link to avoid 404/preload issues %>
     <%= javascript_importmap_tags %>
@@ -25,8 +26,6 @@
     <script src="https://js.stripe.com/v3/"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" rel="stylesheet" />
-    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
     <%= javascript_include_tag "flowbite.turbo.min", "data-turbo-track": "reload" %>
 </head>
 
@@ -37,7 +36,9 @@
     <div class="admin-layout">
         <%= render 'admin/dashboard/admin_lateral_navbar' %>
         <div class="admin-content" data-sidebar-target="content">
+            <%= turbo_frame_tag "flash" do %>
             <%= render 'shared/flash' %>
+            <% end %>
             <main class="admin-main">
                 <%= yield %>
             </main>
@@ -50,7 +51,9 @@
         <header>
             <%= render 'shared/navbar' %>
         </header>
+        <%= turbo_frame_tag "flash" do %>
         <%= render 'shared/flash' %>
+        <% end %>
         <%= yield %>
     </div>
     
@@ -60,8 +63,10 @@
         <%= render 'shared/navbar' %>
     </header>
     <div class="flex-grow bg-no-repeat bg-cover bg-center <%= 'parallax-bg' if controller_name == 'home' && action_name == 'index' %>" style="background-image: url('<%= asset_path(content_for(:background_image) || 'background_temp.webp') %>'); background-attachment: fixed; background-position: center; background-repeat: no-repeat; background-size: cover;">
+        <%= turbo_frame_tag "flash" do %>
         <%= render 'shared/flash' %>
-        <main class="w-full mx-auto space-y-6 px-4 sm:px-6 lg:px-8 pt-8">
+        <% end %>
+        <main class="w-full mx-auto space-y-6 px-4 sm:px-6 lg:px-8 <%= controller_name == 'home' && action_name == 'index' ? 'pt-0' : 'pt-8' %>">
         <div class="max-w-6xl mx-auto">
             <%= yield %>
         </div>
@@ -69,6 +74,8 @@
     </div>
     <%= render 'shared/footer' %>
     <% end %>
+
+    <%= render 'shared/confirm_modal' %>
 </body>
 
 </html>

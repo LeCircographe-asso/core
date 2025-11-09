@@ -2,7 +2,7 @@ class SubscriptionPlan < ApplicationRecord
   include Priceable
   include Humanizable
   include Versionable
-  
+
   # Relations
   belongs_to :membership_type
   has_many :book_of_entries, dependent: :destroy
@@ -119,6 +119,11 @@ class SubscriptionPlan < ApplicationRecord
   scope :current_versions, -> { where(effective_until: nil) }
   scope :effective_on, ->(date) { where("effective_from <= ? AND (effective_until IS NULL OR effective_until >= ?)", date, date) }
   scope :price_history, -> { order(:effective_from, :version) }
+
+  def self.available_for(person)
+    return none unless person&.current_membership&.membership_type&.circus?
+    for_circus_members.current_versions.order(:duration, :price_cents)
+  end
 
   # Méthodes de classe pour créer les plans par défaut
   def self.create_default_plans!

@@ -3,4 +3,3 @@ FactoryBot.define do
     name { "Sample Tag" }
   end
 end
-

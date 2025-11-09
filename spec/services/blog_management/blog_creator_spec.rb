@@ -11,9 +11,9 @@ RSpec.describe BlogManagement::BlogCreator do
           title: "Test Blog",
           content: "Test Content"
         )
-        
+
         result = creator.call
-        
+
         expect(result.success?).to be true
         expect(result.blog).to be_present
         expect(result.blog.title).to eq("Test Blog")
@@ -24,11 +24,11 @@ RSpec.describe BlogManagement::BlogCreator do
         creator = described_class.new(
           title: "Test Blog",
           content: "Test Content",
-          tag_ids: [tag1.id, tag2.id]
+          tag_ids: [ tag1.id, tag2.id ]
         )
-        
+
         result = creator.call
-        
+
         expect(result.success?).to be true
         expect(result.blog.tags).to include(tag1, tag2)
       end
@@ -39,9 +39,9 @@ RSpec.describe BlogManagement::BlogCreator do
           content: "Test Content",
           tag_ids: []
         )
-        
+
         result = creator.call
-        
+
         expect(result.success?).to be true
         expect(result.blog.tags).to be_empty
       end
@@ -50,7 +50,7 @@ RSpec.describe BlogManagement::BlogCreator do
     context "with invalid attributes" do
       it "returns failure when title is missing" do
         creator = described_class.new(content: "Test Content")
-        
+
         result = creator.call
         expect(result.success?).to be false
         expect(result.message).to include("Invalid data")
@@ -58,7 +58,7 @@ RSpec.describe BlogManagement::BlogCreator do
 
       it "returns failure when content is missing" do
         creator = described_class.new(title: "Test Blog")
-        
+
         result = creator.call
         expect(result.success?).to be false
       end
@@ -67,9 +67,9 @@ RSpec.describe BlogManagement::BlogCreator do
         creator = described_class.new(
           title: "Test Blog",
           content: "Test Content",
-          tag_ids: [99999]
+          tag_ids: [ 99999 ]
         )
-        
+
         result = creator.call
         expect(result.success?).to be false
         expect(result.message).to include("Tag not found")
@@ -82,7 +82,7 @@ RSpec.describe BlogManagement::BlogCreator do
           creator = described_class.new(
             title: "Test Blog",
             content: "Test Content",
-            tag_ids: [tag1.id]
+            tag_ids: [ tag1.id ]
           )
           creator.call
         }.to instrument("blog.created")
@@ -90,4 +90,3 @@ RSpec.describe BlogManagement::BlogCreator do
     end
   end
 end
-

@@ -1,6 +1,5 @@
 module SubscriptionPlanManagement
   class SubscriptionPlanDeleter < BaseService
-
     attribute :subscription_plan_id, :integer
     attribute :deleted_by_id, :integer
 
@@ -49,5 +48,3 @@ module SubscriptionPlanManagement
     # success et failure hérités de BaseService
   end
 end
-
-

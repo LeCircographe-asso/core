@@ -9,9 +9,9 @@
 
 **État actuel:** L'application a une architecture backend solide mais souffre de problèmes UX/UI majeurs qui empêchent une utilisation fluide.
 
-**Blocages identifiés:**
+**Blocages identifiés (mise à jour):**
 1. ⚠️ Procédure d'adhésion complexe et lourde
-2. ⚠️ Newsletter: code legacy + service incomplet
+2. ⚠️ Newsletter: code legacy + service incomplet (public now via People::NewsletterSignup)
 3. ⚠️ Gestion compte web: conflit Person.newsletter_subscribed vs NewsletterSubscriber
 4. ⚠️ Édition "inline" informations personnelles manquante
 5. ⚠️ Workflow validation/erreurs pas clair pour l'utilisateur
@@ -24,31 +24,34 @@
 
 ### Analyse
 
-**Fichiers concernés:**
+**Fichiers concernés (après refacto People):**
 - `app/controllers/registrations_controller.rb`
-- `app/services/web/user_registration.rb`
+- `app/services/web/user_registration.rb` (→ `People::Register`)
+- `app/services/people/register.rb`
+- `app/services/people/person_creator.rb`
+- `app/services/people/user_account_creator.rb`
+- `app/services/people/membership_creator.rb`
 - `app/views/registrations/new.html.erb`
 
-### Workflow actuel (TROP LOURD)
+### Nouveau workflow (People::Register)
 
 ```
 Utilisateur → Formulaire inscription
   ↓
 Web::UserRegistration.call
   ↓
-1. create_or_find_person (PersonManagement::PersonCreator)
-   - Check email exists?
-     - OUI + User exists → "Mot de passe oublié"
-     - OUI + no User → "Récupérer mon compte"
-     - NON → Create Person
+People::Register.new(
+  person_params,
+  create_user_account: true,
+  create_membership: false,
+  newsletter_subscribed: ...
+).call
   ↓
-2. create_user_account
-   - Check user_email exists?
-   - Create User
+People::PersonCreator -> crée/maj Person (newsletter incluse)
+People::UserAccountCreator -> crée/maj User
+People::MembershipCreator -> (optionnel si achat immédiat)
   ↓
-3. Success/Error handling
-   - Flash messages
-   - Redirections
+Success/Error (centralisé)
 ```
 
 ### Problèmes identifiés
@@ -58,36 +61,31 @@ Web::UserRegistration.call
 - ❌ Pas de feedback progressif
 - ❌ Conflit entre Person et User
 
-### Plan d'Action
+### Plan d'Action (mis à jour)
 
-**Phase 1: Simplification (Jours 1-3)**
+**Statut actuel :** ✅ Back-end unifié (People::Register). UI admin branchée sur People::Membership*, People::Payment*, People::Subscription*. Il reste à reprendre l’interface publique.
 
-1. **Unifier le formulaire**
-   - Un seul formulaire pour Person + User
-   - Validation en temps réel
-   - Messages d'erreur clairs
+**Phase UX (à faire)**
 
-2. **Améliorer les messages**
-   - Messages spécifiques par cas
-   - Actions suggérées (ex: "Mot de passe oublié?")
-   - Feedback progressif
-
-3. **Simplifier le service**
-   - Un seul appel pour créer Person + User
-   - Gestion d'erreurs centralisée
-   - Rollback automatique en cas d'erreur
+1. **Moderniser le formulaire**
+   - Maintenir l’unicité back-end (People::Register) tout en allégeant le front.
+   - Ajouter feedback progressif + validations client.
+2. **Clarifier les messages**
+   - Réutiliser les messages de `People::Register` tout en proposant des CTA explicites ("Mot de passe oublié", "Récupérer mon compte").
+3. **Journeys visuels**
+   - Ajouter un récapitulatif des étapes (nouvelle Person, compte créé, prochaine action).
 
 ---
 
-## 🔴 Problème 2: Newsletter Legacy
+## 🔴 Problème 2: Newsletter Legacy (mis à jour)
 
 ### Analyse
 
 **Fichiers concernés:**
-- `app/models/person.rb` (newsletter_subscribed - DEPRECATED)
 - `app/models/newsletter_subscriber.rb` (nouveau)
-- `app/services/newsletter_management/newsletter_updater.rb`
-- `app/controllers/users_controller.rb`
+- `app/services/people/newsletter_signup.rb` (public)
+- `app/services/newsletter_management/newsletter_updater.rb` (authentifié)
+- `app/controllers/users_controller.rb` (newsletter_signup → People::NewsletterSignup)
 
 ### Problème identifié
 
@@ -95,10 +93,10 @@ Web::UserRegistration.call
 - `Person.newsletter_subscribed` (legacy, booléen)
 - `NewsletterSubscriber` (nouveau, table dédiée)
 
-**Impact:**
-- Code dupliqué
-- Données incohérentes
-- Service incomplet
+**Impact (résolu en partie):**
+- Code public unifié via `People::NewsletterSignup`
+- Instrumentation: `people.newsletter_signed_up`, `people.newsletter_signup.skipped`, `people.newsletter_signup.failed`
+- Reste: workflow authentifié (paramètres newsletter) à finaliser via `NewsletterManagement::NewsletterUpdater`
 
 ### Plan d'Action
 

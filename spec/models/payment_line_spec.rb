@@ -60,7 +60,7 @@ RSpec.describe PaymentLine, type: :model do
       payment = create(:payment)
       membership = create(:membership)
       create(:payment_line, payment: payment, item: membership, amount_cents: 1500)
-      
+
       duplicate_line = PaymentLine.new(payment: payment, item: membership, amount_cents: 2000)
       expect(duplicate_line).not_to be_valid
       expect(duplicate_line.errors[:payment_id]).to include("has already been taken")
@@ -128,28 +128,28 @@ RSpec.describe PaymentLine, type: :model do
       membership_type = create(:membership_type, name: "Adhésion Basique")
       membership = create(:membership, membership_type: membership_type)
       payment_line = create(:payment_line, item: membership)
-      
+
       expect(payment_line.item_description).to eq("Adhésion Basique")
     end
 
     it "returns description for subscription_plan" do
       subscription_plan = create(:subscription_plan, name: "Plan Trimestriel", duration: "trimester")
       payment_line = create(:payment_line, item: subscription_plan)
-      
+
       expect(payment_line.item_description).to eq("Trimestriel") # duration_humanized
     end
 
     it "returns description for membership_type" do
       membership_type = create(:membership_type, name: "Adhésion Cirque")
       payment_line = create(:payment_line, item: membership_type)
-      
+
       expect(payment_line.item_description).to eq("Adhésion Cirque")
     end
 
     it "returns humanized item_type for unknown types" do
       payment_line = create(:payment_line)
       payment_line.item_type = "UnknownType"
-      
+
       expect(payment_line.item_description).to eq("Unknowntype")
     end
   end
@@ -175,9 +175,9 @@ RSpec.describe PaymentLine, type: :model do
     describe '.create_for_membership!' do
       it "creates payment line for membership" do
         membership = create(:membership)
-        
+
         payment_line = PaymentLine.create_for_membership!(payment, membership, 1500)
-        
+
         expect(payment_line).to be_persisted
         expect(payment_line.payment).to eq(payment)
         expect(payment_line.item).to eq(membership)
@@ -190,9 +190,9 @@ RSpec.describe PaymentLine, type: :model do
     describe '.create_for_subscription_plan!' do
       it "creates payment line for subscription plan" do
         subscription_plan = create(:subscription_plan, name: "Plan Trimestriel", duration: "trimester")
-        
+
         payment_line = PaymentLine.create_for_subscription_plan!(payment, subscription_plan, 6000)
-        
+
         expect(payment_line).to be_persisted
         expect(payment_line.payment).to eq(payment)
         expect(payment_line.item).to eq(subscription_plan)
@@ -205,9 +205,9 @@ RSpec.describe PaymentLine, type: :model do
     describe '.create_for_membership_type!' do
       it "creates payment line for membership type" do
         membership_type = create(:membership_type, name: "Adhésion Cirque")
-        
+
         payment_line = PaymentLine.create_for_membership_type!(payment, membership_type, 2500)
-        
+
         expect(payment_line).to be_persisted
         expect(payment_line.payment).to eq(payment)
         expect(payment_line.item).to eq(membership_type)

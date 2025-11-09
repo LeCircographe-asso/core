@@ -15,7 +15,7 @@ module SoftDeletable
   # Archiver l'enregistrement (soft delete)
   def archive!
     return false if respond_to?(:has_financial_data?) && has_financial_data?
-    
+
     update!(deleted_at: Time.current)
   end
 
@@ -29,5 +29,3 @@ module SoftDeletable
     !archived? && (!respond_to?(:has_financial_data?) || !has_financial_data?)
   end
 end
-
-

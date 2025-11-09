@@ -43,9 +43,11 @@
 ### Zone 1: Comportement Défini
 
 #### Durée et Statuts
-- **Durée standard:** 1 an depuis date de souscription (`started_at` → `ended_at`)
+- **Durée standard:** 1 an, calculée de `started_at` à `ended_at` (dates inclusives)
 - **Statuts:** `pending` → `active` → `inactive` → `expired`
 - **Activation:** Immédiate après paiement réussi
+- **Expiration:** Quand `ended_at < Date.current` → passage en `expired`
+- **Renouvellement:** Crée une nouvelle adhésion datée à partir de la nouvelle souscription
 
 #### Types d'Adhésions
 - **Basic:** 1€ - Adhésion standard sans accès cirque
@@ -57,6 +59,7 @@
 # Validation: ended_at > started_at
 # Validation: Pas d'overlapping active memberships (sauf si skip_overlap_validation)
 # Enum status: pending(0), inactive(1), active(2), expired(3)
+# Expiration automatique: status passe à expired si Date.current > ended_at
 ```
 
 #### Upgrades Possibles
@@ -156,9 +159,15 @@ enum system_role: [:super_admin, :admin, :volunteer, :web_visitor]
 ```
 
 #### Person Architecture (Nouvelle)
-- **User → Person:** Relation 1-to-1
-- **Délégation:** User délègue attributs à Person
-- **Attributs:** name, phone, email, address, birth_date, etc.
+- **Entity / Account pattern:**
+  - **Person = Entity CRM** (identité unique, historique financier, soft delete via `SoftDeletable`).
+  - **User = Account** (accès web optionnel) qui référence une `Person` existante (`belongs_to :person`).
+- **Conséquences :**
+  - Création front : on `find_or_create_by` Person avant de créer User.
+  - Création admin : `People::Register` orchestre Person + User (+ Membership optionnel) ; `People::PersonCreator` disponible pour les scripts.
+  - Suppression User : coupe l’accès web (`destroy`), la Person et ses paiements restent.
+  - Suppression Person : passe par `UserManagement::UserDeleter` qui archive la Person (`Person#archive!`) seulement si aucune donnée financière (sauf super_admin).
+- **Délégation:** User délègue attributs à Person (`delegate :full_name, :phone, ...`).
 
 #### Tarifs Réduits
 - **Attributs:** `reduced_rate_eligible`, `reduced_rate_reason`, `reduced_rate_proof`
@@ -203,6 +212,7 @@ enum duration: {
 - **Prix:** En centimes (`price_cents`)
 - **Versioning:** Plans versionnés
 - **Effective from:** Date d'effet
+- **Disponibilité:** `SubscriptionPlan.available_for(person)` retourne les plans autorisés pour la personne (actuellement uniquement si membership Circus actif)
 
 ### Zone 2: En Cours de Validation
 
@@ -222,10 +232,12 @@ enum duration: {
 
 ### Zone 1: Comportement Défini
 
+> **NOTE BUSINESS:** Dans l’usage actuel de l’association, *BookOfEntry* ne matérialise **que** les carnets Pack 10 séances. Le modèle conserve des attributs (expiration, illimité, etc.) pour rester compatible avec d’anciens prototypes, mais cette logique n’est plus exploitée. Tout test/implémentation doit partir du principe « BookOfEntry = Pack 10 ».
+
 #### Création
-- **Trigger:** Paiement d'un SubscriptionPlan pack10
+- **Trigger:** Paiement d'un SubscriptionPlan pack10 (unique offre à carnet)
 - **Person:** Assigné au propriétaire
-- **Sessions:** Nombre initial = sessions_count du plan
+- **Sessions:** Nombre initial = sessions_count du plan (par défaut 10)
 
 #### Utilisation
 ```ruby
@@ -240,8 +252,8 @@ BookOfEntry#use_session!
 ```
 
 #### Expiration (Pack10 uniquement)
-- **Never expires:** Pack10 n'a pas expires_at
-- **Non-pack:** Expire selon validité
+- **Never expires:** Pack10 n'a pas expires_at (les autres durées ne sont plus utilisées)
+- **Non-pack (legacy):** Expire selon validité — gardé pour compatibilité mais hors périmètre actuel
 
 #### Suspension & Réactivation
 ```ruby
@@ -272,9 +284,11 @@ BookOfEntry.reactivate_suspended_packs_for_person(person) # Auto après expirati
 ### Zone 1: Comportement Défini
 
 #### Création Événement
-- **Name:** Requis
+- **Name/Title:** Requis (accès via attribut virtuel `title`)
 - **Date:** Requise
 - **Category:** Enum (default: circus)
+  
+> Implémentation admin: CRUD inline dans `Admin::EventsController` (plus de service EventManagement dans le flux admin).
 
 #### Inscription
 - **Person:** Une personne peut s'inscrire à un événement
@@ -310,6 +324,30 @@ BookOfEntry.reactivate_suspended_packs_for_person(person) # Auto après expirati
 #### Book of Entry Integration
 - **Auto-decrement:** Décrémente sessions_remaining si book_of_entry lié
 - **Can_use check:** Vérifie logique can_use? avant
+- **Daily free training list:** `AttendanceListManagement::DailyListGenerator` crée chaque jour (hors lundi) la liste d'émargement « training » pour l'entraînement libre.
+
+#### Check-in Entraînement Libre (Zone 1)
+- **Service principal:** `AttendanceManagement::CheckInService`
+  - Résout la personne (`person_id` ou `Current.user.person`).
+  - Garantit l’existence d’une liste d’entraînement libre via `DailyListGenerator` (skip lundi).
+  - Choisit automatiquement le carnet utilisable (`pack10` prioritaire, sinon day pass, puis illimité) si `book_of_entry_id` absent.
+  - Délègue la création d’une présence à `AttendanceCreator`.
+- **Instrumentation:** déclenche les événements `attendance.created`, `attendance.deleted`, `attendance_list.daily_created`.
+- **Rôle du carnet:**
+  - `use_session!` lors du check-in (décrément).
+  - `refund_session!` via `AttendanceManagement::AttendanceRemover` en cas de suppression.
+- **Présentations quotidiennes:** `AttendanceManagement::DailyFreeTrainingPresenter` assemble les métriques (total, pack10, day pass) pour le dashboard.
+- **Flux utilisateur:**
+  1. L’admin clique « check-in » → service check-in.
+  2. La présence apparaît sur la liste du jour (Turbo stream).
+  3. En cas d’annulation, `AttendanceRemover` détruit la présence + recrédite le carnet si applicable.
+  4. Le dashboard consomme le presenter pour les stats.
+
+> **Tests clés:**
+> - `spec/services/attendance_management/check_in_service_spec.rb`
+> - `spec/services/attendance_management/daily_list_generator_spec.rb`
+> - `spec/services/attendance_management/attendance_remover_spec.rb`
+> - `spec/services/attendance_management/daily_free_training_presenter_spec.rb`
 
 ### Zone 2: En Cours de Validation
 
@@ -451,9 +489,10 @@ Person#handle_member_number_change!(old_type, new_type, recorded_by) # Upgrade
 - **Scopes:** subscribed, unsubscribed, orphaned, linked
 
 #### Inscription
-- **Service:** `NewsletterSignupService` (refactoré pour nouvelle table)
+- **Service:** `People::NewsletterSignup` (remplace `NewsletterSignupService`)
 - **Provider:** Mailjet
 - **Opt-in:** Consentement requis
+- **Instrumentation:** `people.newsletter_signed_up`, `people.newsletter_signup.skipped`, `people.newsletter_signup.failed`
 
 #### Méthodes
 ```ruby
@@ -479,10 +518,12 @@ NewsletterSubscriber#link_to_person!(person)
 ## Services Zone 1 (Testés)
 
 ✅ `MemberManagementService` - Assignation numéros  
-✅ `MembershipManagement::MembershipCreator` - Création adhésions  
-✅ `MembershipManagement::MembershipUpgrader` - Upgrades membres  
+✅ `People::MembershipCreator` - Création adhésions  
+✅ `People::MembershipUpgrader` - Upgrades membres  
+✅ `People::SubscriptionCreator` - Création cotisations  
+✅ `People::PaymentCreator` - Création paiements  
 ✅ `Admin::PaymentsService` - Filtrage/query paiements  
-✅ `NewsletterSignupService` - Inscriptions newsletter  
+✅ `People::NewsletterSignup` - Inscriptions newsletter  
 
 ## Modèles Zone 1 (Testés)
 
@@ -498,12 +539,100 @@ NewsletterSubscriber#link_to_person!(person)
 
 ⚠️ `UserManagement::UserCreator` - Création utilisateurs  
 ⚠️ `PersonManagement::PersonCreator` - Création personnes  
-⚠️ `EventManagement::*` - Gestion événements  
+⚠️ `EventManagement::*` - Gestion événements (déprécié au profit du CRUD inline du contrôleur admin)  
 
 ## Services Zone 3 (Obsolètes/Supprimés)
 
 ❌ `Payments::Process` - OBSOLÈTE (remplacé par Person-based logic)  
-❌ `Memberships::Upgrade` - OBSOLÈTE (remplacé par MembershipManagement::MembershipUpgrader)  
+❌ `Memberships::Upgrade` - OBSOLÈTE (remplacé par People::MembershipUpgrader)  
+
+---
+
+# Plan d'Activation People::Register (2025-11-08)
+
+## Objectif
+
+Unifier la création Person → Membership → Payment autour d'un orchestrateur `People::Register` afin de supprimer la logique dupliquée dans les formulaires admin et les services historiques.
+
+## Architecture Cible
+
+```
+Admin::UserCreationForm
+  └── People::Register.call
+        ├── People::PersonCreator
+        ├── People::UserAccountCreator (optionnel)
+        └── People::MembershipCreator (paiement inclus)
+```
+
+## Étapes
+
+1. **Recréer les services** `people/person_creator.rb`, `user_account_creator.rb`, `membership_creator.rb`, `register.rb` conformément aux specs.
+2. **Brancher le dashboard** : remplacer la logique inline de `Admin::UserCreationForm` (et assimilés) par un appel unique à `People::Register`.
+3. **Nettoyer les doublons** : supprimer les créations directes (`Person.create!`, `person.create_membership!`, etc.) hors services People::*.
+4. **Réactiver les tests** : ajouter `shoulda-matchers`, `rails-controller-testing`, puis réhabiliter progressivement `spec/disabled/**`.
+5. **Documenter les flux** : MAJ des diagrammes et du changelog une fois l'activation terminée.
+
+## Contrôles
+
+- Grep régulier sur `app/` pour s'assurer que les créations passent par `People::Register`.
+- Vérification UI : création depuis `/admin/users/new`, upgrade membership, paiement manuel.
+- Instrumentation disponible : évènement `people.register` (success/failure) + logs `Rails.logger` pour audit.
+
+## Statut (2025-11-08)
+
+- **Logique écrite :** ✅ services `People::PersonCreator`, `UserAccountCreator`, `MembershipCreator`, `MembershipUpgrader`, `MembershipUpdater`, `MembershipDeactivator`, `Register`, `Payment*`, `Subscription*`
+- **Branchée UI :** ✅ Admin (`Admin::UserCreationForm`, `Admin::MembershipsController`, `Admin::PaymentsController`, `Admin::SubscriptionPlansController`) & Web (`Web::UserRegistration`) délèguent aux services People::*
+- **Tests :** ✅ `bundle exec rspec` (1054 exemples, 0 échec)
+- **Coverage :** ✅ 53.9 % (seuil SimpleCov 12 % respecté)
+
+## Actions de migration (en cours)
+
+1. ✅ **Réactivation complète** des suites RSpec (`bundle exec rspec`)
+    - `spec/services/member_management_service_spec.rb`
+    - `spec/models/person_spec.rb`
+2. ✅ **Brancher tous les flux d’adhésion** sur `People::*`
+    - `Web::UserRegistration` → `People::Register`
+    - `MembershipManagement::MembershipCreator/Updater/Deactivator/Upgrader` → `People::Membership*`
+3. ⏳ **Prochaines priorités**
+    - Mettre à jour `docs/UX_GUIDE.md` / guides internes (nouvelle architecture People)
+    - ✅ Migrer seeds (`db/seeds/sample_people.rb`, `db/seeds/bulk_users.rb`, `db/seeds/add_memberships_and_payments.rb`, `db/seeds/admin.rb`) sur services People
+    - ✅ Mettre à jour scripts de test (`scripts/test_person_first_refactoring.rb`, `scripts/test_all_scenarios.rb`) pour consommer `People::Register`
+    - ⚠️ Documenter / refondre les scripts legacy (`scripts/fix_person_user_merge.rb`, tâches rake de migration) vers les futurs services `People::AccountLinker`
+    - Exploiter instrumentation/logging `people.register` en staging + plan de nettoyage des services historiques
+
+## Nettoyage futur
+
+- Finaliser le retrait de `UserManagement::AccountCreator` lorsque plus aucune dépendance directe ne subsiste.
+- `People::PersonCreator` ne fusionne plus automatiquement les fiches : les créations sans `existing_person` échouent désormais si l'email ou le téléphone est déjà utilisé, ce qui protège les données CRM du dashboard admin.
+- `People::PaymentCreator` et `People::SubscriptionCreator` centralisent la création des paiements / cotisations (les services historiques `PaymentManagement::*` et `SubscriptionManagement::*` ont été retirés).
+- `People::AccountLinker` gère la reliaison manuelle Person/User avec instrumentation (`people.account_linked`).
+- Retirer les appels directs à `Person#create_membership!` en dehors de `People::MembershipCreator`.
+- Supprimer les services historiques restants (ex. `Payments::Process`) une fois la migration terminée.
+- Réviser les seeds et scripts (`db/seeds`, `scripts/`) pour utiliser les nouveaux services.
+- Encapsuler les scripts CRM spéciaux (merge/link) via `People::AccountLinker` ou futurs services dédiés.
+
+## Correspondance services (ancien → nouveau)
+
+| Ancien service / form | Nouveau service People::* | État |
+| --- | --- | --- |
+| `Admin::UserCreationForm` + logique inline | `People::Register` (dashboard) | ✅ Branché |
+| `PersonManagement::PersonCreator` (backend, web) | `People::PersonCreator` | ❌ Supprimé |
+| `UserManagement::AccountCreator` | `People::UserAccountCreator` | ❌ Supprimé |
+| `UserManagement::UserCreator` | `People::UserAccountCreator` | ✅ Branché |
+| `People::AccountLinker` (script merge) | `People::AccountLinker` | ✅ Branché |
+| `MembershipManagement::MembershipCreator` | `People::MembershipCreator` | ❌ Supprimé |
+| `MembershipManagement::MembershipUpgrader` | `People::MembershipUpgrader` | ❌ Supprimé |
+| `MembershipManagement::MembershipUpdater` | `People::MembershipUpdater` | ❌ Supprimé |
+| `MembershipManagement::MembershipDeactivator` | `People::MembershipDeactivator` | ❌ Supprimé |
+| `Person#create_membership!` appels directs | `People::MembershipCreator` | 🔄 à généraliser |
+| `Web::UserRegistration` (PersonManagement + AccountCreator) | `People::Register` | ✅ Branché |
+| `PaymentManagement::PaymentCreator/WithLines` | `People::PaymentCreator` | ❌ Supprimé |
+| `PaymentManagement::PaymentUpdater` | `People::PaymentUpdater` | ❌ Supprimé |
+| `PaymentManagement::PaymentDeleter` | `People::PaymentCanceller` | ❌ Supprimé |
+| `PaymentManagement::PaymentRestorer` | `People::PaymentRestorer` | ❌ Supprimé |
+| `SubscriptionManagement::SubscriptionCreator` | `People::SubscriptionCreator` | ❌ Supprimé |
+| `SubscriptionManagement::SubscriptionUpgrader` | `People::SubscriptionUpgrader` | ❌ Supprimé |
+| Scripts/Seeds divers | `People::Register` (legacy scripts à convertir) | ⏳ En cours |
 
 ---
 
@@ -558,11 +687,20 @@ NewsletterSubscriber#link_to_person!(person)
 ---
 
 **Prochaine Révision:** Après stabilisation des Zones 2  
-**Dernière Mise à Jour:** 2025-11-03
+**Dernière Mise à Jour:** 2025-11-09
 
 ---
 
 ## Changelog Récent
+
+### Consolidation People + DRY (2025-11-09)
+
+- Admin: CRUD inline pour `MembershipTypes`, `SubscriptionPlans`, `Events` (abandon des services *Management* sur ces flux).
+- Plans: `SubscriptionPlan.available_for(person)` unifie la sélection des plans autorisés.
+- UI: Options de méthode de paiement centralisées via helper.
+- Instrumentation: événements ajoutés pour adhésions, cotisations, newsletter.
+- Seeds/Tasks: migration des Person sans adhésion via `Person#create_membership!`.
+- Nettoyage: suppression des reliques `Payments::Process` (désactivés).
 
 ### Réécriture Complète Logique Métier (2025-11-03)
 
@@ -577,10 +715,19 @@ NewsletterSubscriber#link_to_person!(person)
 - **Historique:** Tous changements tracés dans MemberNumberHistory
 
 **Prorata Cotisations:**
-- **Nouveau:** `Person#upgrade_subscription!` - Upgrade Pack10/Trimestre/Année
-- **Pack10 → Trimestre/Année:** Suspension Pack10, pas de crédit
-- **Trimestre → Année:** Crédit prorata temporel (jours restants)
-- **Réactivation:** Auto Pack10 quand Trimestre/Année expire
+- **Contrôleur:** `Person#upgrade_subscription!`
+- **Jour → autre plan:** interdit (journée non cumulable, pas d’upgrade possible)
+- **Pack10 → Trimestre/Année:** pack suspendu (sessions conservées), **pas** de prorata — on paie le nouveau plan plein tarif
+- **Trimestre → Année:** prorata temporel appliqué (montant Année – valeur temps restant sur Trimestre)
+- **Réactivation automatique:** Pack10 suspendu se réactive une fois le Trimestre/Année arrivé à expiration
+- **Durées:**
+  - `day` : `purchased_at` à fin de journée (`end_of_day`)
+  - `trimester` : 3 mois (≈90 jours) à partir de `purchased_at`
+  - `annual` : 1 an à partir de `purchased_at`
+  - `pack10` : pas d’expiration (`expires_at` nil) ; suspendu si upgrade
+- **Suspension/Expiration:**
+  - Si l’adhésion (`membership`) expire, tous les carnets associés (book_of_entries) sont suspendus jusqu’à renouvellement/adherence active.
+  - Réactivation automatique quand une nouvelle adhésion circus redevient active.
 
 **Tarifs Réduits:**
 - **Nouveau:** Attributs `reduced_rate_eligible`, `reduced_rate_reason`, `reduced_rate_proof` sur Person
@@ -620,59 +767,6 @@ NewsletterSubscriber#link_to_person!(person)
 **Pattern:** Controller → Service → Model
 
 **Services créés (44 services dans 15 domaines):**
-- `MembershipManagement::*` (4 services)
+- `MembershipManagement::*` (4 services) – supprimés au profit de `People::Membership*`
 - `SubscriptionManagement::*` (2 services)
-- `PaymentManagement::*` (6 services)
-- `AccountClaimManagement::*` (2 services)
-- `AttendanceManagement::*` (1 service)
-- `AttendanceListManagement::*` (3 services)
-- `BlogManagement::*` (3 services)
-- `MembershipTypeManagement::*` (2 services)
-- `OpeningHoursManagement::*` (1 service)
-- `NewsletterManagement::*` (1 service)
-- `SubscriptionPlanManagement::*` (2 services)
-- `UserManagement::*` (3 services)
-- `PersonManagement::*` (3 services)
-- `EventManagement::*` (3 services)
-- `MemberNumberManagement::*` (2 services)
-
-**Bénéfices:**
-- Controllers minimalistes (délégation pure)
-- Logique métier extraite et testable
-- Instrumentation pour audit (ActiveSupport::Notifications)
-- Cohérence et maintenabilité
-
-**Documentation:** Voir `docs/ARCHITECTURE_SERVICES.md` pour détails complets.
-
-### Historique des Refactorings (2025-01-31)
-
-#### Simplification Architecture
-
-**MembershipType category enum:**
-- **Avant:** `basic`, `circus_full`, `circus_reduced` (3 catégories confuses)
-- **Après:** `basic`, `circus`, `event` (3 catégories claires)
-- **Impact:** Circus Full et Reduced sont des tarifs, pas des catégories distinctes
-- **Avantage:** Ajout facile de tarifs Circus (Student, Senior, etc.) sans modifier code
-
-**Newsletter:**
-- **Nouveau:** Table `newsletter_subscribers` dédiée
-- **Avant:** Booléen sur Person
-- **Avantage:** Tracking indépendant, merge email simplifié, audit trail complet
-
-**Payment relations:**
-- **Supprimé:** Legacy `user_id`, `order_id`
-- **Conservé:** Architecture Person-Based uniquement
-- **Avantage:** Tests simplifiés -50% complexité
-
-**Score modèle:** 7/10 → 9/10 ✅
-
-## 📚 Documentation liée
-
-- **Architecture Services:** `docs/ARCHITECTURE_SERVICES.md` - Pattern Controller → Service → Model (44 services)
-- **Concerns:** `docs/CONCERNS_ANALYSIS.md` - Analyse complète des concerns (10 concerns)
-- **Audit Controllers:** `docs/CONTROLLERS_AUDIT.md` - État des tests et stratégie TDD
-- **Zones Classification:** `docs/ZONES_CLASSIFICATION.md` - Classification Zone 1/2/3
-- **TDD Guide:** `docs/TDD_GUIDE.md` - Guide complet TDD
-- **Testing Guide:** `docs/TESTING_GUIDE.md` - Guide tests et couverture
-
-
+- `

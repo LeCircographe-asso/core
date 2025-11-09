@@ -103,13 +103,12 @@ function initSmoothScroll() {
             const targetElement = document.querySelector(targetId);
             
             if (targetElement) {
-                // Calcul de la position avec un décalage (offset) si nécessaire
-                const offset = 275 // Ajustez selon vos besoins
+                const header = document.querySelector('header');
+                const offset = header ? header.offsetHeight + 24 : 0;
                 const targetPosition = targetElement.getBoundingClientRect().top + window.pageYOffset - offset;
-                
-                // Animation de défilement fluide
+
                 window.scrollTo({
-                    top: targetPosition,
+                    top: Math.max(targetPosition, 0),
                     behavior: 'smooth'
                 });
             }

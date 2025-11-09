@@ -20,7 +20,7 @@ module Admin::MembershipsHelper
   def upgrade_name_with_price(membership_type)
     base_name = membership_type.name
     price_diff = upgrade_price_difference(membership_type)
-    
+
     if price_diff == "0€"
       "#{base_name} - Gratuit"
     else

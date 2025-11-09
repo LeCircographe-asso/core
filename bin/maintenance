@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+APP_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+SCRIPT_PATH="${APP_ROOT}/scripts/maintenance.sh"
+
+if [[ ! -x "${SCRIPT_PATH}" ]]; then
+  echo "Error: maintenance script not found or not executable at ${SCRIPT_PATH}" >&2
+  exit 1
+fi
+
+exec "${SCRIPT_PATH}" "$@"
+

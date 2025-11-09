@@ -8,8 +8,8 @@ class CreateMembershipSystem < ActiveRecord::Migration[8.0]
       t.text "description"
       t.datetime "created_at", null: false
       t.datetime "updated_at", null: false
-      t.index ["category"], name: "index_membership_types_on_category"
-      t.index ["name"], name: "index_membership_types_on_name", unique: true
+      t.index [ "category" ], name: "index_membership_types_on_category"
+      t.index [ "name" ], name: "index_membership_types_on_name", unique: true
     end
 
     create_table "memberships", force: :cascade do |t|
@@ -21,11 +21,11 @@ class CreateMembershipSystem < ActiveRecord::Migration[8.0]
       t.date "first_joined_at"
       t.datetime "created_at", null: false
       t.datetime "updated_at", null: false
-      t.index ["membership_type_id"], name: "index_memberships_on_membership_type_id"
-      t.index ["person_id", "status"], name: "index_memberships_on_person_id_and_status"
-      t.index ["person_id"], name: "index_memberships_on_person_id"
-      t.index ["started_at", "ended_at"], name: "index_memberships_on_started_at_and_ended_at"
-      t.index ["status"], name: "index_memberships_on_status"
+      t.index [ "membership_type_id" ], name: "index_memberships_on_membership_type_id"
+      t.index [ "person_id", "status" ], name: "index_memberships_on_person_id_and_status"
+      t.index [ "person_id" ], name: "index_memberships_on_person_id"
+      t.index [ "started_at", "ended_at" ], name: "index_memberships_on_started_at_and_ended_at"
+      t.index [ "status" ], name: "index_memberships_on_status"
     end
 
     # Foreign Keys

@@ -4,4 +4,3 @@ FactoryBot.define do
     association :blog
   end
 end
-

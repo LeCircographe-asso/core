@@ -68,7 +68,6 @@ module Admin
 
         number_to_currency(amount, unit: "€", separator: ",", delimiter: " ")
       end
-
     end
   end
 end

@@ -1,0 +1,17 @@
+<main class="w-full px-4 sm:px-6 lg:px-8 py-12">
+  <div class="max-w-5xl mx-auto space-y-8">
+    <header class="text-center space-y-2">
+      <p class="text-sm uppercase tracking-[0.3em] text-[#1F5C55]/70">Événements</p>
+      <h1 class="text-3xl font-semibold text-gray-800">À venir au Circographe</h1>
+      <p class="text-gray-600">Cette page est également utilisée par Turbo pour remplir la section d’accueil.</p>
+    </header>
+
+    <%= render "events/upcoming_frame", events: @events %>
+
+    <div class="text-center">
+      <%= link_to "Voir tous les événements", events_path,
+                  class: "inline-flex items-center justify-center px-4 py-2 text-sm font-semibold text-white bg-[#1F5C55] border-2 border-[#1F5C55] rounded-full shadow-sm hover:bg-gray-100 hover:text-[#1F5C55] hover:border-[#1F5C55] transition-colors duration-300" %>
+    </div>
+  </div>
+</main>
+

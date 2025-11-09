@@ -1,6 +1,5 @@
 module BlogManagement
   class BlogDeleter < BaseService
-
     attribute :blog_id, :integer
     attribute :deleted_by_id, :integer
 
@@ -47,5 +46,3 @@ module BlogManagement
     # success et failure hérités de BaseService
   end
 end
-
-

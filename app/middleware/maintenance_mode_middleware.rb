@@ -4,7 +4,9 @@ class MaintenanceModeMiddleware
   end
 
   def call(env)
-    if maintenance_enabled? && !healthcheck?(env)
+    request = Rack::Request.new(env)
+
+    if maintenance_enabled? && !allowlisted_request?(request)
       return maintenance_response
     end
 
@@ -14,25 +16,34 @@ class MaintenanceModeMiddleware
   private
 
   def maintenance_enabled?
-    # Logique hybride : maintenance par défaut si ENV non défini (comme maintenance-mode)
-    # mais support du fichier /tmp/maintenance pour plus de flexibilité
-    value = ENV["MAINTENANCE_MODE"]
+    env_enabled = truthy_env?(ENV["MAINTENANCE_MODE"])
 
-    # Si ENV["MAINTENANCE_MODE"] n'est pas défini, désactivation par défaut
-    return false if value.nil? || value.to_s.strip.empty?
-
-    # Si ENV est défini, respecter sa valeur
-    env_enabled = value.to_s.strip.casecmp("true").zero?
-
-    # Vérifier aussi le fichier /tmp/maintenance pour plus de flexibilité
-    file_enabled = File.exist?("/tmp/maintenance") && File.read("/tmp/maintenance").strip.downcase == "true"
+    file_enabled = maintenance_flag_enabled?
 
     env_enabled || file_enabled
   end
 
-  def healthcheck?(env)
-    request = Rack::Request.new(env)
+  def allowlisted_request?(request)
+    healthcheck?(request) || pwa_request?(request)
+  end
+
+  def healthcheck?(request)
     request.path == "/up"
+  end
+
+  def pwa_request?(request)
+    return false unless %w[GET HEAD].include?(request.request_method)
+
+    path = request.path
+    pwa_paths = [
+      "/manifest",
+      "/manifest.json",
+      "/manifest.webmanifest",
+      "/service-worker",
+      "/service-worker.js"
+    ]
+
+    pwa_paths.include?(path)
   end
 
   def maintenance_response
@@ -118,6 +129,30 @@ class MaintenanceModeMiddleware
     }
 
     [ 503, headers, [ body ] ]
+  end
+
+  def maintenance_flag_enabled?
+    maintenance_flag_paths.any? do |path|
+      next false unless File.exist?(path)
+
+      content = File.read(path).strip.downcase
+      content.empty? || content == "true"
+    end
+  rescue StandardError
+    false
+  end
+
+  def maintenance_flag_paths
+    @maintenance_flag_paths ||= [
+      Rails.root.join("tmp", "maintenance.flag").to_s,
+      "/tmp/maintenance"
+    ]
+  end
+
+  def truthy_env?(value)
+    return false if value.nil?
+
+    value.to_s.strip.casecmp("true").zero?
   end
 
   def google_url

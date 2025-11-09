@@ -195,7 +195,7 @@ module Admin
         @user = User.new
         @user.person = result.person if result.person
         flash.now[:alert] = result.message
-        render :new, status: :unprocessable_entity
+        render :new, status: :unprocessable_content
       end
     end
 
@@ -206,36 +206,39 @@ module Admin
         person_id = params[:id].to_s.gsub("person_", "")
         @person = PersonQuery.active.find(person_id)
 
-        # Utiliser le service PersonManagement::PersonUpdater
-        updater = PersonManagement::PersonUpdater.new(
-          person_id: @person.id,
-          attributes: person_params.except(:newsletter_subscribed),
-          newsletter_subscribed: (person_params[:newsletter_subscribed] == "1" || person_params[:newsletter_subscribed] == true || person_params[:newsletter_subscribed] == 1),
-          updated_by_id: Current.user.id
-        )
+        person_attributes = person_params.to_h.deep_symbolize_keys
+        newsletter_flag = ActiveModel::Type::Boolean.new.cast(person_attributes.delete(:newsletter_subscribed))
 
-        result = updater.call
+        result = People::Register.new(
+          person_params: person_attributes.merge(allow_blank_attributes: true),
+          existing_person: @person,
+          newsletter_subscribed: newsletter_flag,
+          newsletter_source: "admin",
+          create_user_account: false,
+          create_membership: false
+        ).call
 
         if result.success?
+          updated_person = result.person || @person
           # Handle AJAX requests for inline editing
           if request.xhr?
             render json: {
               success: true,
-              member_number: @person.reload.member_number,
+              member_number: updated_person.reload.member_number,
               message: "Informations mises à jour avec succès."
             }
           else
-            redirect_to admin_user_path("person_#{@person.id}"), notice: "Informations mises à jour avec succès."
+            redirect_to admin_user_path("person_#{updated_person.id}"), notice: "Informations mises à jour avec succès."
           end
         else
           if request.xhr?
             render json: {
               success: false,
               errors: result.errors
-            }, status: :unprocessable_entity
+            }, status: :unprocessable_content
           else
             flash.now[:alert] = result.message
-            render :edit_person, status: :unprocessable_entity
+            render :edit_person, status: :unprocessable_content
           end
         end
         return
@@ -270,8 +273,8 @@ module Admin
             ]
           }
         else
-          format.html { render :show, status: :unprocessable_entity, alert: result.message }
-          format.json { render json: { errors: result.errors }, status: :unprocessable_entity }
+          format.html { render :show, status: :unprocessable_content, alert: result.message }
+          format.json { render json: { errors: result.errors }, status: :unprocessable_content }
           format.turbo_stream {
             render turbo_stream: turbo_stream.replace(
               "error_explanation",
@@ -289,22 +292,22 @@ module Admin
       if params[:id].to_s.start_with?("person_")
         # Supprimer la Person (déjà chargée dans set_user)
         person = @person
-        
+
         # Debug: vérifier si @person est défini
         if person.nil?
           Rails.logger.error "DEBUG: @person is nil for params[:id] = #{params[:id]}"
           redirect_to admin_users_path, alert: "Personne non trouvée." and return
         end
-        
+
         # Utiliser le service UserManagement::UserDeleter
         deleter = UserManagement::UserDeleter.new(
           person_id: person.id,
           deleted_by_id: current_user.id,
           reason: "Suppression via interface admin"
         )
-        
+
         result = deleter.call
-        
+
         if result.success?
           redirect_to admin_users_path, status: :see_other, notice: "Personne supprimée avec succès."
         else
@@ -342,12 +345,12 @@ module Admin
         # Pour les Person, charger la Person
         person_id = params[:id].gsub("person_", "")
         @person = Person.find_by(id: person_id)
-        
+
         # If person not found, redirect to index with alert
         if @person.nil?
           redirect_to admin_users_path, alert: "Utilisateur non trouvé." and return
         end
-        
+
         @user = @person.user # Peut être nil si pas de compte utilisateur
       else
         # Pour les User classiques
@@ -481,7 +484,7 @@ module Admin
         reduced_rate_reason: person_params[:reduced_rate_reason],
         reduced_rate_proof: person_params[:reduced_rate_proof],
         create_web_account: params.dig(:user, :create_web_account),
-        email_address: params.dig(:user, :email_address),
+        email_address: params.dig(:user, :email_address) || person_params[:email],
         system_role: params.dig(:user, :system_role),
         create_membership: params.dig(:user, :create_membership),
         membership_type_id: params.dig(:user, :membership_type_id),
@@ -513,14 +516,12 @@ module Admin
         :reduced_rate_proof
       )
     end
-    
-
     def available_roles_for_user(user)
       return [] if user.nil?
-      
+
       # Un super_admin peut assigner tous les rôles sauf super_admin
       if Current.user&.super_admin?
-        User.system_roles.keys.reject { |role| role == 'super_admin' }
+        User.system_roles.keys.reject { |role| role == "super_admin" }
       # Un admin peut assigner volunteer et web_visitor
       elsif Current.user&.admin?
         %w[volunteer web_visitor]

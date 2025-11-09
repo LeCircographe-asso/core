@@ -30,7 +30,7 @@ RSpec.describe AccountClaim, type: :model do
     it "auto-generates unique confirmation_token" do
       claim1 = create(:account_claim)
       claim2 = create(:account_claim)
-      
+
       expect(claim1.confirmation_token).to be_present
       expect(claim2.confirmation_token).to be_present
       expect(claim1.confirmation_token).not_to eq(claim2.confirmation_token)
@@ -46,7 +46,7 @@ RSpec.describe AccountClaim, type: :model do
     describe ".active" do
       it "returns only pending claims that haven't expired" do
         active_claims = AccountClaim.active
-        
+
         expect(active_claims).to include(active_claim)
         expect(active_claims).not_to include(expired_pending_claim, confirmed_claim, rejected_claim)
       end
@@ -151,7 +151,9 @@ RSpec.describe AccountClaim, type: :model do
       end
 
       it "returns false for claim expiring this week (but not today)" do
-        expect(claim.today?(:expires_at)).to be false
+        other_day = (Date.current.beginning_of_week..Date.current.end_of_week).to_a.find { |d| d != Date.current }
+        not_today_claim = create(:account_claim, expires_at: other_day.beginning_of_day + 12.hours)
+        expect(not_today_claim.today?(:expires_at)).to be false
       end
     end
 
@@ -179,4 +181,3 @@ RSpec.describe AccountClaim, type: :model do
     end
   end
 end
-

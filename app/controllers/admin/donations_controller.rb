@@ -5,19 +5,18 @@ module Admin
       @person = @user.person
 
       begin
-        # Utiliser le service PaymentManagement::PaymentCreator pour cohérence
-        creator = PaymentManagement::PaymentCreator.new(
-          person_id: @person.id,
-          amount_cents: (payment_params[:payment_amount].to_f * 100).to_i,
+        amount_cents = (payment_params[:payment_amount].to_f * 100).to_i
+
+        result = People::PaymentCreator.new(
+          person: @person,
+          amount_cents: amount_cents,
           payment_method: "cash",
-          recorded_by_id: Current.user.id,
+          recorded_by_id: Current.user&.id,
           item_type: "Donation",
-          item_id: @person.id, # Pour donations, item_id = person_id
+          item_id: @person.id,
           description: "Donation",
           notes: "Donation"
-        )
-
-        result = creator.call
+        ).call
 
         if result.success?
           redirect_to admin_payment_path(result.payment), notice: "Donation prise en compte"

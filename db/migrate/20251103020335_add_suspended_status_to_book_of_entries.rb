@@ -3,7 +3,7 @@ class AddSuspendedStatusToBookOfEntries < ActiveRecord::Migration[8.0]
     # Add suspended status to enum (value 4)
     add_column :book_of_entries, :suspended_at, :datetime
     add_column :book_of_entries, :suspended_reason, :text
-    
+
     # Update existing enum values to make room for suspended status
     # Suspended will be value 4 in the enum
     reversible do |dir|

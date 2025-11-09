@@ -1,7 +1,7 @@
 class User < ApplicationRecord
   include Roleable
   include Dateable
-  
+
   attr_accessor :cgu, :privacy_policy
   after_create :generate_password_reset_token
   after_create :welcome_send
@@ -38,7 +38,7 @@ class User < ApplicationRecord
            :notes, :occupation, :specialty, :image_rights, :get_involved,
            :dyslexic_font, :zip_code, :town, :country,
            to: :person, prefix: false, allow_nil: true
-           
+
   # Override newsletter_subscribed to read from NewsletterSubscriber
   def newsletter_subscribed
     return false unless person.present? && person.email.present?

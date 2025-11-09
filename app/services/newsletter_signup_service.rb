@@ -10,7 +10,7 @@ class NewsletterSignupService
   # No toggle/unsubscribe - that's done via settings/profile
   def call_newsletter
     subscriber = NewsletterSubscriber.find_by(email: @new_email)
-    
+
     if subscriber
       # If email already exists, redirect to login for management
       { success: false, message: "Cette adresse est déjà dans notre liste. Connectez-vous pour gérer votre inscription.", redirect_to: true }
@@ -18,7 +18,7 @@ class NewsletterSignupService
       create_new_subscriber
     end
   end
-  
+
 
   private
 
@@ -26,12 +26,12 @@ class NewsletterSignupService
     subscriber = NewsletterSubscriber.new(
       email: @new_email,
       subscribed: true,
-      source: 'web'
+      source: "web"
     )
-    
+
     # Link vers Person si existe
     subscriber.person = @person if @person
-    
+
     if subscriber.save
       { success: true, message: "Inscription à la newsletter réussie !" }
     else

@@ -11,9 +11,9 @@ RSpec.describe "Registrations", type: :request do
 
     context "when authenticated" do
       let(:user) { create(:user) }
-      
+
       before { login_as(user) }
-      
+
       it "redirects to root" do
         get new_registration_path
         expect(response).to redirect_to(root_path)
@@ -43,37 +43,37 @@ RSpec.describe "Registrations", type: :request do
           post registration_path, params: valid_params
         }.to change { User.count }.by(1)
       end
-      
+
       it "creates a person" do
         expect {
           post registration_path, params: valid_params
         }.to change { Person.count }.by(1)
       end
-      
+
       it "creates a newsletter subscriber if requested" do
         expect {
           post registration_path, params: valid_params
         }.to change { NewsletterSubscriber.count }.by(1)
       end
-      
+
       it "creates a session" do
         expect {
           post registration_path, params: valid_params
         }.to change { Session.count }.by(1)
       end
-      
+
       it "redirects to root with success notice" do
         post registration_path, params: valid_params
         expect(response).to redirect_to(root_path)
       end
-      
+
       it "sends welcome email" do
         expect {
           post registration_path, params: valid_params
         }.to have_enqueued_job(ActionMailer::MailDeliveryJob)
       end
     end
-    
+
     context "without newsletter subscription" do
       let(:valid_params) do
         {
@@ -95,7 +95,7 @@ RSpec.describe "Registrations", type: :request do
           post registration_path, params: valid_params
         }.not_to change { NewsletterSubscriber.count }
       end
-      
+
       it "still creates user and person" do
         expect {
           post registration_path, params: valid_params
@@ -103,10 +103,10 @@ RSpec.describe "Registrations", type: :request do
           .and change { Person.count }.by(1)
       end
     end
-    
+
     context "with existing email" do
       let!(:existing_user) { create(:user, email_address: "existing@example.com") }
-      
+
       it "does not create duplicate user" do
         expect {
           post registration_path, params: {
@@ -122,7 +122,7 @@ RSpec.describe "Registrations", type: :request do
           }
         }.not_to change { User.count }
       end
-      
+
       it "renders new with error" do
         post registration_path, params: {
           user: {
@@ -135,12 +135,11 @@ RSpec.describe "Registrations", type: :request do
             privacy_policy: "1"
           }
         }
-        
         expect(response).to have_http_status(:unprocessable_content)
         expect(response.body).to include("S'inscrire")
       end
     end
-    
+
     context "without CGU" do
       it "does not create user" do
         expect {
@@ -155,12 +154,11 @@ RSpec.describe "Registrations", type: :request do
             }
           }
         }.not_to change { User.count }
-        
         expect(response).to have_http_status(:unprocessable_content)
         expect(response.body).to include("CGU")
       end
     end
-    
+
     context "without privacy policy" do
       it "does not create user" do
         expect {
@@ -175,12 +173,11 @@ RSpec.describe "Registrations", type: :request do
             }
           }
         }.not_to change { User.count }
-        
         expect(response).to have_http_status(:unprocessable_content)
         expect(response.body).to include("confidentialité")
       end
     end
-    
+
     context "with password mismatch" do
       it "does not create user" do
         expect {
@@ -196,10 +193,8 @@ RSpec.describe "Registrations", type: :request do
             }
           }
         }.not_to change { User.count }
-        
         expect(response).to have_http_status(:unprocessable_content)
       end
     end
   end
 end
-

@@ -39,7 +39,7 @@ module Admin
         redirect_to admin_attendance_lists_path, notice: result.message
       else
         flash.now[:error] = result.message
-        render :new, status: :unprocessable_entity
+        render :new, status: :unprocessable_content
       end
     end
 
@@ -59,7 +59,7 @@ module Admin
         redirect_to admin_attendance_lists_path, notice: result.message
       else
         flash.now[:error] = result.message
-        render :edit, status: :unprocessable_entity
+        render :edit, status: :unprocessable_content
       end
     end
 

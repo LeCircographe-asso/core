@@ -11,8 +11,8 @@ class CreateMemberNumberHistories < ActiveRecord::Migration[8.0]
 
       t.timestamps
     end
-    
+
     add_index :member_number_histories, :member_number, unique: true
-    add_index :member_number_histories, [:person_id, :assigned_at]
+    add_index :member_number_histories, [ :person_id, :assigned_at ]
   end
 end
