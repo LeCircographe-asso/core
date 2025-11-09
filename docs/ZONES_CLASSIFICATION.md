@@ -67,27 +67,24 @@
 | Service | Usage | Tests? | Action |
 |---------|-------|--------|---------|
 | `MemberManagementService` | ✅ Utilisé partout | ✅ Oui | Maintenir |
-| `Payments::Process` | ✅ Critical | ✅ Oui | Maintenir |
-| `Memberships::Upgrade` | ✅ Critical | ✅ Oui | Maintenir |
+| `People::PaymentCreator` | ✅ Critical | ✅ Oui | Maintenir |
+| `People::MembershipUpgrader` | ✅ Critical | ✅ Oui | Maintenir |
 | `Admin::PaymentsService` | ✅ Utilisé | ❌ Non | **Ajouter tests** |
-| `NewsletterSignupService` | ✅ Utilisé | ❌ Non | Ajouter tests |
+| `People::NewsletterSignup` | ✅ Utilisé | ❌ Non | Ajouter tests |
 
 ### 🟡 Zone 2: Fonctionnels mais Non Testés
 
 | Service | Usage | Raison Zone 2 | Tests Quand? |
 |---------|-------|---------------|--------------|
 | `Web::UserRegistration` | ✅ Utilisé | Workflow complexe, peut évoluer | Après stabilisation |
-| `PaymentManagement::PaymentCreator` | ⚠️ Existe | Logique en cours | Après stabilisation |
-| `PaymentManagement::PaymentUpdater` | ⚠️ Existe | Logique en cours | Après stabilisation |
-| `PaymentManagement::PaymentDeleter` | ⚠️ Existe | Logique en cours | Après stabilisation |
-| `PaymentManagement::PaymentRestorer` | ⚠️ Existe | Logique en cours | Après stabilisation |
-| `UserManagement::UserCreator` | ⚠️ Existe | Référencé | Après stabilisation |
+| `People::Register` | ⚠️ Existe | Orchestrateur CRM (à surveiller) | Tests de régression |
+| `People::PaymentCreator` | ⚠️ Existe | Interface unique paiements | Tests People |
+| `People::PaymentUpdater` | ⚠️ Existe | Interface unique paiements | Tests People |
+| `People::PaymentCanceller` | ⚠️ Existe | Interface unique paiements | Tests People |
+| `People::PaymentRestorer` | ⚠️ Existe | Interface unique paiements | Tests People |
+| `People::AccountLinker` | ⚠️ Existe | CRM merge ponctuel | Tests People |
 | `UserManagement::UserDeleter` | ⚠️ Existe | Logique soft-delete | Après stabilisation |
-| `UserManagement::AccountCreator` | ⚠️ Existe | Référencé | Après stabilisation |
-| `PersonManagement::PersonCreator` | ⚠️ Existe | Référencé | Après stabilisation |
-| `PersonManagement::PersonMerger` | ⚠️ Existe | Référencé mais rare | Après stabilisation |
-| `MembershipManagement::MembershipCreator` | ⚠️ Existe | Référencé | Après stabilisation |
-| `MembershipManagement::MembershipUpgrader` | ⚠️ Existe | Complément Upgrade | Après stabilisation |
+| `People::AccountMerger` | ⚠️ Existe | Fusion CRM ponctuelle | Tests People |
 | `EventManagement::EventCreator` | ⚠️ Existe | Référencé | Après stabilisation |
 | `EventManagement::EventUpdater` | ⚠️ Existe | CRUD standard | Après stabilisation |
 | `EventManagement::EventDeleter` | ⚠️ Existe | CRUD standard | Après stabilisation |
@@ -96,7 +93,7 @@
 
 | Service | Statut |
 |---------|--------|
-| `PaymentManagement::RefundCreator` | Future |
+| `People::PaymentRefund` (à concevoir) | Future |
 | Operations in `app/services/admin/operations/` | Non utilisées |
 
 ---
@@ -180,7 +177,7 @@
 - [ ] Support: `MemberNumberHistory`, `PaymentAuditLog`
 
 #### Services Zone 1 Restants
-- [ ] `NewsletterSignupService` - Email signup
+- [ ] `People::NewsletterSignup` - Email signup
 - [ ] Compléter Coverage existants
 
 #### Controllers Zone 1 Restants
@@ -195,8 +192,8 @@
 
 #### Stabiliser Services Zone 2
 - [ ] `Web::UserRegistration` - Stabiliser, puis tester
-- [ ] `PaymentManagement::*` - Stabiliser, puis tester
-- [ ] `UserManagement::*` - Stabiliser, puis tester
+- [ ] `People::Register` & déclinaisons (monitoring en production)
+- [ ] `UserManagement::UserDeleter` - Stabiliser, puis tester
 
 **Estimation:** +18 specs (progressif)
 
@@ -207,7 +204,6 @@
 ### Code Mort / Inconsistances
 
 ❌ **Références à services inexistants:**
-- `MembershipManagement::MembershipCreator` - Référencé mais non utilisé
 - Services dans `app/services/admin/operations/` - Non utilisés
 
 **Action:** Audit et nettoyage
@@ -225,7 +221,7 @@
 ### 🟡 Court Terme (Zone 1 Restant)
 5. `AccountClaim`, `Attendance` models
 6. Autres admin controllers
-7. `NewsletterSignupService`
+7. `People::NewsletterSignup`
 
 ### 🔵 Moyen Terme (Zone 2 → 1)
 8. Services en exploration

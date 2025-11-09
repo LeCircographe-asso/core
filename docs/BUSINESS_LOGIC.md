@@ -164,7 +164,7 @@ enum system_role: [:super_admin, :admin, :volunteer, :web_visitor]
   - **User = Account** (accès web optionnel) qui référence une `Person` existante (`belongs_to :person`).
 - **Conséquences :**
   - Création front : on `find_or_create_by` Person avant de créer User.
-  - Création admin : Person d’abord (`PersonManagement::PersonCreator`), puis User via `UserManagement::UserCreator` si espace web nécessaire.
+  - Création admin : `People::Register` orchestre Person + User (+ Membership optionnel) ; `People::PersonCreator` disponible pour les scripts.
   - Suppression User : coupe l’accès web (`destroy`), la Person et ses paiements restent.
   - Suppression Person : passe par `UserManagement::UserDeleter` qui archive la Person (`Person#archive!`) seulement si aucune donnée financière (sauf super_admin).
 - **Délégation:** User délègue attributs à Person (`delegate :full_name, :phone, ...`).
@@ -486,7 +486,7 @@ Person#handle_member_number_change!(old_type, new_type, recorded_by) # Upgrade
 - **Scopes:** subscribed, unsubscribed, orphaned, linked
 
 #### Inscription
-- **Service:** `NewsletterSignupService` (refactoré pour nouvelle table)
+- **Service:** `People::NewsletterSignup` (remplace `NewsletterSignupService`)
 - **Provider:** Mailjet
 - **Opt-in:** Consentement requis
 
@@ -514,10 +514,10 @@ NewsletterSubscriber#link_to_person!(person)
 ## Services Zone 1 (Testés)
 
 ✅ `MemberManagementService` - Assignation numéros  
-✅ `MembershipManagement::MembershipCreator` - Création adhésions  
-✅ `MembershipManagement::MembershipUpgrader` - Upgrades membres  
+✅ `People::MembershipCreator` - Création adhésions  
+✅ `People::MembershipUpgrader` - Upgrades membres  
 ✅ `Admin::PaymentsService` - Filtrage/query paiements  
-✅ `NewsletterSignupService` - Inscriptions newsletter  
+✅ `People::NewsletterSignup` - Inscriptions newsletter  
 
 ## Modèles Zone 1 (Testés)
 
@@ -538,7 +538,7 @@ NewsletterSubscriber#link_to_person!(person)
 ## Services Zone 3 (Obsolètes/Supprimés)
 
 ❌ `Payments::Process` - OBSOLÈTE (remplacé par Person-based logic)  
-❌ `Memberships::Upgrade` - OBSOLÈTE (remplacé par MembershipManagement::MembershipUpgrader)  
+❌ `Memberships::Upgrade` - OBSOLÈTE (remplacé par People::MembershipUpgrader)  
 
 ---
 
@@ -570,12 +570,63 @@ Admin::UserCreationForm
 
 - Grep régulier sur `app/` pour s'assurer que les créations passent par `People::Register`.
 - Vérification UI : création depuis `/admin/users/new`, upgrade membership, paiement manuel.
+- Instrumentation disponible : évènement `people.register` (success/failure) + logs `Rails.logger` pour audit.
 
-## Statut
+## Statut (2025-11-08)
 
-- **Logique écrite :** en cours de reconstruction
-- **Branchée UI :** non
-- **Tests :** specs existantes désynchronisées → réactivation prévue après branchement
+- **Logique écrite :** ✅ services `People::PersonCreator`, `UserAccountCreator`, `MembershipCreator`, `MembershipUpgrader`, `MembershipUpdater`, `MembershipDeactivator`, `Register`, `Payment*`, `Subscription*`
+- **Branchée UI :** ✅ Admin (`Admin::UserCreationForm`, `Admin::MembershipsController`, `Admin::PaymentsController`, `Admin::SubscriptionPlansController`) & Web (`Web::UserRegistration`) délèguent aux services People::*
+- **Tests :** ✅ `bundle exec rspec` (1054 exemples, 0 échec)
+- **Coverage :** ✅ 53.9 % (seuil SimpleCov 12 % respecté)
+
+## Actions de migration (en cours)
+
+1. ✅ **Réactivation complète** des suites RSpec (`bundle exec rspec`)
+    - `spec/services/member_management_service_spec.rb`
+    - `spec/models/person_spec.rb`
+2. ✅ **Brancher tous les flux d’adhésion** sur `People::*`
+    - `Web::UserRegistration` → `People::Register`
+    - `MembershipManagement::MembershipCreator/Updater/Deactivator/Upgrader` → `People::Membership*`
+3. ⏳ **Prochaines priorités**
+    - Mettre à jour `docs/UX_GUIDE.md` / guides internes (nouvelle architecture People)
+    - ✅ Migrer seeds (`db/seeds/sample_people.rb`, `db/seeds/bulk_users.rb`, `db/seeds/add_memberships_and_payments.rb`, `db/seeds/admin.rb`) sur services People
+    - ✅ Mettre à jour scripts de test (`scripts/test_person_first_refactoring.rb`, `scripts/test_all_scenarios.rb`) pour consommer `People::Register`
+    - ⚠️ Documenter / refondre les scripts legacy (`scripts/fix_person_user_merge.rb`, tâches rake de migration) vers les futurs services `People::AccountLinker`
+    - Exploiter instrumentation/logging `people.register` en staging + plan de nettoyage des services historiques
+
+## Nettoyage futur
+
+- Finaliser le retrait de `UserManagement::AccountCreator` lorsque plus aucune dépendance directe ne subsiste.
+- `People::PersonCreator` ne fusionne plus automatiquement les fiches : les créations sans `existing_person` échouent désormais si l'email ou le téléphone est déjà utilisé, ce qui protège les données CRM du dashboard admin.
+- `People::PaymentCreator` et `People::SubscriptionCreator` centralisent la création des paiements / cotisations (les services historiques `PaymentManagement::*` et `SubscriptionManagement::*` ont été retirés).
+- `People::AccountLinker` gère la reliaison manuelle Person/User avec instrumentation (`people.account_linked`).
+- Retirer les appels directs à `Person#create_membership!` en dehors de `People::MembershipCreator`.
+- Supprimer les services historiques restants (ex. `Payments::Process`) une fois la migration terminée.
+- Réviser les seeds et scripts (`db/seeds`, `scripts/`) pour utiliser les nouveaux services.
+- Encapsuler les scripts CRM spéciaux (merge/link) via `People::AccountLinker` ou futurs services dédiés.
+
+## Correspondance services (ancien → nouveau)
+
+| Ancien service / form | Nouveau service People::* | État |
+| --- | --- | --- |
+| `Admin::UserCreationForm` + logique inline | `People::Register` (dashboard) | ✅ Branché |
+| `PersonManagement::PersonCreator` (backend, web) | `People::PersonCreator` | ❌ Supprimé |
+| `UserManagement::AccountCreator` | `People::UserAccountCreator` | ❌ Supprimé |
+| `UserManagement::UserCreator` | `People::UserAccountCreator` | ✅ Branché |
+| `People::AccountLinker` (script merge) | `People::AccountLinker` | ✅ Branché |
+| `MembershipManagement::MembershipCreator` | `People::MembershipCreator` | ❌ Supprimé |
+| `MembershipManagement::MembershipUpgrader` | `People::MembershipUpgrader` | ❌ Supprimé |
+| `MembershipManagement::MembershipUpdater` | `People::MembershipUpdater` | ❌ Supprimé |
+| `MembershipManagement::MembershipDeactivator` | `People::MembershipDeactivator` | ❌ Supprimé |
+| `Person#create_membership!` appels directs | `People::MembershipCreator` | 🔄 à généraliser |
+| `Web::UserRegistration` (PersonManagement + AccountCreator) | `People::Register` | ✅ Branché |
+| `PaymentManagement::PaymentCreator/WithLines` | `People::PaymentCreator` | ❌ Supprimé |
+| `PaymentManagement::PaymentUpdater` | `People::PaymentUpdater` | ❌ Supprimé |
+| `PaymentManagement::PaymentDeleter` | `People::PaymentCanceller` | ❌ Supprimé |
+| `PaymentManagement::PaymentRestorer` | `People::PaymentRestorer` | ❌ Supprimé |
+| `SubscriptionManagement::SubscriptionCreator` | `People::SubscriptionCreator` | ❌ Supprimé |
+| `SubscriptionManagement::SubscriptionUpgrader` | `People::SubscriptionUpgrader` | ❌ Supprimé |
+| Scripts/Seeds divers | `People::Register` (legacy scripts à convertir) | ⏳ En cours |
 
 ---
 
@@ -701,59 +752,6 @@ Admin::UserCreationForm
 **Pattern:** Controller → Service → Model
 
 **Services créés (44 services dans 15 domaines):**
-- `MembershipManagement::*` (4 services)
+- `MembershipManagement::*` (4 services) – supprimés au profit de `People::Membership*`
 - `SubscriptionManagement::*` (2 services)
-- `PaymentManagement::*` (6 services)
-- `AccountClaimManagement::*` (2 services)
-- `AttendanceManagement::*` (1 service)
-- `AttendanceListManagement::*` (3 services)
-- `BlogManagement::*` (3 services)
-- `MembershipTypeManagement::*` (2 services)
-- `OpeningHoursManagement::*` (1 service)
-- `NewsletterManagement::*` (1 service)
-- `SubscriptionPlanManagement::*` (2 services)
-- `UserManagement::*` (3 services)
-- `PersonManagement::*` (3 services)
-- `EventManagement::*` (3 services)
-- `MemberNumberManagement::*` (2 services)
-
-**Bénéfices:**
-- Controllers minimalistes (délégation pure)
-- Logique métier extraite et testable
-- Instrumentation pour audit (ActiveSupport::Notifications)
-- Cohérence et maintenabilité
-
-**Documentation:** Voir `docs/ARCHITECTURE_SERVICES.md` pour détails complets.
-
-### Historique des Refactorings (2025-01-31)
-
-#### Simplification Architecture
-
-**MembershipType category enum:**
-- **Avant:** `basic`, `circus_full`, `circus_reduced` (3 catégories confuses)
-- **Après:** `basic`, `circus`, `event` (3 catégories claires)
-- **Impact:** Circus Full et Reduced sont des tarifs, pas des catégories distinctes
-- **Avantage:** Ajout facile de tarifs Circus (Student, Senior, etc.) sans modifier code
-
-**Newsletter:**
-- **Nouveau:** Table `newsletter_subscribers` dédiée
-- **Avant:** Booléen sur Person
-- **Avantage:** Tracking indépendant, merge email simplifié, audit trail complet
-
-**Payment relations:**
-- **Supprimé:** Legacy `user_id`, `order_id`
-- **Conservé:** Architecture Person-Based uniquement
-- **Avantage:** Tests simplifiés -50% complexité
-
-**Score modèle:** 7/10 → 9/10 ✅
-
-## 📚 Documentation liée
-
-- **Architecture Services:** `docs/ARCHITECTURE_SERVICES.md` - Pattern Controller → Service → Model (44 services)
-- **Concerns:** `docs/CONCERNS_ANALYSIS.md` - Analyse complète des concerns (10 concerns)
-- **Audit Controllers:** `docs/CONTROLLERS_AUDIT.md` - État des tests et stratégie TDD
-- **Zones Classification:** `docs/ZONES_CLASSIFICATION.md` - Classification Zone 1/2/3
-- **TDD Guide:** `docs/TDD_GUIDE.md` - Guide complet TDD
-- **Testing Guide:** `docs/TESTING_GUIDE.md` - Guide tests et couverture
-
-
+- `
