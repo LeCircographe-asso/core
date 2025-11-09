@@ -32,6 +32,13 @@ module People
         offer_reason: offer_reason
       )
 
+      ActiveSupport::Notifications.instrument(
+        "membership.upgraded",
+        person_id: person.id, old_member_number: result[:old_member_number], new_member_number: result[:new_member_number],
+        membership_id: result[:membership].id, payment_id: result[:payment].id, new_membership_type_id: new_membership_type.id,
+        payment_method: payment_method
+      )
+
       Result.new(
         success?: true,
         membership: result[:membership],
@@ -43,9 +50,11 @@ module People
         message: "Membership upgraded successfully"
       )
     rescue ActiveRecord::RecordNotFound => e
+      ActiveSupport::Notifications.instrument("membership.upgrade_failed", error: e.message, reason: "record_not_found")
       failure("Record not found: #{e.message}")
     rescue => e
       Rails.logger.error("[People::MembershipUpgrader] #{e.class}: #{e.message}\n#{e.backtrace.take(5).join("\n")}")
+      ActiveSupport::Notifications.instrument("membership.upgrade_failed", error: e.message, reason: "exception")
       failure("Error upgrading membership: #{e.message}")
     end
 

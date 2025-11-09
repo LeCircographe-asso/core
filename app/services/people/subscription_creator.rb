@@ -46,9 +46,11 @@ module People
         message: "Subscription created successfully"
       )
     rescue ActiveRecord::RecordNotFound => e
+      ActiveSupport::Notifications.instrument("subscription.failed", error: e.message, reason: "record_not_found")
       failure("Record not found: #{e.message}")
     rescue => e
       Rails.logger.error("[People::SubscriptionCreator] #{e.class}: #{e.message}\n#{e.backtrace.take(5).join("\n")}")
+      ActiveSupport::Notifications.instrument("subscription.failed", error: e.message, reason: "exception")
       failure("Error creating subscription: #{e.message}")
     end
 
