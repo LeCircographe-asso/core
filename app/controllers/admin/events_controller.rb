@@ -15,7 +15,7 @@ module Admin
 
     def create
       @event = Event.new(
-        name: event_params[:title],
+        title: event_params[:title],
         upper_description: event_params[:upper_description],
         middle_description: event_params[:middle_description],
         bottom_description: event_params[:bottom_description],
@@ -40,7 +40,7 @@ module Admin
     def update
       @event = Event.find params[:id]
       attrs = {
-        name: event_params[:title],
+        title: event_params[:title],
         upper_description: event_params[:upper_description],
         middle_description: event_params[:middle_description],
         bottom_description: event_params[:bottom_description],
