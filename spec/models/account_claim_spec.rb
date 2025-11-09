@@ -151,7 +151,9 @@ RSpec.describe AccountClaim, type: :model do
       end
 
       it "returns false for claim expiring this week (but not today)" do
-        expect(claim.today?(:expires_at)).to be false
+        other_day = (Date.current.beginning_of_week..Date.current.end_of_week).to_a.find { |d| d != Date.current }
+        not_today_claim = create(:account_claim, expires_at: other_day.beginning_of_day + 12.hours)
+        expect(not_today_claim.today?(:expires_at)).to be false
       end
     end
 
