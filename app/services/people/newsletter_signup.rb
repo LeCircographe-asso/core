@@ -20,6 +20,10 @@ module People
       existing = NewsletterSubscriber.find_by(email: normalized_email)
 
       if existing
+        ActiveSupport::Notifications.instrument(
+          "people.newsletter_signup.skipped",
+          email: normalized_email, reason: "already_subscribed", person_id: existing.person_id, source: source
+        )
         return Result.new(success?: false, message: "Cette adresse est déjà dans notre liste. Connectez-vous pour gérer votre inscription.", redirect_to: true)
       end
 
@@ -31,8 +35,16 @@ module People
       subscriber.person = person if person
 
       if subscriber.save
+        ActiveSupport::Notifications.instrument(
+          "people.newsletter_signed_up",
+          email: normalized_email, person_id: subscriber.person_id, subscriber_id: subscriber.id, source: source
+        )
         success("Inscription à la newsletter réussie !")
       else
+        ActiveSupport::Notifications.instrument(
+          "people.newsletter_signup.failed",
+          email: normalized_email, errors: subscriber.errors.full_messages, source: source
+        )
         failure("Une erreur s'est produite. Veuillez réessayer.")
       end
     end
