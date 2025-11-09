@@ -9,6 +9,8 @@
 @import "./components/hero.css";
 @import "./components/badges.css";
 @import "./components/layout.css";
+@import "./components/dashboard.css";
+@import "./components/timeline.css";
 
 @layer base {
   /* Local fonts first (Propshaft rewrites /fonts/... to fingerprinted assets) */
