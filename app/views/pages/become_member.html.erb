@@ -12,9 +12,14 @@
   }
 </style>
 
-<section class="text-center mb-12 bg-white/95 py-6 rounded-lg shadow-md fade-in">
-  <h1 class="font-circographe text-3xl sm:text-4xl lg:text-5xl font-bold text-black">Adhérer au Circographe</h1>
-  <p class="mt-3 max-w-2xl mx-auto text-gray-600">Tout commence par une rencontre sur place. Voici comment rejoindre la communauté, participer aux entraînements libres et faire vivre le lieu.</p>
+<section class="relative overflow-hidden rounded-[32px] shadow-2xl mb-14">
+  <%= image_tag hero_image(:become_member_hero), class: "absolute inset-0 w-full h-full object-cover hero-img-filter", alt: "" %>
+  <div class="hero-overlay"></div>
+  <div class="relative hero-panel text-center space-y-4">
+    <p class="text-sm uppercase tracking-[0.35em] text-white/70">Rejoindre la communauté</p>
+    <h1 class="font-circographe text-3xl sm:text-4xl lg:text-5xl font-bold">Adhérer au Circographe</h1>
+    <p class="max-w-3xl mx-auto text-lg text-white/85 leading-relaxed">Tout commence par une rencontre sur place. Rejoins la communauté du Circographe, découvre le lieu et participe à la vie associative.</p>
+  </div>
 </section>
 
 <section class="grid grid-cols-1 xl:grid-cols-4 gap-6 fade-in">
@@ -25,24 +30,24 @@
     <p class="text-gray-600">Sur place, on t'accueille pour t'expliquer le fonctionnement autogéré du lieu, te présenter l'équipe bénévole et t'aider à trouver les bons créneaux selon ta pratique.</p>
   </article>
 
-  <aside class="bg-[#1F5C55]/10 rounded-[24px] shadow-lg p-6 space-y-3">
-    <h3 class="text-lg font-semibold text-[#1F5C55]">Les avantages adhérent·e</h3>
-    <ul class="space-y-2 text-sm text-gray-700">
+  <aside class="bg-gradient-to-br from-[#1F5C55]/75 to-[#2a7d73]/75 rounded-[24px] shadow-xl p-6 space-y-4 backdrop-blur-sm">
+    <h3 class="text-xl font-bold text-white">Les avantages adhérent·e</h3>
+    <ul class="space-y-3 text-sm text-white">
       <li class="flex items-center gap-3">
-        <span class="w-6 h-6 inline-flex items-center justify-center rounded-full bg-[#1F5C55]/20 text-[#1F5C55]">✓</span>
-        Accès aux entraînements libres de cirque
+        <span class="w-7 h-7 flex-shrink-0 inline-flex items-center justify-center rounded-full bg-white text-[#1F5C55] font-bold shadow-md" style="font-size: 1.125rem; line-height: 1;">✓</span>
+        <span class="font-medium">Accès aux entraînements libres de cirque</span>
       </li>
       <li class="flex items-center gap-3">
-        <span class="w-6 h-6 inline-flex items-center justify-center rounded-full bg-[#1F5C55]/20 text-[#1F5C55]">✓</span>
-        Participation aux ateliers & résidences graphiques
+        <span class="w-7 h-7 flex-shrink-0 inline-flex items-center justify-center rounded-full bg-white text-[#1F5C55] font-bold shadow-md" style="font-size: 1.125rem; line-height: 1;">✓</span>
+        <span class="font-medium">Participation aux ateliers & résidences graphiques</span>
       </li>
       <li class="flex items-center gap-3">
-        <span class="w-6 h-6 inline-flex items-center justify-center rounded-full bg-[#1F5C55]/20 text-[#1F5C55]">✓</span>
-        Vie associative & bénévolat (événements, accueil, technique)
+        <span class="w-7 h-7 flex-shrink-0 inline-flex items-center justify-center rounded-full bg-white text-[#1F5C55] font-bold shadow-md" style="font-size: 1.125rem; line-height: 1;">✓</span>
+        <span class="font-medium">Vie associative & bénévolat (événements, accueil, technique)</span>
       </li>
       <li class="flex items-center gap-3">
-        <span class="w-6 h-6 inline-flex items-center justify-center rounded-full bg-[#1F5C55]/20 text-[#1F5C55]">✓</span>
-        Communauté active pour partager astuces, matériel et projets
+        <span class="w-7 h-7 flex-shrink-0 inline-flex items-center justify-center rounded-full bg-white text-[#1F5C55] font-bold shadow-md" style="font-size: 1.125rem; line-height: 1;">✓</span>
+        <span class="font-medium">Communauté active pour partager astuces, matériel et projets</span>
       </li>
     </ul>
   </aside>
@@ -56,9 +61,9 @@
   </header>
   <div class="space-y-6">
     <% [
-      { title: "1. Passer nous voir", body: "Présente-toi sur un créneau d'ouverture pour découvrir le lieu, rencontrer l'équipe bénévole et poser toutes tes questions." },
-      { title: "2. Adhérer sur place", body: "On complète ensemble la fiche d'inscription (assurance comprise) et on te présente les règles de fonctionnement partagé." },
-      { title: "3. Participer", body: "Tu peux réserver tes entraînements libres, rejoindre un créneau graphique, filer un coup de main sur un événement ou proposer un projet." }
+      { title: "1. Passer nous voir", body: "Viens pendant un créneau d'ouverture, on te présente le lieu et les règles de fonctionnement." },
+      { title: "2. Adhérer sur place", body: "On complète ensemble la fiche d'adhésion (assurance comprise)." },
+      { title: "3. Participer", body: "Tu peux t'entraîner, aider à l'accueil ou proposer un projet." }
     ].each_with_index do |step, index| %>
       <div class="timeline-step relative pl-8 md:pl-12" data-timeline-target="step">
         <div class="absolute left-0 top-2 w-6 h-6 rounded-full border-2 border-[#1F5C55] bg-white flex items-center justify-center font-semibold text-sm text-[#1F5C55] shadow">
@@ -88,8 +93,7 @@
   <article class="bg-white/95 rounded-[28px] shadow-lg p-6 sm:p-8 space-y-4">
     <p class="text-sm uppercase tracking-[0.3em] text-[#1F5C55]/70">Bénévolat</p>
     <h2 class="text-2xl font-semibold text-gray-800">Participer à l'autogestion</h2>
-    <p class="text-gray-600">Le Circographe vit grâce à ses bénévoles : accueil, montage technique, communication, entretien… Une réunion de nouveaux bénévoles est organisée chaque mois.</p>
-    <p class="text-gray-600">En fonction de tes envies, tu peux prendre part à l'équipe cirque, à l'atelier graphique ou aux événements publics. Parlons-en lors de ton adhésion !</p>
+    <p class="text-gray-600">Le Circographe vit grâce à ses bénévoles ! Tu peux participer à l'accueil, la communication ou la technique.</p>
   </article>
 </section>
 
@@ -139,5 +143,5 @@
 </section>
 
 <section class="text-center mt-12 mb-12 fade-in">
-  <%= link_to "Je viens adhérer", page_path('contact_us'), class: "inline-flex items-center gap-2 px-8 py-4 tracking-wide text-white font-bold bg-[#1F5C55] border-2 border-[#1F5C55] rounded-full shadow-lg hover:bg-gray-100 hover:text-[#1F5C55] hover:border-[#1F5C55] transition-all duration-300" %>
+  <%= link_to "Passer nous voir", page_path('contact_us'), class: "inline-flex items-center gap-2 px-8 py-4 tracking-wide text-white font-bold bg-[#1F5C55] border-2 border-[#1F5C55] rounded-full shadow-lg hover:bg-gray-100 hover:text-[#1F5C55] hover:border-[#1F5C55] transition-all duration-300" %>
 </section>

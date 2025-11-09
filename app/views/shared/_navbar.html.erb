@@ -5,7 +5,7 @@
         <div class="flex items-center justify-between w-full md:w-auto">
             <!-- Logo -->
             <%= link_to root_path, class: "flex items-center space-x-3 rtl:space-x-reverse", data: { 'nav-active-target': 'link', 'nav-active-path': root_path, 'nav-active-active-classes': 'nav-active-link', 'nav-active-starts-with': 'true' } do %>
-            <%= image_tag("Le-Circographe-crop.webp", alt: "le-circographe Logo", class: "w-40 h-auto") %>
+            <%= image_tag("logo.webp", alt: "le-circographe Logo", class: "w-40 h-auto") %>
             <% end %>
 
             <!-- Elements grouped on the right for mobile -->
@@ -56,7 +56,7 @@
                 </li>
 
                 <li>
-                    <%= link_to "Devenir Membre", page_path('become_member'), class: "block py-2 text-gray-900 hover:text-indigo-700", data: { 'nav-active-target': 'link', 'nav-active-path': page_path('become_member'), 'nav-active-active-classes': 'nav-active-link' } %>
+                    <%= link_to "Adhérer", page_path('become_member'), class: "block py-2 text-gray-900 hover:text-indigo-700", data: { 'nav-active-target': 'link', 'nav-active-path': page_path('become_member'), 'nav-active-active-classes': 'nav-active-link' } %>
                 </li>
 
                 <!-- About -->
@@ -66,9 +66,6 @@
                     <% end %>
                     <div class="hidden group-hover:block absolute left-0 top-full z-10 w-48 bg-white rounded-lg shadow-lg">
                         <ul class="py-2 text-sm text-gray-700">
-                            <li>
-                                <%= link_to "Informations Utiles", page_path("practical_info"), class: "block px-4 py-2 hover:bg-gray-100" %>
-                            </li>
                             <li>
                                 <%= link_to "Nous contacter", page_path("contact_us"), class: "block px-4 py-2 hover:bg-gray-100" %>
                             </li>
@@ -93,7 +90,7 @@
 
             <!-- My Space button with dropdown -->
             <div class="relative">
-                <button id="dropdownUserButton" data-dropdown-toggle="dropdownUser" class="relative inline-flex items-center px-5 py-2.5 text-sm font-medium text-center text-white bg-[#1F5C55] rounded-lg hover:bg-gray-100 hover:text-[#1F5C55] hover:border-[#1F5C55] hover:border-2 focus:ring-4 focus:outline-none focus:ring-gray-300 transition-colors duration-300 border-2 border-transparent cursor-pointer">
+                <button id="dropdownUserButton" data-dropdown-toggle="dropdownUser" class="btn-navbar">
                     Mon Espace
                     <svg class="w-2.5 h-2.5 ms-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
                         <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4" />
@@ -136,12 +133,8 @@
             <% else %>
             <!-- Visitor buttons -->
             <div class="flex items-center space-x-2">
-                <%= link_to new_session_path, class: "text-gray-900 hover:text-indigo-700 font-medium rounded-lg text-sm px-4 py-2 text-center" do %>
-                Se connecter
-                <% end %>
-                <%= link_to new_registration_path, class: "px-6 py-2 tracking-wide text-white font-bold bg-[#1F5C55] border-2 border-[#1F5C55] rounded-lg shadow-lg hover:bg-gray-100 hover:text-[#1F5C55] hover:border-[#1F5C55] transition-colors duration-300" do %>
-                S'inscrire
-                <% end %>
+                <%= link_to "Se connecter", new_session_path, class: "btn-tertiary text-sm" %>
+                <%= link_to "S'inscrire", new_registration_path, class: "btn-primary text-sm shadow-lg" %>
             </div>
             <% end %>
         </div>
@@ -211,12 +204,12 @@
 
                 <!-- Our events (simple link) -->
                 <div class="border-b border-gray-200">
-                    <%= link_to "Nos Événements", events_path, class: "flex items-center w-full py-4 font-medium text-left text-gray-900", data: { 'nav-active-target': 'link', 'nav-active-path': events_path, 'nav-active-active-classes': 'text-[#1F5C55] font-semibold' } %>
+                    <%= link_to "Nos Événements", page_path("news", anchor: "evenements"), class: "flex items-center w-full py-4 font-medium text-left text-gray-900", data: { 'nav-active-target': 'link', 'nav-active-path': page_path('news'), 'nav-active-active-classes': 'text-brand-primary font-semibold' } %>
                 </div>
 
                 <!-- Become a Member (simple link) -->
                 <div class="border-b border-gray-200">
-                    <%= link_to "Devenir Membre", page_path("become_member"), class: "flex items-center w-full py-4 font-medium text-left text-gray-900", data: { 'nav-active-target': 'link', 'nav-active-path': page_path('become_member'), 'nav-active-active-classes': 'nav-active-link' } %>
+            <%= link_to "Adhérer", page_path("become_member"), class: "flex items-center w-full py-4 font-medium text-left text-gray-900", data: { 'nav-active-target': 'link', 'nav-active-path': page_path('become_member'), 'nav-active-active-classes': 'nav-active-link' } %>
                 </div>
 
                 <!-- About accordion -->
@@ -236,9 +229,6 @@
                                     <%= link_to "À Propos", page_path('about'), class: "block text-indigo-700 font-medium" %>
                                 </li>
                                 <li>
-                                    <%= link_to "Informations Utiles", page_path("practical_info"), class: "block" %>
-                                </li>
-                                <li>
                                     <%= link_to "Nous contacter", page_path("contact_us"), class: "block" %>
                                 </li>
                             </ul>
@@ -248,7 +238,7 @@
 
                 <!-- F.A.Q (link simple) -->
                 <div class="border-b border-gray-200">
-                    <%= link_to "F.A.Q", page_path("faq"), class: "flex items-center w-full py-4 font-medium text-left text-gray-900", data: { 'nav-active-target': 'link', 'nav-active-path': page_path('faq'), 'nav-active-active-classes': 'text-[#1F5C55] font-semibold' } %>
+                    <%= link_to "F.A.Q", page_path("faq"), class: "flex items-center w-full py-4 font-medium text-left text-gray-900", data: { 'nav-active-target': 'link', 'nav-active-path': page_path('faq'), 'nav-active-active-classes': 'text-brand-primary font-semibold' } %>
                 </div>
             </div>
 

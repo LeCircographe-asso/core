@@ -1,0 +1,59 @@
+@layer components {
+  @keyframes flash-slide-in-right {
+    from {
+      transform: translateX(100%);
+      opacity: 0;
+    }
+
+    to {
+      transform: translateX(0);
+      opacity: 1;
+    }
+  }
+
+  @keyframes flash-slide-out-right {
+    from {
+      transform: translateX(0);
+      opacity: 1;
+    }
+
+    to {
+      transform: translateX(100%);
+      opacity: 0;
+    }
+  }
+
+  .flash-notification {
+    @apply fixed bottom-4 right-4 z-50 max-w-sm w-full bg-white rounded-lg shadow-lg border-l-4 p-4 transform transition-all duration-300 ease-in-out;
+    animation: flash-slide-in-right 0.3s ease-out;
+  }
+
+  .flash-notification.flash-notice,
+  .flash-notification.flash-success {
+    @apply border-green-500 bg-green-50;
+  }
+
+  .flash-notification.flash-alert,
+  .flash-notification.flash-error {
+    @apply border-red-500 bg-red-50;
+  }
+
+  .flash-notification.flash-warning {
+    @apply border-yellow-500 bg-yellow-50;
+  }
+
+  .flash-notification.flash-info {
+    @apply border-blue-500 bg-blue-50;
+  }
+
+  .flash-notification.closing {
+    animation: flash-slide-out-right 0.3s ease-in forwards;
+  }
+
+  @media (max-width: 640px) {
+    .flash-notification {
+      @apply bottom-2 right-2 left-2 max-w-none;
+    }
+  }
+}
+
