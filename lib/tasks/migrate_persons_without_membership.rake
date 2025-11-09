@@ -59,31 +59,10 @@ namespace :migrate do
     persons_without_membership.find_each do |person|
       begin
         ActiveRecord::Base.transaction do
-          # Créer l'adhésion
-          membership = person.memberships.create!(
-            membership_type: basic_membership_type,
-            started_at: Date.current,
-            ended_at: 1.year.from_now,
-            status: :active,
-            first_joined_at: Date.current
-          )
-
-          # Créer le paiement
-          payment = Payment.create!(
-            person: person,
-            recorded_by: admin_user,
-            total_cents: basic_membership_type.price_cents,
+          data = person.create_membership!(
+            basic_membership_type,
             payment_method: :cash,
-            status: :success,
-            notes: "Migration automatique - Adhésion #{basic_membership_type.name}"
-          )
-
-          # Créer la ligne de paiement
-          PaymentLine.create!(
-            payment: payment,
-            item: membership,
-            amount_cents: basic_membership_type.price_cents,
-            description: "Adhésion #{basic_membership_type.name}"
+            recorded_by: admin_user
           )
 
           puts "  ✅ #{person.full_name} - Adhésion créée"
