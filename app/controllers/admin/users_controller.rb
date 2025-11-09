@@ -206,15 +206,17 @@ module Admin
         person_id = params[:id].to_s.gsub("person_", "")
         @person = PersonQuery.active.find(person_id)
 
-        # Utiliser le service PersonManagement::PersonUpdater
-        updater = PersonManagement::PersonUpdater.new(
-          person_id: @person.id,
-          attributes: person_params.except(:newsletter_subscribed),
-          newsletter_subscribed: (person_params[:newsletter_subscribed] == "1" || person_params[:newsletter_subscribed] == true || person_params[:newsletter_subscribed] == 1),
-          updated_by_id: Current.user.id
-        )
+        person_attributes = person_params.to_h.deep_symbolize_keys
+        newsletter_flag = ActiveModel::Type::Boolean.new.cast(person_attributes.delete(:newsletter_subscribed))
 
-        result = updater.call
+        result = People::Register.new(
+          person_params: person_attributes.merge(allow_blank_attributes: true),
+          existing_person: @person,
+          newsletter_subscribed: newsletter_flag,
+          newsletter_source: "admin",
+          create_user_account: false,
+          create_membership: false
+        ).call
 
         if result.success?
           updated_person = result.person || @person

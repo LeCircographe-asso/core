@@ -52,29 +52,27 @@ module Admin
     end
 
     def create
-      # NEW: Utiliser le service PaymentManagement::PaymentCreator
       # Convertir le montant en centimes si fourni en euros
       total_cents = payment_params[:total_cents]
       total_cents = (total_cents.to_f * 100).to_i if total_cents.present?
 
-      creator = PaymentManagement::PaymentCreator.new(
-        person_id: payment_params[:person_id],
+      person = Person.find(payment_params[:person_id])
+
+      result = People::PaymentCreator.new(
+        person: person,
         amount_cents: total_cents,
         payment_method: payment_params[:payment_method] || "cash",
-        recorded_by_id: Current.user.id,
-        item_type: "Donation", # Par défaut pour les paiements directs
-        item_id: payment_params[:person_id], # Lié à la personne
+        recorded_by_id: Current.user&.id,
+        item_type: "Donation",
+        item_id: person.id,
         description: "Paiement direct",
         notes: payment_params[:notes]
-      )
-
-      result = creator.call
+      ).call
 
       respond_to do |format|
         if result.success?
           format.html { redirect_to admin_payments_path, notice: "Paiement créé avec succès" }
           format.turbo_stream {
-            # Recalculer les totaux
             payments_service = Admin::PaymentsService.new({})
             service_result = payments_service.call
 
@@ -95,39 +93,51 @@ module Admin
           }
         end
       end
-
-      # OLD: logique directe (commentée pour rollback)
-      # begin
-      #   person = Person.find(payment_params[:person_id])
-      #   payment = person.payments.create!(
-      #     total_cents: payment_params[:total_cents],
-      #     payment_method: payment_params[:payment_method] || "cash",
-      #     status: :success,
-      #     recorded_by: Current.user,
-      #     notes: payment_params[:notes]
-      #   )
-      #   redirect_to admin_payment_path(payment), notice: "Paiement créé avec succès"
-      # rescue => e
-      #   redirect_to admin_payments_path, alert: "Erreur lors de la création du paiement: #{e.message}"
-      # end
+    rescue ActiveRecord::RecordNotFound => e
+      respond_to do |format|
+        format.html { redirect_to admin_payments_path, alert: "Erreur lors de la création du paiement: #{e.message}" }
+        format.turbo_stream {
+          render turbo_stream: turbo_stream.replace("flash", partial: "shared/flash", locals: { alert: "Erreur: #{e.message}" })
+        }
+      end
+    rescue StandardError => e
+      Rails.logger.error("[Admin::PaymentsController#create] #{e.class}: #{e.message}")
+      respond_to do |format|
+        format.html { redirect_to admin_payments_path, alert: "Erreur lors de la création du paiement: #{e.message}" }
+        format.turbo_stream {
+          render turbo_stream: turbo_stream.replace("flash", partial: "shared/flash", locals: { alert: "Erreur: #{e.message}" })
+        }
+      end
     end
 
+    # OLD: logique directe (commentée pour rollback)
+    # begin
+    #   person = Person.find(payment_params[:person_id])
+    #   payment = person.payments.create!(
+    #     total_cents: payment_params[:total_cents],
+    #     payment_method: payment_params[:payment_method] || "cash",
+    #     status: :success,
+    #     recorded_by: Current.user,
+    #     notes: payment_params[:notes]
+    #   )
+    #   redirect_to admin_payment_path(payment), notice: "Paiement créé avec succès"
+    # rescue => e
+    #   redirect_to admin_payments_path, alert: "Erreur lors de la création du paiement: #{e.message}"
+    # end
+
     def update
-      # NEW: Utiliser le service PaymentManagement::PaymentUpdater
       # Convertir le montant en centimes si fourni en euros
       total_cents = payment_params[:total_cents]
       total_cents = (total_cents.to_f * 100).to_i if total_cents.present?
 
-      updater = PaymentManagement::PaymentUpdater.new(
+      result = People::PaymentUpdater.new(
         payment_id: params[:id],
         total_cents: total_cents,
         payment_method: payment_params[:payment_method],
         status: payment_params[:status],
         notes: payment_params[:notes],
         updated_by_id: Current.user.id
-      )
-
-      result = updater.call
+      ).call
 
       respond_to do |format|
         if result.success?
@@ -167,14 +177,11 @@ module Admin
 
     # Add destroy method with soft deletion support
     def destroy
-      # NEW: Utiliser le service PaymentManagement::PaymentDeleter
-      deleter = PaymentManagement::PaymentDeleter.new(
+      result = People::PaymentCanceller.new(
         payment_id: params[:id],
         deleted_by_id: Current.user.id,
         reason: "Suppression via interface admin"
-      )
-
-      result = deleter.call
+      ).call
 
       respond_to do |format|
         if result.success?
@@ -217,14 +224,11 @@ module Admin
 
     # POST /admin/payments/:id/restore
     def restore
-      # NEW: Utiliser le service PaymentManagement::PaymentRestorer
-      restorer = PaymentManagement::PaymentRestorer.new(
+      result = People::PaymentRestorer.new(
         payment_id: params[:id],
         restored_by_id: Current.user.id,
         reason: "Restauration via interface admin"
-      )
-
-      result = restorer.call
+      ).call
 
       if result.success?
         redirect_to admin_payment_path(result.payment), notice: "Paiement restauré avec succès"

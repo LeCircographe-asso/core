@@ -15,7 +15,7 @@ module Admin
 
     def create
       @event = Event.new(
-        title: event_params[:title],
+        name: event_params[:title],
         upper_description: event_params[:upper_description],
         middle_description: event_params[:middle_description],
         bottom_description: event_params[:bottom_description],
@@ -23,6 +23,7 @@ module Admin
         location: event_params[:location],
         category: "other"
       )
+      @event.creator = current_user if @event.respond_to?(:creator=)
 
       if @event.save
         redirect_to admin_events_path, notice: "Événement créé avec succès"
@@ -38,14 +39,15 @@ module Admin
     end
     def update
       @event = Event.find params[:id]
-      if @event.update(
-        title: event_params[:title],
+      attrs = {
+        name: event_params[:title],
         upper_description: event_params[:upper_description],
         middle_description: event_params[:middle_description],
         bottom_description: event_params[:bottom_description],
         date: event_params[:date],
         location: event_params[:location]
-      )
+      }.compact_blank
+      if @event.update(attrs)
         redirect_to event_path(@event), notice: "Événement modifié avec succès"
       else
         render :edit, status: :unprocessable_content
