@@ -14,26 +14,20 @@ module Admin
     end
 
     def create
-      creator = EventManagement::EventCreator.new(
-        name: event_params[:title],
+      @event = Event.new(
+        title: event_params[:title],
         upper_description: event_params[:upper_description],
         middle_description: event_params[:middle_description],
         bottom_description: event_params[:bottom_description],
         date: event_params[:date],
         location: event_params[:location],
-        creator_id: current_user.id,
-        category: "other" # Default category, can be enhanced later
+        category: "other"
       )
 
-      result = creator.call
-
-      respond_to do |format|
-        if result.success?
-          format.html { redirect_to admin_events_path, notice: "Événement créé avec succès" }
-        else
-          @event = Event.new(event_params)
-          format.html { render :new, alert: result.message }
-        end
+      if @event.save
+        redirect_to admin_events_path, notice: "Événement créé avec succès"
+      else
+        render :new, status: :unprocessable_content
       end
     end
     def edit
@@ -44,49 +38,37 @@ module Admin
     end
     def update
       @event = Event.find params[:id]
-
-      updater = EventManagement::EventUpdater.new(
-        event_id: @event.id,
-        name: event_params[:title],
+      if @event.update(
+        title: event_params[:title],
         upper_description: event_params[:upper_description],
         middle_description: event_params[:middle_description],
         bottom_description: event_params[:bottom_description],
         date: event_params[:date],
-        location: event_params[:location],
-        updated_by_id: current_user.id
+        location: event_params[:location]
       )
-
-      result = updater.call
-
-      if result.success?
         redirect_to event_path(@event), notice: "Événement modifié avec succès"
       else
-        redirect_to edit_admin_event_path(@event), alert: result.message
+        render :edit, status: :unprocessable_content
       end
     end
     def destroy
-      deleter = EventManagement::EventDeleter.new(
-        event_id: params.expect(:id),
-        deleted_by_id: current_user.id,
-        reason: event_deletion_reason
-      )
-
-      result = deleter.call
-
-      respond_to do |format|
-        if result.success?
+      event = Event.find(params.expect(:id))
+      if event.destroy
+        respond_to do |format|
           format.html { redirect_to admin_events_path, notice: "Événement supprimé avec succès" }
           format.turbo_stream do
             flash.now[:notice] = "Événement supprimé avec succès"
             render turbo_stream: [
-              turbo_stream.remove(dom_id(result.event)),
+              turbo_stream.remove(dom_id(event)),
               turbo_stream.replace("flash", partial: "shared/flash")
             ]
           end
-        else
-          format.html { redirect_to admin_events_path, alert: result.message }
+        end
+      else
+        respond_to do |format|
+          format.html { redirect_to admin_events_path, alert: event.errors.full_messages.to_sentence }
           format.turbo_stream do
-            flash.now[:alert] = result.message
+            flash.now[:alert] = event.errors.full_messages.to_sentence
             render turbo_stream: turbo_stream.replace("flash", partial: "shared/flash")
           end
         end
