@@ -77,6 +77,19 @@ module ApplicationHelper
     fallback && !exclusions.include?(fallback.to_s) ? [ fallback ] : []
   end
 
+  def asset_available?(logical_path)
+    return false if logical_path.blank?
+
+    if (assembly = Rails.application.assets)&.respond_to?(:load_path)
+      return true if assembly.load_path.find(logical_path).present?
+    end
+
+    asset_full_path = Rails.root.join("app/assets/images", logical_path)
+    asset_full_path.exist?
+  rescue StandardError
+    false
+  end
+
   private
 
   def hero_image_pool
@@ -97,18 +110,5 @@ module ApplicationHelper
 
   def hero_image_pool_without_cache
     Dir[Rails.root.join("app/assets/images/hero_*.webp")].map { |path| File.basename(path) }
-  end
-
-  def asset_available?(logical_path)
-    return false if logical_path.blank?
-
-    if (assembly = Rails.application.assets)&.respond_to?(:load_path)
-      return true if assembly.load_path.find(logical_path).present?
-    end
-
-    asset_full_path = Rails.root.join("app/assets/images", logical_path)
-    asset_full_path.exist?
-  rescue StandardError
-    false
   end
 end
