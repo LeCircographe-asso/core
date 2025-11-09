@@ -2,10 +2,9 @@
 
 **Date:** 2025-01-31  
 **Status:** ✅ STABLE - Ne pas modifier sans validation  
-**Dernière mise à jour:** 2025-01-31  
-**Services:** 44 services (40 dans *Management, 4 non-standard)  
-**Domaines:** 15 domaines *Management  
-**Controllers:** 19 controllers admin (13 utilisent services, 6 sans logique métier complexe)
+**Dernière mise à jour:** 2025-11-09  
+**Services:** Consolidés (People::* pour adhésions/paiements/cotisations; plusieurs *Management retirés côté admin)  
+**Controllers:** Admin simplifiés (CRUD inline pour Events, MembershipTypes, SubscriptionPlans)
 
 ## Principe Fondamental
 
@@ -72,10 +71,8 @@ Cette séparation “Entity / Account” garantit :
 - `UserDeleter` - Suppression d'utilisateurs (Person)
 - `UserUpdater` - Mise à jour User/Person (newsletter, rôles)
 
-### ✅ EventManagement (Stable)
-- `EventManagement::EventCreator` - Création d'événements
-- `EventManagement::EventUpdater` - Mise à jour d'événements
-- `EventManagement::EventDeleter` - Suppression d'événements
+### ❌ EventManagement (Retiré côté admin)
+- Flux admin géré en CRUD inline par `Admin::EventsController` (validation au modèle, `Event#title` virtuel)
 
 ### ✅ AccountClaimManagement (Stable)
 - `AccountClaimManagement::AccountClaimCreator` - Création de demandes de réclamation
@@ -103,27 +100,20 @@ Cette séparation “Entity / Account” garantit :
 - `Admin::MemberNumbersController` (suggest, change)
 
 ### ❌ SubscriptionPlanManagement (Removed)
-- `SubscriptionPlanUpdater` - Mise à jour de plan de cotisation (super_admin uniquement)
-- `SubscriptionPlanDeleter` - Suppression de plan de cotisation (avec vérification book_of_entries)
+- Flux admin géré en CRUD inline par `Admin::SubscriptionPlansController`
 
-**Utilisé dans:**
-- `Admin::SubscriptionPlansController` (update, destroy)
-
-### ✅ BlogManagement (Stable)
-- `BlogManagement::BlogCreator` - Création de blogs
-- `BlogManagement::BlogUpdater` - Mise à jour de blogs
-- `BlogManagement::BlogDeleter` - Suppression de blogs
+### ❌ BlogManagement (Retiré côté admin)
+- Flux admin géré en CRUD inline par `Admin::BlogsController`
 
 ### ❌ MembershipTypeManagement (Removed)
 - Géré directement par `Admin::MembershipTypesController` (CRUD inline)
 
-### ✅ OpeningHoursManagement (Stable)
-- `OpeningHoursManagement::OpeningHoursUpdater` - Mise à jour des horaires d'ouverture
+### ⚠️ OpeningHours (Simple cache)
+- Mise à jour via cache dans `Admin::OpeningHoursController` (à migrer vers un modèle `Setting` si besoin)
 
-### ✅ NewsletterManagement (Stable)
-- `NewsletterManagement::NewsletterUpdater` - Mise à jour des abonnements newsletter
-
-**Note:** L'inscription newsletter publique est gérée par `People::NewsletterSignup` (remplace le legacy `NewsletterSignupService`). La gestion authentifiée reste sous un updater newsletter (ex: `NewsletterManagement::NewsletterUpdater`).
+### ✅ Newsletter
+- Public: `People::NewsletterSignup` (instrumentation: `people.newsletter_signed_up`, `people.newsletter_signup.skipped`, `people.newsletter_signup.failed`)
+- Authentifié: `NewsletterManagement::NewsletterUpdater`
 
 ### Autres Services (Non-standard, Legacy)
 
@@ -139,7 +129,7 @@ Cette séparation “Entity / Account” garantit :
 - Services legacy maintenus pour compatibilité
 - Services web spécifiques (Web::UserRegistration)
 
-## View Components
+## View Components & Helpers
 
 L'application utilise **ViewComponent** pour les composants réutilisables (21 composants actifs).
 
@@ -152,6 +142,9 @@ L'application utilise **ViewComponent** pour les composants réutilisables (21 c
 - Un composant = un fichier Ruby + un template ERB
 - Namespace par domaine (Admin::Users::, Admin::Payments::)
 - Logique de présentation uniquement (pas de logique métier)
+
+**Helpers communs:**
+- `PaymentMethodsHelper#payment_method_options(include_pending: false)` — source unique des options de paiement (réutilisée dans les vues admin).
 
 **Voir:** `ARCHITECTURE_GUIDE.md` pour détails complets sur ViewComponents.
 
