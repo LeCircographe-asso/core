@@ -246,7 +246,9 @@ GEM
     nokogiri (1.18.10-x86_64-linux-musl)
       racc (~> 1.4)
     ostruct (0.6.3)
-    pagy (6.5.0)
+    pagy (43.0.2)
+      json
+      yaml
     parallel (1.27.0)
     parser (3.3.10.0)
       ast (~> 2.4.1)
@@ -470,6 +472,7 @@ GEM
     xpath (3.2.0)
       nokogiri (~> 1.8)
     yajl-ruby (1.4.3)
+    yaml (0.4.0)
     zeitwerk (2.7.3)
 
 PLATFORMS
@@ -500,7 +503,7 @@ DEPENDENCIES
   letter_opener
   letter_opener_web
   mailjet
-  pagy (~> 6.0)
+  pagy (~> 43.0)
   propshaft
   puma (>= 5.0)
   rack-cors
