@@ -53,74 +53,60 @@
   </aside>
 </section>
 
-<section class="bg-white/95 rounded-[28px] shadow-lg p-6 sm:p-8 mt-10 fade-in"
-         data-controller="timeline">
-  <header class="text-center space-y-3 mb-6">
-    <p class="text-sm uppercase tracking-[0.3em] text-[#1F5C55]/70">Comment ça marche ?</p>
-    <h2 class="text-2xl font-semibold text-gray-800">Les trois étapes de l'adhésion</h2>
-  </header>
-  <div class="space-y-6">
-    <% [
-      { title: "1. Passer nous voir", body: "Viens pendant un créneau d'ouverture, on te présente le lieu et les règles de fonctionnement." },
-      { title: "2. Adhérer sur place", body: "On complète ensemble la fiche d'adhésion (assurance comprise)." },
-      { title: "3. Participer", body: "Tu peux t'entraîner, aider à l'accueil ou proposer un projet." }
-    ].each_with_index do |step, index| %>
-      <div class="timeline-step relative pl-8 md:pl-12" data-timeline-target="step">
-        <div class="absolute left-0 top-2 w-6 h-6 rounded-full border-2 border-[#1F5C55] bg-white flex items-center justify-center font-semibold text-sm text-[#1F5C55] shadow">
-          <%= index + 1 %>
-        </div>
-        <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 md:p-6 transition-transform duration-500">
-          <h3 class="text-xl font-semibold text-gray-800 mb-2"><%= step[:title] %></h3>
-          <p class="text-gray-600"><%= step[:body] %></p>
-        </div>
-      </div>
-    <% end %>
-  </div>
-</section>
 
 <section class="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-10 fade-in" id="tarifs">
   <article class="bg-white/95 rounded-[28px] shadow-lg p-6 sm:p-8 space-y-4">
     <p class="text-sm uppercase tracking-[0.3em] text-[#1F5C55]/70">Tarifs & types d'adhésion</p>
     <h2 class="text-2xl font-semibold text-gray-800">Adhésion annuelle</h2>
     <ul class="space-y-3 text-gray-600">
-      <li><strong class="text-gray-800">Adhésion classique :</strong> 30 € / an – accès à tous les créneaux selon disponibilités.</li>
-      <li><strong class="text-gray-800">Adhésion solidaire :</strong> 15 € / an – pour les étudiant·es, demandeur·euses d'emploi, minimas sociaux (sur présentation d'un justificatif).</li>
-      <li><strong class="text-gray-800">Adhésion soutien :</strong> 50 € / an – pour soutenir davantage l'association et ses projets.</li>
+      <li><strong class="text-gray-800">Adhésion visiteur :</strong> prix libre à partir de 1 € / an – pour soutenir l'association et profiter des temps ouverts en simple découverte (sans pratique).</li>
+      <li>
+        <strong class="text-gray-800">Adhésion cirque :</strong>
+        <span class="block text-gray-600">Plein tarif : 10 € / an.</span>
+        <span class="block text-gray-600">Tarif réduit : 7 € / an (sur justificatif).</span>
+        <span class="block text-gray-600">Chaque adhésion est valable de date à date.</span>
+      </li>
+      <li><strong class="text-gray-800">Adhésion soutien :</strong> 20 € / an – pour contribuer davantage à l'autogestion et accompagner nos projets.</li>
     </ul>
     <p class="text-sm text-gray-500 bg-[#1F5C55]/10 border border-[#1F5C55]/20 rounded-2xl px-4 py-3">Le paiement se fait sur place (CB ou espèces). Un reçu fiscal peut être remis sur demande.</p>
   </article>
 
   <article class="bg-white/95 rounded-[28px] shadow-lg p-6 sm:p-8 space-y-4">
-    <p class="text-sm uppercase tracking-[0.3em] text-[#1F5C55]/70">Bénévolat</p>
+    <p class="text-sm uppercase tracking-[0.3em] text-[#1F5C55]/70">Cotisations</p>
     <h2 class="text-2xl font-semibold text-gray-800">Participer à l'autogestion</h2>
-    <p class="text-gray-600">Le Circographe vit grâce à ses bénévoles ! Tu peux participer à l'accueil, la communication ou la technique.</p>
+    <p class="text-gray-600">La cotisation finance l’entretien du lieu et le renouvellement du matériel. Merci de choisir la formule qui correspond à ta pratique, tout en participant au fonctionnement collectif.</p>
+    <ul class="space-y-2 text-gray-600">
+      <li><strong class="text-gray-800">Séance libre :</strong> 4 € la journée pour profiter d’un créneau d’entraînement.</li>
+      <li><strong class="text-gray-800">Carnet 10 séances :</strong> 30 € pour venir quand tu veux et partager l’espace en toute autonomie.</li>
+      <li><strong class="text-gray-800">Trimestre (3 mois) :</strong> 65 € pour t’installer durablement dans la dynamique de la salle.</li>
+      <li><strong class="text-gray-800">Cotisation annuelle « super soutiens » :</strong> 120 € pour accompagner l’autogestion sur la durée.</li>
+    </ul>
+    <p class="text-gray-600">Tu peux t’impliquer selon tes disponibilités : accueil, maintenance, communication… l’équipe bénévole t’aide à trouver ta place et à rester branché·e sur la communauté.</p>
   </article>
 </section>
 
-<section class="bg-white/95 rounded-[28px] shadow-lg p-6 sm:p-8 mt-10 fade-in"
-         data-controller="checklist">
+<section class="bg-white/95 rounded-[28px] shadow-lg p-6 sm:p-8 mt-10 fade-in">
   <header class="text-center space-y-3 mb-6">
-    <p class="text-sm uppercase tracking-[0.3em] text-[#1F5C55]/70">Avant de venir</p>
-    <h2 class="text-2xl font-semibold text-gray-800">Les documents à préparer</h2>
+    <p class="text-sm uppercase tracking-[0.3em] text-[#1F5C55]/70">S'impliquer au quotidien</p>
+    <h2 class="text-2xl font-semibold text-gray-800">Bénévolat et vie associative</h2>
+    <p class="text-gray-600 max-w-3xl mx-auto">Au Circographe, chaque adhésion se prolonge par une participation active : l’autogestion repose sur les bénévoles qui accueillent, maintiennent et imaginent les projets du lieu.</p>
   </header>
-  <ul class="grid sm:grid-cols-2 gap-4">
-    <% [
-      { label: "Pièce d'identité" },
-      { label: "Justificatif de domicile (< 3 mois)" },
-      { label: "Photo d'identité (format numérique ou papier)" },
-      { label: "Certificat médical (pour la pratique aérienne)" },
-      { label: "Attestation de responsabilité civile" },
-      { label: "Tarif solidaire : justificatif de situation" }
-    ].each do |item| %>
-      <li class="checklist-item flex items-center gap-3 bg-white rounded-2xl border border-gray-100 p-4 shadow-sm cursor-pointer transition" data-checklist-target="item" data-action="click->checklist#toggle">
-        <span class="checklist-indicator w-6 h-6 inline-flex items-center justify-center rounded-full border border-[#1F5C55] text-sm text-[#1F5C55]"></span>
-        <span class="text-gray-700"><%= item[:label] %></span>
-      </li>
-    <% end %>
-  </ul>
-  <p class="mt-4 text-sm text-gray-500 text-center">Un doute ? Écris-nous via le <%= link_to "formulaire de contact", page_path('contact_us'), class: "text-[#1F5C55] underline" %>.</p>
+  <div class="grid gap-6 md:grid-cols-3">
+    <article class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 transition-transform duration-300 hover:-translate-y-1">
+      <h3 class="text-lg font-semibold text-gray-800 mb-2">Accueil & convivialité</h3>
+      <p class="text-gray-600">Tenir un créneau, présenter les règles du lieu et s’assurer que tout le monde se sente bienvenu·e.</p>
+    </article>
+    <article class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 transition-transform duration-300 hover:-translate-y-1">
+      <h3 class="text-lg font-semibold text-gray-800 mb-2">Technique & maintenance</h3>
+      <p class="text-gray-600">Installer ou régler un agrès, bricoler un équipement, maintenir l’espace propre et sécurisé.</p>
+    </article>
+    <article class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 transition-transform duration-300 hover:-translate-y-1">
+      <h3 class="text-lg font-semibold text-gray-800 mb-2">Communication & projets</h3>
+      <p class="text-gray-600">Partager les actualités, documenter la vie du lieu, impulser des événements qui relient cirque et arts graphiques.</p>
+    </article>
+  </div>
+  <p class="mt-6 text-center text-sm text-gray-500">Pour te proposer, passe sur un créneau d’ouverture ou contacte-nous via le <%= link_to "formulaire de contact", page_path('contact_us'), class: "text-[#1F5C55] underline" %>.</p>
 </section>
-
 <section class="mt-10 fade-in">
   <%= render "shared/faq_section", id: "adhesion-faq", label: "Questions fréquentes", title: "Avant de te déplacer", subtitle: "Quelques repères supplémentaires pour préparer ton adhésion.", faqs: @adhesion_faqs, footer: "Besoin d'un coup de main ? Contacte-nous en amont ou passe pendant un créneau d'ouverture." %>
 </section>
