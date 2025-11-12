@@ -4,7 +4,7 @@ ruby "3.3.5"
 
 # Core Rails gems
 gem "rails", "~> 8.0.2"
-gem "stringio", "~> 3.1.2"
+gem "stringio", "~> 3.1.8"
 gem "bootsnap", require: false  # Reduces boot times through caching
 
 # Database and ORM
