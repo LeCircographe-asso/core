@@ -1,0 +1,10 @@
+hero: "Tu as une question ? On y répond ici avant ta venue au Circographe."
+cta_label: "Contacter l’équipe"
+entries:
+  - question: "Pourquoi adhérer ?"
+    answer: "Parce que le lieu est privé et associatif. L’adhésion couvre l’assurance et soutient le fonctionnement."
+  - question: "Puis-je venir sans expérience de cirque ?"
+    answer: "Les entraînements libres s’adressent aux pratiquant·es confirmé·es. Pour débuter, contacte une école partenaire."
+  - question: "Comment fonctionne la mise à disposition de la salle ?"
+    answer: "Les compagnies et artistes peuvent réserver des créneaux selon disponibilité, sur dossier ou simple demande."
+

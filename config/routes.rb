@@ -83,6 +83,7 @@ Rails.application.routes.draw do
 
   root "home#index"
   get "fonts", to: "home#font_examples", as: "font_examples"
+  get "/faq", to: "faqs#index", as: :faq
 
   # match "*unmatched", to: "application#url_not_found", via: :all
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html

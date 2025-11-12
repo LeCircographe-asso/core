@@ -6,20 +6,31 @@
   </header>
 
   <div class="flex justify-center mb-8 fade-in">
-    <div class="bg-white/95 shadow-md rounded-lg p-6 w-full md:w-3/4">
+    <div class="bg-white/95 shadow-md rounded-lg p-6 w-full md:w-3/4 space-y-4">
       <p class="text-gray-600 text-center">
-        Sic de isto et tuius peruchti ad actum ipsum, ut si dico "Ego autem vadam lavari, ut mens mea in statu naturae conformiter."
-        Cum igitur impediantur turbulentur aut dolore videamus.
+        L’espace graphique du Circographe accueille illustrateur·ices, peintres, dessinateur·ices ou collectifs en création. On y trouve un atelier vivant, partagé et propice aux croisements artistiques.
+      </p>
+      <p class="text-gray-600 text-center">
+        L’association propose des temps de pratique libre, d’exposition et la mise à disposition de la salle pour soutenir vos projets visuels. Ici, chaque adhérent·e contribue à faire vibrer les murs du lieu.
+      </p>
+      <p class="text-gray-600 text-center font-medium">
+        Allez viens, on va tartiner de la culture !
       </p>
     </div>
   </div>
 
   <div class="flex justify-center mb-8 fade-in">
-    <%= link_to "Devenir Membre", page_path('become_member'), class: "px-4 py-2 tracking-wide text-white font-bold bg-[#1F5C55] border-2 border-[#1F5C55] rounded-lg shadow-lg hover:bg-gray-100 hover:text-[#1F5C55] hover:border-[#1F5C55] hover:shadow-lg transition-colors duration-300" %>
+    <%= link_to "Adhérer au Circographe", page_path('become_member'), class: "px-4 py-2 tracking-wide text-white font-bold bg-[#1F5C55] border-2 border-[#1F5C55] rounded-lg shadow-lg hover:bg-gray-100 hover:text-[#1F5C55] hover:border-[#1F5C55] hover:shadow-lg transition-colors duration-300" %>
   </div>
 
   <div class="bg-white/95 rounded-lg shadow-md p-6 fade-in">
-    <%= render "shared/carousel_image", images: ["graff-img1.webp", "graff.jpg", "home3.webp", "home1.webp"] %>
+    <%= render "shared/carousel_image",
+          images: [
+            "graff-img1.webp",
+            "flowersZoomed.webp",
+            hero_image(:graphics_carousel_three),
+            hero_image(:graphics_carousel_four)
+          ] %>
   </div>
 </section>
 
