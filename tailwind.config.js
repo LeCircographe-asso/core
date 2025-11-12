@@ -29,7 +29,15 @@ module.exports = {
           800: '#25524b',
           900: '#22443e',
           950: '#112722',
-        }
+        },
+        'brand-primary': '#1F5C55',
+        'brand-primary-dark': '#174A44',
+        'brand-accent': '#5836A5',
+        'brand-accent-dark': '#4C2D8A',
+        'surface-light': '#F7FAFC',
+        'surface-card': '#FFFFFF',
+        'text-main': '#0B1220',
+        'text-muted': '#1F2937'
       }
     },
   },
