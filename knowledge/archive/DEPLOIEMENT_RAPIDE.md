@@ -1,5 +1,10 @@
 # Guide de Déploiement Rapide - Le Circographe
 
+**Statut actuel:** ⚠️ Historique (snapshot 2025-10-12).  
+**Source de vérité:** `knowledge/DEPLOYMENT_GUIDE.md`.
+
+---
+
 ## 🚀 Déploiement Staging (Test)
 
 ### 1. **Préparation**

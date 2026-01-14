@@ -6,30 +6,36 @@ Ce dossier contient toute la documentation technique, les découvertes, et les p
 
 ## 📋 **Index des Documents**
 
+### ✅ **Source de vérité**
+- **[CURRENT_STATUS.md](CURRENT_STATUS.md)** - Pointe vers les docs vraiment à jour
+
 ### **🧠 Connaissance Critique**
 - **[KNOWLEDGE_BASE.md](KNOWLEDGE_BASE.md)** - Règles d'or, solutions résolues, pièges évités
-- **[SESSION_LOG_2025-10-12.md](SESSION_LOG_2025-10-12.md)** - Journal détaillé de la session de debug CSS
+- **[archive/SESSION_LOG_2025-10-12.md](archive/SESSION_LOG_2025-10-12.md)** - Journal détaillé de la session de debug CSS (historique)
 
 ### **🚀 Déploiement**
 - **[DEPLOYMENT_GUIDE.md](DEPLOYMENT_GUIDE.md)** - Guide rapide de déploiement (staging/production)
-- **[DEPLOYMENT_ANALYSIS.md](DEPLOYMENT_ANALYSIS.md)** - Analyse approfondie des logs de déploiement
-- **[DEPLOIEMENT.md](DEPLOIEMENT.md)** - Documentation initiale de déploiement
-- **[DEPLOIEMENT_RAPIDE.md](DEPLOIEMENT_RAPIDE.md)** - Procédure rapide de déploiement
+- **[archive/DEPLOYMENT_ANALYSIS.md](archive/DEPLOYMENT_ANALYSIS.md)** - Analyse approfondie des logs (historique)
+- **[archive/DEPLOIEMENT.md](archive/DEPLOIEMENT.md)** - Documentation initiale (historique)
+- **[archive/DEPLOIEMENT_RAPIDE.md](archive/DEPLOIEMENT_RAPIDE.md)** - Procédure rapide (historique)
 
 ### **📊 Performance & Optimisations**
-- **[PERFORMANCE_REPORT.md](PERFORMANCE_REPORT.md)** - Rapport de performance après optimisations
+- **[archive/PERFORMANCE_REPORT.md](archive/PERFORMANCE_REPORT.md)** - Rapport de performance (historique)
 - **[OPTIMIZATIONS_TODO.md](OPTIMIZATIONS_TODO.md)** - Liste des optimisations à implémenter
-- **[ANALYSIS_SUMMARY.md](ANALYSIS_SUMMARY.md)** - Résumé exécutif de l'analyse
+- **[archive/ANALYSIS_SUMMARY.md](archive/ANALYSIS_SUMMARY.md)** - Résumé exécutif (historique)
 
 ### **🎨 CSS & Frontend**
 - **[CSS_MIGRATION_STRATEGY.md](CSS_MIGRATION_STRATEGY.md)** - Plan de migration CSS vers architecture propre
 
 ### **🏗️ Production**
-- **[PRODUCTION_DEPLOYMENT_PLAN.md](PRODUCTION_DEPLOYMENT_PLAN.md)** - Plan de déploiement production avec mode maintenance
+- **[PRODUCTION_DEPLOYMENT_PLAN.md](PRODUCTION_DEPLOYMENT_PLAN.md)** - Plan de déploiement production (historique)
 
 ---
 
-## 🎯 **Documents par Priorité**
+## 🎯 **Documents par Priorité (historique)**
+
+**Note:** L’ordre ci-dessous reflète une priorisation de 2025-10-12.  
+Pour l’actuel, se référer à `to-do.md` (produit) et `knowledge/OPTIMIZATIONS_TODO.md` (infra).
 
 ### **À Lire en Premier :**
 1. **KNOWLEDGE_BASE.md** - Règles critiques à ne jamais oublier
@@ -78,4 +84,3 @@ git push origin docs/nouveau-document
 ---
 
 **Dernière mise à jour :** 2025-10-12
-

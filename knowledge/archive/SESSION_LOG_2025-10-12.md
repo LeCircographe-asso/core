@@ -1,5 +1,10 @@
 # 📝 Journal de Session - 2025-10-12
 
+**Statut actuel:** ⚠️ Historique (snapshot 2025-10-12).  
+**Source de vérité:** `knowledge/KNOWLEDGE_BASE.md` + `knowledge/DEPLOYMENT_GUIDE.md` + `to-do.md`.
+
+---
+
 **Objectif :** Résoudre `Propshaft::MissingAssetError` et optimiser le pipeline CSS
 
 ---
