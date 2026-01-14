@@ -45,7 +45,7 @@ module Admin
     validates :last_name, presence: true, if: -> { person_id.blank? }
     validates :email_address, presence: true, if: -> { create_web_account == true }
     validates :system_role, inclusion: { in: %w[super_admin admin volunteer web_visitor] }
-    validates :membership_type_id, presence: true, if: -> { create_membership == true }
+    validates :membership_type_id, presence: true, if: :membership_requested?
     validates :payment_method, inclusion: { in: %w[cash card cheque transfer offered] }
 
     def call
@@ -61,7 +61,7 @@ module Admin
         newsletter_source: "admin",
         create_user_account: create_web_account,
         user_params: user_creation_params(compact: true),
-        create_membership: create_membership,
+        create_membership: membership_requested?,
         membership_params: membership_creation_params
       ).call
 
@@ -112,13 +112,17 @@ module Admin
     end
 
     def membership_creation_params
-      return {} unless create_membership == true
+      return {} unless membership_requested?
 
       {
         membership_type_id: membership_type_id,
         payment_method: payment_method,
         recorded_by_id: Current.user&.id
       }.compact_blank
+    end
+
+    def membership_requested?
+      create_membership || membership_type_id.present?
     end
 
     def success(person, message)

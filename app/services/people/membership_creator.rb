@@ -61,7 +61,8 @@ module People
       ActiveSupport::Notifications.instrument("membership.failed", error: e.message, reason: "validation")
       failure("Validation error: #{e.message}")
     rescue => e
-      Rails.logger.error("[People::MembershipCreator] #{e.class}: #{e.message}\n#{e.backtrace.take(5).join("\n")}")
+      db_path = ActiveRecord::Base.connection_db_config&.database
+      Rails.logger.error("[People::MembershipCreator] db=#{db_path} #{e.class}: #{e.message}\n#{e.backtrace.take(5).join("\n")}")
       ActiveSupport::Notifications.instrument("membership.failed", error: e.message, reason: "exception")
       failure("Error creating membership: #{e.message}")
     end

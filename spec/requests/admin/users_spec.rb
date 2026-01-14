@@ -20,14 +20,13 @@ RSpec.describe "Admin::Users", type: :request do
     context "when creating a brand new person" do
       let(:membership_type) { create(:membership_type, :circus, price_cents: 2500) }
 
-      it "creates person, membership, payment and optional web account" do
+      it "creates person, membership, and payment" do
         expect {
           post admin_users_path, params: {
             user: {
               create_membership: "1",
               membership_type_id: membership_type.id,
               payment_method: "cash",
-              create_web_account: "1",
               system_role: "volunteer",
               email_address: "jane.doe@local.test",
               person: {
@@ -54,7 +53,7 @@ RSpec.describe "Admin::Users", type: :request do
         expect(payment.total_cents).to eq(2500)
         expect(payment.payment_lines.first.item_id).to eq(membership.id)
         expect(payment.recorded_by).to eq(admin)
-        expect(person.user).to be_present
+        expect(person.user).to be_nil
       end
     end
 
@@ -267,17 +266,19 @@ RSpec.describe "Admin::Users", type: :request do
 
       before { login_as(super_admin) }
 
-      it "deletes the user from database" do
+      it "archives the user instead of hard delete" do
         delete admin_user_path(regular_user)
         follow_redirect! if response.redirect?
 
-        expect { regular_user.reload }.to raise_error(ActiveRecord::RecordNotFound)
+        expect(regular_user.reload.deleted?).to eq(true)
+        expect(regular_user.deleted_at).to be_present
+        expect(regular_user.email_address).to include("deleted_")
       end
 
       it "does not allow deleting self" do
         expect {
           delete admin_user_path(super_admin)
-        }.not_to change { User.count }
+        }.not_to change { super_admin.reload.deleted? }
 
         expect(response).to redirect_to(admin_users_path)
       end

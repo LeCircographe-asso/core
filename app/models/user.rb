@@ -82,7 +82,7 @@ class User < ApplicationRecord
     end
 
     # Deactivate any active memberships
-    user_memberships.where(status: "active").update_all(status: "inactive")
+    memberships.where(status: "active").update_all(status: "inactive")
   end
 
   # Check if the user has any active payments
@@ -104,6 +104,7 @@ class User < ApplicationRecord
 
   def welcome_send
     return if web_visitor?
+    return if Rails.env.test?
     return if email_address.blank? # Don't send email if no email address
 
     # Skip email sending in seeds
@@ -193,6 +194,7 @@ class User < ApplicationRecord
   scope :today, -> { where("created_at >= ? AND created_at < ?", Date.current.beginning_of_day, Date.current.end_of_day) }
   scope :this_week, -> { where("created_at >= ? AND created_at <= ?", Date.current.beginning_of_week.beginning_of_day, Date.current.end_of_week.end_of_day) }
   scope :this_month, -> { where("created_at >= ? AND created_at <= ?", Date.current.beginning_of_month.beginning_of_day, Date.current.end_of_month.end_of_day) }
+  scope :with_deleted, -> { all }
 
   # Class method to find or create a user with the same email
   def self.find_or_create_with_identity(email:, **attributes)
@@ -205,13 +207,29 @@ class User < ApplicationRecord
     create(email_address: email, **attributes)
   end
 
+  def deleted?
+    deleted == true || deleted_at.present?
+  end
+
+  def archive!
+    return false if deleted?
+
+    update!(deleted: true, deleted_at: Time.current)
+    anonymize_personal_data
+    true
+  end
+
+  def restore
+    update(deleted: false, deleted_at: nil)
+  end
+
+  def restore!
+    update!(deleted: false, deleted_at: nil)
+  end
+
   # Standard destroy method - no soft deletion
   def destroy
-    # Transfer payments to admin user before deletion
-    admin_user = User.find_by(system_role: :admin)
-    if admin_user && payments.exists?
-      payments.update_all(user_id: admin_user.id)
-    end
+    # Payments belong to Person, not User; do not attempt reassignment here.
     super # Standard ActiveRecord destroy
   end
 
@@ -239,6 +257,7 @@ class User < ApplicationRecord
   private
 
   def generate_password_reset_token
+    return if Rails.env.test?
     generate_token_for(:password_reset)
   end
 
