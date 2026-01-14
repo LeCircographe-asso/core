@@ -240,24 +240,36 @@ module Admin
     private
 
     def payment_params
-      # Nouveau modèle Person-Based
       params.require(:payment).permit(
         :person_id, :recorded_by_id, :total_cents, :payment_method, :status, :notes,
         # Compatibilité avec l'ancien modèle
-        :payment_id, :payment_date, :payment_amount, :payment_type, :user_id, :order_id, :donation, :total_payment
+        :payment_id, :payment_date, :payment_amount, :payment_type, :order_id, :donation, :total_payment
       )
     end
 
     def set_payments_breadcrumbs
-      @user = User.find_by(id: params[:user_id]) if params[:user_id].present?
-
-      if @user
-        add_breadcrumb "Liste d'adhérents", admin_users_path
-        add_breadcrumb @user.full_name.present? ? @user.full_name : "Utilisateur ##{@user.id}", admin_user_path(@user)
-        add_breadcrumb "Historique des paiements", nil
-      else
-        add_breadcrumb "Historique des paiements", nil
+      if params[:person_id].present?
+        person = Person.find_by(id: params[:person_id])
+        if person
+          add_breadcrumb "Liste d'adhérents", admin_users_path
+          add_breadcrumb person.full_name, admin_user_path("person_#{person.id}")
+          add_breadcrumb "Historique des paiements", nil
+          return
+        end
       end
+
+      if params[:user_id].present?
+        user = User.find_by(id: params[:user_id])
+        if user
+          add_breadcrumb "Liste d'adhérents", admin_users_path
+          label = user.full_name.present? ? user.full_name : "Utilisateur ##{user.id}"
+          add_breadcrumb label, admin_user_path(user)
+          add_breadcrumb "Historique des paiements", nil
+          return
+        end
+      end
+
+      add_breadcrumb "Historique des paiements", nil
     end
   end
 end
