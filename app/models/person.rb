@@ -224,7 +224,7 @@ class Person < ApplicationRecord
   end
 
   # Méthodes métier pour la création d'adhésions
-  def create_membership!(membership_type, payment_method: :cash, recorded_by:, custom_amount_cents: nil, offer_reason: nil)
+  def create_membership!(membership_type, payment_method: :cash, recorded_by:, custom_amount_cents: nil, offer_reason: nil, donation_cents: nil)
     ActiveRecord::Base.transaction do
       # Vérifier les permissions pour les offres
       if payment_method.to_s == "offered"
@@ -261,11 +261,14 @@ class Person < ApplicationRecord
 
       # Déterminer le montant selon le mode de paiement
       amount_cents = calculate_amount_cents(payment_method, membership_type.price_cents, custom_amount_cents)
+      donation_cents = donation_cents.to_i if donation_cents.present?
+      donation_cents = nil if donation_cents.to_i <= 0
+      total_cents = amount_cents + (donation_cents || 0)
 
       # Créer le paiement (toujours pour la traçabilité, même si montant = 0)
       description = generate_payment_description(payment_method, membership_type.name, "Membership")
       payment = payments.create!(
-        total_cents: amount_cents,
+        total_cents: total_cents,
         payment_method: payment_method,
         status: :success,
         recorded_by: recorded_by,
@@ -280,12 +283,21 @@ class Person < ApplicationRecord
         description: description
       )
 
+      if donation_cents.present?
+        payment.payment_lines.create!(
+          item_type: "Payment",
+          item_id: payment.id,
+          amount_cents: donation_cents,
+          description: "Donation"
+        )
+      end
+
       { membership: membership, payment: payment }
     end
   end
 
   # Méthodes métier pour la création de cotisations
-  def create_subscription!(subscription_plan, payment_method: :cash, recorded_by:, record_attendance: false, custom_amount_cents: nil, offer_reason: nil)
+  def create_subscription!(subscription_plan, payment_method: :cash, recorded_by:, record_attendance: false, custom_amount_cents: nil, offer_reason: nil, donation_cents: nil)
     ActiveRecord::Base.transaction do
       # Vérifier les permissions pour les offres
       if payment_method.to_s == "offered"
@@ -333,11 +345,14 @@ class Person < ApplicationRecord
 
       # Déterminer le montant selon le mode de paiement
       amount_cents = calculate_amount_cents(payment_method, subscription_plan.price_cents, custom_amount_cents)
+      donation_cents = donation_cents.to_i if donation_cents.present?
+      donation_cents = nil if donation_cents.to_i <= 0
+      total_cents = amount_cents + (donation_cents || 0)
 
       # Créer le paiement (toujours pour la traçabilité, même si montant = 0)
       description = generate_payment_description(payment_method, subscription_plan.name, "BookOfEntry")
       payment = payments.create!(
-        total_cents: amount_cents,
+        total_cents: total_cents,
         payment_method: payment_method,
         status: :success,
         recorded_by: recorded_by,
@@ -351,6 +366,15 @@ class Person < ApplicationRecord
         amount_cents: amount_cents,
         description: description
       )
+
+      if donation_cents.present?
+        payment.payment_lines.create!(
+          item_type: "Payment",
+          item_id: payment.id,
+          amount_cents: donation_cents,
+          description: "Donation"
+        )
+      end
 
       # Enregistrer la présence si demandé
       if record_attendance
@@ -436,7 +460,7 @@ class Person < ApplicationRecord
   end
 
   # Méthode métier pour les upgrades d'adhésion
-  def upgrade_membership!(new_membership_type, payment_method: :cash, recorded_by:, custom_amount_cents: nil, offer_reason: nil)
+  def upgrade_membership!(new_membership_type, payment_method: :cash, recorded_by:, custom_amount_cents: nil, offer_reason: nil, donation_cents: nil)
     ActiveRecord::Base.transaction do
       # Vérifier qu'il y a une adhésion active
       current_membership = self.current_membership
@@ -467,7 +491,8 @@ class Person < ApplicationRecord
         recorded_by: recorded_by,
         item_type: "Membership",
         item_id: new_membership.id,
-        description: "Upgrade d'adhésion de #{old_membership_type.name} vers #{new_membership_type.name} (plein tarif)"
+        description: "Upgrade d'adhésion de #{old_membership_type.name} vers #{new_membership_type.name} (plein tarif)",
+        donation_cents: donation_cents
       )
 
       {
@@ -654,9 +679,13 @@ class Person < ApplicationRecord
   end
 
   # Méthode utilitaire pour créer un paiement avec sa ligne
-  def create_payment_with_line!(amount_cents:, payment_method:, recorded_by:, item_type:, item_id:, description:)
+  def create_payment_with_line!(amount_cents:, payment_method:, recorded_by:, item_type:, item_id:, description:, donation_cents: nil)
+    donation_cents = donation_cents.to_i if donation_cents.present?
+    donation_cents = nil if donation_cents.to_i <= 0
+    total_cents = amount_cents + (donation_cents || 0)
+
     payment = payments.create!(
-      total_cents: amount_cents,
+      total_cents: total_cents,
       payment_method: payment_method,
       status: :success,
       recorded_by: recorded_by,
@@ -669,6 +698,15 @@ class Person < ApplicationRecord
       amount_cents: amount_cents,
       description: description
     )
+
+    if donation_cents.present?
+      payment.payment_lines.create!(
+        item_type: "Payment",
+        item_id: payment.id,
+        amount_cents: donation_cents,
+        description: "Donation"
+      )
+    end
 
     payment
   end
