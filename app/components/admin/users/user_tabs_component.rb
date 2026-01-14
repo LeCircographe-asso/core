@@ -17,11 +17,6 @@ class Admin::Users::UserTabsComponent < ViewComponent::Base
 
   def tab_class(tab_id)
     base_class = "tab-button flex-1 py-3 px-2 text-center border-b-2 font-medium text-xs sm:text-sm"
-
-    if tab_id == active_tab
-      "#{base_class} border-[#1F5C55] text-[#1F5C55]"
-    else
-      "#{base_class} border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
-    end
+    "#{base_class} border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
   end
 end
