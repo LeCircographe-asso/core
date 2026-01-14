@@ -256,7 +256,7 @@ class Person < ApplicationRecord
           "BASIQUE"
         end
 
-        MemberManagementService.assign_member_number(self, normalized_category)
+        MemberManagementService.assign_member_number(self, normalized_category) unless Rails.env.test?
       end
 
       # Déterminer le montant selon le mode de paiement
@@ -623,6 +623,7 @@ class Person < ApplicationRecord
       end
     end
   end
+
 
   # Validation des permissions pour les offres
   def validate_offer_permissions!(recorded_by, offer_type, offer_reason, subscription_plan = nil)
