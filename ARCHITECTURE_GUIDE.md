@@ -14,6 +14,41 @@ Ce document consolide les bonnes pratiques et l'architecture mise en place lors 
 
 ---
 
+## 👤 Person / User - Règles de Cycle de Vie
+
+- **Person = source de vérité** pour l'identité et la finance.
+- **User = compte web** (authentification + permissions), optionnel.
+- **Cas supportés** :
+  - Person sans User (inscription IRL d'abord).
+  - User sans Person (inscription web d'abord).
+- **Lien explicite uniquement** : le lien User ↔ Person se fait via un service dédié.
+- **Pas de reliaison implicite** si une Person a déjà un User lié.
+- **Pas d'orphelins financiers** : paiements et adhésions restent rattachés à la Person.
+
+---
+
+## 🧭 Service Entry Points (Flux Unifiés)
+
+- **Création Person / User / Membership** : `People::Register`
+- **Lien User ↔ Person** : `People::AccountLinker`
+- **Achat adhésion** : `People::MembershipCreator`
+- **Achat cotisation** : `People::SubscriptionCreator`
+- **Mise à jour User + Person** : `UserManagement::UserUpdater`
+- **Paiement** : `People::PaymentCreator`, `People::PaymentUpdater`, `People::PaymentCanceller`
+
+> Les contrôleurs doivent rester minces : valider les params, appeler un service, render/redirect.
+
+---
+
+## 🧾 RGPD / Suppression et Anonymisation
+
+- **Pas de suppression hard** pour les Person/Users avec historique financier.
+- **Archivage + anonymisation** des données personnelles.
+- **Traçabilité** : raison + acteur pour chaque action de suppression/annulation.
+- **Pas d'orphelins** : paiements et adhésions conservent leurs liens.
+
+---
+
 ## 🧩 Architecture View Components
 
 ### Structure des Composants
