@@ -108,7 +108,7 @@ module Admin
     end
 
     def membership_purchase_params
-      params.require(:membership).permit(:person_id, :membership_type_id, :payment_method, :custom_amount_cents, :offer_reason, :upgrade)
+      params.require(:membership).permit(:person_id, :membership_type_id, :payment_method, :custom_amount_cents, :offer_reason, :upgrade, :donation_amount)
     end
 
     def payment_method_from(params_hash)
@@ -121,6 +121,13 @@ module Admin
       params_hash[:custom_amount_cents].to_i
     end
 
+    def donation_cents_from(params_hash)
+      return nil if params_hash[:donation_amount].blank?
+
+      cents = (params_hash[:donation_amount].to_f * 100).to_i
+      cents.positive? ? cents : nil
+    end
+
     def handle_upgrade_flow(person, membership_type)
       params_hash = membership_purchase_params
       result = People::MembershipUpgrader.new(
@@ -129,7 +136,8 @@ module Admin
         payment_method: payment_method_from(params_hash),
         recorded_by_id: Current.user.id,
         custom_amount_cents: custom_amount_from(params_hash),
-        offer_reason: params_hash[:offer_reason]
+        offer_reason: params_hash[:offer_reason],
+        donation_cents: donation_cents_from(params_hash)
       ).call
 
       if result.success?
@@ -148,7 +156,8 @@ module Admin
         payment_method: payment_method_from(params_hash),
         recorded_by_id: Current.user.id,
         custom_amount_cents: custom_amount_from(params_hash),
-        offer_reason: params_hash[:offer_reason]
+        offer_reason: params_hash[:offer_reason],
+        donation_cents: donation_cents_from(params_hash)
       ).call
 
       if result.success?

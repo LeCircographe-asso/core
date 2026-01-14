@@ -31,23 +31,6 @@ module Admin
         query = query.where(person_id: person.id) if person
       end
 
-      # Filter by user if user_id is provided (compatibility)
-      if params[:user_id].present?
-        user_ids = Array(params[:user_id]).reject(&:blank?)
-
-        if user_ids.any?
-          person_ids = User.where(id: user_ids).where.not(person_id: nil).pluck(:person_id)
-
-          query = if person_ids.any?
-                    query.where(person_id: person_ids)
-          else
-                    query.none
-          end
-        else
-          query = query.none
-        end
-      end
-
       # Apply status filter
       if params[:status].present?
         query = query.where(status: params[:status])
@@ -78,7 +61,11 @@ module Admin
     end
 
     def calculate_total_donation
-      PaymentQuery.total_donation
+      @filtered_payments
+        .where(status: :success)
+        .joins(:payment_lines)
+        .where("LOWER(payment_lines.description) LIKE ? OR payment_lines.item_type = ?", "%don%", "Donation")
+        .sum("payment_lines.amount_cents")
     end
 
     def pagy_result

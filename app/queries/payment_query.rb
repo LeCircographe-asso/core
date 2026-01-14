@@ -38,7 +38,8 @@ module PaymentQuery
 
   def self.total_donation
     Payment.joins(:payment_lines)
-      .where(payment_lines: { item_type: "Donation" })
+      .where(status: :success)
+      .where("LOWER(payment_lines.description) LIKE ? OR payment_lines.item_type = ?", "%don%", "Donation")
       .sum("payment_lines.amount_cents")
   end
 end
