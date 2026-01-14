@@ -1,5 +1,7 @@
 # 🚀 Optimisations à Implémenter
 
+**Status update (current app):** garder ce fichier comme backlog d’optimisation infra/UX. Les items non cochés restent à arbitrer; préférer `to-do.md` pour le plan produit.
+
 ## ✅ Réalisé le 14/10/2025
 
 - [x] **Optimisation du module Horaires d'ouverture** :
@@ -301,4 +303,3 @@ Les warnings suivants sont normaux en production:
 **Créé le:** 2025-10-12  
 **Statut:** 🟡 En attente d'implémentation  
 **Prochaine action:** Phase 1 - Quick Wins
-

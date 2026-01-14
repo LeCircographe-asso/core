@@ -1,5 +1,10 @@
 # Guide de Tests et Couverture - Le Circographe
 
+**Statut actuel:** ⚠️ À revalider régulièrement (snapshot 2025-01-31).  
+**Source de vérité:** `to-do.md` + `docs/ZONES_CLASSIFICATION.md`.
+
+---
+
 **Date:** 2025-01-31  
 **Status:** ✅ STABLE - Guide complet pour tests et couverture
 
@@ -74,27 +79,18 @@ app/models/subscription_plan.rb
 
 ---
 
-## Audit de Couverture
+## Audit de Couverture (à revalider)
 
-### Coverage Actuel
-
-- **10.42%** de couverture globale
-- SimpleCov activé et configuré
-- Seuil minimum: 10% (progressif vers 60%)
-
-### Executive Summary
-
-L'application a actuellement une **couverture très faible** à 10.42%. Bien que des tests de qualité existent pour la logique métier core (Membership, Payment processing), la plupart des modèles, contrôleurs et services manquent de couverture de tests.
-
-**Priorité Critique:** Se concentrer sur les tests de contrôleurs pour la zone admin et les modèles business core avant d'étendre le développement de fonctionnalités.
+Les chiffres de couverture et la liste des specs présentes doivent être **revalidés** avant d’être utilisés.  
+Référence actuelle: `to-do.md` (tests prioritaires) + `docs/ZONES_CLASSIFICATION.md`.
 
 ---
 
 ## Gaps Identifiés
 
-### Models (24 total, 12 tested = 50%)
+### Models (snapshot 2025-01-31)
 
-#### ✅ **Well Tested Models**
+#### ✅ **Well Tested Models** (snapshot)
 - `User` - User spec exists
 - `Person` - Person spec exists
 - `Membership` - Membership spec exists
@@ -107,7 +103,7 @@ L'application a actuellement une **couverture très faible** à 10.42%. Bien que
 #### ⚠️ **Partially Tested Models**
 - Complex logic tested in integration tests but no dedicated specs
 
-#### ❌ **Untested Models (HIGH PRIORITY)**
+#### ❌ **Untested Models (snapshot)**
 - `SubscriptionPlan` - Critical for pricing logic, pack10 subscriptions
 - `AccountClaim` - Workflow for account claiming/recovery
 - `Attendance` - Event registration, daily attendance
@@ -123,9 +119,9 @@ L'application a actuellement une **couverture très faible** à 10.42%. Bien que
 
 **Estimation:** 12 specs needed for models
 
-### Controllers (34 total)
+### Controllers (snapshot 2025-01-31)
 
-#### ✅ **Tested Controllers (Zone 1 - 8 controllers)**
+#### ✅ **Tested Controllers (snapshot)**
 - `Admin::UsersController` - 107 request specs
 - `Admin::PaymentsController` - Tests complets
 - `Admin::MembershipsController` - Tests complets
@@ -135,17 +131,17 @@ L'application a actuellement une **couverture très faible** à 10.42%. Bien que
 - `RegistrationsController` - Tests complets
 - `CheckoutController` - Tests complets
 
-#### ⚠️ **Partially Tested Controllers (Zone 2 - 10 controllers)**
+#### ⚠️ **Partially Tested Controllers (snapshot)**
 - En exploration, tests après stabilisation
 
-#### ❌ **Untested Controllers (Zone 3 - 16 controllers)**
+#### ❌ **Untested Controllers (snapshot)**
 - Non prioritaires, tests triviaux ou pas de tests
 
 **Estimation:** 25-30 request specs needed for Zone 2 controllers
 
-### Services (21 total)
+### Services (snapshot 2025-01-31)
 
-#### ✅ **All Services Tested (100%)**
+#### ✅ **All Services Tested (snapshot)**
 - `People::*` (PersonCreator, Register, Payment*, Subscription*, Membership*, AccountLinker, NewsletterSignup) - specs dédiées
 - `AccountClaimManagement::*` - 2 services, tous testés
 - `AttendanceManagement::*` - 1 service, testé
@@ -163,9 +159,9 @@ L'application a actuellement une **couverture très faible** à 10.42%. Bien que
 
 ---
 
-## Plan d'Action
+## Plan d'Action (à revalider)
 
-### Phase 1: Critiques (Semaine 1)
+### Phase 1: Critiques (snapshot)
 
 **Models (HIGH PRIORITY):**
 1. `SubscriptionPlan` - Critical for pricing logic
@@ -176,7 +172,7 @@ L'application a actuellement une **couverture très faible** à 10.42%. Bien que
 
 **Goal:** Augmenter coverage à 15%
 
-### Phase 2: Admin Complet (Semaine 2)
+### Phase 2: Admin Complet (snapshot)
 
 **Controllers Zone 2:**
 - Controllers admin restants
@@ -186,7 +182,7 @@ L'application a actuellement une **couverture très faible** à 10.42%. Bien que
 
 **Goal:** Augmenter coverage à 25%
 
-### Phase 3: Public & Integration (Semaine 3)
+### Phase 3: Public & Integration (snapshot)
 
 **Controllers Public:**
 - Controllers public
@@ -196,7 +192,7 @@ L'application a actuellement une **couverture très faible** à 10.42%. Bien que
 
 **Goal:** Augmenter coverage à 35%
 
-### Roadmap Long Terme
+### Roadmap Long Terme (snapshot)
 
 **Phase 4: Coverage 50% (Semaine 4-6)**
 - Models restants
@@ -239,5 +235,3 @@ L'application a actuellement une **couverture très faible** à 10.42%. Bien que
 - **TDD Guide:** `docs/TDD_GUIDE.md` - Workflow TDD complet
 - **Audit Controllers:** `docs/CONTROLLERS_AUDIT.md` - État des tests controllers
 - **Zones Classification:** `docs/ZONES_CLASSIFICATION.md` - Classification Zone 1/2/3
-
-

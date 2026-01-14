@@ -1,5 +1,10 @@
 # 🔍 Analyse Approfondie du Déploiement Staging
 
+**Statut actuel:** ⚠️ Historique (snapshot 2025-10-12).  
+**Source de vérité:** `knowledge/OPTIMIZATIONS_TODO.md` + `knowledge/DEPLOYMENT_GUIDE.md`.
+
+---
+
 **Date:** 2025-10-12  
 **Run ID:** 18444855888  
 **Status:** ✅ Success  
@@ -258,4 +263,3 @@ RUN bundle install && \
 
 **Analyse générée le:** 2025-10-12  
 **Prochaine révision:** Après implémentation des optimisations prioritaires
-

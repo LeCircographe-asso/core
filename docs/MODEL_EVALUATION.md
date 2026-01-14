@@ -48,8 +48,7 @@ Person (données centriques)
 - ✅ Status + method enums
 
 **Points à améliorer:**
-- ⚠️ Duplication `user_id` vs `recorded_by_id` (legacy)
-- ⚠️ Relations `order` / `product_orders` inutilisées (legacy)
+- ⚠️ Ajouter un contrôle d'intégrité: somme `payment_lines` == `payment.total_cents`
 
 ### 3. Versioning (10/10)
 
@@ -87,32 +86,16 @@ MembershipType, SubscriptionPlan
 
 ## ⚠️ Problèmes Identifiés
 
-### 1. Complexité Schema: Double Foreign Keys
+### 1. Complexité Schema: Double Foreign Keys (résolu)
 
 **Problème critique:**
 ```ruby
-# Payment a DEUX foreign keys pour la même relation
-belongs_to :person          # Nouveau (correct)
-belongs_to :user            # Legacy (compatibilité)
-belongs_to :recorded_by     # Qui a enregistré (correct)
+# Payment a une relation claire
+belongs_to :person          # Qui paie (correct)
+belongs_to :recorded_by     # Qui enregistre (correct)
 ```
 
-**Impact:**
-- ❌ Pollution des tests (2 façons de créer Payment)
-- ❌ Complexité inutile
-- ❌ Risque d'incohérence (person.user_id vs recorded_by)
-
-**Solution recommandée:**
-```ruby
-# Migration de nettoyage
-remove_column :payments, :user_id
-remove_column :payments, :order_id
-# Conserver uniquement:
-# - person_id (qui paie)
-# - recorded_by_id (qui enregistre)
-```
-
-**Effort:** 30 min (migration + tests)
+**Statut:** ✅ `user_id`/`order_id` retirés des paiements
 
 ---
 
@@ -311,7 +294,7 @@ validates :expires_at, presence: true, unless: :is_pack10?
 ### Maintenabilité: 7/10
 - ✅ Concerns bien organisés
 - ✅ Services séparés
-- ⚠️ Legacy code (user_id, order)
+- ⚠️ Legacy newsletter_subscribed (Person) encore présent
 - ⚠️ Logic dual (expired)
 
 ### Testabilité: 6/10
@@ -325,15 +308,8 @@ validates :expires_at, presence: true, unless: :is_pack10?
 ## 🔧 Recommandations par Priorité
 
 ### 🔴 Priorité 1: Nettoyage Legacy (2h)
-```ruby
-# Migration
-remove_column :payments, :user_id
-remove_column :payments, :order_id
-remove_index :payments, :user_id
-remove_index :payments, :order_id
-```
 
-**Impact:** Tests -50% de complexité
+**Statut:** ✅ Nettoyage Payment déjà effectué (user_id/order_id retirés)
 
 ---
 
@@ -414,24 +390,9 @@ add_index :subscription_plans, [:membership_type_id, :duration], name: 'idx_sub_
 
 **Recommandation:** Faire les 3 premières priorités maintenant, indexer plus tard.
 
-**✅ TERMINÉ (2025-01-31):** Score passe de 7/10 → 10/10 🎉
+**Statut actuel (vrai code):**
+- ✅ Payment: legacy user_id/order_id supprimés
+- ⚠️ BookOfEntry: validations/nullable à revalider
+- ⚠️ Newsletter: `newsletter_subscribed` encore présent (voir plan UX)
 
-**Fixes appliqués - TOUTES PRIORITÉS:**
-- ✅ **Priorité 1:** Legacy code Payment (user_id, order) supprimé
-- ✅ **Priorité 1:** MembershipType enum simplifié (circus_full/reduced → circus)
-- ✅ **Priorité 1:** Table newsletter_subscribers dédiée créée
-- ✅ **Priorité 2:** BookOfEntry contradictions corrigées (sessions_remaining nullable)
-- ✅ **Priorité 3:** Membership expired logic clarifiée (expired_by_date? + scope)
-- ✅ **Priorité 4:** 5 indexes performance ajoutés
-- ✅ **Priorité 5:** upgrade_to! refactoré (atomicité garantie)
-- ✅ Tests mis à jour et validés (462 examples, 0 failures)
-
-**Impact final:**
-- Tests: -50% complexité
-- Performance: +200% (dashboards)
-- Maintenabilité: +60%
-- Bugs potentiels: -30%
-
----
-
-**Prochaine action:** Modèle solide et prêt! Focus sur fonctionnalités métier
+**Prochaine action:** Revalider les contradictions restantes et aligner avec le `to-do.md`.

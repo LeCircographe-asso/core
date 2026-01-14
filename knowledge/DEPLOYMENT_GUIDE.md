@@ -1,5 +1,8 @@
 # 🚀 Guide Déploiement - Le Circographe
 
+**Source de vérité (déploiement):** ce guide + `knowledge/OPTIMIZATIONS_TODO.md`  
+**Historique:** les anciens guides sont archivés dans `knowledge/archive/`.
+
 ## Workflow Standard
 ```bash
 # 1. Développement local
@@ -69,6 +72,34 @@ kamal rollback -c config/deploy.staging.yml
 # Accéder au conteneur
 docker exec -it <container-id> bash
 ```
+
+## Mode Maintenance (Production)
+
+**Objectif:** maintenance activée par défaut, admin accès dashboard, healthcheck `/up` toujours OK.
+
+### Comportement attendu
+- `/up` → OK (healthcheck Kamal)
+- `/sessions/new` → OK (login)
+- `/admin/*` → OK si admin connecté
+- Autres → 503 (page maintenance)
+
+### Variables requises
+```bash
+MAINTENANCE_MODE=true
+RAILS_ENV=production
+SECRET_KEY_BASE=<secret>
+RAILS_MASTER_KEY=<master_key>
+```
+
+### Middleware (rappel)
+Fichier: `app/middleware/maintenance_mode_middleware.rb`
+- Autoriser `/up`
+- Autoriser `/sessions/new` et `/sessions`
+- Autoriser `/admin/*` si session admin valide
+- Sinon: page maintenance (503)
+
+### Horaires sur page maintenance
+Utiliser `Rails.cache.fetch("opening_hours")` avec fallback si indisponible.
 
 ## Importmap / Swiper Assets
 
