@@ -71,21 +71,13 @@ test_*.rb
 cookies.txt
 db/schema_clean.rb
 
+# CI / linter outputs (never commit these)
+rspec.xml
+rubocop.json
+identifier.sqlite
+
 # IDE files
 /.idea
 
 # Watchman (not used - we use Tailwind watcher instead)
 /watchman
-docs/CONTRIBUTING.md
-docs/DOCUMENTATION_ORGANIZATION.md
-docs/OPTIMIZATION_SUMMARY.md
-docs/PIPELINE_ARCHITECTURE.md
-docs/RAKE_TASKS.md
-docs/README_SQLITE.md
-docs/ROADMAP.md
-docs/WORKFLOWS_GUIDE.md
-docs/data_integrity.md
-docs/data_integrity_implementation.md
-docs/documentations/
-docs/optionnal/
-docs/profile/
