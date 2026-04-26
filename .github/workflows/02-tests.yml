@@ -61,6 +61,8 @@ jobs:
       - uses: actions/setup-node@v6
         with:
           node-version: "22"
+      - name: Build Tailwind CSS
+        run: bundle exec rails tailwindcss:build
       - name: Run full test suite with coverage
         run: bundle exec rspec
       - name: Verify coverage threshold
