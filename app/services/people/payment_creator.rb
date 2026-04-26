@@ -49,7 +49,7 @@ module People
         created_lines = if normalized_lines.any?
           create_multiple_lines(payment, normalized_lines)
         else
-          [create_single_line(payment)]
+          [ create_single_line(payment) ]
         end
 
         instrument_payment_created(payment, created_lines.length)

@@ -81,7 +81,7 @@ class PagesController < ApplicationController
     path = Rails.root.join("config/content/#{key}.yml")
     raw = YAML.load_file(path)
     Array(raw).each_with_index.map { |entry, idx| entry.to_h.deep_symbolize_keys.merge(_idx: idx) }
-         .sort_by { |entry| [entry[:display_order] || Float::INFINITY, entry[:_idx]] }
+         .sort_by { |entry| [ entry[:display_order] || Float::INFINITY, entry[:_idx] ] }
          .map { |entry| entry.except(:_idx) }
   rescue Errno::ENOENT, Psych::SyntaxError => e
     Rails.logger.error("Content load failed: #{e.message}")
