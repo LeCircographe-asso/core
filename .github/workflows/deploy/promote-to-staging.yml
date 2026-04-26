@@ -1,0 +1,40 @@
+name: deploy-promote-to-staging
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirm_promote:
+        description: "Type PROMOTE to confirm dev -> staging promotion"
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  promote:
+    if: ${{ inputs.confirm_promote == 'PROMOTE' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - name: Ensure dev CI is green
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          SHA=$(git rev-parse origin/dev)
+          gh api "repos/${{ github.repository }}/commits/${SHA}/check-runs" > checks.json
+          for required in "ci-lint-audit" "ci-tests" "ci-docker-build"; do
+            status=$(jq -r --arg n "$required" '.check_runs[] | select(.name == $n) | .conclusion' checks.json | head -n1)
+            if [ "$status" != "success" ]; then
+              echo "Required check '$required' not successful on dev (got: ${status:-missing})"
+              exit 1
+            fi
+          done
+      - name: Promote dev into staging
+        run: |
+          git checkout staging
+          git pull --ff-only origin staging
+          git merge --no-ff origin/dev -m "chore: promote dev to staging"
+          git push origin staging
