@@ -13,6 +13,5 @@ RSpec.configure do |config|
         FileUtils.touch(db_path)
       end
     end
-
   end
 end

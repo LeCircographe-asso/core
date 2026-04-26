@@ -25,4 +25,3 @@ end
 Rake::Task["assets:precompile"].enhance do
   Rake::Task["importmap:normalize_modules"].invoke
 end
-
