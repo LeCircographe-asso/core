@@ -1,0 +1,34 @@
+name: ci-auto-lint
+
+on:
+  pull_request:
+    branches: [dev]
+    types: [opened, synchronize, reopened]
+
+permissions:
+  contents: write
+
+jobs:
+  autocorrect:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ github.head_ref }}
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "4.0.1"
+          bundler-cache: true
+      - name: Run RuboCop autocorrect
+        run: bundle exec rubocop --autocorrect --format github
+      - name: Commit corrections if any
+        run: |
+          if git diff --quiet; then
+            echo "No autocorrect changes."
+          else
+            git config user.name "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
+            git add -A
+            git commit -m "fix: rubocop autocorrect [skip ci]"
+            git push
+          fi
