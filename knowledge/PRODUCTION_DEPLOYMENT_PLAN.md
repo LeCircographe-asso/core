@@ -1,5 +1,10 @@
 # 🚀 Plan de Déploiement Production - Mode Maintenance
 
+**Statut actuel:** ⚠️ Historique (snapshot 2025-10-12).  
+**Source de vérité:** `knowledge/DEPLOYMENT_GUIDE.md`.
+
+---
+
 **Date :** 2025-10-12  
 **Objectif :** Déployer en production avec mode maintenance activé + accès admin pour gérer les horaires
 

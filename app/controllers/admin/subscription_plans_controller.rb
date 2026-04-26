@@ -58,6 +58,7 @@ module Admin
       custom_amount = if subscription_purchase_params[:payment_method] == "offered"
                         subscription_purchase_params[:custom_amount_cents]&.to_i || 0
       end
+      donation_cents = donation_cents_from(subscription_purchase_params)
 
       result = People::SubscriptionCreator.new(
         person: @person,
@@ -66,7 +67,8 @@ module Admin
         recorded_by_id: Current.user&.id,
         record_attendance: false,
         custom_amount_cents: custom_amount,
-        offer_reason: subscription_purchase_params[:offer_reason]
+        offer_reason: subscription_purchase_params[:offer_reason],
+        donation_cents: donation_cents
       ).call
 
       if result.success?
@@ -110,9 +112,16 @@ module Admin
     end
 
     def subscription_purchase_params
-      params.require(:subscription_plan).permit(:person_id, :subscription_plan_id, :payment_method, :record_attendance, :attendance_date, :custom_amount_cents, :offer_reason).merge(
+      params.require(:subscription_plan).permit(:person_id, :subscription_plan_id, :payment_method, :record_attendance, :attendance_date, :custom_amount_cents, :offer_reason, :donation_amount).merge(
         recorded_by_id: Current.user.id
       )
+    end
+
+    def donation_cents_from(params_hash)
+      return nil if params_hash[:donation_amount].blank?
+
+      cents = (params_hash[:donation_amount].to_f * 100).to_i
+      cents.positive? ? cents : nil
     end
   end
 end

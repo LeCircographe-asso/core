@@ -25,6 +25,7 @@ Rails.application.routes.draw do
     resources :payments, only: %i[show create new edit update index destroy] do
       post :restore, on: :member
     end
+    resources :health_reports, only: %i[index]
     resources :attendances, only: %i[index show new create destroy]
     resources :memberships, only: %i[index show new create edit update destroy]
     resources :membership_types, only: %i[index show new create edit update destroy]

@@ -5,6 +5,16 @@
 
 ---
 
+**Statut actuel:** ⚠️ Snapshot 2025-01-27 — à revalider régulièrement.  
+**Source de vérité:** `to-do.md` (priorités), `docs/BUSINESS_LOGIC.md` (règles), `docs/ARCHITECTURE_SERVICES.md` (services).
+
+---
+
+## Comment utiliser ce document
+- Utiliser ces zones comme **cadre** (stabilité/risque).
+- Vérifier la réalité du code et des tests avant d’exécuter un plan.
+- Reporter toute priorité actuelle dans `to-do.md`.
+
 ## Légende
 
 - **🟢 Zone 1 (Stable)** - Tests immédiats requis
@@ -17,8 +27,8 @@
 
 ### 🟢 Zone 1: Comportement Défini
 
-#### Core Business
-| Model | Tests Existants? | Action | Priorité |
+#### Core Business (snapshot)
+| Model | Tests (snapshot) | Action (à valider) | Priorité |
 |-------|-----------------|---------|----------|
 | `User` | ✅ Oui | Compléter si gaps | 🔴 Haute |
 | `Person` | ✅ Oui | Compléter si gaps | 🔴 Haute |
@@ -28,28 +38,28 @@
 | `MembershipType` | ✅ Oui | Compléter si gaps | 🔴 Haute |
 | `BookOfEntry` | ✅ Oui | Compléter si gaps | 🔴 Haute |
 
-#### Business Logic
-| Model | Tests Existants? | Action | Priorité |
+#### Business Logic (snapshot)
+| Model | Tests (snapshot) | Action (à valider) | Priorité |
 |-------|-----------------|---------|----------|
 | `Event` | ✅ Partiel | Ajouter tests edge cases | 🟡 Moyenne |
 | `SubscriptionPlan` | ❌ Non | **Tests critiques** | 🔴 **Haute** |
 | `AccountClaim` | ❌ Non | Tests workflow | 🟡 Moyenne |
 | `Attendance` | ❌ Non | Tests logique quotidienne | 🟡 Moyenne |
 
-#### Support
-| Model | Tests Existants? | Action | Priorité |
+#### Support (snapshot)
+| Model | Tests (snapshot) | Action (à valider) | Priorité |
 |-------|-----------------|---------|----------|
 | `MemberNumberHistory` | ❌ Non | Tests audit | 🔵 Basse |
 | `PaymentAuditLog` | ❌ Non | Tests audit | 🔵 Basse |
 
-### 🟡 Zone 2: En Exploration
+### 🟡 Zone 2: En Exploration (snapshot)
 
 | Model | Raison | Tests Quand? |
 |-------|--------|--------------|
 | `AttendanceList` | Logique quotidienne à finaliser | Après validation |
 | `UserService` | Service wrapper, usage incertain | Après clarification |
 
-### 🔵 Zone 3: Future / Non Prioritaire
+### 🔵 Zone 3: Future / Non Prioritaire (snapshot)
 
 | Model | Statut |
 |-------|--------|
@@ -62,7 +72,7 @@
 
 ## Services Classification
 
-### 🟢 Zone 1: Fonctionnels et Testés
+### 🟢 Zone 1: Fonctionnels et Testés (snapshot)
 
 | Service | Usage | Tests? | Action |
 |---------|-------|--------|---------|
@@ -72,13 +82,12 @@
 | `Admin::PaymentsService` | ✅ Utilisé | ❌ Non | **Ajouter tests** |
 | `People::NewsletterSignup` | ✅ Utilisé | ❌ Non | Ajouter tests |
 
-### 🟡 Zone 2: Fonctionnels mais Non Testés
+### 🟡 Zone 2: Fonctionnels mais Non Testés (snapshot)
 
 | Service | Usage | Raison Zone 2 | Tests Quand? |
 |---------|-------|---------------|--------------|
 | `Web::UserRegistration` | ✅ Utilisé | Workflow complexe, peut évoluer | Après stabilisation |
 | `People::Register` | ⚠️ Existe | Orchestrateur CRM (à surveiller) | Tests de régression |
-| `People::PaymentCreator` | ⚠️ Existe | Interface unique paiements | Tests People |
 | `People::PaymentUpdater` | ⚠️ Existe | Interface unique paiements | Tests People |
 | `People::PaymentCanceller` | ⚠️ Existe | Interface unique paiements | Tests People |
 | `People::PaymentRestorer` | ⚠️ Existe | Interface unique paiements | Tests People |
@@ -89,7 +98,7 @@
 | `EventManagement::EventUpdater` | ⚠️ Existe | CRUD standard | Après stabilisation |
 | `EventManagement::EventDeleter` | ⚠️ Existe | CRUD standard | Après stabilisation |
 
-### 🔵 Zone 3: Non Implémenté / Future
+### 🔵 Zone 3: Non Implémenté / Future (snapshot)
 
 | Service | Statut |
 |---------|--------|
@@ -100,10 +109,10 @@
 
 ## Controllers Classification
 
-### 🟢 Zone 1: Critiques
+### 🟢 Zone 1: Critiques (snapshot)
 
-#### Admin Controllers (CRUD Essentiels)
-| Controller | Usage | Tests? | Action |
+#### Admin Controllers (CRUD Essentiels, snapshot)
+| Controller | Usage | Tests (snapshot) | Action (à valider) |
 |------------|-------|--------|---------|
 | `Admin::UsersController` | 🔴 Critique | ❌ Non | **Tests urgent** |
 | `Admin::MembershipsController` | 🔴 Critique | ❌ Non | **Tests urgent** |
@@ -111,14 +120,14 @@
 | `Admin::EventsController` | 🔴 Critique | ❌ Non | **Tests urgent** |
 | `Admin::DashboardController` | 🔴 Home | ❌ Non | Tests régression |
 
-#### Public Controllers (Authentification)
-| Controller | Usage | Tests? | Action |
+#### Public Controllers (Authentification, snapshot)
+| Controller | Usage | Tests (snapshot) | Action (à valider) |
 |------------|-------|--------|---------|
 | `SessionsController` | 🔴 Login | ❌ Non | **Tests urgent** |
 | `RegistrationsController` | 🔴 Signup | ❌ Non | **Tests urgent** |
 | `CheckoutController` | 🔴 Payment | ❌ Non | **Tests urgent** |
 
-### 🟡 Zone 2: En Cours
+### 🟡 Zone 2: En Cours (snapshot)
 
 | Controller | Raison |
 |------------|--------|
@@ -128,7 +137,7 @@
 | `Admin::MemberNumbersController` | Admin access |
 | Tous autres admin controllers | CRUD standard |
 
-### 🔵 Zone 3: Non Prioritaire
+### 🔵 Zone 3: Non Prioritaire (snapshot)
 
 | Controller | Raison |
 |------------|--------|
@@ -140,66 +149,7 @@
 
 ---
 
-## Plan d'Action Prioritaire
-
-### Phase 1: Protection Critique (Semaine 1-2)
-
-**Objectif:** 40% coverage, focus sur business critique
-
-#### Models Zone 1 Urgents
-- [ ] `SubscriptionPlan` - **CRITIQUE** (pricing)
-- [ ] Compléter tests existants si gaps
-  - User, Person, Membership, Payment
-
-#### Services Zone 1 Urgents
-- [ ] `Admin::PaymentsService` - Utilisé, ajouter tests
-- [ ] Compléter tests existants si gaps
-
-#### Controllers Zone 1 Urgents
-- [ ] `Admin::UsersController` - Request specs
-- [ ] `Admin::PaymentsController` - Request specs
-- [ ] `Admin::MembershipsController` - Request specs
-- [ ] `Admin::EventsController` - Request specs
-- [ ] `SessionsController` - Auth specs
-- [ ] `RegistrationsController` - Signup specs
-- [ ] `CheckoutController` - Payment specs
-
-**Estimation:** 9 specs critiques
-
-### Phase 2: Complet Zone 1 (Semaine 3-4)
-
-**Objectif:** 60% coverage, Zone 1 complète
-
-#### Models Zone 1 Restants
-- [ ] `AccountClaim` - Workflow
-- [ ] `Attendance` - Logique quotidienne
-- [ ] `Event` - Edge cases
-- [ ] Support: `MemberNumberHistory`, `PaymentAuditLog`
-
-#### Services Zone 1 Restants
-- [ ] `People::NewsletterSignup` - Email signup
-- [ ] Compléter Coverage existants
-
-#### Controllers Zone 1 Restants
-- [ ] Autres admin controllers critiques
-- [ ] `Admin::DashboardController`
-
-**Estimation:** +15 specs
-
-### Phase 3: Zone 2 Progressive (Semaine 5+)
-
-**Objectif:** Stabiliser Zone 2 → Zone 1
-
-#### Stabiliser Services Zone 2
-- [ ] `Web::UserRegistration` - Stabiliser, puis tester
-- [ ] `People::Register` & déclinaisons (monitoring en production)
-- [ ] `UserManagement::UserDeleter` - Stabiliser, puis tester
-
-**Estimation:** +18 specs (progressif)
-
----
-
-## Gaps Critiques Identifiés
+## Gaps Critiques Identifiés (snapshot)
 
 ### Code Mort / Inconsistances
 
@@ -210,27 +160,7 @@
 
 ---
 
-## Résumé Priorités
+## Priorités actuelles
 
-### 🔴 Immédiat (Zone 1 Critique)
-1. `SubscriptionPlan` model
-2. Admin controllers: Users, Payments, Memberships, Events
-3. Public controllers: Sessions, Registrations, Checkout
-4. `Admin::PaymentsService` service
-
-### 🟡 Court Terme (Zone 1 Restant)
-5. `AccountClaim`, `Attendance` models
-6. Autres admin controllers
-7. `People::NewsletterSignup`
-
-### 🔵 Moyen Terme (Zone 2 → 1)
-8. Services en exploration
-9. Features en cours
-
-### ⚪ Long Terme
-10. CMS, Pricing, Features future
-
----
-
-**Prochaine Revue:** Après Phase 1
-
+Les priorités actives sont centralisées dans `to-do.md`.  
+Ce document conserve uniquement une **classification** par zones.

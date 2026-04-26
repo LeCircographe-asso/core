@@ -16,6 +16,7 @@ module People
     attribute :record_attendance, :boolean, default: false
     attribute :custom_amount_cents, :integer
     attribute :offer_reason, :string
+    attribute :donation_cents, :integer
 
     validates :subscription_plan_id, presence: true
     validates :payment_method, presence: true, inclusion: { in: %w[cash card cheque transfer offered pending] }
@@ -35,7 +36,8 @@ module People
         recorded_by: recorded_by,
         record_attendance: record_attendance,
         custom_amount_cents: custom_amount_cents,
-        offer_reason: offer_reason
+        offer_reason: offer_reason,
+        donation_cents: donation_cents
       )
 
       instrument_subscription_created(target_person, subscription_plan, recorded_by, result[:book_of_entry], result[:payment])

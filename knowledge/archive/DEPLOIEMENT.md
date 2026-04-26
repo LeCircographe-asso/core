@@ -1,5 +1,10 @@
 # 🚀 Guide Déploiement - Le Circographe
 
+**Statut actuel:** ⚠️ Historique (snapshot 2025-10-12).  
+**Source de vérité:** `knowledge/DEPLOYMENT_GUIDE.md`.
+
+---
+
 **VPS**: Ionos Linux M - 82.165.63.129  
 **Stack**: Rails 8.1.1 + Kamal 2.8.2 + kamal-proxy + Thruster
 
@@ -304,4 +309,3 @@ kamal app exec -c config/deploy.staging.yml "bin/rails console"
 ---
 
 **Ref**: [Kamal 2 Docs](https://kamal-deploy.org/)
-

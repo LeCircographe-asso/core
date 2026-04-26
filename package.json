@@ -1,5 +1,4 @@
 {
-  "packageManager": "yarn@4.5.3",
   "name": "core",
   "version": "1.0.0",
   "description": "<div align=\"center\">   <img src=\"docs/documentations/assets/screenshots/logo.png\" alt=\"Logo Le Circographe\" width=\"200\"/>   <p><i>Une application de gestion complète pour association de cirque</i></p>",

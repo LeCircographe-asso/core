@@ -1,0 +1,180 @@
+<% content_for :title, "Rapport d'integrite" %>
+
+<div class="min-h-screen py-6">
+  <div class="max-w-6xl mx-auto">
+    <%= render 'shared/breadcrumbs' %>
+
+    <div class="bg-white shadow-lg rounded-lg overflow-hidden mb-6">
+      <div class="bg-gradient-to-r from-[#1F5C55] to-[#194A45] px-6 py-4">
+        <h1 class="text-2xl font-bold text-white">Rapport d'integrite</h1>
+        <p class="text-white/80 mt-1">Verifications rapides pour detecter les donnees orphelines ou incoherentes</p>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+      <div class="bg-white rounded-lg shadow p-4 border border-gray-200">
+        <p class="text-sm text-gray-600">Utilisateurs sans Person</p>
+        <p class="text-2xl font-bold text-gray-900"><%= @users_without_person_count %></p>
+      </div>
+      <div class="bg-white rounded-lg shadow p-4 border border-gray-200">
+        <p class="text-sm text-gray-600">Person sans User</p>
+        <p class="text-2xl font-bold text-gray-900"><%= @people_without_user_count %></p>
+      </div>
+      <div class="bg-white rounded-lg shadow p-4 border border-gray-200">
+        <p class="text-sm text-gray-600">Doublons email</p>
+        <p class="text-2xl font-bold text-gray-900"><%= @duplicate_people_by_email_count %></p>
+      </div>
+      <div class="bg-white rounded-lg shadow p-4 border border-gray-200">
+        <p class="text-sm text-gray-600">Doublons telephone</p>
+        <p class="text-2xl font-bold text-gray-900"><%= @duplicate_people_by_phone_count %></p>
+      </div>
+    </div>
+
+    <div class="bg-white rounded-lg shadow p-6 border border-gray-200 mb-6">
+      <h2 class="text-lg font-semibold text-gray-900 mb-3">Utilisateurs sans Person</h2>
+      <% if @users_without_person.any? %>
+        <div class="overflow-x-auto">
+          <table class="min-w-full text-sm">
+            <thead>
+              <tr class="text-left text-gray-600">
+                <th class="py-2">ID</th>
+                <th class="py-2">Email</th>
+                <th class="py-2">Role</th>
+                <th class="py-2">Cree le</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-200">
+              <% @users_without_person.each do |user| %>
+                <tr>
+                  <td class="py-2"><%= link_to user.id, admin_user_path(user), class: "text-[#1F5C55] hover:underline" %></td>
+                  <td class="py-2"><%= user.email_address %></td>
+                  <td class="py-2"><%= user.system_role.presence || "-" %></td>
+                  <td class="py-2"><%= l(user.created_at.to_date) %></td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+        <% if @users_without_person_count > @users_without_person.size %>
+          <p class="text-xs text-gray-500 mt-2">Liste limitee a <%= @list_limit %> elements.</p>
+        <% end %>
+      <% else %>
+        <p class="text-sm text-gray-600">Aucun utilisateur sans Person.</p>
+      <% end %>
+    </div>
+
+    <div class="bg-white rounded-lg shadow p-6 border border-gray-200 mb-6">
+      <h2 class="text-lg font-semibold text-gray-900 mb-3">Person sans User</h2>
+      <% if @people_without_user.any? %>
+        <div class="overflow-x-auto">
+          <table class="min-w-full text-sm">
+            <thead>
+              <tr class="text-left text-gray-600">
+                <th class="py-2">ID</th>
+                <th class="py-2">Nom</th>
+                <th class="py-2">Email</th>
+                <th class="py-2">Cree le</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-200">
+              <% @people_without_user.each do |person| %>
+                <tr>
+                  <td class="py-2"><%= link_to person.id, admin_user_path("person_#{person.id}"), class: "text-[#1F5C55] hover:underline" %></td>
+                  <td class="py-2"><%= person.full_name %></td>
+                  <td class="py-2"><%= person.email.presence || "-" %></td>
+                  <td class="py-2"><%= l(person.created_at.to_date) %></td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+        <% if @people_without_user_count > @people_without_user.size %>
+          <p class="text-xs text-gray-500 mt-2">Liste limitee a <%= @list_limit %> elements.</p>
+        <% end %>
+      <% else %>
+        <p class="text-sm text-gray-600">Aucune Person sans User.</p>
+      <% end %>
+    </div>
+
+    <div class="bg-white rounded-lg shadow p-6 border border-gray-200 mb-6">
+      <h2 class="text-lg font-semibold text-gray-900 mb-3">Doublons par email</h2>
+      <% if @duplicate_people_by_email_groups.any? %>
+        <div class="space-y-3">
+          <% @duplicate_people_by_email_groups.each do |email, people| %>
+            <div class="border border-gray-200 rounded-md p-3">
+              <p class="text-sm font-medium text-gray-900"><%= email %></p>
+              <div class="mt-2 text-sm text-gray-600">
+                <% people.each do |person| %>
+                  <%= link_to person.full_name, admin_user_path("person_#{person.id}"), class: "text-[#1F5C55] hover:underline" %>
+                  <span class="text-gray-400">(##<%= person.id %>)</span>
+                <% end %>
+              </div>
+            </div>
+          <% end %>
+        </div>
+        <% if @duplicate_people_by_email_count > @duplicate_people_by_email_groups.size %>
+          <p class="text-xs text-gray-500 mt-2">Liste limitee a <%= @list_limit %> elements.</p>
+        <% end %>
+      <% else %>
+        <p class="text-sm text-gray-600">Aucun doublon email detecte.</p>
+      <% end %>
+    </div>
+
+    <div class="bg-white rounded-lg shadow p-6 border border-gray-200 mb-6">
+      <h2 class="text-lg font-semibold text-gray-900 mb-3">Doublons par telephone</h2>
+      <% if @duplicate_people_by_phone_groups.any? %>
+        <div class="space-y-3">
+          <% @duplicate_people_by_phone_groups.each do |phone, people| %>
+            <div class="border border-gray-200 rounded-md p-3">
+              <p class="text-sm font-medium text-gray-900"><%= phone %></p>
+              <div class="mt-2 text-sm text-gray-600">
+                <% people.each do |person| %>
+                  <%= link_to person.full_name, admin_user_path("person_#{person.id}"), class: "text-[#1F5C55] hover:underline" %>
+                  <span class="text-gray-400">(##<%= person.id %>)</span>
+                <% end %>
+              </div>
+            </div>
+          <% end %>
+        </div>
+        <% if @duplicate_people_by_phone_count > @duplicate_people_by_phone_groups.size %>
+          <p class="text-xs text-gray-500 mt-2">Liste limitee a <%= @list_limit %> elements.</p>
+        <% end %>
+      <% else %>
+        <p class="text-sm text-gray-600">Aucun doublon telephone detecte.</p>
+      <% end %>
+    </div>
+
+    <div class="bg-white rounded-lg shadow p-6 border border-gray-200">
+      <h2 class="text-lg font-semibold text-gray-900 mb-3">Paiements sans Person</h2>
+      <% if @payments_without_person.any? %>
+        <div class="overflow-x-auto">
+          <table class="min-w-full text-sm">
+            <thead>
+              <tr class="text-left text-gray-600">
+                <th class="py-2">ID</th>
+                <th class="py-2">Montant</th>
+                <th class="py-2">Statut</th>
+                <th class="py-2">Cree le</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-200">
+              <% @payments_without_person.each do |payment| %>
+                <tr>
+                  <td class="py-2"><%= link_to payment.id, admin_payment_path(payment), class: "text-[#1F5C55] hover:underline" %></td>
+                  <td class="py-2"><%= payment.total_euros %>€</td>
+                  <td class="py-2"><%= payment.status_humanized %></td>
+                  <td class="py-2"><%= l(payment.created_at.to_date) %></td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+        <% if @payments_without_person_count > @payments_without_person.size %>
+          <p class="text-xs text-gray-500 mt-2">Liste limitee a <%= @list_limit %> elements.</p>
+        <% end %>
+      <% else %>
+        <p class="text-sm text-gray-600">Aucun paiement orphelin detecte.</p>
+      <% end %>
+    </div>
+  </div>
+</div>

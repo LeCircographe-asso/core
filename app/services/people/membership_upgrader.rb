@@ -13,6 +13,7 @@ module People
     attribute :recorded_by_id, :integer
     attribute :custom_amount_cents, :integer
     attribute :offer_reason, :string
+    attribute :donation_cents, :integer
 
     validates :person, presence: true
     validates :new_membership_type_id, presence: true
@@ -29,7 +30,8 @@ module People
         payment_method: payment_method.to_sym,
         recorded_by: recorded_by,
         custom_amount_cents: custom_amount_cents,
-        offer_reason: offer_reason
+        offer_reason: offer_reason,
+        donation_cents: donation_cents
       )
 
       ActiveSupport::Notifications.instrument(

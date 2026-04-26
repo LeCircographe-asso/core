@@ -3,8 +3,11 @@
   <nav class="flex w-full" aria-label="Tabs">
     <% tabs.each do |tab| %>
       <button type="button" 
-              class="<%= tab_class(tab[:id]) %> w-full" 
-              data-tab="<%= tab[:id] %>">
+              class="<%= tab_class(tab[:id]) %> w-full"
+              data-tabs-target="trigger"
+              data-tabs-name-value="<%= tab[:id] %>"
+              data-action="click->tabs#select"
+              aria-selected="<%= tab[:id] == active_tab %>">
         <span class="sm:inline"><%= tab[:icon] %> </span>
         <span class="ml-1"><%= tab[:label] %></span>
       </button>

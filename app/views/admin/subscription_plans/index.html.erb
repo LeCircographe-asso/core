@@ -48,7 +48,14 @@
             
             <!-- Description -->
             <div class="mb-4">
-              <p class="text-sm text-gray-600 leading-relaxed"><%= plan.description %></p>
+              <p class="text-sm text-gray-600 leading-relaxed">
+                <% if plan.duration == "pack10" %>
+                  <% sessions_count = plan.sessions_count.to_i %>
+                  <%= "#{sessions_count.positive? ? sessions_count : 10} séances valables sans expiration" %>
+                <% else %>
+                  <%= plan.description %>
+                <% end %>
+              </p>
             </div>
             
             <!-- Details Row -->
@@ -162,7 +169,14 @@
             
             <!-- Description -->
             <div class="mb-4">
-              <p class="text-sm text-gray-600 leading-relaxed"><%= plan.description %></p>
+              <p class="text-sm text-gray-600 leading-relaxed">
+                <% if plan.duration == "pack10" %>
+                  <% sessions_count = plan.sessions_count.to_i %>
+                  <%= "#{sessions_count.positive? ? sessions_count : 10} séances valables sans expiration" %>
+                <% else %>
+                  <%= plan.description %>
+                <% end %>
+              </p>
             </div>
             
             <!-- Details Row -->

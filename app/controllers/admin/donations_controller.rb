@@ -1,8 +1,13 @@
 module Admin
   class DonationsController < BaseController
     def create
-      @user = User.find(params[:user_id])
-      @person = @user.person
+      if params[:person_id].present?
+        @person = Person.find(params[:person_id])
+        @user = @person.user
+      else
+        @user = User.find(params[:user_id])
+        @person = @user.person
+      end
 
       begin
         amount_cents = (payment_params[:payment_amount].to_f * 100).to_i
@@ -33,7 +38,7 @@ module Admin
     private
 
     def payment_params
-      params.require(:payment).permit(:payment_amount, :payment_date, :payment_type, :status, :donation, :total_payment, :user_id)
+      params.require(:payment).permit(:payment_amount, :payment_date, :payment_type, :status, :donation, :total_payment, :user_id, :person_id)
     end
   end
 end

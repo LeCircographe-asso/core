@@ -81,9 +81,14 @@ class Admin::Users::UserActionsComponent < ViewComponent::Base
       active_book = person.book_of_entries.active.first
 
       links = []
-      if active_book && active_book.remaining_entries > 0
+      if active_book
+        label = "Voir cotisation"
+        if active_book.subscription_plan.duration == "pack10"
+          remaining_entries = active_book.remaining_entries.to_i
+          label = "Voir cotisation (#{remaining_entries} restantes)" if remaining_entries.positive?
+        end
         links << link_to(
-          "Voir cotisation (#{active_book.remaining_entries} restantes)",
+          label,
           admin_user_path(user ? user.id : "person_#{person.id}") + "#payments",
           class: "inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#1F5C55] hover:bg-[#194A45] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1F5C55] mr-2"
         )
@@ -116,13 +121,13 @@ class Admin::Users::UserActionsComponent < ViewComponent::Base
 
   def payment_history_action
     link_to "Historique des paiements",
-            admin_payments_path(user_id: user&.id, person_id: person.id),
+            admin_payments_path(person_id: person.id),
             class: "text-[#1F5C55] hover:text-[#194A45] hover:underline"
   end
 
   def make_donation_action
     link_to "Faire un don",
-            admin_donations_path(user_id: user&.id, person_id: person.id),
+            admin_donations_path(person_id: person.id),
             class: "text-[#1F5C55] hover:text-[#194A45] hover:underline"
   end
 

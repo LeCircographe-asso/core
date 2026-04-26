@@ -7,6 +7,9 @@
 
 ## 📚 Guide de Navigation
 
+**Source de vérité:** `to-do.md` (roadmap) + `ARCHITECTURE_GUIDE.md` + `docs/ARCHITECTURE_SERVICES.md`.  
+Pour un index court et à jour, voir `knowledge/CURRENT_STATUS.md`.
+
 ### Architecture & Design
 
 1. **[ARCHITECTURE_SERVICES.md](./ARCHITECTURE_SERVICES.md)** - ⭐ **Source unique de vérité**
@@ -118,5 +121,4 @@ Tous les fichiers principaux ont une section "Documentation liée" avec des lien
 
 **Dernière mise à jour:** 2025-01-31  
 **Synthèse:** 2025-01-31 - Documentation optimisée, code nettoyé, architecture vérifiée
-
 
