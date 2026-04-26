@@ -73,6 +73,13 @@ module Dateable
 
   # Méthodes de classe pour les scopes temporels
   class_methods do
+    def dateable_column(date_attr)
+      key = date_attr.to_s
+      raise ArgumentError, "Unknown column #{key.inspect}" unless columns_hash.key?(key)
+
+      arel_table[key]
+    end
+
     def today(date_attr = nil)
       # Auto-detect date attribute: prefer :date if it exists, otherwise :created_at
       if date_attr.nil?
@@ -88,9 +95,8 @@ module Dateable
       if date_attr == :date && columns_hash.key?("date") && columns_hash["date"].type == :date
         where(date: Date.current)
       else
-        where("#{date_attr} >= ? AND #{date_attr} < ?",
-              Date.current.beginning_of_day,
-              Date.current.end_of_day)
+        c = dateable_column(date_attr)
+        where(c.gteq(Date.current.beginning_of_day).and(c.lt(Date.current.end_of_day)))
       end
     end
 
@@ -107,9 +113,8 @@ module Dateable
       if date_attr == :date && columns_hash.key?("date") && columns_hash["date"].type == :date
         where(date: Date.current.beginning_of_week..Date.current.end_of_week)
       else
-        where("#{date_attr} >= ? AND #{date_attr} <= ?",
-              Date.current.beginning_of_week,
-              Date.current.end_of_week)
+        c = dateable_column(date_attr)
+        where(c.gteq(Date.current.beginning_of_week).and(c.lteq(Date.current.end_of_week)))
       end
     end
 
@@ -126,36 +131,37 @@ module Dateable
       if date_attr == :date && columns_hash.key?("date") && columns_hash["date"].type == :date
         where(date: Date.current.beginning_of_month..Date.current.end_of_month)
       else
-        where("#{date_attr} >= ? AND #{date_attr} <= ?",
-              Date.current.beginning_of_month,
-              Date.current.end_of_month)
+        c = dateable_column(date_attr)
+        where(c.gteq(Date.current.beginning_of_month).and(c.lteq(Date.current.end_of_month)))
       end
     end
 
     def this_year(date_attr = :created_at)
-      where("#{date_attr} >= ? AND #{date_attr} <= ?",
-            Date.current.beginning_of_year,
-            Date.current.end_of_year)
+      c = dateable_column(date_attr)
+      where(c.gteq(Date.current.beginning_of_year).and(c.lteq(Date.current.end_of_year)))
     end
 
     def upcoming(date_attr = :date)
+      c = dateable_column(date_attr)
       if columns_hash.key?(date_attr.to_s) && columns_hash[date_attr.to_s].type == :datetime
-        where("#{date_attr} >= ?", Time.zone.now)
+        where(c.gteq(Time.zone.now))
       else
-      where("#{date_attr} >= ?", Date.current)
+        where(c.gteq(Date.current))
       end
     end
 
     def past(date_attr = :date)
+      c = dateable_column(date_attr)
       if columns_hash.key?(date_attr.to_s) && columns_hash[date_attr.to_s].type == :datetime
-        where("#{date_attr} < ?", Time.zone.now)
+        where(c.lt(Time.zone.now))
       else
-      where("#{date_attr} < ?", Date.current)
+        where(c.lt(Date.current))
       end
     end
 
     def by_date_range(start_date, end_date, date_attr = :created_at)
-      where("#{date_attr} >= ? AND #{date_attr} <= ?", start_date, end_date)
+      c = dateable_column(date_attr)
+      where(c.gteq(start_date).and(c.lteq(end_date)))
     end
   end
 end

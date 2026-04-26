@@ -22,6 +22,7 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
     curl \
     libjemalloc2 \
     libvips \
+    libyaml-0-2 \
     sqlite3
 
 # Set bundle configuration (RAILS_ENV will be set at runtime via Kamal)
@@ -42,6 +43,7 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
     apt-get install --no-install-recommends -y \
     build-essential \
     git \
+    libyaml-dev \
     pkg-config
 
 # Layer 3: Install gems (changes when Gemfile changes)
