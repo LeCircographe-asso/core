@@ -81,4 +81,3 @@ RSpec.describe MaintenanceModeMiddleware do
     end
   end
 end
-

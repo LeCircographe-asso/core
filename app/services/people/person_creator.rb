@@ -66,7 +66,7 @@ module People
     private
 
     def resolve_person
-      return [person, false] if person.present?
+      return [ person, false ] if person.present?
 
       new_person = Person.new
       new_person.skip_membership_validation = true
@@ -78,7 +78,7 @@ module People
       end
       new_person.assign_attributes(creation_attributes)
       new_person.save!
-      [new_person, true]
+      [ new_person, true ]
     end
 
     def update_person!(target_person)

@@ -7,4 +7,3 @@ class FaqsController < ApplicationController
     @cta_label = data[:cta_label]
   end
 end
-
