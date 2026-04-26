@@ -66,7 +66,7 @@ module People
     end
 
     def append_note(existing_notes, suffix)
-      [existing_notes.presence, suffix].compact.join(" - ")
+      [ existing_notes.presence, suffix ].compact.join(" - ")
     end
 
     def payment_identifier_present

@@ -29,4 +29,3 @@ class FaqRepository
     end
   end
 end
-
