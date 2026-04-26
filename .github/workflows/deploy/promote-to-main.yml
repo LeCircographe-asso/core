@@ -1,4 +1,4 @@
-name: 05-promote-to-main
+name: deploy-promote-to-main
 
 on:
   workflow_dispatch:
@@ -12,19 +12,13 @@ permissions:
   contents: write
 
 jobs:
-  promote-to-main:
+  promote:
     if: ${{ inputs.confirm_promote == 'PROMOTE' }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
         with:
           fetch-depth: 0
-      - uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: "4.0.1"
-      - uses: actions/setup-node@v6
-        with:
-          node-version: "22"
       - name: Promote staging into main
         run: |
           git checkout main
