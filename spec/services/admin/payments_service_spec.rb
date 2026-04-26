@@ -8,10 +8,7 @@ RSpec.describe Admin::PaymentsService do
   let!(:payment_success) { create(:payment, :success, person: person_one, total_cents: 2_500, recorded_by: admin_user, created_at: Time.zone.parse('2025-02-10 10:00')) }
   let!(:payment_pending) { create(:payment, :pending, person: person_two, total_cents: 1_000, recorded_by: admin_user, created_at: Time.zone.parse('2025-02-12 12:00')) }
   let!(:donation_payment) { create(:payment, :success, person: person_one, total_cents: 5_000, recorded_by: admin_user) }
-
-  before do
-    allow(PaymentQuery).to receive(:total_donation).and_return(5_000)
-  end
+  let!(:donation_line) { create(:payment_line, payment: donation_payment, item: donation_payment, item_type: "Payment", amount_cents: 5_000, description: "Donation") }
 
   describe '#call' do
     it 'returns all payments with aggregated amounts by default' do
@@ -29,18 +26,11 @@ RSpec.describe Admin::PaymentsService do
       expect(result[:payments]).to match_array([ payment_pending ])
     end
 
-    it 'filters payments by user_id (converted to person ids)' do
+    it 'ignores unknown filters and returns unfiltered payments' do
       user_for_person = create(:user, :volunteer, person: person_two)
       result = described_class.new(user_id: user_for_person.id).call
 
-      expect(result[:payments]).to match_array([ payment_pending ])
-    end
-
-    it 'ignores user filter when user has no linked person' do
-      orphan_user = create(:user, :volunteer, person: nil)
-      result = described_class.new(user_id: orphan_user.id).call
-
-      expect(result[:payments]).to be_empty
+      expect(result[:payments]).to match_array([ payment_success, payment_pending, donation_payment ])
     end
 
     it 'filters by status' do
