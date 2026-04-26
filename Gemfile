@@ -4,6 +4,7 @@ ruby "4.0.1"
 
 # Core Rails gems
 gem "rails", "~> 8.1.3"
+gem "csv" # Ruby 4+: stdlib gem, required for Admin::ExportsController and others
 gem "stringio", "~> 3.1.2"
 gem "bootsnap", require: false  # Reduces boot times through caching
 

@@ -4,6 +4,11 @@ class PagesController < ApplicationController
   include OpeningHoursHelper
   layout "application"
 
+  # Matches app/views/pages/*.html.erb (slug must not be user-controlled for render path)
+  ALLOWED_PAGE_IDS = %w[
+    about association become_member blog_newsletter circus_details contact_us faq gallery
+    graphic_arts_details news newsletter_unsubscribe_success privacy_policy terms
+  ].freeze
 
   def show
     redirect_mapping = {
@@ -45,7 +50,10 @@ class PagesController < ApplicationController
       @partners = load_yaml_content("partners")
     end
 
-    render template: "pages/#{params[:id]}"
+    page_id = params[:id].to_s
+    raise ActiveRecord::RecordNotFound unless ALLOWED_PAGE_IDS.include?(page_id)
+
+    render template: "pages/#{page_id}"
   end
 
   private
