@@ -498,6 +498,7 @@ DEPENDENCIES
   image_processing (~> 1.2)
   importmap-rails
   jbuilder
+  json (>= 2.19.2)
   kamal
   letter_opener
   letter_opener_web

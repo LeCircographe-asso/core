@@ -38,6 +38,7 @@ gem "whenever", require: false  # Cron jobs
 gem "stripe"  # Payment processing
 gem "mailjet"  # Email service
 gem "jbuilder"  # JSON API builder
+gem "json", ">= 2.19.2"  # Pin patched version for security advisories
 gem "rack-cors"  # Cross-Origin Resource Sharing
 
 # Development and Testing
