@@ -1,0 +1,33 @@
+name: 05-promote-to-main
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirm_promote:
+        description: "Type PROMOTE to confirm staging -> main promotion"
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  promote-to-main:
+    if: ${{ inputs.confirm_promote == 'PROMOTE' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "4.0.1"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Promote staging into main
+        run: |
+          git checkout main
+          git pull --ff-only origin main
+          git merge --no-ff origin/staging -m "chore: promote staging to main"
+          git push origin main
