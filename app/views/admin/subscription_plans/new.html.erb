@@ -61,6 +61,23 @@
                           placeholder: "0.00",
                           class: "w-full text-sm border-gray-300 rounded-md focus:border-[#1F5C55] focus:ring-[#1F5C55]" %>
                     </div>
+
+                    <div id="offer-reason-<%= subscription_plan.id %>" class="hidden">
+                      <%= form.label :offer_reason, "Raison de l'offre", class: "block text-sm font-medium text-gray-700 mb-1" %>
+                      <%= form.text_area :offer_reason,
+                          rows: 2,
+                          placeholder: "Ex: Bénévolat, geste commercial, partenariat...",
+                          class: "w-full text-sm border-gray-300 rounded-md focus:border-[#1F5C55] focus:ring-[#1F5C55]" %>
+                    </div>
+
+                    <div>
+                      <%= form.label :donation_amount, "Donation (€) (optionnel)", class: "block text-sm font-medium text-gray-700 mb-1" %>
+                      <%= form.number_field :donation_amount,
+                          step: 0.01,
+                          min: 0,
+                          placeholder: "0.00",
+                          class: "w-full text-sm border-gray-300 rounded-md focus:border-[#1F5C55] focus:ring-[#1F5C55]" %>
+                    </div>
                     
                     <%= form.submit "Acheter la cotisation", 
                         class: "w-full inline-flex justify-center items-center px-3 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-[#1F5C55] hover:bg-[#194A45] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1F5C55]" %>
@@ -86,11 +103,21 @@
       select.addEventListener('change', function() {
         const planId = this.closest('form').querySelector('input[name="subscription_plan_id"]').value;
         const customAmountDiv = document.getElementById('custom-amount-' + planId);
+        const offerReasonDiv = document.getElementById('offer-reason-' + planId);
+        const offerReasonField = offerReasonDiv ? offerReasonDiv.querySelector('textarea') : null;
         
         if (this.value === 'offered') {
           customAmountDiv.classList.remove('hidden');
+          if (offerReasonDiv) {
+            offerReasonDiv.classList.remove('hidden');
+            if (offerReasonField) offerReasonField.required = true;
+          }
         } else {
           customAmountDiv.classList.add('hidden');
+          if (offerReasonDiv) {
+            offerReasonDiv.classList.add('hidden');
+            if (offerReasonField) offerReasonField.required = false;
+          }
         }
       });
     });

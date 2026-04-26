@@ -30,19 +30,23 @@ development_cable:
 # Do not set this db to the same as development or production.
 test:
   <<: *default
-  database: storage/test.sqlite3
+  pool: 1
+  database: <%= Rails.root.join("tmp", "test.sqlite3") %>
 
 test_cache:
   <<: *default
-  database: storage/test_cache.sqlite3
+  pool: 1
+  database: <%= Rails.root.join("tmp", "test_cache.sqlite3") %>
 
 test_queue:
   <<: *default
-  database: storage/test_queue.sqlite3
+  pool: 1
+  database: <%= Rails.root.join("tmp", "test_queue.sqlite3") %>
 
 test_cable:
   <<: *default
-  database: storage/test_cable.sqlite3
+  pool: 1
+  database: <%= Rails.root.join("tmp", "test_cable.sqlite3") %>
 
 # Store production database in the storage/ directory, which by default
 # is mounted as a persistent Docker volume in config/deploy.yml.

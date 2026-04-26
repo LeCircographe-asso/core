@@ -1,6 +1,7 @@
 module Admin
   module Users
     class ActionButtonsComponent < ViewComponent::Base
+      # LEGACY: kept for reference; not currently used in admin user views.
       def initialize(person:)
         @person = person
       end
@@ -57,9 +58,14 @@ module Admin
           active_book = person.book_of_entries.active.first
 
           buttons = []
-          if active_book && active_book.remaining_entries > 0
+          if active_book
+            label = "Voir cotisation"
+            if active_book.subscription_plan.duration == "pack10"
+              remaining_entries = active_book.remaining_entries.to_i
+              label = "Voir cotisation (#{remaining_entries} restantes)" if remaining_entries.positive?
+            end
             buttons << link_to(
-              "Voir cotisation (#{active_book.remaining_entries} restantes)",
+              label,
               admin_user_path(person.user ? person.user.id : "person_#{person.id}"),
               class: "inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#1F5C55] hover:bg-[#194A45] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1F5C55] mr-2"
             )

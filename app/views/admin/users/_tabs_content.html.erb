@@ -1,0 +1,20 @@
+<div class="<%= wrapper_class %>">
+  <!-- Personal Info Tab -->
+  <div class="tab-content" id="personal-tab" data-tabs-target="panel" data-tabs-name-value="personal">
+    <%= render Admin::Users::UserInfoComponent.new(
+      user: user,
+      person: person,
+      is_person_without_user: is_person_without_user
+    ) %>
+  </div>
+
+  <!-- Membership Tab -->
+  <div class="tab-content hidden" id="membership-tab" data-tabs-target="panel" data-tabs-name-value="membership">
+    <%= render Admin::Users::MembershipDisplayComponent.new(person: person) %>
+  </div>
+
+  <!-- Payments Tab -->
+  <div class="tab-content hidden" id="payments-tab" data-tabs-target="panel" data-tabs-name-value="payments">
+    <%= render "payments_tab", recent_payments: recent_payments, person: person %>
+  </div>
+</div>

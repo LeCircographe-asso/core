@@ -42,14 +42,13 @@ RSpec.describe "Admin::Payments", type: :request do
         expect(response.body).to include("50") # Check for amount in localized format
       end
 
-      it "filters by user_id" do
+      it "filters by person_id" do
         person1 = create(:person, first_name: "Alice", last_name: "TestA")
         person2 = create(:person, first_name: "Bob", last_name: "TestB")
-        user1 = create(:user, person: person1)
         create(:payment, person: person1, recorded_by: admin, total_cents: 5000)
         create(:payment, person: person2, recorded_by: admin, total_cents: 3000)
 
-        get admin_payments_path, params: { user_id: user1.id }
+        get admin_payments_path, params: { person_id: person1.id }
 
         html = Nokogiri::HTML(response.body)
         displayed_names = html.css("tbody#payments td:nth-child(2)").map { |cell| cell.text.strip }
@@ -72,12 +71,11 @@ RSpec.describe "Admin::Payments", type: :request do
       expect(response.body).to include("Création de paiement temporairement désactivée")
     end
 
-    context "with user_id param" do
+    context "with person_id param" do
       let(:person) { create(:person) }
-      let(:user) { create(:user, person: person) }
 
       it "redirects to index with notice" do
-        get new_admin_payment_path, params: { user_id: user.id }
+        get new_admin_payment_path, params: { person_id: person.id }
         expect(response).to redirect_to(admin_payments_path)
         follow_redirect!
         expect(response.body).to include("Création de paiement temporairement désactivée")

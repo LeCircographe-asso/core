@@ -30,7 +30,7 @@ module Admin
 
       content_tag :span,
                   class: "px-2 inline-flex text-xs leading-5 font-semibold rounded-full #{status_class}" do
-        payment.status.humanize
+        payment.payment_status_humanized
       end
     end
 

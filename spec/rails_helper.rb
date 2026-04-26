@@ -43,7 +43,7 @@ RSpec.configure do |config|
   # If you're not using ActiveRecord, or you'd prefer not to run each of your
   # examples within a transaction, remove the following line or assign false
   # instead of true.
-  config.use_transactional_fixtures = true  # Utilise les transactions Rails par défaut
+  config.use_transactional_fixtures = false  # Disable transactional fixtures for SQLite stability
 
   config.before(:suite) do
     ActiveRecord::Base.connection.disable_referential_integrity do

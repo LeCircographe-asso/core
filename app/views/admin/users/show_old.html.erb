@@ -1,3 +1,4 @@
+<%# LEGACY: Old admin user show view kept for reference; do not update new UI here. %>
 <div class="max-w-4xl mx-auto">
   <!-- Breadcrumbs -->
   <%= render 'shared/breadcrumbs' %>
@@ -62,7 +63,7 @@
               Historique de paiement
             <% end %>
           <% else %>
-            <%= link_to admin_payments_path(user_id: @user.id), class: "inline-flex items-center px-3 py-1 text-xs font-semibold text-white rounded-full bg-[#1F5C55]/80 hover:bg-[#1F5C55] transition-colors duration-200" do %>
+            <%= link_to admin_payments_path(person_id: @person.id), class: "inline-flex items-center px-3 py-1 text-xs font-semibold text-white rounded-full bg-[#1F5C55]/80 hover:bg-[#1F5C55] transition-colors duration-200" do %>
               <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
               </svg>
@@ -189,7 +190,9 @@
             </div>
             
             <div class="mt-4 text-right">
-              <%= link_to "Voir tout l'historique", admin_payments_path(user_id: @user.id), class: "text-[#1F5C55] hover:underline text-sm font-medium" %>
+              <% if @person.present? %>
+                <%= link_to "Voir tout l'historique", admin_payments_path(person_id: @person.id), class: "text-[#1F5C55] hover:underline text-sm font-medium" %>
+              <% end %>
             </div>
           <% else %>
             <div class="bg-gray-50 p-4 rounded-md text-center">

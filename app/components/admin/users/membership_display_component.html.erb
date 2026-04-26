@@ -37,9 +37,12 @@
           <div class="flex items-center justify-between py-2 px-3 bg-gray-50 rounded-md">
             <div class="text-sm">
               <span class="font-medium text-gray-900"><%= book.subscription_plan.name %></span>
-              <span class="text-gray-500 ml-2">
-                <%= book.sessions_remaining %> séance<%= 's' if book.sessions_remaining > 1 %> restante<%= 's' if book.sessions_remaining > 1 %>
-              </span>
+              <% if book.subscription_plan.duration == "pack10" %>
+                <span class="text-gray-500 ml-2">
+                  <% sessions_remaining = book.sessions_remaining.to_i %>
+                  <%= sessions_remaining %> séance<%= 's' if sessions_remaining > 1 %> restante<%= 's' if sessions_remaining > 1 %>
+                </span>
+              <% end %>
             </div>
             <% if book.expires_at %>
               <div class="text-xs text-gray-500">

@@ -316,11 +316,14 @@ module Admin
         return
       end
 
-      @user.destroy!
-
       respond_to do |format|
-        format.html { redirect_to admin_users_path, status: :see_other, notice: "Utilisateur supprimé avec succès." }
-        format.json { head :no_content }
+        if @user.archive!
+          format.html { redirect_to admin_users_path, status: :see_other, notice: "Utilisateur archivé avec succès." }
+          format.json { head :no_content }
+        else
+          format.html { redirect_to admin_users_path, status: :see_other, alert: "Impossible d'archiver cet utilisateur." }
+          format.json { head :unprocessable_content }
+        end
       end
     end
 

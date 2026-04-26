@@ -13,6 +13,7 @@ module People
     attribute :recorded_by_id, :integer
     attribute :custom_amount_cents, :integer
     attribute :offer_reason, :string
+    attribute :donation_cents, :integer
 
     validates :person, presence: true
     validates :membership_type_id, presence: true
@@ -37,7 +38,8 @@ module People
         payment_method: payment_method.to_sym,
         recorded_by: recorded_by,
         custom_amount_cents: custom_amount_cents,
-        offer_reason: offer_reason
+        offer_reason: offer_reason,
+        donation_cents: donation_cents
       )
 
       ActiveSupport::Notifications.instrument(
@@ -61,7 +63,8 @@ module People
       ActiveSupport::Notifications.instrument("membership.failed", error: e.message, reason: "validation")
       failure("Validation error: #{e.message}")
     rescue => e
-      Rails.logger.error("[People::MembershipCreator] #{e.class}: #{e.message}\n#{e.backtrace.take(5).join("\n")}")
+      db_path = ActiveRecord::Base.connection_db_config&.database
+      Rails.logger.error("[People::MembershipCreator] db=#{db_path} #{e.class}: #{e.message}\n#{e.backtrace.take(5).join("\n")}")
       ActiveSupport::Notifications.instrument("membership.failed", error: e.message, reason: "exception")
       failure("Error creating membership: #{e.message}")
     end

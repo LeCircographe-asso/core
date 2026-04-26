@@ -1,5 +1,18 @@
 # 🎯 Prochaines Étapes - À Faire Chez Toi
 
+**Statut actuel:** ⚠️ Historique (snapshot 2025-10-12).  
+**Source de vérité:** `to-do.md` pour le produit + `knowledge/OPTIMIZATIONS_TODO.md` pour l’infra/optimisations.  
+**Action:** Conserver comme archive, ne pas suivre à la lettre sans revalidation.
+
+---
+
+## 🧭 Résumé actuel (à jour)
+- Roadmap produit: `to-do.md`
+- Optimisations infra: `knowledge/OPTIMIZATIONS_TODO.md`
+- Déploiement: `knowledge/DEPLOYMENT_GUIDE.md`
+
+---
+
 **Date :** 2025-10-12  
 **Contexte :** Session laptop terminée, continuation sur PC fixe
 
@@ -273,4 +286,3 @@ gh run watch
 
 **Bon courage chez toi ! 🚀**  
 **Tout est documenté, tu ne peux pas te perdre !** 😊
-

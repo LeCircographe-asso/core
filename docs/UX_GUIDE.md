@@ -114,7 +114,7 @@ end
 
 2. **Supprimer assignation dans PersonCreator**
 ```ruby
-# app/services/person_management/person_creator.rb
+# app/services/people/person_creator.rb
 def person_attributes
   {
     # newsletter_subscribed: newsletter_subscribed,  # ← SUPPRIMER
@@ -324,5 +324,4 @@ end
 - **Architecture Services:** `docs/ARCHITECTURE_SERVICES.md` - Services utilisés
 - **Logique Métier:** `docs/BUSINESS_LOGIC.md` - Règles business
 - **TDD Guide:** `docs/TDD_GUIDE.md` - Tests et qualité
-
 

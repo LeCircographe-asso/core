@@ -45,7 +45,24 @@
       <%= form.select :payment_method, 
           options_for_select(payment_method_options),
           { selected: 'cash' },
-          { class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#1F5C55] focus:ring-[#1F5C55] sm:text-sm" } %>
+          { class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#1F5C55] focus:ring-[#1F5C55] sm:text-sm", id: "membership-payment-method" } %>
+    </div>
+
+    <div id="membership-offer-reason" class="hidden">
+      <%= form.label :offer_reason, "Raison de l'offre", class: "block text-sm font-medium text-gray-700" %>
+      <%= form.text_area :offer_reason,
+          rows: 2,
+          placeholder: "Ex: Bénévolat, geste commercial, partenariat...",
+          class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#1F5C55] focus:ring-[#1F5C55] sm:text-sm" %>
+    </div>
+
+    <div>
+      <%= form.label :donation_amount, "Donation (€) (optionnel)", class: "block text-sm font-medium text-gray-700" %>
+      <%= form.number_field :donation_amount,
+          step: 0.01,
+          min: 0,
+          placeholder: "0.00",
+          class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#1F5C55] focus:ring-[#1F5C55] sm:text-sm" %>
     </div>
     
     <div id="reduced-rate-section" class="space-y-3" data-controller="reduced-rate">
@@ -68,3 +85,26 @@
     </div>
   <% end %>
 </div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const paymentSelect = document.getElementById('membership-payment-method');
+    const offerReasonDiv = document.getElementById('membership-offer-reason');
+    if (!paymentSelect || !offerReasonDiv) return;
+
+    const offerReasonField = offerReasonDiv.querySelector('textarea');
+
+    function toggleOfferReason() {
+      if (paymentSelect.value === 'offered') {
+        offerReasonDiv.classList.remove('hidden');
+        if (offerReasonField) offerReasonField.required = true;
+      } else {
+        offerReasonDiv.classList.add('hidden');
+        if (offerReasonField) offerReasonField.required = false;
+      }
+    }
+
+    paymentSelect.addEventListener('change', toggleOfferReason);
+    toggleOfferReason();
+  });
+</script>

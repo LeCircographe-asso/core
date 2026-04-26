@@ -3,17 +3,22 @@ import { Controller } from "@hotwired/stimulus"
 // Connects to data-controller="tabs"
 export default class extends Controller {
   static targets = ["trigger", "panel"]
-  static values = { initial: String }
+  static values = { initial: String, useHash: Boolean }
   static classes = ["active"]
 
   connect() {
-    this.show(this.initialValue || this.defaultName)
+    const initialName = this.initialValue || this.defaultName
+    const hashName = this.useHashValue ? this.nameFromHash() : null
+    this.show(hashName || initialName)
   }
 
   select(event) {
     event.preventDefault()
     const name = event.currentTarget.dataset.tabsNameValue
     this.show(name)
+    if (this.useHashValue) {
+      window.location.hash = name
+    }
   }
 
   show(name) {
@@ -33,5 +38,12 @@ export default class extends Controller {
 
   get defaultName() {
     return this.triggerTargets[0]?.dataset.tabsNameValue
+  }
+
+  nameFromHash() {
+    const hash = window.location.hash.replace("#", "")
+    if (!hash) return null
+    const names = this.triggerTargets.map(trigger => trigger.dataset.tabsNameValue)
+    return names.includes(hash) ? hash : null
   }
 }

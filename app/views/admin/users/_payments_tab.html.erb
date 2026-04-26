@@ -1,0 +1,60 @@
+<div class="space-y-4">
+  <h3 class="text-sm font-medium text-gray-700 mb-4">Paiements récents</h3>
+
+  <% if recent_payments&.any? %>
+    <div class="space-y-3">
+      <% recent_payments.each do |payment| %>
+        <div class="bg-gray-50 rounded-lg p-4">
+          <div class="flex justify-between items-start mb-2">
+            <div class="flex-1">
+              <div class="flex items-center gap-2 mb-1">
+                <div class="text-sm font-medium text-gray-900">
+                  <% if payment.is_offered? %>
+                    <span class="text-purple-600 font-semibold">Offert</span>
+                  <% else %>
+                    <%= number_to_currency(payment.total_cents / 100.0, unit: "€", format: "%n %u") %>
+                  <% end %>
+                </div>
+                <% if payment.payment_lines.any? %>
+                  <span class="text-xs text-gray-500 bg-gray-200 px-2 py-1 rounded">
+                    <%= payment.payment_lines.first.item_description %>
+                  </span>
+                <% end %>
+              </div>
+              <div class="text-xs text-gray-500">
+                <%= payment.created_at.strftime("%d/%m/%Y") %>
+              </div>
+            </div>
+            <div class="text-right">
+              <% status_class = case payment.status
+                              when "success" then "bg-green-100 text-green-800"
+                              when "pending" then "bg-yellow-100 text-yellow-800"
+                              when "cancel" then "bg-red-100 text-red-800"
+                              else "bg-gray-100 text-gray-800"
+                              end %>
+              <span class="px-2 py-1 text-xs font-semibold rounded-full <%= status_class %>">
+                <%= payment.status.humanize %>
+              </span>
+            </div>
+          </div>
+          <div class="flex justify-end items-center">
+            <%= link_to admin_payment_path(payment), class: "text-[#1F5C55] hover:text-[#194A45] text-xs" do %>
+              Voir détails →
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+
+    <% if person.present? %>
+      <div class="mt-4 text-center">
+        <%= link_to "Voir tout l'historique", admin_payments_path(person_id: person.id),
+            class: "text-[#1F5C55] hover:underline text-sm font-medium" %>
+      </div>
+    <% end %>
+  <% else %>
+    <div class="bg-gray-50 p-4 rounded-lg text-center">
+      <p class="text-gray-700 text-sm">Aucun paiement enregistré</p>
+    </div>
+  <% end %>
+</div>

@@ -26,6 +26,8 @@ class PaymentLine < ApplicationRecord
       else
         "Cotisation"
       end
+    when "Payment"
+      description.presence || "Paiement"
     else
       item_type.humanize
     end

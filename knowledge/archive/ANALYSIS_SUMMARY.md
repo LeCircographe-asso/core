@@ -1,5 +1,10 @@
 # 📊 Résumé Exécutif - Analyse Déploiement
 
+**Statut actuel:** ⚠️ Historique (snapshot 2025-10-12).  
+**Source de vérité:** `knowledge/OPTIMIZATIONS_TODO.md` (backlog infra) + `knowledge/DEPLOYMENT_GUIDE.md`.
+
+---
+
 **Date:** 2025-10-12  
 **Déploiement analysé:** Run #18444855888 (Success ✅)  
 **Temps d'analyse:** Complet (4537 lignes de logs)

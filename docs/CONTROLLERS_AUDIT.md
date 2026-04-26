@@ -1,14 +1,19 @@
 # Audit des Contrôleurs - Stratégie TDD
 
+**Statut actuel:** ⚠️ À revalider régulièrement (snapshot 2025-01-31).  
+**Source de vérité:** `to-do.md` + `docs/ZONES_CLASSIFICATION.md`.
+
+---
+
 **Date:** 2025-01-31  
 **Objectif:** Audit complet des contrôleurs pour préparer l'implémentation de tests TDD  
 **Base:** Classification Zones (`docs/ZONES_CLASSIFICATION.md`)
 
 ---
 
-## 📊 Résumé Exécutif
+## 📊 Résumé Exécutif (snapshot)
 
-**Statut actuel:** ✅ Phase 1 complète - 107 request specs pour 8 contrôleurs critiques  
+**Statut actuel:** ⚠️ À revalider (snapshot 2025-01-31)  
 **Total contrôleurs:** 33  
 **Zone 1 (Critiques):** 8 contrôleurs ✅ **100% testé**  
 **Zone 2 (En cours):** 10 contrôleurs  
@@ -584,4 +589,3 @@ end
 ---
 
 **Prochaine Étape:** Commencer Phase 1 avec `SessionsController` (plus simple) pour établir patterns et helpers.
-

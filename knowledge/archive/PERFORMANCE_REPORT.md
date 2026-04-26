@@ -1,5 +1,10 @@
 # 📊 Rapport de Performance - Déploiement Optimisé
 
+**Statut actuel:** ⚠️ Historique (snapshot 2025-10-12).  
+**Source de vérité:** `knowledge/OPTIMIZATIONS_TODO.md` + `knowledge/DEPLOYMENT_GUIDE.md`.
+
+---
+
 **Date:** 2025-10-12  
 **Comparaison:** Run #18444855888 (avant) vs Run #18446080894 (après)
 
@@ -188,4 +193,3 @@ Le premier build est plus lent car on **investit** dans :
 
 **Rapport généré le:** 2025-10-12  
 **Prochaine mesure:** Après 2-3 déploiements supplémentaires
-

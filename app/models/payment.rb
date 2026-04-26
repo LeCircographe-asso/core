@@ -41,7 +41,7 @@ class Payment < ApplicationRecord
     Rails.cache.fetch("total_donations", expires_in: 1.hour) do
       joins(:payment_lines)
         .where(status: :success)
-        .where(payment_lines: { item_type: "Donation" })
+        .where("LOWER(payment_lines.description) LIKE ? OR payment_lines.item_type = ?", "%don%", "Donation")
         .sum("payment_lines.amount_cents")
     end
   end
