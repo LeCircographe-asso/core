@@ -7,21 +7,29 @@ elif [[ -s "/usr/local/rvm/scripts/rvm" ]]; then
   source "/usr/local/rvm/scripts/rvm"
 fi
 
-# Check if foreman is available via bundle, otherwise try to install
-if ! command -v foreman &> /dev/null; then
-  if bundle exec which foreman &> /dev/null; then
-    FOREMAN_CMD="bundle exec foreman"
-  else
-    echo "Installing foreman..."
-    if gem install foreman --user-install 2>/dev/null; then
-      FOREMAN_CMD="foreman"
+# Check if foreman is available via PATH or bundle.
+FOREMAN_CMD=()
+if command -v foreman &> /dev/null; then
+  FOREMAN_CMD=(foreman)
+elif bundle exec which foreman &> /dev/null; then
+  FOREMAN_CMD=(bundle exec foreman)
+else
+  echo "Installing foreman..."
+  # Install into current Ruby/RVM context to avoid user-gem PATH/hook mismatches.
+  if gem install foreman 2>/dev/null; then
+    if command -v foreman &> /dev/null; then
+      FOREMAN_CMD=(foreman)
+    elif bundle exec which foreman &> /dev/null; then
+      FOREMAN_CMD=(bundle exec foreman)
     else
-      echo "Error: Could not install foreman. Please install it manually: gem install foreman"
+      echo "Error: foreman was installed but is still unavailable."
+      echo "Try running: bundle add foreman --group development"
       exit 1
     fi
+  else
+    echo "Error: Could not install foreman. Please install it manually: gem install foreman"
+    exit 1
   fi
-else
-  FOREMAN_CMD="foreman"
 fi
 
 # Default to port 3000 if not specified
@@ -32,4 +40,4 @@ export PORT="${PORT:-3000}"
 export RUBY_DEBUG_OPEN="true"
 export RUBY_DEBUG_LAZY="true"
 
-exec $FOREMAN_CMD start -f Procfile.dev "$@"
+exec "${FOREMAN_CMD[@]}" start -f Procfile.dev "$@"
