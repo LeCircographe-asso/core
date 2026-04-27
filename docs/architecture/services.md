@@ -3,8 +3,8 @@
 **Date:** 2025-01-31  
 **Status:** ✅ STABLE - Ne pas modifier sans validation  
 **Dernière mise à jour:** 2025-11-09  
-**Services:** Consolidés (People::* pour adhésions/paiements/cotisations; plusieurs *Management retirés côté admin)  
-**Controllers:** Admin simplifiés (CRUD inline pour Events, MembershipTypes, SubscriptionPlans)
+**Services:** Consolidés (`People::*` pour adhésions/paiements/cotisations ; plusieurs `*Management` retirés côté admin)  
+**Controllers:** Admin simplifiés (CRUD inline pour `Events`, `MembershipTypes`, `SubscriptionPlans` *(cible : `ContributionFormulas`)*)
 
 ## Principe Fondamental
 
@@ -24,7 +24,7 @@ Les services suivent le pattern **Service Object avec ActiveModel::Model** :
   - Créer/éditer la fiche métier via `People::Register` / `People::PersonCreator` ; le compte web est créé via `People::UserAccountCreator` si besoin.
   - Supprimer un `User` ne détruit pas la `Person` (relation `has_one :user, dependent: :nullify`).
   - Supprimer une `Person` passe par `SoftDeletable` (`Person#archive!`) avec garde-fous financiers (`has_financial_data?`).
-  - Toutes les opérations financières (`People::Payment*`, `People::Subscription*`, `People::Register`) travaillent **exclusivement** sur `Person`.
+  - Toutes les opérations financières (`People::Payment*`, `People::Subscription*` *(cible : `People::Contribution*`)*, `People::Register`) travaillent **exclusivement** sur `Person`.
 
 Cette séparation “Entity / Account” garantit :
 - pas de perte d’historique quand un utilisateur supprime son compte web,
@@ -50,8 +50,8 @@ Cette séparation “Entity / Account” garantit :
 - `People::SubscriptionStatusEnsurer` (cible : `People::ContributionStatusEnsurer`) — synchronisation des statuts en fonction de l'adhésion Cirque.
 
 **Utilisé dans :**
-- `Admin::SubscriptionPlansController` (create)
-- `Admin::SubscriptionsController` (upgrade)
+- `Admin::SubscriptionPlansController` *(cible : `Admin::ContributionFormulasController`)* — `create`
+- `Admin::SubscriptionsController` *(cible : `Admin::ContributionsController`)* — `upgrade`
 
 ### ✅ People::Payment* (Stable)
 - `People::PaymentCreator` — paiements simples et multi-lignes (incluant don).
@@ -107,8 +107,8 @@ Cette séparation “Entity / Account” garantit :
 **Utilisé dans:**
 - `Admin::MemberNumbersController` (suggest, change)
 
-### ❌ SubscriptionPlanManagement (Removed)
-- Flux admin géré en CRUD inline par `Admin::SubscriptionPlansController`
+### ❌ SubscriptionPlanManagement (Removed) *(cible : `ContributionFormulaManagement`)*
+- Flux admin géré en CRUD inline par `Admin::SubscriptionPlansController` *(cible : `Admin::ContributionFormulasController`)*
 
 ### ❌ BlogManagement (Retiré côté admin)
 - Flux admin géré en CRUD inline par `Admin::BlogsController`

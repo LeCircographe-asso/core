@@ -1,6 +1,13 @@
 # Modèles, concerns et zones de stabilité
 
-> Vocabulaire : voir [`../glossary.md`](../glossary.md). Ce document utilise les noms de classes Ruby actuels (`SubscriptionPlan`, `BookOfEntry`) ; cibles : `ContributionFormula`, `Contribution`. Plan de renommage : [`../migrations/vocabulary_migration.md`](../migrations/vocabulary_migration.md).
+> **Vocabulaire DDD-light** (voir [`../glossary.md`](../glossary.md))
+>
+> Les noms de classes Ruby utilisés ci-dessous sont systématiquement annotés `(cible : …)` quand ils correspondent à du code legacy en cours de migration :
+>
+> - `SubscriptionPlan` → `ContributionFormula`
+> - `BookOfEntry` → `Contribution`
+>
+> Plan de renommage : [`../migrations/vocabulary_migration.md`](../migrations/vocabulary_migration.md), `phase3-model-rename`.
 
 Ce document remplace l'ancien trio `docs/MODEL_EVALUATION.md` + `docs/CONCERNS_ANALYSIS.md` + `docs/ZONES_CLASSIFICATION.md` qui s'étaient mis à diverger.
 
@@ -16,6 +23,8 @@ Person (CRM, données personnelles)
   └─> MemberNumberHistory (historique numéro membre)
 ```
 
+Les formules de cotisation sont stockées dans `SubscriptionPlan` *(cible : `ContributionFormula`)*.
+
 ### Points forts confirmés
 
 - Séparation claire **auth** (`User`) vs **profil** (`Person`).
@@ -24,13 +33,13 @@ Person (CRM, données personnelles)
 - Soft-delete `Person` sans perdre `User`.
 - `Payment` → `PaymentLine` polymorphique = un paiement peut regrouper adhésion + cotisation + don.
 - Audit trail complet via `PaymentAuditLog` + UUID externe.
-- Versioning sur `MembershipType` et `SubscriptionPlan` (`version`, `effective_from/until`, `change_reason`, `created_by_user_id`).
+- Versioning sur `MembershipType` et `SubscriptionPlan` *(cible : `ContributionFormula`)* (`version`, `effective_from/until`, `change_reason`, `created_by_user_id`).
 
 ### Verdict d'audit (snapshot 2025-01-31)
 
 | Dimension | Score | Commentaire |
 | --- | --- | --- |
-| Robustesse métier | 8 / 10 | Validations solides, quelques contradictions sur `BookOfEntry` |
+| Robustesse métier | 8 / 10 | Validations solides, quelques contradictions sur `BookOfEntry` *(cible : `Contribution`)* |
 | Performance | 6 / 10 | Indexes composites manquants (cf. §4) |
 | Maintenabilité | 7 / 10 | Concerns bien organisés, dualité `expired?` à clarifier |
 | Testabilité | 6 / 10 | Polymorphisme `PaymentLine` + `skip_overlap_validation` augmentent le coût des tests |
@@ -45,12 +54,14 @@ Dix concerns en place :
 - `Categorizable` — humanization des catégories.
 - `Humanizable` — humanization d'enums divers.
 - `Roleable` — gestion des rôles utilisateur.
-- `Versionable` — versioning (`MembershipType`, `SubscriptionPlan`).
+- `Versionable` — versioning (`MembershipType`, `SubscriptionPlan` *(cible : `ContributionFormula`)*).
 - `Validatable` — validations communes.
 - `Duplicatable` — détection / fusion de doublons.
 - `SoftDeletable` — soft delete avec `deleted_at`.
 
 ### Tableau d'inclusion
+
+> Dans le tableau ci-dessous, `BookOfEntry` cible `Contribution` et `SubscriptionPlan` cible `ContributionFormula` (cf. encadré en tête).
 
 | Modèle | Statusable | Dateable | Priceable | Categorizable | Humanizable | Roleable | Versionable | SoftDeletable | EmailNormalizable |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -86,11 +97,11 @@ Cadre de **stabilité / risque** pour prioriser les tests. Pour les priorités a
 
 #### Zone 1 — core business
 
-`User`, `Person`, `Membership`, `Payment`, `PaymentLine`, `MembershipType`, `BookOfEntry` — tous testés, à compléter selon les gaps.
+`User`, `Person`, `Membership`, `Payment`, `PaymentLine`, `MembershipType`, `BookOfEntry` *(cible : `Contribution`)* — tous testés, à compléter selon les gaps.
 
 #### Zone 1 — business logic prioritaire
 
-- `SubscriptionPlan` — pas de spec dédiée, **critique pour le pricing**, priorité haute.
+- `SubscriptionPlan` *(cible : `ContributionFormula`)* — pas de spec dédiée, **critique pour le pricing**, priorité haute.
 - `Event` — partiel, ajouter edge cases.
 - `AccountClaim` — workflow à couvrir.
 - `Attendance` — logique quotidienne à couvrir.
@@ -131,7 +142,7 @@ Cadre de **stabilité / risque** pour prioriser les tests. Pour les priorités a
 Voir [`controllers.md`](controllers.md) pour le détail. Résumé :
 
 - **Zone 1** — admin CRUD critiques (`Admin::Users`, `Admin::Memberships`, `Admin::Payments`, `Admin::Events`, `Admin::Dashboard`) et auth/checkout publics (`Sessions`, `Registrations`, `Checkout`).
-- **Zone 2** — `AccountClaims`, `Passwords`, `Admin::SubscriptionPlans`, `Admin::MemberNumbers`, autres admin CRUD standards.
+- **Zone 2** — `AccountClaims`, `Passwords`, `Admin::SubscriptionPlans` *(cible : `Admin::ContributionFormulas`)*, `Admin::MemberNumbers`, autres admin CRUD standards.
 - **Zone 3** — `Home`, `Pages`, `Events` public, `Blogs`, `Contacts`, `Admin::Blogs`, `Admin::Attendances`, `Admin::AttendanceLists`.
 
 ## 4. Dettes techniques identifiées
@@ -156,7 +167,7 @@ end
 # BookOfEntry : OK tel quel
 ```
 
-### 4.2 `BookOfEntry` — validations contradictoires
+### 4.2 `BookOfEntry` *(cible : `Contribution`)* — validations contradictoires
 
 `sessions_remaining` est forcé à `0` par défaut, validé `presence: true` si `has_session_limit?`, `presence: false` si Pack 10, et la validation custom contredit le default. Tests fragiles.
 
@@ -193,7 +204,7 @@ add_index :subscription_plans, [:membership_type_id, :duration], name: "idx_sub_
 
 Impact attendu : dashboards admin plus rapides, scalabilité accrue.
 
-### 4.5 `BookOfEntry.expires_at` nullable mais NOT NULL en migration
+### 4.5 `BookOfEntry.expires_at` *(cible : `Contribution.expires_at`)* nullable mais NOT NULL en migration
 
 Pack 10 force `expires_at` à `Time.current + 100.years` faute d'accepter `NULL`. Conséquence : queries `WHERE expires_at < ?` partout, factories complexes.
 

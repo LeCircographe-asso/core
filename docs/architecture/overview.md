@@ -35,7 +35,7 @@ Ce document consolide les bonnes pratiques et l'architecture mise en place lors 
 - **Création Person / User / Membership** : `People::Register`
 - **Lien User ↔ Person** : `People::AccountLinker`
 - **Achat adhésion** : `People::MembershipCreator`
-- **Achat cotisation** : `People::SubscriptionCreator`
+- **Achat cotisation** : `People::SubscriptionCreator` *(cible : `People::ContributionCreator`)*
 - **Mise à jour User + Person** : `UserManagement::UserUpdater`
 - **Paiement** : `People::PaymentCreator`, `People::PaymentUpdater`, `People::PaymentCanceller`
 
