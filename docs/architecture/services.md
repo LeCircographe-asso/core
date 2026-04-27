@@ -47,7 +47,6 @@ Cette séparation “Entity / Account” garantit :
 
 - `People::SubscriptionCreator` (cible : `People::ContributionCreator`) — création de cotisations.
 - `People::SubscriptionUpgrader` (cible : `People::ContributionUpgrader`) — upgrade / prorata Trimestre → Annuel.
-- `People::SubscriptionStatusEnsurer` (cible : `People::ContributionStatusEnsurer`) — synchronisation des statuts en fonction de l'adhésion Cirque.
 
 **Utilisé dans :**
 - `Admin::SubscriptionPlansController` *(cible : `Admin::ContributionFormulasController`)* — `create`

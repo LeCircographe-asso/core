@@ -44,7 +44,6 @@
 | `bookOfEntryValidation` (callback) | (supprimé — déjà fait) | `app/models/book_of_entry.rb` | déjà fait |
 | `People::SubscriptionCreator` | `People::ContributionCreator` | `app/services/people/` | `phase3-model-rename` |
 | `People::SubscriptionUpgrader` | `People::ContributionUpgrader` | `app/services/people/` | `phase3-model-rename` |
-| `People::SubscriptionStatusEnsurer` | `People::ContributionStatusEnsurer` | `app/services/people/` | `phase3-model-rename` |
 | `SubscriptionStatusBadgeComponent` | `ContributionStatusBadgeComponent` | `app/components/` | `phase2-component-rename` |
 
 ### 1.4 Vocabulaire documentaire

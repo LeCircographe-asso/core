@@ -2,7 +2,10 @@
 
 > Source de vérité **unique** pour le déploiement Kamal (staging + production).
 > Fusion de l'ancien `knowledge/DEPLOYMENT_GUIDE.md` et des « règles d'or » de `knowledge/KNOWLEDGE_BASE.md`.
-> Pour un déploiement bare-metal alternatif (sans Kamal), voir [`sqlite_deployment.md`](sqlite_deployment.md).
+> Pour un déploiement bare-metal alternatif (sans Kamal), voir [`../internal/sqlite_deployment.md`](../internal/sqlite_deployment.md).
+>
+> **Branches actives** (cf. `.github/workflows/deploy-*.yml`) :
+> `dev` (intégration) → `staging` (déploie staging) → `main` (déploie production).
 
 ## 1. Workflow Git standard
 
@@ -13,22 +16,22 @@ git checkout dev
 git checkout staging
 git merge dev
 git push origin staging
-# → GitHub Actions 03 (staging-deploy) se déclenche
+# → .github/workflows/deploy-staging.yml se déclenche
 
-git checkout production
+git checkout main
 git merge staging
-git push origin production
-# → GitHub Actions 05 (production-deploy) se déclenche
+git push origin main
+# → .github/workflows/deploy-production.yml se déclenche
 ```
 
-**Règle d'or — Aucune modification directe sur `staging` ni `production`.**
+**Règle d'or — Aucune modification directe sur `staging` ni `main`.**
 Toujours créer une branche dédiée :
 
 ```bash
 git checkout -b fix/nom-du-probleme
 # … travail …
 git push origin fix/nom-du-probleme
-# Merger ensuite vers dev → staging → production
+# Merger ensuite vers dev → staging → main
 ```
 
 ## 2. Tests de validation post-déploiement
