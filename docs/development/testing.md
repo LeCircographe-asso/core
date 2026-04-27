@@ -161,7 +161,7 @@ expect(result).to respond_to(:membership)
 
 #### Instrumentation (`ActiveSupport::Notifications`)
 
-Les services émettent des événements (`payment.created`, `membership.created`, `membership.upgraded`, `subscription.created`, etc.) :
+Les services émettent des événements (`payment.created`, `membership.created`, `membership.upgraded`, `subscription.created` *(cible : `contribution.created`)*, etc.) :
 
 ```ruby
 captured = []
@@ -190,7 +190,7 @@ Les contrôleurs admin simplifiés se testent comme des flows intégrés :
 
 - `Admin::EventsController` — création avec `title`, mise à jour partielle (via `compact_blank`), redirections et notices.
 - `Admin::MembershipTypesController` — `create` / `update` / `destroy` et validations modèle.
-- `Admin::SubscriptionPlansController` — `update` / `destroy` inline ; `create` délègue à `People::SubscriptionCreator`.
+- `Admin::SubscriptionPlansController` *(cible : `Admin::ContributionFormulasController`)* — `update` / `destroy` inline ; `create` délègue à `People::SubscriptionCreator` *(cible : `People::ContributionCreator`)*.
 
 ## 4. Workflow TDD au quotidien
 
@@ -377,7 +377,7 @@ L'ensemble des services `People::*`, `AccountClaimManagement::*`, `AttendanceMan
 2. Newsletter (flow authentifié) via `NewsletterManagement::NewsletterUpdater`.
 3. `UserDeleter` (suppression / archivage sécurisé).
 4. Observabilité : tests d'événements (`ActiveSupport::Notifications`) sur `People::*`.
-5. Request specs CRUD inline : `Events`, `MembershipTypes`, `SubscriptionPlans`.
+5. Request specs CRUD inline : `Events`, `MembershipTypes`, `SubscriptionPlans` *(cible : `ContributionFormulas`)*.
 6. Edge cases modèles (dates, enums, scopes).
 
 ## 9. CI/CD

@@ -5,6 +5,18 @@
 **Classification:** Zone 1 (Stable) | Zone 2 (En cours) | Zone 3 (Future)  
 **État:** ✅ Logique métier complètement réécrite selon vraies règles business (2025-11-03)
 
+> **Vocabulaire DDD-light** (voir [`../glossary.md`](../glossary.md))
+>
+> Ce document utilise les noms de classes Ruby **actuels** (`SubscriptionPlan`, `BookOfEntry`, `People::Subscription*`, `Person#create_subscription!`).
+> Vocabulaire **cible** (en cours de migration) :
+>
+> - `SubscriptionPlan` → `ContributionFormula`
+> - `BookOfEntry` → `Contribution`
+> - `People::Subscription*` → `People::Contribution*`
+> - `Person#create_subscription!` → `Person#create_contribution!`
+>
+> Le terme « subscription » n'est légitime que pour la **newsletter**. Plan de renommage : [`../migrations/vocabulary_migration.md`](../migrations/vocabulary_migration.md), phases 0–3.
+
 ---
 
 ## Classification des Zones
@@ -105,15 +117,18 @@ Person#renew_membership!(membership_type, ...) # Nouveau numéro chaque année
 
 #### Types de Paiements
 - **Membership:** Activation adhésion
-- **SubscriptionPlan:** Abonnement (pack10, annual, etc.)
+- **`SubscriptionPlan`** *(cible : `ContributionFormula`)* — formule de cotisation (pack10, annual, etc.)
 - **MembershipType:** Nouvelle adhésion
 
 #### Logique Métier Person-Based
+
+Les méthodes ci-dessous portent les noms du code actuel ; les cibles `*_contribution!` arriveront en `phase3-model-rename`.
+
 ```ruby
-Person#create_membership!(...) # Crée membership + payment + payment_line
-Person#upgrade_membership!(...) # Crée payment full price + payment_line
-Person#create_subscription!(...) # Crée book_of_entry + payment + payment_line
-Person#upgrade_subscription!(...) # Prorata + payment + payment_line
+Person#create_membership!(...)    # Crée membership + payment + payment_line
+Person#upgrade_membership!(...)   # Crée payment full price + payment_line
+Person#create_subscription!(...)  # cible : Person#create_contribution!  — crée book_of_entry + payment + payment_line
+Person#upgrade_subscription!(...) # cible : Person#upgrade_contribution! — prorata + payment + payment_line
 ```
 
 #### Payment Lines
@@ -189,10 +204,6 @@ enum system_role: [:super_admin, :admin, :volunteer, :web_visitor]
 ---
 
 ## 4. ContributionFormula (Formules de cotisation)
-
-> **Vocabulaire** : « formule de cotisation » = `ContributionFormula`. **Code actuel : `SubscriptionPlan`** (rename planifié, voir [`../migrations/vocabulary_migration.md`](../migrations/vocabulary_migration.md), phase `phase3-model-rename`).
->
-> Ne pas employer « plan d'abonnement » ni « subscription » dans la doc / UI — ces termes sont réservés à la newsletter.
 
 ### Zone 1: Comportement Défini
 
