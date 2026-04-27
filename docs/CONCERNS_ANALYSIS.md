@@ -1,5 +1,9 @@
 # Analyse complète des Concerns - Opportunités d'amélioration
 
+> **Vocabulaire** : ce document mentionne les classes Ruby actuelles (`SubscriptionPlan`, `BookOfEntry`).
+> Vocabulaire cible : `SubscriptionPlan` → `ContributionFormula`, `BookOfEntry` → `Contribution`.
+> Voir [glossary.md](glossary.md) et [migrations/vocabulary_migration.md](migrations/vocabulary_migration.md).
+
 ## 📊 État actuel des Concerns (10 concerns)
 
 ### Concerns existants

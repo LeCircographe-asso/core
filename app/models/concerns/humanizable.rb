@@ -49,7 +49,7 @@ module Humanizable
     end
   end
 
-  # Humanization des durées d'abonnement
+  # Humanization des durées de cotisation (ContributionFormula — code actuel : SubscriptionPlan).
   def subscription_duration_humanized
     case duration
     when "day" then "Journée"

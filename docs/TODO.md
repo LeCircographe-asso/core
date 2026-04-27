@@ -2,6 +2,9 @@
 
 Ordered from quick wins to long-term work. Each item can be handled incrementally.
 
+> **Vocabulary note** : les mots `subscription`, `SubscriptionCreator`, `BookOfEntry` désignent le code actuel.
+> Vocabulaire cible : `Contribution`, `ContributionCreator`, `ContributionFormula`. Voir [glossary.md](glossary.md) et [migrations/vocabulary_migration.md](migrations/vocabulary_migration.md).
+
 ## 0) Ground Rules (Architecture + MVC)
 - Document the Person/User lifecycle and ownership rules.
 - Enforce “Person is source of truth for identity + finance.”

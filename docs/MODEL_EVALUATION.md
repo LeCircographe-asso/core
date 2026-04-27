@@ -1,7 +1,11 @@
 # Évaluation du Modèle de Données - Le Circographe
 
-**Date:** 2025-01-31  
+**Date:** 2025-01-31
 **Contexte:** Audit après implémentation tests critiques
+
+> **Vocabulaire** : ce document utilise les noms de classes Ruby actuels (`SubscriptionPlan`, `BookOfEntry`).
+> Vocabulaire cible : `SubscriptionPlan` → `ContributionFormula`, `BookOfEntry` → `Contribution`.
+> Voir [glossary.md](glossary.md) et [migrations/vocabulary_migration.md](migrations/vocabulary_migration.md).
 
 ---
 

@@ -1,5 +1,6 @@
-# Seed pour les plans d'abonnement (Articles de cotisation)
-puts "\n🎫 Creating subscription plans (Articles de cotisation)..."
+# Seed des formules de cotisation (vocabulaire cible : ContributionFormula).
+# Le code actuel utilise encore le modèle SubscriptionPlan (rename planifié — voir docs/migrations/vocabulary_migration.md).
+puts "\nChargement des formules de cotisation (ContributionFormula — code actuel : SubscriptionPlan)..."
 
 # Récupérer l'admin pour l'audit
 admin_user = User.find_by(system_role: "super_admin")
@@ -64,8 +65,8 @@ subscription_plans = [
 ]
 
 subscription_plans.each do |attrs|
-  subscription_plan = SubscriptionPlan.create!(attrs)
-  puts "  ✅ #{subscription_plan.name} (#{subscription_plan.price_euros}€) - #{subscription_plan.membership_type.name} - Version #{subscription_plan.version}"
+  formula = SubscriptionPlan.create!(attrs)
+  puts "  - #{formula.name} (#{formula.price_euros}€) — #{formula.membership_type.name} — version #{formula.version}"
 end
 
-puts "🎉 Created #{SubscriptionPlan.count} subscription plans"
+puts "  #{SubscriptionPlan.count} formules de cotisation créées."

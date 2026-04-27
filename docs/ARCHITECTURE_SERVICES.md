@@ -41,24 +41,32 @@ Cette séparation “Entity / Account” garantit :
 
 **Utilisé dans:** `Admin::MembershipsController` (create, update, destroy)
 
-### ✅ People::Subscription* (Stable)
-- `People::SubscriptionCreator` - Création de cotisations (2025-11)
-- `People::SubscriptionUpgrader` - Upgrade/prorata (2025-11)
+### ✅ People::Contribution* (Stable — vocabulaire cible)
 
-**Utilisé dans:** 
+> **Vocabulaire** : services « cotisation » = `People::Contribution*`. **Code actuel : `People::Subscription*`** (rename planifié, voir [migrations/vocabulary_migration.md](migrations/vocabulary_migration.md), phase `phase3-model-rename`).
+
+- `People::SubscriptionCreator` (cible : `People::ContributionCreator`) — création de cotisations.
+- `People::SubscriptionUpgrader` (cible : `People::ContributionUpgrader`) — upgrade / prorata Trimestre → Annuel.
+- `People::SubscriptionStatusEnsurer` (cible : `People::ContributionStatusEnsurer`) — synchronisation des statuts en fonction de l'adhésion Cirque.
+
+**Utilisé dans :**
 - `Admin::SubscriptionPlansController` (create)
 - `Admin::SubscriptionsController` (upgrade)
 
 ### ✅ People::Payment* (Stable)
-- `People::PaymentCreator` utilisé pour donations et paiements multi-lignes (2025-11)
-- `People::PaymentUpdater` / `PaymentCanceller` / `PaymentRestorer` intégrés dans l’admin (2025-11)
+- `People::PaymentCreator` — paiements simples et multi-lignes (incluant don).
+- `People::PaymentUpdater` / `PaymentCanceller` / `PaymentRestorer` — utilisés depuis l'admin.
 
-**Utilisé dans:** 
+**Utilisé dans :**
 - `Admin::PaymentsController` (create, update, destroy)
 - `Admin::DonationsController` (create)
 - `Admin::Users::PaymentsController` (create, update, destroy via `People::PaymentCreator` multi-lignes)
 
-**Note:** Pour les donations, utiliser `item_type: "Donation"` et `item_id: person_id`. `People::PaymentCreator` ajoutera automatiquement une `PaymentLine` interne avec `item_type: "Payment"` et `item_id: payment.id` pour assurer la cohérence polymorphique. Pour les paiements multiples, fournir `payment_lines` au service ; la validation garantit que la somme des lignes = `total_cents`.
+**Donations — état actuel et cible**
+- **Cible** : une donation est une `PaymentLine` avec `item_type: "Donation"`. Aucune `PaymentLine` ne doit avoir `item_type: "Payment"`.
+- **Code actuel** : `People::PaymentCreator` réécrit silencieusement les lignes de don en `item_type: "Payment"` et `item_id: payment.id` (cf. `app/services/people/payment_creator.rb` L92). Cette dette technique est tracée dans `phase1-donation-fix` (voir [payments.md](payments.md)).
+- **Comportement attendu côté appelant** : passer `item_type: "Donation"` et `item_id: payment.id` (ou `person.id` selon le flow). Le service fait le reste — y compris la réécriture legacy temporaire.
+- **Validation** : la somme des `payment_lines` doit égaler `total_cents` ; sinon, `failure`.
 
 ### ✅ People::AccountLinker (Support CRM)
 - `People::AccountLinker` relie un compte web existant à une fiche CRM (`people.account_linked`)
@@ -220,7 +228,7 @@ end
 ## Règles Importantes
 
 1. **Les services NE font PAS de logique métier complexe** - Ils délèguent vers les modèles
-2. **La logique métier reste dans les modèles** (Person#create_membership!, Person#create_subscription!, etc.)
+2. **La logique métier reste dans les modèles** (`Person#create_membership!`, `Person#create_subscription!` (cible : `Person#create_contribution!`), etc.)
 3. **Les services ajoutent uniquement:**
    - Validation des paramètres
    - Instrumentation (audit)

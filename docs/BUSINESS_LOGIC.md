@@ -188,93 +188,99 @@ enum system_role: [:super_admin, :admin, :volunteer, :web_visitor]
 
 ---
 
-## 4. Subscription Plans (Abonnements)
+## 4. ContributionFormula (Formules de cotisation)
+
+> **Vocabulaire** : « formule de cotisation » = `ContributionFormula`. **Code actuel : `SubscriptionPlan`** (rename planifié, voir [migrations/vocabulary_migration.md](migrations/vocabulary_migration.md), phase `phase3-model-rename`).
+>
+> Ne pas employer « plan d'abonnement » ni « subscription » dans la doc / UI — ces termes sont réservés à la newsletter.
 
 ### Zone 1: Comportement Défini
 
-#### Durées Disponibles
+#### Durées disponibles
 ```ruby
 enum duration: {
-  day: 0,           # Jour
-  trimester: 1,     # Trimestre
-  annual: 2,        # Annuel
+  day: 0,           # Journée
+  trimester: 1,     # Trimestre (≈ 90 jours)
+  annual: 2,        # Annuel (365 jours)
   pack10: 3         # Pack de 10 séances
 }
 ```
 
-#### Pack10 (Spécial)
-- **BookOfEntry:** Créé automatiquement après paiement
-- **Sessions:** Nombre défini (sessions_count)
-- **Validity:** Période de validité (validity_days)
-- **Expiry:** Pack10 n'expire jamais (`expired_at` nil)
+#### Pack10 (cas particulier)
+- **Cotisation associée** : une `Contribution` (code actuel : `BookOfEntry`) est créée automatiquement après paiement.
+- **Sessions** : nombre défini par la formule (`sessions_count`, par défaut 10).
+- **Validité** : `validity_days` informatif. Le Pack 10 **n'expire pas** (`expires_at` nil).
 
-#### Règles Métier
-- **Prix:** En centimes (`price_cents`)
-- **Versioning:** Plans versionnés
-- **Effective from:** Date d'effet
-- **Disponibilité:** `SubscriptionPlan.available_for(person)` retourne les plans autorisés pour la personne (actuellement uniquement si membership Circus actif)
+#### Règles métier
+- **Prix** : en centimes (`price_cents`).
+- **Versionnage** : chaque formule est versionnée (`version`, `effective_from`, `effective_until`).
+- **Disponibilité** : `SubscriptionPlan.available_for(person)` (cible : `ContributionFormula.available_for(person)`) retourne les formules autorisées (actuellement : exige une `Membership` Cirque active).
 
-### Zone 2: En Cours de Validation
+### Zone 2: En cours de validation
 
-- [ ] Plans personnalisés
-- [ ] Promotions/Code réductions
-- [ ] Pause d'abonnement
+- [ ] Formules personnalisées
+- [ ] Promotions / codes réduction
+- [ ] Pause de cotisation
 
-### Zone 3: Future
+### Zone 3: Futur
 
-- [ ] Abonnements récurrents automatiques
-- [ ] Plans famille
+- [ ] Cotisations récurrentes automatiques
+- [ ] Formules famille
 - [ ] Offres groupées
 
 ---
 
-## 5. Book of Entry (Carnets)
+## 5. Contribution (Cotisations)
+
+> **Vocabulaire** : « cotisation » = `Contribution`. **Code actuel : `BookOfEntry`** (rename planifié, voir [migrations/vocabulary_migration.md](migrations/vocabulary_migration.md), phase `phase3-model-rename`).
+>
+> Le terme « carnet d'entrées » reste légitime quand on désigne explicitement le sous-type Pack 10. Pour parler du concept général, utiliser « cotisation ».
 
 ### Zone 1: Comportement Défini
 
-> **NOTE BUSINESS:** Dans l’usage actuel de l’association, *BookOfEntry* ne matérialise **que** les carnets Pack 10 séances. Le modèle conserve des attributs (expiration, illimité, etc.) pour rester compatible avec d’anciens prototypes, mais cette logique n’est plus exploitée. Tout test/implémentation doit partir du principe « BookOfEntry = Pack 10 ».
+> **Note métier** : dans l'usage actuel de l'association, le modèle `BookOfEntry` ne matérialise **que les Pack 10 séances**. Les attributs liés aux durées Trimestre / Annuel / Day existent encore mais ne sont pas exploités au runtime — la phase 3 unifiera explicitement.
 
 #### Création
-- **Trigger:** Paiement d'un SubscriptionPlan pack10 (unique offre à carnet)
-- **Person:** Assigné au propriétaire
-- **Sessions:** Nombre initial = sessions_count du plan (par défaut 10)
+- **Déclencheur** : paiement d'une `ContributionFormula` (code : `SubscriptionPlan`) de type `pack10`.
+- **Personne** : `belongs_to :person` (titulaire).
+- **Sessions** : `sessions_remaining` initialisé à `sessions_count` (10 par défaut).
 
 #### Utilisation
 ```ruby
-BookOfEntry#can_use?
-  - Membership circus active?
-  - Sessions remaining > 0?
-  - Status active?
-  
-BookOfEntry#use_session!
-  - Décrémente sessions_remaining
-  - Status = consumed si 0
+Contribution#can_use?  # alias actuel : BookOfEntry#can_use?
+  # - Adhésion Cirque active ?
+  # - Sessions restantes > 0 ?
+  # - Statut active ?
+
+Contribution#use_session!
+  # - Décrémente sessions_remaining
+  # - Statut → consumed si 0
 ```
 
-#### Expiration (Pack10 uniquement)
-- **Never expires:** Pack10 n'a pas expires_at (les autres durées ne sont plus utilisées)
-- **Non-pack (legacy):** Expire selon validité — gardé pour compatibilité mais hors périmètre actuel
+#### Expiration (Pack 10 uniquement)
+- **Pack 10** : pas d'`expires_at` (durée infinie tant que sessions restantes).
+- **Non-pack (legacy)** : expirerait selon `validity_days`. Hors périmètre runtime actuel.
 
-#### Suspension & Réactivation
+#### Suspension & réactivation
 ```ruby
-BookOfEntry#suspend!(reason:) # Statut suspended (upgrades)
-BookOfEntry#reactivate! # Statut active
-BookOfEntry.reactivate_suspended_packs_for_person(person) # Auto après expiration Trimestre/Année
+Contribution#suspend!(reason:)  # statut → suspended (cas upgrade Pack 10 → Trimestre / Annuel)
+Contribution#reactivate!        # statut → active
+Contribution.reactivate_suspended_packs_for_person(person)  # auto après expiration Trimestre / Annuel
 ```
 
-**RÈGLES UPGRADE Cotisations:**
-- Pack10 → Trimestre/Année OK (suspension Pack10, pas de crédit)
-- Trimestre → Année OK (crédit prorata temporel)
-- Day interdit
+#### Règles d'upgrade
+- **Pack 10 → Trimestre / Annuel** : autorisé (Pack 10 suspendu, sessions conservées, **pas de prorata**).
+- **Trimestre → Annuel** : autorisé (prorata temporel sur le temps restant).
+- **Day → autre** : interdit.
 
-### Zone 2: En Cours de Validation
+### Zone 2: En cours de validation
 
-- [ ] Transfert de séances entre carnets
+- [ ] Transfert de séances entre cotisations
 - [ ] Extension de validité
 
-### Zone 3: Future
+### Zone 3: Futur
 
-- [ ] Gifts cards
+- [ ] Cartes cadeaux
 - [ ] Système de points
 
 ---

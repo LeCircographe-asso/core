@@ -2,6 +2,13 @@
 
 Ce dossier contient toute la documentation technique, les découvertes, et les plans d'action pour le projet.
 
+> **Journal historique non normatif** — les fichiers de ce dossier reflètent l'état du projet à différentes dates et **ne sont pas la source de vérité du vocabulaire métier courant**.
+> Pour les règles canoniques, se référer à :
+> - [`docs/glossary.md`](../glossary.md)
+> - [`docs/domain_model.md`](../domain_model.md)
+> - [`docs/payments.md`](../payments.md)
+> - [`docs/migrations/vocabulary_migration.md`](../migrations/vocabulary_migration.md)
+
 ---
 
 ## 📋 **Index des Documents**

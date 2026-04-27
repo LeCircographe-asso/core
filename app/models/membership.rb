@@ -2,7 +2,7 @@ class Membership < ApplicationRecord
   include Statusable
   include Dateable
 
-  # Relations selon le domain_model_circographe.md
+  # Relations — voir docs/domain_model.md.
   belongs_to :person
   belongs_to :membership_type
   # Validations
@@ -10,7 +10,7 @@ class Membership < ApplicationRecord
   validates :ended_at, presence: true
   validates :status, presence: true
 
-  # Enum pour les statuts selon le domain_model_circographe.md
+  # Statuts — voir docs/glossary.md.
   enum :status, {
     pending: 0,
     inactive: 1,

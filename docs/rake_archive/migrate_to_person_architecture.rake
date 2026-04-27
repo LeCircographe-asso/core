@@ -1,3 +1,14 @@
+# =====================================================================
+# LEGACY ARCHIVE — NE PAS RECHARGER
+# ---------------------------------------------------------------------
+# Cette tâche Rake est conservée pour mémoire historique uniquement.
+# Elle a été exécutée lors de la migration vers l'architecture Person-Based
+# (cf. docs/migrations/vocabulary_migration.md). Le code peut référencer
+# des modèles ou colonnes qui n'existent plus.
+#
+# Ne pas l'inclure dans lib/tasks/ ni dans aucun runner CI / déploiement.
+# =====================================================================
+
 namespace :migration do
   desc "Migrate existing data to Person-Based Architecture"
   task person_architecture: :environment do
