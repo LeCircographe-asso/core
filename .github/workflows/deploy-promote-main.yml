@@ -9,6 +9,7 @@ on:
         type: string
 
 permissions:
+  actions: read
   contents: write
 
 jobs:
@@ -19,6 +20,21 @@ jobs:
       - uses: actions/checkout@v6
         with:
           fetch-depth: 0
+      - name: Ensure last staging deployment succeeded
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          result=$(gh run list \
+            --workflow=deploy-staging.yml \
+            --branch=staging \
+            --limit=1 \
+            --json conclusion \
+            --jq '.[0].conclusion')
+          echo "Last deploy-staging conclusion: ${result}"
+          if [ "$result" != "success" ]; then
+            echo "Last staging deployment did not succeed (got: ${result:-none}). Aborting."
+            exit 1
+          fi
       - name: Promote staging into main
         run: |
           git checkout main
