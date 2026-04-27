@@ -1,6 +1,8 @@
 require 'rails_helper'
 
 RSpec.describe AttendanceManagement::CheckInService do
+  include ActiveSupport::Testing::TimeHelpers
+
   let(:attendance_list) { create(:attendance_list, status: :open, list_type: :training) }
   let(:person) { create(:person, :with_circus_membership) }
   let(:pack_plan) { create(:subscription_plan, :pack10) }
@@ -23,10 +25,13 @@ RSpec.describe AttendanceManagement::CheckInService do
     end
 
     it 'creates list automatically when missing' do
-      result = described_class.new(person_id: person.id).call
+      # DailyListGenerator refuses Mondays — travel to next Tuesday to ensure list can be created
+      travel_to Date.current.next_occurring(:tuesday).beginning_of_day + 12.hours do
+        result = described_class.new(person_id: person.id).call
 
-      expect(result.success?).to be true
-      expect(result.attendance.attendance_list.list_type).to eq('training')
+        expect(result.success?).to be true
+        expect(result.attendance.attendance_list.list_type).to eq('training')
+      end
     end
 
     it 'returns failure when person not found' do
