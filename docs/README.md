@@ -1,124 +1,51 @@
-# Documentation - Le Circographe
+# Documentation — Le Circographe
 
-**Date:** 2025-01-31  
-**Version:** Synthétisée et optimisée
+Index de la documentation Markdown du projet. Pour le démarrage et le déploiement, voir le [`README.md`](../README.md) à la racine.
 
----
+> Une restructuration progressive est en cours. La structure cible est décrite dans [`migrations/vocabulary_migration.md`](migrations/vocabulary_migration.md).
 
-## 📚 Guide de Navigation
+## Domaine et vocabulaire
 
-**Source de vérité:** `to-do.md` (roadmap) + `ARCHITECTURE_GUIDE.md` + `docs/ARCHITECTURE_SERVICES.md`.  
-Pour un index court et à jour, voir `knowledge/CURRENT_STATUS.md`.
+- [`glossary.md`](glossary.md) — lexique canonique FR/EN, termes interdits.
+- [`domain_model.md`](domain_model.md) — diagramme Mermaid + responsabilités des agrégats.
+- [`payments.md`](payments.md) — `Payment`, `PaymentLine`, `Donation` et la dette legacy `item_type:"Payment"`.
+- [`BUSINESS_LOGIC.md`](BUSINESS_LOGIC.md) — règles métier complètes (adhésion, cotisation, paiements).
 
-### Architecture & Design
+## Architecture
 
-1. **[ARCHITECTURE_SERVICES.md](./ARCHITECTURE_SERVICES.md)** - ⭐ **Source unique de vérité**
-   - Pattern Controller → Service → Model
-   - 44 services dans 15 domaines
-   - 21 ViewComponents actifs
-   - Tous les controllers admin utilisent des services
-   - Vérification complète de l'architecture
+- [`ARCHITECTURE_GUIDE.md`](ARCHITECTURE_GUIDE.md) — Person/User, RGPD, ViewComponents.
+- [`ARCHITECTURE_SERVICES.md`](ARCHITECTURE_SERVICES.md) — catalogue des services `People::*`.
+- [`MODEL_EVALUATION.md`](MODEL_EVALUATION.md) — audit du modèle (Person-based, score 9/10).
+- [`CONCERNS_ANALYSIS.md`](CONCERNS_ANALYSIS.md) — cartographie des 10 concerns.
+- [`ZONES_CLASSIFICATION.md`](ZONES_CLASSIFICATION.md) — priorisation tests par zone.
+- [`CONTROLLERS_AUDIT.md`](CONTROLLERS_AUDIT.md) — état des contrôleurs.
 
-2. **[CONCERNS_ANALYSIS.md](./CONCERNS_ANALYSIS.md)** - Analyse complète des concerns
-   - 10 concerns documentés
-   - Tableau récapitulatif complet (13 modèles)
-   - Plan d'action complété
+## Tests
 
-3. **[MODEL_EVALUATION.md](./MODEL_EVALUATION.md)** - Évaluation du modèle de données
-   - Score: 9/10
-   - Architecture Person-Based
-   - Points forts et améliorations
+- [`TDD_GUIDE.md`](TDD_GUIDE.md) — guide TDD complet (Red-Green-Refactor).
+- [`TESTING_GUIDE.md`](TESTING_GUIDE.md) — couverture SimpleCov, gaps, plan.
 
-**Note:** Pour les détails ViewComponents, voir `../ARCHITECTURE_GUIDE.md` à la racine.
+## Frontend, UX et design
 
-### Logique Métier
+- [`TURBO_GUIDE.md`](TURBO_GUIDE.md) — diagnostic Turbo / Frames / Streams / Importmap.
+- [`UX_GUIDE.md`](UX_GUIDE.md) — diagnostic écart back/front.
+- [`REFONTE_CIRCOGRAPHE.md`](REFONTE_CIRCOGRAPHE.md) — feuille de route refonte UX/UI.
+- [`ASSETS_LOCK.md`](ASSETS_LOCK.md) — règles Propshaft / Tailwind / Flowbite.
+- [`design/color_system.md`](design/color_system.md) — palette, tokens, accessibilité.
 
-4. **[BUSINESS_LOGIC.md](./BUSINESS_LOGIC.md)** - Règles business complètes
-   - Classification Zone 1/2/3
-   - Domaines métier (Membership, Payment, Subscription, etc.)
-   - Historique des refactorings
-   - Architecture Services
+## Operations
 
-5. **[ZONES_CLASSIFICATION.md](./ZONES_CLASSIFICATION.md)** - Classification par zones
-   - Zone 1 (Stable) - Tests immédiats
-   - Zone 2 (En cours) - Tests après stabilisation
-   - Zone 3 (Future) - Pas de tests
+- [`knowledge/DEPLOYMENT_GUIDE.md`](knowledge/DEPLOYMENT_GUIDE.md) — workflow Kamal dev → staging → prod (source de vérité).
+- [`knowledge/KNOWLEDGE_BASE.md`](knowledge/KNOWLEDGE_BASE.md) — règles or Kamal, `/up`, branches Git.
+- [`knowledge/OPTIMIZATIONS_TODO.md`](knowledge/OPTIMIZATIONS_TODO.md) — backlog optimisations.
+- [`PRODUCTION_SQLITE_DEPLOYMENT.md`](PRODUCTION_SQLITE_DEPLOYMENT.md) — alternative bare-metal (Ruby 4.0.1, SQLite, systemd).
 
-### Tests & Qualité
+## Migrations et legacy
 
-6. **[TDD_GUIDE.md](./TDD_GUIDE.md)** - Guide complet TDD
-   - Philosophie Red-Green-Refactor
-   - Configuration et setup
-   - Stratégie de tests (Invariants, Contrats, Caractérisation)
-   - Workflow TDD
-   - Outils et commandes
-   - CI/CD
+- [`migrations/vocabulary_migration.md`](migrations/vocabulary_migration.md) — plan de renommage DDD-light, phases 0 → 4.
+- [`legacy/README.md`](legacy/README.md) — documents historiques non normatifs.
+- [`rake_archive/`](rake_archive/) — Rake tasks de migration one-shot, **ne plus exécuter**.
 
-7. **[TESTING_GUIDE.md](./TESTING_GUIDE.md)** - Guide tests et couverture
-   - Pourquoi la couverture est importante
-   - Rapport SimpleCov
-   - Audit de couverture
-   - Gaps identifiés
-   - Plan d'action
+## Backlog
 
-8. **[CONTROLLERS_AUDIT.md](./CONTROLLERS_AUDIT.md)** - Audit des contrôleurs
-   - Stratégie TDD par zone
-   - Contrôleurs critiques (Zone 1)
-   - État des tests
-   - Plan d'action prioritaire
-
-### UX/UI
-
-9. **[UX_GUIDE.md](./UX_GUIDE.md)** - Guide UX/UI
-   - Problèmes critiques identifiés
-   - Procédure d'adhésion
-   - Newsletter legacy
-   - Gestion compte web
-   - Plan d'action global
-
-### Configuration
-
-10. **[ASSETS_LOCK.md](./ASSETS_LOCK.md)** - Règles asset pipeline
-    - Tailwind CSS
-    - Propshaft
-    - Vite (optionnel)
-
----
-
-## 🎯 Fichiers par Thème
-
-### Pour comprendre l'architecture
-→ `ARCHITECTURE_SERVICES.md` + `CONCERNS_ANALYSIS.md` + `MODEL_EVALUATION.md`
-
-### Pour comprendre la logique métier
-→ `BUSINESS_LOGIC.md` + `ZONES_CLASSIFICATION.md`
-
-### Pour écrire des tests
-→ `TDD_GUIDE.md` + `TESTING_GUIDE.md` + `CONTROLLERS_AUDIT.md`
-
-### Pour améliorer l'UX
-→ `UX_GUIDE.md`
-
----
-
-## 📊 Statistiques
-
-- **11 fichiers docs/** (réduit de 18 → 11, -39%)
-- **44 services** dans 15 domaines *Management
-- **21 ViewComponents** actifs
-- **2 Query Objects** (PersonQuery, PaymentQuery)
-- **10 concerns** documentés
-- **13 modèles** avec concerns
-- **19 controllers admin** (13 utilisent services, 6 sans logique métier complexe)
-
----
-
-## 🔗 Liens Croisés
-
-Tous les fichiers principaux ont une section "Documentation liée" avec des liens vers les autres fichiers pertinents.
-
----
-
-**Dernière mise à jour:** 2025-01-31  
-**Synthèse:** 2025-01-31 - Documentation optimisée, code nettoyé, architecture vérifiée
-
+- [`TODO.md`](TODO.md) — backlog dev court terme (en cours de fusion avec `to-do.md` racine).
