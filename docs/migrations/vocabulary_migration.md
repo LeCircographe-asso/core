@@ -114,7 +114,7 @@
 | --- | --- | --- | --- |
 | Phase 0 | en cours | mentionne « code actuel : `subordinate_roles`, `active_membership?` » | utilise `subordinate_roles` |
 | Phase 1 | en cours | mentionne « actuel : `item_type: "Payment"` pour les dons (legacy à retirer) » | utilise `Donation` |
-| Phase 2 | à faire | mentionne `ContributionStatusBadgeComponent` (legacy : `SubscriptionStatusBadgeComponent`) | idem |
+| Phase 2 | done | composant `ContributionStatusBadgeComponent` (legacy `SubscriptionStatusBadgeComponent` supprimé) | idem |
 | Phase 3 | à faire | mentionne `Contribution` (code actuel : `BookOfEntry`) jusqu'au merge | idem |
 | Phase 4 | à faire | toute mention legacy est supprimée | idem |
 
