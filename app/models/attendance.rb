@@ -43,18 +43,6 @@ private
   def decrement_book_of_entry
     return unless book_of_entry
 
-    # Utiliser la nouvelle méthode du modèle BookOfEntry
-    if book_of_entry.respond_to?(:use_session!)
-      book_of_entry.use_session!
-    else
-      # Ancienne logique pour compatibilité
-      if book_of_entry.remaining > 0
-        book_of_entry.update(remaining: book_of_entry.remaining - 1)
-
-        if book_of_entry.remaining <= 0
-          book_of_entry.update(status: :inactive)
-        end
-      end
-    end
+    book_of_entry.use_session!
   end
 end
