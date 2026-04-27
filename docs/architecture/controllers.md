@@ -1,7 +1,14 @@
 # Audit des Contrôleurs - Stratégie TDD
 
-**Statut actuel:** ⚠️ À revalider régulièrement (snapshot 2025-01-31).  
-**Source de vérité:** [`../internal/todo.md`](../internal/todo.md) + [`models.md`](models.md#3-classification-par-zones).
+> **Statut** : stable (snapshot daté à recouper avec le code)
+> **Public cible** : contributeur
+> **Dernière vérification** : 2026-04-27
+> **Sources de vérité** : `app/controllers/`, `config/routes.rb`, [`models.md`](models.md), [`../internal/todo.md`](../internal/todo.md).
+>
+> **À vérifier** :
+> - [ ] Recroiser la liste des contrôleurs avec `app/controllers/` après chaque ajout admin.
+
+**Statut interne:** ⚠️ À revalider régulièrement (snapshot 2025-01-31).
 
 ---
 

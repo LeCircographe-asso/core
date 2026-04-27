@@ -1,5 +1,10 @@
 # 🏗️ Guide d'Architecture - Le Circographe
 
+> **Statut** : stable
+> **Public cible** : contributeur
+> **Dernière vérification** : 2026-04-27
+> **Sources de vérité** : `app/models/person.rb`, `app/models/user.rb`, `app/components/`, `app/services/people/`.
+
 > **Vocabulaire** : les services `People::Subscription*` et le composant `subscription_status_badge_component` sont les noms actuels.
 > Vocabulaire cible : `People::Contribution*` et `contribution_status_badge_component`. Voir [`../glossary.md`](../glossary.md).
 

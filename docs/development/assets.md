@@ -1,5 +1,10 @@
 # Assets Lock (Rails 8.1 + Propshaft)
 
+> **Statut** : stable
+> **Public cible** : contributeur
+> **Dernière vérification** : 2026-04-27
+> **Sources de vérité** : `Gemfile`, `app/assets/`, `bin/dev`, `bin/rails assets:doctor`.
+
 Keep these rules to avoid breaking the asset pipeline.
 
 1) Tailwind

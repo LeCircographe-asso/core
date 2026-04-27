@@ -1,5 +1,10 @@
 # ⚡ Turbo Guide
 
+> **Statut** : stable
+> **Public cible** : contributeur
+> **Dernière vérification** : 2026-04-27
+> **Sources de vérité** : `app/javascript/controllers/`, `config/importmap.rb`, vues `app/views/**/*.html.erb`.
+
 This guide explains how Turbo works inside Le Circographe, how it collaborates with Stimulus and Importmap, and the diagnostic routines you can apply when something fails (e.g. Firefox showing an infinite loading bar).
 
 ## 1. Turbo in Le Circographe

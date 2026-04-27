@@ -1,8 +1,11 @@
 # Paiements, lignes et dons — Le Circographe
 
-> Vocabulaire utilisé : voir [glossary.md](glossary.md).
+> **Statut** : stable
+> **Public cible** : contributeur
+> **Dernière vérification** : 2026-04-27
+> **Sources de vérité** : `app/models/payment.rb`, `app/models/payment_line.rb`, `app/services/people/payment_creator.rb`.
 
-**Dernière mise à jour :** 2026-04-27
+> Vocabulaire utilisé : voir [glossary.md](glossary.md).
 
 ---
 

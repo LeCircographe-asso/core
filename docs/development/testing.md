@@ -1,5 +1,10 @@
 # Guide de tests — Le Circographe
 
+> **Statut** : stable
+> **Public cible** : contributeur
+> **Dernière vérification** : 2026-04-27
+> **Sources de vérité** : `spec/`, `bin/test`, `bin/test_fast`, `spec/rails_helper.rb`, `.rspec`.
+
 > Vocabulaire : voir [`../glossary.md`](../glossary.md). Les exemples de code peuvent encore utiliser des noms legacy (`SubscriptionPlan`, `BookOfEntry`) pendant la migration progressive vers `ContributionFormula` / `Contribution` (cf. [`../migrations/vocabulary_migration.md`](../migrations/vocabulary_migration.md)).
 
 Ce document remplace l'ancien trio `docs/TDD_GUIDE.md` + `docs/TESTING_GUIDE.md` + `docs/CHANGELOG_TDD_SETUP.md` qui s'étaient mis à diverger. Pour la priorisation par zones (Zone 1 / 2 / 3), se référer à [`../architecture/models.md`](../architecture/models.md#3-classification-par-zones).

@@ -1,9 +1,12 @@
 # Modèle de Domaine — Le Circographe
 
-> Vocabulaire utilisé : voir [glossary.md](glossary.md). Quand le code n'est pas encore aligné sur le vocabulaire cible, l'alias legacy est indiqué entre parenthèses.
+> **Statut** : stable
+> **Public cible** : contributeur
+> **Dernière vérification** : 2026-04-27
+> **Sources de vérité** : `db/schema.rb`, `app/models/person.rb`, `app/models/membership.rb`, `app/models/payment.rb`, `app/models/payment_line.rb`.
 
-**Dernière mise à jour :** 2026-04-27
-**Pattern** : Person-Based / DDD-light.
+> Vocabulaire utilisé : voir [glossary.md](glossary.md). Quand le code n'est pas encore aligné sur le vocabulaire cible, l'alias legacy est indiqué entre parenthèses.
+> **Pattern** : Person-Based / DDD-light.
 
 ---
 

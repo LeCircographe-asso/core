@@ -1,5 +1,10 @@
 # Guide de déploiement — Le Circographe
 
+> **Statut** : stable
+> **Public cible** : équipe ops, contributeur
+> **Dernière vérification** : 2026-04-27
+> **Sources de vérité** : `config/deploy.staging.yml`, `config/deploy.production.yml`, `.github/workflows/deploy-staging.yml`, `.github/workflows/deploy-production.yml`, `.github/workflows/deploy-promote-main.yml`, `Dockerfile`.
+
 > Source de vérité **unique** pour le déploiement Kamal (staging + production).
 > Fusion de l'ancien `knowledge/DEPLOYMENT_GUIDE.md` et des « règles d'or » de `knowledge/KNOWLEDGE_BASE.md`.
 > Pour un déploiement bare-metal alternatif (sans Kamal), voir [`../internal/sqlite_deployment.md`](../internal/sqlite_deployment.md).
