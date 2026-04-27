@@ -3,10 +3,6 @@ require "active_support/core_ext/integer/time"
 Rails.application.configure do
   # Settings specified here will take precedence over those in config/application.rb.
 
-  # Use the default credentials secret_key_base for production
-  # Rails will use config/credentials.yml.enc with RAILS_MASTER_KEY
-  config.secret_key_base = Rails.application.credentials.secret_key_base
-
   # Code is not reloaded between requests.
   config.enable_reloading = false
 
@@ -70,10 +66,6 @@ Rails.application.configure do
     host: "lecircographe.fr",
     protocol: "https"
   }
-
-  # TEMPORAIRE : Utiliser le mode test pour les emails en production
-  config.action_mailer.delivery_method = :test
-  config.action_mailer.perform_deliveries = true
 
   # Specify outgoing SMTP server. Remember to add smtp/* credentials via rails credentials:edit.
   # config.action_mailer.smtp_settings = {

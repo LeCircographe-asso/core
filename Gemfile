@@ -33,7 +33,6 @@ gem "solid_cable"  # Database-backed Action Cable
 
 # Pagination
 gem "pagy", "~> 6.0"  # Lightweight pagination
-gem "whenever", require: false  # Cron jobs
 
 # API and External Services
 gem "stripe"  # Payment processing
@@ -57,13 +56,11 @@ group :development, :test do
   gem "factory_bot_rails"
   gem "shoulda-matchers"  # Pour tester les validations Rails
   # gem "database_cleaner-active_record"  # Nettoyage de DB entre tests
-  # gem "rails-controller-testing"  # Tests de contrôleurs (rspec le fait déjà)
 end
 
 group :development do
   gem "web-console"  # Interactive console
-  gem "letter_opener"  # Preview emails in development
-  gem "letter_opener_web"  # Web interface for letter_opener
+  gem "letter_opener_web"  # Preview emails in browser
 end
 
 group :test do

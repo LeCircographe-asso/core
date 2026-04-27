@@ -8,7 +8,7 @@ Rails.application.configure do
   config.secret_key_base = ENV["SECRET_KEY_BASE"] || Rails.application.credentials.secret_key_base
 
   # Environnement
-  config.cache_classes = true
+  config.enable_reloading = false
   config.eager_load = true
   config.consider_all_requests_local = false
   config.public_file_server.enabled = true
@@ -26,12 +26,6 @@ Rails.application.configure do
   # Host Authorization - Allow kamal-proxy container hostnames
   # kamal-proxy uses Docker container IDs as hostnames (e.g., f4753d38178e)
   config.hosts.clear  # Allow all hosts in staging for Docker container communication
-
-  # Assets configuration
-  config.assets.compile = true  # Allow compilation during Docker build
-  config.assets.digest = true
-  # Note: In Rails 8.1, assets.paths manipulation causes frozen errors
-  # Assets paths should be configured via Propshaft
 
   # SSL configuration
   config.force_ssl = true
