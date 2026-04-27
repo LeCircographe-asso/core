@@ -141,7 +141,7 @@
 
 ### 4.3 Documentation legacy temporaire
 - `docs/rake_archive/*.rake` reçoit un encadré « LEGACY ARCHIVE » expliquant le statut.
-- `docs/knowledge/README.md` reçoit une note « Journal historique non normatif » pour différencier les anciennes notes des sources canoniques.
+- `docs/legacy/` (ex `docs/knowledge/`) reçoit son propre `README.md` expliquant que l'ensemble est un « Journal historique non normatif » à différencier des sources canoniques.
 
 ### 4.4 Vérifications manuelles
 - Liens cassés dans 8 modèles vers `domain_model_circographe.md` (inexistant) → remplacés par `docs/domain_model.md`.

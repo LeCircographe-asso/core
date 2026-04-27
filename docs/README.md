@@ -41,6 +41,8 @@ Index de la documentation Markdown du projet. Pour le démarrage et le déploiem
 
 - [`migrations/vocabulary_migration.md`](migrations/vocabulary_migration.md) — plan de renommage DDD-light, phases 0 → 4.
 - [`legacy/README.md`](legacy/README.md) — documents historiques non normatifs.
+- [`legacy/incidents/oct_2025_lessons.md`](legacy/incidents/oct_2025_lessons.md) — synthèse des incidents staging/production d'oct. 2025.
+- [`legacy/production_deployment_plan.md`](legacy/production_deployment_plan.md) — snapshot du plan de mise en prod « mode maintenance ».
 - [`rake_archive/`](rake_archive/) — Rake tasks de migration one-shot, **ne plus exécuter**.
 
 ## Backlog

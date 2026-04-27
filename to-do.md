@@ -46,7 +46,7 @@ Ordered from quick wins to long-term work. Each item can be handled incrementall
 - Add “Happy-path flows” docs (Register, Link, Membership purchase, Subscription purchase, Donation).
 - Add “Data integrity rules” checklist (no orphans, no overlap, unlimited plan rules).
 - Add “Role permissions” doc (who can offer, delete, link, anonymize).
-- Maintain `knowledge/CURRENT_STATUS.md` as the index of truth.
+- Maintain `docs/README.md` as the index of truth.
  - Keep `docs/development/testing.md` + `docs/architecture/controllers.md` revalidated against current tests.
 
 ## 4) Tests (medium -> long)
