@@ -39,7 +39,7 @@ class Admin::Users::MembershipDisplayComponent < ViewComponent::Base
     is_circus_member?
   end
 
-  def subscription_plans
-    @subscription_plans ||= SubscriptionPlan.for_circus_members
+  def contribution_formulas
+    @contribution_formulas ||= ContributionFormula.for_circus_members
   end
 end

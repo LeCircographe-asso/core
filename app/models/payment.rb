@@ -49,7 +49,7 @@ class Payment < ApplicationRecord
     # Déterminer le type de paiement basé sur les payment_lines
     if payment_lines.memberships.any?
       "Adhésion"
-    elsif payment_lines.subscription_plans.any?
+    elsif payment_lines.contribution_formulas.any?
       "Cotisation"
     elsif payment_lines.any?
       # Utiliser la description de la première ligne
@@ -80,9 +80,8 @@ class Payment < ApplicationRecord
   end
 
   def carnet_related?
-    # Vérifier si le paiement contient une cotisation Pack 10 (ContributionFormula de type pack — code actuel : SubscriptionPlan).
-    payment_lines.joins("JOIN subscription_plans ON payment_lines.item_type = 'SubscriptionPlan' AND payment_lines.item_id = subscription_plans.id")
-                 .where("subscription_plans.duration = ?", SubscriptionPlan.durations[:pack10]).exists?
+    payment_lines.joins("JOIN contribution_formulas ON payment_lines.item_type = 'SubscriptionPlan' AND payment_lines.item_id = contribution_formulas.id")
+                 .where("contribution_formulas.duration = ?", ContributionFormula.durations[:pack10]).exists?
   end
 
   # Generate a UUID for the payment

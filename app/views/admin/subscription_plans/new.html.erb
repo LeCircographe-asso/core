@@ -22,10 +22,10 @@
     <!-- Content -->
     <div class="bg-white shadow-lg rounded-lg overflow-hidden">
       <div class="p-6">
-        <% if @person&.can_buy_subscription_plans? %>
+        <% if @person&.can_buy_contribution_formulas? %>
           <!-- Plans disponibles -->
           <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
-            <% @subscription_plans.each do |subscription_plan| %>
+            <% @contribution_formulas.each do |subscription_plan| %>
               <div class="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
                 <h3 class="text-lg font-medium text-gray-900"><%= subscription_plan.name %></h3>
                 <p class="text-sm text-gray-600 mt-1"><%= subscription_plan.description %></p>

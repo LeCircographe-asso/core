@@ -14,7 +14,7 @@ class ContributionStatusBadgeComponent < ViewComponent::Base
   def badge_text
     if has_active_contributions?
       contribution = active_contribution
-      case contribution.subscription_plan.duration
+      case contribution.contribution_formula.duration
       when "pack10"
         sessions_remaining = contribution.sessions_remaining
         plural_s = (sessions_remaining > 1) ? "s" : ""
@@ -36,7 +36,7 @@ class ContributionStatusBadgeComponent < ViewComponent::Base
   def tooltip_text
     if has_active_contributions?
       contribution = active_contribution
-      case contribution.subscription_plan.duration
+      case contribution.contribution_formula.duration
       when "pack10"
         "Carnet de 10 séances"
       when "day"
@@ -65,11 +65,11 @@ class ContributionStatusBadgeComponent < ViewComponent::Base
   end
 
   def has_active_contributions?
-    person.book_of_entries.active.any?
+    person.contributions.active.any?
   end
 
   def total_sessions
-    person.book_of_entries.active.sum(&:sessions_remaining)
+    person.contributions.active.sum(&:sessions_remaining)
   end
 
   private
@@ -77,6 +77,6 @@ class ContributionStatusBadgeComponent < ViewComponent::Base
   attr_reader :person
 
   def active_contribution
-    person.book_of_entries.active.first
+    person.contributions.active.first
   end
 end

@@ -29,7 +29,7 @@ class User < ApplicationRecord
   # Relations via Person (nouvelles)
   has_many :memberships, through: :person
   has_many :payments, through: :person
-  has_many :book_of_entries, through: :person
+  has_many :contributions, through: :person
   has_many :attendances, through: :person
 
   # Délégation des attributs personnels vers Person

@@ -29,12 +29,14 @@ class PaymentLine < ApplicationRecord
       item&.duration_humanized || "Cotisation"
     when "MembershipType"
       item&.name || "Type d'adhésion"
-    when "BookOfEntry"
-      if item&.subscription_plan
-        item.subscription_plan.duration_humanized
+    when "BookOfEntry", "Contribution"
+      if item&.contribution_formula
+        item.contribution_formula.duration_humanized
       else
         "Cotisation"
       end
+    when "ContributionFormula"
+      item&.duration_humanized || "Cotisation"
     when "Donation"
       description.presence || "Donation"
     else
@@ -46,7 +48,7 @@ class PaymentLine < ApplicationRecord
 
   # Scopes
   scope :memberships, -> { where(item_type: "Membership") }
-  scope :subscription_plans, -> { where(item_type: "SubscriptionPlan") }
+  scope :contribution_formulas, -> { where(item_type: %w[SubscriptionPlan ContributionFormula]) }
   scope :membership_types, -> { where(item_type: "MembershipType") }
   scope :donations, -> { where(item_type: "Donation") }
   scope :by_item_type, ->(type) { where(item_type: type) }
@@ -61,12 +63,12 @@ class PaymentLine < ApplicationRecord
     )
   end
 
-  def self.create_for_subscription_plan!(payment, subscription_plan, amount_cents)
+  def self.create_for_contribution_formula!(payment, contribution_formula, amount_cents)
     create!(
       payment: payment,
-      item: subscription_plan,
+      item: contribution_formula,
       amount_cents: amount_cents,
-      description: "#{subscription_plan.name} (#{subscription_plan.duration})"
+      description: "#{contribution_formula.name} (#{contribution_formula.duration})"
     )
   end
 

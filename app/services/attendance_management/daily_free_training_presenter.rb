@@ -11,9 +11,9 @@ module AttendanceManagement
 
       return failure("No training list for #{target_date}") unless list
 
-      attendances = list.attendances.includes(:person, :book_of_entry)
-      pack10_sessions = attendances.select { |att| att.book_of_entry&.is_pack10? }.count
-      day_passes = attendances.select { |att| att.book_of_entry&.subscription_plan&.duration == "day" }.count
+      attendances = list.attendances.includes(:person, :contribution)
+      pack10_sessions = attendances.select { |att| att.contribution&.is_pack10? }.count
+      day_passes = attendances.select { |att| att.contribution&.contribution_formula&.duration == "day" }.count
 
       success(
         attendance_list: list,

@@ -87,23 +87,23 @@
                 <div class="flex flex-col space-y-2">
                     <div class="flex justify-between items-center">
                         <span class="text-sm text-gray-500">Carnets disponibles :</span>
-                        <% active_booklets = @user.person.book_of_entries.where(status: :active) %>
+                        <% active_booklets = @user.person.contributions.where(status: :active) %>
                         <% if active_booklets.exists? %>
                             <div class="flex flex-col space-y-1">
                                 <% active_booklets.each do |booklet| %>
                                     <div class="flex items-center">
-                                        <% if booklet.subscription_plan.duration == "pack10" %>
+                                        <% if booklet.contribution_formula.duration == "pack10" %>
                                             <% sessions_remaining = booklet.sessions_remaining.to_i %>
                                             <span class="text-sm font-medium <%= sessions_remaining > 3 ? 'text-green-600' : 
                                                 (sessions_remaining > 0 ? 'text-yellow-600' : 'text-red-600') %>">
-                                                <%= booklet.subscription_plan.name %>: <%= sessions_remaining %> séances
+                                                <%= booklet.contribution_formula.name %>: <%= sessions_remaining %> séances
                                             </span>
                                             <% if sessions_remaining <= 3 && sessions_remaining > 0 %>
                                                 <span class="ml-2 px-2 py-0.5 text-xs bg-yellow-100 text-yellow-800 rounded-full">Bientôt épuisé</span>
                                             <% end %>
                                         <% else %>
                                             <span class="text-sm font-medium text-gray-800">
-                                                <%= booklet.subscription_plan.name %> : Accès illimité
+                                                <%= booklet.contribution_formula.name %> : Accès illimité
                                             </span>
                                         <% end %>
                                     </div>
@@ -120,23 +120,23 @@
                 <div class="flex flex-col space-y-2">
                     <div class="flex justify-between items-center">
                         <span class="text-sm text-gray-500">Carnets disponibles :</span>
-                        <% active_booklets = @user.person.book_of_entries.where(status: :active) %>
+                        <% active_booklets = @user.person.contributions.where(status: :active) %>
                         <% if active_booklets.exists? %>
                             <div class="flex flex-col space-y-1">
                                 <% active_booklets.each do |booklet| %>
                                     <div class="flex items-center">
-                                        <% if booklet.subscription_plan.duration == "pack10" %>
+                                        <% if booklet.contribution_formula.duration == "pack10" %>
                                             <% sessions_remaining = booklet.sessions_remaining.to_i %>
                                             <span class="text-sm font-medium <%= sessions_remaining > 3 ? 'text-green-600' : 
                                                 (sessions_remaining > 0 ? 'text-yellow-600' : 'text-red-600') %>">
-                                                <%= booklet.subscription_plan.name %>: <%= sessions_remaining %> séances
+                                                <%= booklet.contribution_formula.name %>: <%= sessions_remaining %> séances
                                             </span>
                                             <% if sessions_remaining <= 3 && sessions_remaining > 0 %>
                                                 <span class="ml-2 px-2 py-0.5 text-xs bg-yellow-100 text-yellow-800 rounded-full">Bientôt épuisé</span>
                                             <% end %>
                                         <% else %>
                                             <span class="text-sm font-medium text-gray-800">
-                                                <%= booklet.subscription_plan.name %> : Accès illimité
+                                                <%= booklet.contribution_formula.name %> : Accès illimité
                                             </span>
                                         <% end %>
                                     </div>

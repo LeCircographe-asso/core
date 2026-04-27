@@ -9,7 +9,7 @@ RSpec.describe People::AccountMerger do
       it "transfers memberships, payments and subscriptions" do
         membership = create(:membership, person: source_person)
         payment = create(:payment, person: source_person)
-        book = create(:book_of_entry, person: source_person)
+        book = create(:contribution, person: source_person)
 
         result = described_class.new(
           source_person: source_person,

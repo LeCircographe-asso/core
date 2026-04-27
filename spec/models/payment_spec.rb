@@ -171,8 +171,8 @@ RSpec.describe Payment, type: :model do
     end
 
     it "returns 'Cotisation' when payment has subscription plan lines" do
-      subscription_plan = create(:subscription_plan)
-      create(:payment_line, payment: payment, item: subscription_plan, item_type: "SubscriptionPlan")
+      contribution_formula = create(:contribution_formula)
+      create(:payment_line, payment: payment, item: contribution_formula, item_type: "SubscriptionPlan")
 
       expect(payment.payment_type).to eq("Cotisation")
     end
@@ -285,8 +285,8 @@ RSpec.describe Payment, type: :model do
     end
 
     it "returns false when payment has no membership lines" do
-      subscription_plan = create(:subscription_plan)
-      create(:payment_line, payment: payment, item: subscription_plan, item_type: "SubscriptionPlan")
+      contribution_formula = create(:contribution_formula)
+      create(:payment_line, payment: payment, item: contribution_formula, item_type: "SubscriptionPlan")
 
       expect(payment.membership_related?).to be false
     end
@@ -298,15 +298,15 @@ RSpec.describe Payment, type: :model do
     let(:payment) { create(:payment, person: person, recorded_by: user) }
 
     it "returns true when payment has pack subscription plan lines" do
-      subscription_plan = create(:subscription_plan, :pack10)
-      create(:payment_line, payment: payment, item: subscription_plan, item_type: "SubscriptionPlan")
+      contribution_formula = create(:contribution_formula, :pack10)
+      create(:payment_line, payment: payment, item: contribution_formula, item_type: "SubscriptionPlan")
 
       expect(payment.carnet_related?).to be true
     end
 
     it "returns false when payment has no pack subscription plan lines" do
-      subscription_plan = create(:subscription_plan, :annual)
-      create(:payment_line, payment: payment, item: subscription_plan, item_type: "SubscriptionPlan")
+      contribution_formula = create(:contribution_formula, :annual)
+      create(:payment_line, payment: payment, item: contribution_formula, item_type: "SubscriptionPlan")
 
       expect(payment.carnet_related?).to be false
     end

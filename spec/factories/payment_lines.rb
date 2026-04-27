@@ -9,8 +9,8 @@ FactoryBot.define do
       association :item, factory: :membership_type
     end
 
-    trait :for_subscription_plan do
-      association :item, factory: :subscription_plan
+    trait :for_contribution_formula do
+      association :item, factory: :contribution_formula
     end
 
     trait :for_membership do

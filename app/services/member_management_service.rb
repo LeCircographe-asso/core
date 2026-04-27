@@ -146,10 +146,9 @@ class MemberManagementService
       secondary_person.attendances.update_all(person_id: primary_person.id)
       transferred_count += attendances_count
 
-      # Transférer les carnets
-      book_of_entries_count = secondary_person.book_of_entries.count
-      secondary_person.book_of_entries.update_all(person_id: primary_person.id)
-      transferred_count += book_of_entries_count
+      contributions_count = secondary_person.contributions.count
+      secondary_person.contributions.update_all(person_id: primary_person.id)
+      transferred_count += contributions_count
 
       # 3. Supprimer la Person secondaire
       secondary_person.destroy!

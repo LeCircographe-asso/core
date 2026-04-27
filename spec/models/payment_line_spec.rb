@@ -110,11 +110,11 @@ RSpec.describe PaymentLine, type: :model do
       expect(payment_line.item_type).to eq("Membership")
     end
 
-    it "belongs to a polymorphic item (subscription_plan)" do
-      subscription_plan = create(:subscription_plan)
-      payment_line = create(:payment_line, item: subscription_plan)
-      expect(payment_line.item).to eq(subscription_plan)
-      expect(payment_line.item_type).to eq("SubscriptionPlan")
+    it "belongs to a polymorphic item (contribution_formula)" do
+      contribution_formula = create(:contribution_formula)
+      payment_line = create(:payment_line, item: contribution_formula)
+      expect(payment_line.item).to eq(contribution_formula)
+      expect(payment_line.item_type).to eq("ContributionFormula")
     end
 
     it "belongs to a polymorphic item (membership_type)" do
@@ -127,7 +127,7 @@ RSpec.describe PaymentLine, type: :model do
 
   describe 'scopes' do
     let!(:membership_line) { create(:payment_line, item: create(:membership), item_type: "Membership") }
-    let!(:subscription_line) { create(:payment_line, item: create(:subscription_plan), item_type: "SubscriptionPlan") }
+    let!(:subscription_line) { create(:payment_line, item: create(:contribution_formula), item_type: "SubscriptionPlan") }
     let!(:membership_type_line) { create(:payment_line, item: create(:membership_type), item_type: "MembershipType") }
 
     it "finds membership lines" do
@@ -136,8 +136,8 @@ RSpec.describe PaymentLine, type: :model do
     end
 
     it "finds subscription plan lines" do
-      expect(PaymentLine.subscription_plans).to include(subscription_line)
-      expect(PaymentLine.subscription_plans).not_to include(membership_line, membership_type_line)
+      expect(PaymentLine.contribution_formulas).to include(subscription_line)
+      expect(PaymentLine.contribution_formulas).not_to include(membership_line, membership_type_line)
     end
 
     it "finds membership type lines" do
@@ -161,9 +161,9 @@ RSpec.describe PaymentLine, type: :model do
       expect(payment_line.item_description).to eq("Adhésion Basique")
     end
 
-    it "returns description for subscription_plan" do
-      subscription_plan = create(:subscription_plan, name: "Plan Trimestriel", duration: "trimester")
-      payment_line = create(:payment_line, item: subscription_plan)
+    it "returns description for contribution_formula" do
+      contribution_formula = create(:contribution_formula, name: "Plan Trimestriel", duration: "trimester")
+      payment_line = create(:payment_line, item: contribution_formula)
 
       expect(payment_line.item_description).to eq("Trimestriel") # duration_humanized
     end
@@ -216,16 +216,16 @@ RSpec.describe PaymentLine, type: :model do
       end
     end
 
-    describe '.create_for_subscription_plan!' do
-      it "creates payment line for subscription plan" do
-        subscription_plan = create(:subscription_plan, name: "Plan Trimestriel", duration: "trimester")
+    describe '.create_for_contribution_formula!' do
+      it "creates payment line for contribution formula" do
+        contribution_formula = create(:contribution_formula, name: "Plan Trimestriel", duration: "trimester")
 
-        payment_line = PaymentLine.create_for_subscription_plan!(payment, subscription_plan, 6000)
+        payment_line = PaymentLine.create_for_contribution_formula!(payment, contribution_formula, 6000)
 
         expect(payment_line).to be_persisted
         expect(payment_line.payment).to eq(payment)
-        expect(payment_line.item).to eq(subscription_plan)
-        expect(payment_line.item_type).to eq("SubscriptionPlan")
+        expect(payment_line.item).to eq(contribution_formula)
+        expect(payment_line.item_type).to eq("ContributionFormula")
         expect(payment_line.amount_cents).to eq(6000)
         expect(payment_line.description).to eq("Plan Trimestriel (trimester)")
       end

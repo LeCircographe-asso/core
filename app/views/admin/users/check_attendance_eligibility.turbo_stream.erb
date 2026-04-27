@@ -1,9 +1,9 @@
 <% if @person.present? %>
   <%= turbo_stream.update "attendance-frame-#{@person.id}" do %>
     <% if @result.needs_confirmation? %>
-      <%= render "admin/users/attendance_book_confirmation", 
-                 person: @person, 
-                 book_of_entry: @result.book_of_entry, 
+      <%= render "admin/users/attendance_contribution_confirmation",
+                 person: @person,
+                 contribution: @result.contribution,
                  date: @date %>
                    
     <% elsif @result.can_record_directly? %>

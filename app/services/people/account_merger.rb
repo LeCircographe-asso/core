@@ -31,7 +31,7 @@ module People
       ActiveRecord::Base.transaction do
         merge_memberships(source, target)
         merge_payments(source, target)
-        merge_subscriptions(source, target)
+        merge_contributions(source, target)
         merge_newsletter(source, target)
         merge_attributes(source, target)
 
@@ -76,8 +76,8 @@ module People
       source.payments.update_all(person_id: target.id)
     end
 
-    def merge_subscriptions(source, target)
-      source.book_of_entries.update_all(person_id: target.id)
+    def merge_contributions(source, target)
+      source.contributions.update_all(person_id: target.id)
     end
 
     def merge_newsletter(source, target)
