@@ -14,7 +14,7 @@ Ce dossier contient toute la documentation technique, les découvertes, et les p
 ## 📋 **Index des Documents**
 
 ### ✅ **Source de vérité**
-- **[CURRENT_STATUS.md](CURRENT_STATUS.md)** - Pointe vers les docs vraiment à jour
+- Voir [`docs/README.md`](../README.md) pour l'index courant.
 
 ### **🧠 Connaissance Critique**
 - **[KNOWLEDGE_BASE.md](KNOWLEDGE_BASE.md)** - Règles d'or, solutions résolues, pièges évités
