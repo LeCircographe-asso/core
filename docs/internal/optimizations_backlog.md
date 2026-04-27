@@ -1,13 +1,18 @@
 # Backlog optimisations infra & UX
 
+> **Statut** : internal
+> **Public cible** : équipe dev / ops
+> **Dernière mise à jour** : 2026-04-27
+> **Provenance** : ex-`docs/operations/optimizations_backlog.md`, déplacé dans `docs/internal/` car backlog équipe sans source de vérité code.
+>
 > **Backlog** d'améliorations infra (Docker, GitHub Actions, sécurité) et UX
 > identifiées au fil des sessions ops.
 > Les items non cochés restent à arbitrer ; pour le **plan produit** se référer
-> à `to-do.md` (racine du repo).
+> à [`todo.md`](todo.md).
 
 Les sections « Documentation » historiques renvoient à des fichiers supprimés
 ou renommés (`KNOWLEDGE_BASE.md`, `DEPLOYMENT_GUIDE.md`) — désormais consolidés
-dans [`deployment.md`](deployment.md).
+dans [`../operations/deployment.md`](../operations/deployment.md).
 
 ## ✅ Réalisé le 14/10/2025
 

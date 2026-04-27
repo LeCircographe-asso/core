@@ -611,7 +611,7 @@ Admin::UserCreationForm
     - `Web::UserRegistration` → `People::Register`
     - `MembershipManagement::MembershipCreator/Updater/Deactivator/Upgrader` → `People::Membership*`
 3. ⏳ **Prochaines priorités**
-    - Mettre à jour `docs/development/ux.md` / guides internes (nouvelle architecture People)
+    - Mettre à jour `docs/internal/ux_audit_2025_01.md` / guides internes (nouvelle architecture People)
     - ✅ Migrer seeds (`db/seeds/sample_people.rb`, `db/seeds/bulk_users.rb`, `db/seeds/add_memberships_and_payments.rb`, `db/seeds/admin.rb`) sur services People
     - ✅ Mettre à jour scripts de test (`scripts/test_person_first_refactoring.rb`, `scripts/test_all_scenarios.rb`) pour consommer `People::Register`
     - ⚠️ Documenter / refondre les scripts legacy (`scripts/fix_person_user_merge.rb`, tâches rake de migration) vers les futurs services `People::AccountLinker`

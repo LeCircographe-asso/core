@@ -1,6 +1,10 @@
 # Bare-metal SQLite deployment — Rails 8.1 + SQLite3 (VPS Linux)
 
-> **Alternative au flux Kamal** documenté dans [`deployment.md`](deployment.md).
+> **Statut** : internal (procédure alternative non testée en CI)
+> **Public cible** : équipe ops
+> **Provenance** : ex-`docs/operations/sqlite_deployment.md`, déplacé dans `docs/internal/` car non maintenu en CI ; conservé comme plan B.
+>
+> **Alternative au flux Kamal** documenté dans [`../operations/deployment.md`](../operations/deployment.md).
 > Conserver ce guide pour les cas où l'on veut déployer sans conteneurs (single VPS + systemd).
 
 This document describes a pragmatic, fast setup for deploying this Rails 8.1 app on a small VPS (e.g., IONOS Linux M) using SQLite3 in production. It focuses on performance, reliability, and simplicity.

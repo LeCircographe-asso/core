@@ -277,4 +277,4 @@ docker exec -it <container-id> bash
 
 ---
 
-**Voir aussi :** [`optimizations_backlog.md`](optimizations_backlog.md) (backlog optimisation infra/Docker) · [`sqlite_deployment.md`](sqlite_deployment.md) (alternative bare-metal sans Kamal).
+**Voir aussi :** [`../internal/optimizations_backlog.md`](../internal/optimizations_backlog.md) (backlog optimisation infra/Docker) · [`../internal/sqlite_deployment.md`](../internal/sqlite_deployment.md) (alternative bare-metal sans Kamal).

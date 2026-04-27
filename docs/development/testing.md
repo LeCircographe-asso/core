@@ -353,7 +353,7 @@ Rapport : `coverage/index.html`.
 
 ## 8. Gaps connus (snapshot 2025-01-31, à revalider)
 
-Ces listes sont un instantané et doivent être recroisées avec [`to-do.md`](../../to-do.md) et [`../architecture/models.md`](../architecture/models.md#3-classification-par-zones) avant action.
+Ces listes sont un instantané et doivent être recroisées avec [`../internal/todo.md`](../internal/todo.md) et [`../architecture/models.md`](../architecture/models.md#3-classification-par-zones) avant action.
 
 ### Models testés
 
