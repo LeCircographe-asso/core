@@ -12,6 +12,10 @@ permissions:
   actions: read
   contents: write
 
+concurrency:
+  group: deploy-promote-main-${{ github.workflow }}
+  cancel-in-progress: false
+
 jobs:
   promote:
     if: ${{ inputs.confirm_promote == 'PROMOTE' }}
