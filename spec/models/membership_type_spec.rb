@@ -89,12 +89,12 @@ RSpec.describe MembershipType, type: :model do
       expect(membership_type.memberships).to include(membership1, membership2)
     end
 
-    it "has many subscription_plans" do
+    it "has many contribution_formulas" do
       membership_type = create(:membership_type)
-      plan1 = create(:subscription_plan, membership_type: membership_type)
-      plan2 = create(:subscription_plan, membership_type: membership_type)
+      plan1 = create(:contribution_formula, membership_type: membership_type)
+      plan2 = create(:contribution_formula, membership_type: membership_type)
 
-      expect(membership_type.subscription_plans).to include(plan1, plan2)
+      expect(membership_type.contribution_formulas).to include(plan1, plan2)
     end
 
     it "belongs to created_by_user" do

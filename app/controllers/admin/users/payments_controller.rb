@@ -21,7 +21,7 @@ module Admin
         @payment = @person.payments.build
         @payment.recorded_by = Current.user
         @membership_types = MembershipType.all
-        @subscription_plans = SubscriptionPlan.all
+        @contribution_formulas = ContributionFormula.all
       end
 
     # POST /admin/users/person_1/payments
@@ -59,13 +59,13 @@ module Admin
           redirect_to admin_user_path("person_#{@person.id}"), notice: "Paiement créé avec succès"
         else
           @membership_types = MembershipType.all
-          @subscription_plans = SubscriptionPlan.all
+          @contribution_formulas = ContributionFormula.all
           flash.now[:alert] = "Erreur lors de la création du paiement: #{result.message}"
           render :new, status: :unprocessable_content
         end
       rescue => e
         @membership_types = MembershipType.all
-        @subscription_plans = SubscriptionPlan.all
+        @contribution_formulas = ContributionFormula.all
         flash.now[:alert] = "Erreur lors de la création du paiement: #{e.message}"
         render :new, status: :unprocessable_content
       end

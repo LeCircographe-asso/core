@@ -4,8 +4,8 @@ FactoryBot.define do
     association :event
     date { Date.current }
 
-    trait :with_book_of_entry do
-      association :book_of_entry
+    trait :with_contribution do
+      association :contribution
     end
 
     trait :yesterday do

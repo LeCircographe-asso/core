@@ -14,42 +14,26 @@ class Person < ApplicationRecord
   # TODO: Replace all newsletter_subscribed references with NewsletterSubscriber
   # ===================================================================
 
-  # Relations (MODIFIER dependent pour protéger données financières)
   has_one :user, dependent: :nullify
-  has_many :memberships, dependent: :restrict_with_error  # ✅ Empêcher suppression
-  has_many :payments, dependent: :restrict_with_error     # ✅ Empêcher suppression
+  has_many :memberships, dependent: :restrict_with_error
+  has_many :payments, dependent: :restrict_with_error
   has_many :attendances, dependent: :destroy
-  has_many :book_of_entries, dependent: :destroy
+  has_many :contributions, dependent: :destroy
   has_many :member_number_histories, dependent: :destroy
-  has_one :newsletter_subscriber, dependent: :destroy  # ✅ NEW: Link to NewsletterSubscriber
+  has_one :newsletter_subscriber, dependent: :destroy
 
-  # Attribut pour skip validation dans certains cas (seeds, migrations)
   attr_accessor :skip_membership_validation
 
-  # Validations
   validates :first_name, presence: true
   validates :last_name, presence: true
   validates :email, uniqueness: true, allow_blank: true
   validates :phone, uniqueness: true, allow_blank: true
   validates :member_number, uniqueness: true, allow_blank: true
 
-  # DEPRECATED: Use NewsletterSubscriber instead
-  # Validation removed - handled by NewsletterSubscriber
-
-  # Validation d'adhésion obligatoire (sauf cas spéciaux)
-  # Une Person peut exister sans adhésion (inscription de base, newsletter, prospects, etc.)
-  # L'adhésion sera ajoutée plus tard selon les besoins
-
-  # Normalisation des données (via EmailNormalizable concern)
-
-  # DEPRECATED: newsletter token generation removed (now handled by NewsletterSubscriber)
-
-  # Méthodes
   def full_name
     "#{first_name} #{last_name}"
   end
 
-  # Affiche le numéro d'adhérent de manière lisible
   def formatted_member_number
     return "Non assigné" unless member_number.present?
 
@@ -59,49 +43,40 @@ class Person < ApplicationRecord
     "#{parsed[:year]} - #{parsed[:type]} - ##{parsed[:number]}"
   end
 
-  # Retourne les détails du numéro d'adhérent
   def member_number_details
     return nil unless member_number.present?
     MemberManagementService.parse_member_number(member_number)
   end
 
-  # Retourne l'historique des numéros d'adhérent
   def member_number_history
     member_number_histories.order(:assigned_at)
   end
 
-  # Retourne le numéro d'adhérent actuel (depuis l'historique)
   def current_member_number_history
     member_number_histories.current.first
   end
 
-  # Retourne tous les numéros d'adhérent précédents
   def previous_member_numbers
     member_number_histories.historical.order(:assigned_at)
   end
 
-  # Change le numéro d'adhérent (avec historique)
   def change_member_number(new_membership_type, notes = nil)
     return false if member_number.blank?
 
-    # Normaliser le type d'adhésion
     normalized_type = case new_membership_type.to_s.upcase
     when "CIRQUE", "C"
                        "Cirque"
     when "BASIQUE", "U", "BASIC"
                        "Basique"
     else
-                       "Basique" # Par défaut
+                       "Basique"
     end
 
-    # Marquer l'ancien numéro comme remplacé
     current_history = current_member_number_history
     current_history&.mark_as_replaced!
 
-    # Générer le nouveau numéro
     new_number = MemberManagementService.generate_member_number(new_membership_type)
 
-    # Créer l'historique
     member_number_histories.create!(
       member_number: new_number,
       membership_type: normalized_type,
@@ -110,7 +85,6 @@ class Person < ApplicationRecord
       assigned_at: Time.current
     )
 
-    # Mettre à jour le numéro actuel
     self.skip_membership_validation = true
     update!(member_number: new_number)
 
@@ -129,8 +103,7 @@ class Person < ApplicationRecord
     current_membership.present?
   end
 
-  def can_buy_subscription_plans?
-    # Seuls les adhérents Circus peuvent acheter une formule de cotisation (cible : ContributionFormula).
+  def can_buy_contribution_formulas?
     return false unless current_membership
     current_membership.membership_type.circus?
   end
@@ -143,7 +116,6 @@ class Person < ApplicationRecord
     !is_minor
   end
 
-  # Scopes (active and archived are provided by SoftDeletable concern)
   scope :with_user_account, -> { joins(:user) }
   scope :without_user_account, -> { left_joins(:user).where(users: { id: nil }) }
   scope :by_name, ->(query) { where("first_name LIKE ? OR last_name LIKE ?",
@@ -153,12 +125,9 @@ class Person < ApplicationRecord
   scope :minors, -> { where(is_minor: true) }
   scope :adults, -> { where(is_minor: false) }
 
-  # Scopes pour le tableau de bord admin
   scope :with_active_membership, -> { joins(:memberships).where(memberships: { status: :active }) }
 
-  # Scope pour ne montrer que les Person "principales" (éviter les doublons)
   scope :main_people, -> {
-    # Person avec User lié OU Person unique (pas de doublon de nom)
     where(
       id: Person.joins(:user).select(:id)
     ).or(
@@ -185,30 +154,24 @@ class Person < ApplicationRecord
           "%#{query}%", "%#{query}%", "%#{query}%", "%#{query}%")
   }
 
-  # Soft delete via SoftDeletable concern
-  # Concerns
   include SoftDeletable
   include Humanizable
   include Dateable
   include EmailNormalizable
 
-  # Vérifier si la personne a des données financières
   def has_financial_data?
     payments.exists? || memberships.where(status: :active).exists?
   end
 
-  # Override archive! to add financial data check
   def archive!
     return false if has_financial_data?
-    super # Call SoftDeletable's archive!
+    super
   end
 
-  # Méthodes utilitaires pour la sécurité des fusions
   def safe_to_merge_with?(other_person)
     return false if other_person.nil?
     return false if id == other_person.id
 
-    # Si les deux ont des Users différents, fusion dangereuse
     if user.present? && other_person.user.present? && user.id != other_person.user.id
       return false
     end
@@ -217,26 +180,22 @@ class Person < ApplicationRecord
   end
 
   def can_be_claimed_by?(email_to_check)
-    return false if user.present? # Déjà lié à un User
-    return false if email.blank? # Pas d'email
-    return false if email.downcase != email_to_check.downcase # Email différent
+    return false if user.present?
+    return false if email.blank?
+    return false if email.downcase != email_to_check.downcase
     true
   end
 
-  # Méthodes métier pour la création d'adhésions
   def create_membership!(membership_type, payment_method: :cash, recorded_by:, custom_amount_cents: nil, offer_reason: nil, donation_cents: nil)
     ActiveRecord::Base.transaction do
-      # Vérifier les permissions pour les offres
       if payment_method.to_s == "offered"
         validate_offer_permissions!(recorded_by, "membership", offer_reason)
       end
 
-      # Vérifier qu'il n'y a pas d'adhésion active
       if memberships.active.current.exists?
         raise "Cette personne a déjà une adhésion active"
       end
 
-      # Créer l'adhésion
       membership = memberships.create!(
         membership_type: membership_type,
         started_at: Date.current,
@@ -244,9 +203,7 @@ class Person < ApplicationRecord
         status: :active
       )
 
-      # Générer le numéro d'adhérent si la personne n'en a pas
       if member_number.blank?
-        # Normaliser la catégorie pour la génération du numéro
         normalized_category = case membership_type.category
         when "circus"
           "CIRQUE"
@@ -259,13 +216,11 @@ class Person < ApplicationRecord
         MemberManagementService.assign_member_number(self, normalized_category) unless Rails.env.test?
       end
 
-      # Déterminer le montant selon le mode de paiement
       amount_cents = calculate_amount_cents(payment_method, membership_type.price_cents, custom_amount_cents)
       donation_cents = donation_cents.to_i if donation_cents.present?
       donation_cents = nil if donation_cents.to_i <= 0
       total_cents = amount_cents + (donation_cents || 0)
 
-      # Créer le paiement (toujours pour la traçabilité, même si montant = 0)
       description = generate_payment_description(payment_method, membership_type.name, "Membership")
       payment = payments.create!(
         total_cents: total_cents,
@@ -275,7 +230,6 @@ class Person < ApplicationRecord
         notes: "Paiement pour #{description}"
       )
 
-      # Créer la ligne de paiement
       payment.payment_lines.create!(
         item_type: "Membership",
         item_id: membership.id,
@@ -296,61 +250,54 @@ class Person < ApplicationRecord
     end
   end
 
-  # Méthodes métier pour la création de cotisations
-  def create_subscription!(subscription_plan, payment_method: :cash, recorded_by:, record_attendance: false, custom_amount_cents: nil, offer_reason: nil, donation_cents: nil)
+  def create_contribution!(contribution_formula, payment_method: :cash, recorded_by:, record_attendance: false, custom_amount_cents: nil, offer_reason: nil, donation_cents: nil)
     ActiveRecord::Base.transaction do
-      # Vérifier les permissions pour les offres
       if payment_method.to_s == "offered"
-        validate_offer_permissions!(recorded_by, "subscription", offer_reason, subscription_plan)
+        validate_offer_permissions!(recorded_by, "contribution", offer_reason, contribution_formula)
       end
 
-      # Vérifier que la personne peut acheter une cotisation (cible : ContributionFormula).
-      unless can_buy_subscription_plans?
+      unless can_buy_contribution_formulas?
         raise "Cette personne doit avoir une adhésion Cirque active pour acheter une cotisation"
       end
 
-      # Déterminer les valeurs selon le type de plan
-      sessions_remaining = case subscription_plan.duration
+      sessions_remaining = case contribution_formula.duration
       when "pack10"
-        subscription_plan.sessions_count || 10 # Par défaut 10 pour les packs
+        contribution_formula.sessions_count || 10
       when "day"
-        1 # Une journée = 1 séance
+        1
       when "trimester", "annual"
-        nil # Pas de limite de séances pour les abonnements (accès rapide à la présence)
+        nil
       else
-        subscription_plan.sessions_count || 1 # Par défaut 1 si non spécifié
+        contribution_formula.sessions_count || 1
       end
 
-      expires_at = case subscription_plan.duration
+      expires_at = case contribution_formula.duration
       when "pack10"
-        nil # Les packs10 n'expirent jamais et se réactivent avec une nouvelle adhésion
+        nil
       when "day"
-        Date.current.end_of_day # Expire à la fin de la journée achetée
+        Date.current.end_of_day
       when "trimester"
         Date.current + 90.days
       when "annual"
         Date.current + 1.year
       else
-        subscription_plan.validity_days ? Date.current + subscription_plan.validity_days.days : nil
+        contribution_formula.validity_days ? Date.current + contribution_formula.validity_days.days : nil
       end
 
-      # Créer le carnet d'entrées
-      book_of_entry = book_of_entries.create!(
-        subscription_plan: subscription_plan,
+      contribution = contributions.create!(
+        contribution_formula: contribution_formula,
         sessions_remaining: sessions_remaining,
         status: :active,
         purchased_at: Time.current,
         expires_at: expires_at
       )
 
-      # Déterminer le montant selon le mode de paiement
-      amount_cents = calculate_amount_cents(payment_method, subscription_plan.price_cents, custom_amount_cents)
+      amount_cents = calculate_amount_cents(payment_method, contribution_formula.price_cents, custom_amount_cents)
       donation_cents = donation_cents.to_i if donation_cents.present?
       donation_cents = nil if donation_cents.to_i <= 0
       total_cents = amount_cents + (donation_cents || 0)
 
-      # Créer le paiement (toujours pour la traçabilité, même si montant = 0)
-      description = generate_payment_description(payment_method, subscription_plan.name, "BookOfEntry")
+      description = generate_payment_description(payment_method, contribution_formula.name, "BookOfEntry")
       payment = payments.create!(
         total_cents: total_cents,
         payment_method: payment_method,
@@ -359,10 +306,9 @@ class Person < ApplicationRecord
         notes: "Paiement pour #{description}"
       )
 
-      # Créer la ligne de paiement
       payment.payment_lines.create!(
         item_type: "BookOfEntry",
-        item_id: book_of_entry.id,
+        item_id: contribution.id,
         amount_cents: amount_cents,
         description: description
       )
@@ -376,69 +322,57 @@ class Person < ApplicationRecord
         )
       end
 
-      # Enregistrer la présence si demandé
       if record_attendance
-        # Logique pour enregistrer la présence
-        # À implémenter selon les besoins
+        # Logique de présence — implémentation à compléter selon les besoins.
       end
 
-      { book_of_entry: book_of_entry, payment: payment }
+      { contribution: contribution, payment: payment }
     end
   end
 
-  # Méthode métier pour les upgrades de cotisation avec prorata
-  def upgrade_subscription!(from_book_id:, to_plan_id:, payment_method: :cash, recorded_by:)
+  def upgrade_contribution!(from_contribution_id:, to_formula_id:, payment_method: :cash, recorded_by:)
     ActiveRecord::Base.transaction do
-      # Vérifier adhésion Circus active
-      raise "Adhésion Cirque active requise" unless can_buy_subscription_plans?
+      raise "Adhésion Cirque active requise" unless can_buy_contribution_formulas?
 
-      from_book = book_of_entries.find(from_book_id)
-      to_plan = SubscriptionPlan.find(to_plan_id)
+      from_contribution = contributions.find(from_contribution_id)
+      to_formula = ContributionFormula.find(to_formula_id)
 
-      # Validation upgrades autorisés
-      validate_subscription_upgrade!(from_book, to_plan)
+      validate_contribution_upgrade!(from_contribution, to_formula)
 
-      # Calculer crédit du plan actuel
-      credit_cents = calculate_subscription_credit(from_book)
+      credit_cents = calculate_contribution_credit(from_contribution)
 
-      # Suspendre ancien plan
-      from_book.suspend!(reason: "Upgrade vers #{to_plan.name}")
+      from_contribution.suspend!(reason: "Upgrade vers #{to_formula.name}")
 
-      # Créer nouveau plan
-      new_book_result = create_subscription!(to_plan, payment_method: payment_method, recorded_by: recorded_by)
+      new_result = create_contribution!(to_formula, payment_method: payment_method, recorded_by: recorded_by)
 
-      # Calculer montant à payer (prix nouveau - crédit ancien)
-      amount_to_pay = [ to_plan.price_cents - credit_cents, 0 ].max
+      amount_to_pay = [ to_formula.price_cents - credit_cents, 0 ].max
 
-      # Créer paiement upgrade avec crédit
       payment = payments.create!(
         total_cents: amount_to_pay,
         payment_method: payment_method,
         status: :success,
         recorded_by: recorded_by,
-        notes: "Upgrade cotisation: #{from_book.subscription_plan.name} → #{to_plan.name}. Crédit: #{credit_cents/100.0}€"
+        notes: "Upgrade cotisation: #{from_contribution.contribution_formula.name} → #{to_formula.name}. Crédit: #{credit_cents/100.0}€"
       )
 
       payment.payment_lines.create!(
         item_type: "BookOfEntry",
-        item_id: new_book_result[:book_of_entry].id,
+        item_id: new_result[:contribution].id,
         amount_cents: amount_to_pay,
         description: "Upgrade avec crédit prorata"
       )
 
       {
-        old_book: from_book,
-        new_book: new_book_result[:book_of_entry],
+        old_contribution: from_contribution,
+        new_contribution: new_result[:contribution],
         payment: payment,
         credit_applied: credit_cents
       }
     end
   end
 
-  # Méthodes métier pour la création de donations
   def create_donation!(amount_cents, payment_method: :cash, recorded_by:, notes: "Donation")
     ActiveRecord::Base.transaction do
-      # Créer le paiement
       payment = payments.create!(
         total_cents: amount_cents,
         payment_method: payment_method,
@@ -458,32 +392,24 @@ class Person < ApplicationRecord
     end
   end
 
-  # Méthode métier pour les upgrades d'adhésion
   def upgrade_membership!(new_membership_type, payment_method: :cash, recorded_by:, custom_amount_cents: nil, offer_reason: nil, donation_cents: nil)
     ActiveRecord::Base.transaction do
-      # Vérifier qu'il y a une adhésion active
       current_membership = self.current_membership
       raise "Aucune adhésion active à upgrader" unless current_membership
 
-      # Vérifier les permissions pour les offres
       if payment_method.to_s == "offered"
         validate_offer_permissions!(recorded_by, "membership_upgrade", offer_reason)
       end
 
-      # Sauvegarder l'ancienne adhésion
       old_membership_type = current_membership.membership_type
 
-      # CHANGEMENT: Plein tarif du nouveau type, pas de différence
       amount_to_pay = new_membership_type.price_cents
 
-      # Effectuer l'upgrade
       new_membership = current_membership.upgrade_to!(new_membership_type)
 
-      # Changer automatiquement le numéro d'adhérent si nécessaire
       old_member_number = member_number
       new_member_number = handle_member_number_change!(old_membership_type, new_membership_type, recorded_by)
 
-      # Paiement plein tarif
       payment = create_payment_with_line!(
         amount_cents: amount_to_pay,
         payment_method: payment_method,
@@ -504,26 +430,20 @@ class Person < ApplicationRecord
     end
   end
 
-  # Méthode métier pour les renouvellements d'adhésion
   def renew_membership!(membership_type, payment_method: :cash, recorded_by:, custom_amount_cents: nil, offer_reason: nil)
     ActiveRecord::Base.transaction do
-      # Vérifier adhésion expirée
       current = self.current_membership
       if current&.active?
         raise "Adhésion encore active jusqu'au #{current.ended_at}. Renouvellement impossible."
       end
 
-      # Marquer ancienne adhésion comme expired
       current&.update!(status: :expired) if current
 
-      # Créer nouvelle adhésion
       result = create_membership!(membership_type, payment_method: payment_method, recorded_by: recorded_by, custom_amount_cents: custom_amount_cents, offer_reason: offer_reason)
 
-      # NOUVEAU NUMÉRO D'ADHÉRENT À CHAQUE RENOUVELLEMENT
       old_number = member_number
       new_number = MemberManagementService.generate_member_number(get_membership_type_code(membership_type))
 
-      # Historique changement
       create_member_number_change_history!(
         old_member_number: old_number,
         new_member_number: new_number,
@@ -544,35 +464,27 @@ class Person < ApplicationRecord
 
   private
 
-  # Gérer le changement automatique de numéro d'adhérent lors d'un upgrade
   def handle_member_number_change!(old_membership_type, new_membership_type, recorded_by)
-    # Déterminer si un changement de numéro est nécessaire
     old_type_code = get_membership_type_code(old_membership_type)
     new_type_code = get_membership_type_code(new_membership_type)
 
-    # Si le type de numéro change, générer un nouveau numéro
     if old_type_code != new_type_code
-      # Générer le nouveau numéro selon le type d'adhésion
       new_member_number = MemberManagementService.generate_member_number(new_type_code)
 
-      # Créer l'historique du changement
       create_member_number_change_history!(old_member_number: member_number,
                                          new_member_number: new_member_number,
                                          old_type: old_type_code,
                                          new_type: new_type_code,
                                          recorded_by: recorded_by)
 
-      # Mettre à jour le numéro actuel
       update!(member_number: new_member_number)
 
       new_member_number
     else
-      # Pas de changement nécessaire, retourner le numéro actuel
       member_number
     end
   end
 
-  # Obtenir le code de type d'adhésion pour la génération de numéro
   def get_membership_type_code(membership_type)
     case membership_type.category
     when "circus"
@@ -580,11 +492,10 @@ class Person < ApplicationRecord
     when "basic"
       "BASIQUE"
     else
-      "BASIQUE" # Par défaut
+      "BASIQUE"
     end
   end
 
-  # Obtenir le nom de type d'adhésion pour l'historique
   def get_membership_type_name(membership_type)
     case membership_type.category
     when "circus"
@@ -592,23 +503,19 @@ class Person < ApplicationRecord
     when "basic"
       "Basique"
     else
-      "Basique" # Par défaut
+      "Basique"
     end
   end
 
-  # Créer l'historique du changement de numéro d'adhérent
   def create_member_number_change_history!(old_member_number:, new_member_number:, old_type:, new_type:, recorded_by:)
-    # Marquer l'ancien numéro comme remplacé
     if old_member_number.present?
       old_history = member_number_histories.where(member_number: old_member_number, replaced_at: nil).first
       old_history&.mark_as_replaced!
     end
 
-    # Convertir les codes en noms pour l'historique
     old_type_name = old_type == "CIRQUE" ? "Cirque" : "Basique"
     new_type_name = new_type == "CIRQUE" ? "Cirque" : "Basique"
 
-    # Créer l'historique pour le nouveau numéro
     member_number_histories.create!(
       member_number: new_member_number,
       membership_type: new_type_name,
@@ -618,7 +525,6 @@ class Person < ApplicationRecord
     )
   end
 
-  # Calculer le montant selon le mode de paiement
   def calculate_amount_cents(payment_method, base_price_cents, custom_amount_cents = nil)
     case payment_method.to_s
     when "offered"
@@ -628,7 +534,6 @@ class Person < ApplicationRecord
     end
   end
 
-  # Générer la description d'un paiement
   def generate_payment_description(payment_method, item_name, item_type)
     case payment_method.to_s
     when "offered"
@@ -648,36 +553,28 @@ class Person < ApplicationRecord
     end
   end
 
-
-  # Validation des permissions pour les offres
-  def validate_offer_permissions!(recorded_by, offer_type, offer_reason, subscription_plan = nil)
-    # Vérifier que l'utilisateur a les permissions
+  def validate_offer_permissions!(recorded_by, offer_type, offer_reason, contribution_formula = nil)
     unless recorded_by.super_admin? || recorded_by.admin? || recorded_by.volunteer?
       raise "Seuls les bénévoles, admins et super-admins peuvent offrir des #{offer_type}s"
     end
 
-    # Vérifier que la raison est fournie
     if offer_reason.blank?
       raise "Une raison doit être fournie pour offrir une #{offer_type}"
     end
 
-    # Restrictions spécifiques pour les bénévoles
     if recorded_by.volunteer?
-      if offer_type == "subscription" && subscription_plan&.duration != "day"
+      if offer_type == "contribution" && contribution_formula&.duration != "day"
         raise "Les bénévoles ne peuvent offrir que des cotisations 'journée'"
       end
     end
 
-    # Enregistrer l'audit trail
-    create_offer_audit_log!(recorded_by, offer_type, offer_reason, subscription_plan)
+    create_offer_audit_log!(recorded_by, offer_type, offer_reason, contribution_formula)
   end
 
-  # Créer un log d'audit pour les offres
-  def create_offer_audit_log!(recorded_by, offer_type, offer_reason, subscription_plan = nil)
+  def create_offer_audit_log!(recorded_by, offer_type, offer_reason, contribution_formula = nil)
     Rails.logger.info "OFFER AUDIT: #{recorded_by.email} offered #{offer_type} to #{full_name} (#{id}) - Reason: #{offer_reason}"
   end
 
-  # Méthode utilitaire pour créer un paiement avec sa ligne
   def create_payment_with_line!(amount_cents:, payment_method:, recorded_by:, item_type:, item_id:, description:, donation_cents: nil)
     donation_cents = donation_cents.to_i if donation_cents.present?
     donation_cents = nil if donation_cents.to_i <= 0
@@ -710,14 +607,10 @@ class Person < ApplicationRecord
     payment
   end
 
-  # Validation des upgrades de cotisations autorisés
-  def validate_subscription_upgrade!(from_book, to_plan)
-    from_duration = from_book.subscription_plan.duration
-    to_duration = to_plan.duration
+  def validate_contribution_upgrade!(from_contribution, to_formula)
+    from_duration = from_contribution.contribution_formula.duration
+    to_duration = to_formula.duration
 
-    # Pack10 → Trimestre/Année OK
-    # Trimestre → Année OK
-    # Day interdit
     valid_upgrades = {
       "pack10" => [ "trimester", "annual" ],
       "trimester" => [ "annual" ]
@@ -727,30 +620,27 @@ class Person < ApplicationRecord
     raise "Upgrade #{from_duration} → #{to_duration} non autorisé" unless allowed&.include?(to_duration)
   end
 
-  # Calculer le crédit prorata pour upgrade cotisation
-  def calculate_subscription_credit(book_of_entry)
-    plan = book_of_entry.subscription_plan
+  def calculate_contribution_credit(contribution)
+    formula = contribution.contribution_formula
 
-    case plan.duration
+    case formula.duration
     when "pack10"
-      # Pas de crédit, suspension seulement (selon 11.c)
       0
     when "trimester"
-      # Prorata temporel (jours restants)
       total_days = 90
-      days_remaining = ((book_of_entry.expires_at.to_date - Date.current).to_i)
-      (plan.price_cents * days_remaining / total_days.to_f).round
+      days_remaining = ((contribution.expires_at.to_date - Date.current).to_i)
+      (formula.price_cents * days_remaining / total_days.to_f).round
     when "annual"
-      # Prorata temporel (jours restants)
       total_days = 365
-      days_remaining = ((book_of_entry.expires_at.to_date - Date.current).to_i)
-      (plan.price_cents * days_remaining / total_days.to_f).round
+      days_remaining = ((contribution.expires_at.to_date - Date.current).to_i)
+      (formula.price_cents * days_remaining / total_days.to_f).round
     else
       0
     end
   end
 
-  # Méthodes pour les statistiques et la traçabilité
+  public
+
   def offered_payments_count
     payments.where(payment_method: "offered").count
   end
@@ -773,13 +663,12 @@ class Person < ApplicationRecord
             .count
   end
 
-  def subscription_purchases_count
+  def contribution_purchases_count
     payments.joins(:payment_lines)
             .where(payment_lines: { item_type: "BookOfEntry" })
             .count
   end
 
-  # Méthodes de classe pour les statistiques globales
   def self.total_offered_payments
     joins(:payments).where(payments: { payment_method: "offered" }).count
   end
@@ -807,17 +696,14 @@ class Person < ApplicationRecord
       .count
   end
 
-  # normalize_email maintenant dans EmailNormalizable concern
-
   def must_have_active_membership
-    return if new_record? # Skip à la création
+    return if new_record?
     return if memberships.active.any?
-    return if skip_membership_validation # Skip si explicitement demandé
+    return if skip_membership_validation
 
     errors.add(:base, "Une adhésion active est obligatoire")
   end
 
-  # Read-only helper to check newsletter status from NewsletterSubscriber
   def newsletter_subscribed?
     return false unless email.present?
 
@@ -825,6 +711,5 @@ class Person < ApplicationRecord
     subscriber&.subscribed? || false
   end
 
-  # Make newsletter_subscribed? public (AR makes bool methods private)
   public :newsletter_subscribed?
 end

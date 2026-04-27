@@ -1,5 +1,5 @@
 FactoryBot.define do
-  factory :subscription_plan do
+  factory :contribution_formula do
     association :membership_type
     sequence(:name) { |n| "Test Plan #{n}" }
     duration { :day }

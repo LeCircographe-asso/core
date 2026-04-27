@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_04_27_084000) do
+ActiveRecord::Schema[8.1].define(version: 2026_04_27_085953) do
   create_table "account_claims", force: :cascade do |t|
     t.string "confirmation_token", null: false
     t.datetime "created_at", null: false
@@ -75,7 +75,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_27_084000) do
 
   create_table "attendances", force: :cascade do |t|
     t.integer "attendance_list_id"
-    t.integer "book_of_entry_id"
+    t.integer "contribution_id"
     t.datetime "created_at", null: false
     t.date "date", null: false
     t.bigint "event_id"
@@ -94,24 +94,47 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_27_084000) do
     t.datetime "updated_at", null: false
   end
 
-  create_table "book_of_entries", force: :cascade do |t|
+  create_table "contribution_formulas", force: :cascade do |t|
+    t.text "change_reason"
+    t.datetime "created_at", null: false
+    t.integer "created_by_user_id"
+    t.text "description"
+    t.integer "duration", null: false
+    t.date "effective_from"
+    t.date "effective_until"
+    t.bigint "membership_type_id", null: false
+    t.string "name", null: false
+    t.integer "price_cents", null: false
+    t.integer "sessions_count"
+    t.datetime "updated_at", null: false
+    t.integer "validity_days"
+    t.integer "version", default: 1, null: false
+    t.index ["created_by_user_id"], name: "index_contribution_formulas_on_created_by_user_id"
+    t.index ["duration"], name: "index_contribution_formulas_on_duration"
+    t.index ["effective_from", "effective_until"], name: "idx_contribution_formulas_effective_period"
+    t.index ["membership_type_id", "duration"], name: "idx_contribution_formulas_type_duration"
+    t.index ["membership_type_id"], name: "index_contribution_formulas_on_membership_type_id"
+    t.index ["name", "version"], name: "idx_contribution_formulas_name_version", unique: true
+  end
+
+  create_table "contributions", force: :cascade do |t|
+    t.bigint "contribution_formula_id", null: false
     t.datetime "created_at", null: false
     t.datetime "expires_at"
     t.bigint "person_id", null: false
     t.datetime "purchased_at", null: false
     t.integer "sessions_remaining"
     t.integer "status", default: 0, null: false
-    t.bigint "subscription_plan_id", null: false
     t.datetime "suspended_at"
     t.text "suspended_reason"
     t.datetime "updated_at", null: false
-    t.index ["expires_at"], name: "index_book_of_entries_on_expires_at"
-    t.index ["person_id", "status", "expires_at"], name: "idx_boe_person_status_exp"
-    t.index ["person_id", "status"], name: "index_book_of_entries_on_person_id_and_status"
-    t.index ["person_id"], name: "index_book_of_entries_on_person_id"
-    t.index ["purchased_at", "expires_at"], name: "index_book_of_entries_on_purchased_at_and_expires_at"
-    t.index ["status"], name: "index_book_of_entries_on_status"
-    t.index ["subscription_plan_id"], name: "index_book_of_entries_on_subscription_plan_id"
+    t.index ["contribution_formula_id"], name: "index_contributions_on_contribution_formula_id"
+    t.index ["expires_at"], name: "index_contributions_on_expires_at"
+    t.index ["person_id", "status", "expires_at"], name: "idx_contributions_person_status_exp"
+    t.index ["person_id", "status"], name: "index_contributions_on_person_id_and_status"
+    t.index ["person_id"], name: "index_contributions_on_person_id"
+    t.index ["purchased_at", "expires_at"], name: "index_contributions_on_purchased_at_and_expires_at"
+    t.index ["status"], name: "index_contributions_on_status"
   end
 
   create_table "event_attendees", force: :cascade do |t|
@@ -312,29 +335,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_27_084000) do
     t.index ["user_id"], name: "index_sessions_on_user_id"
   end
 
-  create_table "subscription_plans", force: :cascade do |t|
-    t.text "change_reason"
-    t.datetime "created_at", null: false
-    t.integer "created_by_user_id"
-    t.text "description"
-    t.integer "duration", null: false
-    t.date "effective_from"
-    t.date "effective_until"
-    t.bigint "membership_type_id", null: false
-    t.string "name", null: false
-    t.integer "price_cents", null: false
-    t.integer "sessions_count"
-    t.datetime "updated_at", null: false
-    t.integer "validity_days"
-    t.integer "version", default: 1, null: false
-    t.index ["created_by_user_id"], name: "index_subscription_plans_on_created_by_user_id"
-    t.index ["duration"], name: "index_subscription_plans_on_duration"
-    t.index ["effective_from", "effective_until"], name: "idx_subscription_plans_effective_period"
-    t.index ["membership_type_id", "duration"], name: "idx_sub_plans_type_duration"
-    t.index ["membership_type_id"], name: "index_subscription_plans_on_membership_type_id"
-    t.index ["name", "version"], name: "idx_subscription_plans_name_version", unique: true
-  end
-
   create_table "tag_blogs", force: :cascade do |t|
     t.bigint "blog_id", null: false
     t.datetime "created_at", null: false
@@ -375,8 +375,10 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_27_084000) do
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "attendances", "events"
   add_foreign_key "attendances", "people"
-  add_foreign_key "book_of_entries", "people"
-  add_foreign_key "book_of_entries", "subscription_plans"
+  add_foreign_key "contribution_formulas", "membership_types"
+  add_foreign_key "contribution_formulas", "users", column: "created_by_user_id"
+  add_foreign_key "contributions", "contribution_formulas"
+  add_foreign_key "contributions", "people"
   add_foreign_key "event_attendees", "events"
   add_foreign_key "event_attendees", "payments"
   add_foreign_key "event_attendees", "users"
@@ -392,8 +394,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_27_084000) do
   add_foreign_key "payments", "people"
   add_foreign_key "payments", "users", column: "recorded_by_id"
   add_foreign_key "sessions", "users"
-  add_foreign_key "subscription_plans", "membership_types"
-  add_foreign_key "subscription_plans", "users", column: "created_by_user_id"
   add_foreign_key "tag_blogs", "blogs"
   add_foreign_key "tag_blogs", "tags"
   add_foreign_key "users", "people"

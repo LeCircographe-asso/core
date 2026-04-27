@@ -1,16 +1,16 @@
 require "ostruct"
 
 module People
-  class SubscriptionCreator
+  class ContributionCreator
     include ActiveModel::Model
     include ActiveModel::Attributes
 
-    Result = Struct.new(:success?, :book_of_entry, :payment, :errors, :message, keyword_init: true)
+    Result = Struct.new(:success?, :contribution, :payment, :errors, :message, keyword_init: true)
 
     attr_accessor :person
 
     attribute :person_id, :integer
-    attribute :subscription_plan_id, :integer
+    attribute :contribution_formula_id, :integer
     attribute :payment_method, :string, default: "cash"
     attribute :recorded_by_id, :integer
     attribute :record_attendance, :boolean, default: false
@@ -18,7 +18,7 @@ module People
     attribute :offer_reason, :string
     attribute :donation_cents, :integer
 
-    validates :subscription_plan_id, presence: true
+    validates :contribution_formula_id, presence: true
     validates :payment_method, presence: true, inclusion: { in: %w[cash card cheque transfer offered pending] }
     validate :person_present
     validate :recorded_by_present
@@ -27,11 +27,11 @@ module People
       return failure("Invalid data: #{errors.full_messages.join(', ')}") unless valid?
 
       target_person = resolve_person
-      subscription_plan = SubscriptionPlan.find(subscription_plan_id)
+      contribution_formula = ContributionFormula.find(contribution_formula_id)
       recorded_by = resolve_recorded_by
 
-      result = target_person.create_subscription!(
-        subscription_plan,
+      result = target_person.create_contribution!(
+        contribution_formula,
         payment_method: payment_method.to_sym,
         recorded_by: recorded_by,
         record_attendance: record_attendance,
@@ -40,20 +40,20 @@ module People
         donation_cents: donation_cents
       )
 
-      instrument_subscription_created(target_person, subscription_plan, recorded_by, result[:book_of_entry], result[:payment])
+      instrument_contribution_created(target_person, contribution_formula, recorded_by, result[:contribution], result[:payment])
 
       success(
-        book_of_entry: result[:book_of_entry],
+        contribution: result[:contribution],
         payment: result[:payment],
-        message: "Subscription created successfully"
+        message: "Contribution created successfully"
       )
     rescue ActiveRecord::RecordNotFound => e
-      ActiveSupport::Notifications.instrument("subscription.failed", error: e.message, reason: "record_not_found")
+      ActiveSupport::Notifications.instrument("contribution.failed", error: e.message, reason: "record_not_found")
       failure("Record not found: #{e.message}")
     rescue => e
-      Rails.logger.error("[People::SubscriptionCreator] #{e.class}: #{e.message}\n#{e.backtrace.take(5).join("\n")}")
-      ActiveSupport::Notifications.instrument("subscription.failed", error: e.message, reason: "exception")
-      failure("Error creating subscription: #{e.message}")
+      Rails.logger.error("[People::ContributionCreator] #{e.class}: #{e.message}\n#{e.backtrace.take(5).join("\n")}")
+      ActiveSupport::Notifications.instrument("contribution.failed", error: e.message, reason: "exception")
+      failure("Error creating contribution: #{e.message}")
     end
 
     private
@@ -75,24 +75,24 @@ module People
       end
     end
 
-    def instrument_subscription_created(person, subscription_plan, recorded_by, book_of_entry, payment)
+    def instrument_contribution_created(person, contribution_formula, recorded_by, contribution, payment)
       ActiveSupport::Notifications.instrument(
-        "subscription.created",
+        "contribution.created",
         person_id: person.id,
-        book_of_entry_id: book_of_entry.id,
-        subscription_plan: subscription_plan.name,
+        contribution_id: contribution.id,
+        contribution_formula: contribution_formula.name,
         payment_method: payment_method,
         recorded_by_id: recorded_by.id,
         amount_cents: payment.total_cents
       )
     end
 
-    def success(book_of_entry:, payment:, message:)
-      Result.new(success?: true, book_of_entry: book_of_entry, payment: payment, errors: [], message: message)
+    def success(contribution:, payment:, message:)
+      Result.new(success?: true, contribution: contribution, payment: payment, errors: [], message: message)
     end
 
     def failure(message, errors = nil)
-      Result.new(success?: false, book_of_entry: nil, payment: nil, errors: Array(errors || message), message: message)
+      Result.new(success?: false, contribution: nil, payment: nil, errors: Array(errors || message), message: message)
     end
 
     def person_present

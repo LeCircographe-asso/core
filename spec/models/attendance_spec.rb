@@ -4,13 +4,13 @@ RSpec.describe Attendance, type: :model do
   let(:person) { create(:person) }
   let(:event) { create(:event) }
   let(:circus_membership_type) { create(:membership_type, category: :circus) }
-  let(:pack10_plan) { create(:subscription_plan, :pack10, membership_type: circus_membership_type) }
+  let(:pack10_plan) { create(:contribution_formula, :pack10, membership_type: circus_membership_type) }
 
   describe "associations" do
     it { should belong_to(:person) }
     it { should belong_to(:event).optional }
     it { should belong_to(:attendance_list).optional }
-    it { should belong_to(:book_of_entry).optional }
+    it { should belong_to(:contribution).optional }
   end
 
   describe "validations" do
@@ -146,43 +146,43 @@ RSpec.describe Attendance, type: :model do
       end
     end
 
-    describe "#decrement_book_of_entry" do
-      context "with attendance_list and book_of_entry" do
-        let!(:book_of_entry) do
+    describe "#decrement_contribution" do
+      context "with attendance_list and contribution" do
+        let!(:contribution) do
           person.current_membership || create(:membership, person: person, membership_type: circus_membership_type)
-          create(:book_of_entry, person: person, subscription_plan: pack10_plan, sessions_remaining: 5)
+          create(:contribution, person: person, contribution_formula: pack10_plan, sessions_remaining: 5)
         end
         let(:attendance_list) { create(:attendance_list) }
 
-        it "decrements book_of_entry sessions when attendance created" do
-          attendance = create(:attendance, person: person, attendance_list: attendance_list, book_of_entry: book_of_entry, event: nil)
+        it "decrements contribution sessions when attendance created" do
+          attendance = create(:attendance, person: person, attendance_list: attendance_list, contribution: contribution, event: nil)
 
-          book_of_entry.reload
-          expect(book_of_entry.sessions_remaining).to eq(4)
+          contribution.reload
+          expect(contribution.sessions_remaining).to eq(4)
         end
 
         it "calls use_session! method" do
-          allow(book_of_entry).to receive(:use_session!).and_return(true)
+          allow(contribution).to receive(:use_session!).and_return(true)
 
-          create(:attendance, person: person, attendance_list: attendance_list, book_of_entry: book_of_entry, event: nil)
+          create(:attendance, person: person, attendance_list: attendance_list, contribution: contribution, event: nil)
 
-          expect(book_of_entry).to have_received(:use_session!)
+          expect(contribution).to have_received(:use_session!)
         end
 
         it "does not decrement if attendance_list is nil" do
-          book_of_entry = create(:book_of_entry, person: person, subscription_plan: pack10_plan, sessions_remaining: 5)
+          contribution = create(:contribution, person: person, contribution_formula: pack10_plan, sessions_remaining: 5)
 
-          create(:attendance, person: person, event: event, book_of_entry: book_of_entry)
+          create(:attendance, person: person, event: event, contribution: contribution)
 
-          book_of_entry.reload
-          expect(book_of_entry.sessions_remaining).to eq(5)
+          contribution.reload
+          expect(contribution.sessions_remaining).to eq(5)
         end
       end
 
-      context "without book_of_entry" do
+      context "without contribution" do
         it "creates attendance successfully" do
           attendance_list = create(:attendance_list)
-          attendance = build(:attendance, person: person, attendance_list: attendance_list, book_of_entry: nil, event: nil)
+          attendance = build(:attendance, person: person, attendance_list: attendance_list, contribution: nil, event: nil)
 
           expect { attendance.save! }.not_to raise_error
         end

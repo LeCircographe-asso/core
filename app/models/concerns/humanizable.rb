@@ -49,8 +49,7 @@ module Humanizable
     end
   end
 
-  # Humanization des durées de cotisation (ContributionFormula — code actuel : SubscriptionPlan).
-  def subscription_duration_humanized
+  def contribution_duration_humanized
     case duration
     when "day" then "Journée"
     when "trimester" then "Trimestriel"
@@ -60,9 +59,8 @@ module Humanizable
     end
   end
 
-  # Alias pour compatibilité
   def duration_humanized
-    subscription_duration_humanized
+    contribution_duration_humanized
   end
 
   # Méthodes de classe pour les humanizations
@@ -106,7 +104,7 @@ module Humanizable
       end
     end
 
-    def humanize_subscription_duration(duration)
+    def humanize_contribution_duration(duration)
       case duration.to_s
       when "day" then "Journée"
       when "trimester" then "Trimestriel"

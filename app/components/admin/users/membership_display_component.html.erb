@@ -28,25 +28,24 @@
     <% end %>
   </div>
 
-  <!-- Active Subscriptions - Simplified -->
-  <% if person.book_of_entries&.active&.any? %>
+  <% if person.contributions&.active&.any? %>
     <div class="bg-white rounded-lg border border-gray-200 p-4">
       <h3 class="text-lg font-semibold text-gray-900 mb-3">Cotisations Actives</h3>
       <div class="space-y-2">
-        <% person.book_of_entries.active.each do |book| %>
+        <% person.contributions.active.each do |contribution| %>
           <div class="flex items-center justify-between py-2 px-3 bg-gray-50 rounded-md">
             <div class="text-sm">
-              <span class="font-medium text-gray-900"><%= book.subscription_plan.name %></span>
-              <% if book.subscription_plan.duration == "pack10" %>
+              <span class="font-medium text-gray-900"><%= contribution.contribution_formula.name %></span>
+              <% if contribution.contribution_formula.duration == "pack10" %>
                 <span class="text-gray-500 ml-2">
-                  <% sessions_remaining = book.sessions_remaining.to_i %>
+                  <% sessions_remaining = contribution.sessions_remaining.to_i %>
                   <%= sessions_remaining %> séance<%= 's' if sessions_remaining > 1 %> restante<%= 's' if sessions_remaining > 1 %>
                 </span>
               <% end %>
             </div>
-            <% if book.expires_at %>
+            <% if contribution.expires_at %>
               <div class="text-xs text-gray-500">
-                Expire le <%= book.expires_at.strftime("%d/%m/%Y") %>
+                Expire le <%= contribution.expires_at.strftime("%d/%m/%Y") %>
               </div>
             <% end %>
           </div>

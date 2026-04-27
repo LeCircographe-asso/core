@@ -47,7 +47,7 @@ module Admin
         person_id: attendance_params[:person_id],
         event_id: attendance_params[:event_id],
         attendance_list_id: attendance_params[:attendance_list_id],
-        book_of_entry_id: attendance_params[:book_of_entry_id],
+        contribution_id: attendance_params[:contribution_id],
         date: attendance_params[:date]
       )
 
@@ -85,7 +85,10 @@ module Admin
     end
 
     def attendance_params
-      params.require(:attendance).permit(:person_id, :event_id, :date, :book_of_entry_id, :attendance_list_id, :notes)
+      params.require(:attendance).permit(:person_id, :event_id, :date, :contribution_id, :attendance_list_id, :notes).tap do |permitted|
+        legacy = params[:attendance][:book_of_entry_id]
+        permitted[:contribution_id] ||= legacy if legacy.present?
+      end
     end
   end
 end

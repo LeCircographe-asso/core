@@ -1,7 +1,7 @@
 module AttendanceManagement
   class CheckInService < BaseService
     attribute :person_id, :integer
-    attribute :book_of_entry_id, :integer
+    attribute :contribution_id, :integer
     attribute :attendance_list_date, :date
     attribute :attendance_list_id, :integer
 
@@ -9,13 +9,13 @@ module AttendanceManagement
 
     def call
       person = Person.find(person_id)
-      book = find_book_of_entry(person)
+      contribution = find_contribution(person)
 
       list = find_or_create_attendance_list
       creator = AttendanceCreator.new(
         person_id: person.id,
         attendance_list_id: list.id,
-        book_of_entry_id: book&.id,
+        contribution_id: contribution&.id,
         date: list.start_date.to_date
       )
 
@@ -29,15 +29,15 @@ module AttendanceManagement
 
     private
 
-    def find_book_of_entry(person)
-      return BookOfEntry.find(book_of_entry_id) if book_of_entry_id.present?
+    def find_contribution(person)
+      return Contribution.find(contribution_id) if contribution_id.present?
 
-      person.book_of_entries
+      person.contributions
             .active
-            .joins(:subscription_plan)
-            .where(subscription_plans: { duration: %w[pack10 day trimester annual] })
+            .joins(:contribution_formula)
+            .where(contribution_formulas: { duration: %w[pack10 day trimester annual] })
             .usable
-            .order("subscription_plans.duration DESC")
+            .order("contribution_formulas.duration DESC")
             .first
     end
 

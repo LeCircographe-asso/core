@@ -96,9 +96,9 @@ RSpec.describe Person, type: :model do
 
     it "can have book of entries" do
       person = create(:person)
-      book_of_entry = create(:book_of_entry, person: person)
+      contribution = create(:contribution, person: person)
 
-      expect(person.book_of_entries).to include(book_of_entry)
+      expect(person.contributions).to include(contribution)
     end
 
     it "can have member number histories" do
@@ -247,20 +247,20 @@ RSpec.describe Person, type: :model do
     end
   end
 
-  describe '#can_buy_subscription_plans?' do
+  describe '#can_buy_contribution_formulas?' do
     it "returns true for circus members" do
       person = create(:person, :with_circus_membership)
-      expect(person.can_buy_subscription_plans?).to be true
+      expect(person.can_buy_contribution_formulas?).to be true
     end
 
     it "returns false for basic members" do
       person = create(:person, :with_basic_membership)
-      expect(person.can_buy_subscription_plans?).to be false
+      expect(person.can_buy_contribution_formulas?).to be false
     end
 
     it "returns false when no active membership" do
       person = create(:person, :without_membership)
-      expect(person.can_buy_subscription_plans?).to be false
+      expect(person.can_buy_contribution_formulas?).to be false
     end
   end
 
@@ -306,53 +306,53 @@ RSpec.describe Person, type: :model do
     end
   end
 
-  describe '#upgrade_subscription!' do
+  describe '#upgrade_contribution!' do
     let(:person) { create(:person, :with_circus_membership) }
-    let(:pack10_plan) { create(:subscription_plan, :pack10) }
-    let(:trimester_plan) { create(:subscription_plan, :trimester) }
-    let(:annual_plan) { create(:subscription_plan, :annual) }
+    let(:pack10_plan) { create(:contribution_formula, :pack10) }
+    let(:trimester_plan) { create(:contribution_formula, :trimester) }
+    let(:annual_plan) { create(:contribution_formula, :annual) }
     let(:admin_user) { create(:user, system_role: :admin) }
-    let!(:book) { create(:book_of_entry, person: person, subscription_plan: pack10_plan, status: :active) }
+    let!(:book) { create(:contribution, person: person, contribution_formula: pack10_plan, status: :active) }
 
     it "upgrades pack10 to trimester with suspension" do
-      result = person.upgrade_subscription!(
-        from_book_id: book.id,
-        to_plan_id: trimester_plan.id,
+      result = person.upgrade_contribution!(
+        from_contribution_id: book.id,
+        to_formula_id: trimester_plan.id,
         payment_method: :cash,
         recorded_by: admin_user
       )
 
-      expect(result[:old_book].reload.status).to eq('suspended')
-      expect(result[:new_book]).to be_persisted
+      expect(result[:old_contribution].reload.status).to eq('suspended')
+      expect(result[:new_contribution]).to be_persisted
       expect(result[:payment]).to be_persisted
       expect(result[:credit_applied]).to eq(0) # Pack10 no credit
     end
 
     it "upgrades trimester to annual with prorata" do
-      trimester_book = create(:book_of_entry, person: person, subscription_plan: trimester_plan,
+      trimester_book = create(:contribution, person: person, contribution_formula: trimester_plan,
                             status: :active, expires_at: Date.current + 30.days, sessions_remaining: nil)
 
-      result = person.upgrade_subscription!(
-        from_book_id: trimester_book.id,
-        to_plan_id: annual_plan.id,
+      result = person.upgrade_contribution!(
+        from_contribution_id: trimester_book.id,
+        to_formula_id: annual_plan.id,
         payment_method: :cash,
         recorded_by: admin_user
       )
 
-      expect(result[:old_book].reload.status).to eq('suspended')
-      expect(result[:new_book]).to be_persisted
+      expect(result[:old_contribution].reload.status).to eq('suspended')
+      expect(result[:new_contribution]).to be_persisted
       expect(result[:payment]).to be_persisted
       expect(result[:credit_applied]).to be > 0 # Prorata credit
     end
 
     it "raises error if no circus membership" do
       basic_person = create(:person, :with_basic_membership)
-      basic_book = create(:book_of_entry, person: basic_person, subscription_plan: pack10_plan)
+      basic_book = create(:contribution, person: basic_person, contribution_formula: pack10_plan)
 
       expect {
-        basic_person.upgrade_subscription!(
-          from_book_id: basic_book.id,
-          to_plan_id: trimester_plan.id,
+        basic_person.upgrade_contribution!(
+          from_contribution_id: basic_book.id,
+          to_formula_id: trimester_plan.id,
           payment_method: :cash,
           recorded_by: admin_user
         )
@@ -361,9 +361,9 @@ RSpec.describe Person, type: :model do
 
     it "raises error for invalid upgrade path" do
       expect {
-        person.upgrade_subscription!(
-          from_book_id: book.id,
-          to_plan_id: pack10_plan.id, # Can't upgrade to same type
+        person.upgrade_contribution!(
+          from_contribution_id: book.id,
+          to_formula_id: pack10_plan.id, # Can't upgrade to same type
           payment_method: :cash,
           recorded_by: admin_user
         )
