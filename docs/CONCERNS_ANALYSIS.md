@@ -132,7 +132,7 @@
 
 ## 📚 Documentation liée
 
-- **Architecture Services:** `docs/ARCHITECTURE_SERVICES.md` - Pattern Controller → Service → Model
-- **Logique Métier:** `docs/BUSINESS_LOGIC.md` - Règles business complètes par domaine
-- **Audit Controllers:** `docs/CONTROLLERS_AUDIT.md` - État des tests et stratégie TDD
+- **Architecture Services:** `docs/architecture/services.md` - Pattern Controller → Service → Model
+- **Logique Métier:** `docs/domain/business_logic.md` - Règles business complètes par domaine
+- **Audit Controllers:** `docs/architecture/controllers.md` - État des tests et stratégie TDD
 

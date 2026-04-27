@@ -13,7 +13,7 @@
 - **Zone 2 (En cours)** - Logique temporaire/exploration → Tests après stabilisation
 - **Zone 3 (Future)** - Non implémenté → Pas de tests
 
-**Voir `docs/ZONES_CLASSIFICATION.md` pour détails complets.**
+**Voir [`../ZONES_CLASSIFICATION.md`](../ZONES_CLASSIFICATION.md) pour détails complets.**
 
 ### Stratégie Backend - Logique Métier Immuable
 
@@ -28,7 +28,7 @@
 3. **Zone 3: Logique Future (À Définir)** - Non implémenté → Documentation seulement
 
 **Workflow:**
-1. Documenter la logique métier dans `docs/BUSINESS_LOGIC.md`
+1. Documenter la logique métier dans `docs/domain/business_logic.md`
 2. Classifier le code par zone
 3. Tester Zone 1 immédiatement
 4. Attendre stabilisation pour Zone 2
@@ -190,7 +190,7 @@ enum system_role: [:super_admin, :admin, :volunteer, :web_visitor]
 
 ## 4. ContributionFormula (Formules de cotisation)
 
-> **Vocabulaire** : « formule de cotisation » = `ContributionFormula`. **Code actuel : `SubscriptionPlan`** (rename planifié, voir [migrations/vocabulary_migration.md](migrations/vocabulary_migration.md), phase `phase3-model-rename`).
+> **Vocabulaire** : « formule de cotisation » = `ContributionFormula`. **Code actuel : `SubscriptionPlan`** (rename planifié, voir [`../migrations/vocabulary_migration.md`](../migrations/vocabulary_migration.md), phase `phase3-model-rename`).
 >
 > Ne pas employer « plan d'abonnement » ni « subscription » dans la doc / UI — ces termes sont réservés à la newsletter.
 
@@ -232,7 +232,7 @@ enum duration: {
 
 ## 5. Contribution (Cotisations)
 
-> **Vocabulaire** : « cotisation » = `Contribution`. **Code actuel : `BookOfEntry`** (rename planifié, voir [migrations/vocabulary_migration.md](migrations/vocabulary_migration.md), phase `phase3-model-rename`).
+> **Vocabulaire** : « cotisation » = `Contribution`. **Code actuel : `BookOfEntry`** (rename planifié, voir [`../migrations/vocabulary_migration.md`](../migrations/vocabulary_migration.md), phase `phase3-model-rename`).
 >
 > Le terme « carnet d'entrées » reste légitime quand on désigne explicitement le sous-type Pack 10. Pour parler du concept général, utiliser « cotisation ».
 

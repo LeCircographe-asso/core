@@ -9,16 +9,16 @@ Index de la documentation Markdown du projet. Pour le démarrage et le déploiem
 - [`glossary.md`](glossary.md) — lexique canonique FR/EN, termes interdits.
 - [`domain_model.md`](domain_model.md) — diagramme Mermaid + responsabilités des agrégats.
 - [`payments.md`](payments.md) — `Payment`, `PaymentLine`, `Donation` et la dette legacy `item_type:"Payment"`.
-- [`BUSINESS_LOGIC.md`](BUSINESS_LOGIC.md) — règles métier complètes (adhésion, cotisation, paiements).
+- [`domain/business_logic.md`](domain/business_logic.md) — règles métier complètes (adhésion, cotisation, paiements).
 
 ## Architecture
 
-- [`ARCHITECTURE_GUIDE.md`](ARCHITECTURE_GUIDE.md) — Person/User, RGPD, ViewComponents.
-- [`ARCHITECTURE_SERVICES.md`](ARCHITECTURE_SERVICES.md) — catalogue des services `People::*`.
+- [`architecture/overview.md`](architecture/overview.md) — Person/User, RGPD, ViewComponents.
+- [`architecture/services.md`](architecture/services.md) — catalogue des services `People::*`.
 - [`MODEL_EVALUATION.md`](MODEL_EVALUATION.md) — audit du modèle (Person-based, score 9/10).
 - [`CONCERNS_ANALYSIS.md`](CONCERNS_ANALYSIS.md) — cartographie des 10 concerns.
 - [`ZONES_CLASSIFICATION.md`](ZONES_CLASSIFICATION.md) — priorisation tests par zone.
-- [`CONTROLLERS_AUDIT.md`](CONTROLLERS_AUDIT.md) — état des contrôleurs.
+- [`architecture/controllers.md`](architecture/controllers.md) — état des contrôleurs.
 
 ## Tests
 

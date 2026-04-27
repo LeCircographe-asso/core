@@ -47,7 +47,7 @@ Ordered from quick wins to long-term work. Each item can be handled incrementall
 - Add “Data integrity rules” checklist (no orphans, no overlap, unlimited plan rules).
 - Add “Role permissions” doc (who can offer, delete, link, anonymize).
 - Maintain `knowledge/CURRENT_STATUS.md` as the index of truth.
- - Keep `docs/TESTING_GUIDE.md` + `docs/CONTROLLERS_AUDIT.md` revalidated against current tests.
+ - Keep `docs/TESTING_GUIDE.md` + `docs/architecture/controllers.md` revalidated against current tests.
 
 ## 4) Tests (medium -> long)
 - Service specs: Register, AccountLinker, MembershipCreator, SubscriptionCreator.

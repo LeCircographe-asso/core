@@ -321,7 +321,7 @@ end
 
 ## 📚 Documentation liée
 
-- **Architecture Services:** `docs/ARCHITECTURE_SERVICES.md` - Services utilisés
-- **Logique Métier:** `docs/BUSINESS_LOGIC.md` - Règles business
+- **Architecture Services:** `docs/architecture/services.md` - Services utilisés
+- **Logique Métier:** `docs/domain/business_logic.md` - Règles business
 - **TDD Guide:** `docs/TDD_GUIDE.md` - Tests et qualité
 

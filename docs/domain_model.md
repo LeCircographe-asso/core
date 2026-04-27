@@ -224,5 +224,5 @@ sequenceDiagram
 - [glossary.md](glossary.md) — vocabulaire canonique.
 - [payments.md](payments.md) — détail Payment / PaymentLine / Donation.
 - [migrations/vocabulary_migration.md](migrations/vocabulary_migration.md) — mapping ancien → nouveau.
-- [BUSINESS_LOGIC.md](BUSINESS_LOGIC.md) — règles métier complètes.
-- [ARCHITECTURE_SERVICES.md](ARCHITECTURE_SERVICES.md) — services `People::*` et orchestrateurs.
+- [domain/business_logic.md](domain/business_logic.md) — règles métier complètes.
+- [architecture/services.md](architecture/services.md) — services `People::*` et orchestrateurs.

@@ -175,5 +175,5 @@ Trace toute opération sur `Payment` :
 - [glossary.md](glossary.md) — vocabulaire canonique.
 - [domain_model.md](domain_model.md) — modèle de domaine et cycles de vie.
 - [migrations/vocabulary_migration.md](migrations/vocabulary_migration.md) — plan de migration.
-- [BUSINESS_LOGIC.md](BUSINESS_LOGIC.md) — règles métier détaillées.
-- [ARCHITECTURE_SERVICES.md](ARCHITECTURE_SERVICES.md) — services orchestrateurs.
+- [domain/business_logic.md](domain/business_logic.md) — règles métier détaillées.
+- [architecture/services.md](architecture/services.md) — services orchestrateurs.

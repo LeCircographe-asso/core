@@ -1,7 +1,7 @@
 # 🏗️ Guide d'Architecture - Le Circographe
 
 > **Vocabulaire** : les services `People::Subscription*` et le composant `subscription_status_badge_component` sont les noms actuels.
-> Vocabulaire cible : `People::Contribution*` et `contribution_status_badge_component`. Voir [glossary.md](glossary.md).
+> Vocabulaire cible : `People::Contribution*` et `contribution_status_badge_component`. Voir [`../glossary.md`](../glossary.md).
 
 ## 📋 Vue d'Ensemble
 
