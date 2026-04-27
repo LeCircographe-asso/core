@@ -38,13 +38,7 @@ Rails.application.configure do
   config.action_mailer.perform_caching = false
   config.action_mailer.perform_deliveries = true
 
-  # Configure letter_opener for email preview in development
-  # config.action_mailer.delivery_method = :letter_opener
-  # config.action_mailer.perform_deliveries = true
-
-  # TEMPORAIRE : Utiliser le mode test pour les emails
-  config.action_mailer.delivery_method = :test
-  config.action_mailer.perform_deliveries = true
+  config.action_mailer.delivery_method = :letter_opener_web
 
   # Set localhost to be used by links generated in mailer templates.
   config.action_mailer.default_url_options = { host: "localhost", port: 3000 }
