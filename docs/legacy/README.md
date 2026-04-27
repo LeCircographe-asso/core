@@ -1,5 +1,10 @@
 # Legacy — documentation non normative
 
+> **Statut** : legacy
+> **Public cible** : équipe (consultation occasionnelle)
+> **Dernière vérification** : 2026-04-27
+> **Sources de vérité** : aucune (snapshots datés, non recroisés au code).
+
 Ce dossier regroupe des documents historiques qui ne sont **plus la source de vérité** du projet. Ils sont conservés pour traçabilité, pas pour être consultés au quotidien.
 
 ## Règles de lecture

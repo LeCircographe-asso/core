@@ -1,11 +1,15 @@
 # Synthèse incidents staging/production — Octobre 2025
 
+> **Statut** : legacy (snapshot daté 11–12 oct. 2025)
+> **Public cible** : équipe ops (compréhension historique)
+> **Dernière vérification** : 2026-04-27 (statut, pas le contenu)
+> **Sources de vérité actuelles** : [`../../operations/deployment.md`](../../operations/deployment.md).
+>
 > Document **non normatif**. Synthèse de 7 archives historiques
 > (`SESSION_LOG_2025-10-12`, `DEPLOYMENT_ANALYSIS`, `PERFORMANCE_REPORT`,
 > `ANALYSIS_SUMMARY`, `DEPLOIEMENT`, `DEPLOIEMENT_RAPIDE`, `NEXT_STEPS`)
 > condensées en leçons réutilisables.
 >
-> Pour les procédures **actives**, voir [`../../operations/deployment.md`](../../operations/deployment.md).
 > Ce fichier ne sert qu'à comprendre le **pourquoi** des règles d'or et garder une trace
 > des arbitrages historiques.
 
