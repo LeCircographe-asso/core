@@ -47,7 +47,7 @@ RSpec.describe People::PaymentCreator do
 
         expect(result.success?).to be(true)
         line = result.payment.payment_lines.first
-        expect(line.item_type).to eq("Payment")
+        expect(line.item_type).to eq("Donation")
         expect(line.item_id).to eq(result.payment.id)
         expect(line.description).to eq("Test donation")
       end

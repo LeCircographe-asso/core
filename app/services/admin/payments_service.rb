@@ -64,7 +64,7 @@ module Admin
       @filtered_payments
         .where(status: :success)
         .joins(:payment_lines)
-        .where("LOWER(payment_lines.description) LIKE ? OR payment_lines.item_type = ?", "%don%", "Donation")
+        .where(payment_lines: { item_type: "Donation" })
         .sum("payment_lines.amount_cents")
     end
 

@@ -3,7 +3,7 @@ class PaymentLine < ApplicationRecord
 
   # Relations
   belongs_to :payment
-  belongs_to :item, polymorphic: true
+  belongs_to :item, polymorphic: true, optional: true
 
   # Validations
   validates :amount_cents, presence: true, numericality: { greater_than_or_equal_to: 0 }
@@ -26,8 +26,8 @@ class PaymentLine < ApplicationRecord
       else
         "Cotisation"
       end
-    when "Payment"
-      description.presence || "Paiement"
+    when "Donation"
+      description.presence || "Donation"
     else
       item_type.humanize
     end
@@ -39,6 +39,7 @@ class PaymentLine < ApplicationRecord
   scope :memberships, -> { where(item_type: "Membership") }
   scope :subscription_plans, -> { where(item_type: "SubscriptionPlan") }
   scope :membership_types, -> { where(item_type: "MembershipType") }
+  scope :donations, -> { where(item_type: "Donation") }
   scope :by_item_type, ->(type) { where(item_type: type) }
 
   # Méthodes de classe pour créer des lignes de paiement

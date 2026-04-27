@@ -89,10 +89,8 @@ module People
       line_item_type = item_type.presence || "Donation"
       line_description = description.presence || default_description_for(line_item_type)
 
-      resolved_item_type = donation_line?(line_item_type) ? "Payment" : line_item_type
-
       payment.payment_lines.create!(
-        item_type: resolved_item_type,
+        item_type: line_item_type,
         item_id: donation_line?(line_item_type) ? payment.id : item_id,
         amount_cents: line_amount,
         description: line_description
