@@ -1,7 +1,7 @@
 # 🚀 Plan de Déploiement Production - Mode Maintenance
 
 **Statut actuel:** ⚠️ Historique (snapshot 2025-10-12).  
-**Source de vérité:** `knowledge/DEPLOYMENT_GUIDE.md`.
+**Source de vérité :** [`../operations/deployment.md`](../operations/deployment.md).
 
 ---
 

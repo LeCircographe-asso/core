@@ -1,4 +1,7 @@
-## Production deployment guide — Rails 8.1 + SQLite3 (VPS Linux)
+# Bare-metal SQLite deployment — Rails 8.1 + SQLite3 (VPS Linux)
+
+> **Alternative au flux Kamal** documenté dans [`deployment.md`](deployment.md).
+> Conserver ce guide pour les cas où l'on veut déployer sans conteneurs (single VPS + systemd).
 
 This document describes a pragmatic, fast setup for deploying this Rails 8.1 app on a small VPS (e.g., IONOS Linux M) using SQLite3 in production. It focuses on performance, reliability, and simplicity.
 
@@ -22,8 +25,8 @@ git clone https://github.com/rbenv/ruby-build.git ~/.rbenv/plugins/ruby-build
 cd /var/www/app # or the chosen path
 git clone <YOUR_REPO_URL> core
 cd core
-rbenv install 3.3.5
-rbenv local 3.3.5
+rbenv install 4.0.1
+rbenv local 4.0.1
 ruby -v
 gem install bundler
 bundle install --without development test

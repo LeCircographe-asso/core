@@ -33,10 +33,9 @@ Index de la documentation Markdown du projet. Pour le démarrage et le déploiem
 
 ## Operations
 
-- [`knowledge/DEPLOYMENT_GUIDE.md`](knowledge/DEPLOYMENT_GUIDE.md) — workflow Kamal dev → staging → prod (source de vérité).
-- [`knowledge/KNOWLEDGE_BASE.md`](knowledge/KNOWLEDGE_BASE.md) — règles or Kamal, `/up`, branches Git.
-- [`knowledge/OPTIMIZATIONS_TODO.md`](knowledge/OPTIMIZATIONS_TODO.md) — backlog optimisations.
-- [`PRODUCTION_SQLITE_DEPLOYMENT.md`](PRODUCTION_SQLITE_DEPLOYMENT.md) — alternative bare-metal (Ruby 4.0.1, SQLite, systemd).
+- [`operations/deployment.md`](operations/deployment.md) — workflow Kamal dev → staging → prod + règles d'or et troubleshooting (source de vérité).
+- [`operations/optimizations_backlog.md`](operations/optimizations_backlog.md) — backlog optimisations infra/Docker/CI.
+- [`operations/sqlite_deployment.md`](operations/sqlite_deployment.md) — alternative bare-metal (Ruby 4.0.1, SQLite, systemd).
 
 ## Migrations et legacy
 
