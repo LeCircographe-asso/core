@@ -1,14 +1,14 @@
 # Classification Zones - Le Circographe
 
 **Date:** 2025-01-27
-**Base:** `docs/BUSINESS_LOGIC.md`
+**Base:** `docs/domain/business_logic.md`
 
 > **Vocabulaire** : `SubscriptionPlan` est le nom de classe actuel ; vocabulaire cible : `ContributionFormula`. `BookOfEntry` → `Contribution`. Voir [glossary.md](glossary.md).
 
 ---
 
 **Statut actuel:** ⚠️ Snapshot 2025-01-27 — à revalider régulièrement.  
-**Source de vérité:** `to-do.md` (priorités), `docs/BUSINESS_LOGIC.md` (règles), `docs/ARCHITECTURE_SERVICES.md` (services).
+**Source de vérité:** `to-do.md` (priorités), `docs/domain/business_logic.md` (règles), `docs/architecture/services.md` (services).
 
 ---
 

@@ -130,8 +130,8 @@
 - Création des nouvelles documents : `glossary.md`, `domain_model.md`, `payments.md`, `migrations/vocabulary_migration.md`.
 - Réécriture du `README.md` (court, lien glossaire, versions à jour).
 - Réécriture de `db/seeds.rb`, `db/seeds/subscription_plans.rb`, `db/seeds/membership_types.rb` (logs et bandeaux français).
-- Réécriture des sections 4 et 5 de `docs/BUSINESS_LOGIC.md`.
-- MAJ de `docs/ARCHITECTURE_SERVICES.md`.
+- Réécriture des sections 4 et 5 de `docs/domain/business_logic.md`.
+- MAJ de `docs/architecture/services.md`.
 - Alignement de `MODEL_EVALUATION`, `CONCERNS_ANALYSIS`, `ZONES_CLASSIFICATION`, `UX_GUIDE`, `TODO`, `ARCHITECTURE_GUIDE`.
 
 ### 4.2 Corrections à faire avec les migrations futures
@@ -174,5 +174,5 @@ end
 - [../glossary.md](../glossary.md) — vocabulaire canonique.
 - [../domain_model.md](../domain_model.md) — modèle de domaine.
 - [../payments.md](../payments.md) — paiements et dons.
-- [../BUSINESS_LOGIC.md](../BUSINESS_LOGIC.md) — règles métier.
-- [../ARCHITECTURE_SERVICES.md](../ARCHITECTURE_SERVICES.md) — services.
+- [../domain/business_logic.md](../domain/business_logic.md) — règles métier.
+- [../architecture/services.md](../architecture/services.md) — services.

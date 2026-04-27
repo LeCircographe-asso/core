@@ -206,7 +206,7 @@ end
 **Si dans 6 mois tu changes cette règle métier:**
 1. Le test va échouer
 2. Tu DECIDES: Est-ce une régression ou une nouvelle feature?
-3. Si nouvelle feature → Mettre à jour BUSINESS_LOGIC.md + Test
+3. Si nouvelle feature → Mettre à jour `docs/domain/business_logic.md` + Test
 4. Si régression → Rejeter le changement
 
 ### Classification par Zones
@@ -233,7 +233,7 @@ Voir `docs/ZONES_CLASSIFICATION.md` pour détails.
 ### Scénario 2: Nouvelle Règle Métier Ajoutée
 
 ```
-1. Documenter la règle dans BUSINESS_LOGIC.md
+1. Documenter la règle dans `docs/domain/business_logic.md`
 2. Écrire test pour la règle (RED)
 3. Implémenter la logique (GREEN)
 4. Refactor
@@ -493,9 +493,9 @@ Le rapport est généré dans: `coverage/index.html`
 
 ## 📚 Documentation liée
 
-- **Architecture Services:** `docs/ARCHITECTURE_SERVICES.md` - Pattern Controller → Service → Model
-- **Logique Métier:** `docs/BUSINESS_LOGIC.md` - Règles business complètes
-- **Audit Controllers:** `docs/CONTROLLERS_AUDIT.md` - État des tests et stratégie
+- **Architecture Services:** `docs/architecture/services.md` - Pattern Controller → Service → Model
+- **Logique Métier:** `docs/domain/business_logic.md` - Règles business complètes
+- **Audit Controllers:** `docs/architecture/controllers.md` - État des tests et stratégie
 - **Zones Classification:** `docs/ZONES_CLASSIFICATION.md` - Classification Zone 1/2/3
 
 

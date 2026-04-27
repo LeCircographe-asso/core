@@ -1,13 +1,13 @@
 # Audit des Contrôleurs - Stratégie TDD
 
 **Statut actuel:** ⚠️ À revalider régulièrement (snapshot 2025-01-31).  
-**Source de vérité:** `to-do.md` + `docs/ZONES_CLASSIFICATION.md`.
+**Source de vérité:** `to-do.md` + [`../ZONES_CLASSIFICATION.md`](../ZONES_CLASSIFICATION.md).
 
 ---
 
 **Date:** 2025-01-31  
 **Objectif:** Audit complet des contrôleurs pour préparer l'implémentation de tests TDD  
-**Base:** Classification Zones (`docs/ZONES_CLASSIFICATION.md`)
+**Base:** Classification Zones ([`../ZONES_CLASSIFICATION.md`](../ZONES_CLASSIFICATION.md))
 
 ---
 
@@ -19,7 +19,7 @@
 **Zone 2 (En cours):** 10 contrôleurs  
 **Zone 3 (Non prioritaire):** 15 contrôleurs
 
-**Architecture actuelle (2025-01):** ✅ Tous les controllers admin utilisent des services (voir `docs/ARCHITECTURE_SERVICES.md`)
+**Architecture actuelle (2025-01):** ✅ Tous les controllers admin utilisent des services (voir [`services.md`](services.md))
 
 ---
 
@@ -562,8 +562,7 @@ end
 ## ✅ Checklist Démarrage
 
 ### Avant de Commencer
-- [ ] Lire `docs/TEST_STRATEGY_UNSTABLE_LOGIC.md`
-- [ ] Lire `docs/BUSINESS_LOGIC.md` (Zone 1)
+- [ ] Lire `docs/domain/business_logic.md` (Zone 1)
 - [ ] Comprendre architecture Person-Based
 - [ ] Setup helpers request spec
 - [ ] Créer factories nécessaires
@@ -581,10 +580,8 @@ end
 
 ## 📚 Références
 
-- **Business Logic:** `docs/BUSINESS_LOGIC.md`
-- **Zones Classification:** `docs/ZONES_CLASSIFICATION.md`
-- **Test Strategy:** `docs/TEST_STRATEGY_UNSTABLE_LOGIC.md`
-- **TDD Approach:** `docs/TDD_REALISTIC_APPROACH.md`
+- **Business Logic:** [`../domain/business_logic.md`](../domain/business_logic.md)
+- **Zones Classification:** [`../ZONES_CLASSIFICATION.md`](../ZONES_CLASSIFICATION.md)
 
 ---
 

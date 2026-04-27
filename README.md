@@ -84,8 +84,8 @@ Scripts utilitaires :
 L'index complet de la documentation se trouve dans [`docs/README.md`](docs/README.md). Points d'entrée recommandés :
 
 - [`docs/glossary.md`](docs/glossary.md) — vocabulaire canonique.
-- [`docs/BUSINESS_LOGIC.md`](docs/BUSINESS_LOGIC.md) — règles métier.
-- [`docs/ARCHITECTURE_SERVICES.md`](docs/ARCHITECTURE_SERVICES.md) — catalogue des services.
+- [`docs/domain/business_logic.md`](docs/domain/business_logic.md) — règles métier.
+- [`docs/architecture/services.md`](docs/architecture/services.md) — catalogue des services.
 - [`docs/TDD_GUIDE.md`](docs/TDD_GUIDE.md) — guide TDD.
 - [`docs/knowledge/DEPLOYMENT_GUIDE.md`](docs/knowledge/DEPLOYMENT_GUIDE.md) — déploiement Kamal.
 

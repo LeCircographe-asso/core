@@ -233,5 +233,5 @@ Référence actuelle: `to-do.md` (tests prioritaires) + `docs/ZONES_CLASSIFICATI
 ## 📚 Documentation liée
 
 - **TDD Guide:** `docs/TDD_GUIDE.md` - Workflow TDD complet
-- **Audit Controllers:** `docs/CONTROLLERS_AUDIT.md` - État des tests controllers
+- **Audit Controllers:** `docs/architecture/controllers.md` - État des tests controllers
 - **Zones Classification:** `docs/ZONES_CLASSIFICATION.md` - Classification Zone 1/2/3

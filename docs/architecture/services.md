@@ -43,7 +43,7 @@ Cette séparation “Entity / Account” garantit :
 
 ### ✅ People::Contribution* (Stable — vocabulaire cible)
 
-> **Vocabulaire** : services « cotisation » = `People::Contribution*`. **Code actuel : `People::Subscription*`** (rename planifié, voir [migrations/vocabulary_migration.md](migrations/vocabulary_migration.md), phase `phase3-model-rename`).
+> **Vocabulaire** : services « cotisation » = `People::Contribution*`. **Code actuel : `People::Subscription*`** (rename planifié, voir [`../migrations/vocabulary_migration.md`](../migrations/vocabulary_migration.md), phase `phase3-model-rename`).
 
 - `People::SubscriptionCreator` (cible : `People::ContributionCreator`) — création de cotisations.
 - `People::SubscriptionUpgrader` (cible : `People::ContributionUpgrader`) — upgrade / prorata Trimestre → Annuel.
@@ -64,7 +64,7 @@ Cette séparation “Entity / Account” garantit :
 
 **Donations — état actuel et cible**
 - **Cible** : une donation est une `PaymentLine` avec `item_type: "Donation"`. Aucune `PaymentLine` ne doit avoir `item_type: "Payment"`.
-- **Code actuel** : `People::PaymentCreator` réécrit silencieusement les lignes de don en `item_type: "Payment"` et `item_id: payment.id` (cf. `app/services/people/payment_creator.rb` L92). Cette dette technique est tracée dans `phase1-donation-fix` (voir [payments.md](payments.md)).
+- **Code actuel** : `People::PaymentCreator` réécrit silencieusement les lignes de don en `item_type: "Payment"` et `item_id: payment.id` (cf. `app/services/people/payment_creator.rb` L92). Cette dette technique est tracée dans `phase1-donation-fix` (voir [`../payments.md`](../payments.md)).
 - **Comportement attendu côté appelant** : passer `item_type: "Donation"` et `item_id: payment.id` (ou `person.id` selon le flow). Le service fait le reste — y compris la réécriture legacy temporaire.
 - **Validation** : la somme des `payment_lines` doit égaler `total_cents` ; sinon, `failure`.
 
@@ -154,7 +154,7 @@ L'application utilise **ViewComponent** pour les composants réutilisables (21 c
 **Helpers communs:**
 - `PaymentMethodsHelper#payment_method_options(include_pending: false)` — source unique des options de paiement (réutilisée dans les vues admin).
 
-**Voir:** `ARCHITECTURE_GUIDE.md` pour détails complets sur ViewComponents.
+**Voir:** [`overview.md`](overview.md) pour détails complets sur ViewComponents.
 
 ## Pattern Service Object
 

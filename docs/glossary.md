@@ -203,5 +203,5 @@
 - [domain_model.md](domain_model.md) — diagramme du modèle de domaine cible.
 - [payments.md](payments.md) — détail Payment / PaymentLine / Donation et dette technique.
 - [migrations/vocabulary_migration.md](migrations/vocabulary_migration.md) — mapping ancien → nouveau et statut par phase.
-- [BUSINESS_LOGIC.md](BUSINESS_LOGIC.md) — règles métier détaillées par domaine.
-- [ARCHITECTURE_SERVICES.md](ARCHITECTURE_SERVICES.md) — services et orchestrateurs (`People::*`).
+- [domain/business_logic.md](domain/business_logic.md) — règles métier détaillées par domaine.
+- [architecture/services.md](architecture/services.md) — services et orchestrateurs (`People::*`).
