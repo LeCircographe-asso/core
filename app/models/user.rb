@@ -123,7 +123,7 @@ class User < ApplicationRecord
     %w[admin super_admin volunteer].include?(self.system_role)
   end
 
-  def has_admin?
+  def admin?
     %w[admin super_admin].include?(self.system_role)
   end
 
