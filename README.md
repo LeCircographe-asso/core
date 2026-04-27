@@ -2,10 +2,6 @@
 
 Application Rails 8 de gestion associative pour Le Circographe (adhésions, cotisations, paiements, présences, événements).
 
-<div align="center">
-  <img src="docs/documentations/assets/screenshots/logo.png" alt="Logo Le Circographe" width="180"/>
-</div>
-
 [![Version](https://img.shields.io/badge/version-0.5.9.1-blue)](#)
 [![Rails](https://img.shields.io/badge/Rails-8.1.3-red)](#)
 [![Ruby](https://img.shields.io/badge/Ruby-4.0.1-red)](#)
@@ -83,26 +79,15 @@ Scripts utilitaires :
 
 ---
 
-## Documentation principale
+## Documentation
 
-### Architecture & domaine
-- [Domaines métier](docs/documentations/domains/README.md)
-- [Architecture services (`People::*`)](docs/ARCHITECTURE_SERVICES.md)
-- [Logique métier (BUSINESS_LOGIC)](docs/BUSINESS_LOGIC.md)
+L'index complet de la documentation se trouve dans [`docs/README.md`](docs/README.md). Points d'entrée recommandés :
 
-### Tests
-- [Workflow TDD](docs/TDD_WORKFLOW.md)
-- [Stratégie tests Zones 1/2/3](docs/ZONES_CLASSIFICATION.md)
-- [Approche TDD réaliste](docs/TDD_REALISTIC_APPROACH.md)
-
-### Technique
-- [Configuration Rails 8](docs/documentations/technical/RAILS8_CONFIG.md)
-- [Environnements](docs/documentations/technical/ENVIRONMENTS.md)
-- [Déploiement](docs/documentations/technical/deployment/)
-
-### Autres
-- [Guides utilisateur](docs/documentations/USER_GUIDES.md)
-- [Guide administrateur](docs/documentations/ADMIN_GUIDE.md)
+- [`docs/glossary.md`](docs/glossary.md) — vocabulaire canonique.
+- [`docs/BUSINESS_LOGIC.md`](docs/BUSINESS_LOGIC.md) — règles métier.
+- [`docs/ARCHITECTURE_SERVICES.md`](docs/ARCHITECTURE_SERVICES.md) — catalogue des services.
+- [`docs/TDD_GUIDE.md`](docs/TDD_GUIDE.md) — guide TDD.
+- [`docs/knowledge/DEPLOYMENT_GUIDE.md`](docs/knowledge/DEPLOYMENT_GUIDE.md) — déploiement Kamal.
 
 ---
 
