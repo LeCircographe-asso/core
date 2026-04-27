@@ -15,9 +15,7 @@ Index de la documentation Markdown du projet. Pour le démarrage et le déploiem
 
 - [`architecture/overview.md`](architecture/overview.md) — Person/User, RGPD, ViewComponents.
 - [`architecture/services.md`](architecture/services.md) — catalogue des services `People::*`.
-- [`MODEL_EVALUATION.md`](MODEL_EVALUATION.md) — audit du modèle (Person-based, score 9/10).
-- [`CONCERNS_ANALYSIS.md`](CONCERNS_ANALYSIS.md) — cartographie des 10 concerns.
-- [`ZONES_CLASSIFICATION.md`](ZONES_CLASSIFICATION.md) — priorisation tests par zone.
+- [`architecture/models.md`](architecture/models.md) — modèles, concerns, zones de stabilité, dettes techniques.
 - [`architecture/controllers.md`](architecture/controllers.md) — état des contrôleurs.
 
 ## Tests
