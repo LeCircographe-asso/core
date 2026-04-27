@@ -9,7 +9,12 @@ on:
         type: string
 
 permissions:
+  actions: read
   contents: write
+
+concurrency:
+  group: deploy-promote-staging-${{ github.workflow }}
+  cancel-in-progress: false
 
 jobs:
   promote:
@@ -23,12 +28,16 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          SHA=$(git rev-parse origin/dev)
-          gh api "repos/${{ github.repository }}/commits/${SHA}/check-runs" > checks.json
-          for required in "ci-lint-audit" "ci-tests" "ci-docker-build"; do
-            status=$(jq -r --arg n "$required" '.check_runs[] | select(.name == $n) | .conclusion' checks.json | head -n1)
+          for required in "ci-lint-audit.yml" "ci-tests.yml" "ci-docker-build.yml"; do
+            status=$(gh run list \
+              --workflow="$required" \
+              --branch=dev \
+              --limit=1 \
+              --json conclusion \
+              --jq '.[0].conclusion')
+            echo "Latest ${required} on dev: ${status:-none}"
             if [ "$status" != "success" ]; then
-              echo "Required check '$required' not successful on dev (got: ${status:-missing})"
+              echo "Required workflow '$required' not successful on dev (got: ${status:-none})"
               exit 1
             fi
           done
