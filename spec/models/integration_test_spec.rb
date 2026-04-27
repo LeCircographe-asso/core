@@ -51,11 +51,11 @@ RSpec.describe "Integration Tests", type: :model do
 
       # Verify admin permissions
       expect(admin.has_privileges?).to be_truthy
-      expect(admin.has_admin?).to be_truthy
+      expect(admin.admin?).to be_truthy
 
       # Verify regular user permissions
       expect(regular_user.has_privileges?).to be_falsey
-      expect(regular_user.has_admin?).to be_falsey
+      expect(regular_user.admin?).to be_falsey
     end
   end
 end

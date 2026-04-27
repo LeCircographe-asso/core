@@ -5,7 +5,7 @@ RSpec.describe People::PaymentCreator do
   let(:admin_user) { create(:user, :admin) }
   let(:membership_type) { create(:membership_type) }
   let(:membership) { create(:membership, person: person, membership_type: membership_type) }
-  let(:subscription_plan) { create(:subscription_plan, :pack10) }
+  let(:contribution_formula) { create(:contribution_formula, :pack10) }
 
   describe "#call" do
     context "with valid single-line attributes" do
@@ -47,7 +47,7 @@ RSpec.describe People::PaymentCreator do
 
         expect(result.success?).to be(true)
         line = result.payment.payment_lines.first
-        expect(line.item_type).to eq("Payment")
+        expect(line.item_type).to eq("Donation")
         expect(line.item_id).to eq(result.payment.id)
         expect(line.description).to eq("Test donation")
       end
@@ -57,7 +57,7 @@ RSpec.describe People::PaymentCreator do
       let(:payment_lines) do
         [
           { item_type: "Membership", item_id: membership.id, amount_cents: 3_000, description: "Adhésion" },
-          { item_type: "SubscriptionPlan", item_id: subscription_plan.id, amount_cents: 5_000, description: "Pack 10" }
+          { item_type: "ContributionFormula", item_id: contribution_formula.id, amount_cents: 5_000, description: "Pack 10" }
         ]
       end
 

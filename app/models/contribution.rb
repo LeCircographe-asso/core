@@ -1,20 +1,17 @@
-class BookOfEntry < ApplicationRecord
+class Contribution < ApplicationRecord
   include Statusable
   include Dateable
 
-  # Relations — voir docs/domain_model.md (vocabulaire cible : Contribution).
   belongs_to :person
-  belongs_to :subscription_plan
-  # Validations
+  belongs_to :contribution_formula
+
   validates :sessions_remaining, presence: true, numericality: { greater_than_or_equal_to: 0 }, if: :has_session_limit?
   validates :status, presence: true
   validates :purchased_at, presence: true
   validates :expires_at, presence: true, unless: :is_pack10?
 
-  # Validation personnalisée pour les séances
   validate :sessions_remaining_validation
 
-  # Statuts — voir docs/domain_model.md.
   enum :status, {
     inactive: 0,
     active: 1,
@@ -25,26 +22,21 @@ class BookOfEntry < ApplicationRecord
 
   before_create :set_initial_values
 
-  # Méthodes
   def can_use?
-    # Un carnet peut être utilisé s'il est actif et a des séances restantes
     return false unless active?
 
     if has_session_limit?
       return false unless sessions_remaining.present? && sessions_remaining > 0
     end
 
-    # Pour les packs, vérifier qu'il n'est pas expiré (sauf si c'est un pack10)
     return false if expired? && !is_pack10?
 
-    # Vérifier que la personne a une adhésion Circus active
     return false unless person.current_membership&.membership_type&.circus?
 
     true
   end
 
   def use_session!
-    # Décrémenter une séance et mettre à jour le statut
     return false unless can_use?
 
     if has_session_limit?
@@ -61,7 +53,7 @@ class BookOfEntry < ApplicationRecord
   def refund_session!
     return true unless has_session_limit?
 
-    max_sessions = subscription_plan.sessions_count
+    max_sessions = contribution_formula.sessions_count
     max_sessions ||= is_pack10? ? 10 : 1
 
     self.sessions_remaining ||= 0
@@ -71,11 +63,9 @@ class BookOfEntry < ApplicationRecord
   end
 
   def expired?
-    # Les packs10 ne expirent jamais et se réactivent avec une nouvelle adhésion
     return false if is_pack10?
 
-    # Pour les journées, vérifier si on est après la fin de journée
-    if subscription_plan.duration == "day"
+    if contribution_formula.duration == "day"
       return Time.current > expires_at.end_of_day
     end
 
@@ -83,51 +73,43 @@ class BookOfEntry < ApplicationRecord
   end
 
   def is_pack10?
-    subscription_plan.duration == "pack10"
+    contribution_formula.duration == "pack10"
   end
 
   def has_session_limit?
-    # Les Pack 10 et les Journées ont une limite de séances.
-    # Les cotisations illimitées (trimester, annual) n'en ont pas (accès libre à la présence).
-    is_pack10? || subscription_plan.duration == "day"
+    is_pack10? || contribution_formula.duration == "day"
   end
 
   def remaining_entries
     sessions_remaining
   end
 
-  # Scopes optimisés pour les requêtes d'expiration
   scope :expired_by_date, -> { where("expires_at < ?", Date.current) }
   scope :not_expired_by_date, -> { where("expires_at IS NULL OR expires_at > ?", Date.current) }
   scope :with_expiration, -> { where.not(expires_at: nil) }
   scope :without_expiration, -> { where(expires_at: nil) }
 
-  # Scopes de statut
   scope :active, -> { where(status: :active) }
   scope :expired, -> { where(status: :expired) }
   scope :consumed, -> { where(status: :consumed) }
   scope :suspended, -> { where(status: :suspended) }
 
-  # Scope utilisable : actif, pas expiré par date, et avec séances restantes (si applicable)
   scope :usable, -> {
     active
       .where("expires_at IS NULL OR expires_at > ?", Date.current)
       .where("sessions_remaining IS NULL OR sessions_remaining > 0")
   }
 
-  # Méthodes de classe
   def self.reactivate_suspended_packs_for_person(person)
-    return unless person.can_buy_subscription_plans?
+    return unless person.can_buy_contribution_formulas?
 
-    # Si aucun plan actif (Trimestre/Année), réactiver Pack10 suspendus
-    active_plans = person.book_of_entries.active.joins(:subscription_plan).where.not(subscription_plans: { duration: "pack10" })
+    active_plans = person.contributions.active.joins(:contribution_formula).where.not(contribution_formulas: { duration: "pack10" })
 
     if active_plans.empty?
-      person.book_of_entries.suspended.joins(:subscription_plan).where(subscription_plans: { duration: "pack10" }).each(&:reactivate!)
+      person.contributions.suspended.joins(:contribution_formula).where(contribution_formulas: { duration: "pack10" }).each(&:reactivate!)
     end
   end
 
-  # Instance methods
   def suspend!(reason:)
     update!(status: :suspended, suspended_at: Time.current, suspended_reason: reason)
   end
@@ -143,12 +125,10 @@ class BookOfEntry < ApplicationRecord
   private
 
   def sessions_remaining_validation
-    # Pour les cotisations illimitées (trimester, annual), sessions_remaining doit être nil.
-    if subscription_plan&.duration.in?([ "trimester", "annual" ])
+    if contribution_formula&.duration.in?([ "trimester", "annual" ])
       if sessions_remaining.present?
         errors.add(:sessions_remaining, "doit être vide pour les cotisations illimitées")
       end
-    # Pour les Pack 10 et les Journées, sessions_remaining doit être présent et positif.
     elsif has_session_limit?
       if sessions_remaining.blank? || sessions_remaining < 0
         errors.add(:sessions_remaining, "doit être présent et positif pour les Pack 10 et les Journées")
@@ -159,8 +139,5 @@ class BookOfEntry < ApplicationRecord
   def set_initial_values
     self.purchased_at ||= Time.current
     self.status ||= :active
-    # sessions_remaining n'est pas initialisé ici : la validation le contrôle selon la durée.
-    # Cotisations illimitées (trimester / annual) → sessions_remaining DOIT être nil.
-    # Cotisations limitées (pack10 / day) → sessions_remaining DOIT être défini explicitement.
   end
 end

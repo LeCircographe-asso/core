@@ -1,43 +1,16 @@
 <%
-  # Helper partial for correctly calculating payment totals
   payments = local_assigns[:payments] || []
-  
-  # Calculate totals
+
   total_count = payments.count
   successful_count = payments.where(status: :success).count
   pending_count = payments.where(status: :pending).count
   canceled_count = payments.where(status: :cancel).count
-  
-  # Calculate payment totals accurately
-  payments_total = 0
-  donations_total = 0
-  
-  payments.where(status: :success).each do |payment|
-    # Add payment amount (nouveau modèle Person-Based)
-    if payment.total_cents.present?
-      payments_total += payment.total_cents / 100.0
-    end
-    
-    # Calculer les donations via les payment_lines (nouveau modèle)
-    payment.payment_lines.each do |line|
-      if line.description&.downcase&.include?('don') || line.item_type == 'Donation'
-        donations_total += line.amount_cents / 100.0
-      end
-    end
-    
-    # Fallback pour l'ancien système (si colonne donation existe encore)
-    if payment.respond_to?(:donation) && payment.donation.present? && payment.donation > 0
-      donations_total += payment.donation
-      
-      # Only add standalone donations to payment total (where total_cents is 0)
-      if payment.total_cents.to_f == 0
-        payments_total += payment.donation
-      end
-    end
-  end
-  
-  # Calculate combined total
-  combined_total = payments_total
+
+  successful_scope = payments.where(status: :success)
+  payments_total = successful_scope.sum(:total_cents) / 100.0
+  donations_total = PaymentLine
+    .where(payment_id: successful_scope.select(:id), item_type: "Donation")
+    .sum(:amount_cents) / 100.0
 %>
 
 <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4 mb-6">

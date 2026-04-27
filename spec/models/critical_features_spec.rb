@@ -14,8 +14,8 @@ RSpec.describe "Critical Features", type: :model do
       super_admin = create(:user, system_role: :super_admin)
       admin_user = create(:user, system_role: :admin)
 
-      expect(super_admin.has_admin?).to be_truthy
-      expect(admin_user.has_admin?).to be_truthy
+      expect(super_admin.admin?).to be_truthy
+      expect(admin_user.admin?).to be_truthy
     end
   end
 

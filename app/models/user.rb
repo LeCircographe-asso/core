@@ -29,7 +29,7 @@ class User < ApplicationRecord
   # Relations via Person (nouvelles)
   has_many :memberships, through: :person
   has_many :payments, through: :person
-  has_many :book_of_entries, through: :person
+  has_many :contributions, through: :person
   has_many :attendances, through: :person
 
   # Délégation des attributs personnels vers Person
@@ -123,7 +123,7 @@ class User < ApplicationRecord
     %w[admin super_admin volunteer].include?(self.system_role)
   end
 
-  def has_admin?
+  def admin?
     %w[admin super_admin].include?(self.system_role)
   end
 
@@ -131,14 +131,11 @@ class User < ApplicationRecord
     created_by_admin == true
   end
   def has_higher_permissions?(other_user)
-    Rails.logger.debug "has_higher_permissions? called with other_user: #{other_user.inspect}"
     return false if other_user.nil?
 
     # Get the integer values of the roles
     self_role_value = User.system_roles[self.system_role]
     other_role_value = User.system_roles[other_user.system_role]
-
-    Rails.logger.debug "self_role_value: #{self_role_value}, other_role_value: #{other_role_value}"
 
     # Handle nil roles - nil means no permissions (lowest level)
     return false if self_role_value.nil?
@@ -148,21 +145,16 @@ class User < ApplicationRecord
     self_role_value < other_role_value
   end
 
-  def inferior_rights
-    Rails.logger.debug "inferior_rights called"
+  def subordinate_roles
     current_role_value = User.system_roles[system_role]
-    Rails.logger.debug "current_role_value: #{current_role_value.inspect}"
 
     return [] if current_role_value.nil?
 
     # Get all roles with higher values (lower permissions) than current role
-    result = User.system_roles.select { |_, value| value > current_role_value }.keys
-    Rails.logger.debug "inferior_rights result: #{result.inspect}"
-
-    result
+    User.system_roles.select { |_, value| value > current_role_value }.keys
   end
 
-  def active_subscription?
+  def active_membership?
     person&.has_active_membership? || false
   end
 
@@ -182,10 +174,6 @@ class User < ApplicationRecord
   end
 
   def system_role_before_type_cast
-    Rails.logger.debug "system_role_before_type_cast called"
-    Rails.logger.debug "self: #{self.inspect}"
-    Rails.logger.debug "self.system_role: #{self.system_role.inspect}"
-
     # Return the raw value from the database
     self[:system_role]
   end

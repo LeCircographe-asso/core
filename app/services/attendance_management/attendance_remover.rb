@@ -10,11 +10,11 @@ module AttendanceManagement
 
       attendance = Attendance.find(attendance_id)
       Attendance.transaction do
-        book_of_entry = attendance.book_of_entry
+        contribution = attendance.contribution
         attendance.destroy!
 
-        if book_of_entry&.has_session_limit?
-          book_of_entry.refund_session!
+        if contribution&.has_session_limit?
+          contribution.refund_session!
         end
 
         ActiveSupport::Notifications.instrument(
@@ -22,11 +22,11 @@ module AttendanceManagement
           attendance_id: attendance_id,
           person_id: attendance.person_id,
           attendance_list_id: attendance.attendance_list_id,
-          book_of_entry_id: attendance.book_of_entry_id,
+          contribution_id: attendance.contribution_id,
           deleted_by_id: deleted_by_id
         )
 
-        success(message: "Attendance removed successfully", book_of_entry: book_of_entry)
+        success(message: "Attendance removed successfully", contribution: contribution)
       end
     rescue ActiveRecord::RecordNotFound => e
       failure("Attendance not found: #{e.message}")

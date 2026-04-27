@@ -157,7 +157,7 @@ RSpec.describe "Admin::Payments", type: :request do
         expect(payment.total_cents).to eq(1500)
         expect(payment.payment_lines.count).to eq(1)
         line = payment.payment_lines.first
-        expect(line.item_type).to eq("Payment")
+        expect(line.item_type).to eq("Donation")
         expect(line.item_id).to eq(payment.id)
         expect(line.amount_cents).to eq(1500)
         expect(line.description).to eq("Paiement direct")

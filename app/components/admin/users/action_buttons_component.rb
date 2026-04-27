@@ -55,13 +55,13 @@ module Admin
                       class: "inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-500 bg-gray-100"
         elsif current_membership.membership_type.circus?
           # Adhésion cirque -> peut ajouter des cotisations
-          active_book = person.book_of_entries.active.first
+          active_contribution = person.contributions.active.first
 
           buttons = []
-          if active_book
+          if active_contribution
             label = "Voir cotisation"
-            if active_book.subscription_plan.duration == "pack10"
-              remaining_entries = active_book.remaining_entries.to_i
+            if active_contribution.contribution_formula.duration == "pack10"
+              remaining_entries = active_contribution.remaining_entries.to_i
               label = "Voir cotisation (#{remaining_entries} restantes)" if remaining_entries.positive?
             end
             buttons << link_to(
