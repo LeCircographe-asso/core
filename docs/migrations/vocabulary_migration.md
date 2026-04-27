@@ -38,11 +38,11 @@
 
 | Ancien | Nouveau | Localisation | Phase |
 | --- | --- | --- | --- |
-| `Person#create_subscription!` | `Person#create_contribution!` | `app/models/person.rb` | `phase0-quick-wins` (alias) puis `phase3` |
-| `Person#upgrade_subscription!` | `Person#upgrade_contribution!` | `app/models/person.rb` | `phase0-quick-wins` (alias) puis `phase3` |
+| `Person#create_subscription!` | `Person#create_contribution!` | `app/models/person.rb` | `phase3-model-rename` |
+| `Person#upgrade_subscription!` | `Person#upgrade_contribution!` | `app/models/person.rb` | `phase3-model-rename` |
 | `Person#active_subscription?` | `Person#active_contribution?` | `app/models/person.rb` | `phase0-quick-wins` |
 | `Person#current_subscription` | `Person#current_contribution` | `app/models/person.rb` | `phase0-quick-wins` |
-| `Person#subscriptions` | `Person#contributions` | `app/models/person.rb` | `phase0-quick-wins` (alias) |
+| `Person#subscriptions` | `Person#contributions` | `app/models/person.rb` | `phase3-model-rename` |
 | `User#inferior_rights` | `User#subordinate_roles` | `app/models/user.rb` | `phase0-quick-wins` |
 | `bookOfEntryValidation` (callback) | (supprimé — déjà fait) | `app/models/book_of_entry.rb` | déjà fait |
 | `People::SubscriptionCreator` | `People::ContributionCreator` | `app/services/people/` | `phase3-model-rename` |
@@ -65,10 +65,8 @@
 ## 2. Phases (ordre canonique)
 
 ### Phase 0 — Quick wins (zéro impact DB)
-- Renommer `User#inferior_rights` → `User#subordinate_roles` (alias rétro-compat avec `ActiveSupport::Deprecation.warn`).
-- Renommer `Person#active_subscription?` → `Person#active_contribution?` (idem).
-- Renommer `Person#current_subscription` → `Person#current_contribution` (idem).
-- Ajouter alias `Person#contributions` ↔ `Person#subscriptions`.
+- Renommer `User#inferior_rights` → `User#subordinate_roles` (sans alias rétro-compat).
+- Renommer `User#active_subscription?` → `User#active_membership?` (sans alias rétro-compat).
 - Supprimer logs de debug oubliés (`Rails.logger.debug` orphelins, `puts`).
 - ✅ **Tests à mettre à jour** : remplacer les usages existants.
 
@@ -98,14 +96,14 @@
   - Renommer modèles `SubscriptionPlan` → `ContributionFormula`, `BookOfEntry` → `Contribution`.
   - Renommer fichiers (snake_case Zeitwerk).
   - Renommer services `People::Subscription*` → `People::Contribution*`.
-  - Renommer méthodes `Person#*subscription*` → `Person#*contribution*` (suppression des alias rétro-compat ajoutés en phase 0).
+  - Renommer méthodes `Person#*subscription*` → `Person#*contribution*` (sans phase d'alias).
 - Mettre à jour validation `PaymentLine` pour ne plus accepter `SubscriptionPlan` / `BookOfEntry`.
 - Mettre à jour TOUTES les vues, helpers, factories, specs, locales.
 
 ### Phase 4 — Cleanup legacy
 - Auditer puis supprimer `EventAttendee` si la fonctionnalité est intégrée à `Attendance`.
 - Extraire la logique métier de `Person` (>500 lignes) vers des services dédiés.
-- Supprimer définitivement les alias rétro-compat ajoutés en phase 0.
+- Supprimer définitivement les derniers termes legacy restants.
 - Supprimer le champ `donation` de `payments` (si pas déjà fait phase 1).
 
 ---
@@ -114,7 +112,7 @@
 
 | Phase | Code | Doc principale | Glossaire |
 | --- | --- | --- | --- |
-| Phase 0 | en cours | mentionne « code actuel : `inferior_rights` (alias `subordinate_roles`) » | utilise `subordinate_roles` |
+| Phase 0 | en cours | mentionne « code actuel : `subordinate_roles`, `active_membership?` » | utilise `subordinate_roles` |
 | Phase 1 | en cours | mentionne « actuel : `item_type: "Payment"` pour les dons (legacy à retirer) » | utilise `Donation` |
 | Phase 2 | à faire | mentionne `ContributionStatusBadgeComponent` (legacy : `SubscriptionStatusBadgeComponent`) | idem |
 | Phase 3 | à faire | mentionne `Contribution` (code actuel : `BookOfEntry`) jusqu'au merge | idem |
