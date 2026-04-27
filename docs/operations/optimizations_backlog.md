@@ -1,6 +1,13 @@
-# 🚀 Optimisations à Implémenter
+# Backlog optimisations infra & UX
 
-**Status update (current app):** garder ce fichier comme backlog d’optimisation infra/UX. Les items non cochés restent à arbitrer; préférer `to-do.md` pour le plan produit.
+> **Backlog** d'améliorations infra (Docker, GitHub Actions, sécurité) et UX
+> identifiées au fil des sessions ops.
+> Les items non cochés restent à arbitrer ; pour le **plan produit** se référer
+> à `to-do.md` (racine du repo).
+
+Les sections « Documentation » historiques renvoient à des fichiers supprimés
+ou renommés (`KNOWLEDGE_BASE.md`, `DEPLOYMENT_GUIDE.md`) — désormais consolidés
+dans [`deployment.md`](deployment.md).
 
 ## ✅ Réalisé le 14/10/2025
 

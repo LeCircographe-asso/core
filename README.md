@@ -87,7 +87,7 @@ L'index complet de la documentation se trouve dans [`docs/README.md`](docs/READM
 - [`docs/domain/business_logic.md`](docs/domain/business_logic.md) — règles métier.
 - [`docs/architecture/services.md`](docs/architecture/services.md) — catalogue des services.
 - [`docs/development/testing.md`](docs/development/testing.md) — guide TDD.
-- [`docs/knowledge/DEPLOYMENT_GUIDE.md`](docs/knowledge/DEPLOYMENT_GUIDE.md) — déploiement Kamal.
+- [`docs/operations/deployment.md`](docs/operations/deployment.md) — déploiement Kamal.
 
 ---
 
