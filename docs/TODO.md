@@ -2,8 +2,10 @@
 
 Ordered from quick wins to long-term work. Each item can be handled incrementally.
 
-> **Vocabulary note** : les mots `subscription`, `SubscriptionCreator`, `BookOfEntry` désignent le code actuel.
-> Vocabulaire cible : `Contribution`, `ContributionCreator`, `ContributionFormula`. Voir [glossary.md](glossary.md) et [migrations/vocabulary_migration.md](migrations/vocabulary_migration.md).
+> **Vocabulary note** — les mots `subscription`, `SubscriptionCreator`, `SubscriptionUpgrader`, `SubscriptionPlan`, `BookOfEntry` désignent le **code actuel**.
+> Vocabulaire **cible** : `contribution`, `ContributionCreator`, `ContributionUpgrader`, `ContributionFormula`, `Contribution`.
+> Seule exception : `subscription` est légitime pour la **newsletter**.
+> Voir [`glossary.md`](glossary.md) et [`migrations/vocabulary_migration.md`](migrations/vocabulary_migration.md) (phases 0–3).
 
 ## 0) Ground Rules (Architecture + MVC)
 - Document the Person/User lifecycle and ownership rules.

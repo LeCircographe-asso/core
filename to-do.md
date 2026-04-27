@@ -2,6 +2,11 @@
 
 Ordered from quick wins to long-term work. Each item can be handled incrementally.
 
+> **Vocabulary note** — the words `subscription`, `SubscriptionCreator`, `SubscriptionUpgrader`, `SubscriptionPlan`, `BookOfEntry` below refer to the **current code**.
+> Target domain vocabulary: `contribution`, `ContributionCreator`, `ContributionUpgrader`, `ContributionFormula`, `Contribution`.
+> Single exception: `subscription` is legitimate in the **newsletter** context.
+> See [`docs/glossary.md`](docs/glossary.md) and [`docs/migrations/vocabulary_migration.md`](docs/migrations/vocabulary_migration.md) (phases 0–3).
+
 ## 0) Ground Rules (Architecture + MVC)
 - Document the Person/User lifecycle and ownership rules.
 - Enforce “Person is source of truth for identity + finance.”
