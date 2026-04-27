@@ -9,6 +9,30 @@ Index de la documentation Markdown du projet. Pour le démarrage et le déploiem
 
 > Une restructuration progressive est en cours. La structure cible est décrite dans [`migrations/vocabulary_migration.md`](migrations/vocabulary_migration.md).
 
+## Cartographie
+
+```
+docs/
+  README.md             ← (ici) index, gouvernance, statuts
+  glossary.md           lexique canonique
+  domain_model.md       modèle de domaine
+  payments.md           paiements, lignes, dons
+
+  domain/               règles métier
+  architecture/         modèles, services, contrôleurs
+  development/          tests, Turbo, assets
+  design/               design system stable
+  operations/           déploiement (source de vérité ops)
+
+  migrations/           plan DDD-light transitionnel
+  legacy/               snapshots historiques non normatifs
+  rake_archive/         Rake tasks one-shot historiques
+
+  internal/             ← versionné, mais réservé équipe
+                          (TODO, backlogs, audits datés, plans en cours)
+  _drafts/              ← gitignored (brouillons Cursor / audits ponctuels)
+```
+
 ---
 
 ## Gouvernance documentaire
