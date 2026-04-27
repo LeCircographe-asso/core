@@ -323,5 +323,5 @@ end
 
 - **Architecture Services:** `docs/architecture/services.md` - Services utilisés
 - **Logique Métier:** `docs/domain/business_logic.md` - Règles business
-- **TDD Guide:** `docs/TDD_GUIDE.md` - Tests et qualité
+- **Guide tests:** `docs/development/testing.md` - Tests et qualité
 
