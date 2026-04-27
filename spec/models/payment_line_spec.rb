@@ -16,11 +16,17 @@ RSpec.describe PaymentLine, type: :model do
       expect(payment_line.errors[:payment]).to include("must exist")
     end
 
-    it "requires an item" do
+    it "does not require a backing item record (polymorphic optional)" do
+      # Donation lines reference their parent payment id without a Donation model.
       payment = create(:payment)
-      payment_line = PaymentLine.new(payment: payment, amount_cents: 1500)
-      expect(payment_line).not_to be_valid
-      expect(payment_line.errors[:item]).to include("must exist")
+      payment_line = PaymentLine.new(
+        payment: payment,
+        item_type: "Donation",
+        item_id: payment.id,
+        amount_cents: 1500
+      )
+      expect(payment_line).to be_valid
+      expect(payment_line.errors[:item]).to be_empty
     end
 
     it "requires amount_cents" do
@@ -64,6 +70,29 @@ RSpec.describe PaymentLine, type: :model do
       duplicate_line = PaymentLine.new(payment: payment, item: membership, amount_cents: 2000)
       expect(duplicate_line).not_to be_valid
       expect(duplicate_line.errors[:payment_id]).to include("has already been taken")
+    end
+
+    it "rejects legacy item_type 'Payment' for donations" do
+      payment = create(:payment)
+      payment_line = PaymentLine.new(
+        payment: payment,
+        item_type: "Payment",
+        item_id: payment.id,
+        amount_cents: 500
+      )
+      expect(payment_line).not_to be_valid
+      expect(payment_line.errors[:item_type]).to include(/not a supported item_type/)
+    end
+
+    it "accepts the canonical Donation item_type" do
+      payment = create(:payment)
+      payment_line = PaymentLine.new(
+        payment: payment,
+        item_type: "Donation",
+        item_id: payment.id,
+        amount_cents: 500
+      )
+      expect(payment_line).to be_valid
     end
   end
 
