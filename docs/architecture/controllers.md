@@ -1,7 +1,7 @@
 # Audit des Contrôleurs - Stratégie TDD
 
 **Statut actuel:** ⚠️ À revalider régulièrement (snapshot 2025-01-31).  
-**Source de vérité:** `to-do.md` + [`models.md`](models.md#3-classification-par-zones).
+**Source de vérité:** [`../internal/todo.md`](../internal/todo.md) + [`models.md`](models.md#3-classification-par-zones).
 
 ---
 

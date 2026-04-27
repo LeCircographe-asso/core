@@ -1,6 +1,11 @@
 # 🎨 CSS Migration Strategy — Le Circographe
 *Updated 2025-11-09*
 
+> **Statut** : internal (plan de migration)
+> **Public cible** : équipe dev
+> **Provenance** : ex-`docs/design/css_migration.md`, déplacé dans `docs/internal/` car plan en cours.
+> **Référence stable** : [`../development/assets.md`](../development/assets.md).
+
 ---
 
 ## 🎯 Objectives

@@ -1,7 +1,17 @@
-# Guide UX/UI - Le Circographe
+# Audit UX/UI — Le Circographe (snapshot 2025-01-31)
+
+> **Statut** : internal (snapshot d'audit, daté)
+> **Public cible** : équipe produit / dev
+> **Date de l'audit** : 2025-01-31
+> **Provenance** : ex-`docs/development/ux.md`, déplacé dans `docs/internal/` car diagnostic daté plutôt que doc UX stable.
+>
+> Document **non normatif**. Les passages cités dans les sections suivantes
+> peuvent être partiellement obsolètes : voir [`../architecture/services.md`](../architecture/services.md)
+> et [`../architecture/controllers.md`](../architecture/controllers.md) pour
+> l'état actuel du code (refactos `People::*` notamment).
 
 **Date:** 2025-01-31  
-**Status:** ⚠️ EN COURS - Problèmes critiques identifiés
+**Status:** ⚠️ EN COURS - Problèmes critiques identifiés (état initial de l'audit)
 
 ---
 

@@ -128,7 +128,7 @@ Le détail complet (code middleware, rendu HTML des horaires) reste dans
 2. Migration des `Sprockets`-isms restants vers Propshaft (séparation
    `application.css` / `tailwind.css` / `application.scss`).
 3. Adoption du backlog
-   [`../../operations/optimizations_backlog.md`](../../operations/optimizations_backlog.md)
+   [`../../internal/optimizations_backlog.md`](../../internal/optimizations_backlog.md)
    pour suivre les optimisations Docker/CI/sécurité encore en attente.
 4. Workflow Git strict (`dev` → `staging` → `production`, jamais en direct).
 

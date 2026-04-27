@@ -1,11 +1,16 @@
-# TODO - Le Circographe (Rails 8 / MVC)
+# TODO — Le Circographe (Rails 8 / MVC)
+
+> **Statut** : internal
+> **Public cible** : équipe dev
+> **Dernière mise à jour** : 2026-04-27
+> **Provenance** : fusion de l'ancien `to-do.md` (racine) et `docs/TODO.md` (doublon).
+>
+> **Vocabulary note** — the words `subscription`, `SubscriptionCreator`, `SubscriptionUpgrader`, `SubscriptionPlan`, `BookOfEntry` below refer to the **current code**.
+> Target domain vocabulary: `contribution`, `ContributionCreator`, `ContributionUpgrader`, `ContributionFormula`, `Contribution`.
+> Single exception: `subscription` is legitimate in the **newsletter** context.
+> See [`../glossary.md`](../glossary.md) and [`../migrations/vocabulary_migration.md`](../migrations/vocabulary_migration.md) (phases 0–3).
 
 Ordered from quick wins to long-term work. Each item can be handled incrementally.
-
-> **Vocabulary note** — les mots `subscription`, `SubscriptionCreator`, `SubscriptionUpgrader`, `SubscriptionPlan`, `BookOfEntry` désignent le **code actuel**.
-> Vocabulaire **cible** : `contribution`, `ContributionCreator`, `ContributionUpgrader`, `ContributionFormula`, `Contribution`.
-> Seule exception : `subscription` est légitime pour la **newsletter**.
-> Voir [`glossary.md`](glossary.md) et [`migrations/vocabulary_migration.md`](migrations/vocabulary_migration.md) (phases 0–3).
 
 ## 0) Ground Rules (Architecture + MVC)
 - Document the Person/User lifecycle and ownership rules.
@@ -52,7 +57,7 @@ Ordered from quick wins to long-term work. Each item can be handled incrementall
 - Add “Data integrity rules” checklist (no orphans, no overlap, unlimited plan rules).
 - Add “Role permissions” doc (who can offer, delete, link, anonymize).
 - Maintain `docs/README.md` as the index of truth.
-- Keep `docs/development/testing.md` + `docs/architecture/controllers.md` revalidated against current tests.
+ - Keep `docs/development/testing.md` + `docs/architecture/controllers.md` revalidated against current tests.
 
 ## 4) Tests (medium -> long)
 - Service specs: Register, AccountLinker, MembershipCreator, SubscriptionCreator.

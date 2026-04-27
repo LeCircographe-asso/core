@@ -71,17 +71,12 @@ Chaque document Markdown déclare un statut dans son header :
 ## Frontend, UX et design
 
 - [`development/turbo.md`](development/turbo.md) — diagnostic Turbo / Frames / Streams / Importmap.
-- [`development/ux.md`](development/ux.md) — diagnostic écart back/front.
 - [`development/assets.md`](development/assets.md) — règles Propshaft / Tailwind / Flowbite.
-- [`design/refonte.md`](design/refonte.md) — feuille de route refonte UX/UI.
 - [`design/color_system.md`](design/color_system.md) — palette, tokens, accessibilité.
-- [`design/css_migration.md`](design/css_migration.md) — plan de migration CSS.
 
 ## Operations
 
 - [`operations/deployment.md`](operations/deployment.md) — workflow Kamal dev → staging → prod + règles d'or et troubleshooting (source de vérité).
-- [`operations/optimizations_backlog.md`](operations/optimizations_backlog.md) — backlog optimisations infra/Docker/CI.
-- [`operations/sqlite_deployment.md`](operations/sqlite_deployment.md) — alternative bare-metal (Ruby 4.0.1, SQLite, systemd).
 
 ## Migrations et legacy
 
@@ -91,6 +86,13 @@ Chaque document Markdown déclare un statut dans son header :
 - [`legacy/production_deployment_plan.md`](legacy/production_deployment_plan.md) — snapshot du plan de mise en prod « mode maintenance ».
 - [`rake_archive/`](rake_archive/) — Rake tasks de migration one-shot, **ne plus exécuter**.
 
-## Backlog
+## Documentation interne (équipe)
 
-- [`TODO.md`](TODO.md) — backlog dev court terme (en cours de fusion avec `to-do.md` racine).
+> Vivant, en évolution. Versionné dans `dev` mais hors de la doc publique. Voir [`internal/README.md`](internal/README.md).
+
+- [`internal/todo.md`](internal/todo.md) — backlog produit + dette technique.
+- [`internal/optimizations_backlog.md`](internal/optimizations_backlog.md) — backlog optimisations infra/UX.
+- [`internal/ux_audit_2025_01.md`](internal/ux_audit_2025_01.md) — audit UX/UI daté 2025-01-31 (snapshot).
+- [`internal/refonte.md`](internal/refonte.md) — feuille de route refonte UX/UI (working document).
+- [`internal/css_migration.md`](internal/css_migration.md) — plan de migration CSS.
+- [`internal/sqlite_deployment.md`](internal/sqlite_deployment.md) — alternative bare-metal au flux Kamal.

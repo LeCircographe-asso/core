@@ -87,7 +87,7 @@ Dix concerns en place :
 
 ## 3. Classification par zones
 
-Cadre de **stabilité / risque** pour prioriser les tests. Pour les priorités actives en flux, se référer à [`../../to-do.md`](../../to-do.md).
+Cadre de **stabilité / risque** pour prioriser les tests. Pour les priorités actives en flux, se référer à [`../internal/todo.md`](../internal/todo.md).
 
 - **Zone 1 (stable)** — comportement défini, tests immédiats requis.
 - **Zone 2 (en cours)** — logique en évolution, tests après stabilisation.
@@ -147,7 +147,7 @@ Voir [`controllers.md`](controllers.md) pour le détail. Résumé :
 
 ## 4. Dettes techniques identifiées
 
-Liste héritée de `MODEL_EVALUATION.md` (snapshot 2025-01-31). À recroiser avec [`../../to-do.md`](../../to-do.md) avant action.
+Liste héritée de `MODEL_EVALUATION.md` (snapshot 2025-01-31). À recroiser avec [`../internal/todo.md`](../internal/todo.md) avant action.
 
 ### 4.1 Dualité `expired?` (statut vs date)
 

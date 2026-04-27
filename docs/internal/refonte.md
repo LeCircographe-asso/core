@@ -1,6 +1,11 @@
 # 🧭 Refonte UX / UI et dynamique JS — **Le Circographe**
 *(Working document — updated 2025-11-09)*
 
+> **Statut** : internal (working document)
+> **Public cible** : équipe produit
+> **Provenance** : ex-`docs/design/refonte.md`, déplacé dans `docs/internal/` car feuille de route en cours, non stabilisée.
+> **Référence stable design** : [`../design/color_system.md`](../design/color_system.md).
+
 ---
 
 ## 🎯 Vision synthétique
