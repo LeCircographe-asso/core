@@ -1,30 +1,30 @@
 <div class="bg-white shadow-lg rounded-lg p-6">
   <h2 class="text-xl font-semibold text-gray-900 mb-4">Options de Cotisation</h2>
   
-  <% if @person.can_buy_subscription_plans? %>
+  <% if @person.can_buy_contribution_formulas? %>
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-      <% @subscription_plans.each do |subscription_plan| %>
+      <% @contribution_formulas.each do |contribution_formula| %>
         <div class="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
-          <h3 class="text-lg font-medium text-gray-900"><%= subscription_plan.name %></h3>
-          <p class="text-sm text-gray-600 mt-1"><%= subscription_plan.description %></p>
+          <h3 class="text-lg font-medium text-gray-900"><%= contribution_formula.name %></h3>
+          <p class="text-sm text-gray-600 mt-1"><%= contribution_formula.description %></p>
           
           <div class="mt-3">
-            <p class="text-2xl font-bold text-[#1F5C55]"><%= subscription_plan.price_euros %> €</p>
-            <% if subscription_plan.sessions_count %>
-              <p class="text-sm text-gray-500"><%= subscription_plan.sessions_count %> séances</p>
+            <p class="text-2xl font-bold text-[#1F5C55]"><%= contribution_formula.price_euros %> €</p>
+            <% if contribution_formula.sessions_count %>
+              <p class="text-sm text-gray-500"><%= contribution_formula.sessions_count %> séances</p>
             <% end %>
-            <% if subscription_plan.validity_days %>
-              <p class="text-sm text-gray-500">Valide <%= subscription_plan.validity_days %> jours</p>
+            <% if contribution_formula.validity_days %>
+              <p class="text-sm text-gray-500">Valide <%= contribution_formula.validity_days %> jours</p>
             <% end %>
           </div>
           
           <div class="mt-4">
             <%= form_with url: admin_user_path("person_#{@person.id}"), method: :post, local: true do |form| %>
-              <%= form.hidden_field :subscription_plan_id, value: subscription_plan.id %>
+              <%= form.hidden_field :contribution_formula_id, value: contribution_formula.id %>
               <%= form.hidden_field :payment_method, value: 'cash' %>
               <%= form.submit "Acheter", 
                   class: "w-full inline-flex justify-center items-center px-3 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-[#1F5C55] hover:bg-[#194A45] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1F5C55]",
-                  name: "create_subscription" %>
+                  name: "create_contribution" %>
             <% end %>
           </div>
         </div>

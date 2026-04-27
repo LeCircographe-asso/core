@@ -1,58 +1,58 @@
 require "rails_helper"
 
-RSpec.describe People::SubscriptionUpgrader do
+RSpec.describe People::ContributionUpgrader do
   let(:person) { create(:person, :with_circus_membership) }
   let(:admin_user) { create(:user, :admin, person: create(:person)) }
-  let(:from_plan) { create(:subscription_plan, :pack10) }
-  let(:to_plan) { create(:subscription_plan, :trimester) }
-  let(:book_of_entry) do
-    People::SubscriptionCreator.new(
+  let(:from_plan) { create(:contribution_formula, :pack10) }
+  let(:to_plan) { create(:contribution_formula, :trimester) }
+  let(:contribution) do
+    People::ContributionCreator.new(
       person: person,
-      subscription_plan_id: from_plan.id,
+      contribution_formula_id: from_plan.id,
       payment_method: "cash",
       recorded_by_id: admin_user.id
-    ).call.book_of_entry
+    ).call.contribution
   end
 
   describe "#call" do
     context "with valid attributes" do
       it "upgrades subscription and returns payment info" do
-        book_of_entry # ensure existing pack
+        contribution # ensure existing pack
 
         result = described_class.new(
           person: person,
-          from_book_id: person.book_of_entries.first.id,
-          to_plan_id: to_plan.id,
+          from_contribution_id: person.contributions.first.id,
+          to_formula_id: to_plan.id,
           payment_method: "cash",
           recorded_by_id: admin_user.id
         ).call
 
         expect(result.success?).to be(true)
-        expect(result.new_book).to be_present
+        expect(result.new_contribution).to be_present
         expect(result.payment).to be_present
         expect(result.credit_applied).to be >= 0
       end
 
       it "fires instrumentation" do
-        book_of_entry
+        contribution
 
         upgrader = described_class.new(
           person: person,
-          from_book_id: person.book_of_entries.first.id,
-          to_plan_id: to_plan.id,
+          from_contribution_id: person.contributions.first.id,
+          to_formula_id: to_plan.id,
           payment_method: "cash",
           recorded_by_id: admin_user.id
         )
 
-        expect { upgrader.call }.to instrument("subscription.upgraded")
+        expect { upgrader.call }.to instrument("contribution.upgraded")
       end
     end
 
     context "with invalid data" do
       it "fails when person missing" do
         result = described_class.new(
-          from_book_id: 1,
-          to_plan_id: to_plan.id,
+          from_contribution_id: 1,
+          to_formula_id: to_plan.id,
           payment_method: "cash",
           recorded_by_id: admin_user.id
         ).call
@@ -64,8 +64,8 @@ RSpec.describe People::SubscriptionUpgrader do
       it "fails when recorded_by missing" do
         result = described_class.new(
           person: person,
-          from_book_id: 1,
-          to_plan_id: to_plan.id,
+          from_contribution_id: 1,
+          to_formula_id: to_plan.id,
           payment_method: "cash"
         ).call
 
@@ -77,8 +77,8 @@ RSpec.describe People::SubscriptionUpgrader do
       it "fails when from_book not found" do
         result = described_class.new(
           person: person,
-          from_book_id: 999_999,
-          to_plan_id: to_plan.id,
+          from_contribution_id: 999_999,
+          to_formula_id: to_plan.id,
           payment_method: "cash",
           recorded_by_id: admin_user.id
         ).call
@@ -88,12 +88,12 @@ RSpec.describe People::SubscriptionUpgrader do
       end
 
       it "fails when to_plan not found" do
-        book_of_entry
+        contribution
 
         result = described_class.new(
           person: person,
-          from_book_id: person.book_of_entries.first.id,
-          to_plan_id: 999_999,
+          from_contribution_id: person.contributions.first.id,
+          to_formula_id: 999_999,
           payment_method: "cash",
           recorded_by_id: admin_user.id
         ).call

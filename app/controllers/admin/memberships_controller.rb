@@ -12,7 +12,7 @@ module Admin
     def show
       @membership = @person.current_membership
       @membership_types = MembershipType.all
-      @subscription_plans = SubscriptionPlan.all
+      @contribution_formulas = ContributionFormula.all
 
       add_breadcrumb "Liste d'adhérents", admin_users_path
       add_breadcrumb @person.full_name, admin_user_path("person_#{@person.id}")

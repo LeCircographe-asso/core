@@ -3,7 +3,7 @@ module AttendanceManagement
     attribute :person_id, :integer
     attribute :event_id, :integer
     attribute :attendance_list_id, :integer
-    attribute :book_of_entry_id, :integer
+    attribute :contribution_id, :integer
     attribute :date, :date
 
     validates :person_id, presence: true
@@ -18,18 +18,17 @@ module AttendanceManagement
           person: person,
           event_id: event_id,
           attendance_list_id: attendance_list_id,
-          book_of_entry_id: book_of_entry_id,
+          contribution_id: contribution_id,
           date: date || Date.current
         )
 
-        # Instrumentation pour audit
         ActiveSupport::Notifications.instrument(
           "attendance.created",
           attendance_id: attendance.id,
           person_id: person_id,
           event_id: event_id,
           attendance_list_id: attendance_list_id,
-          book_of_entry_id: book_of_entry_id
+          contribution_id: contribution_id
         )
 
           success(attendance: attendance, message: "Attendance created successfully")
@@ -43,9 +42,5 @@ module AttendanceManagement
         failure("Error creating attendance: #{e.message}")
       end
     end
-
-    private
-
-    # success et failure hérités de BaseService
   end
 end

@@ -6,7 +6,7 @@ class MembershipType < ApplicationRecord
 
   # Relations
   has_many :memberships, dependent: :restrict_with_error
-  has_many :subscription_plans, dependent: :destroy
+  has_many :contribution_formulas, dependent: :destroy
   belongs_to :created_by_user, class_name: "User", optional: true
 
   # Validations

@@ -80,7 +80,7 @@ module Duplicatable
 
   def self.transfer_relations(primary, secondary, options = {})
     # Relations à transférer par défaut
-    default_relations = %w[memberships payments book_of_entries attendances]
+    default_relations = %w[memberships payments contributions attendances]
 
     # Relations spécifiées dans les options
     relations_to_transfer = options[:relations] || default_relations

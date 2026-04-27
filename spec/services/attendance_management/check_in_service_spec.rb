@@ -5,23 +5,23 @@ RSpec.describe AttendanceManagement::CheckInService do
 
   let(:attendance_list) { create(:attendance_list, status: :open, list_type: :training) }
   let(:person) { create(:person, :with_circus_membership) }
-  let(:pack_plan) { create(:subscription_plan, :pack10) }
-  let!(:book_of_entry) { create(:book_of_entry, person: person, subscription_plan: pack_plan, sessions_remaining: 5) }
+  let(:pack_plan) { create(:contribution_formula, :pack10) }
+  let!(:contribution) { create(:contribution, person: person, contribution_formula: pack_plan, sessions_remaining: 5) }
 
   describe '#call' do
-    it 'creates attendance using existing list and book_of_entry' do
-      result = described_class.new(person_id: person.id, attendance_list_id: attendance_list.id, book_of_entry_id: book_of_entry.id).call
+    it 'creates attendance using existing list and contribution' do
+      result = described_class.new(person_id: person.id, attendance_list_id: attendance_list.id, contribution_id: contribution.id).call
 
       expect(result.success?).to be true
       expect(result.attendance.attendance_list).to eq(attendance_list)
-      expect(result.attendance.book_of_entry).to eq(book_of_entry)
+      expect(result.attendance.contribution).to eq(contribution)
     end
 
-    it 'auto-selects usable book_of_entry when none provided' do
+    it 'auto-selects usable contribution when none provided' do
       result = described_class.new(person_id: person.id, attendance_list_id: attendance_list.id).call
 
       expect(result.success?).to be true
-      expect(result.attendance.book_of_entry).to eq(book_of_entry)
+      expect(result.attendance.contribution).to eq(contribution)
     end
 
     it 'creates list automatically when missing' do

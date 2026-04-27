@@ -3,10 +3,10 @@ module Admin
     before_action :set_person
 
     def upgrade
-      result = People::SubscriptionUpgrader.new(
+      result = People::ContributionUpgrader.new(
         person: @person,
-        from_book_id: params[:from_book_id],
-        to_plan_id: params[:to_plan_id],
+        from_contribution_id: params[:from_contribution_id] || params[:from_book_id],
+        to_formula_id: params[:to_formula_id] || params[:to_plan_id],
         payment_method: params[:payment_method] || "cash",
         recorded_by_id: Current.user.id
       ).call

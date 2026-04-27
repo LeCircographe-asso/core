@@ -19,7 +19,7 @@
 
       <!-- Mobile-first card layout with max width constraint -->
       <div class="grid grid-cols-1 gap-4 max-w-4xl mx-auto">
-        <% @subscription_plans.each do |plan| %>
+        <% @contribution_formulas.each do |plan| %>
           <div class="bg-white rounded-lg shadow-md border border-gray-200 p-4 hover:shadow-lg transition-shadow duration-200">
             <!-- Card Header -->
             <div class="flex justify-between items-start mb-3">
@@ -37,7 +37,7 @@
                     <%= plan.duration.humanize %>
                   </span>
                   <span class="text-sm text-gray-500">
-                    <%= pluralize(plan.book_of_entries.count, 'carnet') %>
+                    <%= pluralize(plan.contributions.count, 'carnet') %>
                   </span>
                 </div>
               </div>
@@ -97,7 +97,7 @@
                 <% end %>
               <% end %>
               
-              <% if plan.book_of_entries.empty? %>
+              <% if plan.contributions.empty? %>
                 <% if Current.user&.system_role == 'super_admin' %>
                   <%= button_to admin_subscription_plan_path(plan), 
                       method: :delete,
@@ -140,7 +140,7 @@
     <!-- Version pour écrans larges (sans conteneur blanc) -->
     <div class="hidden lg:block">
       <div class="grid grid-cols-1 gap-4 max-w-4xl mx-auto">
-        <% @subscription_plans.each do |plan| %>
+        <% @contribution_formulas.each do |plan| %>
           <div class="bg-white rounded-lg shadow-md border border-gray-200 p-4 hover:shadow-lg transition-shadow duration-200">
             <!-- Card Header -->
             <div class="flex justify-between items-start mb-3">
@@ -158,7 +158,7 @@
                     <%= plan.duration.humanize %>
                   </span>
                   <span class="text-sm text-gray-500">
-                    <%= pluralize(plan.book_of_entries.count, 'carnet') %>
+                    <%= pluralize(plan.contributions.count, 'carnet') %>
                   </span>
                 </div>
               </div>
@@ -218,7 +218,7 @@
                 <% end %>
               <% end %>
               
-              <% if plan.book_of_entries.empty? %>
+              <% if plan.contributions.empty? %>
                 <% if Current.user&.system_role == 'super_admin' %>
                   <%= button_to admin_subscription_plan_path(plan), 
                       method: :delete,

@@ -91,4 +91,22 @@ RSpec.describe User, type: :model do
       end
     end
   end
+
+  describe "DDD vocabulary naming" do
+    let(:person) { create(:person) }
+    let(:user) { create(:user, person: person) }
+
+    describe "#subordinate_roles" do
+      it "returns subordinate roles for an admin" do
+        user.update!(system_role: :admin)
+        expect(user.subordinate_roles).to match_array(%w[volunteer web_visitor])
+      end
+    end
+
+    describe "#active_membership?" do
+      it "returns false when person has no active membership" do
+        expect(user.active_membership?).to be false
+      end
+    end
+  end
 end

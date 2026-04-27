@@ -5,8 +5,7 @@
 > **Dernière vérification** : 2026-04-27
 > **Sources de vérité** : `app/models/person.rb`, `app/models/user.rb`, `app/components/`, `app/services/people/`.
 
-> **Vocabulaire** : les services `People::Subscription*` et le composant `subscription_status_badge_component` sont les noms actuels.
-> Vocabulaire cible : `People::Contribution*` et `contribution_status_badge_component`. Voir [`../glossary.md`](../glossary.md).
+> **Vocabulaire** : le composant a été renommé `contribution_status_badge_component` (cible). Les services `People::Subscription*` restent à renommer en `People::Contribution*` lors de la migration DB. Voir [`../glossary.md`](../glossary.md).
 
 ## 📋 Vue d'Ensemble
 
@@ -65,7 +64,7 @@ Ce document consolide les bonnes pratiques et l'architecture mise en place lors 
 app/components/admin/users/
 ├── membership_status_badge_component.rb + .html.erb
 ├── membership_type_badge_component.rb + .html.erb
-├── subscription_status_badge_component.rb + .html.erb
+├── contribution_status_badge_component.rb + .html.erb
 ├── web_account_icon_component.rb + .html.erb
 ├── contextual_actions_component.rb + .html.erb
 └── member_number_history_component.rb + .html.erb

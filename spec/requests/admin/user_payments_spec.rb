@@ -9,11 +9,11 @@ RSpec.describe "Admin::Users::Payments", type: :request do
   describe "POST /admin/users/:id/payments" do
     let(:membership_type) { create(:membership_type, :circus) }
     let(:membership) { create(:membership, person: person, membership_type: membership_type) }
-    let(:subscription_plan) { create(:subscription_plan, :pack10) }
+    let(:contribution_formula) { create(:contribution_formula, :pack10) }
 
     it "creates a multi-line payment and redirects back to the person dashboard" do
       membership
-      subscription_plan
+      contribution_formula
 
       expect do
         post admin_user_payments_path("person_#{person.id}"), params: {
@@ -23,7 +23,7 @@ RSpec.describe "Admin::Users::Payments", type: :request do
           },
           payment_lines: [
             { item_type: "Membership", item_id: membership.id, amount_cents: 3_000, description: "Membership" },
-            { item_type: "SubscriptionPlan", item_id: subscription_plan.id, amount_cents: 5_000, description: "Pack 10 sessions" }
+            { item_type: "ContributionFormula", item_id: contribution_formula.id, amount_cents: 5_000, description: "Pack 10 sessions" }
           ]
         }
       end.to change(Payment, :count).by(1)

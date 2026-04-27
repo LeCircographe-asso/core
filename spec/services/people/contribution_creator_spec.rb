@@ -1,8 +1,8 @@
 require "rails_helper"
 
-RSpec.describe People::SubscriptionCreator do
+RSpec.describe People::ContributionCreator do
   let(:person) { create(:person, :with_circus_membership) }
-  let(:subscription_plan) { create(:subscription_plan, :pack10) }
+  let(:contribution_formula) { create(:contribution_formula, :pack10) }
   let(:admin_user) { create(:user, :admin, person: create(:person)) }
 
   describe "#call" do
@@ -10,7 +10,7 @@ RSpec.describe People::SubscriptionCreator do
       let(:params) do
         {
           person: person,
-          subscription_plan_id: subscription_plan.id,
+          contribution_formula_id: contribution_formula.id,
           payment_method: "cash",
           recorded_by_id: admin_user.id,
           record_attendance: false
@@ -21,15 +21,15 @@ RSpec.describe People::SubscriptionCreator do
         result = described_class.new(params).call
 
         expect(result.success?).to be(true)
-        expect(result.book_of_entry).to be_present
+        expect(result.contribution).to be_present
         expect(result.payment).to be_present
-        expect(result.payment.total_cents).to eq(subscription_plan.price_cents)
+        expect(result.payment.total_cents).to eq(contribution_formula.price_cents)
       end
 
       it "fires instrumentation" do
         creator = described_class.new(params)
 
-        expect { creator.call }.to instrument("subscription.created")
+        expect { creator.call }.to instrument("contribution.created")
       end
     end
 
@@ -37,7 +37,7 @@ RSpec.describe People::SubscriptionCreator do
       it "fails when offer_reason missing" do
         result = described_class.new(
           person: person,
-          subscription_plan_id: subscription_plan.id,
+          contribution_formula_id: contribution_formula.id,
           payment_method: "offered",
           recorded_by_id: admin_user.id
         ).call
@@ -49,7 +49,7 @@ RSpec.describe People::SubscriptionCreator do
         super_admin = create(:user, :super_admin, person: create(:person))
         result = described_class.new(
           person: person,
-          subscription_plan_id: subscription_plan.id,
+          contribution_formula_id: contribution_formula.id,
           payment_method: "offered",
           recorded_by_id: super_admin.id,
           offer_reason: "Solidarity"
@@ -63,7 +63,7 @@ RSpec.describe People::SubscriptionCreator do
     context "with invalid data" do
       it "fails when person missing" do
         result = described_class.new(
-          subscription_plan_id: subscription_plan.id,
+          contribution_formula_id: contribution_formula.id,
           payment_method: "cash",
           recorded_by_id: admin_user.id
         ).call
@@ -85,7 +85,7 @@ RSpec.describe People::SubscriptionCreator do
       it "fails when recorded_by missing" do
         result = described_class.new(
           person: person,
-          subscription_plan_id: subscription_plan.id,
+          contribution_formula_id: contribution_formula.id,
           payment_method: "cash"
         ).call
 
@@ -100,7 +100,7 @@ RSpec.describe People::SubscriptionCreator do
       it "fails when person cannot buy subscription plans" do
         result = described_class.new(
           person: basic_person,
-          subscription_plan_id: subscription_plan.id,
+          contribution_formula_id: contribution_formula.id,
           payment_method: "cash",
           recorded_by_id: admin_user.id
         ).call

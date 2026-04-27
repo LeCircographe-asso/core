@@ -18,7 +18,7 @@ module Admin
       @people = PersonQuery.active.main_people.includes(
         :user,
         memberships: :membership_type,
-        book_of_entries: :subscription_plan
+        contributions: :contribution_formula
       )
 
       # Filtres
@@ -57,7 +57,7 @@ module Admin
         person_id = params[:id].gsub("person_", "")
 
         # Chercher d'abord dans les Person actives
-        @person = PersonQuery.active.includes(:user, memberships: :membership_type, book_of_entries: :subscription_plan, payments: [ :payment_lines, :recorded_by ])
+        @person = PersonQuery.active.includes(:user, memberships: :membership_type, contributions: :contribution_formula, payments: [ :payment_lines, :recorded_by ])
                         .find_by(id: person_id)
 
         # Si Person archivée (fusion), rediriger vers la liste
@@ -89,7 +89,7 @@ module Admin
 
         # Données pour les formulaires
         @membership_types = MembershipType.all
-        @subscription_plans = SubscriptionPlan.all
+        @contribution_formulas = ContributionFormula.all
         @users = User.where(person: nil) # Users non liés
         @recent_payments = @person.payments.includes(:payment_lines, :recorded_by).order(created_at: :desc).limit(10)
 
