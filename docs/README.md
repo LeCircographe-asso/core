@@ -1,8 +1,54 @@
 # Documentation — Le Circographe
 
+> **Statut** : stable
+> **Public cible** : contributeur, équipe
+> **Dernière vérification** : 2026-04-27
+> **Sources de vérité** : structure réelle du dossier `docs/`.
+
 Index de la documentation Markdown du projet. Pour le démarrage et le déploiement, voir le [`README.md`](../README.md) à la racine.
 
 > Une restructuration progressive est en cours. La structure cible est décrite dans [`migrations/vocabulary_migration.md`](migrations/vocabulary_migration.md).
+
+---
+
+## Gouvernance documentaire
+
+### Statuts
+
+Chaque document Markdown déclare un statut dans son header :
+
+| Statut | Sens |
+| --- | --- |
+| `stable` | Vérifiée contre le code, vocabulaire canonique, prête pour `dev`. |
+| `draft` | En cours d'écriture, ne doit pas être mergée dans `dev`. |
+| `internal` | Utile équipe, non publique. Range dans `docs/internal/`. |
+| `legacy` | Historique non normatif. Range dans `docs/legacy/`. |
+| `deprecated` | Marquée pour suppression au prochain cycle. |
+
+### Règles (résumé)
+
+1. Toute doc publique a une **source de vérité code** (`app/`, `db/`, `config/`, `spec/`, `.github/`).
+2. Toute doc métier utilise le **vocabulaire canonique** (voir [`glossary.md`](glossary.md)).
+3. Les **TODO, backlogs, audits ponctuels** vont dans `docs/internal/` (versionné, équipe) ou `docs/_drafts/` (gitignored).
+4. Toute doc **legacy** est isolée dans `docs/legacy/` avec encadré « non normatif ».
+5. Toute **divergence code/doc** ouvre une issue ou une question — jamais d'auto-correction silencieuse.
+6. Toute **suppression** est justifiée dans le commit message.
+
+### Template de header
+
+```markdown
+# Titre du document
+
+> **Statut** : stable | draft | internal | legacy | deprecated
+> **Public cible** : contributeur | équipe dev | équipe ops | métier
+> **Dernière vérification** : YYYY-MM-DD
+> **Sources de vérité** :
+> - `app/models/example.rb`
+> - `db/schema.rb` (table `examples`)
+>
+> **À vérifier** :
+> - [ ] Encore à jour après PR #123 ?
+```
 
 ## Domaine et vocabulaire
 
