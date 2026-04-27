@@ -1,13 +1,22 @@
 class PaymentLine < ApplicationRecord
   include Priceable
 
-  # Relations
+  ALLOWED_ITEM_TYPES = %w[
+    Membership
+    MembershipType
+    MembershipUpgrade
+    SubscriptionPlan
+    BookOfEntry
+    ContributionFormula
+    Contribution
+    Donation
+  ].freeze
+
   belongs_to :payment
   belongs_to :item, polymorphic: true, optional: true
 
-  # Validations
   validates :amount_cents, presence: true, numericality: { greater_than_or_equal_to: 0 }
-  validates :item_type, presence: true
+  validates :item_type, presence: true, inclusion: { in: ALLOWED_ITEM_TYPES, message: "%{value} is not a supported item_type" }
   validates :item_id, presence: true
   validates :payment_id, uniqueness: { scope: [ :item_type, :item_id ] }
 
