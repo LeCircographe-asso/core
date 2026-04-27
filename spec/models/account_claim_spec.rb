@@ -128,7 +128,7 @@ RSpec.describe AccountClaim, type: :model do
   end
 
   describe "Dateable concern methods" do
-    let(:claim) { create(:account_claim, expires_at: Date.current.end_of_week.beginning_of_day + 12.hours) }
+    let(:claim) { create(:account_claim, expires_at: [ Date.current.end_of_week, Date.current.end_of_month ].min.beginning_of_day + 12.hours) }
 
     describe "#formatted_date" do
       it "formats expires_at date" do

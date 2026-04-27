@@ -1,17 +1,28 @@
 version: 2
 updates:
-- package-ecosystem: bundler
-  directory: "/"
-  target-branch: "dev"
-  schedule:
-    interval: daily
-  open-pull-requests-limit: 10
-  rebase-strategy: auto
-- package-ecosystem: github-actions
-  directory: "/"
-  target-branch: "dev"
-  schedule:
-    interval: daily
-  open-pull-requests-limit: 10
-  rebase-strategy: auto
+  - package-ecosystem: bundler
+    directory: "/"
+    target-branch: "dev"
+    schedule:
+      interval: weekly
+      day: friday
+      time: "09:00"
+    open-pull-requests-limit: 5
+    rebase-strategy: auto
+    groups:
+      ruby-deps:
+        patterns: ["*"]
+
+  - package-ecosystem: github-actions
+    directory: "/"
+    target-branch: "dev"
+    schedule:
+      interval: weekly
+      day: friday
+      time: "09:00"
+    open-pull-requests-limit: 3
+    rebase-strategy: auto
+    groups:
+      github-actions:
+        patterns: ["*"]
 
