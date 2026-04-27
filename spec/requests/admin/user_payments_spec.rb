@@ -23,7 +23,7 @@ RSpec.describe "Admin::Users::Payments", type: :request do
           },
           payment_lines: [
             { item_type: "Membership", item_id: membership.id, amount_cents: 3_000, description: "Membership" },
-            { item_type: "SubscriptionPlan", item_id: contribution_formula.id, amount_cents: 5_000, description: "Pack 10 sessions" }
+            { item_type: "ContributionFormula", item_id: contribution_formula.id, amount_cents: 5_000, description: "Pack 10 sessions" }
           ]
         }
       end.to change(Payment, :count).by(1)

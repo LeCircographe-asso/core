@@ -18,7 +18,7 @@ Le projet utilise un vocabulaire DDD-light strict. **Avant toute contribution, l
 - [docs/payments.md](docs/payments.md) — paiements, lignes, dons.
 - [docs/migrations/vocabulary_migration.md](docs/migrations/vocabulary_migration.md) — plan de migration en cours.
 
-> Résumé express : `Person` (CRM) ⟶ `User` (compte web optionnel) ⟶ `Membership` (adhésion annuelle) ⟶ `Contribution` (cotisation cirque, code legacy : `BookOfEntry`) selon une `ContributionFormula` (code legacy : `SubscriptionPlan`). Les paiements (`Payment`) regroupent une ou plusieurs `PaymentLine` (adhésion, cotisation, don).
+> Résumé express : `Person` (CRM) ⟶ `User` (compte web optionnel) ⟶ `Membership` (adhésion annuelle) ⟶ `Contribution` (cotisation cirque) selon une `ContributionFormula`. Les paiements (`Payment`) regroupent une ou plusieurs `PaymentLine` (adhésion, cotisation, don).
 
 ---
 

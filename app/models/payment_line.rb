@@ -5,8 +5,6 @@ class PaymentLine < ApplicationRecord
     Membership
     MembershipType
     MembershipUpgrade
-    SubscriptionPlan
-    BookOfEntry
     ContributionFormula
     Contribution
     Donation
@@ -25,11 +23,9 @@ class PaymentLine < ApplicationRecord
     case item_type
     when "Membership"
       item&.membership_type&.name || "Adhésion"
-    when "SubscriptionPlan"
-      item&.duration_humanized || "Cotisation"
     when "MembershipType"
       item&.name || "Type d'adhésion"
-    when "BookOfEntry", "Contribution"
+    when "Contribution"
       if item&.contribution_formula
         item.contribution_formula.duration_humanized
       else
@@ -48,7 +44,7 @@ class PaymentLine < ApplicationRecord
 
   # Scopes
   scope :memberships, -> { where(item_type: "Membership") }
-  scope :contribution_formulas, -> { where(item_type: %w[SubscriptionPlan ContributionFormula]) }
+  scope :contribution_formulas, -> { where(item_type: "ContributionFormula") }
   scope :membership_types, -> { where(item_type: "MembershipType") }
   scope :donations, -> { where(item_type: "Donation") }
   scope :by_item_type, ->(type) { where(item_type: type) }

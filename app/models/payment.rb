@@ -80,7 +80,7 @@ class Payment < ApplicationRecord
   end
 
   def carnet_related?
-    payment_lines.joins("JOIN contribution_formulas ON payment_lines.item_type = 'SubscriptionPlan' AND payment_lines.item_id = contribution_formulas.id")
+    payment_lines.joins("JOIN contribution_formulas ON payment_lines.item_type = 'ContributionFormula' AND payment_lines.item_id = contribution_formulas.id")
                  .where("contribution_formulas.duration = ?", ContributionFormula.durations[:pack10]).exists?
   end
 
