@@ -6,6 +6,13 @@ on:
   pull_request:
     branches: [dev]
 
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-lint-audit-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   lint:
     runs-on: ubuntu-latest
