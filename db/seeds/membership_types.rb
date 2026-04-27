@@ -1,5 +1,6 @@
-# Seed pour les types d'adhésion (Articles d'adhésion)
-puts "\n🌱 Creating membership types (Articles d'adhésion)..."
+# Seed des types d'adhésion (catalogue MembershipType).
+# Voir docs/glossary.md pour le vocabulaire canonique.
+puts "\nChargement des types d'adhésion (MembershipType)..."
 
 # Récupérer l'admin pour l'audit
 admin_user = User.find_by(system_role: "super_admin")
@@ -42,7 +43,7 @@ membership_types = [
 
 membership_types.each do |attrs|
   membership_type = MembershipType.create!(attrs)
-  puts "  ✅ #{membership_type.name} (#{membership_type.price_euros}€) - Version #{membership_type.version}"
+  puts "  - #{membership_type.name} (#{membership_type.price_euros}€) — version #{membership_type.version}"
 end
 
-puts "🎉 Created #{MembershipType.count} membership types"
+puts "  #{MembershipType.count} types d'adhésion créés."

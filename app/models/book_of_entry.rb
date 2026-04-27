@@ -2,7 +2,7 @@ class BookOfEntry < ApplicationRecord
   include Statusable
   include Dateable
 
-  # Relations selon le domain_model_circographe.md
+  # Relations — voir docs/domain_model.md (vocabulaire cible : Contribution).
   belongs_to :person
   belongs_to :subscription_plan
   # Validations
@@ -14,7 +14,7 @@ class BookOfEntry < ApplicationRecord
   # Validation personnalisée pour les séances
   validate :sessions_remaining_validation
 
-  # Enum pour les statuts selon le domain_model_circographe.md
+  # Statuts — voir docs/domain_model.md.
   enum :status, {
     inactive: 0,
     active: 1,
@@ -87,8 +87,8 @@ class BookOfEntry < ApplicationRecord
   end
 
   def has_session_limit?
-    # Les packs10 et les journées ont une limite de séances
-    # Les abonnements (trimester, annual) n'en ont pas (accès rapide à la présence)
+    # Les Pack 10 et les Journées ont une limite de séances.
+    # Les cotisations illimitées (trimester, annual) n'en ont pas (accès libre à la présence).
     is_pack10? || subscription_plan.duration == "day"
   end
 
@@ -143,25 +143,24 @@ class BookOfEntry < ApplicationRecord
   private
 
   def sessions_remaining_validation
-    # Pour les abonnements illimités (trimester, annual), sessions_remaining doit être nil
+    # Pour les cotisations illimitées (trimester, annual), sessions_remaining doit être nil.
     if subscription_plan&.duration.in?([ "trimester", "annual" ])
       if sessions_remaining.present?
-        errors.add(:sessions_remaining, "doit être vide pour les abonnements illimités")
+        errors.add(:sessions_remaining, "doit être vide pour les cotisations illimitées")
       end
-    # Pour les packs et journées, sessions_remaining doit être présent et positif
+    # Pour les Pack 10 et les Journées, sessions_remaining doit être présent et positif.
     elsif has_session_limit?
       if sessions_remaining.blank? || sessions_remaining < 0
-        errors.add(:sessions_remaining, "doit être présent et positif pour les packs et journées")
+        errors.add(:sessions_remaining, "doit être présent et positif pour les Pack 10 et les Journées")
       end
     end
   end
 
   def set_initial_values
-    # Valeurs par défaut si pas définies
     self.purchased_at ||= Time.current
     self.status ||= :active
-    # sessions_remaining is NOT set by default - validation will set it based on duration
-    # For unlimited subscriptions (trimester/annual), it MUST be nil
-    # For limited subscriptions (pack10/day), it MUST be set explicitly
+    # sessions_remaining n'est pas initialisé ici : la validation le contrôle selon la durée.
+    # Cotisations illimitées (trimester / annual) → sessions_remaining DOIT être nil.
+    # Cotisations limitées (pack10 / day) → sessions_remaining DOIT être défini explicitement.
   end
 end

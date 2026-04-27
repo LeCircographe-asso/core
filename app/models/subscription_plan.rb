@@ -17,7 +17,7 @@ class SubscriptionPlan < ApplicationRecord
   validates :version, presence: true, numericality: { greater_than: 0 }
   validates :effective_from, presence: true
 
-  # Enum pour les durées selon le domain_model_circographe.md
+  # Durées — voir docs/glossary.md (vocabulaire cible : ContributionFormula).
   enum :duration, {
     day: 0,
     trimester: 1,
@@ -25,9 +25,8 @@ class SubscriptionPlan < ApplicationRecord
     pack10: 3
   }
 
-  # Méthodes
   def for_circus_members?
-    # Seuls les membres Circus peuvent acheter des plans d'abonnement
+    # Seuls les adhérents Cirque peuvent acheter une formule de cotisation (cible : ContributionFormula).
     membership_type.circus?
   end
 

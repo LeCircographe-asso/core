@@ -1,7 +1,9 @@
 # Classification Zones - Le Circographe
 
-**Date:** 2025-01-27  
+**Date:** 2025-01-27
 **Base:** `docs/BUSINESS_LOGIC.md`
+
+> **Vocabulaire** : `SubscriptionPlan` est le nom de classe actuel ; vocabulaire cible : `ContributionFormula`. `BookOfEntry` → `Contribution`. Voir [glossary.md](glossary.md).
 
 ---
 
