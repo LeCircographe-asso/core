@@ -1,5 +1,8 @@
-# Seeds pour le nouveau modèle Person-Based Architecture avec Articles
-puts "🎪 Le Circographe - Nouveau Modèle d'Articles"
+# Seeds — architecture Person-Based.
+# Vocabulaire canonique : Person / User / Membership / MembershipType /
+# Contribution (code actuel : BookOfEntry) / ContributionFormula (code actuel : SubscriptionPlan)
+# Voir docs/glossary.md pour le lexique complet.
+puts "Le Circographe — chargement des seeds"
 puts "=" * 60
 
 # Le Circographe ASCII Art Logo
@@ -16,27 +19,27 @@ puts %(
 ⠀⠹⣷⣤⣀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣀⣰⡿⠁⠀⠀⠀⠀
 ⠀⠀⠀⠉⠙⠛⠿⠶⣶⣶⣶⣶⣶⠶⠿⠟⠛⠉⠀⠀⠀⠀⠀⠀
 )
-puts "\n🎪 Bienvenue dans la seed du Circographe! 🎪\n\n"
+puts "\nLe Circographe — initialisation des données de référence\n\n"
 
 # Nettoyage des données existantes (dans l'ordre des dépendances)
-puts "🧹 Cleaning existing data..."
+puts "Nettoyage des données existantes..."
 [ PaymentLine, Payment, Attendance, BookOfEntry, Membership,
   Event, SubscriptionPlan, MembershipType, User, Person ].each do |model|
   count = model.count
   model.delete_all if count > 0
-  puts "  - Deleted #{count} #{model.name.pluralize.downcase}"
+  puts "  - #{count} #{model.name.pluralize.downcase} supprimé(s)"
 end
 
-# Charger les seeds modulaires
-puts "\n📋 Loading modular seeds..."
+# Chargement des seeds modulaires
+puts "\nChargement des seeds modulaires..."
 
 # 0. Super administrateur
 load Rails.root.join('db', 'seeds', 'admin.rb')
 
-# 1. Types d'adhésion (Articles d'adhésion)
+# 1. Types d'adhésion (catalogue MembershipType)
 load Rails.root.join('db', 'seeds', 'membership_types.rb')
 
-# 2. Plans d'abonnement (Articles de cotisation)
+# 2. Formules de cotisation (catalogue ContributionFormula — code actuel : SubscriptionPlan)
 load Rails.root.join('db', 'seeds', 'subscription_plans.rb')
 
 # 3. Événements
@@ -51,49 +54,49 @@ load Rails.root.join('db', 'seeds', 'bulk_users.rb')
 # 6. Ajouter des adhésions et paiements avec la nouvelle logique
 load Rails.root.join('db', 'seeds', 'add_memberships_and_payments.rb')
 
-puts "\n🎉 Seeds completed successfully!"
+puts "\nSeeds terminés."
 puts "=" * 60
-puts "📊 Summary:"
-puts "  - #{MembershipType.count} types d'adhésion (articles d'adhésion)"
-puts "  - #{SubscriptionPlan.count} plans d'abonnement (articles de cotisation)"
+puts "Récapitulatif :"
+puts "  - #{MembershipType.count} types d'adhésion"
+puts "  - #{SubscriptionPlan.count} formules de cotisation (code actuel : SubscriptionPlan)"
 puts "  - #{Event.count} événements"
 puts "  - #{Person.count} personnes"
-puts "  - #{User.count} utilisateurs"
+puts "  - #{User.count} comptes web"
 puts "  - #{Membership.count} adhésions"
-puts "  - #{BookOfEntry.count} carnets d'entrées"
+puts "  - #{BookOfEntry.count} cotisations (code actuel : BookOfEntry)"
 puts "  - #{Payment.count} paiements"
 puts "=" * 60
 
-puts "\n🔑 Comptes de test:"
-puts "  👑 Super Admin: super-admin@rails.com / 123456"
-puts "  👨‍💼 Admin: admin@rails.com / 123456"
-puts "  🤝 Volunteer: volunteer@rails.com / 123456"
+puts "\nComptes de test :"
+puts "  - Super Admin : super-admin@rails.com / 123456"
+puts "  - Admin       : admin@rails.com / 123456"
+puts "  - Volunteer   : volunteer@rails.com / 123456"
 
-puts "\n📈 Articles disponibles:"
-puts "  📋 Adhésions:"
+puts "\nCatalogue disponible :"
+puts "  Types d'adhésion :"
 MembershipType.all.each do |mt|
-  puts "    - #{mt.name}: #{mt.price_euros}€ (#{mt.category})"
+  puts "    - #{mt.name} : #{mt.price_euros}€ (#{mt.category})"
 end
 
-puts "  🎫 Cotisations:"
+puts "  Formules de cotisation :"
 SubscriptionPlan.all.each do |sp|
-  puts "    - #{sp.name}: #{sp.price_euros}€ (#{sp.duration})"
+  puts "    - #{sp.name} : #{sp.price_euros}€ (#{sp.duration})"
 end
 
-puts "\n👥 Personnes avec numéros d'adhérent:"
+puts "\nPersonnes avec numéro d'adhérent :"
 Person.where.not(member_number: nil).each do |person|
   history_count = person.member_number_history.count
-  web_account = person.user.present? ? "🌐" : "📱"
-  puts "    #{web_account} #{person.full_name}: #{person.member_number} (#{history_count} historique(s))"
+  web_account = person.user.present? ? "[web]" : "[no-web]"
+  puts "    #{web_account} #{person.full_name} : #{person.member_number} (#{history_count} historique(s))"
 end
 
-puts "\n📊 Statistiques des numéros d'adhérent:"
+puts "\nStatistiques des numéros d'adhérent :"
 current_year = Date.current.year.to_s.last(2)
 basique_count = Person.where("member_number LIKE ?", "#{current_year}U%").count
 cirque_count = Person.where("member_number LIKE ?", "#{current_year}C%").count
-puts "    - Basique (#{current_year}U): #{basique_count} adhérent(s)"
-puts "    - Cirque (#{current_year}C): #{cirque_count} adhérent(s)"
-puts "    - Total avec numéro: #{Person.where.not(member_number: nil).count}"
-puts "    - Sans numéro: #{Person.where(member_number: nil).count}"
+puts "    - Basic  (#{current_year}U) : #{basique_count} adhérent(s)"
+puts "    - Cirque (#{current_year}C) : #{cirque_count} adhérent(s)"
+puts "    - Total avec numéro : #{Person.where.not(member_number: nil).count}"
+puts "    - Sans numéro       : #{Person.where(member_number: nil).count}"
 
-puts "\n✨ Système d'articles et numéros d'adhérent prêt à l'emploi!"
+puts "\nCatalogue d'adhésions et de cotisations prêt à l'emploi."

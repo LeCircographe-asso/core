@@ -1,3 +1,11 @@
+# =====================================================================
+# LEGACY ARCHIVE — NE PAS RECHARGER
+# ---------------------------------------------------------------------
+# Tâche Rake one-shot conservée pour mémoire historique. Elle a comblé
+# un gap de données lors d'une migration passée. Ne pas la déplacer
+# dans lib/tasks/ ni l'exécuter en runtime.
+# =====================================================================
+
 namespace :migrate do
   desc "Migrate existing persons without active membership to have basic membership"
   task persons_without_membership: :environment do

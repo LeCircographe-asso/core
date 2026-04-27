@@ -79,7 +79,7 @@ RSpec.describe BookOfEntry, type: :model do
             expires_at: 1.year.from_now
           )
           expect(book_of_entry).not_to be_valid
-          expect(book_of_entry.errors[:sessions_remaining]).to include("doit être vide pour les abonnements illimités")
+          expect(book_of_entry.errors[:sessions_remaining]).to include("doit être vide pour les cotisations illimitées")
         end
       end
     end

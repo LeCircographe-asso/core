@@ -130,7 +130,7 @@ class Person < ApplicationRecord
   end
 
   def can_buy_subscription_plans?
-    # Seuls les membres Circus peuvent acheter des plans d'abonnement
+    # Seuls les adhérents Circus peuvent acheter une formule de cotisation (cible : ContributionFormula).
     return false unless current_membership
     current_membership.membership_type.circus?
   end
@@ -304,9 +304,9 @@ class Person < ApplicationRecord
         validate_offer_permissions!(recorded_by, "subscription", offer_reason, subscription_plan)
       end
 
-      # Vérifier que la personne peut acheter des plans d'abonnement
+      # Vérifier que la personne peut acheter une cotisation (cible : ContributionFormula).
       unless can_buy_subscription_plans?
-        raise "Cette personne doit avoir une adhésion Cirque pour acheter des plans d'abonnement"
+        raise "Cette personne doit avoir une adhésion Cirque active pour acheter une cotisation"
       end
 
       # Déterminer les valeurs selon le type de plan
@@ -447,10 +447,12 @@ class Person < ApplicationRecord
         notes: notes
       )
 
-      # Créer la ligne de paiement (utiliser Payment comme item_type pour cohérence avec PaymentCreator)
+      # Dette legacy : la ligne de don utilise item_type: "Payment" pour rester cohérente
+      # avec People::PaymentCreator (réécriture L92). Migration prévue en phase1-donation-fix
+      # → cible : item_type: "Donation". Voir docs/payments.md.
       payment.payment_lines.create!(
         item_type: "Payment",
-        item_id: payment.id, # Lié au paiement lui-même pour les donations simples
+        item_id: payment.id,
         amount_cents: amount_cents,
         description: notes
       )

@@ -2,15 +2,15 @@ class Event < ApplicationRecord
   include Categorizable
   include Dateable
 
-  # Relations selon le domain_model_circographe.md
+  # Relations — voir docs/domain_model.md.
   belongs_to :creator, class_name: "User"
   has_many :attendances, dependent: :destroy
   has_many :people, through: :attendances
-  has_many :event_attendees, dependent: :destroy  # Legacy support
+  has_many :event_attendees, dependent: :destroy  # Legacy — à auditer (phase 4 vocab migration).
   # Validations
   validates :name, :date, presence: true
   validates :category, presence: true
-  # Enum pour les catégories selon le domain_model_circographe.md
+  # Catégories — voir docs/glossary.md.
   enum :category, {
     show: 0,
     workshop: 1,
