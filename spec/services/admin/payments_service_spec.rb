@@ -8,7 +8,7 @@ RSpec.describe Admin::PaymentsService do
   let!(:payment_success) { create(:payment, :success, person: person_one, total_cents: 2_500, recorded_by: admin_user, created_at: Time.zone.parse('2025-02-10 10:00')) }
   let!(:payment_pending) { create(:payment, :pending, person: person_two, total_cents: 1_000, recorded_by: admin_user, created_at: Time.zone.parse('2025-02-12 12:00')) }
   let!(:donation_payment) { create(:payment, :success, person: person_one, total_cents: 5_000, recorded_by: admin_user) }
-  let!(:donation_line) { create(:payment_line, payment: donation_payment, item: donation_payment, item_type: "Payment", amount_cents: 5_000, description: "Donation") }
+  let!(:donation_line) { create(:payment_line, payment: donation_payment, item_type: "Donation", item_id: donation_payment.id, amount_cents: 5_000, description: "Donation") }
 
   describe '#call' do
     it 'returns all payments with aggregated amounts by default' do

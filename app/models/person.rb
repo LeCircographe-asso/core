@@ -285,7 +285,7 @@ class Person < ApplicationRecord
 
       if donation_cents.present?
         payment.payment_lines.create!(
-          item_type: "Payment",
+          item_type: "Donation",
           item_id: payment.id,
           amount_cents: donation_cents,
           description: "Donation"
@@ -369,7 +369,7 @@ class Person < ApplicationRecord
 
       if donation_cents.present?
         payment.payment_lines.create!(
-          item_type: "Payment",
+          item_type: "Donation",
           item_id: payment.id,
           amount_cents: donation_cents,
           description: "Donation"
@@ -447,11 +447,8 @@ class Person < ApplicationRecord
         notes: notes
       )
 
-      # Dette legacy : la ligne de don utilise item_type: "Payment" pour rester cohérente
-      # avec People::PaymentCreator (réécriture L92). Migration prévue en phase1-donation-fix
-      # → cible : item_type: "Donation". Voir docs/payments.md.
       payment.payment_lines.create!(
-        item_type: "Payment",
+        item_type: "Donation",
         item_id: payment.id,
         amount_cents: amount_cents,
         description: notes
@@ -703,7 +700,7 @@ class Person < ApplicationRecord
 
     if donation_cents.present?
       payment.payment_lines.create!(
-        item_type: "Payment",
+        item_type: "Donation",
         item_id: payment.id,
         amount_cents: donation_cents,
         description: "Donation"
