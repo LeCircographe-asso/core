@@ -23,9 +23,7 @@ class BookOfEntry < ApplicationRecord
     suspended: 4
   }
 
-  # Callbacks
   before_create :set_initial_values
-  after_create :bookOfEntryValidation
 
   # Méthodes
   def can_use?
@@ -165,36 +163,5 @@ class BookOfEntry < ApplicationRecord
     # sessions_remaining is NOT set by default - validation will set it based on duration
     # For unlimited subscriptions (trimester/annual), it MUST be nil
     # For limited subscriptions (pack10/day), it MUST be set explicitly
-  end
-
-  def bookOfEntryValidation
-    erreurs = []
-
-    if person_id.blank?
-      erreurs << "La personne est obligatoire"
-    end
-
-    if subscription_plan_id.blank?
-      erreurs << "Le plan d'abonnement est obligatoire"
-    end
-
-    # sessions_remaining validation is now handled by sessions_remaining_validation
-    # Only validate if has_session_limit (not for unlimited subscriptions)
-    if has_session_limit? && (sessions_remaining.blank? || sessions_remaining < 0)
-      erreurs << "Le nombre de séances restantes doit être positif"
-    end
-
-    if purchased_at.blank?
-      erreurs << "La date d'achat est obligatoire"
-    end
-
-    # Only validate expires_at for non-pack10 (pack10 never expire)
-    if !is_pack10? && expires_at.blank?
-      erreurs << "La date d'expiration est obligatoire"
-    end
-
-    if expires_at && purchased_at && expires_at <= purchased_at
-      erreurs << "La date d'expiration doit être après la date d'achat"
-    end
   end
 end
