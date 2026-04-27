@@ -1,13 +1,13 @@
 # Audit des Contrôleurs - Stratégie TDD
 
 **Statut actuel:** ⚠️ À revalider régulièrement (snapshot 2025-01-31).  
-**Source de vérité:** `to-do.md` + [`../ZONES_CLASSIFICATION.md`](../ZONES_CLASSIFICATION.md).
+**Source de vérité:** `to-do.md` + [`models.md`](models.md#3-classification-par-zones).
 
 ---
 
 **Date:** 2025-01-31  
 **Objectif:** Audit complet des contrôleurs pour préparer l'implémentation de tests TDD  
-**Base:** Classification Zones ([`../ZONES_CLASSIFICATION.md`](../ZONES_CLASSIFICATION.md))
+**Base:** Classification Zones ([`models.md`](models.md#3-classification-par-zones))
 
 ---
 
@@ -581,7 +581,7 @@ end
 ## 📚 Références
 
 - **Business Logic:** [`../domain/business_logic.md`](../domain/business_logic.md)
-- **Zones Classification:** [`../ZONES_CLASSIFICATION.md`](../ZONES_CLASSIFICATION.md)
+- **Zones Classification:** [`models.md`](models.md#3-classification-par-zones)
 
 ---
 

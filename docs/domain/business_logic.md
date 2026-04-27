@@ -13,7 +13,7 @@
 - **Zone 2 (En cours)** - Logique temporaire/exploration → Tests après stabilisation
 - **Zone 3 (Future)** - Non implémenté → Pas de tests
 
-**Voir [`../ZONES_CLASSIFICATION.md`](../ZONES_CLASSIFICATION.md) pour détails complets.**
+**Voir [`../architecture/models.md`](../architecture/models.md#3-classification-par-zones) pour détails complets.**
 
 ### Stratégie Backend - Logique Métier Immuable
 

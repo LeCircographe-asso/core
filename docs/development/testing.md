@@ -2,7 +2,7 @@
 
 > Vocabulaire : voir [`../glossary.md`](../glossary.md). Les exemples de code peuvent encore utiliser des noms legacy (`SubscriptionPlan`, `BookOfEntry`) pendant la migration progressive vers `ContributionFormula` / `Contribution` (cf. [`../migrations/vocabulary_migration.md`](../migrations/vocabulary_migration.md)).
 
-Ce document remplace l'ancien trio `docs/TDD_GUIDE.md` + `docs/TESTING_GUIDE.md` + `docs/CHANGELOG_TDD_SETUP.md` qui s'étaient mis à diverger. Pour la priorisation par zones (Zone 1 / 2 / 3), se référer à [`../ZONES_CLASSIFICATION.md`](../ZONES_CLASSIFICATION.md).
+Ce document remplace l'ancien trio `docs/TDD_GUIDE.md` + `docs/TESTING_GUIDE.md` + `docs/CHANGELOG_TDD_SETUP.md` qui s'étaient mis à diverger. Pour la priorisation par zones (Zone 1 / 2 / 3), se référer à [`../architecture/models.md`](../architecture/models.md#3-classification-par-zones).
 
 ## Sommaire
 
@@ -353,7 +353,7 @@ Rapport : `coverage/index.html`.
 
 ## 8. Gaps connus (snapshot 2025-01-31, à revalider)
 
-Ces listes sont un instantané et doivent être recroisées avec [`to-do.md`](../../to-do.md) et [`../ZONES_CLASSIFICATION.md`](../ZONES_CLASSIFICATION.md) avant action.
+Ces listes sont un instantané et doivent être recroisées avec [`to-do.md`](../../to-do.md) et [`../architecture/models.md`](../architecture/models.md#3-classification-par-zones) avant action.
 
 ### Models testés
 
@@ -426,4 +426,4 @@ L'ensemble des services `People::*`, `AccountClaimManagement::*`, `AttendanceMan
 - [`../domain/business_logic.md`](../domain/business_logic.md) — règles métier.
 - [`../architecture/services.md`](../architecture/services.md) — catalogue de services.
 - [`../architecture/controllers.md`](../architecture/controllers.md) — état des contrôleurs.
-- [`../ZONES_CLASSIFICATION.md`](../ZONES_CLASSIFICATION.md) — priorisation tests.
+- [`../architecture/models.md`](../architecture/models.md) — modèles, concerns, zones de stabilité.
