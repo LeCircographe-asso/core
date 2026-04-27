@@ -24,11 +24,12 @@ Index de la documentation Markdown du projet. Pour le démarrage et le déploiem
 
 ## Frontend, UX et design
 
-- [`TURBO_GUIDE.md`](TURBO_GUIDE.md) — diagnostic Turbo / Frames / Streams / Importmap.
-- [`UX_GUIDE.md`](UX_GUIDE.md) — diagnostic écart back/front.
-- [`REFONTE_CIRCOGRAPHE.md`](REFONTE_CIRCOGRAPHE.md) — feuille de route refonte UX/UI.
-- [`ASSETS_LOCK.md`](ASSETS_LOCK.md) — règles Propshaft / Tailwind / Flowbite.
+- [`development/turbo.md`](development/turbo.md) — diagnostic Turbo / Frames / Streams / Importmap.
+- [`development/ux.md`](development/ux.md) — diagnostic écart back/front.
+- [`development/assets.md`](development/assets.md) — règles Propshaft / Tailwind / Flowbite.
+- [`design/refonte.md`](design/refonte.md) — feuille de route refonte UX/UI.
 - [`design/color_system.md`](design/color_system.md) — palette, tokens, accessibilité.
+- [`design/css_migration.md`](design/css_migration.md) — plan de migration CSS.
 
 ## Operations
 

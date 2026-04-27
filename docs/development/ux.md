@@ -63,7 +63,7 @@ Success/Error (centralisé)
 
 ### Plan d'Action (mis à jour)
 
-**Statut actuel :** ✅ Back-end unifié (`People::Register`). UI admin branchée sur `People::Membership*`, `People::Payment*` et `People::Subscription*` (vocabulaire cible : `People::Contribution*` — voir [glossary.md](glossary.md)). Il reste à reprendre l’interface publique.
+**Statut actuel :** ✅ Back-end unifié (`People::Register`). UI admin branchée sur `People::Membership*`, `People::Payment*` et `People::Subscription*` (vocabulaire cible : `People::Contribution*` — voir [`../glossary.md`](../glossary.md)). Il reste à reprendre l’interface publique.
 
 **Phase UX (à faire)**
 

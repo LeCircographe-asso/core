@@ -32,7 +32,7 @@ Ce dossier contient toute la documentation technique, les découvertes, et les p
 - **[archive/ANALYSIS_SUMMARY.md](archive/ANALYSIS_SUMMARY.md)** - Résumé exécutif (historique)
 
 ### **🎨 CSS & Frontend**
-- **[CSS_MIGRATION_STRATEGY.md](CSS_MIGRATION_STRATEGY.md)** - Plan de migration CSS vers architecture propre
+- Voir [`../design/css_migration.md`](../design/css_migration.md) — plan de migration CSS vers une architecture propre.
 
 ### **🏗️ Production**
 - **[PRODUCTION_DEPLOYMENT_PLAN.md](PRODUCTION_DEPLOYMENT_PLAN.md)** - Plan de déploiement production (historique)
@@ -57,7 +57,7 @@ Pour l’actuel, se référer à `to-do.md` (produit) et `knowledge/OPTIMIZATION
 6. **PERFORMANCE_REPORT.md** - Métriques et gains attendus
 
 ### **Pour Refactorer :**
-7. **CSS_MIGRATION_STRATEGY.md** - Sortir du "bordel CSS"
+7. **`../design/css_migration.md`** - Sortir du "bordel CSS"
 
 ---
 
