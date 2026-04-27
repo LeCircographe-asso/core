@@ -1,7 +1,8 @@
 class Attendance < ApplicationRecord
   include Dateable
 
-  # Relations selon le domain_model_circographe.md
+  # Relations — voir docs/domain_model.md.
+  # Note: book_of_entry sera renommé contribution (voir docs/migrations/vocabulary_migration.md).
   belongs_to :person
   belongs_to :event, optional: true
   belongs_to :attendance_list, optional: true

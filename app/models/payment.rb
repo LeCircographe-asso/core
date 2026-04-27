@@ -4,7 +4,7 @@ class Payment < ApplicationRecord
   include Statusable
   include Dateable
 
-  # Relations selon le domain_model_circographe.md
+  # Relations — voir docs/domain_model.md et docs/payments.md.
   belongs_to :person
   belongs_to :recorded_by, class_name: "User"
   has_many :payment_lines, dependent: :destroy
@@ -15,9 +15,7 @@ class Payment < ApplicationRecord
 
   before_create :generate_uuid
   after_create :create_audit_log
-  # Callbacks obsolètes désactivés - utilisez les services Person-Based
-  # after_update :update_user_membership_if_paid, if: -> { saved_change_to_status? && status == "success" }
-  # after_update :createBookOfEntry, if: -> { saved_change_to_status? && status == "success" }
+  # Callbacks legacy supprimés : la création/mise à jour cascade passe désormais par les services People::*.
   after_update :log_status_change, if: -> { saved_change_to_status? }
   after_update :invalidate_totals_cache, if: -> { saved_change_to_total_cents? }
 
@@ -46,7 +44,7 @@ class Payment < ApplicationRecord
     end
   end
 
-  # Nouvelles méthodes selon le domain_model_circographe.md
+  # Méthodes utilitaires de présentation — voir docs/payments.md.
   def payment_type
     # Déterminer le type de paiement basé sur les payment_lines
     if payment_lines.memberships.any?
@@ -82,7 +80,7 @@ class Payment < ApplicationRecord
   end
 
   def carnet_related?
-    # Vérifier si le paiement contient des carnets (subscription_plans de type pack)
+    # Vérifier si le paiement contient une cotisation Pack 10 (ContributionFormula de type pack — code actuel : SubscriptionPlan).
     payment_lines.joins("JOIN subscription_plans ON payment_lines.item_type = 'SubscriptionPlan' AND payment_lines.item_id = subscription_plans.id")
                  .where("subscription_plans.duration = ?", SubscriptionPlan.durations[:pack10]).exists?
   end

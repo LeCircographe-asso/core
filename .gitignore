@@ -80,8 +80,18 @@ identifier.sqlite
 # IDE files
 /.idea
 
-# Cursor IDE — agent plans (local); keep .cursor/rules/ in repo
+# Cursor IDE — agent plans and per-developer rules (local only)
 /.cursor/plans/
+/.cursor/rules/
+
+# Documentation drafts (Cursor / ad-hoc audits — never commit)
+docs/_drafts/
+*.draft.md
+
+# Local developer notes
+NOTES.md
+SCRATCH.md
+.notes/
 
 # Watchman (not used - we use Tailwind watcher instead)
 /watchman

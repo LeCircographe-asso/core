@@ -16,7 +16,7 @@ class MembershipType < ApplicationRecord
   validates :version, presence: true, numericality: { greater_than: 0 }
   validates :effective_from, presence: true
 
-  # Enum pour les catégories selon le domain_model_circographe.md
+  # Catégories — voir docs/glossary.md.
   enum :category, {
     basic: 0,
     circus: 1,

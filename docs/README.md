@@ -1,124 +1,122 @@
-# Documentation - Le Circographe
+# Documentation — Le Circographe
 
-**Date:** 2025-01-31  
-**Version:** Synthétisée et optimisée
+> **Statut** : stable
+> **Public cible** : contributeur, équipe
+> **Dernière vérification** : 2026-04-27
+> **Sources de vérité** : structure réelle du dossier `docs/`.
 
----
+Index de la documentation Markdown du projet. Pour le démarrage et le déploiement, voir le [`README.md`](../README.md) à la racine.
 
-## 📚 Guide de Navigation
+> Une restructuration progressive est en cours. La structure cible est décrite dans [`migrations/vocabulary_migration.md`](migrations/vocabulary_migration.md).
 
-**Source de vérité:** `to-do.md` (roadmap) + `ARCHITECTURE_GUIDE.md` + `docs/ARCHITECTURE_SERVICES.md`.  
-Pour un index court et à jour, voir `knowledge/CURRENT_STATUS.md`.
+## Cartographie
 
-### Architecture & Design
+```
+docs/
+  README.md             ← (ici) index, gouvernance, statuts
+  glossary.md           lexique canonique
+  domain_model.md       modèle de domaine
+  payments.md           paiements, lignes, dons
 
-1. **[ARCHITECTURE_SERVICES.md](./ARCHITECTURE_SERVICES.md)** - ⭐ **Source unique de vérité**
-   - Pattern Controller → Service → Model
-   - 44 services dans 15 domaines
-   - 21 ViewComponents actifs
-   - Tous les controllers admin utilisent des services
-   - Vérification complète de l'architecture
+  domain/               règles métier
+  architecture/         modèles, services, contrôleurs
+  development/          tests, Turbo, assets
+  design/               design system stable
+  operations/           déploiement (source de vérité ops)
 
-2. **[CONCERNS_ANALYSIS.md](./CONCERNS_ANALYSIS.md)** - Analyse complète des concerns
-   - 10 concerns documentés
-   - Tableau récapitulatif complet (13 modèles)
-   - Plan d'action complété
+  migrations/           plan DDD-light transitionnel
+  legacy/               snapshots historiques non normatifs
+  rake_archive/         Rake tasks one-shot historiques
 
-3. **[MODEL_EVALUATION.md](./MODEL_EVALUATION.md)** - Évaluation du modèle de données
-   - Score: 9/10
-   - Architecture Person-Based
-   - Points forts et améliorations
-
-**Note:** Pour les détails ViewComponents, voir `../ARCHITECTURE_GUIDE.md` à la racine.
-
-### Logique Métier
-
-4. **[BUSINESS_LOGIC.md](./BUSINESS_LOGIC.md)** - Règles business complètes
-   - Classification Zone 1/2/3
-   - Domaines métier (Membership, Payment, Subscription, etc.)
-   - Historique des refactorings
-   - Architecture Services
-
-5. **[ZONES_CLASSIFICATION.md](./ZONES_CLASSIFICATION.md)** - Classification par zones
-   - Zone 1 (Stable) - Tests immédiats
-   - Zone 2 (En cours) - Tests après stabilisation
-   - Zone 3 (Future) - Pas de tests
-
-### Tests & Qualité
-
-6. **[TDD_GUIDE.md](./TDD_GUIDE.md)** - Guide complet TDD
-   - Philosophie Red-Green-Refactor
-   - Configuration et setup
-   - Stratégie de tests (Invariants, Contrats, Caractérisation)
-   - Workflow TDD
-   - Outils et commandes
-   - CI/CD
-
-7. **[TESTING_GUIDE.md](./TESTING_GUIDE.md)** - Guide tests et couverture
-   - Pourquoi la couverture est importante
-   - Rapport SimpleCov
-   - Audit de couverture
-   - Gaps identifiés
-   - Plan d'action
-
-8. **[CONTROLLERS_AUDIT.md](./CONTROLLERS_AUDIT.md)** - Audit des contrôleurs
-   - Stratégie TDD par zone
-   - Contrôleurs critiques (Zone 1)
-   - État des tests
-   - Plan d'action prioritaire
-
-### UX/UI
-
-9. **[UX_GUIDE.md](./UX_GUIDE.md)** - Guide UX/UI
-   - Problèmes critiques identifiés
-   - Procédure d'adhésion
-   - Newsletter legacy
-   - Gestion compte web
-   - Plan d'action global
-
-### Configuration
-
-10. **[ASSETS_LOCK.md](./ASSETS_LOCK.md)** - Règles asset pipeline
-    - Tailwind CSS
-    - Propshaft
-    - Vite (optionnel)
+  internal/             ← versionné, mais réservé équipe
+                          (TODO, backlogs, audits datés, plans en cours)
+  _drafts/              ← gitignored (brouillons Cursor / audits ponctuels)
+```
 
 ---
 
-## 🎯 Fichiers par Thème
+## Gouvernance documentaire
 
-### Pour comprendre l'architecture
-→ `ARCHITECTURE_SERVICES.md` + `CONCERNS_ANALYSIS.md` + `MODEL_EVALUATION.md`
+### Statuts
 
-### Pour comprendre la logique métier
-→ `BUSINESS_LOGIC.md` + `ZONES_CLASSIFICATION.md`
+Chaque document Markdown déclare un statut dans son header :
 
-### Pour écrire des tests
-→ `TDD_GUIDE.md` + `TESTING_GUIDE.md` + `CONTROLLERS_AUDIT.md`
+| Statut | Sens |
+| --- | --- |
+| `stable` | Vérifiée contre le code, vocabulaire canonique, prête pour `dev`. |
+| `draft` | En cours d'écriture, ne doit pas être mergée dans `dev`. |
+| `internal` | Utile équipe, non publique. Range dans `docs/internal/`. |
+| `legacy` | Historique non normatif. Range dans `docs/legacy/`. |
+| `deprecated` | Marquée pour suppression au prochain cycle. |
 
-### Pour améliorer l'UX
-→ `UX_GUIDE.md`
+### Règles (résumé)
 
----
+1. Toute doc publique a une **source de vérité code** (`app/`, `db/`, `config/`, `spec/`, `.github/`).
+2. Toute doc métier utilise le **vocabulaire canonique** (voir [`glossary.md`](glossary.md)).
+3. Les **TODO, backlogs, audits ponctuels** vont dans `docs/internal/` (versionné, équipe) ou `docs/_drafts/` (gitignored).
+4. Toute doc **legacy** est isolée dans `docs/legacy/` avec encadré « non normatif ».
+5. Toute **divergence code/doc** ouvre une issue ou une question — jamais d'auto-correction silencieuse.
+6. Toute **suppression** est justifiée dans le commit message.
 
-## 📊 Statistiques
+### Template de header
 
-- **11 fichiers docs/** (réduit de 18 → 11, -39%)
-- **44 services** dans 15 domaines *Management
-- **21 ViewComponents** actifs
-- **2 Query Objects** (PersonQuery, PaymentQuery)
-- **10 concerns** documentés
-- **13 modèles** avec concerns
-- **19 controllers admin** (13 utilisent services, 6 sans logique métier complexe)
+```markdown
+# Titre du document
 
----
+> **Statut** : stable | draft | internal | legacy | deprecated
+> **Public cible** : contributeur | équipe dev | équipe ops | métier
+> **Dernière vérification** : YYYY-MM-DD
+> **Sources de vérité** :
+> - `app/models/example.rb`
+> - `db/schema.rb` (table `examples`)
+>
+> **À vérifier** :
+> - [ ] Encore à jour après PR #123 ?
+```
 
-## 🔗 Liens Croisés
+## Domaine et vocabulaire
 
-Tous les fichiers principaux ont une section "Documentation liée" avec des liens vers les autres fichiers pertinents.
+- [`glossary.md`](glossary.md) — lexique canonique FR/EN, termes interdits.
+- [`domain_model.md`](domain_model.md) — diagramme Mermaid + responsabilités des agrégats.
+- [`payments.md`](payments.md) — `Payment`, `PaymentLine`, `Donation` et la dette legacy `item_type:"Payment"`.
+- [`domain/business_logic.md`](domain/business_logic.md) — règles métier complètes (adhésion, cotisation, paiements).
 
----
+## Architecture
 
-**Dernière mise à jour:** 2025-01-31  
-**Synthèse:** 2025-01-31 - Documentation optimisée, code nettoyé, architecture vérifiée
+- [`architecture/overview.md`](architecture/overview.md) — Person/User, RGPD, ViewComponents.
+- [`architecture/services.md`](architecture/services.md) — catalogue des services `People::*`.
+- [`architecture/models.md`](architecture/models.md) — modèles, concerns, zones de stabilité, dettes techniques.
+- [`architecture/controllers.md`](architecture/controllers.md) — état des contrôleurs.
 
+## Tests
+
+- [`development/testing.md`](development/testing.md) — guide TDD unifié (philosophie, setup, couverture, gaps, CI).
+
+## Frontend, UX et design
+
+- [`development/turbo.md`](development/turbo.md) — diagnostic Turbo / Frames / Streams / Importmap.
+- [`development/assets.md`](development/assets.md) — règles Propshaft / Tailwind / Flowbite.
+- [`design/color_system.md`](design/color_system.md) — palette, tokens, accessibilité.
+
+## Operations
+
+- [`operations/deployment.md`](operations/deployment.md) — workflow Kamal dev → staging → prod + règles d'or et troubleshooting (source de vérité).
+
+## Migrations et legacy
+
+- [`migrations/vocabulary_migration.md`](migrations/vocabulary_migration.md) — plan de renommage DDD-light, phases 0 → 4.
+- [`legacy/README.md`](legacy/README.md) — documents historiques non normatifs.
+- [`legacy/incidents/oct_2025_lessons.md`](legacy/incidents/oct_2025_lessons.md) — synthèse des incidents staging/production d'oct. 2025.
+- [`legacy/production_deployment_plan.md`](legacy/production_deployment_plan.md) — snapshot du plan de mise en prod « mode maintenance ».
+- [`rake_archive/`](rake_archive/) — Rake tasks de migration one-shot, **ne plus exécuter**.
+
+## Documentation interne (équipe)
+
+> Vivant, en évolution. Versionné dans `dev` mais hors de la doc publique. Voir [`internal/README.md`](internal/README.md).
+
+- [`internal/todo.md`](internal/todo.md) — backlog produit + dette technique.
+- [`internal/optimizations_backlog.md`](internal/optimizations_backlog.md) — backlog optimisations infra/UX.
+- [`internal/ux_audit_2025_01.md`](internal/ux_audit_2025_01.md) — audit UX/UI daté 2025-01-31 (snapshot).
+- [`internal/refonte.md`](internal/refonte.md) — feuille de route refonte UX/UI (working document).
+- [`internal/css_migration.md`](internal/css_migration.md) — plan de migration CSS.
+- [`internal/sqlite_deployment.md`](internal/sqlite_deployment.md) — alternative bare-metal au flux Kamal.
