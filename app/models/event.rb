@@ -6,7 +6,9 @@ class Event < ApplicationRecord
   belongs_to :creator, class_name: "User"
   has_many :attendances, dependent: :destroy
   has_many :people, through: :attendances
-  has_many :event_attendees, dependent: :destroy  # Legacy — à auditer (phase 4 vocab migration).
+  # `event_attendees` reste réservé à la billetterie (paiement Stripe) — voir
+  # docs/glossary.md. Les présences "registre" passent par `attendances`.
+  has_many :event_attendees, dependent: :destroy
   # Validations
   validates :name, :date, presence: true
   validates :category, presence: true
@@ -37,15 +39,11 @@ class Event < ApplicationRecord
     attendances.exists?(person: person)
   end
 
-  # Méthode de compatibilité avec l'ancien système
+  # Présence "registre" : ne consulte jamais `event_attendees` (billetterie).
   def is_user_registered?(user)
-    # Essayer d'abord avec le nouveau système si user a une person
-    if user.person
-      is_person_registered?(user.person)
-    else
-      # Fallback sur l'ancien système
-      event_attendees.exists?(user_id: user.id)
-    end
+    return false unless user&.person
+
+    is_person_registered?(user.person)
   end
 
   # Méthode pour obtenir le nom (compatibilité)
