@@ -140,7 +140,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_27_092706) do
   create_table "event_attendees", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.bigint "event_id", null: false
-    t.boolean "interested"
+    t.boolean "interested", default: false
     t.bigint "payment_id"
     t.datetime "updated_at", null: false
     t.bigint "user_id", null: false
@@ -296,17 +296,17 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_27_092706) do
     t.string "country"
     t.datetime "created_at", null: false
     t.datetime "deleted_at"
-    t.boolean "dyslexic_font"
+    t.boolean "dyslexic_font", default: false
     t.string "email"
     t.string "emergency_contact_name"
     t.string "emergency_contact_phone"
     t.string "first_name", null: false
-    t.boolean "get_involved"
-    t.boolean "image_rights"
-    t.boolean "is_minor", null: false
+    t.boolean "get_involved", default: false
+    t.boolean "image_rights", default: false
+    t.boolean "is_minor", default: false, null: false
     t.string "last_name", null: false
     t.string "member_number"
-    t.boolean "newsletter_subscribed"
+    t.boolean "newsletter_subscribed", default: false
     t.string "newsletter_unsubscribe_token"
     t.text "notes"
     t.string "occupation"
@@ -352,8 +352,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_27_092706) do
 
   create_table "users", force: :cascade do |t|
     t.datetime "created_at", null: false
-    t.boolean "created_by_admin"
-    t.boolean "deleted"
+    t.boolean "created_by_admin", default: false
+    t.boolean "deleted", default: false
     t.datetime "deleted_at"
     t.string "email_address"
     t.string "password_digest", null: false
