@@ -1,5 +1,10 @@
 # Modèles, concerns et zones de stabilité
 
+> **Statut** : stable
+> **Public cible** : contributeur
+> **Dernière vérification** : 2026-04-27
+> **Sources de vérité** : `app/models/`, `app/models/concerns/`, `db/schema.rb`, `spec/models/`.
+
 > **Vocabulaire DDD-light** (voir [`../glossary.md`](../glossary.md))
 >
 > Les noms de classes Ruby utilisés ci-dessous sont systématiquement annotés `(cible : …)` quand ils correspondent à du code legacy en cours de migration :

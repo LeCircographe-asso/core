@@ -1,5 +1,10 @@
 # Circographe UI Color System
 
+> **Statut** : stable
+> **Public cible** : contributeur, design
+> **Dernière vérification** : 2026-04-27
+> **Sources de vérité** : `app/assets/tailwind/application.css`, `app/assets/tailwind/components/`.
+
 ## 1. Brand Palette
 
 | Role                    | Token                | Hex       | Usage                                                                 |

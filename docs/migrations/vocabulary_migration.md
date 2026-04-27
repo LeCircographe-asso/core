@@ -1,9 +1,12 @@
 # Migration de Vocabulaire — DDD-light
 
-> Plan progressif d'alignement vocabulaire / code / documentation, sans big-bang. Chaque phase est livrable seule, sans casser la précédente.
+> **Statut** : stable (transitionnel — disparaît à la fin de phase 4)
+> **Public cible** : contributeur
+> **Dernière vérification** : 2026-04-27
+> **Sources de vérité** : `app/models/`, `app/services/people/`, [`../glossary.md`](../glossary.md).
 
-**Dernière mise à jour :** 2026-04-27
-**Vocabulaire cible :** voir [../glossary.md](../glossary.md).
+> Plan progressif d'alignement vocabulaire / code / documentation, sans big-bang. Chaque phase est livrable seule, sans casser la précédente.
+> **Vocabulaire cible :** voir [../glossary.md](../glossary.md).
 
 ---
 

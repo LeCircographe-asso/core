@@ -1,7 +1,12 @@
 # Logique Métier - Le Circographe
 
+> **Statut** : stable
+> **Public cible** : contributeur, métier
+> **Dernière vérification** : 2026-04-27
+> **Sources de vérité** : `app/models/person.rb`, `app/models/membership.rb`, `app/services/people/*.rb`, `db/seeds/membership_types.rb`, `db/seeds/subscription_plans.rb`.
+
 **Application:** Gestion complète pour association de cirque  
-**Date:** 2025-11-03  
+**Dernière revue contenu:** 2025-11-03  
 **Classification:** Zone 1 (Stable) | Zone 2 (En cours) | Zone 3 (Future)  
 **État:** ✅ Logique métier complètement réécrite selon vraies règles business (2025-11-03)
 

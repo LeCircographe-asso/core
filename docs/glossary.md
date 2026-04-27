@@ -1,9 +1,11 @@
 # Lexique Métier — Le Circographe
 
-> **Source de vérité unique** pour le vocabulaire du domaine. Toute nouvelle PR (code, doc, UI, tests) doit utiliser ce vocabulaire. Les termes listés en section « Termes interdits » sont rejetés en revue.
+> **Statut** : stable (canonique)
+> **Public cible** : contributeur, métier
+> **Dernière vérification** : 2026-04-27
+> **Sources de vérité** : `app/models/*.rb`, `db/schema.rb`, [`migrations/vocabulary_migration.md`](migrations/vocabulary_migration.md).
 
-**Dernière mise à jour :** 2026-04-27
-**Statut :** Canonique — utilisée pendant la migration `phase0` → `phase4` (cf. [migrations/vocabulary_migration.md](migrations/vocabulary_migration.md)).
+> **Source de vérité unique** pour le vocabulaire du domaine. Toute nouvelle PR (code, doc, UI, tests) doit utiliser ce vocabulaire. Les termes listés en section « Termes interdits » sont rejetés en revue. Utilisé pendant la migration `phase0` → `phase4`.
 
 ---
 

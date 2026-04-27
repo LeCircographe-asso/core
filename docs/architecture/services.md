@@ -1,8 +1,12 @@
 # Architecture des Services - Le Circographe
 
-**Date:** 2025-01-31  
-**Status:** ✅ STABLE - Ne pas modifier sans validation  
-**Dernière mise à jour:** 2025-11-09  
+> **Statut** : stable
+> **Public cible** : contributeur
+> **Dernière vérification** : 2026-04-27
+> **Sources de vérité** : `app/services/people/`, `app/services/event_management/`, `app/services/attendance_management/`, `app/services/user_management/`.
+
+**Création initiale:** 2025-01-31  
+**Dernière revue contenu:** 2025-11-09  
 **Services:** Consolidés (`People::*` pour adhésions/paiements/cotisations ; plusieurs `*Management` retirés côté admin)  
 **Controllers:** Admin simplifiés (CRUD inline pour `Events`, `MembershipTypes`, `SubscriptionPlans` *(cible : `ContributionFormulas`)*)
 
