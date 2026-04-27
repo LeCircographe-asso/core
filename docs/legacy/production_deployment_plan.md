@@ -1,13 +1,13 @@
 # 🚀 Plan de Déploiement Production — Mode Maintenance (snapshot)
 
+> **Statut** : legacy (snapshot daté 2025-10-12)
+> **Public cible** : équipe (consultation historique)
+> **Dernière vérification** : 2026-04-27 (statut, pas le contenu)
+> **Sources de vérité actuelles** : [`../operations/deployment.md`](../operations/deployment.md), [`incidents/oct_2025_lessons.md`](incidents/oct_2025_lessons.md).
+>
 > **Document non normatif** archivé depuis `docs/knowledge/` le 2026-04-27.
 > Snapshot de l'arbitrage produit du 2025-10-12 (mode maintenance + accès admin
 > + horaires affichés). Conservé pour traçabilité.
->
-> **Source de vérité actuelle** :
-> [`../operations/deployment.md`](../operations/deployment.md)
-> + résumé des incidents associés dans
-> [`incidents/oct_2025_lessons.md`](incidents/oct_2025_lessons.md).
 
 ---
 
