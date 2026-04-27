@@ -127,27 +127,27 @@ RSpec.describe PaymentLine, type: :model do
 
   describe 'scopes' do
     let!(:membership_line) { create(:payment_line, item: create(:membership), item_type: "Membership") }
-    let!(:subscription_line) { create(:payment_line, item: create(:contribution_formula), item_type: "SubscriptionPlan") }
+    let!(:contribution_formula_line) { create(:payment_line, item: create(:contribution_formula), item_type: "ContributionFormula") }
     let!(:membership_type_line) { create(:payment_line, item: create(:membership_type), item_type: "MembershipType") }
 
     it "finds membership lines" do
       expect(PaymentLine.memberships).to include(membership_line)
-      expect(PaymentLine.memberships).not_to include(subscription_line, membership_type_line)
+      expect(PaymentLine.memberships).not_to include(contribution_formula_line, membership_type_line)
     end
 
-    it "finds subscription plan lines" do
-      expect(PaymentLine.contribution_formulas).to include(subscription_line)
+    it "finds contribution formula lines" do
+      expect(PaymentLine.contribution_formulas).to include(contribution_formula_line)
       expect(PaymentLine.contribution_formulas).not_to include(membership_line, membership_type_line)
     end
 
     it "finds membership type lines" do
       expect(PaymentLine.membership_types).to include(membership_type_line)
-      expect(PaymentLine.membership_types).not_to include(membership_line, subscription_line)
+      expect(PaymentLine.membership_types).not_to include(membership_line, contribution_formula_line)
     end
 
     it "finds lines by item type" do
       expect(PaymentLine.by_item_type("Membership")).to include(membership_line)
-      expect(PaymentLine.by_item_type("SubscriptionPlan")).to include(subscription_line)
+      expect(PaymentLine.by_item_type("ContributionFormula")).to include(contribution_formula_line)
       expect(PaymentLine.by_item_type("MembershipType")).to include(membership_type_line)
     end
   end

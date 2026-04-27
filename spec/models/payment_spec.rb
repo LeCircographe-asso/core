@@ -170,9 +170,9 @@ RSpec.describe Payment, type: :model do
       expect(payment.payment_type).to eq("Adhésion")
     end
 
-    it "returns 'Cotisation' when payment has subscription plan lines" do
+    it "returns 'Cotisation' when payment has contribution formula lines" do
       contribution_formula = create(:contribution_formula)
-      create(:payment_line, payment: payment, item: contribution_formula, item_type: "SubscriptionPlan")
+      create(:payment_line, payment: payment, item: contribution_formula, item_type: "ContributionFormula")
 
       expect(payment.payment_type).to eq("Cotisation")
     end
@@ -286,7 +286,7 @@ RSpec.describe Payment, type: :model do
 
     it "returns false when payment has no membership lines" do
       contribution_formula = create(:contribution_formula)
-      create(:payment_line, payment: payment, item: contribution_formula, item_type: "SubscriptionPlan")
+      create(:payment_line, payment: payment, item: contribution_formula, item_type: "ContributionFormula")
 
       expect(payment.membership_related?).to be false
     end
@@ -297,16 +297,16 @@ RSpec.describe Payment, type: :model do
     let(:user) { create(:user) }
     let(:payment) { create(:payment, person: person, recorded_by: user) }
 
-    it "returns true when payment has pack subscription plan lines" do
+    it "returns true when payment has pack contribution formula lines" do
       contribution_formula = create(:contribution_formula, :pack10)
-      create(:payment_line, payment: payment, item: contribution_formula, item_type: "SubscriptionPlan")
+      create(:payment_line, payment: payment, item: contribution_formula, item_type: "ContributionFormula")
 
       expect(payment.carnet_related?).to be true
     end
 
-    it "returns false when payment has no pack subscription plan lines" do
+    it "returns false when payment has no pack contribution formula lines" do
       contribution_formula = create(:contribution_formula, :annual)
-      create(:payment_line, payment: payment, item: contribution_formula, item_type: "SubscriptionPlan")
+      create(:payment_line, payment: payment, item: contribution_formula, item_type: "ContributionFormula")
 
       expect(payment.carnet_related?).to be false
     end

@@ -48,7 +48,7 @@ FactoryBot.define do
     trait :with_contribution_formula_line do
       after(:create) do |payment|
         contribution_formula = create(:contribution_formula)
-        create(:payment_line, payment: payment, item: contribution_formula, item_type: "SubscriptionPlan", amount_cents: payment.total_cents)
+        create(:payment_line, payment: payment, item: contribution_formula, item_type: "ContributionFormula", amount_cents: payment.total_cents)
       end
     end
 

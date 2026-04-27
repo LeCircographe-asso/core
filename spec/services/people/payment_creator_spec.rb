@@ -57,7 +57,7 @@ RSpec.describe People::PaymentCreator do
       let(:payment_lines) do
         [
           { item_type: "Membership", item_id: membership.id, amount_cents: 3_000, description: "Adhésion" },
-          { item_type: "SubscriptionPlan", item_id: contribution_formula.id, amount_cents: 5_000, description: "Pack 10" }
+          { item_type: "ContributionFormula", item_id: contribution_formula.id, amount_cents: 5_000, description: "Pack 10" }
         ]
       end
 

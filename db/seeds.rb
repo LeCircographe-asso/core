@@ -1,6 +1,6 @@
 # Seeds — architecture Person-Based.
 # Vocabulaire canonique : Person / User / Membership / MembershipType /
-# Contribution (code actuel : BookOfEntry) / ContributionFormula (code actuel : SubscriptionPlan)
+# Contribution / ContributionFormula
 # Voir docs/glossary.md pour le lexique complet.
 puts "Le Circographe — chargement des seeds"
 puts "=" * 60
@@ -23,8 +23,8 @@ puts "\nLe Circographe — initialisation des données de référence\n\n"
 
 # Nettoyage des données existantes (dans l'ordre des dépendances)
 puts "Nettoyage des données existantes..."
-[ PaymentLine, Payment, Attendance, BookOfEntry, Membership,
-  Event, SubscriptionPlan, MembershipType, User, Person ].each do |model|
+[ PaymentLine, Payment, Attendance, Contribution, Membership,
+  Event, ContributionFormula, MembershipType, User, Person ].each do |model|
   count = model.count
   model.delete_all if count > 0
   puts "  - #{count} #{model.name.pluralize.downcase} supprimé(s)"
@@ -39,8 +39,8 @@ load Rails.root.join('db', 'seeds', 'admin.rb')
 # 1. Types d'adhésion (catalogue MembershipType)
 load Rails.root.join('db', 'seeds', 'membership_types.rb')
 
-# 2. Formules de cotisation (catalogue ContributionFormula — code actuel : SubscriptionPlan)
-load Rails.root.join('db', 'seeds', 'subscription_plans.rb')
+# 2. Formules de cotisation (catalogue ContributionFormula)
+load Rails.root.join('db', 'seeds', 'contribution_formulas.rb')
 
 # 3. Événements
 load Rails.root.join('db', 'seeds', 'events.rb')
@@ -58,12 +58,12 @@ puts "\nSeeds terminés."
 puts "=" * 60
 puts "Récapitulatif :"
 puts "  - #{MembershipType.count} types d'adhésion"
-puts "  - #{SubscriptionPlan.count} formules de cotisation (code actuel : SubscriptionPlan)"
+puts "  - #{ContributionFormula.count} formules de cotisation"
 puts "  - #{Event.count} événements"
 puts "  - #{Person.count} personnes"
 puts "  - #{User.count} comptes web"
 puts "  - #{Membership.count} adhésions"
-puts "  - #{BookOfEntry.count} cotisations (code actuel : BookOfEntry)"
+puts "  - #{Contribution.count} cotisations"
 puts "  - #{Payment.count} paiements"
 puts "=" * 60
 
@@ -79,7 +79,7 @@ MembershipType.all.each do |mt|
 end
 
 puts "  Formules de cotisation :"
-SubscriptionPlan.all.each do |sp|
+ContributionFormula.all.each do |sp|
   puts "    - #{sp.name} : #{sp.price_euros}€ (#{sp.duration})"
 end
 

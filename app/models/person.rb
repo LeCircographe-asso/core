@@ -297,7 +297,7 @@ class Person < ApplicationRecord
       donation_cents = nil if donation_cents.to_i <= 0
       total_cents = amount_cents + (donation_cents || 0)
 
-      description = generate_payment_description(payment_method, contribution_formula.name, "BookOfEntry")
+      description = generate_payment_description(payment_method, contribution_formula.name, "Contribution")
       payment = payments.create!(
         total_cents: total_cents,
         payment_method: payment_method,
@@ -307,7 +307,7 @@ class Person < ApplicationRecord
       )
 
       payment.payment_lines.create!(
-        item_type: "BookOfEntry",
+        item_type: "Contribution",
         item_id: contribution.id,
         amount_cents: amount_cents,
         description: description
@@ -356,7 +356,7 @@ class Person < ApplicationRecord
       )
 
       payment.payment_lines.create!(
-        item_type: "BookOfEntry",
+        item_type: "Contribution",
         item_id: new_result[:contribution].id,
         amount_cents: amount_to_pay,
         description: "Upgrade avec crédit prorata"
@@ -539,14 +539,14 @@ class Person < ApplicationRecord
     when "offered"
       case item_type
       when "Membership" then "Adhésion offerte #{item_name}"
-      when "BookOfEntry" then "Cotisation offerte #{item_name}"
+      when "Contribution" then "Cotisation offerte #{item_name}"
       when "MembershipUpgrade" then "Upgrade offert d'adhésion vers #{item_name}"
       else "#{item_type} offert #{item_name}"
       end
     else
       case item_type
       when "Membership" then "Adhésion #{item_name}"
-      when "BookOfEntry" then "Plan d'abonnement #{item_name}"
+      when "Contribution" then "Plan d'abonnement #{item_name}"
       when "MembershipUpgrade" then "Upgrade d'adhésion vers #{item_name}"
       else "#{item_type} #{item_name}"
       end
@@ -665,7 +665,7 @@ class Person < ApplicationRecord
 
   def contribution_purchases_count
     payments.joins(:payment_lines)
-            .where(payment_lines: { item_type: "BookOfEntry" })
+            .where(payment_lines: { item_type: "Contribution" })
             .count
   end
 
