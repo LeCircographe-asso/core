@@ -6,6 +6,13 @@ on:
   pull_request:
     branches: [dev]
 
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-docker-build-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   docker-build-check:
     runs-on: ubuntu-latest

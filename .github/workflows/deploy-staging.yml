@@ -8,9 +8,15 @@ permissions:
   contents: read
   packages: write
 
+concurrency:
+  group: deploy-staging-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   build-push:
     runs-on: ubuntu-latest
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
     steps:
       - uses: actions/checkout@v6
       - uses: docker/setup-buildx-action@v3
