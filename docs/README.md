@@ -22,8 +22,7 @@ Index de la documentation Markdown du projet. Pour le démarrage et le déploiem
 
 ## Tests
 
-- [`TDD_GUIDE.md`](TDD_GUIDE.md) — guide TDD complet (Red-Green-Refactor).
-- [`TESTING_GUIDE.md`](TESTING_GUIDE.md) — couverture SimpleCov, gaps, plan.
+- [`development/testing.md`](development/testing.md) — guide TDD unifié (philosophie, setup, couverture, gaps, CI).
 
 ## Frontend, UX et design
 
