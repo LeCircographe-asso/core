@@ -10,13 +10,17 @@ Ce dossier regroupe des documents historiques qui ne sont **plus la source de v�
 
 ## Contenu
 
-Au fur et à mesure de la restructuration documentaire, ce dossier accueillera :
+- [`production_deployment_plan.md`](production_deployment_plan.md) — snapshot
+  one-shot du plan « mode maintenance + accès admin » de 2025-10-12. Pour la
+  procédure courante, voir [`../operations/deployment.md`](../operations/deployment.md).
+- [`incidents/oct_2025_lessons.md`](incidents/oct_2025_lessons.md) — synthèse
+  des sessions de debug staging/production du 11–12 octobre 2025
+  (`Propshaft::MissingAssetError`, `/up`, host authorization, optimisations
+  Docker, mode maintenance).
 
-- les snapshots de plans de déploiement « one-shot » (mode maintenance, etc.) ;
-- les comptes-rendus d'incidents ou de sessions de debug datés ;
-- les anciennes notes de migration encore référencées par certains fichiers.
-
-À la racine du projet, [`docs/rake_archive/`](../rake_archive/) joue le même rôle pour les Rake tasks de migration historique : à conserver, **ne jamais relancer**.
+À la racine du projet, [`docs/rake_archive/`](../rake_archive/) joue le même
+rôle pour les Rake tasks de migration historique : à conserver, **ne jamais
+relancer**.
 
 ## Pour la documentation vivante
 
