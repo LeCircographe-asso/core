@@ -80,5 +80,8 @@ identifier.sqlite
 # IDE files
 /.idea
 
+# Cursor IDE — agent plans (local); keep .cursor/rules/ in repo
+/.cursor/plans/
+
 # Watchman (not used - we use Tailwind watcher instead)
 /watchman
