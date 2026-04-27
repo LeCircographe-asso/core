@@ -93,6 +93,9 @@ Ordered from quick wins to long-term work. Each item can be handled incrementall
 - Add rake task to backfill donation lines for legacy donations.
 - Add report for book_of_entries with invalid sessions_remaining for unlimited plans.
 
+## 7b) Code cleanup tracked from doc audit (2026-04-27)
+- **Cleanup `EventManagement::*` orphans** — `app/services/event_management/{event_creator,event_updater,event_deleter}.rb` exist with passing specs but are **never called** from `app/`. `Admin::EventsController` uses inline CRUD (`Event.new` / `Event.find`). Either delete the services and their specs, or rewire the controller. Decision pending — open a GitHub issue when starting. (Source: doc audit 2026-04-27, divergence §3.3.)
+
 ## 8) Rollout Order
 1. Health Report panel (visibility first). (done)
 2. Fix invalid payment/user linking logic. (done: admin payment/donation links use person_id; removed user_id filter in payments service)

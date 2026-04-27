@@ -153,7 +153,7 @@
 **Actions à tester:**
 - `index` - Liste tous les événements
 - `new` - Formulaire création
-- `create`/`update` - EventManagement conservé (à réévaluer plus tard)
+- `create`/`update` - **CRUD inline** : le contrôleur instancie `Event.new` / `Event.find` directement (vérifié dans `app/controllers/admin/events_controller.rb`).
 - `destroy` - Suppression événement
 
 **Invariants métier à tester:**
@@ -162,8 +162,7 @@
 - ✅ Category par défaut: 'other'
 
 **Services utilisés:**
-- `EventManagement::EventCreator`
-- `EventManagement::EventUpdater`
+- *(aucun)* — les classes `EventManagement::EventCreator/Updater/Deleter` existent dans `app/services/event_management/` mais ne sont plus appelées depuis `app/`. Voir l'item « Cleanup `EventManagement::*` orphelins » dans [`../internal/todo.md`](../internal/todo.md).
 
 **Estimation:** 12-15 request specs
 

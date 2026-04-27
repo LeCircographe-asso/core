@@ -131,7 +131,9 @@ Cadre de **stabilité / risque** pour prioriser les tests. Pour les priorités a
 
 #### Zone 2 — fonctionnels mais à stabiliser
 
-`Web::UserRegistration`, `People::Register`, `People::PaymentUpdater`, `People::PaymentCanceller`, `People::PaymentRestorer`, `People::AccountLinker`, `UserManagement::UserDeleter`, `People::AccountMerger`, `EventManagement::{EventCreator,EventUpdater,EventDeleter}`.
+`Web::UserRegistration`, `People::Register`, `People::PaymentUpdater`, `People::PaymentCanceller`, `People::PaymentRestorer`, `People::AccountLinker`, `UserManagement::UserDeleter`, `People::AccountMerger`.
+
+> Les classes `EventManagement::EventCreator/Updater/Deleter` existent dans `app/services/event_management/` mais sont **orphelines** : aucun contrôleur ne les appelle (CRUD inline dans `Admin::EventsController`). Cleanup tracé dans [`../internal/todo.md`](../internal/todo.md).
 
 #### Zone 3
 
