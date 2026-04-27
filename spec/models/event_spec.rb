@@ -131,7 +131,7 @@ RSpec.describe Event, type: :model do
         week_date = if Date.current.beginning_of_week != Date.current
           Date.current.beginning_of_week.beginning_of_day + 12.hours
         else
-          Date.current.end_of_week.beginning_of_day + 12.hours
+          [ Date.current.end_of_week, Date.current.end_of_month ].min.beginning_of_day + 12.hours
         end
         create(:event, creator: creator2, date: week_date)
       end
