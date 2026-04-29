@@ -1,8 +1,8 @@
 module AuthenticationHelpers
   def login_as(user)
     @current_session = user.sessions.create!(
-      user_agent: "Mozilla/5.0",
-      ip_address: "127.0.0.1"
+      user_agent: 'Mozilla/5.0',
+      ip_address: '127.0.0.1'
     )
     Current.session = @current_session
   end

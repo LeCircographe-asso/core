@@ -5,9 +5,9 @@ RSpec.describe BlogManagement::BlogDeleter do
   let(:admin_user) { create(:user, system_role: :admin) }
   let(:tag) { create(:tag) }
 
-  describe "#call" do
-    context "with valid attributes" do
-      it "deletes blog successfully" do
+  describe '#call' do
+    context 'with valid attributes' do
+      it 'deletes blog successfully' do
         blog.tags << tag
 
         deleter = described_class.new(
@@ -21,7 +21,7 @@ RSpec.describe BlogManagement::BlogDeleter do
         expect { blog.reload }.to raise_error(ActiveRecord::RecordNotFound)
       end
 
-      it "clears tags before deletion" do
+      it 'clears tags before deletion' do
         blog.tags << tag
 
         deleter = described_class.new(
@@ -36,15 +36,15 @@ RSpec.describe BlogManagement::BlogDeleter do
       end
     end
 
-    context "with invalid attributes" do
-      it "returns failure when blog_id is missing" do
+    context 'with invalid attributes' do
+      it 'returns failure when blog_id is missing' do
         deleter = described_class.new(deleted_by_id: admin_user.id)
 
         result = deleter.call
         expect(result.success?).to be false
       end
 
-      it "returns failure when deleted_by_id is missing" do
+      it 'returns failure when deleted_by_id is missing' do
         deleter = described_class.new(blog_id: blog.id)
 
         result = deleter.call
@@ -61,19 +61,19 @@ RSpec.describe BlogManagement::BlogDeleter do
 
         result = deleter.call
         expect(result.success?).to be false
-        expect(result.message).to include("Insufficient permissions")
+        expect(result.message).to include('Insufficient permissions')
       end
     end
 
-    context "instrumentation" do
-      it "fires blog.deleted notification" do
-        expect {
+    context 'instrumentation' do
+      it 'fires blog.deleted notification' do
+        expect do
           deleter = described_class.new(
             blog_id: blog.id,
             deleted_by_id: admin_user.id
           )
           deleter.call
-        }.to instrument("blog.deleted")
+        end.to instrument('blog.deleted')
       end
     end
   end

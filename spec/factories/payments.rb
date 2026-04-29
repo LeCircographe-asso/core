@@ -41,21 +41,21 @@ FactoryBot.define do
     trait :with_membership_line do
       after(:create) do |payment|
         membership = create(:membership, person: payment.person)
-        create(:payment_line, payment: payment, item: membership, item_type: "Membership", amount_cents: payment.total_cents)
+        create(:payment_line, payment: payment, item: membership, item_type: 'Membership', amount_cents: payment.total_cents)
       end
     end
 
     trait :with_contribution_formula_line do
       after(:create) do |payment|
         contribution_formula = create(:contribution_formula)
-        create(:payment_line, payment: payment, item: contribution_formula, item_type: "ContributionFormula", amount_cents: payment.total_cents)
+        create(:payment_line, payment: payment, item: contribution_formula, item_type: 'ContributionFormula', amount_cents: payment.total_cents)
       end
     end
 
     trait :with_membership_type_line do
       after(:create) do |payment|
         membership_type = create(:membership_type)
-        create(:payment_line, payment: payment, item: membership_type, item_type: "MembershipType", amount_cents: payment.total_cents)
+        create(:payment_line, payment: payment, item: membership_type, item_type: 'MembershipType', amount_cents: payment.total_cents)
       end
     end
 

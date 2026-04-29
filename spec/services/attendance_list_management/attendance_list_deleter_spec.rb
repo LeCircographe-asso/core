@@ -9,18 +9,18 @@ RSpec.describe AttendanceListManagement::AttendanceListDeleter do
       it 'destroys the attendance list and returns success' do
         params = { attendance_list_id: attendance_list.id, deleted_by_id: admin_user.id }
 
-        expect {
+        expect do
           result = described_class.new(params).call
           expect(result.success?).to be true
-        }.to change(AttendanceList, :count).by(-1)
+        end.to change(AttendanceList, :count).by(-1)
       end
 
       it 'fires attendance_list.deleted instrumentation' do
         params = { attendance_list_id: attendance_list.id, deleted_by_id: admin_user.id }
 
-        expect {
+        expect do
           described_class.new(params).call
-        }.to instrument('attendance_list.deleted')
+        end.to instrument('attendance_list.deleted')
       end
     end
 

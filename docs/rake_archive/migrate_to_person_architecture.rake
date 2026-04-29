@@ -10,9 +10,9 @@
 # =====================================================================
 
 namespace :migration do
-  desc "Migrate existing data to Person-Based Architecture"
+  desc 'Migrate existing data to Person-Based Architecture'
   task person_architecture: :environment do
-    puts "🚀 Starting migration to Person-Based Architecture..."
+    puts '🚀 Starting migration to Person-Based Architecture...'
 
     # Étape 1: Créer les données de référence
     puts "\n📋 Step 1: Creating reference data..."
@@ -44,7 +44,7 @@ namespace :migration do
     validate_migration!
 
     puts "\n🎉 Migration completed successfully!"
-    puts "📊 Summary:"
+    puts '📊 Summary:'
     puts "  - People: #{Person.count}"
     puts "  - Users: #{User.count}"
     puts "  - Memberships: #{Membership.count}"
@@ -56,13 +56,13 @@ namespace :migration do
   private
 
   def create_membership_types!
-    puts "  Creating membership types..."
+    puts '  Creating membership types...'
     MembershipType.create_default_types!
     puts "  ✅ Created #{MembershipType.count} membership types"
   end
 
   def create_subscription_plans!
-    puts "  Creating subscription plans..."
+    puts '  Creating subscription plans...'
     SubscriptionPlan.create_default_plans!
     puts "  ✅ Created #{SubscriptionPlan.count} subscription plans"
   end
@@ -74,8 +74,8 @@ namespace :migration do
       next if user.person.present? # Skip if already migrated
 
       creator = People::PersonCreator.new(
-        first_name: user.first_name || "Unknown",
-        last_name: user.last_name || "User",
+        first_name: user.first_name || 'Unknown',
+        last_name: user.last_name || 'User',
         email: user.email,
         allow_blank_attributes: true
       )
@@ -107,7 +107,7 @@ namespace :migration do
         # Vérifier s'il n'y a pas déjà une adhésion active
         existing_membership = Membership.find_by(
           person: user_membership.user.person,
-          status: [ :active, :inactive ]
+          status: %i[active inactive]
         )
 
         unless existing_membership
@@ -140,28 +140,28 @@ namespace :migration do
       person = find_person_for_payment(payment)
       next unless person
 
-        # Créer les lignes de paiement si nécessaire
-        if payment.order&.product_orders.present? && payment.payment_lines.empty?
-          payment.order.product_orders.each do |product_order|
-            item = determine_payment_item(product_order.product)
-            next unless item
+      # Créer les lignes de paiement si nécessaire
+      if payment.order&.product_orders.present? && payment.payment_lines.empty?
+        payment.order.product_orders.each do |product_order|
+          item = determine_payment_item(product_order.product)
+          next unless item
 
-            # Vérifier si la ligne existe déjà
-            existing_line = PaymentLine.find_by(
-              payment: payment,
-              item: item
-            )
+          # Vérifier si la ligne existe déjà
+          existing_line = PaymentLine.find_by(
+            payment: payment,
+            item: item
+          )
 
-            unless existing_line
-              PaymentLine.create!(
-                payment: payment,
-                item: item,
-                amount_cents: calculate_amount_cents(product_order),
-                description: "#{item.class.name} - #{product_order.product.product_name}"
-              )
-            end
-          end
+          next if existing_line
+
+          PaymentLine.create!(
+            payment: payment,
+            item: item,
+            amount_cents: calculate_amount_cents(product_order),
+            description: "#{item.class.name} - #{product_order.product.product_name}"
+          )
         end
+      end
 
       # Mettre à jour le paiement
       payment.update!(
@@ -234,7 +234,7 @@ namespace :migration do
   end
 
   def validate_migration!
-    puts "  Validating data integrity..."
+    puts '  Validating data integrity...'
 
     # Vérifier que tous les users ont une person
     users_without_person = User.where(person_id: nil).count
@@ -248,18 +248,18 @@ namespace :migration do
     memberships_without_person = Membership.where(person_id: nil).count
     puts "  Memberships without person: #{memberships_without_person}" if memberships_without_person > 0
 
-    puts "  ✅ Validation completed"
+    puts '  ✅ Validation completed'
   end
 
   # Helper methods
 
-  def determine_membership_type(user_membership)
+  def determine_membership_type(_user_membership)
     # Logique pour déterminer le type d'adhésion
     # À adapter selon les données existantes
     MembershipType.find_by(category: :basic) || MembershipType.first
   end
 
-  def determine_membership_status(user_membership)
+  def determine_membership_status(_user_membership)
     # Logique pour déterminer le statut
     # À adapter selon les données existantes
     :active
@@ -267,32 +267,35 @@ namespace :migration do
 
   def find_person_for_payment(payment)
     return payment.user.person if payment.user&.person
+
     # Fallback: chercher par email
     Person.find_by(email: payment.user&.email) if payment.user&.email
   end
 
   def find_person_for_book_of_entry(book_of_entry)
     return book_of_entry.user.person if book_of_entry.user&.person
+
     # Fallback: chercher par email
     Person.find_by(email: book_of_entry.user&.email) if book_of_entry.user&.email
   end
 
   def find_person_for_attendance(attendance)
     return attendance.user.person if attendance.user&.person
+
     # Fallback: chercher par email
     Person.find_by(email: attendance.user&.email) if attendance.user&.email
   end
 
   def determine_payment_item(product)
-      # Logique pour déterminer l'item du paiement
-      # À adapter selon les produits existants
-      if product.product_name&.downcase&.include?("membership")
-        MembershipType.first
-      elsif product.product_name&.downcase&.include?("pack")
-        SubscriptionPlan.find_by(duration: :pack10)
-      else
-        SubscriptionPlan.first
-      end
+    # Logique pour déterminer l'item du paiement
+    # À adapter selon les produits existants
+    if product.product_name&.downcase&.include?('membership')
+      MembershipType.first
+    elsif product.product_name&.downcase&.include?('pack')
+      SubscriptionPlan.find_by(duration: :pack10)
+    else
+      SubscriptionPlan.first
+    end
   end
 
   def calculate_amount_cents(product_order)
@@ -304,7 +307,7 @@ namespace :migration do
   def determine_subscription_plan(product)
     # Logique pour déterminer le plan d'abonnement
     # À adapter selon les produits existants
-    if product.product_name&.downcase&.include?("pack")
+    if product.product_name&.downcase&.include?('pack')
       SubscriptionPlan.find_by(duration: :pack10)
     else
       SubscriptionPlan.first
@@ -314,13 +317,13 @@ namespace :migration do
   def map_payment_method(payment_type)
     # Mapper les anciens types de paiement vers les nouveaux
     case payment_type&.to_s&.downcase
-    when "cash", "espèces"
+    when 'cash', 'espèces'
       :cash
-    when "card", "carte"
+    when 'card', 'carte'
       :sumup
-    when "check", "chèque"
+    when 'check', 'chèque'
       :cheque
-    when "transfer", "virement"
+    when 'transfer', 'virement'
       :transfer
     else
       :cash

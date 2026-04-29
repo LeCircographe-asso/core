@@ -10,7 +10,7 @@ RSpec.describe TagBlog, type: :model do
   end
 
   describe 'creation' do
-    it "can link tag to blog" do
+    it 'can link tag to blog' do
       tag_blog = TagBlog.create!(tag: tag, blog: blog)
       expect(tag_blog).to be_persisted
     end

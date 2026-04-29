@@ -4,13 +4,11 @@ module AttendanceListManagement
     attribute :created_by_id, :integer
 
     def call
-      target_date = (date || Date.current)
+      target_date = date || Date.current
 
-      return failure("Free training closed on Mondays") if target_date.monday?
+      return failure('Free training closed on Mondays') if target_date.monday?
 
-      if attendance_list_exists_for?(target_date)
-        return failure("Attendance list already exists for #{target_date}")
-      end
+      return failure("Attendance list already exists for #{target_date}") if attendance_list_exists_for?(target_date)
 
       start_datetime = build_start_datetime(target_date)
       end_datetime = target_date.end_of_day
@@ -23,16 +21,16 @@ module AttendanceListManagement
       )
 
       ActiveSupport::Notifications.instrument(
-        "attendance_list.daily_created",
+        'attendance_list.daily_created',
         attendance_list_id: attendance_list.id,
         date: target_date,
         created_by_id: created_by_id
       )
 
-      success(attendance_list: attendance_list, message: "Daily attendance list generated")
+      success(attendance_list: attendance_list, message: 'Daily attendance list generated')
     rescue ActiveRecord::RecordInvalid => e
       failure("Validation error: #{e.message}")
-    rescue => e
+    rescue StandardError => e
       Rails.logger.error "[DailyListGenerator] Error: #{e.message}"
       failure("Error generating attendance list: #{e.message}")
     end
@@ -41,7 +39,7 @@ module AttendanceListManagement
 
     def attendance_list_exists_for?(target_date)
       AttendanceList.where(list_type: :training)
-                    .where(start_date: target_date.beginning_of_day..target_date.end_of_day)
+                    .where(start_date: target_date.all_day)
                     .exists?
     end
 

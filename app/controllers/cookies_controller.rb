@@ -1,4 +1,3 @@
 class CookiesController < ApplicationController
-  def privacy_policy
-  end
+  def privacy_policy; end
 end

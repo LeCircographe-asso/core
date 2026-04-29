@@ -13,28 +13,24 @@ module ContributionFormulaManagement
         contribution_formula = ContributionFormula.find(contribution_formula_id)
         deleted_by = User.find(deleted_by_id)
 
-        unless deleted_by.super_admin?
-          return failure("Seul le super-admin peut supprimer des plans de cotisation")
-        end
+        return failure('Seul le super-admin peut supprimer des plans de cotisation') unless deleted_by.super_admin?
 
-        if contribution_formula.contributions.any?
-          return failure("Impossible de supprimer ce plan car il est utilisé par des carnets d'entrées")
-        end
+        return failure("Impossible de supprimer ce plan car il est utilisé par des carnets d'entrées") if contribution_formula.contributions.any?
 
         ActiveRecord::Base.transaction do
           contribution_formula.destroy!
 
           ActiveSupport::Notifications.instrument(
-            "contribution_formula.deleted",
+            'contribution_formula.deleted',
             contribution_formula_id: contribution_formula.id,
             deleted_by_id: deleted_by_id
           )
 
-          success(message: "Contribution formula deleted successfully")
+          success(message: 'Contribution formula deleted successfully')
         end
       rescue ActiveRecord::RecordNotFound => e
         failure("Contribution formula or User not found: #{e.message}")
-      rescue => e
+      rescue StandardError => e
         Rails.logger.error "[ContributionFormulaDeleter] Error: #{e.message}"
         failure("Error deleting contribution formula: #{e.message}")
       end

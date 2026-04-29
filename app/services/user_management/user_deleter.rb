@@ -9,7 +9,7 @@ module UserManagement
     validates :reason, presence: true
 
     def call
-      return failure("Invalid deletion data") unless valid?
+      return failure('Invalid deletion data') unless valid?
 
       begin
         ActiveRecord::Base.transaction do
@@ -18,30 +18,24 @@ module UserManagement
           deleted_by = User.find(deleted_by_id)
 
           # Check if person has financial data (super_admin can bypass this)
-          if person.has_financial_data? && !deleted_by.super_admin?
-            return failure("Cannot delete person with active financial data (memberships, contributions, or payments)")
-          end
+          return failure('Cannot delete person with active financial data (memberships, contributions, or payments)') if person.has_financial_data? && !deleted_by.super_admin?
 
           # Check permissions - super_admin can delete anyone
-          if person.user.present? && !deleted_by.super_admin? && !deleted_by.has_higher_permissions?(person.user)
-            return failure("Insufficient permissions to delete this user")
-          end
+          return failure('Insufficient permissions to delete this user') if person.user.present? && !deleted_by.super_admin? && !deleted_by.has_higher_permissions?(person.user)
 
           # Archive the person (soft delete)
           person.archive!
 
-          success(person: person, message: "User deleted successfully")
+          success(person: person, message: 'User deleted successfully')
         end
       rescue ActiveRecord::RecordNotFound => e
         failure("Person or User not found: #{e.message}")
       rescue ActiveRecord::RecordInvalid => e
         failure("Validation error: #{e.message}")
-      rescue => e
+      rescue StandardError => e
         failure("Unexpected error: #{e.message}")
       end
     end
-
-    private
 
     # success et failure hérités de BaseService
   end

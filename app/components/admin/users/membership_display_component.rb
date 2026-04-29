@@ -24,11 +24,11 @@ class Admin::Users::MembershipDisplayComponent < ViewComponent::Base
   end
 
   def membership_start_date
-    current_membership&.started_at&.strftime("%d/%m/%Y")
+    current_membership&.started_at&.strftime('%d/%m/%Y')
   end
 
   def membership_end_date
-    current_membership&.ended_at&.strftime("%d/%m/%Y")
+    current_membership&.ended_at&.strftime('%d/%m/%Y')
   end
 
   def is_circus_member?

@@ -1,4 +1,4 @@
-require "rails_helper"
+require 'rails_helper'
 
 RSpec.describe People::ContributionUpgrader do
   let(:person) { create(:person, :with_circus_membership) }
@@ -9,21 +9,21 @@ RSpec.describe People::ContributionUpgrader do
     People::ContributionCreator.new(
       person: person,
       contribution_formula_id: from_plan.id,
-      payment_method: "cash",
+      payment_method: 'cash',
       recorded_by_id: admin_user.id
     ).call.contribution
   end
 
-  describe "#call" do
-    context "with valid attributes" do
-      it "upgrades subscription and returns payment info" do
+  describe '#call' do
+    context 'with valid attributes' do
+      it 'upgrades subscription and returns payment info' do
         contribution # ensure existing pack
 
         result = described_class.new(
           person: person,
           from_contribution_id: person.contributions.first.id,
           to_formula_id: to_plan.id,
-          payment_method: "cash",
+          payment_method: 'cash',
           recorded_by_id: admin_user.id
         ).call
 
@@ -33,73 +33,73 @@ RSpec.describe People::ContributionUpgrader do
         expect(result.credit_applied).to be >= 0
       end
 
-      it "fires instrumentation" do
+      it 'fires instrumentation' do
         contribution
 
         upgrader = described_class.new(
           person: person,
           from_contribution_id: person.contributions.first.id,
           to_formula_id: to_plan.id,
-          payment_method: "cash",
+          payment_method: 'cash',
           recorded_by_id: admin_user.id
         )
 
-        expect { upgrader.call }.to instrument("contribution.upgraded")
+        expect { upgrader.call }.to instrument('contribution.upgraded')
       end
     end
 
-    context "with invalid data" do
-      it "fails when person missing" do
+    context 'with invalid data' do
+      it 'fails when person missing' do
         result = described_class.new(
           from_contribution_id: 1,
           to_formula_id: to_plan.id,
-          payment_method: "cash",
+          payment_method: 'cash',
           recorded_by_id: admin_user.id
         ).call
 
         expect(result.success?).to be(false)
-        expect(result.message).to include("Invalid data")
+        expect(result.message).to include('Invalid data')
       end
 
-      it "fails when recorded_by missing" do
+      it 'fails when recorded_by missing' do
         result = described_class.new(
           person: person,
           from_contribution_id: 1,
           to_formula_id: to_plan.id,
-          payment_method: "cash"
+          payment_method: 'cash'
         ).call
 
         expect(result.success?).to be(false)
       end
     end
 
-    context "with missing records" do
-      it "fails when from_book not found" do
+    context 'with missing records' do
+      it 'fails when from_book not found' do
         result = described_class.new(
           person: person,
           from_contribution_id: 999_999,
           to_formula_id: to_plan.id,
-          payment_method: "cash",
+          payment_method: 'cash',
           recorded_by_id: admin_user.id
         ).call
 
         expect(result.success?).to be(false)
-        expect(result.message).to include("Record not found")
+        expect(result.message).to include('Record not found')
       end
 
-      it "fails when to_plan not found" do
+      it 'fails when to_plan not found' do
         contribution
 
         result = described_class.new(
           person: person,
           from_contribution_id: person.contributions.first.id,
           to_formula_id: 999_999,
-          payment_method: "cash",
+          payment_method: 'cash',
           recorded_by_id: admin_user.id
         ).call
 
         expect(result.success?).to be(false)
-        expect(result.message).to include("Record not found")
+        expect(result.message).to include('Record not found')
       end
     end
   end

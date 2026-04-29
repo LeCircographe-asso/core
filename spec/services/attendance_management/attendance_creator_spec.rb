@@ -4,9 +4,9 @@ RSpec.describe AttendanceManagement::AttendanceCreator do
   let(:person) { create(:person) }
   let(:event) { create(:event) }
 
-  describe "#call" do
-    context "with valid attributes" do
-      it "creates attendance successfully" do
+  describe '#call' do
+    context 'with valid attributes' do
+      it 'creates attendance successfully' do
         creator = described_class.new(
           person_id: person.id,
           event_id: event.id
@@ -20,7 +20,7 @@ RSpec.describe AttendanceManagement::AttendanceCreator do
         expect(result.attendance.event).to eq(event)
       end
 
-      it "sets date to current date if not provided" do
+      it 'sets date to current date if not provided' do
         creator = described_class.new(
           person_id: person.id,
           event_id: event.id
@@ -31,7 +31,7 @@ RSpec.describe AttendanceManagement::AttendanceCreator do
         expect(result.attendance.date).to eq(Date.current)
       end
 
-      it "uses provided date" do
+      it 'uses provided date' do
         custom_date = Date.current - 1.day
 
         creator = described_class.new(
@@ -46,29 +46,29 @@ RSpec.describe AttendanceManagement::AttendanceCreator do
       end
     end
 
-    context "with invalid attributes" do
-      it "returns failure when person_id is missing" do
+    context 'with invalid attributes' do
+      it 'returns failure when person_id is missing' do
         creator = described_class.new(event_id: event.id)
 
         result = creator.call
         expect(result.success?).to be false
-        expect(result.message).to include("Invalid data")
+        expect(result.message).to include('Invalid data')
       end
 
       it "returns failure when person doesn't exist" do
         creator = described_class.new(
-          person_id: 99999,
+          person_id: 99_999,
           event_id: event.id
         )
 
         result = creator.call
         expect(result.success?).to be false
-        expect(result.message).to include("not found")
+        expect(result.message).to include('not found')
       end
     end
 
-    context "with validation errors" do
-      it "returns failure when duplicate attendance exists" do
+    context 'with validation errors' do
+      it 'returns failure when duplicate attendance exists' do
         create(:attendance, person: person, event: event)
 
         creator = described_class.new(
@@ -78,11 +78,11 @@ RSpec.describe AttendanceManagement::AttendanceCreator do
 
         result = creator.call
         expect(result.success?).to be false
-        expect(result.message).to include("Validation error")
+        expect(result.message).to include('Validation error')
       end
     end
 
-    context "with contribution" do
+    context 'with contribution' do
       let(:circus_membership_type) { create(:membership_type, category: :circus) }
       let(:pack10_plan) { create(:contribution_formula, :pack10) }
       let(:attendance_list) { create(:attendance_list) }
@@ -92,7 +92,7 @@ RSpec.describe AttendanceManagement::AttendanceCreator do
         create(:contribution, person: person, contribution_formula: pack10_plan, sessions_remaining: 5)
       end
 
-      it "decrements contribution sessions when attendance_list is present" do
+      it 'decrements contribution sessions when attendance_list is present' do
         initial_sessions = contribution.sessions_remaining
 
         creator = described_class.new(
@@ -108,7 +108,7 @@ RSpec.describe AttendanceManagement::AttendanceCreator do
       end
     end
 
-    context "with day pass" do
+    context 'with day pass' do
       let(:circus_membership_type) { create(:membership_type, category: :circus) }
       let(:day_plan) { create(:contribution_formula, :day, membership_type: circus_membership_type) }
       let(:circus_person) { create(:person, :with_circus_membership) }
@@ -117,7 +117,7 @@ RSpec.describe AttendanceManagement::AttendanceCreator do
         create(:contribution, person: circus_person, contribution_formula: day_plan, sessions_remaining: 1, expires_at: Date.current.end_of_day)
       end
 
-      it "consumes the day session and records attendance" do
+      it 'consumes the day session and records attendance' do
         creator = described_class.new(
           person_id: circus_person.id,
           attendance_list_id: attendance_list.id,
@@ -133,7 +133,7 @@ RSpec.describe AttendanceManagement::AttendanceCreator do
       end
     end
 
-    context "with trimester subscription" do
+    context 'with trimester subscription' do
       let(:circus_membership_type) { create(:membership_type, category: :circus) }
       let(:trimester_plan) { create(:contribution_formula, :trimester, membership_type: circus_membership_type) }
       let(:circus_person) { create(:person, :with_circus_membership) }
@@ -142,7 +142,7 @@ RSpec.describe AttendanceManagement::AttendanceCreator do
         create(:contribution, person: circus_person, contribution_formula: trimester_plan, sessions_remaining: nil, expires_at: 3.months.from_now)
       end
 
-      it "records attendance without altering unlimited access" do
+      it 'records attendance without altering unlimited access' do
         creator = described_class.new(
           person_id: circus_person.id,
           attendance_list_id: attendance_list.id,
@@ -157,7 +157,7 @@ RSpec.describe AttendanceManagement::AttendanceCreator do
       end
     end
 
-    context "with annual subscription" do
+    context 'with annual subscription' do
       let(:circus_membership_type) { create(:membership_type, category: :circus) }
       let(:annual_plan) { create(:contribution_formula, :annual, membership_type: circus_membership_type) }
       let(:circus_person) { create(:person, :with_circus_membership) }
@@ -166,7 +166,7 @@ RSpec.describe AttendanceManagement::AttendanceCreator do
         create(:contribution, person: circus_person, contribution_formula: annual_plan, sessions_remaining: nil, expires_at: 1.year.from_now)
       end
 
-      it "keeps annual book active after attendance" do
+      it 'keeps annual book active after attendance' do
         creator = described_class.new(
           person_id: circus_person.id,
           attendance_list_id: attendance_list.id,
@@ -180,7 +180,7 @@ RSpec.describe AttendanceManagement::AttendanceCreator do
       end
     end
 
-    context "refund scenario" do
+    context 'refund scenario' do
       let(:circus_membership_type) { create(:membership_type, category: :circus) }
       let(:pack10_plan) { create(:contribution_formula, :pack10, membership_type: circus_membership_type) }
       let(:circus_person) { create(:person, :with_circus_membership) }
@@ -189,7 +189,7 @@ RSpec.describe AttendanceManagement::AttendanceCreator do
         create(:contribution, person: circus_person, contribution_formula: pack10_plan, sessions_remaining: 2)
       end
 
-      it "allows destroying attendance and re-crediting sessions manually" do
+      it 'allows destroying attendance and re-crediting sessions manually' do
         creator = described_class.new(
           person_id: circus_person.id,
           attendance_list_id: attendance_list.id,
@@ -215,15 +215,15 @@ RSpec.describe AttendanceManagement::AttendanceCreator do
       end
     end
 
-    context "instrumentation" do
-      it "fires attendance.created notification" do
-        expect {
+    context 'instrumentation' do
+      it 'fires attendance.created notification' do
+        expect do
           creator = described_class.new(
             person_id: person.id,
             event_id: event.id
           )
           creator.call
-        }.to instrument("attendance.created")
+        end.to instrument('attendance.created')
       end
     end
   end

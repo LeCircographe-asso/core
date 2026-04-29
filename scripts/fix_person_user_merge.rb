@@ -5,15 +5,15 @@
 
 require_relative '../config/environment'
 
-puts "🔧 RÉPARATION PERSON-USER MERGE"
-puts "=" * 50
+puts '🔧 RÉPARATION PERSON-USER MERGE'
+puts '=' * 50
 
 # Trouver les Person avec des données mais sans User
 people_with_data = Person.joins(:memberships).distinct
 puts "Person avec adhésions: #{people_with_data.count}"
 
 # Trouver les User sans Person ou avec Person vide
-users_without_data = User.joins(:person).where(people: { id: Person.left_joins(:memberships).where(memberships: { id: nil }) })
+users_without_data = User.joins(:person).where(people: { id: Person.where.missing(:memberships) })
 puts "User avec Person vide: #{users_without_data.count}"
 
 # Exemple : Person 10 (données CRM) et User lié à Person 11 (fiche vide)
@@ -33,7 +33,7 @@ link_result = People::AccountLinker.new(
   target_person: person_with_data,
   destroy_source_person: true,
   anonymize_source_person: true,
-  audit_reason: "fix_person_user_merge_script"
+  audit_reason: 'fix_person_user_merge_script'
 ).call
 
 if link_result.success?

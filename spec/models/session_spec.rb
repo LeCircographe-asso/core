@@ -8,7 +8,7 @@ RSpec.describe Session, type: :model do
   end
 
   describe 'creation' do
-    it "can be created with factory" do
+    it 'can be created with factory' do
       session = create(:session, user: user)
       expect(session).to be_persisted
       expect(session.user).to eq(user)

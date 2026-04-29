@@ -3,7 +3,7 @@ require 'spec_helper'
 ENV['RAILS_ENV'] ||= 'test'
 require_relative '../config/environment'
 # Prevent database truncation if the environment is production
-abort("The Rails environment is running in production mode!") if Rails.env.production?
+abort('The Rails environment is running in production mode!') if Rails.env.production?
 require 'rspec/rails'
 # Add additional requires below this line. Rails is not loaded until this point!
 require 'factory_bot_rails'
@@ -11,7 +11,7 @@ require 'shoulda/matchers'
 # require 'database_cleaner/active_record'  # Commenté - on peut l'ajouter plus tard
 
 # Ensure URL helpers have a default host in tests (needed for *_url helpers)
-Rails.application.routes.default_url_options[:host] ||= "www.example.com"
+Rails.application.routes.default_url_options[:host] ||= 'www.example.com'
 
 # Requires supporting ruby files with custom matchers and macros, etc, in
 # spec/support/ and its subdirectories. Files matching `spec/**/*_spec.rb` are
@@ -43,7 +43,7 @@ RSpec.configure do |config|
   # If you're not using ActiveRecord, or you'd prefer not to run each of your
   # examples within a transaction, remove the following line or assign false
   # instead of true.
-  config.use_transactional_fixtures = false  # Disable transactional fixtures for SQLite stability
+  config.use_transactional_fixtures = false # Disable transactional fixtures for SQLite stability
 
   config.before(:suite) do
     ActiveRecord::Base.connection.disable_referential_integrity do
