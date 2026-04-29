@@ -4,27 +4,27 @@ RSpec.describe BlogManagement::BlogCreator do
   let(:tag1) { create(:tag) }
   let(:tag2) { create(:tag) }
 
-  describe "#call" do
-    context "with valid attributes" do
-      it "creates blog successfully" do
+  describe '#call' do
+    context 'with valid attributes' do
+      it 'creates blog successfully' do
         creator = described_class.new(
-          title: "Test Blog",
-          content: "Test Content"
+          title: 'Test Blog',
+          content: 'Test Content'
         )
 
         result = creator.call
 
         expect(result.success?).to be true
         expect(result.blog).to be_present
-        expect(result.blog.title).to eq("Test Blog")
-        expect(result.blog.content.to_plain_text).to eq("Test Content")
+        expect(result.blog.title).to eq('Test Blog')
+        expect(result.blog.content.to_plain_text).to eq('Test Content')
       end
 
-      it "associates tags when provided" do
+      it 'associates tags when provided' do
         creator = described_class.new(
-          title: "Test Blog",
-          content: "Test Content",
-          tag_ids: [ tag1.id, tag2.id ]
+          title: 'Test Blog',
+          content: 'Test Content',
+          tag_ids: [tag1.id, tag2.id]
         )
 
         result = creator.call
@@ -33,10 +33,10 @@ RSpec.describe BlogManagement::BlogCreator do
         expect(result.blog.tags).to include(tag1, tag2)
       end
 
-      it "creates blog without tags when tag_ids is empty" do
+      it 'creates blog without tags when tag_ids is empty' do
         creator = described_class.new(
-          title: "Test Blog",
-          content: "Test Content",
+          title: 'Test Blog',
+          content: 'Test Content',
           tag_ids: []
         )
 
@@ -47,17 +47,17 @@ RSpec.describe BlogManagement::BlogCreator do
       end
     end
 
-    context "with invalid attributes" do
-      it "returns failure when title is missing" do
-        creator = described_class.new(content: "Test Content")
+    context 'with invalid attributes' do
+      it 'returns failure when title is missing' do
+        creator = described_class.new(content: 'Test Content')
 
         result = creator.call
         expect(result.success?).to be false
-        expect(result.message).to include("Invalid data")
+        expect(result.message).to include('Invalid data')
       end
 
-      it "returns failure when content is missing" do
-        creator = described_class.new(title: "Test Blog")
+      it 'returns failure when content is missing' do
+        creator = described_class.new(title: 'Test Blog')
 
         result = creator.call
         expect(result.success?).to be false
@@ -65,27 +65,27 @@ RSpec.describe BlogManagement::BlogCreator do
 
       it "returns failure when tag doesn't exist" do
         creator = described_class.new(
-          title: "Test Blog",
-          content: "Test Content",
-          tag_ids: [ 99999 ]
+          title: 'Test Blog',
+          content: 'Test Content',
+          tag_ids: [99_999]
         )
 
         result = creator.call
         expect(result.success?).to be false
-        expect(result.message).to include("Tag not found")
+        expect(result.message).to include('Tag not found')
       end
     end
 
-    context "instrumentation" do
-      it "fires blog.created notification" do
-        expect {
+    context 'instrumentation' do
+      it 'fires blog.created notification' do
+        expect do
           creator = described_class.new(
-            title: "Test Blog",
-            content: "Test Content",
-            tag_ids: [ tag1.id ]
+            title: 'Test Blog',
+            content: 'Test Content',
+            tag_ids: [tag1.id]
           )
           creator.call
-        }.to instrument("blog.created")
+        end.to instrument('blog.created')
       end
     end
   end

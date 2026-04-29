@@ -15,14 +15,14 @@ module Validatable
     {
       presence: true,
       length: { minimum: 2, maximum: 50 },
-      format: { with: /\A[a-zA-ZÀ-ÿ\s\-']+\z/, message: "ne peut contenir que des lettres, espaces, tirets et apostrophes" }
+      format: { with: /\A[a-zA-ZÀ-ÿ\s\-']+\z/, message: 'ne peut contenir que des lettres, espaces, tirets et apostrophes' }
     }
   end
 
   # Validations communes pour les téléphones
   def self.phone_validation_options
     {
-      format: { with: /\A[\+]?[0-9\s\-\(\)\.]{10,20}\z/, message: "n'est pas un numéro de téléphone valide" },
+      format: { with: /\A\+?[0-9\s\-().]{10,20}\z/, message: "n'est pas un numéro de téléphone valide" },
       length: { maximum: 20 }
     }
   end
@@ -30,14 +30,14 @@ module Validatable
   # Validations communes pour les CGU
   def self.cgu_validation_options
     {
-      acceptance: { message: "Vous devez accepter les CGU pour continuer." }
+      acceptance: { message: 'Vous devez accepter les CGU pour continuer.' }
     }
   end
 
   # Validations communes pour la politique de confidentialité
   def self.privacy_policy_validation_options
     {
-      acceptance: { message: "Vous devez accepter la politique de confidentialité pour continuer." }
+      acceptance: { message: 'Vous devez accepter la politique de confidentialité pour continuer.' }
     }
   end
 
@@ -46,19 +46,17 @@ module Validatable
     return if email.blank?
 
     # Si on a une Person associée avec le même email, c'est OK
-    if respond_to?(:person) && person&.email == email
-      return
-    end
+    return if respond_to?(:person) && person&.email == email
 
     # Sinon, vérifier l'unicité normale
-    if self.class.where(email: email).where.not(id: id).exists?
-      errors.add(:email, "est déjà utilisé")
-    end
+    return unless self.class.where(email: email).where.not(id: id).exists?
+
+    errors.add(:email, 'est déjà utilisé')
   end
 
   def validate_phone_format
     return if phone.blank?
-    return if phone.match?(/\A[\+]?[0-9\s\-\(\)\.]{10,20}\z/)
+    return if phone.match?(/\A\+?[0-9\s\-().]{10,20}\z/)
 
     errors.add(:phone, "n'est pas un numéro de téléphone valide")
   end
@@ -66,13 +64,11 @@ module Validatable
   def validate_name_format
     return if first_name.blank? && last_name.blank?
 
-    if first_name.present? && !first_name.match?(/\A[a-zA-ZÀ-ÿ\s\-']+\z/)
-      errors.add(:first_name, "ne peut contenir que des lettres, espaces, tirets et apostrophes")
-    end
+    errors.add(:first_name, 'ne peut contenir que des lettres, espaces, tirets et apostrophes') if first_name.present? && !first_name.match?(/\A[a-zA-ZÀ-ÿ\s\-']+\z/)
 
-    if last_name.present? && !last_name.match?(/\A[a-zA-ZÀ-ÿ\s\-']+\z/)
-      errors.add(:last_name, "ne peut contenir que des lettres, espaces, tirets et apostrophes")
-    end
+    return unless last_name.present? && !last_name.match?(/\A[a-zA-ZÀ-ÿ\s\-']+\z/)
+
+    errors.add(:last_name, 'ne peut contenir que des lettres, espaces, tirets et apostrophes')
   end
 
   # Méthodes de classe pour les validations

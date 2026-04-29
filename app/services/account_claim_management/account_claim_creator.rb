@@ -15,9 +15,7 @@ module AccountClaimManagement
         # Chercher une Person existante par email
         person = Person.find_by(email: email)
 
-        unless person&.can_be_claimed_by?(email)
-          return failure("Aucun compte trouvé avec cet email ou déjà lié")
-        end
+        return failure('Aucun compte trouvé avec cet email ou déjà lié') unless person&.can_be_claimed_by?(email)
 
         # Créer la demande de réclamation
         claim = AccountClaim.create!(
@@ -30,7 +28,7 @@ module AccountClaimManagement
 
         # Instrumentation pour audit
         ActiveSupport::Notifications.instrument(
-          "account_claim.created",
+          'account_claim.created',
           account_claim_id: claim.id,
           person_id: person.id,
           user_id: user_id,
@@ -40,16 +38,14 @@ module AccountClaimManagement
         # TODO: Envoyer l'email de confirmation
         # AccountClaimMailer.confirmation_email(claim).deliver_later
 
-        success(claim: claim, message: "Demande de réclamation créée avec succès")
+        success(claim: claim, message: 'Demande de réclamation créée avec succès')
       rescue ActiveRecord::RecordNotFound => e
         failure("User not found: #{e.message}")
-      rescue => e
+      rescue StandardError => e
         Rails.logger.error "[AccountClaimCreator] Error: #{e.message}"
         failure("Error creating account claim: #{e.message}")
       end
     end
-
-    private
 
     # success et failure hérités de BaseService
   end

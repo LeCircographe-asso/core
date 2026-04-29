@@ -12,8 +12,13 @@ module Admin
       # GET /admin/users/person_1/payments
       def index
         @payments = @person.payments.includes(:payment_lines, :recorded_by)
-                          .order(created_at: :desc)
-                          .page(params[:page])
+                           .order(created_at: :desc)
+                           .page(params[:page])
+      end
+
+      # GET /admin/users/person_1/payments/1
+      def show
+        @payment = @person.payments.find(params[:id])
       end
 
       # GET /admin/users/person_1/payments/new
@@ -24,20 +29,19 @@ module Admin
         @contribution_formulas = ContributionFormula.all
       end
 
-    # POST /admin/users/person_1/payments
-    def create
-      begin
+      # POST /admin/users/person_1/payments
+      def create
         normalized_lines = normalize_payment_lines(params[:payment_lines])
 
         total_cents = if normalized_lines.any?
-          normalized_lines.sum { |line| line[:amount_cents].to_i }
-        else
-          payment_params[:total_cents].to_i
-        end
+                        normalized_lines.sum { |line| line[:amount_cents].to_i }
+                      else
+                        payment_params[:total_cents].to_i
+                      end
 
         service_params = {
           person: @person,
-          payment_method: payment_params[:payment_method] || "cash",
+          payment_method: payment_params[:payment_method] || 'cash',
           recorded_by_id: Current.user&.id,
           notes: payment_params[:notes]
         }
@@ -48,32 +52,26 @@ module Admin
         else
           first_line = normalized_lines.first
           service_params[:amount_cents] = total_cents
-          service_params[:item_type] = first_line ? first_line[:item_type] : "Donation"
+          service_params[:item_type] = first_line ? first_line[:item_type] : 'Donation'
           service_params[:item_id] = first_line ? first_line[:item_id] : @person.id
-          service_params[:description] = first_line ? first_line[:description] : "Paiement"
+          service_params[:description] = first_line ? first_line[:description] : 'Paiement'
         end
 
         result = People::PaymentCreator.new(service_params).call
 
         if result.success?
-          redirect_to admin_user_path("person_#{@person.id}"), notice: "Paiement créé avec succès"
+          redirect_to admin_user_path("person_#{@person.id}"), notice: 'Paiement créé avec succès'
         else
           @membership_types = MembershipType.all
           @contribution_formulas = ContributionFormula.all
           flash.now[:alert] = "Erreur lors de la création du paiement: #{result.message}"
           render :new, status: :unprocessable_content
         end
-      rescue => e
+      rescue StandardError => e
         @membership_types = MembershipType.all
         @contribution_formulas = ContributionFormula.all
         flash.now[:alert] = "Erreur lors de la création du paiement: #{e.message}"
         render :new, status: :unprocessable_content
-      end
-    end
-
-      # GET /admin/users/person_1/payments/1
-      def show
-        @payment = @person.payments.find(params[:id])
       end
 
       # PATCH /admin/users/person_1/payments/1
@@ -93,7 +91,7 @@ module Admin
         ).call
 
         if result.success?
-          redirect_to admin_user_path("person_#{@person.id}"), notice: "Paiement mis à jour avec succès"
+          redirect_to admin_user_path("person_#{@person.id}"), notice: 'Paiement mis à jour avec succès'
         else
           redirect_to admin_user_path("person_#{@person.id}"), alert: "Erreur lors de la mise à jour: #{result.message}"
         end
@@ -106,49 +104,49 @@ module Admin
         result = People::PaymentCanceller.new(
           payment_id: @payment.id,
           deleted_by_id: Current.user.id,
-          reason: "Suppression via interface admin"
+          reason: 'Suppression via interface admin'
         ).call
 
         if result.success?
-          redirect_to admin_user_path("person_#{@person.id}"), notice: "Paiement supprimé avec succès"
+          redirect_to admin_user_path("person_#{@person.id}"), notice: 'Paiement supprimé avec succès'
         else
           redirect_to admin_user_path("person_#{@person.id}"), alert: "Erreur lors de la suppression: #{result.message}"
         end
       end
 
-    # POST /admin/users/person_1/payments/1/process
-    def process_payment
-      @payment = @person.payments.find(params[:id])
+      # POST /admin/users/person_1/payments/1/process
+      def process_payment
+        @payment = @person.payments.find(params[:id])
 
-      begin
-        if @payment.pending?
-          result = People::PaymentUpdater.new(
-            payment_id: @payment.id,
-            status: "success",
-            updated_by_id: Current.user.id
-          ).call
+        begin
+          if @payment.pending?
+            result = People::PaymentUpdater.new(
+              payment_id: @payment.id,
+              status: 'success',
+              updated_by_id: Current.user.id
+            ).call
 
-          if result.success?
-            redirect_to admin_user_path("person_#{@person.id}"), notice: "Paiement traité avec succès"
+            if result.success?
+              redirect_to admin_user_path("person_#{@person.id}"), notice: 'Paiement traité avec succès'
+            else
+              redirect_to admin_user_path("person_#{@person.id}"), alert: "Erreur lors du traitement: #{result.message}"
+            end
           else
-            redirect_to admin_user_path("person_#{@person.id}"), alert: "Erreur lors du traitement: #{result.message}"
+            redirect_to admin_user_path("person_#{@person.id}"), notice: 'Paiement déjà traité'
           end
-        else
-          redirect_to admin_user_path("person_#{@person.id}"), notice: "Paiement déjà traité"
+        rescue StandardError => e
+          redirect_to admin_user_path("person_#{@person.id}"), alert: "Erreur lors du traitement: #{e.message}"
         end
-      rescue => e
-        redirect_to admin_user_path("person_#{@person.id}"), alert: "Erreur lors du traitement: #{e.message}"
       end
-    end
 
       private
 
       def set_person
         identifier = params[:person_id].presence || params[:user_id].presence
-        raise ActiveRecord::RecordNotFound, "person identifier missing" if identifier.blank?
+        raise ActiveRecord::RecordNotFound, 'person identifier missing' if identifier.blank?
 
-        if identifier.to_s.start_with?("person_")
-          person_id = identifier.to_s.delete_prefix("person_")
+        if identifier.to_s.start_with?('person_')
+          person_id = identifier.to_s.delete_prefix('person_')
           @person = Person.find(person_id)
         else
           user = User.find(identifier)
@@ -159,7 +157,7 @@ module Admin
       def set_breadcrumbs
         add_breadcrumb "Liste d'adhérents", admin_users_path
         add_breadcrumb @person.full_name, admin_user_path("person_#{@person.id}")
-        add_breadcrumb "Gestion des paiements", nil
+        add_breadcrumb 'Gestion des paiements', nil
       end
 
       def payment_params

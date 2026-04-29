@@ -9,7 +9,7 @@ class Attendance < ApplicationRecord
   validates :date, presence: true
   validates :person_id, uniqueness: {
     scope: :event_id,
-    message: "est déjà intéressé par cet événement"
+    message: 'est déjà intéressé par cet événement'
   }, if: -> { event_id.present? }
   validates :person_id, uniqueness: {
     scope: :date,
@@ -23,10 +23,10 @@ class Attendance < ApplicationRecord
   scope :by_event, ->(event) { where(event: event) }
 
   scope :today, -> { where(date: Date.current) }
-  scope :this_week, -> { where(date: Date.current.beginning_of_week..Date.current.end_of_week) }
-  scope :this_month, -> { where(date: Date.current.beginning_of_month..Date.current.end_of_month) }
+  scope :this_week, -> { where(date: Date.current.all_week) }
+  scope :this_month, -> { where(date: Date.current.all_month) }
 
-private
+  private
 
   def set_date_if_missing
     self.date ||= Date.current

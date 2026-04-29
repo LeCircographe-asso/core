@@ -19,13 +19,13 @@ module UserManagement
     validate :person_has_no_user_account
 
     def call
-      return failure("Invalid user data") unless valid?
+      return failure('Invalid user data') unless valid?
 
       person = Person.find(person_id)
       created_by = User.find(created_by_id)
       validate_creator_permissions!(created_by)
 
-      return failure("Insufficient permissions to create accounts") unless creator_can_manage_accounts?(created_by)
+      return failure('Insufficient permissions to create accounts') unless creator_can_manage_accounts?(created_by)
 
       result = People::UserAccountCreator.new(
         person: person,
@@ -44,7 +44,7 @@ module UserManagement
       end
     rescue ActiveRecord::RecordNotFound => e
       failure("Person or User not found: #{e.message}")
-    rescue => e
+    rescue StandardError => e
       Rails.logger.error("[UserManagement::UserCreator] #{e.class}: #{e.message}\n#{e.backtrace.take(5).join("\n")}")
       failure("Unexpected error: #{e.message}")
     end
@@ -54,32 +54,32 @@ module UserManagement
     def passwords_match
       return unless password.present? && password_confirmation.present?
 
-      if password != password_confirmation
-        errors.add(:password_confirmation, "doesn't match Password")
-      end
+      return unless password != password_confirmation
+
+      errors.add(:password_confirmation, "doesn't match Password")
     end
 
     def person_exists
       return unless person_id.present?
 
-      unless Person.exists?(person_id)
-        errors.add(:person_id, "Person not found")
-      end
+      return if Person.exists?(person_id)
+
+      errors.add(:person_id, 'Person not found')
     end
 
     def person_has_no_user_account
       return unless person_id.present?
 
       person = Person.find_by(id: person_id)
-      if person&.user.present?
-        errors.add(:person_id, "Person already has a user account")
-      end
+      return unless person&.user.present?
+
+      errors.add(:person_id, 'Person already has a user account')
     end
 
     def validate_creator_permissions!(created_by)
       return if created_by.super_admin? || created_by.admin?
 
-      errors.add(:created_by_id, "User does not have permissions to create accounts")
+      errors.add(:created_by_id, 'User does not have permissions to create accounts')
       raise ActiveRecord::RecordInvalid.new(created_by)
     end
 

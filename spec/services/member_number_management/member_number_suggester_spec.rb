@@ -4,7 +4,7 @@ RSpec.describe MemberNumberManagement::MemberNumberSuggester do
   describe '#call' do
     context 'when generation succeeds' do
       it 'returns a suggested number for the requested membership type' do
-        suggested = format("%02dC123", Date.current.year % 100)
+        suggested = format('%02dC123', Date.current.year % 100)
         expect(MemberManagementService).to receive(:generate_member_number).with('CIRQUE').and_return(suggested)
 
         result = described_class.new(membership_type: 'CIRQUE').call

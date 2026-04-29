@@ -9,7 +9,7 @@ RSpec.describe Tag, type: :model do
   end
 
   describe 'creation' do
-    it "can be created with name" do
+    it 'can be created with name' do
       expect(tag).to be_persisted
       expect(tag.name).to be_present
     end

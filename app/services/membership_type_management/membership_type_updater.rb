@@ -19,9 +19,7 @@ module MembershipTypeManagement
         updated_by = User.find(updated_by_id)
 
         # Vérifier les permissions
-        unless updated_by.super_admin? || updated_by.admin?
-          return failure("Insufficient permissions to update membership type")
-        end
+        return failure('Insufficient permissions to update membership type') unless updated_by.super_admin? || updated_by.admin?
 
         # Mettre à jour uniquement les champs fournis
         update_attrs = {}
@@ -35,22 +33,20 @@ module MembershipTypeManagement
 
         # Instrumentation pour audit
         ActiveSupport::Notifications.instrument(
-          "membership_type.updated",
+          'membership_type.updated',
           membership_type_id: membership_type.id,
           updated_by_id: updated_by_id,
           changes: membership_type.previous_changes
         )
 
-        success(membership_type: membership_type, message: "Membership type updated successfully")
+        success(membership_type: membership_type, message: 'Membership type updated successfully')
       rescue ActiveRecord::RecordNotFound => e
         failure("MembershipType or User not found: #{e.message}")
-      rescue => e
+      rescue StandardError => e
         Rails.logger.error "[MembershipTypeUpdater] Error: #{e.message}"
         failure("Error updating membership type: #{e.message}")
       end
     end
-
-    private
 
     # success et failure hérités de BaseService
   end

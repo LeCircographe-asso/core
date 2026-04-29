@@ -1,4 +1,4 @@
-require "ostruct"
+require 'ostruct'
 
 module People
   class AccountLinker
@@ -13,7 +13,7 @@ module People
     attribute :target_person_id, :integer
     attribute :destroy_source_person, :boolean, default: false
     attribute :anonymize_source_person, :boolean, default: true
-    attribute :audit_reason, :string, default: "manual_link"
+    attribute :audit_reason, :string, default: 'manual_link'
 
     validates :user_id, presence: true, unless: -> { user.present? }
     validates :target_person_id, presence: true, unless: -> { target_person.present? }
@@ -25,13 +25,9 @@ module People
       resolved_target = resolve_target_person
       previous_person = resolved_user.person
 
-      if previous_person == resolved_target
-        return failure("User already linked to this person")
-      end
+      return failure('User already linked to this person') if previous_person == resolved_target
 
-      if resolved_target.user.present? && resolved_target.user != resolved_user
-        return failure("Target person already has a user account")
-      end
+      return failure('Target person already has a user account') if resolved_target.user.present? && resolved_target.user != resolved_user
 
       ActiveRecord::Base.transaction do
         resolved_user.update!(person: resolved_target)
@@ -46,7 +42,7 @@ module People
       failure("Record not found: #{e.message}")
     rescue ActiveRecord::RecordInvalid => e
       failure("Validation error: #{e.message}")
-    rescue => e
+    rescue StandardError => e
       Rails.logger.error("[People::AccountLinker] #{e.class}: #{e.message}\n#{e.backtrace.take(5).join("\n")}")
       failure("Error linking account: #{e.message}")
     end
@@ -68,16 +64,14 @@ module People
     def cleanup_source_person(previous_person)
       return unless destroy_source_person
 
-      if anonymize_source_person
-        previous_person.update!(email: nil, phone: nil)
-      end
+      previous_person.update!(email: nil, phone: nil) if anonymize_source_person
 
       previous_person.destroy!
     end
 
     def instrument_success(user, target_person, source_person)
       ActiveSupport::Notifications.instrument(
-        "people.account_linked",
+        'people.account_linked',
         user_id: user.id,
         target_person_id: target_person.id,
         source_person_id: source_person&.id,
@@ -87,7 +81,7 @@ module People
     end
 
     def success(user:, target_person:, source_person: nil)
-      Result.new(success?: true, user: user, target_person: target_person, source_person: source_person, errors: [], message: "User linked successfully")
+      Result.new(success?: true, user: user, target_person: target_person, source_person: source_person, errors: [], message: 'User linked successfully')
     end
 
     def failure(message, errors = nil)

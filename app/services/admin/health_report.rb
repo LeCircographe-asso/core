@@ -19,7 +19,7 @@ module Admin
 
     def call
       users_without_person = User.left_joins(:person).where(people: { id: nil }).order(:created_at)
-      people_without_user = PersonQuery.active.left_joins(:user).where(users: { id: nil }).order(:created_at)
+      people_without_user = PersonQuery.active.where.missing(:user).order(:created_at)
       payments_without_person = Payment.where(person_id: nil).order(:created_at)
 
       email_keys = duplicate_keys(PersonQuery.active, :email, normalize: true)
@@ -42,28 +42,28 @@ module Admin
     private
 
     def duplicate_keys(scope, field, normalize: true)
-      raise ArgumentError, "unsupported field" unless DUPLICATE_FIELDS.include?(field)
+      raise ArgumentError, 'unsupported field' unless DUPLICATE_FIELDS.include?(field)
 
       t = scope.klass.arel_table
       col = t[field]
-      expr = normalize ? Arel::Nodes::NamedFunction.new("LOWER", [ col ]) : col
+      expr = normalize ? Arel::Nodes::NamedFunction.new('LOWER', [col]) : col
 
-      scope.where.not(field => [ nil, "" ])
+      scope.where.not(field => [nil, ''])
            .group(expr)
-           .having("COUNT(*) > 1")
+           .having('COUNT(*) > 1')
            .pluck(expr)
     end
 
     def people_by_keys(scope, field, keys, normalize: true)
       return scope.none if keys.empty?
 
-      raise ArgumentError, "unsupported field" unless DUPLICATE_FIELDS.include?(field)
+      raise ArgumentError, 'unsupported field' unless DUPLICATE_FIELDS.include?(field)
 
       t = scope.klass.arel_table
       col = t[field]
 
       if normalize
-        lowered = Arel::Nodes::NamedFunction.new("LOWER", [ col ])
+        lowered = Arel::Nodes::NamedFunction.new('LOWER', [col])
         scope.where(lowered.in(keys))
              .order(lowered, t[:last_name], t[:first_name])
       else

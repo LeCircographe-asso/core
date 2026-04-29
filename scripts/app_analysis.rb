@@ -24,7 +24,7 @@ class AppAnalyzer
 
     puts "🔍 Analyse de l'application Le Circographe"
     puts "📁 Répertoire: #{@app_root}"
-    puts "=" * 60
+    puts '=' * 60
   end
 
   def analyze_all
@@ -50,7 +50,7 @@ class AppAnalyzer
 
     Dir.glob("#{components_dir}/**/*_component.rb").each do |file|
       component_name = File.basename(file, '_component.rb')
-      component_path = file.gsub("#{@app_root}/", "")
+      component_path = file.gsub("#{@app_root}/", '')
 
       # Analyser le fichier du composant
       component_info = analyze_component_file(file)
@@ -108,7 +108,7 @@ class AppAnalyzer
     Dir.glob("#{@app_root}/app/views/**/*.erb").each do |file|
       content = File.read(file)
       if content.include?(component_name) || content.include?(component_name.split('_').map(&:capitalize).join)
-        usage[:views] << file.gsub("#{@app_root}/", "")
+        usage[:views] << file.gsub("#{@app_root}/", '')
         usage[:total_count] += 1
       end
     end
@@ -117,7 +117,7 @@ class AppAnalyzer
     Dir.glob("#{@app_root}/app/controllers/**/*.rb").each do |file|
       content = File.read(file)
       if content.include?(component_name) || content.include?(component_name.split('_').map(&:capitalize).join)
-        usage[:controllers] << file.gsub("#{@app_root}/", "")
+        usage[:controllers] << file.gsub("#{@app_root}/", '')
         usage[:total_count] += 1
       end
     end
@@ -126,7 +126,7 @@ class AppAnalyzer
     Dir.glob("#{@app_root}/app/helpers/**/*.rb").each do |file|
       content = File.read(file)
       if content.include?(component_name) || content.include?(component_name.split('_').map(&:capitalize).join)
-        usage[:helpers] << file.gsub("#{@app_root}/", "")
+        usage[:helpers] << file.gsub("#{@app_root}/", '')
         usage[:total_count] += 1
       end
     end
@@ -135,7 +135,7 @@ class AppAnalyzer
     Dir.glob("#{@app_root}/spec/**/*.rb").each do |file|
       content = File.read(file)
       if content.include?(component_name) || content.include?(component_name.split('_').map(&:capitalize).join)
-        usage[:tests] << file.gsub("#{@app_root}/", "")
+        usage[:tests] << file.gsub("#{@app_root}/", '')
         usage[:total_count] += 1
       end
     end
@@ -153,7 +153,7 @@ class AppAnalyzer
       next if File.basename(file) == 'application_record.rb'
 
       model_name = File.basename(file, '.rb')
-      model_path = file.gsub("#{@app_root}/", "")
+      model_path = file.gsub("#{@app_root}/", '')
 
       model_info = analyze_model_file(file)
       usage = find_model_usage(model_name)
@@ -224,7 +224,7 @@ class AppAnalyzer
     Dir.glob("#{@app_root}/app/controllers/**/*.rb").each do |file|
       content = File.read(file)
       if content.include?(model_name) || content.include?(model_name.split('_').map(&:capitalize).join)
-        usage[:controllers] << file.gsub("#{@app_root}/", "")
+        usage[:controllers] << file.gsub("#{@app_root}/", '')
         usage[:total_count] += 1
       end
     end
@@ -233,7 +233,7 @@ class AppAnalyzer
     Dir.glob("#{@app_root}/app/services/**/*.rb").each do |file|
       content = File.read(file)
       if content.include?(model_name) || content.include?(model_name.split('_').map(&:capitalize).join)
-        usage[:services] << file.gsub("#{@app_root}/", "")
+        usage[:services] << file.gsub("#{@app_root}/", '')
         usage[:total_count] += 1
       end
     end
@@ -242,7 +242,7 @@ class AppAnalyzer
     Dir.glob("#{@app_root}/app/helpers/**/*.rb").each do |file|
       content = File.read(file)
       if content.include?(model_name) || content.include?(model_name.split('_').map(&:capitalize).join)
-        usage[:helpers] << file.gsub("#{@app_root}/", "")
+        usage[:helpers] << file.gsub("#{@app_root}/", '')
         usage[:total_count] += 1
       end
     end
@@ -251,7 +251,7 @@ class AppAnalyzer
     Dir.glob("#{@app_root}/app/views/**/*.erb").each do |file|
       content = File.read(file)
       if content.include?(model_name) || content.include?(model_name.split('_').map(&:capitalize).join)
-        usage[:views] << file.gsub("#{@app_root}/", "")
+        usage[:views] << file.gsub("#{@app_root}/", '')
         usage[:total_count] += 1
       end
     end
@@ -269,7 +269,7 @@ class AppAnalyzer
       next if File.basename(file) == 'application_controller.rb'
 
       controller_name = File.basename(file, '_controller.rb')
-      controller_path = file.gsub("#{@app_root}/", "")
+      controller_path = file.gsub("#{@app_root}/", '')
 
       controller_info = analyze_controller_file(file)
       usage = find_controller_usage(controller_name)
@@ -328,9 +328,7 @@ class AppAnalyzer
         next
       end
 
-      if in_private && line.match(/def\s+(\w+)/)
-        private_methods << $1
-      end
+      private_methods << ::Regexp.last_match(1) if in_private && line.match(/def\s+(\w+)/)
     end
 
     private_methods
@@ -341,9 +339,7 @@ class AppAnalyzer
     has_views = Dir.exist?(views_dir)
 
     view_files = []
-    if has_views
-      view_files = Dir.glob("#{views_dir}/*.erb").map { |f| f.gsub("#{@app_root}/", "") }
-    end
+    view_files = Dir.glob("#{views_dir}/*.erb").map { |f| f.gsub("#{@app_root}/", '') } if has_views
 
     {
       has_views: has_views,
@@ -359,7 +355,7 @@ class AppAnalyzer
 
     Dir.glob("#{services_dir}/**/*.rb").each do |file|
       service_name = File.basename(file, '.rb')
-      service_path = file.gsub("#{@app_root}/", "")
+      service_path = file.gsub("#{@app_root}/", '')
 
       service_info = analyze_service_file(file)
       usage = find_service_usage(service_name)
@@ -398,7 +394,7 @@ class AppAnalyzer
     Dir.glob("#{@app_root}/app/controllers/**/*.rb").each do |file|
       content = File.read(file)
       if content.include?(service_name) || content.include?(service_name.split('_').map(&:capitalize).join)
-        usage[:controllers] << file.gsub("#{@app_root}/", "")
+        usage[:controllers] << file.gsub("#{@app_root}/", '')
         usage[:total_count] += 1
       end
     end
@@ -406,9 +402,10 @@ class AppAnalyzer
     # Recherche dans les autres services
     Dir.glob("#{@app_root}/app/services/**/*.rb").each do |file|
       next if file.include?(service_name)
+
       content = File.read(file)
       if content.include?(service_name) || content.include?(service_name.split('_').map(&:capitalize).join)
-        usage[:services] << file.gsub("#{@app_root}/", "")
+        usage[:services] << file.gsub("#{@app_root}/", '')
         usage[:total_count] += 1
       end
     end
@@ -417,7 +414,7 @@ class AppAnalyzer
     Dir.glob("#{@app_root}/app/jobs/**/*.rb").each do |file|
       content = File.read(file)
       if content.include?(service_name) || content.include?(service_name.split('_').map(&:capitalize).join)
-        usage[:jobs] << file.gsub("#{@app_root}/", "")
+        usage[:jobs] << file.gsub("#{@app_root}/", '')
         usage[:total_count] += 1
       end
     end
@@ -435,7 +432,7 @@ class AppAnalyzer
       next if File.basename(file) == 'application_helper.rb'
 
       helper_name = File.basename(file, '_helper.rb')
-      helper_path = file.gsub("#{@app_root}/", "")
+      helper_path = file.gsub("#{@app_root}/", '')
 
       helper_info = analyze_helper_file(file)
       usage = find_helper_usage(helper_name)
@@ -472,7 +469,7 @@ class AppAnalyzer
     Dir.glob("#{@app_root}/app/views/**/*.erb").each do |file|
       content = File.read(file)
       if content.include?(helper_name) || content.include?(helper_name.split('_').map(&:capitalize).join)
-        usage[:views] << file.gsub("#{@app_root}/", "")
+        usage[:views] << file.gsub("#{@app_root}/", '')
         usage[:total_count] += 1
       end
     end
@@ -481,7 +478,7 @@ class AppAnalyzer
     Dir.glob("#{@app_root}/app/controllers/**/*.rb").each do |file|
       content = File.read(file)
       if content.include?(helper_name) || content.include?(helper_name.split('_').map(&:capitalize).join)
-        usage[:controllers] << file.gsub("#{@app_root}/", "")
+        usage[:controllers] << file.gsub("#{@app_root}/", '')
         usage[:total_count] += 1
       end
     end
@@ -497,7 +494,7 @@ class AppAnalyzer
 
     Dir.glob("#{views_dir}/**/*.erb").each do |file|
       view_name = File.basename(file, '.erb')
-      view_path = file.gsub("#{@app_root}/", "")
+      view_path = file.gsub("#{@app_root}/", '')
 
       view_info = analyze_view_file(file)
 
@@ -568,38 +565,38 @@ class AppAnalyzer
 
     # Composants non utilisés
     @results[:components].each do |name, info|
-      unless info[:is_used]
-        @results[:unused_files] << {
-          type: 'component',
-          name: name,
-          file: info[:file],
-          reason: 'Composant non utilisé dans l\'application'
-        }
-      end
+      next if info[:is_used]
+
+      @results[:unused_files] << {
+        type: 'component',
+        name: name,
+        file: info[:file],
+        reason: 'Composant non utilisé dans l\'application'
+      }
     end
 
     # Services non utilisés
     @results[:services].each do |name, info|
-      unless info[:is_used]
-        @results[:unused_files] << {
-          type: 'service',
-          name: name,
-          file: info[:file],
-          reason: 'Service non utilisé dans l\'application'
-        }
-      end
+      next if info[:is_used]
+
+      @results[:unused_files] << {
+        type: 'service',
+        name: name,
+        file: info[:file],
+        reason: 'Service non utilisé dans l\'application'
+      }
     end
 
     # Helpers non utilisés
     @results[:helpers].each do |name, info|
-      unless info[:is_used]
-        @results[:unused_files] << {
-          type: 'helper',
-          name: name,
-          file: info[:file],
-          reason: 'Helper non utilisé dans l\'application'
-        }
-      end
+      next if info[:is_used]
+
+      @results[:unused_files] << {
+        type: 'helper',
+        name: name,
+        file: info[:file],
+        reason: 'Helper non utilisé dans l\'application'
+      }
     end
   end
 
@@ -634,16 +631,16 @@ class AppAnalyzer
 
     # Contrôleurs sans vues
     controllers_without_views = @results[:controllers].select { |_, info| !info[:has_views] }
-    if controllers_without_views.any?
-      @results[:recommendations] << {
-        type: 'review',
-        priority: 'medium',
-        title: 'Vérifier les contrôleurs sans vues',
-        description: "#{controllers_without_views.count} contrôleurs n\'ont pas de vues associées",
-        files: controllers_without_views.keys,
-        action: 'review'
-      }
-    end
+    return unless controllers_without_views.any?
+
+    @results[:recommendations] << {
+      type: 'review',
+      priority: 'medium',
+      title: 'Vérifier les contrôleurs sans vues',
+      description: "#{controllers_without_views.count} contrôleurs n'ont pas de vues associées",
+      files: controllers_without_views.keys,
+      action: 'review'
+    }
   end
 
   def generate_report
@@ -668,13 +665,13 @@ class AppAnalyzer
   def generate_text_report(file)
     File.open(file, 'w') do |f|
       f.puts "RAPPORT D'ANALYSE - LE CIRCOGRAPHE"
-      f.puts "=" * 50
+      f.puts '=' * 50
       f.puts "Date: #{@results[:timestamp]}"
       f.puts
 
       # Résumé
-      f.puts "RÉSUMÉ"
-      f.puts "-" * 20
+      f.puts 'RÉSUMÉ'
+      f.puts '-' * 20
       f.puts "Composants: #{@results[:components].count} (#{@results[:components].count { |_, info| info[:is_used] }} utilisés)"
       f.puts "Modèles: #{@results[:models].count} (#{@results[:models].count { |_, info| info[:is_used] }} utilisés)"
       f.puts "Contrôleurs: #{@results[:controllers].count} (#{@results[:controllers].count { |_, info| info[:has_views] }} avec vues)"
@@ -687,8 +684,8 @@ class AppAnalyzer
       # Composants non utilisés
       unused_components = @results[:components].select { |_, info| !info[:is_used] }
       if unused_components.any?
-        f.puts "COMPOSANTS NON UTILISÉS"
-        f.puts "-" * 30
+        f.puts 'COMPOSANTS NON UTILISÉS'
+        f.puts '-' * 30
         unused_components.each do |name, info|
           f.puts "❌ #{name} (#{info[:file]})"
         end
@@ -698,8 +695,8 @@ class AppAnalyzer
       # Services non utilisés
       unused_services = @results[:services].select { |_, info| !info[:is_used] }
       if unused_services.any?
-        f.puts "SERVICES NON UTILISÉS"
-        f.puts "-" * 25
+        f.puts 'SERVICES NON UTILISÉS'
+        f.puts '-' * 25
         unused_services.each do |name, info|
           f.puts "❌ #{name} (#{info[:file]})"
         end
@@ -708,8 +705,8 @@ class AppAnalyzer
 
       # Recommandations
       if @results[:recommendations].any?
-        f.puts "RECOMMANDATIONS"
-        f.puts "-" * 20
+        f.puts 'RECOMMANDATIONS'
+        f.puts '-' * 20
         @results[:recommendations].each_with_index do |rec, index|
           f.puts "#{index + 1}. [#{rec[:priority].upcase}] #{rec[:title]}"
           f.puts "   #{rec[:description]}"
@@ -722,7 +719,7 @@ class AppAnalyzer
 
   def display_summary
     puts "\n📈 RÉSUMÉ DE L'ANALYSE"
-    puts "=" * 40
+    puts '=' * 40
 
     total_components = @results[:components].count
     used_components = @results[:components].count { |_, info| info[:is_used] }
@@ -741,11 +738,11 @@ class AppAnalyzer
     puts "👁️ Vues: #{@results[:views].count}"
     puts "🗑️ Fichiers non utilisés: #{@results[:unused_files].count}"
 
-    if @results[:unused_files].any?
-      puts "\n⚠️ FICHIERS À SUPPRIMER:"
-      @results[:unused_files].each do |file|
-        puts "   ❌ #{file[:name]} (#{file[:file]})"
-      end
+    return unless @results[:unused_files].any?
+
+    puts "\n⚠️ FICHIERS À SUPPRIMER:"
+    @results[:unused_files].each do |file|
+      puts "   ❌ #{file[:name]} (#{file[:file]})"
     end
   end
 end

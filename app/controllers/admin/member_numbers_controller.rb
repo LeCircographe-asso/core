@@ -1,10 +1,10 @@
 class Admin::MemberNumbersController < Admin::BaseController
-  before_action :set_person, only: [ :suggest, :change ]
+  before_action :set_person, only: %i[suggest change]
 
   # POST /admin/member_numbers/suggest
   def suggest
     suggester = MemberNumberManagement::MemberNumberSuggester.new(
-      membership_type: params[:membership_type] || "BASIQUE"
+      membership_type: params[:membership_type] || 'BASIQUE'
     )
 
     result = suggester.call

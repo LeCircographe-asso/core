@@ -8,16 +8,14 @@ class UsersController < ApplicationController
   # - RegistrationsController: Creating new accounts
   # - UsersController: Managing existing accounts
   # - SessionsController: Handling login/logout
-  before_action :require_authentication, except: [ :change_newsletter_status, :newsletter_signup ]
-  before_action :set_user, only: [ :show, :edit, :update, :change_newsletter_status, :destroy ]
+  before_action :require_authentication, except: %i[change_newsletter_status newsletter_signup]
+  before_action :set_user, only: %i[show edit update change_newsletter_status destroy]
 
   # User profile view
-  def show
-  end
+  def show; end
 
   # User profile edit form
-  def edit
-  end
+  def edit; end
 
   # User profile update
   def update
@@ -31,7 +29,7 @@ class UsersController < ApplicationController
     result = updater.call
 
     if result.success?
-      redirect_to @user, notice: "Votre profil a été mis à jour avec succès."
+      redirect_to @user, notice: 'Votre profil a été mis à jour avec succès.'
     else
       flash.now[:alert] = result.message
       render :edit, status: :unprocessable_content
@@ -44,7 +42,7 @@ class UsersController < ApplicationController
     if @user.destroy
       # End the user's session
       reset_session
-      redirect_to root_path, notice: "Votre compte a été supprimé avec succès."
+      redirect_to root_path, notice: 'Votre compte a été supprimé avec succès.'
     else
       redirect_to edit_user_path(@user), alert: "Impossible de supprimer votre compte. Veuillez contacter l'assistance."
     end
@@ -52,7 +50,7 @@ class UsersController < ApplicationController
 
   # Newsletter subscription management (legacy, redirect to settings)
   def change_newsletter_status
-    redirect_to settings_path, alert: "Gérez votre newsletter depuis vos paramètres."
+    redirect_to settings_path, alert: 'Gérez votre newsletter depuis vos paramètres.'
   end
 
   # Handle newsletter signup from footer
@@ -61,34 +59,34 @@ class UsersController < ApplicationController
     # Check honeypot - if filled, it's likely a bot
     if params[:user][:website].present?
       # Don't show an error, just silently redirect to avoid tipping off bots
-      redirect_back fallback_location: root_path, notice: "Merci pour votre inscription!"
+      redirect_back_or_to(root_path, notice: 'Merci pour votre inscription!')
       return
     end
 
     email = params[:user][:email_address]
 
     if email.blank?
-      flash[:alert] = "Veuillez entrer une adresse email valide."
-      redirect_back fallback_location: root_path
+      flash[:alert] = 'Veuillez entrer une adresse email valide.'
+      redirect_back_or_to(root_path)
       return
     end
 
     # If authenticated, redirect to settings (no form for connected users)
     if authenticated? && Current.user.present?
-      redirect_to settings_path, notice: "Gérez votre newsletter depuis vos paramètres en cochant/décochant la case."
+      redirect_to settings_path, notice: 'Gérez votre newsletter depuis vos paramètres en cochant/décochant la case.'
       return
     end
 
-    result = People::NewsletterSignup.new(email: email, source: "web").call
+    result = People::NewsletterSignup.new(email: email, source: 'web').call
 
     if result.redirect_to
       redirect_to new_session_path, alert: result.message
     elsif result.success?
       flash[:notice] = result.message
-      redirect_back fallback_location: root_path
+      redirect_back_or_to(root_path)
     else
       flash[:alert] = result.message
-      redirect_back fallback_location: root_path
+      redirect_back_or_to(root_path)
     end
   end
 
@@ -97,9 +95,9 @@ class UsersController < ApplicationController
     subscriber = NewsletterSubscriber.find_by(unsubscribe_token: params[:token])
     if subscriber
       subscriber.unsubscribe!
-      redirect_to page_path("newsletter_unsubscribe_success")
+      redirect_to page_path('newsletter_unsubscribe_success')
     else
-      redirect_to root_path, alert: "Token de désinscription invalide."
+      redirect_to root_path, alert: 'Token de désinscription invalide.'
     end
   end
 

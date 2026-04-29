@@ -3,7 +3,7 @@ class Event < ApplicationRecord
   include Dateable
 
   # Relations — voir docs/domain_model.md.
-  belongs_to :creator, class_name: "User"
+  belongs_to :creator, class_name: 'User'
   has_many :attendances, dependent: :destroy
   has_many :people, through: :attendances
   # `event_attendees` reste réservé à la billetterie (paiement Stripe) — voir
@@ -27,11 +27,11 @@ class Event < ApplicationRecord
   scope :others, -> { where(category: :other) }
 
   # Date scopes (using explicit :date column - datetime type)
-  scope :upcoming, -> { where("date >= ?", Time.zone.now) }
-  scope :past, -> { where("date < ?", Time.zone.now) }
-  scope :today, -> { where("date >= ? AND date < ?", Date.current.beginning_of_day, Date.current.end_of_day) }
-  scope :this_week, -> { where("date >= ? AND date <= ?", Date.current.beginning_of_week.beginning_of_day, Date.current.end_of_week.end_of_day) }
-  scope :this_month, -> { where("date >= ? AND date <= ?", Date.current.beginning_of_month.beginning_of_day, Date.current.end_of_month.end_of_day) }
+  scope :upcoming, -> { where('date >= ?', Time.zone.now) }
+  scope :past, -> { where('date < ?', Time.zone.now) }
+  scope :today, -> { where('date >= ? AND date < ?', Date.current.beginning_of_day, Date.current.end_of_day) }
+  scope :this_week, -> { where('date >= ? AND date <= ?', Date.current.beginning_of_week.beginning_of_day, Date.current.end_of_week.end_of_day) }
+  scope :this_month, -> { where('date >= ? AND date <= ?', Date.current.beginning_of_month.beginning_of_day, Date.current.end_of_month.end_of_day) }
   scope :by_date, -> { order(:date) }
 
   # Méthodes
@@ -57,6 +57,6 @@ class Event < ApplicationRecord
 
   # Méthode pour obtenir la description unifiée
   def full_description
-    description.presence || [ upper_description, middle_description, bottom_description ].compact.join("\n\n")
+    description.presence || [upper_description, middle_description, bottom_description].compact.join("\n\n")
   end
 end

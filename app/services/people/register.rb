@@ -1,4 +1,4 @@
-require "ostruct"
+require 'ostruct'
 
 module People
   class Register
@@ -7,7 +7,7 @@ module People
     attr_reader :person_params, :existing_person, :newsletter_subscribed, :newsletter_source,
                 :create_user_account, :user_params, :create_membership, :membership_params
 
-    def initialize(person_params:, existing_person: nil, newsletter_subscribed: nil, newsletter_source: "admin",
+    def initialize(person_params:, existing_person: nil, newsletter_subscribed: nil, newsletter_source: 'admin',
                    create_user_account: false, user_params: {}, create_membership: false, membership_params: {})
       @person_params = person_params || {}
       @existing_person = existing_person
@@ -33,14 +33,13 @@ module People
 
         person = person_result.person
 
-        if create_user_account && person.user.present?
-          return failure("Cette personne a déjà un compte web.")
-        end
+        return failure('Cette personne a déjà un compte web.') if create_user_account && person.user.present?
 
         user = nil
         if create_user_account
           user_result = People::UserAccountCreator.new(user_creator_params(person)).call
           return failure_from(user_result) unless user_result.success?
+
           user = user_result.user
         end
 
@@ -48,6 +47,7 @@ module People
         if should_create_membership?
           membership_result = People::MembershipCreator.new(membership_creator_params(person)).call
           return failure_from(membership_result) unless membership_result.success?
+
           membership = membership_result.membership
         end
 
@@ -57,7 +57,7 @@ module People
         payload[:result] = :success
 
         Rails.logger.info("[People::Register] success person_id=#{person.id} user_id=#{user&.id} membership_id=#{membership&.id}")
-        ActiveSupport::Notifications.instrument("people.register", payload) do
+        ActiveSupport::Notifications.instrument('people.register', payload) do
           Result.new(
             success?: true,
             person: person,
@@ -68,7 +68,7 @@ module People
           )
         end
       end
-    rescue => e
+    rescue StandardError => e
       Rails.logger.error("[People::Register] #{e.class}: #{e.message}\n#{e.backtrace.take(5).join("\n")}")
       failure("Registration failed: #{e.message}")
     end
@@ -101,19 +101,19 @@ module People
 
     def build_success_message(person_created, user_created, membership_created)
       parts = []
-      parts << (person_created ? "Person created" : "Person updated")
-      parts << "user account" if user_created
-      parts << "membership" if membership_created
-      "Successfully processed #{parts.join(" and ")}".strip
+      parts << (person_created ? 'Person created' : 'Person updated')
+      parts << 'user account' if user_created
+      parts << 'membership' if membership_created
+      "Successfully processed #{parts.join(' and ')}".strip
     end
 
     def failure(message, errors = [])
       Rails.logger.warn("[People::Register] failure message=#{message}")
-      ActiveSupport::Notifications.instrument("people.register", {
-        result: :failure,
-        message: message,
-        errors: Array(errors)
-      })
+      ActiveSupport::Notifications.instrument('people.register', {
+                                                result: :failure,
+                                                message: message,
+                                                errors: Array(errors)
+                                              })
 
       Result.new(
         success?: false,

@@ -1,8 +1,34 @@
-# Omakase Ruby styling for Rails
-inherit_gem: { rubocop-rails-omakase: rubocop.yml }
+plugins: rubocop-rails
 
-# Overwrite or add rules to create your own house style
-#
-# # Use `[a, [b, c]]` not `[ a, [ b, c ] ]`
-# Layout/SpaceInsideArrayLiteralBrackets:
-#   Enabled: false
+AllCops:
+  NewCops: enable
+  SuggestExtensions: false
+  TargetRailsVersion: 8.1.3
+  TargetRubyVersion: 4.0.1
+  Exclude:
+    - 'bin'
+    # temporaly excluded
+    - 'db/**/*.rb'
+    - '**/*.erb' # rubocop actually break (uglify) template file
+    - 'test/**/*.rb'
+
+Layout/IndentationWidth:
+  Width: 2
+
+Layout/IndentationStyle:
+  EnforcedStyle: spaces
+
+Layout/IndentationConsistency:
+  Enabled: true
+
+Layout/EndOfLine:
+  EnforcedStyle: lf
+
+Layout/TrailingWhitespace:
+  Enabled: true
+
+# temporaly disabled
+Layout/LineLength:
+  Enabled: false
+Metrics/BlockLength:
+  Enabled: false

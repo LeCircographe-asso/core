@@ -21,7 +21,7 @@ module EventManagement
         ActiveRecord::Base.transaction do
           # Find the event and updater
           event = Event.find(event_id)
-          updated_by = User.find(updated_by_id)
+          User.find(updated_by_id)
 
           # Prepare update attributes (only non-blank values)
           update_attrs = {}
@@ -35,7 +35,7 @@ module EventManagement
 
           # Update event
           if event.update!(update_attrs)
-            success(event: event, message: "Event updated successfully")
+            success(event: event, message: 'Event updated successfully')
           else
             failure("Failed to update event: #{event.errors.full_messages.join(', ')}")
           end
@@ -44,12 +44,10 @@ module EventManagement
         failure("Event or User not found: #{e.message}")
       rescue ActiveRecord::RecordInvalid => e
         failure("Validation error: #{e.message}")
-      rescue => e
+      rescue StandardError => e
         failure("Unexpected error: #{e.message}")
       end
     end
-
-    private
 
     # success et failure hérités de BaseService
   end
