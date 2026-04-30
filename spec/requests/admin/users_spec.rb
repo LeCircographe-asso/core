@@ -96,7 +96,9 @@ RSpec.describe 'Admin::Users', type: :request do
         end.not_to change(Person, :count)
 
         expect(response).to have_http_status(:unprocessable_content)
-        expect(flash[:alert]).to include('Invalid data')
+        expect(flash[:alert]).to start_with(
+          I18n.t("admin.users.create.invalid_data_alert", details: "").rstrip
+        )
       end
     end
   end

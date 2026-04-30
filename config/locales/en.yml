@@ -1,31 +1,57 @@
-# Files in the config/locales directory are used for internationalization and
-# are automatically loaded by Rails. If you want to use locales other than
-# English, add the necessary files in this directory.
-#
-# To use the locales, use `I18n.t`:
-#
-#     I18n.t "hello"
-#
-# In views, this is aliased to just `t`:
-#
-#     <%= t("hello") %>
-#
-# To use a different locale, set it with `I18n.locale`:
-#
-#     I18n.locale = :es
-#
-# This would use the information in config/locales/es.yml.
-#
-# To learn more about the API, please read the Rails Internationalization guide
-# at https://guides.rubyonrails.org/i18n.html.
-#
-# Be aware that YAML interprets the following case-insensitive strings as
-# booleans: `true`, `false`, `on`, `off`, `yes`, `no`. Therefore, these strings
-# must be quoted to be interpreted as strings. For example:
-#
-#     en:
-#       "yes": yup
-#       enabled: "ON"
+# English locale — user-visible strings mirror keys under fr.yml; fill incrementally.
+# Keys added for dynamic flash / membership upgrade flows ship with translations here.
 
 en:
   hello: "Hello world"
+
+  flash:
+    generic:
+      error_detail: "Error: %{message}"
+
+  account_claims:
+    create:
+      rescue_alert: "Error: %{message}"
+    confirm:
+      rescue_alert: "Error while claiming account: %{message}"
+
+  admin:
+    memberships:
+      create:
+        upgrade_failed_alert: "Error during upgrade: %{message}"
+        membership_creation_failed_alert: "Error creating membership: %{message}"
+        upgrade_notice_offered: "Membership upgraded successfully! %{name} — Complimentary"
+        upgrade_notice_paid: "Membership upgraded successfully! %{name} — Amount: %{amount}€"
+        upgrade_notice_member_number_suffix: " | Member number changed: %{old_number} → %{new_number}"
+
+    payments:
+      create:
+        failure_alert: "Error creating payment: %{message}"
+      update:
+        failure_alert: "Update failed: %{message}"
+      destroy:
+        cancel_failed_alert: "Failed to cancel payment: %{message}"
+      restore:
+        restore_failed_alert: "Failed to restore payment: %{message}"
+
+    subscription_plans:
+      create:
+        purchase_failed_alert: "Error purchasing plan: %{message}"
+
+    subscriptions:
+      upgrade:
+        success_notice: "Contribution upgraded successfully."
+        credit_applied_suffix: " Credit applied: %{amount}€"
+        failure_alert: "Error during upgrade: %{message}"
+
+    users:
+      create:
+        invalid_data_alert: "Invalid data: %{details}"
+      payments:
+        create:
+          failure_alert: "Error creating payment: %{message}"
+        update:
+          failure_alert: "Error updating payment: %{message}"
+        destroy:
+          failure_alert: "Error deleting payment: %{message}"
+        process_payment:
+          failure_alert: "Error processing payment: %{message}"
