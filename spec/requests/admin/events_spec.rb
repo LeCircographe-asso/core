@@ -111,12 +111,6 @@ RSpec.describe 'Admin::Events', type: :request do
         expect(response).to redirect_to(admin_events_path)
       end
     end
-
-    context 'with invalid attributes' do
-      # NOTE: EventManagement::EventCreator doesn't enforce title/date presence
-      # Service returns success even with empty values
-      # This is a known behavior - service only validates creator_id
-    end
   end
 
   describe 'GET /admin/events/:id/edit' do
@@ -159,12 +153,6 @@ RSpec.describe 'Admin::Events', type: :request do
 
         expect(response).to redirect_to(event_path(event))
       end
-    end
-
-    context 'with invalid attributes' do
-      # NOTE: EventManagement::EventUpdater accepts empty strings
-      # Service ignores blank values and only updates non-blank attributes
-      # This is a known behavior - service only validates event_id and updated_by_id
     end
   end
 end

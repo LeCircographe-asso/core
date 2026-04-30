@@ -1,29 +1,38 @@
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
-  static targets = ["notification"]
+  static targets = ["progress"]
+
+  static values = {
+    duration: { type: Number, default: 8000 },
+    exitDuration: { type: Number, default: 350 },
+  }
 
   connect() {
-    // Auto-hide après 8 secondes (plus long que l'ancien système)
-    this.timeoutId = setTimeout(() => {
-      this.close()
-    }, 8000)
+    this.element.style.setProperty("--flash-duration", `${this.durationValue}ms`)
+    this.element.style.setProperty("--flash-exit-duration", `${this.exitDurationValue}ms`)
+
+    this.timeoutId = window.setTimeout(() => this.close(), this.durationValue)
   }
 
   disconnect() {
-    // Nettoyer le timeout si le composant est détruit
-    if (this.timeoutId) {
-      clearTimeout(this.timeoutId)
-    }
+    if (this.timeoutId) window.clearTimeout(this.timeoutId)
   }
 
   close() {
-    // Ajouter la classe de fermeture pour l'animation
-    this.element.classList.add('flash-closing')
-    
-    // Supprimer l'élément après l'animation
-    setTimeout(() => {
+    if (this.timeoutId) {
+      window.clearTimeout(this.timeoutId)
+      this.timeoutId = null
+    }
+
+    if (this.hasProgressTarget) {
+      this.progressTarget.classList.add("flash-progress-paused")
+    }
+
+    this.element.classList.add("flash-closing")
+
+    window.setTimeout(() => {
       this.element.remove()
-    }, 300)
+    }, this.exitDurationValue)
   }
 }

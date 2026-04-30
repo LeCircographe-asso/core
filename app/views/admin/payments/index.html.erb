@@ -103,14 +103,11 @@
           <% end %>
         </div>
 
-        <!-- Résumé des paiements -->
-        <div id="payment-summary">
-          <%= render Admin::Payments::PaymentSummaryComponent.new(
-            payments: @payments, 
-            total_amount: @total_amount, 
-            total_donation: @total_donation
-          ) %>
-        </div>
+        <!-- Résumé des paiements (#payment-summary est défini dans le partial pour les mises à jour Turbo) -->
+        <%= render "payment_summary",
+                   payments: @payments_for_summary,
+                   total_amount: @total_amount,
+                   total_donation: @total_donation %>
 
         <!-- Tableau des paiements -->
         <div class="bg-white shadow overflow-hidden rounded-lg">
@@ -131,7 +128,7 @@
               <tbody id="payments" class="bg-white divide-y divide-gray-200">
                 <% if @payments.any? %>
                   <% @payments.each do |payment| %>
-                    <%= render "payment_row", payment: payment %>
+                    <%= render "payment_row", payment: payment, list_filter_params: @filter_params.to_unsafe_h %>
                   <% end %>
                 <% else %>
                   <tr>

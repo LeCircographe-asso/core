@@ -40,6 +40,20 @@ RSpec.describe UserManagement::UserUpdater do
       expect(subscriber.reload.subscribed?).to be(true)
     end
 
+    it 'updates newsletter when the user updates their own settings (not only admin)' do
+      create(:newsletter_subscriber, person: person, email: person.email, subscribed: false)
+
+      updater = described_class.new(
+        user_id: user.id,
+        person_attributes: {},
+        newsletter_subscribed: true,
+        updated_by_id: user.id
+      )
+
+      expect(updater.call.success?).to be(true)
+      expect(NewsletterSubscriber.find_by(email: person.email).subscribed?).to be(true)
+    end
+
     it 'returns validation errors when update fails' do
       updater = described_class.new(
         user_id: user.id,

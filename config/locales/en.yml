@@ -122,8 +122,17 @@ en:
       destroy:
         destroyed: Blog supprimé avec succès
     donations:
+      new:
+        title: Record a donation
+        heading: New donation
+        donor_label: Recipient (person record)
+        amount_label: Amount (EUR)
+        amount_placeholder: "0.00"
+        submit: Save donation
+        cancel: Cancel
+        missing_person: Select a person to record a donation.
       create:
-        recorded: Donation prise en compte
+        recorded: Donation recorded
     events:
       create:
         created: Événement créé avec succès
@@ -300,6 +309,11 @@ en:
       user_registration:
         accept_cgu: Vous devez accepter les CGU pour continuer.
         accept_privacy: Vous devez accepter la politique de confidentialité pour continuer.
+        errors:
+          email_in_use_login: This email is already in use. Use another address or sign in.
+          email_in_use_orphan_user: This address is already tied to a user account.
+          user_email_login_taken: This login email is already in use.
+          user_email_person_has_account: This email is already used for a web account.
   checkout:
     success:
       payment_ok: Paiement réussi et commande mise à jour.

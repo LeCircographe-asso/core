@@ -7,6 +7,26 @@ RSpec.describe 'Admin::Donations', type: :request do
 
   before { login_as(admin) }
 
+  describe 'GET /admin/donations/new' do
+    let(:person) { create(:person, first_name: 'Ada', last_name: 'Lovelace') }
+
+    it 'returns success when person_id is given' do
+      get new_admin_donation_path(person_id: person.id)
+      expect(response).to have_http_status(:success)
+      expect(response.body).to include('Ada')
+    end
+
+    it 'redirects when person context is missing' do
+      get new_admin_donation_path
+      expect(response).to redirect_to(admin_users_path)
+    end
+
+    it 'legacy GET /admin/donations redirects to new preserving query string' do
+      get "/admin/donations", params: { person_id: person.id }
+      expect(response).to redirect_to(new_admin_donation_path(person_id: person.id))
+    end
+  end
+
   describe 'POST /admin/donations' do
     let(:person) { create(:person) }
 

@@ -1,5 +1,8 @@
-<%= render Admin::Payments::PaymentSummaryComponent.new(
-  payments: payments, 
-  total_amount: total_amount, 
-  total_donation: total_donation
-) %>
+<%# Le wrapper doit être dans le partial : chaque turbo_stream.replace remplace tout le nœud #payment-summary. %>
+<div id="payment-summary">
+  <%= render Admin::Payments::PaymentSummaryComponent.new(
+        payments: payments,
+        total_amount: total_amount,
+        total_donation: total_donation
+      ) %>
+</div>
