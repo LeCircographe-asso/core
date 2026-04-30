@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module MembershipTypeManagement
   class MembershipTypeDeleter < BaseService
     attribute :membership_type_id, :integer
@@ -24,13 +26,13 @@ module MembershipTypeManagement
 
         # Instrumentation pour audit
         ActiveSupport::Notifications.instrument(
-          'membership_type.deleted',
+          "membership_type.deleted",
           membership_type_id: membership_type_id,
           deleted_by_id: deleted_by_id,
           name: membership_type.name
         )
 
-        success(message: 'Membership type deleted successfully')
+        success(message: "Membership type deleted successfully")
       rescue ActiveRecord::RecordNotFound => e
         failure("MembershipType or User not found: #{e.message}")
       rescue StandardError => e

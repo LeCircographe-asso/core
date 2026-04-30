@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'rails_helper'
 
 RSpec.describe Attendance, type: :model do
@@ -70,12 +72,12 @@ RSpec.describe Attendance, type: :model do
     let!(:this_week_attendance) do
       week_date = if Date.current.beginning_of_week != Date.current
                     Date.current.beginning_of_week
-                  elsif Date.current.end_of_week != Date.current
+      elsif Date.current.end_of_week != Date.current
                     Date.current.end_of_week
-                  else
+      else
                     # If we're the only day in the week (shouldn't happen), use tomorrow
                     Date.current + 1.day
-                  end
+      end
       create(:attendance, person: person2, event: event2, date: week_date)
     end
     # Use a date from last week, but adjust if it's in a different month
@@ -84,10 +86,10 @@ RSpec.describe Attendance, type: :model do
       # If last week is in a different month, use a date from earlier this month (but not this week)
       attendance_date = if last_week_date.month == Date.current.month
                           last_week_date
-                        else
+      else
                           # Use a date from earlier in the month, but not in current week
-                          [Date.current.beginning_of_month, Date.current.beginning_of_week - 1.day].max
-                        end
+                          [ Date.current.beginning_of_month, Date.current.beginning_of_week - 1.day ].max
+      end
       create(:attendance, person: person3, event: event3, date: attendance_date)
     end
 

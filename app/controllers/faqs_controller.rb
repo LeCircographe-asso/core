@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class FaqsController < ApplicationController
   def index
     data = FaqRepository.load

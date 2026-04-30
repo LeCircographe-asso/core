@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module AccountClaimManagement
   class AccountClaimConfirmer < BaseService
     attribute :confirmation_token, :string
@@ -10,9 +12,9 @@ module AccountClaimManagement
       begin
         claim = AccountClaim.find_by!(confirmation_token: confirmation_token)
 
-        return failure('Lien expiré (24h)') if claim.expired?
+        return failure("Lien expiré (24h)") if claim.expired?
 
-        return failure('Cette réclamation a déjà été confirmée') if claim.confirmed?
+        return failure("Cette réclamation a déjà été confirmée") if claim.confirmed?
 
         user_person = resolve_user_person(claim)
         admin_person = claim.person
@@ -22,7 +24,7 @@ module AccountClaimManagement
             user: claim.user,
             target_person: admin_person,
             destroy_source_person: false,
-            audit_reason: 'account_claim'
+            audit_reason: "account_claim"
           ).call
 
           return failure("Erreur lors du rattachement du compte: #{link_result.message}") unless link_result.success?
@@ -33,7 +35,7 @@ module AccountClaimManagement
             source_person: admin_person,
             target_person: user_person,
             actor_id: claim.user.id,
-            merge_type: 'account_claim'
+            merge_type: "account_claim"
           ).call
 
           return failure("Erreur lors de la fusion: #{merge_result.message}") unless merge_result.success?
@@ -42,7 +44,7 @@ module AccountClaimManagement
         claim.update!(status: :confirmed)
 
         ActiveSupport::Notifications.instrument(
-          'account_claim.confirmed',
+          "account_claim.confirmed",
           account_claim_id: claim.id,
           admin_person_id: admin_person.id,
           user_id: claim.user.id,
@@ -53,7 +55,7 @@ module AccountClaimManagement
           claim: claim,
           user_person: user_person,
           user: user_person.user,
-          message: '✅ Compte revendiqué ! Votre historique est maintenant disponible.'
+          message: "✅ Compte revendiqué ! Votre historique est maintenant disponible."
         )
       rescue ActiveRecord::RecordNotFound => e
         failure("Account claim not found: #{e.message}")

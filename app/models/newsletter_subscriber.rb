@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class NewsletterSubscriber < ApplicationRecord
   include Dateable
   include EmailNormalizable

@@ -1,26 +1,28 @@
+# frozen_string_literal: true
+
 module Dateable
   extend ActiveSupport::Concern
 
   # Méthodes de formatage de dates
   def formatted_date(date_attr = :created_at)
     date = send(date_attr)
-    return 'Non renseigné' unless date
+    return "Non renseigné" unless date
 
-    date.strftime('%d/%m/%Y')
+    date.strftime("%d/%m/%Y")
   end
 
   def formatted_datetime(date_attr = :created_at)
     date = send(date_attr)
-    return 'Non renseigné' unless date
+    return "Non renseigné" unless date
 
-    date.strftime('%d/%m/%Y à %H:%M')
+    date.strftime("%d/%m/%Y à %H:%M")
   end
 
   def formatted_time(date_attr = :created_at)
     date = send(date_attr)
-    return 'Non renseigné' unless date
+    return "Non renseigné" unless date
 
-    date.strftime('%H:%M')
+    date.strftime("%H:%M")
   end
 
   # Méthodes de vérification de dates
@@ -35,16 +37,14 @@ module Dateable
     date = send(date_attr)
     return false unless date
 
-    date.to_date >= Date.current.beginning_of_week &&
-      date.to_date <= Date.current.end_of_week
+    date.to_date.between?(Date.current.beginning_of_week, Date.current.end_of_week)
   end
 
   def this_month?(date_attr = :created_at)
     date = send(date_attr)
     return false unless date
 
-    date.to_date >= Date.current.beginning_of_month &&
-      date.to_date <= Date.current.end_of_month
+    date.to_date.between?(Date.current.beginning_of_month, Date.current.end_of_month)
   end
 
   def this_year?(date_attr = :created_at)
@@ -84,15 +84,15 @@ module Dateable
       # Auto-detect date attribute: prefer :date if it exists, otherwise :created_at
       if date_attr.nil?
         # Check if model has a 'date' column and it's a date type (not datetime)
-        date_attr = if columns_hash.key?('date') && columns_hash['date'].type == :date
+        date_attr = if columns_hash.key?("date") && columns_hash["date"].type == :date
                       :date
-                    else
+        else
                       :created_at
-                    end
+        end
       end
 
       # For date columns, use simple equality; for datetime columns, use range
-      if date_attr == :date && columns_hash.key?('date') && columns_hash['date'].type == :date
+      if date_attr == :date && columns_hash.key?("date") && columns_hash["date"].type == :date
         where(date: Date.current)
       else
         c = dateable_column(date_attr)
@@ -103,14 +103,14 @@ module Dateable
     def this_week(date_attr = nil)
       # Auto-detect date attribute: prefer :date if it exists, otherwise :created_at
       if date_attr.nil?
-        date_attr = if columns_hash.key?('date') && columns_hash['date'].type == :date
+        date_attr = if columns_hash.key?("date") && columns_hash["date"].type == :date
                       :date
-                    else
+        else
                       :created_at
-                    end
+        end
       end
 
-      if date_attr == :date && columns_hash.key?('date') && columns_hash['date'].type == :date
+      if date_attr == :date && columns_hash.key?("date") && columns_hash["date"].type == :date
         where(date: Date.current.all_week)
       else
         c = dateable_column(date_attr)
@@ -121,14 +121,14 @@ module Dateable
     def this_month(date_attr = nil)
       # Auto-detect date attribute: prefer :date if it exists, otherwise :created_at
       if date_attr.nil?
-        date_attr = if columns_hash.key?('date') && columns_hash['date'].type == :date
+        date_attr = if columns_hash.key?("date") && columns_hash["date"].type == :date
                       :date
-                    else
+        else
                       :created_at
-                    end
+        end
       end
 
-      if date_attr == :date && columns_hash.key?('date') && columns_hash['date'].type == :date
+      if date_attr == :date && columns_hash.key?("date") && columns_hash["date"].type == :date
         where(date: Date.current.all_month)
       else
         c = dateable_column(date_attr)

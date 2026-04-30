@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module PaymentQuery
   def self.by_person(person_id)
     Payment.where(person_id: person_id)
@@ -39,7 +41,7 @@ module PaymentQuery
   def self.total_donation
     Payment.joins(:payment_lines)
            .where(status: :success)
-           .where(payment_lines: { item_type: 'Donation' })
-           .sum('payment_lines.amount_cents')
+           .where(payment_lines: { item_type: "Donation" })
+           .sum("payment_lines.amount_cents")
   end
 end

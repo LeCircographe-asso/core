@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Admin
   class PaymentsController < BaseController
     # Remove the before_action since we don't need the dashboard breadcrumb
@@ -13,15 +15,15 @@ module Admin
       @total_donation = service_result[:total_donation]
 
       # Handle pagination in controller (service returns the query)
-      sort_column = params[:sort] || 'payments.created_at'
-      sort_direction = params[:direction] || 'desc'
+      sort_column = params[:sort] || "payments.created_at"
+      sort_direction = params[:direction] || "desc"
 
       # Ensure sort_column is properly qualified with table name
-      @payments = if sort_column.include?('.')
+      @payments = if sort_column.include?(".")
                     @payments.order("#{sort_column} #{sort_direction}")
-                  else
+      else
                     @payments.order("payments.#{sort_column} #{sort_direction}")
-                  end
+      end
 
       items_per_page = params[:items]&.to_i || 15
       @pagy, @payments = pagy(@payments, items: items_per_page)
@@ -37,16 +39,16 @@ module Admin
 
     def new
       # Payment creation is currently disabled, redirect to index
-      redirect_to admin_payments_path, notice: 'Création de paiement temporairement désactivée'
+      redirect_to admin_payments_path, notice: "Création de paiement temporairement désactivée"
     end
 
     def edit
       @payment = Payment.find(params[:id])
 
       respond_to do |format|
-        format.html { render partial: 'edit_form', locals: { payment: @payment } }
+        format.html { render partial: "edit_form", locals: { payment: @payment } }
         format.turbo_stream do
-          render turbo_stream: turbo_stream.replace("payment_#{@payment.id}_actions", partial: 'edit_form', locals: { payment: @payment })
+          render turbo_stream: turbo_stream.replace("payment_#{@payment.id}_actions", partial: "edit_form", locals: { payment: @payment })
         end
       end
     end
@@ -61,35 +63,35 @@ module Admin
       result = People::PaymentCreator.new(
         person: person,
         amount_cents: total_cents,
-        payment_method: payment_params[:payment_method] || 'cash',
+        payment_method: payment_params[:payment_method] || "cash",
         recorded_by_id: Current.user&.id,
-        item_type: 'Donation',
+        item_type: "Donation",
         item_id: person.id,
-        description: 'Paiement direct',
+        description: "Paiement direct",
         notes: payment_params[:notes]
       ).call
 
       respond_to do |format|
         if result.success?
-          format.html { redirect_to admin_payments_path, notice: 'Paiement créé avec succès' }
+          format.html { redirect_to admin_payments_path, notice: "Paiement créé avec succès" }
           format.turbo_stream do
             payments_service = Admin::PaymentsService.new({})
             payments_service.call
 
             render turbo_stream: [
-              turbo_stream.append('payments', partial: 'payment_row', locals: { payment: result.payment }),
-              turbo_stream.replace('payment-summary', partial: 'payment_summary', locals: {
+              turbo_stream.append("payments", partial: "payment_row", locals: { payment: result.payment }),
+              turbo_stream.replace("payment-summary", partial: "payment_summary", locals: {
                                      payments: Payment.includes(:person, :recorded_by, :payment_lines).order(created_at: :desc),
                                      total_amount: Payment.total_successful_amount,
                                      total_donation: Payment.total_donations
                                    }),
-              turbo_stream.replace('flash', partial: 'shared/flash', locals: { notice: 'Paiement créé avec succès' })
+              turbo_stream.replace("flash", partial: "shared/flash", locals: { notice: "Paiement créé avec succès" })
             ]
           end
         else
           format.html { redirect_to admin_payments_path, alert: "Erreur lors de la création du paiement: #{result.message}" }
           format.turbo_stream do
-            render turbo_stream: turbo_stream.replace('flash', partial: 'shared/flash', locals: { alert: "Erreur: #{result.message}" })
+            render turbo_stream: turbo_stream.replace("flash", partial: "shared/flash", locals: { alert: "Erreur: #{result.message}" })
           end
         end
       end
@@ -97,7 +99,7 @@ module Admin
       respond_to do |format|
         format.html { redirect_to admin_payments_path, alert: "Erreur lors de la création du paiement: #{e.message}" }
         format.turbo_stream do
-          render turbo_stream: turbo_stream.replace('flash', partial: 'shared/flash', locals: { alert: "Erreur: #{e.message}" })
+          render turbo_stream: turbo_stream.replace("flash", partial: "shared/flash", locals: { alert: "Erreur: #{e.message}" })
         end
       end
     rescue StandardError => e
@@ -105,7 +107,7 @@ module Admin
       respond_to do |format|
         format.html { redirect_to admin_payments_path, alert: "Erreur lors de la création du paiement: #{e.message}" }
         format.turbo_stream do
-          render turbo_stream: turbo_stream.replace('flash', partial: 'shared/flash', locals: { alert: "Erreur: #{e.message}" })
+          render turbo_stream: turbo_stream.replace("flash", partial: "shared/flash", locals: { alert: "Erreur: #{e.message}" })
         end
       end
     end
@@ -141,27 +143,27 @@ module Admin
 
       respond_to do |format|
         if result.success?
-          format.html { redirect_to admin_payments_path, notice: 'Mise à jour réussie' }
+          format.html { redirect_to admin_payments_path, notice: "Mise à jour réussie" }
           format.turbo_stream do
             # Recalculer les totaux
             payments_service = Admin::PaymentsService.new({})
             payments_service.call
 
             render turbo_stream: [
-              turbo_stream.replace("payment_#{result.payment.id}_actions", partial: 'payment_actions', locals: { payment: result.payment }),
-              turbo_stream.replace("payment_row_#{result.payment.id}", partial: 'payment_row', locals: { payment: result.payment }),
-              turbo_stream.replace('payment-summary', partial: 'payment_summary', locals: {
+              turbo_stream.replace("payment_#{result.payment.id}_actions", partial: "payment_actions", locals: { payment: result.payment }),
+              turbo_stream.replace("payment_row_#{result.payment.id}", partial: "payment_row", locals: { payment: result.payment }),
+              turbo_stream.replace("payment-summary", partial: "payment_summary", locals: {
                                      payments: Payment.includes(:person, :recorded_by, :payment_lines).order(created_at: :desc),
                                      total_amount: Payment.total_successful_amount,
                                      total_donation: Payment.total_donations
                                    }),
-              turbo_stream.replace('flash', partial: 'shared/flash', locals: { notice: 'Mise à jour réussie' })
+              turbo_stream.replace("flash", partial: "shared/flash", locals: { notice: "Mise à jour réussie" })
             ]
           end
         else
           format.html { redirect_to admin_payment_path(params[:id]), alert: "Échec de la mise à jour: #{result.message}" }
           format.turbo_stream do
-            render turbo_stream: turbo_stream.replace('flash', partial: 'shared/flash', locals: { alert: "Erreur: #{result.message}" })
+            render turbo_stream: turbo_stream.replace("flash", partial: "shared/flash", locals: { alert: "Erreur: #{result.message}" })
           end
         end
       end
@@ -180,12 +182,12 @@ module Admin
       result = People::PaymentCanceller.new(
         payment_id: params[:id],
         deleted_by_id: Current.user.id,
-        reason: 'Suppression via interface admin'
+        reason: "Suppression via interface admin"
       ).call
 
       respond_to do |format|
         if result.success?
-          format.html { redirect_to admin_payments_path, notice: 'Paiement annulé avec succès' }
+          format.html { redirect_to admin_payments_path, notice: "Paiement annulé avec succès" }
           format.turbo_stream do
             # Recalculer les totaux
             payments_service = Admin::PaymentsService.new({})
@@ -193,18 +195,18 @@ module Admin
 
             render turbo_stream: [
               turbo_stream.remove("payment_row_#{result.payment.id}"),
-              turbo_stream.replace('payment-summary', partial: 'payment_summary', locals: {
+              turbo_stream.replace("payment-summary", partial: "payment_summary", locals: {
                                      payments: Payment.includes(:person, :recorded_by, :payment_lines).order(created_at: :desc),
                                      total_amount: Payment.total_successful_amount,
                                      total_donation: Payment.total_donations
                                    }),
-              turbo_stream.replace('flash', partial: 'shared/flash', locals: { notice: 'Paiement annulé avec succès' })
+              turbo_stream.replace("flash", partial: "shared/flash", locals: { notice: "Paiement annulé avec succès" })
             ]
           end
         else
           format.html { redirect_to admin_payments_path, alert: "Échec de l'annulation du paiement: #{result.message}" }
           format.turbo_stream do
-            render turbo_stream: turbo_stream.replace('flash', partial: 'shared/flash', locals: { alert: "Erreur: #{result.message}" })
+            render turbo_stream: turbo_stream.replace("flash", partial: "shared/flash", locals: { alert: "Erreur: #{result.message}" })
           end
         end
       end
@@ -227,11 +229,11 @@ module Admin
       result = People::PaymentRestorer.new(
         payment_id: params[:id],
         restored_by_id: Current.user.id,
-        reason: 'Restauration via interface admin'
+        reason: "Restauration via interface admin"
       ).call
 
       if result.success?
-        redirect_to admin_payment_path(result.payment), notice: 'Paiement restauré avec succès'
+        redirect_to admin_payment_path(result.payment), notice: "Paiement restauré avec succès"
       else
         redirect_to admin_payments_path, alert: "Échec de la restauration du paiement: #{result.message}"
       end
@@ -240,10 +242,10 @@ module Admin
     private
 
     def payment_params
-      params.require(:payment).permit(
-        :person_id, :recorded_by_id, :total_cents, :payment_method, :status, :notes,
-        # Compatibilité avec l'ancien modèle
-        :payment_id, :payment_date, :payment_amount, :payment_type, :order_id, :donation, :total_payment
+      params.expect(
+        payment: [ :person_id, :recorded_by_id, :total_cents, :payment_method, :status, :notes,
+                  # Compatibilité avec l'ancien modèle
+                  :payment_id, :payment_date, :payment_amount, :payment_type, :order_id, :donation, :total_payment ]
       )
     end
 
@@ -253,7 +255,7 @@ module Admin
         if person
           add_breadcrumb "Liste d'adhérents", admin_users_path
           add_breadcrumb person.full_name, admin_user_path("person_#{person.id}")
-          add_breadcrumb 'Historique des paiements', nil
+          add_breadcrumb "Historique des paiements", nil
           return
         end
       end
@@ -264,12 +266,12 @@ module Admin
           add_breadcrumb "Liste d'adhérents", admin_users_path
           label = user.full_name.presence || "Utilisateur ##{user.id}"
           add_breadcrumb label, admin_user_path(user)
-          add_breadcrumb 'Historique des paiements', nil
+          add_breadcrumb "Historique des paiements", nil
           return
         end
       end
 
-      add_breadcrumb 'Historique des paiements', nil
+      add_breadcrumb "Historique des paiements", nil
     end
   end
 end

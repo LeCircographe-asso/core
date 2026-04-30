@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module AuthenticationHelpers
   def login_as(user)
     @current_session = user.sessions.create!(

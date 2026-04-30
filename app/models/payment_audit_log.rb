@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class PaymentAuditLog < ApplicationRecord
   belongs_to :payment
   belongs_to :user, optional: true

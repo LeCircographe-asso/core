@@ -1,4 +1,6 @@
 #!/usr/bin/env ruby
+# frozen_string_literal: true
+
 # Script legacy de réparation Person/User
 # ⚠️ Préférez People::AccountLinker ; ce script démontre son utilisation.
 # Usage: ruby scripts/fix_person_user_merge.rb

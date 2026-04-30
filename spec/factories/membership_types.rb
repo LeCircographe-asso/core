@@ -1,8 +1,10 @@
+# frozen_string_literal: true
+
 FactoryBot.define do
   factory :membership_type do
     sequence(:name) { |n| "Membership Type #{n}" }
     category { %i[basic circus event].sample }
-    price_cents { [1500, 2000, 2500].sample }
+    price_cents { [ 1500, 2000, 2500 ].sample }
     description { Faker::Lorem.paragraph }
     version { 1 }
     effective_from { Date.current }

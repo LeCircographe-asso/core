@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module BlogManagement
   class BlogUpdater < BaseService
     attribute :blog_id, :integer
@@ -17,7 +19,7 @@ module BlogManagement
         updated_by = User.find(updated_by_id)
 
         # Vérifier les permissions
-        return failure('Insufficient permissions to update blog') unless updated_by.super_admin? || updated_by.admin?
+        return failure("Insufficient permissions to update blog") unless updated_by.super_admin? || updated_by.admin?
 
         # Mettre à jour le blog
         blog.update!(
@@ -36,13 +38,13 @@ module BlogManagement
 
         # Instrumentation pour audit
         ActiveSupport::Notifications.instrument(
-          'blog.updated',
+          "blog.updated",
           blog_id: blog.id,
           updated_by_id: updated_by_id,
           changes: blog.previous_changes
         )
 
-        success(blog: blog, message: 'Blog updated successfully')
+        success(blog: blog, message: "Blog updated successfully")
       rescue ActiveRecord::RecordNotFound => e
         failure("Blog or User not found: #{e.message}")
       rescue StandardError => e

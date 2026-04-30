@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Middleware pour protéger l'environnement staging
 class StagingAuth
   def initialize(app)
@@ -8,7 +10,7 @@ class StagingAuth
     request = Rack::Request.new(env)
 
     # Skip auth for health check endpoint (Kamal needs this)
-    return @app.call(env) if request.path == '/up'
+    return @app.call(env) if request.path == "/up"
 
     # Vérifier si c'est l'environnement staging
     if staging_environment?(request)
@@ -35,25 +37,25 @@ class StagingAuth
 
   def staging_environment?(request)
     # Vérifier le sous-domaine ou la variable d'environnement
-    request.host.start_with?('staging.') ||
-      ENV['RAILS_ENV'] == 'staging' ||
-      ENV['STAGING_MODE'] == 'true'
+    request.host.start_with?("staging.") ||
+      ENV["RAILS_ENV"] == "staging" ||
+      ENV["STAGING_MODE"] == "true"
   end
 
   def valid_credentials?(username, password)
-    username == 'staging' &&
-      password == ENV['STAGING_PASSWORD'] &&
-      ENV['STAGING_PASSWORD'].present?
+    username == "staging" &&
+      password == ENV["STAGING_PASSWORD"] &&
+      ENV["STAGING_PASSWORD"].present?
   end
 
   def unauthorized_response
     [
       401,
       {
-        'WWW-Authenticate' => 'Basic realm="Staging Environment"',
-        'Content-Type' => 'text/html'
+        "WWW-Authenticate" => 'Basic realm="Staging Environment"',
+        "Content-Type" => "text/html"
       },
-      ['<h1>Staging Environment - Authentication Required</h1><p>Please enter your staging credentials.</p>']
+      [ "<h1>Staging Environment - Authentication Required</h1><p>Please enter your staging credentials.</p>" ]
     ]
   end
 end

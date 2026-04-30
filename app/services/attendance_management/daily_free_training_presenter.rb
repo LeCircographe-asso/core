@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module AttendanceManagement
   class DailyFreeTrainingPresenter < BaseService
     attribute :date, :date
@@ -13,7 +15,7 @@ module AttendanceManagement
 
       attendances = list.attendances.includes(:person, :contribution)
       pack10_sessions = attendances.select { |att| att.contribution&.is_pack10? }.count
-      day_passes = attendances.select { |att| att.contribution&.contribution_formula&.duration == 'day' }.count
+      day_passes = attendances.select { |att| att.contribution&.contribution_formula&.duration == "day" }.count
 
       success(
         attendance_list: list,

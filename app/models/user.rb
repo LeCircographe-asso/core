@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class User < ApplicationRecord
   include Roleable
   include Dateable
@@ -51,8 +53,8 @@ class User < ApplicationRecord
 
   validates :email_address, presence: true
   validate :email_uniqueness_unless_person_email
-  validates :cgu, acceptance: { message: 'Vous devez accepter les CGU pour continuer.' }, unless: :created_by_admin?
-  validates :privacy_policy, acceptance: { message: 'Vous devez accepter la politique de confidentialité pour continuer.' }, unless: :created_by_admin?
+  validates :cgu, acceptance: { message: "Vous devez accepter les CGU pour continuer." }, unless: :created_by_admin?
+  validates :privacy_policy, acceptance: { message: "Vous devez accepter la politique de confidentialité pour continuer." }, unless: :created_by_admin?
 
   # (can_edit_member_numbers? maintenant dans le module Roleable)
 
@@ -73,18 +75,16 @@ class User < ApplicationRecord
     )
 
     # Anonymiser les données de la Person liée
-    if person
-      person.update_columns(
-        first_name: 'Deleted',
-        last_name: 'User',
-        address: nil,
-        phone: nil,
-        email: "deleted_#{id}@example.com"
-      )
-    end
+    person&.update_columns(
+      first_name: "Deleted",
+      last_name: "User",
+      address: nil,
+      phone: nil,
+      email: "deleted_#{id}@example.com"
+    )
 
     # Deactivate any active memberships
-    memberships.where(status: 'active').update_all(status: 'inactive')
+    memberships.where(status: "active").update_all(status: "inactive")
   end
 
   # Check if the user has any active payments
@@ -110,7 +110,7 @@ class User < ApplicationRecord
     return if email_address.blank? # Don't send email if no email address
 
     # Skip email sending in seeds
-    return if caller.any? { |line| line.include?('db/seeds') }
+    return if caller.any? { |line| line.include?("db/seeds") }
 
     if created_by_admin?
       # Generate password reset URL for admin-created users
@@ -182,9 +182,9 @@ class User < ApplicationRecord
   end
 
   # Date scopes (using created_at via Dateable)
-  scope :today, -> { where('created_at >= ? AND created_at < ?', Date.current.beginning_of_day, Date.current.end_of_day) }
-  scope :this_week, -> { where('created_at >= ? AND created_at <= ?', Date.current.beginning_of_week.beginning_of_day, Date.current.end_of_week.end_of_day) }
-  scope :this_month, -> { where('created_at >= ? AND created_at <= ?', Date.current.beginning_of_month.beginning_of_day, Date.current.end_of_month.end_of_day) }
+  scope :today, -> { where(created_at: Date.current.beginning_of_day...Date.current.end_of_day) }
+  scope :this_week, -> { where(created_at: Date.current.beginning_of_week.beginning_of_day..Date.current.end_of_week.end_of_day) }
+  scope :this_month, -> { where(created_at: Date.current.beginning_of_month.beginning_of_day..Date.current.end_of_month.end_of_day) }
   scope :with_deleted, -> { all }
 
   # Class method to find or create a user with the same email
@@ -219,10 +219,6 @@ class User < ApplicationRecord
   end
 
   # Standard destroy method - no soft deletion
-  def destroy
-    # Payments belong to Person, not User; do not attempt reassignment here.
-    super # Standard ActiveRecord destroy
-  end
 
   def email_uniqueness_unless_person_email
     return if email_address.blank?
@@ -233,7 +229,7 @@ class User < ApplicationRecord
     # Sinon, vérifier l'unicité normale
     return unless User.where(email_address: email_address).where.not(id: id).exists?
 
-    errors.add(:email_address, 'est déjà utilisé')
+    errors.add(:email_address, "est déjà utilisé")
   end
 
   # Check if user is interested in an event (Person-Based Architecture)

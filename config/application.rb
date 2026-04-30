@@ -1,8 +1,10 @@
-require_relative 'boot'
+# frozen_string_literal: true
 
-require 'rails/all'
-require_relative '../app/middleware/maintenance_mode_middleware'
-require_relative '../app/middleware/staging_auth'
+require_relative "boot"
+
+require "rails/all"
+require_relative "../app/middleware/maintenance_mode_middleware"
+require_relative "../app/middleware/staging_auth"
 
 # Require the gems listed in Gemfile, including any gems
 # you've limited to :test, :development, or :production.
@@ -29,7 +31,7 @@ module Circographe
 
     config.generators do |g|
       g.test_framework :rspec
-      g.fixture_replacement :factory_bot, dir: 'spec/factories'
+      g.fixture_replacement :factory_bot, dir: "spec/factories"
     end
 
     # Don't generate system test files.
@@ -39,7 +41,7 @@ module Circographe
     # SolidCache, SolidQueue, and SolidCable use separate databases
 
     # Add Tailwind CSS builds path for Propshaft (for all environments)
-    config.assets.paths << Rails.root.join('app/assets/builds')
+    config.assets.paths << Rails.root.join("app/assets/builds")
 
     # Insert maintenance mode middleware at the top so it intercepts all requests
     config.middleware.insert_before 0, MaintenanceModeMiddleware
@@ -50,5 +52,5 @@ module Circographe
 end
 
 Rails.application.configure do
-  config.hosts << 'lecircographe.fr'
+  config.hosts << "lecircographe.fr"
 end

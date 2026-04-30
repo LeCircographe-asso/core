@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Configuration partagée entre tous les environnements
 # Ce fichier est inclus dans chaque environnement pour éviter la duplication
 
@@ -14,13 +16,13 @@ module SharedEnvironmentConfig
 
     # Performance optimizations
     config.force_ssl = true
-    config.ssl_options = { redirect: { exclude: ->(request) { request.path == '/up' } } }
+    config.ssl_options = { redirect: { exclude: ->(request) { request.path == "/up" } } }
 
     # Host Authorization for Docker containers
     config.hosts.clear if Rails.env.production? || Rails.env.staging?
 
     # Logging
-    config.log_tags = [:request_id]
+    config.log_tags = [ :request_id ]
 
     # Cache configuration
     config.cache_store = :solid_cache_store if Rails.env.production? || Rails.env.staging?

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'rails_helper'
 
 RSpec.describe MemberManagementService do
@@ -241,9 +243,9 @@ RSpec.describe MemberManagementService do
 
       expect(duplicates.length).to eq(1)
       expect(duplicates.first[:type]).to eq(:name_duplicate)
-      expect(duplicates.first[:primary_person]).to be_in([person1, person2])
+      expect(duplicates.first[:primary_person]).to be_in([ person1, person2 ])
       primary = duplicates.first[:primary_person]
-      others = ([person1, person2] - [primary])
+      others = ([ person1, person2 ] - [ primary ])
       expect(duplicates.first[:secondary_persons]).to contain_exactly(*others)
     end
 
@@ -308,7 +310,7 @@ RSpec.describe MemberManagementService do
   describe '.assign_missing_member_numbers' do
     before do
       # Clean up any persons without member numbers from previous tests
-      Person.where(member_number: [nil, '']).destroy_all
+      Person.where(member_number: [ nil, '' ]).destroy_all
     end
 
     it 'assigns numbers to persons without member numbers' do
@@ -318,7 +320,7 @@ RSpec.describe MemberManagementService do
 
       expect do
         MemberManagementService.assign_missing_member_numbers
-      end.to change { Person.where(member_number: [nil, '']).count }.by(-2)
+      end.to change { Person.where(member_number: [ nil, '' ]).count }.by(-2)
 
       expect(person1.reload.member_number).to be_present
       expect(person2.reload.member_number).to be_present

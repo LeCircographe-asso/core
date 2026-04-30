@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module OpeningHoursManagement
   class OpeningHoursUpdater < BaseService
     attribute :opening_hours, hash: true
@@ -13,22 +15,22 @@ module OpeningHoursManagement
         updated_by = User.find(updated_by_id)
 
         # Vérifier les permissions
-        return failure('Insufficient permissions to update opening hours') unless updated_by.super_admin? || updated_by.admin?
+        return failure("Insufficient permissions to update opening hours") unless updated_by.super_admin? || updated_by.admin?
 
         # Valider les horaires
         return failure("Erreur : l'heure de fermeture doit être après l'heure d'ouverture pour tous les jours ouverts.") unless valid_hours?(opening_hours)
 
         # Sauvegarder dans le cache
-        Rails.cache.write('opening_hours', opening_hours)
+        Rails.cache.write("opening_hours", opening_hours)
 
         # Instrumentation pour audit
         ActiveSupport::Notifications.instrument(
-          'opening_hours.updated',
+          "opening_hours.updated",
           updated_by_id: updated_by_id,
           days_count: opening_hours.keys.length
         )
 
-        success(opening_hours: opening_hours, message: 'Opening hours updated successfully')
+        success(opening_hours: opening_hours, message: "Opening hours updated successfully")
       rescue ActiveRecord::RecordNotFound => e
         failure("User not found: #{e.message}")
       rescue StandardError => e
@@ -41,11 +43,11 @@ module OpeningHoursManagement
 
     def valid_hours?(hours)
       hours.values.all? do |time|
-        if time.to_s.downcase == 'fermé'
+        if time.to_s.downcase == "fermé"
           true
         elsif time.match?(/\A(?:[0-9]|[01][0-9]|2[0-3]):[0-5][0-9] - (?:[0-9]|[01][0-9]|2[0-3]):[0-5][0-9]\z/)
           # Validation logique : fermeture > ouverture
-          open_time, close_time = time.split(' - ')
+          open_time, close_time = time.split(" - ")
           open_minutes = time_to_minutes(open_time)
           close_minutes = time_to_minutes(close_time)
           close_minutes > open_minutes
@@ -56,7 +58,7 @@ module OpeningHoursManagement
     end
 
     def time_to_minutes(time_str)
-      hour, minute = time_str.split(':').map(&:to_i)
+      hour, minute = time_str.split(":").map(&:to_i)
       (hour * 60) + minute
     end
 

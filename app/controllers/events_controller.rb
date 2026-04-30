@@ -1,8 +1,10 @@
+# frozen_string_literal: true
+
 class EventsController < ApplicationController
   skip_before_action :require_authentication, only: %i[index show upcoming]
 
   def index
-    redirect_to page_path('news', anchor: 'evenements')
+    redirect_to page_path("news", anchor: "evenements")
   end
 
   def show
@@ -11,22 +13,22 @@ class EventsController < ApplicationController
 
   def upcoming
     @events = Event.upcoming.by_date.limit(6)
-    frame_id = request.headers['Turbo-Frame'].presence
+    frame_id = request.headers["Turbo-Frame"].presence
 
     respond_to do |format|
       format.html do
         if turbo_frame_request?
           partial_path, partial_locals =
             case frame_id
-            when 'activities-upcoming'
-              ['pages/news/events_grid', { events: @events }]
+            when "activities-upcoming"
+              [ "pages/news/events_grid", { events: @events } ]
             else
-              ['home/upcoming_events', { events: @events }]
+              [ "home/upcoming_events", { events: @events } ]
             end
 
-          render partial: 'shared/turbo_frame_wrapper',
+          render partial: "shared/turbo_frame_wrapper",
                  locals: {
-                   frame_id: frame_id || 'events_upcoming',
+                   frame_id: frame_id || "events_upcoming",
                    partial_path: partial_path,
                    partial_locals: partial_locals
                  }
@@ -39,18 +41,18 @@ class EventsController < ApplicationController
 
   def past
     @events = Event.past.order(date: :desc).limit(9)
-    frame_id = request.headers['Turbo-Frame'].presence
+    frame_id = request.headers["Turbo-Frame"].presence
     respond_to do |format|
       format.html do
         if turbo_frame_request?
-          render partial: 'shared/turbo_frame_wrapper',
+          render partial: "shared/turbo_frame_wrapper",
                  locals: {
-                   frame_id: frame_id || 'events_past',
-                   partial_path: 'pages/news/events_grid',
+                   frame_id: frame_id || "events_past",
+                   partial_path: "pages/news/events_grid",
                    partial_locals: { events: @events }
                  }
         else
-          render partial: 'pages/news/events_grid', locals: { events: @events }
+          render partial: "pages/news/events_grid", locals: { events: @events }
         end
       end
     end

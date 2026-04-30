@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class ContributionFormula < ApplicationRecord
   include Priceable
   include Humanizable
@@ -5,7 +7,7 @@ class ContributionFormula < ApplicationRecord
 
   belongs_to :membership_type
   has_many :contributions, dependent: :destroy
-  belongs_to :created_by_user, class_name: 'User', optional: true
+  belongs_to :created_by_user, class_name: "User", optional: true
 
   validates :name, presence: true, uniqueness: { scope: :version }
   validates :duration, presence: true
@@ -27,34 +29,34 @@ class ContributionFormula < ApplicationRecord
   end
 
   def is_pack?
-    duration == 'pack10'
+    duration == "pack10"
   end
 
   def is_pack10?
-    duration == 'pack10'
+    duration == "pack10"
   end
 
   def is_annual?
-    duration == 'annual'
+    duration == "annual"
   end
 
   def is_trimester?
-    duration == 'trimester'
+    duration == "trimester"
   end
 
   def is_day?
-    duration == 'day'
+    duration == "day"
   end
 
   def duration_days
     case duration
-    when 'day'
+    when "day"
       1
-    when 'trimester'
+    when "trimester"
       90
-    when 'annual'
+    when "annual"
       365
-    when 'pack10'
+    when "pack10"
       nil
     else
       0
@@ -90,7 +92,7 @@ class ContributionFormula < ApplicationRecord
     old_price = ContributionFormula.where(name: name, effective_from: from_date).first&.price_cents
     new_price = ContributionFormula.where(name: name, effective_from: to_date).first&.price_cents
 
-    return nil unless old_price && new_price && old_price > 0
+    return nil unless old_price && new_price && old_price.positive?
 
     ((new_price - old_price).to_f / old_price * 100).round(2)
   end
@@ -102,7 +104,7 @@ class ContributionFormula < ApplicationRecord
   scope :pack_plans, -> { where(duration: :pack10) }
   scope :by_price, -> { order(:price_cents) }
   scope :current_versions, -> { where(effective_until: nil) }
-  scope :effective_on, ->(date) { where('effective_from <= ? AND (effective_until IS NULL OR effective_until >= ?)', date, date) }
+  scope :effective_on, ->(date) { where("effective_from <= ? AND (effective_until IS NULL OR effective_until >= ?)", date, date) }
   scope :price_history, -> { order(:effective_from, :version) }
 
   def self.available_for(person)
@@ -119,7 +121,7 @@ class ContributionFormula < ApplicationRecord
         sp.membership_type = membership_type
         sp.duration = :day
         sp.price_cents = 800
-        sp.description = 'Accès aux cours pour une journée'
+        sp.description = "Accès aux cours pour une journée"
         sp.version = 1
         sp.effective_from = Date.current
       end
@@ -128,7 +130,7 @@ class ContributionFormula < ApplicationRecord
         sp.membership_type = membership_type
         sp.duration = :trimester
         sp.price_cents = 6000
-        sp.description = 'Accès aux cours pendant 3 mois'
+        sp.description = "Accès aux cours pendant 3 mois"
         sp.version = 1
         sp.effective_from = Date.current
       end
@@ -137,7 +139,7 @@ class ContributionFormula < ApplicationRecord
         sp.membership_type = membership_type
         sp.duration = :annual
         sp.price_cents = 20_000
-        sp.description = 'Accès aux cours pendant 1 an'
+        sp.description = "Accès aux cours pendant 1 an"
         sp.version = 1
         sp.effective_from = Date.current
       end
@@ -148,7 +150,7 @@ class ContributionFormula < ApplicationRecord
         sp.price_cents = 7000
         sp.sessions_count = 10
         sp.validity_days = 365
-        sp.description = '10 séances valables 1 an'
+        sp.description = "10 séances valables 1 an"
         sp.version = 1
         sp.effective_from = Date.current
       end

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module AttendanceManagement
   class AttendanceRemover < BaseService
     attribute :attendance_id, :integer
@@ -16,7 +18,7 @@ module AttendanceManagement
         contribution.refund_session! if contribution&.has_session_limit?
 
         ActiveSupport::Notifications.instrument(
-          'attendance.deleted',
+          "attendance.deleted",
           attendance_id: attendance_id,
           person_id: attendance.person_id,
           attendance_list_id: attendance.attendance_list_id,
@@ -24,7 +26,7 @@ module AttendanceManagement
           deleted_by_id: deleted_by_id
         )
 
-        success(message: 'Attendance removed successfully', contribution: contribution)
+        success(message: "Attendance removed successfully", contribution: contribution)
       end
     rescue ActiveRecord::RecordNotFound => e
       failure("Attendance not found: #{e.message}")

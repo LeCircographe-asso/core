@@ -1,7 +1,9 @@
+# frozen_string_literal: true
+
 namespace :users do
-  desc 'Update all users with their full_name and ensure last names are fully capitalized'
+  desc "Update all users with their full_name and ensure last names are fully capitalized"
   task update_full_names: :environment do
-    puts 'Updating full_name and fully capitalizing last names for all users...'
+    puts "Updating full_name and fully capitalizing last names for all users..."
     count = 0
 
     User.find_each do |user|

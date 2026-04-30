@@ -1,12 +1,14 @@
+# frozen_string_literal: true
+
 namespace :security do
-  desc 'Audit des fusions de comptes'
+  desc "Audit des fusions de comptes"
   task audit_merges: :environment do
-    puts '=== AUDIT DES FUSIONS DE COMPTES ==='
+    puts "=== AUDIT DES FUSIONS DE COMPTES ==="
     puts "Date: #{Time.current}"
-    puts ''
+    puts ""
 
     # Person archivées récemment
-    archived = Person.archived.where('deleted_at > ?', 30.days.ago)
+    archived = Person.archived.where("deleted_at > ?", 30.days.ago)
     puts "Person archivées (30 derniers jours): #{archived.count}"
 
     archived.each do |person|
@@ -18,28 +20,28 @@ namespace :security do
       puts "Paiements: #{person.payments.count}"
       puts "Adhésions: #{person.memberships.count}"
 
-      puts '⚠️  ATTENTION: Person avec données financières archivée' if person.payments.any? || person.memberships.any?
+      puts "⚠️  ATTENTION: Person avec données financières archivée" if person.payments.any? || person.memberships.any?
     end
 
     puts "\n=== FIN DE L'AUDIT ==="
   end
 
-  desc 'Vérifier les doublons potentiels'
+  desc "Vérifier les doublons potentiels"
   task check_duplicates: :environment do
-    puts '=== VÉRIFICATION DES DOUBLONS ==='
+    puts "=== VÉRIFICATION DES DOUBLONS ==="
 
     # Doublons par email
     email_duplicates = Person.active
-                             .where.not(email: [nil, ''])
+                             .where.not(email: [ nil, "" ])
                              .group(:email)
-                             .having('COUNT(*) > 1')
+                             .having("COUNT(*) > 1")
                              .count
 
     puts "Emails en doublon: #{email_duplicates.count}"
 
     email_duplicates.each do |email, count|
       puts "\n#{email}: #{count} Person"
-      Person.active.where(email: email).each do |p|
+      Person.active.where(email: email).find_each do |p|
         puts "  - Person #{p.id}: #{p.full_name} (User: #{p.user_id || 'aucun'})"
       end
     end

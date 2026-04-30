@@ -1,20 +1,22 @@
+# frozen_string_literal: true
+
 module PersonQuery
   def self.with_active_membership
     Person.joins(:memberships)
-          .where(memberships: { status: 'active' })
-          .where('memberships.ended_at > ?', Time.current)
+          .where(memberships: { status: "active" })
+          .where("memberships.ended_at > ?", Time.current)
   end
 
   def self.with_expiring_membership(days = 30)
     Person.joins(:memberships)
-          .where(memberships: { status: 'active' })
-          .where('memberships.ended_at BETWEEN ? AND ?', Time.current, days.days.from_now)
+          .where(memberships: { status: "active" })
+          .where("memberships.ended_at BETWEEN ? AND ?", Time.current, days.days.from_now)
   end
 
   def self.with_expired_membership
     Person.joins(:memberships)
-          .where(memberships: { status: 'active' })
-          .where('memberships.ended_at < ?', Time.current)
+          .where(memberships: { status: "active" })
+          .where(memberships: { ended_at: ...Time.current })
   end
 
   def self.without_membership
@@ -33,7 +35,7 @@ module PersonQuery
     return Person.none if search_term.blank?
 
     Person.where(
-      'first_name ILIKE ? OR last_name ILIKE ? OR email ILIKE ? OR phone ILIKE ?',
+      "first_name ILIKE ? OR last_name ILIKE ? OR email ILIKE ? OR phone ILIKE ?",
       "%#{search_term}%", "%#{search_term}%", "%#{search_term}%", "%#{search_term}%"
     )
   end

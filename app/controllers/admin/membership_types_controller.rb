@@ -1,10 +1,12 @@
+# frozen_string_literal: true
+
 module Admin
   class MembershipTypesController < BaseController
     before_action :set_membership_type, only: %i[show edit update destroy]
     before_action :set_breadcrumbs
 
     def index
-      @membership_types = MembershipType.all.order(:category, :price_cents)
+      @membership_types = MembershipType.order(:category, :price_cents)
       add_breadcrumb "Types d'Adhésion", nil
     end
 
@@ -67,12 +69,12 @@ module Admin
     end
 
     def set_breadcrumbs
-      add_breadcrumb 'Administration', admin_dashboard_index_path
+      add_breadcrumb "Administration", admin_dashboard_index_path
       add_breadcrumb "Types d'Adhésion", admin_membership_types_path
     end
 
     def membership_type_params
-      params.require(:membership_type).permit(:name, :category, :price_cents, :description, :effective_from, :version, :created_by_user_id)
+      params.expect(membership_type: %i[name category price_cents description effective_from version created_by_user_id])
     end
   end
 end

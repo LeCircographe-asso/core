@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Configuration Puma pour Staging - VPS Ionos Linux M
 # workers défini via WEB_CONCURRENCY dans puma.rb (0 pour staging)
 threads 2, 2
@@ -7,7 +9,7 @@ threads 2, 2
 # bind "tcp://0.0.0.0:80"     # Déjà défini dans puma.rb
 
 # Environnement
-environment ENV.fetch('RAILS_ENV', 'staging')
+environment ENV.fetch("RAILS_ENV", "staging")
 
 # Préchargement de l'application
 preload_app!
@@ -16,8 +18,8 @@ preload_app!
 # stdout_redirect "/app/log/puma.stdout.log", "/app/log/puma.stderr.log", true
 
 # PID - utilise tmp/rails au lieu de /app/tmp
-pidfile ENV.fetch('PIDFILE', 'tmp/pids/puma.pid')
-state_path 'tmp/pids/puma.state'
+pidfile ENV.fetch("PIDFILE", "tmp/pids/puma.pid")
+state_path "tmp/pids/puma.state"
 
 # Configuration pour VPS avec ressources limitées
 worker_timeout 30

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Validatable
   extend ActiveSupport::Concern
 
@@ -15,7 +17,7 @@ module Validatable
     {
       presence: true,
       length: { minimum: 2, maximum: 50 },
-      format: { with: /\A[a-zA-ZÀ-ÿ\s\-']+\z/, message: 'ne peut contenir que des lettres, espaces, tirets et apostrophes' }
+      format: { with: /\A[a-zA-ZÀ-ÿ\s\-']+\z/, message: "ne peut contenir que des lettres, espaces, tirets et apostrophes" }
     }
   end
 
@@ -30,14 +32,14 @@ module Validatable
   # Validations communes pour les CGU
   def self.cgu_validation_options
     {
-      acceptance: { message: 'Vous devez accepter les CGU pour continuer.' }
+      acceptance: { message: "Vous devez accepter les CGU pour continuer." }
     }
   end
 
   # Validations communes pour la politique de confidentialité
   def self.privacy_policy_validation_options
     {
-      acceptance: { message: 'Vous devez accepter la politique de confidentialité pour continuer.' }
+      acceptance: { message: "Vous devez accepter la politique de confidentialité pour continuer." }
     }
   end
 
@@ -51,7 +53,7 @@ module Validatable
     # Sinon, vérifier l'unicité normale
     return unless self.class.where(email: email).where.not(id: id).exists?
 
-    errors.add(:email, 'est déjà utilisé')
+    errors.add(:email, "est déjà utilisé")
   end
 
   def validate_phone_format
@@ -64,11 +66,11 @@ module Validatable
   def validate_name_format
     return if first_name.blank? && last_name.blank?
 
-    errors.add(:first_name, 'ne peut contenir que des lettres, espaces, tirets et apostrophes') if first_name.present? && !first_name.match?(/\A[a-zA-ZÀ-ÿ\s\-']+\z/)
+    errors.add(:first_name, "ne peut contenir que des lettres, espaces, tirets et apostrophes") if first_name.present? && !first_name.match?(/\A[a-zA-ZÀ-ÿ\s\-']+\z/)
 
     return unless last_name.present? && !last_name.match?(/\A[a-zA-ZÀ-ÿ\s\-']+\z/)
 
-    errors.add(:last_name, 'ne peut contenir que des lettres, espaces, tirets et apostrophes')
+    errors.add(:last_name, "ne peut contenir que des lettres, espaces, tirets et apostrophes")
   end
 
   # Méthodes de classe pour les validations

@@ -1,4 +1,6 @@
-require 'ostruct'
+# frozen_string_literal: true
+
+require "ostruct"
 
 module People
   class AccountMerger
@@ -12,7 +14,7 @@ module People
     attribute :source_person_id, :integer
     attribute :target_person_id, :integer
     attribute :actor_id, :integer
-    attribute :merge_type, :string, default: 'manual'
+    attribute :merge_type, :string, default: "manual"
     attribute :destroy_source, :boolean, default: true
 
     validates :source_person_id, presence: true, unless: -> { source_person.present? }
@@ -24,7 +26,7 @@ module People
       source = resolve_source_person
       target = resolve_target_person
 
-      return failure('Source and target persons are identical') if source == target
+      return failure("Source and target persons are identical") if source == target
 
       ActiveRecord::Base.transaction do
         merge_memberships(source, target)
@@ -79,7 +81,7 @@ module People
     end
 
     def merge_newsletter(source, target)
-      return unless source.newsletter_subscriber.present?
+      return if source.newsletter_subscriber.blank?
 
       subscriber = source.newsletter_subscriber
       subscriber.update!(person: target)
@@ -93,7 +95,7 @@ module People
 
     def instrument_success(source, target)
       ActiveSupport::Notifications.instrument(
-        'people.account_merged',
+        "people.account_merged",
         source_person_id: source.id,
         target_person_id: target.id,
         actor_id: actor_id,
@@ -102,7 +104,7 @@ module People
     end
 
     def success(source_person:, target_person:)
-      Result.new(success?: true, source_person: source_person, target_person: target_person, errors: [], message: 'Accounts merged successfully')
+      Result.new(success?: true, source_person: source_person, target_person: target_person, errors: [], message: "Accounts merged successfully")
     end
 
     def failure(message, errors = nil)

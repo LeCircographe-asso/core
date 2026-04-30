@@ -1,4 +1,6 @@
-require 'ostruct'
+# frozen_string_literal: true
+
+require "ostruct"
 
 module People
   class ContributionUpgrader
@@ -12,7 +14,7 @@ module People
     attribute :person_id, :integer
     attribute :from_contribution_id, :integer
     attribute :to_formula_id, :integer
-    attribute :payment_method, :string, default: 'cash'
+    attribute :payment_method, :string, default: "cash"
     attribute :recorded_by_id, :integer
 
     validates :from_contribution_id, presence: true
@@ -41,7 +43,7 @@ module People
         new_contribution: result[:new_contribution],
         payment: result[:payment],
         credit_applied: result[:credit_applied] || 0,
-        message: 'Contribution upgraded successfully'
+        message: "Contribution upgraded successfully"
       )
     rescue ActiveRecord::RecordNotFound => e
       failure("Record not found: #{e.message}")
@@ -64,7 +66,7 @@ module People
 
     def instrument_upgrade(person, recorded_by, result)
       ActiveSupport::Notifications.instrument(
-        'contribution.upgraded',
+        "contribution.upgraded",
         person_id: person.id,
         from_contribution_id: from_contribution_id,
         to_formula_id: to_formula_id,
@@ -76,7 +78,7 @@ module People
     end
 
     def person_identifier_present
-      errors.add(:person_id, 'must be provided') if person.blank? && person_id.blank?
+      errors.add(:person_id, "must be provided") if person.blank? && person_id.blank?
     end
 
     def success(old_contribution:, new_contribution:, payment:, credit_applied:, message:)
