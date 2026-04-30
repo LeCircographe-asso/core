@@ -494,3 +494,10 @@ L'ensemble des services `People::*`, `AccountClaimManagement::*`, `AttendanceMan
 - [`../architecture/services.md`](../architecture/services.md) — catalogue de services.
 - [`../architecture/controllers.md`](../architecture/controllers.md) — état des contrôleurs.
 - [`../architecture/models.md`](../architecture/models.md) — modèles, concerns, zones de stabilité.
+
+## 11. Audit `Rails/SkipsModelValidations` (classification)
+
+- `risky_bypass` (à corriger): `app/models/user.rb`, `app/models/payment.rb`.
+- `intentional_batch` (gardé sous transaction + commentaire explicite): `app/services/people/account_merger.rb`, `app/models/concerns/versionable.rb`, `app/models/concerns/duplicatable.rb`.
+- `legacy/archive` (exclusion ciblée possible): `docs/rake_archive/migrate_to_person_architecture.rake`.
+- `consolidated_path`: la fusion applicative doit passer par `People::AccountMerger` (éviter les duplications de logique dans d'autres services).

@@ -44,7 +44,9 @@ module Versionable
     def create_version!(attributes, effective_from: Date.current, reason: nil, user: nil)
       transaction do
         # Fermer la version actuelle
+        # rubocop:disable Rails/SkipsModelValidations
         current_versions.update_all(effective_until: effective_from - 1.day)
+        # rubocop:enable Rails/SkipsModelValidations
 
         # Créer la nouvelle version
         create!(attributes.merge(

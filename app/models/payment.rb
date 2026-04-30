@@ -124,12 +124,15 @@ class Payment < ApplicationRecord
     # Instead of destroying the payment or losing the relationship,
     # we maintain the data but anonymize any personal identifiable information
     # This preserves payment history while protecting user privacy
+    # Intentional single-row bypass: we do not want status callbacks here.
+    # rubocop:disable Rails/SkipsModelValidations
     update_columns(
       # We keep the payment record but mark it as associated with a deleted user
       status: :cancel,
       # Add a note that the user was deleted
       notes: "User deleted - payment cancelled"
     )
+    # rubocop:enable Rails/SkipsModelValidations
 
     # Log the user deletion effect on payment
     PaymentAuditLog.log(self, nil, "user_deleted")
