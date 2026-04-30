@@ -199,10 +199,10 @@ RSpec.describe Event, type: :model do
       end
     end
 
-    context 'with user without person' do
+    context 'with user auto-linked to minimal person' do
       let(:user_without_person) { create(:user, person: nil) }
 
-      it 'returns false (no legacy event_attendees)' do
+      it 'returns false when no attendance exists for linked person' do
         expect(event.is_user_registered?(user_without_person)).to be false
       end
     end

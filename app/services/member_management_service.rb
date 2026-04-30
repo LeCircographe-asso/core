@@ -115,37 +115,25 @@ class MemberManagementService
 
       # Préparer les mises à jour de contact
       if merged_data.any?
-        secondary_person.update_columns(email: nil) if merged_data.key?(:email)
-        secondary_person.update_columns(phone: nil) if merged_data.key?(:phone)
+        secondary_person.update!(email: nil) if merged_data.key?(:email)
+        secondary_person.update!(phone: nil) if merged_data.key?(:phone)
 
         primary_person.skip_membership_validation = true
         primary_person.update!(merged_data)
       end
 
-      # 2. Transférer toutes les relations
-      transferred_count = 0
+      transferred_count = secondary_person.memberships.count +
+                          secondary_person.payments.count +
+                          secondary_person.attendances.count +
+                          secondary_person.contributions.count
 
-      # Transférer les adhésions
-      memberships_count = secondary_person.memberships.count
-      secondary_person.memberships.update_all(person_id: primary_person.id)
-      transferred_count += memberships_count
-
-      # Transférer les paiements
-      payments_count = secondary_person.payments.count
-      secondary_person.payments.update_all(person_id: primary_person.id)
-      transferred_count += payments_count
-
-      # Transférer les présences
-      attendances_count = secondary_person.attendances.count
-      secondary_person.attendances.update_all(person_id: primary_person.id)
-      transferred_count += attendances_count
-
-      contributions_count = secondary_person.contributions.count
-      secondary_person.contributions.update_all(person_id: primary_person.id)
-      transferred_count += contributions_count
-
-      # 3. Supprimer la Person secondaire
-      secondary_person.destroy!
+      merge_result = People::AccountMerger.new(
+        source_person: secondary_person,
+        target_person: primary_person,
+        merge_type: "member_management_cleanup",
+        destroy_source: true
+      ).call
+      raise merge_result.message unless merge_result.success?
 
       {
         success: true,
