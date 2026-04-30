@@ -15,8 +15,6 @@ AllCops:
     - 'db/**/*.rb'
     # Temporary: RuboCop autocorrect can corrupt ERB templates
     - '**/*.erb'
-    # To revisit — Lot B2: minitest tree; `spec/` is not excluded (RSpec)
-    - 'test/**/*.rb'
     # Permanent / operational
     - 'vendor/**/*'
     - 'tmp/**/*'
@@ -28,4 +26,20 @@ Layout/EndOfLine:
 
 # Phase 2 Batch 1 — LOW: Gemfile gem order within groups (non-domain)
 Bundler/OrderedGems:
+  Enabled: true
+
+# Lot B2 — Omakase disables the Rails department by default except a few test-only
+# cops (e.g. AssertNot). We selectively enable high-value Rails cops here; add
+# incrementally to avoid churn (see docs/development/testing.md).
+Rails/HttpStatus:
+  Enabled: true
+Rails/Output:
+  Enabled: true
+Rails/Delegate:
+  Enabled: true
+Rails/StrongParametersExpect:
+  Enabled: true
+Rails/PluralizationGrammar:
+  Enabled: true
+Rails/UniqBeforePluck:
   Enabled: true
