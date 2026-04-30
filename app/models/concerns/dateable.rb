@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Dateable
   extend ActiveSupport::Concern
 
@@ -35,16 +37,14 @@ module Dateable
     date = send(date_attr)
     return false unless date
 
-    date.to_date >= Date.current.beginning_of_week &&
-      date.to_date <= Date.current.end_of_week
+    date.to_date.between?(Date.current.beginning_of_week, Date.current.end_of_week)
   end
 
   def this_month?(date_attr = :created_at)
     date = send(date_attr)
     return false unless date
 
-    date.to_date >= Date.current.beginning_of_month &&
-      date.to_date <= Date.current.end_of_month
+    date.to_date.between?(Date.current.beginning_of_month, Date.current.end_of_month)
   end
 
   def this_year?(date_attr = :created_at)

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Base class pour tous les services
 # Fournit les méthodes communes success/failure et OpenStruct
 require 'ostruct'

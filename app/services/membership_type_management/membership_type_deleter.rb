@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module MembershipTypeManagement
   class MembershipTypeDeleter < BaseService
     attribute :membership_type_id, :integer

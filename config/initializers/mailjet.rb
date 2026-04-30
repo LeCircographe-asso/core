@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'mailjet'
 Mailjet.configure do |config|
   config.api_key = ENV.fetch('MJ_APIKEY_PUBLIC', nil)

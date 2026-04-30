@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Admin
   class SubscriptionPlansController < BaseController
     before_action :set_contribution_formula, only: %i[show edit update destroy]
@@ -6,7 +8,7 @@ module Admin
     before_action :require_super_admin, only: %i[edit update destroy]
 
     def index
-      @contribution_formulas = ContributionFormula.includes(:membership_type).all.order(:duration, :price_cents)
+      @contribution_formulas = ContributionFormula.includes(:membership_type).order(:duration, :price_cents)
       add_breadcrumb 'Plans de cotisation', nil
     end
 
@@ -36,7 +38,7 @@ module Admin
     def create
       @person = Person.find(contribution_purchase_params[:person_id])
 
-      custom_amount = (contribution_purchase_params[:custom_amount_cents]&.to_i || 0 if contribution_purchase_params[:payment_method] == 'offered')
+      custom_amount = (contribution_purchase_params[:custom_amount_cents].to_i if contribution_purchase_params[:payment_method] == 'offered')
       donation_cents = donation_cents_from(contribution_purchase_params)
 
       result = People::ContributionCreator.new(
@@ -100,17 +102,17 @@ module Admin
     end
 
     def contribution_formula_params
-      params.require(:contribution_formula).permit(:name, :duration, :price_cents, :description, :membership_type_id, :sessions_count, :validity_days).tap do |permitted|
+      params.expect(contribution_formula: %i[name duration price_cents description membership_type_id sessions_count validity_days]).tap do |permitted|
         legacy = params[:subscription_plan]
         permitted.merge!(legacy.permit(:name, :duration, :price_cents, :description, :membership_type_id, :sessions_count, :validity_days)) if legacy.respond_to?(:permit)
       end
     rescue ActionController::ParameterMissing
-      params.require(:subscription_plan).permit(:name, :duration, :price_cents, :description, :membership_type_id, :sessions_count, :validity_days)
+      params.expect(subscription_plan: %i[name duration price_cents description membership_type_id sessions_count validity_days])
     end
 
     def contribution_purchase_params
       key = params.key?(:contribution_formula) ? :contribution_formula : :subscription_plan
-      params.require(key).permit(:person_id, :contribution_formula_id, :subscription_plan_id, :payment_method, :record_attendance, :attendance_date, :custom_amount_cents, :offer_reason, :donation_amount).merge(
+      params.expect(key => %i[person_id contribution_formula_id subscription_plan_id payment_method record_attendance attendance_date custom_amount_cents offer_reason donation_amount]).merge(
         recorded_by_id: Current.user.id
       )
     end

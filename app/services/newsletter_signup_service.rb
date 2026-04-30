@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class NewsletterSignupService
   def initialize(email)
     # Normalize email by trimming whitespace and converting to lowercase

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Admin
   class PaymentsController < BaseController
     # Remove the before_action since we don't need the dashboard breadcrumb
@@ -240,10 +242,10 @@ module Admin
     private
 
     def payment_params
-      params.require(:payment).permit(
-        :person_id, :recorded_by_id, :total_cents, :payment_method, :status, :notes,
-        # Compatibilité avec l'ancien modèle
-        :payment_id, :payment_date, :payment_amount, :payment_type, :order_id, :donation, :total_payment
+      params.expect(
+        payment: [:person_id, :recorded_by_id, :total_cents, :payment_method, :status, :notes,
+                  # Compatibilité avec l'ancien modèle
+                  :payment_id, :payment_date, :payment_amount, :payment_type, :order_id, :donation, :total_payment]
       )
     end
 

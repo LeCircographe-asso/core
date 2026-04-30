@@ -1,4 +1,6 @@
 #!/usr/bin/env ruby
+# frozen_string_literal: true
+
 # Script d'analyse du code pour identifier les problèmes
 
 require 'find'
@@ -118,7 +120,7 @@ class CodeAnalyzer
 
       puts "🎯 #{controller}: #{total_responsibilities} responsabilités"
       responsibilities.each do |resp, count|
-        puts "   - #{resp}: #{count} méthodes" if count > 0
+        puts "   - #{resp}: #{count} méthodes" if count.positive?
       end
     end
   end

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module OpeningHoursHelper
   # Méthode d'instance pour les contrôleurs qui incluent ce module
   delegate :default_opening_hours, to: :OpeningHoursHelper

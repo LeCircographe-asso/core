@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Admin
   class MembershipsController < BaseController
     before_action :set_person, only: %i[show edit update destroy]
@@ -104,11 +106,11 @@ module Admin
     end
 
     def membership_params
-      params.require(:membership).permit(:person_id, :membership_type_id, :payment_method, :started_at, :ended_at)
+      params.expect(membership: %i[person_id membership_type_id payment_method started_at ended_at])
     end
 
     def membership_purchase_params
-      params.require(:membership).permit(:person_id, :membership_type_id, :payment_method, :custom_amount_cents, :offer_reason, :upgrade, :donation_amount)
+      params.expect(membership: %i[person_id membership_type_id payment_method custom_amount_cents offer_reason upgrade donation_amount])
     end
 
     def payment_method_from(params_hash)

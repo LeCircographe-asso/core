@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class PartnersCatalog
   Partner = Struct.new(:name, :description, :link, :logo, keyword_init: true)
 

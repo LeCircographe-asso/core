@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class MembershipType < ApplicationRecord
   include Priceable
   include Humanizable
@@ -61,7 +63,7 @@ class MembershipType < ApplicationRecord
     old_price = MembershipType.where(name: name, effective_from: from_date).first&.price_cents
     new_price = MembershipType.where(name: name, effective_from: to_date).first&.price_cents
 
-    return nil unless old_price && new_price && old_price > 0
+    return nil unless old_price && new_price && old_price.positive?
 
     ((new_price - old_price).to_f / old_price * 100).round(2)
   end

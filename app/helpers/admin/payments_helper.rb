@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Admin
   module PaymentsHelper
     def payment_date_display(payment)

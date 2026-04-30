@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module OpeningHoursManagement
   class OpeningHoursUpdater < BaseService
     attribute :opening_hours, hash: true

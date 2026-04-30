@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module PaymentMethodsHelper
   def payment_method_options(include_pending: false)
     options = [

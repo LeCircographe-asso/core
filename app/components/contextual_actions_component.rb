@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class ContextualActionsComponent < ViewComponent::Base
   def initialize(person:)
     @person = person

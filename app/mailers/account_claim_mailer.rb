@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class AccountClaimMailer < ApplicationMailer
   def confirmation_email(claim)
     @claim = claim

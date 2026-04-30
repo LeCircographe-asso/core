@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Contribution < ApplicationRecord
   include Statusable
   include Dateable
@@ -25,7 +27,7 @@ class Contribution < ApplicationRecord
   def can_use?
     return false unless active?
 
-    return false if has_session_limit? && !(sessions_remaining.present? && sessions_remaining > 0)
+    return false if has_session_limit? && !(sessions_remaining.present? && sessions_remaining.positive?)
 
     return false if expired? && !is_pack10?
 
@@ -40,7 +42,7 @@ class Contribution < ApplicationRecord
     if has_session_limit?
       self.sessions_remaining -= 1
 
-      self.status = :consumed if sessions_remaining == 0
+      self.status = :consumed if sessions_remaining.zero?
     end
 
     save!
@@ -78,7 +80,7 @@ class Contribution < ApplicationRecord
     sessions_remaining
   end
 
-  scope :expired_by_date, -> { where('expires_at < ?', Date.current) }
+  scope :expired_by_date, -> { where(expires_at: ...Date.current) }
   scope :not_expired_by_date, -> { where('expires_at IS NULL OR expires_at > ?', Date.current) }
   scope :with_expiration, -> { where.not(expires_at: nil) }
   scope :without_expiration, -> { where(expires_at: nil) }
@@ -101,7 +103,7 @@ class Contribution < ApplicationRecord
 
     return unless active_plans.empty?
 
-    person.contributions.suspended.joins(:contribution_formula).where(contribution_formulas: { duration: 'pack10' }).each(&:reactivate!)
+    person.contributions.suspended.joins(:contribution_formula).where(contribution_formulas: { duration: 'pack10' }).find_each(&:reactivate!)
   end
 
   def suspend!(reason:)
@@ -122,7 +124,7 @@ class Contribution < ApplicationRecord
     if contribution_formula&.duration.in?(%w[trimester annual])
       errors.add(:sessions_remaining, 'doit être vide pour les cotisations illimitées') if sessions_remaining.present?
     elsif has_session_limit?
-      errors.add(:sessions_remaining, 'doit être présent et positif pour les Pack 10 et les Journées') if sessions_remaining.blank? || sessions_remaining < 0
+      errors.add(:sessions_remaining, 'doit être présent et positif pour les Pack 10 et les Journées') if sessions_remaining.blank? || sessions_remaining.negative?
     end
   end
 

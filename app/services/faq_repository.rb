@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class FaqRepository
   CONFIG_PATH = Rails.root.join('config/content/faq.yml')
   CACHE_KEY = 'faq:content:v1'

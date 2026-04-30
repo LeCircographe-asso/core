@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Admin
   class EventsController < BaseController
     include ActionView::RecordIdentifier

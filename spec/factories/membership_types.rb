@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 FactoryBot.define do
   factory :membership_type do
     sequence(:name) { |n| "Membership Type #{n}" }

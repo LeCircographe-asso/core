@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Configuration partagée entre tous les environnements
 # Ce fichier est inclus dans chaque environnement pour éviter la duplication
 

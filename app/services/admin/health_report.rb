@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Admin
   class HealthReport
     MAX_LIST = 50

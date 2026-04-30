@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module BlogManagement
   class BlogDeleter < BaseService
     attribute :blog_id, :integer

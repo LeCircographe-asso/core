@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module MembershipTypeManagement
   class MembershipTypeCreator < BaseService
     attribute :name, :string

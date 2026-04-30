@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Payment < ApplicationRecord
   include Priceable
   include Humanizable
@@ -23,9 +25,9 @@ class Payment < ApplicationRecord
   scope :active, -> { where.not(status: :cancel) }
 
   # Date scopes (using created_at via Dateable)
-  scope :today, -> { where('created_at >= ? AND created_at < ?', Date.current.beginning_of_day, Date.current.end_of_day) }
-  scope :this_week, -> { where('created_at >= ? AND created_at <= ?', Date.current.beginning_of_week.beginning_of_day, Date.current.end_of_week.end_of_day) }
-  scope :this_month, -> { where('created_at >= ? AND created_at <= ?', Date.current.beginning_of_month.beginning_of_day, Date.current.end_of_month.end_of_day) }
+  scope :today, -> { where(created_at: Date.current.beginning_of_day...Date.current.end_of_day) }
+  scope :this_week, -> { where(created_at: Date.current.beginning_of_week.beginning_of_day..Date.current.end_of_week.end_of_day) }
+  scope :this_month, -> { where(created_at: Date.current.beginning_of_month.beginning_of_day..Date.current.end_of_month.end_of_day) }
 
   # Class method to get total successful payments amount
   def self.total_successful_amount
@@ -81,7 +83,7 @@ class Payment < ApplicationRecord
 
   def carnet_related?
     payment_lines.joins("JOIN contribution_formulas ON payment_lines.item_type = 'ContributionFormula' AND payment_lines.item_id = contribution_formulas.id")
-                 .where('contribution_formulas.duration = ?', ContributionFormula.durations[:pack10]).exists?
+                 .exists?(contribution_formulas: { duration: ContributionFormula.durations[:pack10] })
   end
 
   # Generate a UUID for the payment

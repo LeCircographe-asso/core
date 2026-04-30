@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module UserManagement
   class UserCreator < BaseService
     attribute :email, :string
@@ -60,7 +62,7 @@ module UserManagement
     end
 
     def person_exists
-      return unless person_id.present?
+      return if person_id.blank?
 
       return if Person.exists?(person_id)
 
@@ -68,10 +70,10 @@ module UserManagement
     end
 
     def person_has_no_user_account
-      return unless person_id.present?
+      return if person_id.blank?
 
       person = Person.find_by(id: person_id)
-      return unless person&.user.present?
+      return if person&.user.blank?
 
       errors.add(:person_id, 'Person already has a user account')
     end
@@ -80,7 +82,7 @@ module UserManagement
       return if created_by.super_admin? || created_by.admin?
 
       errors.add(:created_by_id, 'User does not have permissions to create accounts')
-      raise ActiveRecord::RecordInvalid.new(created_by)
+      raise ActiveRecord::RecordInvalid, created_by
     end
 
     def creator_can_manage_accounts?(created_by)

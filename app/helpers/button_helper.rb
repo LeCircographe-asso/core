@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module ButtonHelper
   # Helper pour créer des boutons avec état désactivé
   def disabled_button(text, options = {})

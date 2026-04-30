@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'ostruct'
 
 module People
@@ -79,7 +81,7 @@ module People
     end
 
     def merge_newsletter(source, target)
-      return unless source.newsletter_subscriber.present?
+      return if source.newsletter_subscriber.blank?
 
       subscriber = source.newsletter_subscriber
       subscriber.update!(person: target)

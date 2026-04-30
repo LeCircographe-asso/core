@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module MemberNumberManagement
   class MemberNumberSuggester < BaseService
     attribute :membership_type, :string, default: 'BASIQUE'

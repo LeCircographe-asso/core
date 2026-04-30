@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module UserManagement
   class UserDeleter < BaseService
     attribute :person_id, :integer

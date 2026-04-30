@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class AccountClaimsController < ApplicationController
   before_action :require_authentication, only: [:create]
 

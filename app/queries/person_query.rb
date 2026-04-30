@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module PersonQuery
   def self.with_active_membership
     Person.joins(:memberships)
@@ -14,7 +16,7 @@ module PersonQuery
   def self.with_expired_membership
     Person.joins(:memberships)
           .where(memberships: { status: 'active' })
-          .where('memberships.ended_at < ?', Time.current)
+          .where(memberships: { ended_at: ...Time.current })
   end
 
   def self.without_membership

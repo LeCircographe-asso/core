@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module NewsletterManagement
   class NewsletterUpdater < BaseService
     attribute :person_id, :integer

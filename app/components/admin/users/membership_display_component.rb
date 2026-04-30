@@ -1,45 +1,51 @@
-class Admin::Users::MembershipDisplayComponent < ViewComponent::Base
-  def initialize(person:)
-    @person = person
-  end
+# frozen_string_literal: true
 
-  private
+module Admin
+  module Users
+    class MembershipDisplayComponent < ViewComponent::Base
+      def initialize(person:)
+        @person = person
+      end
 
-  attr_reader :person
+      private
 
-  def current_membership
-    @current_membership ||= person.current_membership
-  end
+      attr_reader :person
 
-  def has_active_membership?
-    current_membership.present?
-  end
+      def current_membership
+        @current_membership ||= person.current_membership
+      end
 
-  def membership_type_name
-    current_membership&.membership_type&.name
-  end
+      def has_active_membership?
+        current_membership.present?
+      end
 
-  def membership_price
-    current_membership&.membership_type&.price_euros
-  end
+      def membership_type_name
+        current_membership&.membership_type&.name
+      end
 
-  def membership_start_date
-    current_membership&.started_at&.strftime('%d/%m/%Y')
-  end
+      def membership_price
+        current_membership&.membership_type&.price_euros
+      end
 
-  def membership_end_date
-    current_membership&.ended_at&.strftime('%d/%m/%Y')
-  end
+      def membership_start_date
+        current_membership&.started_at&.strftime('%d/%m/%Y')
+      end
 
-  def is_circus_member?
-    current_membership&.membership_type&.circus?
-  end
+      def membership_end_date
+        current_membership&.ended_at&.strftime('%d/%m/%Y')
+      end
 
-  def can_purchase_subscriptions?
-    is_circus_member?
-  end
+      def is_circus_member?
+        current_membership&.membership_type&.circus?
+      end
 
-  def contribution_formulas
-    @contribution_formulas ||= ContributionFormula.for_circus_members
+      def can_purchase_subscriptions?
+        is_circus_member?
+      end
+
+      def contribution_formulas
+        @contribution_formulas ||= ContributionFormula.for_circus_members
+      end
+    end
   end
 end

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class AttendanceList < ApplicationRecord
   include Statusable
   include Dateable
@@ -25,7 +27,7 @@ class AttendanceList < ApplicationRecord
   end
 
   def set_default_name
-    return unless start_date.present?
+    return if start_date.blank?
 
     self.name = case list_type
                 when 'training'

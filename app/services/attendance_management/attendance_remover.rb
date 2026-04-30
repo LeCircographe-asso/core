@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module AttendanceManagement
   class AttendanceRemover < BaseService
     attribute :attendance_id, :integer

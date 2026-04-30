@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module AccountClaimManagement
   class AccountClaimCreator < BaseService
     attribute :email, :string

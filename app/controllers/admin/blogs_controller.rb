@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Admin
   class BlogsController < BaseController
     before_action :set_blog, only: %i[show edit update destroy]
@@ -21,7 +23,7 @@ module Admin
 
     def create
       @blog = Blog.new(blog_params)
-      @blog.tag_ids = Array(params.dig(:blog, :tag_ids)).reject(&:blank?)
+      @blog.tag_ids = Array(params.dig(:blog, :tag_ids)).compact_blank
 
       if @blog.save
         redirect_to admin_blog_path(@blog), notice: 'Blog créé avec succès'
@@ -34,7 +36,7 @@ module Admin
 
     def update
       @blog.assign_attributes(blog_params)
-      @blog.tag_ids = Array(params.dig(:blog, :tag_ids)).reject(&:blank?)
+      @blog.tag_ids = Array(params.dig(:blog, :tag_ids)).compact_blank
 
       respond_to do |format|
         if @blog.save
