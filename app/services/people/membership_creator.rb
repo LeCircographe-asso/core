@@ -22,7 +22,7 @@ module People
     validates :payment_method, inclusion: { in: %w[cash card cheque transfer offered] }
 
     def call
-      return failure("Invalid data", errors.full_messages) unless valid?
+      return failure(I18n.t("services.validation.invalid_data"), errors.full_messages) unless valid?
 
       if person.memberships.active.current.exists?
         ActiveSupport::Notifications.instrument(

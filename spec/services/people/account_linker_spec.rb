@@ -54,7 +54,7 @@ RSpec.describe People::AccountLinker do
         result = described_class.new(user: user).call
 
         expect(result.success?).to be(false)
-        expect(result.message).to include('Invalid data')
+        expect(result.message).to include(I18n.t('services.validation.invalid_data'))
       end
     end
   end

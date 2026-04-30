@@ -7,12 +7,12 @@ module Admin
     include OpeningHoursHelper
 
     def show
-      add_breadcrumb "Horaires d'ouverture", nil
+      add_breadcrumb I18n.t("breadcrumbs.admin.opening_hours.title"), nil
     end
 
     def edit
-      add_breadcrumb "Horaires d'ouverture", admin_opening_hours_path
-      add_breadcrumb "Modifier", nil
+      add_breadcrumb I18n.t("breadcrumbs.admin.opening_hours.title"), admin_opening_hours_path
+      add_breadcrumb I18n.t("breadcrumbs.admin.common.edit"), nil
     end
 
     def update

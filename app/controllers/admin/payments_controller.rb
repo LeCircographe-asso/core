@@ -266,9 +266,9 @@ module Admin
       if params[:person_id].present?
         person = Person.find_by(id: params[:person_id])
         if person
-          add_breadcrumb "Liste d'adhérents", admin_users_path
+          add_breadcrumb I18n.t("breadcrumbs.admin.users.members_list"), admin_users_path
           add_breadcrumb person.full_name, admin_user_path("person_#{person.id}")
-          add_breadcrumb "Historique des paiements", nil
+          add_breadcrumb I18n.t("breadcrumbs.admin.payments.history"), nil
           return
         end
       end
@@ -276,15 +276,15 @@ module Admin
       if params[:user_id].present?
         user = User.find_by(id: params[:user_id])
         if user
-          add_breadcrumb "Liste d'adhérents", admin_users_path
+          add_breadcrumb I18n.t("breadcrumbs.admin.users.members_list"), admin_users_path
           label = user.full_name.presence || "Utilisateur ##{user.id}"
           add_breadcrumb label, admin_user_path(user)
-          add_breadcrumb "Historique des paiements", nil
+          add_breadcrumb I18n.t("breadcrumbs.admin.payments.history"), nil
           return
         end
       end
 
-      add_breadcrumb "Historique des paiements", nil
+      add_breadcrumb I18n.t("breadcrumbs.admin.payments.history"), nil
     end
   end
 end

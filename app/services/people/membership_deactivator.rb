@@ -19,7 +19,7 @@ module People
     validate :membership_presence
 
     def call
-      return failure("Invalid data", errors.full_messages) unless valid?
+      return failure(I18n.t("services.validation.invalid_data"), errors.full_messages) unless valid?
 
       target_membership = membership || Membership.find(membership_id)
       user = resolve_user

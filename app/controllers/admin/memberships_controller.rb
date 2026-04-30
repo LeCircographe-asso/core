@@ -8,7 +8,7 @@ module Admin
 
     def index
       @people = Person.includes(:memberships, :user).all
-      add_breadcrumb "Gestion des Adhésions", nil
+      add_breadcrumb I18n.t("breadcrumbs.admin.memberships.management"), nil
     end
 
     def show
@@ -16,9 +16,9 @@ module Admin
       @membership_types = MembershipType.all
       @contribution_formulas = ContributionFormula.all
 
-      add_breadcrumb "Liste d'adhérents", admin_users_path
+      add_breadcrumb I18n.t("breadcrumbs.admin.users.members_list"), admin_users_path
       add_breadcrumb @person.full_name, admin_user_path("person_#{@person.id}")
-      add_breadcrumb "Adhésion", nil
+      add_breadcrumb I18n.t("breadcrumbs.admin.memberships.membership"), nil
     end
 
     def new
@@ -30,19 +30,19 @@ module Admin
         @membership_types = MembershipType.circus_types.current_versions.order(:price_cents)
         @is_upgrade = true
         @current_membership = @person.current_membership
-        add_breadcrumb "Upgrade vers Cirque", nil
+        add_breadcrumb I18n.t("breadcrumbs.admin.memberships.upgrade_to_circus"), nil
       else
         # Pour une nouvelle adhésion, on propose tous les types
         @membership_types = MembershipType.current_versions.order(:price_cents)
         @is_upgrade = false
-        add_breadcrumb "Nouvelle adhésion", nil
+        add_breadcrumb I18n.t("breadcrumbs.admin.memberships.new_membership"), nil
       end
     end
 
     def edit
       @membership = @person.current_membership
       @membership_types = MembershipType.all
-      add_breadcrumb "Modifier adhésion", nil
+      add_breadcrumb I18n.t("breadcrumbs.admin.memberships.edit_membership"), nil
     end
 
     def create
@@ -102,7 +102,7 @@ module Admin
     end
 
     def set_breadcrumbs
-      add_breadcrumb "Administration", admin_dashboard_index_path
+      add_breadcrumb I18n.t("breadcrumbs.admin.common.administration"), admin_dashboard_index_path
     end
 
     def membership_params

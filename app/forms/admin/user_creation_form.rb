@@ -145,19 +145,19 @@ module Admin
 
     def translate_success_message(result)
       if result.user && result.membership
-        "Personne, compte web et adhésion créés avec succès !"
+        I18n.t("admin.users.create.success_person_user_membership")
       elsif result.user
-        "Personne et compte web créés avec succès !"
+        I18n.t("admin.users.create.success_person_user")
       elsif result.membership
-        "Personne et adhésion créées avec succès !"
+        I18n.t("admin.users.create.success_person_membership")
       else
-        "Personne créée avec succès !"
+        I18n.t("admin.users.create.success_person_only")
       end
     end
 
     def translate_error_message(message)
-      return "Cette personne a déjà un compte web." if message.include?("déjà un compte web") || message.include?("already has a user")
-      return "Un email est obligatoire pour créer un compte web." if message.include?("email is required")
+      return I18n.t("admin.users.create.error_existing_web_account") if message.include?("déjà un compte web") || message.include?("already has a user")
+      return I18n.t("admin.users.create.error_email_required") if message.include?("email is required")
 
       message
     end

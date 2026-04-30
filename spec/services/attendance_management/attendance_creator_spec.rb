@@ -54,7 +54,7 @@ RSpec.describe AttendanceManagement::AttendanceCreator do
 
         result = creator.call
         expect(result.success?).to be false
-        expect(result.message).to include('Invalid data')
+        expect(result.message).to include(I18n.t('services.validation.invalid_data'))
       end
 
       it "returns failure when person doesn't exist" do

@@ -21,7 +21,7 @@ module People
     validates :target_person_id, presence: true, unless: -> { target_person.present? }
 
     def call
-      return failure("Invalid data: #{errors.full_messages.join(', ')}") unless valid?
+      return failure(I18n.t("services.validation.invalid_data_with_details", details: errors.full_messages.join(", "))) unless valid?
 
       resolved_user = resolve_user
       resolved_target = resolve_target_person
