@@ -31,7 +31,7 @@ module Web
     validate :password_confirmation_matches
 
     def call
-      return failure(I18n.t("services.validation.invalid_data_with_details", details: errors.full_messages.join(", "))) unless valid?
+      return failure(validation_flash_message) unless valid?
 
       existing_person = Person.active.find_by(email: email)
 
@@ -84,7 +84,7 @@ module Web
       if existing_person
         if existing_person.user.present?
           # Person a déjà un compte web → erreur
-          errors.add(:email, "Cette adresse email est déjà utilisée. Veuillez utiliser une autre adresse ou vous connecter.")
+          errors.add(:email, I18n.t("services.web.user_registration.errors.email_in_use_login"))
         else
           # Person existe mais pas de compte web → OK, on va la récupérer
           # Pas d'erreur, on va lier le compte web à cette Person
@@ -95,22 +95,26 @@ module Web
       # (cas où User existe mais Person n'existe pas encore)
       return unless User.where(email_address: email).exists?(person_id: nil)
 
-      errors.add(:email, "is already used by an existing user account")
+      errors.add(:email, I18n.t("services.web.user_registration.errors.email_in_use_orphan_user"))
     end
 
     def user_email_uniqueness
       return if user_email.blank?
 
-      # Vérifier l'unicité dans User (sauf si c'est le même email que email)
-      errors.add(:user_email, "has already been taken") if user_email != email && User.where(email_address: user_email).where.not(person_id: nil).exists?
+      # Formulaire web : email profil == email de connexion → déjà couvert par +email_uniqueness+
+      return if emails_match?(email, user_email)
 
-      # Vérifier s'il existe une Person avec le même email
+      # Vérifier l'unicité dans User (email de connexion différent du mail profil)
+      if User.where(email_address: user_email).where.not(person_id: nil).exists?
+        errors.add(:user_email, I18n.t("services.web.user_registration.errors.user_email_login_taken"))
+      end
+
+      # Vérifier s'il existe une Person avec le même email (connexion ≠ profil)
       existing_person = Person.active.find_by(email: user_email)
       return unless existing_person
 
       if existing_person.user.present?
-        # Person a déjà un compte web → erreur
-        errors.add(:user_email, "is already used as newsletter email")
+        errors.add(:user_email, I18n.t("services.web.user_registration.errors.user_email_person_has_account"))
       else
         # Person existe mais pas de compte web → OK, on va la récupérer
         # Pas d'erreur
@@ -123,6 +127,17 @@ module Web
       return if user_password == user_password_confirmation
 
       errors.add(:user_password_confirmation, "ne correspond pas au mot de passe")
+    end
+
+    def emails_match?(a, b)
+      return false if a.blank? || b.blank?
+
+      a.to_s.strip.downcase == b.to_s.strip.downcase
+    end
+
+    def validation_flash_message
+      details = errors.messages.values.flatten.map(&:strip).uniq.join(", ")
+      I18n.t("services.validation.invalid_data_with_details", details: details)
     end
 
     # success et failure hérités de BaseService
