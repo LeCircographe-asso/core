@@ -2,7 +2,7 @@
 
 > **Statut** : stable (canonique)
 > **Public cible** : contributeur, métier
-> **Dernière vérification** : 2026-04-27
+> **Dernière vérification** : 2026-05-01
 > **Sources de vérité** : `app/models/*.rb`, `db/schema.rb`, [`migrations/vocabulary_migration.md`](migrations/vocabulary_migration.md).
 
 > **Source de vérité unique** pour le vocabulaire du domaine. Toute nouvelle PR (code, doc, UI, tests) doit utiliser ce vocabulaire. Les termes listés en section « Termes interdits » sont rejetés en revue. Utilisé pendant la migration `phase0` → `phase4`.
@@ -24,8 +24,8 @@
   - Confondre `Person` avec `User`.
 
 #### Compte web — `User`
-- **Définition** : compte d'authentification web (email, mot de passe, rôle système). **Optionnel** — relié à une `Person` existante via `belongs_to :person`. Tous les attributs de profil (`full_name`, `phone`…) sont délégués vers `Person`.
-- **Cycle de vie** : créé via `People::UserAccountCreator` (souvent dans `People::Register`). Sa suppression (`User#destroy`) coupe l'accès web mais laisse intact le `Person` et son historique.
+- **Définition** : compte d'authentification web (email, mot de passe, rôle système). **Chaque `User` est obligatoirement relié à une `Person`** (`belongs_to :person`, `person_id` NOT NULL) ; une `Person` peut exister **sans** `User` (adhésion papier, mineurs, etc.). Tous les attributs de profil (`full_name`, `phone`…) sont délégués vers `Person`.
+- **Cycle de vie** : créé via `People::UserAccountCreator` ou callback sur `User` (personne minimale) puis enrichissement CRM ; rattachement explicite via `People::AttachUserToPerson` / `People::AccountLinker`. La suppression du compte (`User#destroy`) coupe l'accès web mais laisse intact le `Person` et son historique (tant que les flux RGPD ne désactivent pas autrement).
 - **Usage correct** :
   - « Cette personne n'a pas encore de compte web ».
   - « Le compte web a été archivé, la fiche personne reste active ».
@@ -104,15 +104,15 @@
   - `"MembershipType"` → renouvellement / achat sur le catalogue.
   - `"ContributionFormula"` (cible) / `"SubscriptionPlan"` (legacy) → achat d'une cotisation.
   - `"Contribution"` (cible) / `"BookOfEntry"` (legacy, rare) → cotisation existante.
-  - `"Donation"` → don (cible). **Attention** : actuellement `People::PaymentCreator` réécrit les lignes de don en `item_type: "Payment"` (dette technique tracée — voir [payments.md](payments.md)).
+  - `"Donation"` → don. **Création** : `People::PaymentCreator` conserve `"Donation"` sur les lignes de don. Des lignes **historiques** peuvent encore avoir `item_type: "Payment"` jusqu’au backfill complet — voir [payments.md](payments.md).
 - **Invariant** : la somme des lignes = `payment.total_cents`.
 - **À éviter** :
   - `item_type: "Payment"` pour un don dans toute nouvelle documentation ou code (utiliser `"Donation"`).
 
 #### Don — `Donation`
 - **Définition** : paiement volontaire sans contrepartie, conservé pour reçu fiscal éventuel.
-- **Représentation actuelle** : matérialisé par une `PaymentLine` dont l'item est conceptuellement un don, mais stocké techniquement avec `item_type: "Payment"` (legacy à éliminer).
-- **Représentation cible** : `PaymentLine` avec `item_type: "Donation"` et `item_id` stable (id du paiement parent ou modèle dédié — décision en `phase1-donation-fix`).
+- **Représentation actuelle (code)** : `PaymentLine` avec `item_type: "Donation"` (création via `People::PaymentCreator`). Données anciennes : encore `item_type: "Payment"` sur certaines lignes jusqu’à migration — voir `phase1-donation-fix` et [payments.md](payments.md).
+- **Représentation cible** : même schéma polymorphique ; nettoyage DB (`Payment` legacy, champ `payments.donation`, validations strictes sur `item_type`).
 - **Usage correct** :
   - « Don de 5 € lors d'une adhésion ».
   - « Le paiement contient deux lignes : adhésion + don ».
@@ -171,7 +171,7 @@
 | Terme français | Terme anglais (code) | Statut | Note |
 | --- | --- | --- | --- |
 | Personne | `Person` | canonique | source de vérité CRM |
-| Compte web | `User` | canonique | optionnel |
+| Compte web | `User` | canonique | optionnel **pour une Person** (pas toujours de compte) ; **obligatoire pour un User** (toujours une Person liée) |
 | Adhésion | `Membership` | canonique | annuel |
 | Type d'adhésion | `MembershipType` | canonique | catalogue versionné |
 | Cotisation | `Contribution` | **cible** (legacy : `BookOfEntry`) | instance achetée |

@@ -2,7 +2,7 @@
 
 > **Statut** : stable
 > **Public cible** : contributeur, métier
-> **Dernière vérification** : 2026-04-27
+> **Dernière vérification** : 2026-05-01
 > **Sources de vérité** : `app/models/person.rb`, `app/models/membership.rb`, `app/services/people/*.rb`, `db/seeds/membership_types.rb`, `db/seeds/subscription_plans.rb`.
 
 **Application:** Gestion complète pour association de cirque  
@@ -181,12 +181,13 @@ enum system_role: [:super_admin, :admin, :volunteer, :web_visitor]
 #### Person Architecture (Nouvelle)
 - **Entity / Account pattern:**
   - **Person = Entity CRM** (identité unique, historique financier, soft delete via `SoftDeletable`).
-  - **User = Account** (accès web optionnel) qui référence une `Person` existante (`belongs_to :person`).
+  - **User = Account** (accès web) **toujours lié à une `Person`** (`belongs_to :person`, NOT NULL). Une Person peut exister sans User ; l’inverse non.
 - **Conséquences :**
-  - Création front : on `find_or_create_by` Person avant de créer User.
+  - Création web : `People::Register` / `Web::UserRegistration` ou équivalent ; sinon callback sur `User` crée une **Person minimale** si absente.
   - Création admin : `People::Register` orchestre Person + User (+ Membership optionnel) ; `People::PersonCreator` disponible pour les scripts.
+  - Rattachement / enrichissement : `People::AttachUserToPerson`, `People::AccountLinker`, fusions `People::AccountMerger`.
   - Suppression User : coupe l’accès web (`destroy`), la Person et ses paiements restent.
-  - Suppression Person : passe par `UserManagement::UserDeleter` qui archive la Person (`Person#archive!`) seulement si aucune donnée financière (sauf super_admin).
+  - Suppression Person : passe par `UserManagement::UserDeleter` qui archive la Person (`Person#archive!`) seulement si aucune donnée financière (sauf super_admin). Tant qu’un `User` existe, `Person` ne peut pas être détruite implicitement (`restrict_with_error`).
 - **Délégation:** User délègue attributs à Person (`delegate :full_name, :phone, ...`).
 
 #### Tarifs Réduits
@@ -641,7 +642,7 @@ Admin::UserCreationForm
 | `PersonManagement::PersonCreator` (backend, web) | `People::PersonCreator` | ❌ Supprimé |
 | `UserManagement::AccountCreator` | `People::UserAccountCreator` | ❌ Supprimé |
 | `UserManagement::UserCreator` | `People::UserAccountCreator` | ✅ Branché |
-| `People::AccountLinker` (script merge) | `People::AccountLinker` | ✅ Branché |
+| `People::AccountLinker` (script merge) | `People::AccountLinker` (+ `People::AttachUserToPerson`) | ✅ Branché |
 | `MembershipManagement::MembershipCreator` | `People::MembershipCreator` | ❌ Supprimé |
 | `MembershipManagement::MembershipUpgrader` | `People::MembershipUpgrader` | ❌ Supprimé |
 | `MembershipManagement::MembershipUpdater` | `People::MembershipUpdater` | ❌ Supprimé |
@@ -689,8 +690,8 @@ Admin::UserCreationForm
 
 ## Architecture Actuelle
 
-**Person-Based:** User → Person (relation 1-1)  
-**Résultat:** Séparation données authentification vs profil
+**Person-Based:** `User` `belongs_to` `Person` (obligatoire) ; `Person` `has_one` `User` (optionnel). Relation 1‑to‑0..1 du point de vue Person.  
+**Résultat:** Séparation données authentification vs profil, sans « User sans Person » en base.
 
 ## Concerns Utilisés
 
