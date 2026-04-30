@@ -3,12 +3,12 @@
 module Admin
   class MembershipsController < BaseController
     before_action :set_person, only: %i[show edit update destroy]
-    before_action :set_person_for_create, only: [:create]
+    before_action :set_person_for_create, only: [ :create ]
     before_action :set_breadcrumbs
 
     def index
       @people = Person.includes(:memberships, :user).all
-      add_breadcrumb 'Gestion des Adhésions', nil
+      add_breadcrumb "Gestion des Adhésions", nil
     end
 
     def show
@@ -18,38 +18,38 @@ module Admin
 
       add_breadcrumb "Liste d'adhérents", admin_users_path
       add_breadcrumb @person.full_name, admin_user_path("person_#{@person.id}")
-      add_breadcrumb 'Adhésion', nil
+      add_breadcrumb "Adhésion", nil
     end
 
     def new
       @person = Person.find(params[:person_id]) if params[:person_id]
 
       # Gérer l'upgrade d'adhésion
-      if params[:upgrade] == 'true' && @person&.current_membership&.basic?
+      if params[:upgrade] == "true" && @person&.current_membership&.basic?
         # Pour l'upgrade, on ne propose que les types Circus
         @membership_types = MembershipType.circus_types.current_versions.order(:price_cents)
         @is_upgrade = true
         @current_membership = @person.current_membership
-        add_breadcrumb 'Upgrade vers Cirque', nil
+        add_breadcrumb "Upgrade vers Cirque", nil
       else
         # Pour une nouvelle adhésion, on propose tous les types
         @membership_types = MembershipType.current_versions.order(:price_cents)
         @is_upgrade = false
-        add_breadcrumb 'Nouvelle adhésion', nil
+        add_breadcrumb "Nouvelle adhésion", nil
       end
     end
 
     def edit
       @membership = @person.current_membership
       @membership_types = MembershipType.all
-      add_breadcrumb 'Modifier adhésion', nil
+      add_breadcrumb "Modifier adhésion", nil
     end
 
     def create
       @person = Person.find(membership_purchase_params[:person_id])
       membership_type = MembershipType.find(membership_purchase_params[:membership_type_id])
 
-      if membership_purchase_params[:upgrade] == 'true' && @person.current_membership&.basic?
+      if membership_purchase_params[:upgrade] == "true" && @person.current_membership&.basic?
         handle_upgrade_flow(@person, membership_type)
       else
         handle_creation_flow(@person, membership_type)
@@ -68,7 +68,7 @@ module Admin
       ).call
 
       if result.success?
-        redirect_to admin_user_path("person_#{@person.id}"), notice: 'Adhésion mise à jour avec succès.'
+        redirect_to admin_user_path("person_#{@person.id}"), notice: "Adhésion mise à jour avec succès."
       else
         flash[:alert] = result.message
         redirect_to edit_admin_membership_path(@membership)
@@ -81,11 +81,11 @@ module Admin
       result = People::MembershipDeactivator.new(
         membership_id: @membership.id,
         deactivated_by_id: Current.user.id,
-        reason: 'Désactivation via interface admin'
+        reason: "Désactivation via interface admin"
       ).call
 
       if result.success?
-        redirect_to admin_memberships_path, notice: 'Adhésion désactivée avec succès.'
+        redirect_to admin_memberships_path, notice: "Adhésion désactivée avec succès."
       else
         redirect_to admin_memberships_path, alert: result.message
       end
@@ -102,7 +102,7 @@ module Admin
     end
 
     def set_breadcrumbs
-      add_breadcrumb 'Administration', admin_dashboard_index_path
+      add_breadcrumb "Administration", admin_dashboard_index_path
     end
 
     def membership_params
@@ -114,11 +114,11 @@ module Admin
     end
 
     def payment_method_from(params_hash)
-      params_hash[:payment_method].presence || 'cash'
+      params_hash[:payment_method].presence || "cash"
     end
 
     def custom_amount_from(params_hash)
-      return nil unless params_hash[:payment_method] == 'offered'
+      return nil unless params_hash[:payment_method] == "offered"
 
       params_hash[:custom_amount_cents].to_i
     end
@@ -165,10 +165,10 @@ module Admin
       if result.success?
         if result.already_existed
           redirect_to new_admin_membership_path(person_id: person.id),
-                      alert: 'Cette personne possède déjà une adhésion active.'
+                      alert: "Cette personne possède déjà une adhésion active."
         else
           redirect_to admin_user_path("person_#{person.id}"),
-                      notice: 'Adhésion créée avec succès ! Vous pouvez maintenant ajouter une cotisation depuis la fiche utilisateur.'
+                      notice: "Adhésion créée avec succès ! Vous pouvez maintenant ajouter une cotisation depuis la fiche utilisateur."
         end
       else
         redirect_to new_admin_membership_path(person_id: person.id),
@@ -177,12 +177,12 @@ module Admin
     end
 
     def build_upgrade_notice(membership_type, result, payment_method)
-      message = if payment_method == 'offered'
+      message = if payment_method == "offered"
                   "Adhésion upgradée avec succès ! #{membership_type.name} - Offert"
-                else
+      else
                   amount = result.payment&.total_cents || membership_type.price_cents
                   "Adhésion upgradée avec succès ! #{membership_type.name} - Montant: #{(amount / 100.0).round(2)}€"
-                end
+      end
 
       message += " | Numéro d'adhérent changé: #{result.old_member_number} → #{result.new_member_number}" if result.member_number_changed
 

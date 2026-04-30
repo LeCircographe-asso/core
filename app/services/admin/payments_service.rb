@@ -48,7 +48,7 @@ module Admin
         search_term = "%#{params[:search]}%"
         query = query.joins(:person)
                      .where(
-                       'people.first_name LIKE ? COLLATE NOCASE OR people.last_name LIKE ? COLLATE NOCASE OR people.email LIKE ? COLLATE NOCASE OR CAST(payments.total_cents AS TEXT) LIKE ? COLLATE NOCASE',
+                       "people.first_name LIKE ? COLLATE NOCASE OR people.last_name LIKE ? COLLATE NOCASE OR people.email LIKE ? COLLATE NOCASE OR CAST(payments.total_cents AS TEXT) LIKE ? COLLATE NOCASE",
                        search_term, search_term, search_term, search_term
                      )
       end
@@ -64,27 +64,27 @@ module Admin
       @filtered_payments
         .where(status: :success)
         .joins(:payment_lines)
-        .where(payment_lines: { item_type: 'Donation' })
-        .sum('payment_lines.amount_cents')
+        .where(payment_lines: { item_type: "Donation" })
+        .sum("payment_lines.amount_cents")
     end
 
     def pagy_result
       # Apply sorting
-      sort_column = params[:sort] || 'created_at'
-      sort_direction = params[:direction] || 'desc'
+      sort_column = params[:sort] || "created_at"
+      sort_direction = params[:direction] || "desc"
       sorted_payments = @filtered_payments.order("#{sort_column} #{sort_direction}")
 
       # Pagination
       items_per_page = params[:items]&.to_i || 15
       pagy, paginated_payments = pagy(sorted_payments, items: items_per_page)
 
-      [pagy, paginated_payments]
+      [ pagy, paginated_payments ]
     end
 
     def pagy(collection, _options = {})
       # This would typically be handled by the controller
       # For now, we'll return the collection and let the controller handle pagy
-      [nil, collection]
+      [ nil, collection ]
     end
   end
 end

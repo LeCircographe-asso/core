@@ -20,7 +20,7 @@ module Versionable
 
   # Obtenir la version active à une date donnée
   def self.version_at(model_class, date = Date.current)
-    model_class.where('effective_from <= ? AND (effective_until IS NULL OR effective_until >= ?)', date, date)
+    model_class.where("effective_from <= ? AND (effective_until IS NULL OR effective_until >= ?)", date, date)
   end
 
   # Méthodes de classe pour la gestion des versions
@@ -37,7 +37,7 @@ module Versionable
 
     # Obtenir la version active à une date donnée
     def version_at(date = Date.current)
-      where('effective_from <= ? AND (effective_until IS NULL OR effective_until >= ?)', date, date)
+      where("effective_from <= ? AND (effective_until IS NULL OR effective_until >= ?)", date, date)
     end
 
     # Créer une nouvelle version avec fermeture de l'ancienne

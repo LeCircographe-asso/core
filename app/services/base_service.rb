@@ -2,7 +2,7 @@
 
 # Base class pour tous les services
 # Fournit les méthodes communes success/failure et OpenStruct
-require 'ostruct'
+require "ostruct"
 
 class BaseService
   include ActiveModel::Model
@@ -15,7 +15,7 @@ class BaseService
   def success(**data)
     OpenStruct.new(
       success?: true,
-      message: data.delete(:message) || 'Operation completed successfully',
+      message: data.delete(:message) || "Operation completed successfully",
       **data
     )
   end
@@ -24,7 +24,7 @@ class BaseService
   def failure(message, errors: nil)
     OpenStruct.new(
       success?: false,
-      errors: errors || [message],
+      errors: errors || [ message ],
       message: message
     )
   end

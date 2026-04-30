@@ -39,7 +39,7 @@ module AttendanceManagement
             .joins(:contribution_formula)
             .where(contribution_formulas: { duration: %w[pack10 day trimester annual] })
             .usable
-            .order('contribution_formulas.duration DESC')
+            .order("contribution_formulas.duration DESC")
             .first
     end
 

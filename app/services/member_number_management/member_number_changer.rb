@@ -22,7 +22,7 @@ module MemberNumberManagement
         changed_by = User.find(changed_by_id)
 
         # Vérifier les permissions
-        return failure('Insufficient permissions to change member number') unless can_change_member_number?(person, changed_by)
+        return failure("Insufficient permissions to change member number") unless can_change_member_number?(person, changed_by)
 
         old_number = person.member_number
 
@@ -44,7 +44,7 @@ module MemberNumberManagement
 
           # Instrumentation pour audit
           ActiveSupport::Notifications.instrument(
-            'member_number.changed',
+            "member_number.changed",
             person_id: person.id,
             old_number: old_number,
             new_number: new_member_number,
@@ -73,7 +73,7 @@ module MemberNumberManagement
     def valid_member_number_format
       return if MemberManagementService.valid_member_number_format?(new_member_number)
 
-      errors.add(:new_member_number, 'Format invalide. Utilisez le format YYTNNN (ex: 25C001)')
+      errors.add(:new_member_number, "Format invalide. Utilisez le format YYTNNN (ex: 25C001)")
     end
 
     def member_number_uniqueness

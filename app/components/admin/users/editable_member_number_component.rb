@@ -13,7 +13,7 @@ module Admin
       attr_reader :person, :current_user
 
       def member_number
-        person.member_number.presence || ''
+        person.member_number.presence || ""
       end
 
       def can_edit?

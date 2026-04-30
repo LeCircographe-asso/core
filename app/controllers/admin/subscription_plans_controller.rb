@@ -9,7 +9,7 @@ module Admin
 
     def index
       @contribution_formulas = ContributionFormula.includes(:membership_type).order(:duration, :price_cents)
-      add_breadcrumb 'Plans de cotisation', nil
+      add_breadcrumb "Plans de cotisation", nil
     end
 
     def show
@@ -21,14 +21,14 @@ module Admin
       @person = Person.find(params[:person_id]) if params[:person_id]
 
       unless @person&.can_buy_contribution_formulas?
-        flash[:alert] = 'Cette personne doit avoir une adhésion Cirque pour acheter des plans de cotisation'
+        flash[:alert] = "Cette personne doit avoir une adhésion Cirque pour acheter des plans de cotisation"
         redirect_to admin_users_path
         return
       end
 
       @contribution_formulas = ContributionFormula.available_for(@person)
 
-      add_breadcrumb 'Nouvelle cotisation', nil
+      add_breadcrumb "Nouvelle cotisation", nil
     end
 
     def edit
@@ -38,13 +38,13 @@ module Admin
     def create
       @person = Person.find(contribution_purchase_params[:person_id])
 
-      custom_amount = (contribution_purchase_params[:custom_amount_cents].to_i if contribution_purchase_params[:payment_method] == 'offered')
+      custom_amount = (contribution_purchase_params[:custom_amount_cents].to_i if contribution_purchase_params[:payment_method] == "offered")
       donation_cents = donation_cents_from(contribution_purchase_params)
 
       result = People::ContributionCreator.new(
         person: @person,
         contribution_formula_id: contribution_purchase_params[:contribution_formula_id] || contribution_purchase_params[:subscription_plan_id],
-        payment_method: contribution_purchase_params[:payment_method].presence || 'cash',
+        payment_method: contribution_purchase_params[:payment_method].presence || "cash",
         recorded_by_id: Current.user&.id,
         record_attendance: false,
         custom_amount_cents: custom_amount,
@@ -53,7 +53,7 @@ module Admin
       ).call
 
       if result.success?
-        redirect_to admin_user_path("person_#{@person.id}"), notice: 'Plan de cotisation acheté avec succès !'
+        redirect_to admin_user_path("person_#{@person.id}"), notice: "Plan de cotisation acheté avec succès !"
       else
         redirect_to new_admin_subscription_plan_path(person_id: @person.id),
                     alert: "Erreur lors de l'achat du plan: #{result.message}"
@@ -65,7 +65,7 @@ module Admin
 
     def update
       if @contribution_formula.update(contribution_formula_params)
-        redirect_to admin_subscription_plans_path, notice: 'Plan de cotisation mis à jour avec succès !'
+        redirect_to admin_subscription_plans_path, notice: "Plan de cotisation mis à jour avec succès !"
       else
         flash.now[:alert] = @contribution_formula.errors.full_messages.to_sentence
         render :edit, status: :unprocessable_content
@@ -74,7 +74,7 @@ module Admin
 
     def destroy
       if @contribution_formula.destroy
-        redirect_to admin_subscription_plans_path, notice: 'Plan de cotisation supprimé avec succès !'
+        redirect_to admin_subscription_plans_path, notice: "Plan de cotisation supprimé avec succès !"
       else
         redirect_to admin_subscription_plans_path, alert: @contribution_formula.errors.full_messages.to_sentence
       end
@@ -85,7 +85,7 @@ module Admin
     def require_super_admin
       return if Current.user&.super_admin?
 
-      redirect_to admin_subscription_plans_path, alert: 'Seul le super-admin peut modifier ou supprimer des cotisations.'
+      redirect_to admin_subscription_plans_path, alert: "Seul le super-admin peut modifier ou supprimer des cotisations."
     end
 
     def set_contribution_formula
@@ -97,8 +97,8 @@ module Admin
     end
 
     def set_breadcrumbs
-      add_breadcrumb 'Administration', admin_dashboard_index_path
-      add_breadcrumb 'Plans de cotisation', admin_subscription_plans_path
+      add_breadcrumb "Administration", admin_dashboard_index_path
+      add_breadcrumb "Plans de cotisation", admin_subscription_plans_path
     end
 
     def contribution_formula_params

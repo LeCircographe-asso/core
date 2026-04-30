@@ -26,7 +26,7 @@ RSpec.describe BlogManagement::BlogCreator do
         creator = described_class.new(
           title: 'Test Blog',
           content: 'Test Content',
-          tag_ids: [tag1.id, tag2.id]
+          tag_ids: [ tag1.id, tag2.id ]
         )
 
         result = creator.call
@@ -69,7 +69,7 @@ RSpec.describe BlogManagement::BlogCreator do
         creator = described_class.new(
           title: 'Test Blog',
           content: 'Test Content',
-          tag_ids: [99_999]
+          tag_ids: [ 99_999 ]
         )
 
         result = creator.call
@@ -84,7 +84,7 @@ RSpec.describe BlogManagement::BlogCreator do
           creator = described_class.new(
             title: 'Test Blog',
             content: 'Test Content',
-            tag_ids: [tag1.id]
+            tag_ids: [ tag1.id ]
           )
           creator.call
         end.to instrument('blog.created')

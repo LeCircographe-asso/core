@@ -2,9 +2,9 @@
 
 Rails.application.routes.draw do
   namespace :admin do
-    root to: 'dashboard#index'
+    root to: "dashboard#index"
     resources :blogs
-    resources :dashboard, only: %i[index], path: 'dashboard'
+    resources :dashboard, only: %i[index], path: "dashboard"
     resource :opening_hours, only: %i[show edit update]
     resources :donations, only: %i[create]
     resources :users do
@@ -61,10 +61,10 @@ Rails.application.routes.draw do
     get :latest, on: :collection
   end
   resources :partners, only: %i[index]
-  get '/blog-newsletter', to: 'blogs#index'
+  get "/blog-newsletter", to: "blogs#index"
   resources :users, only: %i[show edit update destroy] do
-    post 'change_newsletter_status', on: :member
-    get 'change_newsletter_status', on: :member
+    post "change_newsletter_status", on: :member
+    get "change_newsletter_status", on: :member
   end
 
   # Routes pour revendication de compte
@@ -73,43 +73,43 @@ Rails.application.routes.draw do
   end
 
   # Route for newsletter signup from footer
-  post '/newsletter_signup', to: 'users#newsletter_signup', as: 'newsletter_signup'
+  post "/newsletter_signup", to: "users#newsletter_signup", as: "newsletter_signup"
 
   # Route for newsletter unsubscribe by token (from emails)
-  get '/newsletter/unsubscribe/:token', to: 'users#unsubscribe_by_token', as: 'newsletter_unsubscribe'
+  get "/newsletter/unsubscribe/:token", to: "users#unsubscribe_by_token", as: "newsletter_unsubscribe"
 
-  scope '/checkout' do
-    post 'create', to: 'checkout#create', as: 'checkout_create'
-    get 'success', to: 'checkout#success', as: 'checkout_success'
-    get 'cancel', to: 'checkout#cancel', as: 'checkout_cancel'
+  scope "/checkout" do
+    post "create", to: "checkout#create", as: "checkout_create"
+    get "success", to: "checkout#success", as: "checkout_success"
+    get "cancel", to: "checkout#cancel", as: "checkout_cancel"
   end
 
-  root 'home#index'
-  get 'fonts', to: 'home#font_examples', as: 'font_examples'
-  get '/faq', to: 'faqs#index', as: :faq
+  root "home#index"
+  get "fonts", to: "home#font_examples", as: "font_examples"
+  get "/faq", to: "faqs#index", as: :faq
 
   # match "*unmatched", to: "application#url_not_found", via: :all
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
   # Can be used by load balancers and uptime monitors to verify that the app is live.
-  get 'up' => 'rails/health#show', as: :rails_health_check
+  get "up" => "rails/health#show", as: :rails_health_check
 
   # Render dynamic PWA files from app/views/pwa/* (remember to link manifest in application.html.erb)
-  get 'manifest' => 'rails/pwa#manifest', as: :pwa_manifest
-  get 'service-worker' => 'rails/pwa#service_worker', as: :pwa_service_worker
+  get "manifest" => "rails/pwa#manifest", as: :pwa_manifest
+  get "service-worker" => "rails/pwa#service_worker", as: :pwa_service_worker
 
   # Defines the root path route ("/")
   # root "posts#index"
 
   # Route pour le formulaire de contact
-  post '/submit_contact', to: 'contacts#create'
+  post "/submit_contact", to: "contacts#create"
 
-  mount LetterOpenerWeb::Engine, at: '/letter_opener' if Rails.env.development?
+  mount LetterOpenerWeb::Engine, at: "/letter_opener" if Rails.env.development?
 
   resource :password, only: %i[new create edit update] do
     get :request_reset, on: :collection
   end
 
-  resource :settings, only: %i[show update], controller: 'settings'
+  resource :settings, only: %i[show update], controller: "settings"
 end

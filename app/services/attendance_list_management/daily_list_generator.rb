@@ -8,7 +8,7 @@ module AttendanceListManagement
     def call
       target_date = date || Date.current
 
-      return failure('Free training closed on Mondays') if target_date.monday?
+      return failure("Free training closed on Mondays") if target_date.monday?
 
       return failure("Attendance list already exists for #{target_date}") if attendance_list_exists_for?(target_date)
 
@@ -23,13 +23,13 @@ module AttendanceListManagement
       )
 
       ActiveSupport::Notifications.instrument(
-        'attendance_list.daily_created',
+        "attendance_list.daily_created",
         attendance_list_id: attendance_list.id,
         date: target_date,
         created_by_id: created_by_id
       )
 
-      success(attendance_list: attendance_list, message: 'Daily attendance list generated')
+      success(attendance_list: attendance_list, message: "Daily attendance list generated")
     rescue ActiveRecord::RecordInvalid => e
       failure("Validation error: #{e.message}")
     rescue StandardError => e

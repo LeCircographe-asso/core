@@ -53,8 +53,8 @@ class User < ApplicationRecord
 
   validates :email_address, presence: true
   validate :email_uniqueness_unless_person_email
-  validates :cgu, acceptance: { message: 'Vous devez accepter les CGU pour continuer.' }, unless: :created_by_admin?
-  validates :privacy_policy, acceptance: { message: 'Vous devez accepter la politique de confidentialité pour continuer.' }, unless: :created_by_admin?
+  validates :cgu, acceptance: { message: "Vous devez accepter les CGU pour continuer." }, unless: :created_by_admin?
+  validates :privacy_policy, acceptance: { message: "Vous devez accepter la politique de confidentialité pour continuer." }, unless: :created_by_admin?
 
   # (can_edit_member_numbers? maintenant dans le module Roleable)
 
@@ -76,15 +76,15 @@ class User < ApplicationRecord
 
     # Anonymiser les données de la Person liée
     person&.update_columns(
-      first_name: 'Deleted',
-      last_name: 'User',
+      first_name: "Deleted",
+      last_name: "User",
       address: nil,
       phone: nil,
       email: "deleted_#{id}@example.com"
     )
 
     # Deactivate any active memberships
-    memberships.where(status: 'active').update_all(status: 'inactive')
+    memberships.where(status: "active").update_all(status: "inactive")
   end
 
   # Check if the user has any active payments
@@ -110,7 +110,7 @@ class User < ApplicationRecord
     return if email_address.blank? # Don't send email if no email address
 
     # Skip email sending in seeds
-    return if caller.any? { |line| line.include?('db/seeds') }
+    return if caller.any? { |line| line.include?("db/seeds") }
 
     if created_by_admin?
       # Generate password reset URL for admin-created users
@@ -229,7 +229,7 @@ class User < ApplicationRecord
     # Sinon, vérifier l'unicité normale
     return unless User.where(email_address: email_address).where.not(id: id).exists?
 
-    errors.add(:email_address, 'est déjà utilisé')
+    errors.add(:email_address, "est déjà utilisé")
   end
 
   # Check if user is interested in an event (Person-Based Architecture)

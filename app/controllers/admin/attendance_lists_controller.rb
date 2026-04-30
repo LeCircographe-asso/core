@@ -7,23 +7,23 @@ module Admin
 
     def index
       @attendance_list = AttendanceList.order(created_at: :desc)
-      add_breadcrumb 'Listes de présence', nil
+      add_breadcrumb "Listes de présence", nil
     end
 
     def show
-      add_breadcrumb 'Listes de présence', admin_attendance_lists_path
+      add_breadcrumb "Listes de présence", admin_attendance_lists_path
       add_breadcrumb @attendance_list.name, nil
     end
 
     def new
-      add_breadcrumb 'Listes de présence', admin_attendance_lists_path
-      add_breadcrumb 'Nouvelle liste', nil
+      add_breadcrumb "Listes de présence", admin_attendance_lists_path
+      add_breadcrumb "Nouvelle liste", nil
     end
 
     def edit
-      add_breadcrumb 'Listes de présence', admin_attendance_lists_path
+      add_breadcrumb "Listes de présence", admin_attendance_lists_path
       add_breadcrumb @attendance_list.name, admin_attendance_list_path(@attendance_list)
-      add_breadcrumb 'Modifier', nil
+      add_breadcrumb "Modifier", nil
     end
 
     def create

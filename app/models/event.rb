@@ -5,7 +5,7 @@ class Event < ApplicationRecord
   include Dateable
 
   # Relations — voir docs/domain_model.md.
-  belongs_to :creator, class_name: 'User'
+  belongs_to :creator, class_name: "User"
   has_many :attendances, dependent: :destroy
   has_many :people, through: :attendances
   # `event_attendees` reste réservé à la billetterie (paiement Stripe) — voir
@@ -59,6 +59,6 @@ class Event < ApplicationRecord
 
   # Méthode pour obtenir la description unifiée
   def full_description
-    description.presence || [upper_description, middle_description, bottom_description].compact.join("\n\n")
+    description.presence || [ upper_description, middle_description, bottom_description ].compact.join("\n\n")
   end
 end

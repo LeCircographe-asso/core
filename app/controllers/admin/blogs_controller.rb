@@ -26,7 +26,7 @@ module Admin
       @blog.tag_ids = Array(params.dig(:blog, :tag_ids)).compact_blank
 
       if @blog.save
-        redirect_to admin_blog_path(@blog), notice: 'Blog créé avec succès'
+        redirect_to admin_blog_path(@blog), notice: "Blog créé avec succès"
       else
         @tags = Tag.all
         flash.now[:alert] = @blog.errors.full_messages.to_sentence
@@ -40,7 +40,7 @@ module Admin
 
       respond_to do |format|
         if @blog.save
-          format.html { redirect_to admin_blogs_path, notice: 'Blog mis à jour avec succès' }
+          format.html { redirect_to admin_blogs_path, notice: "Blog mis à jour avec succès" }
           format.json { render :show, status: :ok, location: @blog }
         else
           @tags = Tag.all
@@ -53,7 +53,7 @@ module Admin
     def destroy
       respond_to do |format|
         if @blog.destroy
-          format.html { redirect_to admin_blogs_path, status: :see_other, notice: 'Blog supprimé avec succès' }
+          format.html { redirect_to admin_blogs_path, status: :see_other, notice: "Blog supprimé avec succès" }
           format.json { head :no_content }
         else
           format.html { redirect_to admin_blogs_path, alert: @blog.errors.full_messages.to_sentence }

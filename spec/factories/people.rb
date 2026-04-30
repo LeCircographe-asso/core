@@ -13,10 +13,10 @@ FactoryBot.define do
     notes { Faker::Lorem.paragraph }
     occupation { Faker::Job.title }
     specialty { Faker::Job.seniority }
-    image_rights { [true, false].sample }
-    get_involved { [true, false].sample }
-    newsletter_subscribed { [true, false].sample }
-    dyslexic_font { [true, false].sample }
+    image_rights { [ true, false ].sample }
+    get_involved { [ true, false ].sample }
+    newsletter_subscribed { [ true, false ].sample }
+    dyslexic_font { [ true, false ].sample }
     is_minor { false }
 
     trait :with_user do

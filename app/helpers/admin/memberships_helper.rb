@@ -4,7 +4,7 @@ module Admin
   module MembershipsHelper
     # Calculer et formater la différence de prix pour l'upgrade
     def upgrade_price_difference(new_membership_type)
-      return '0€' unless @current_membership&.membership_type
+      return "0€" unless @current_membership&.membership_type
 
       old_price = @current_membership.membership_type.price_cents
       new_price = new_membership_type.price_cents
@@ -15,7 +15,7 @@ module Admin
       elsif difference.negative?
         "#{difference / 100.0}€"
       else
-        '0€'
+        "0€"
       end
     end
 
@@ -24,7 +24,7 @@ module Admin
       base_name = membership_type.name
       price_diff = upgrade_price_difference(membership_type)
 
-      if price_diff == '0€'
+      if price_diff == "0€"
         "#{base_name} - Gratuit"
       else
         "#{base_name} - #{price_diff}"

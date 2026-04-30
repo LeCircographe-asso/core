@@ -15,7 +15,7 @@ class NewsletterSignupService
 
     if subscriber
       # If email already exists, redirect to login for management
-      { success: false, message: 'Cette adresse est déjà dans notre liste. Connectez-vous pour gérer votre inscription.', redirect_to: true }
+      { success: false, message: "Cette adresse est déjà dans notre liste. Connectez-vous pour gérer votre inscription.", redirect_to: true }
     else
       create_new_subscriber
     end
@@ -27,14 +27,14 @@ class NewsletterSignupService
     subscriber = NewsletterSubscriber.new(
       email: @new_email,
       subscribed: true,
-      source: 'web'
+      source: "web"
     )
 
     # Link vers Person si existe
     subscriber.person = @person if @person
 
     if subscriber.save
-      { success: true, message: 'Inscription à la newsletter réussie !' }
+      { success: true, message: "Inscription à la newsletter réussie !" }
     else
       { success: false, message: "Une erreur s'est produite. Veuillez réessayer." }
     end

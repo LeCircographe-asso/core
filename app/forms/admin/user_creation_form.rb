@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'ostruct'
+require "ostruct"
 
 module Admin
   class UserCreationForm
@@ -33,12 +33,12 @@ module Admin
     # Attributs pour la création de compte utilisateur
     attribute :create_web_account, :boolean, default: false
     attribute :email_address, :string
-    attribute :system_role, :string, default: 'web_visitor'
+    attribute :system_role, :string, default: "web_visitor"
 
     # Attributs pour l'adhésion
     attribute :create_membership, :boolean, default: false
     attribute :membership_type_id, :integer
-    attribute :payment_method, :string, default: 'cash'
+    attribute :payment_method, :string, default: "cash"
 
     # ID de personne existante (si on crée un compte pour une personne existante)
     attribute :person_id, :integer
@@ -54,13 +54,13 @@ module Admin
       return failure("Invalid data: #{errors.full_messages.join(', ')}") unless valid?
 
       existing_person = person_id.present? ? Person.active.find_by(id: person_id) : nil
-      return failure('Person not found') if person_id.present? && existing_person.nil?
+      return failure("Person not found") if person_id.present? && existing_person.nil?
 
       result = People::Register.new(
         person_params: person_attributes.except(:newsletter_subscribed).compact_blank,
         existing_person: existing_person,
         newsletter_subscribed: newsletter_subscribed,
-        newsletter_source: 'admin',
+        newsletter_source: "admin",
         create_user_account: create_web_account,
         user_params: user_creation_params(compact: true),
         create_membership: membership_requested?,
@@ -145,19 +145,19 @@ module Admin
 
     def translate_success_message(result)
       if result.user && result.membership
-        'Personne, compte web et adhésion créés avec succès !'
+        "Personne, compte web et adhésion créés avec succès !"
       elsif result.user
-        'Personne et compte web créés avec succès !'
+        "Personne et compte web créés avec succès !"
       elsif result.membership
-        'Personne et adhésion créées avec succès !'
+        "Personne et adhésion créées avec succès !"
       else
-        'Personne créée avec succès !'
+        "Personne créée avec succès !"
       end
     end
 
     def translate_error_message(message)
-      return 'Cette personne a déjà un compte web.' if message.include?('déjà un compte web') || message.include?('already has a user')
-      return 'Un email est obligatoire pour créer un compte web.' if message.include?('email is required')
+      return "Cette personne a déjà un compte web." if message.include?("déjà un compte web") || message.include?("already has a user")
+      return "Un email est obligatoire pour créer un compte web." if message.include?("email is required")
 
       message
     end

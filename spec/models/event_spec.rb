@@ -131,10 +131,10 @@ RSpec.describe Event, type: :model do
       let!(:today_event) { create(:event, creator: creator1, date: Date.current.beginning_of_day + 12.hours) }
       let!(:this_week_event) do
         week_date = if Date.current.beginning_of_week == Date.current
-                      [Date.current.end_of_week, Date.current.end_of_month].min.beginning_of_day + 12.hours
-                    else
+                      [ Date.current.end_of_week, Date.current.end_of_month ].min.beginning_of_day + 12.hours
+        else
                       Date.current.beginning_of_week.beginning_of_day + 12.hours
-                    end
+        end
         create(:event, creator: creator2, date: week_date)
       end
       let!(:last_week_event) do
@@ -142,9 +142,9 @@ RSpec.describe Event, type: :model do
         # If last week is in a different month, use a date from earlier this month (but not this week)
         event_date = if last_week_date.month == Date.current.month
                        last_week_date.beginning_of_day + 12.hours
-                     else
-                       [Date.current.beginning_of_month, Date.current.beginning_of_week - 1.day].max.beginning_of_day + 12.hours
-                     end
+        else
+                       [ Date.current.beginning_of_month, Date.current.beginning_of_week - 1.day ].max.beginning_of_day + 12.hours
+        end
         create(:event, creator: creator3, date: event_date)
       end
 

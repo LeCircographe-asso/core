@@ -69,7 +69,7 @@ module Admin
     end
 
     def set_breadcrumbs
-      add_breadcrumb 'Administration', admin_dashboard_index_path
+      add_breadcrumb "Administration", admin_dashboard_index_path
       add_breadcrumb "Types d'Adhésion", admin_membership_types_path
     end
 

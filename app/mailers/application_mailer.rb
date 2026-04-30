@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
 class ApplicationMailer < ActionMailer::Base
-  default from: 'no-reply@lecircographe.fr'
-  layout 'mailer'
+  default from: "no-reply@lecircographe.fr"
+  layout "mailer"
 
   private
 

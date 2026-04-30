@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'ostruct'
+require "ostruct"
 
 module People
   class MembershipCreator
@@ -11,7 +11,7 @@ module People
 
     attribute :person
     attribute :membership_type_id, :integer
-    attribute :payment_method, :string, default: 'cash'
+    attribute :payment_method, :string, default: "cash"
     attribute :recorded_by_id, :integer
     attribute :custom_amount_cents, :integer
     attribute :offer_reason, :string
@@ -22,14 +22,14 @@ module People
     validates :payment_method, inclusion: { in: %w[cash card cheque transfer offered] }
 
     def call
-      return failure('Invalid data', errors.full_messages) unless valid?
+      return failure("Invalid data", errors.full_messages) unless valid?
 
       if person.memberships.active.current.exists?
         ActiveSupport::Notifications.instrument(
-          'membership.skipped',
-          person_id: person.id, reason: 'already_active', membership_type_id: membership_type_id
+          "membership.skipped",
+          person_id: person.id, reason: "already_active", membership_type_id: membership_type_id
         )
-        return Result.new(success?: true, membership: person.memberships.active.current.first, payment: nil, errors: [], message: 'Person already has an active membership', already_existed: true)
+        return Result.new(success?: true, membership: person.memberships.active.current.first, payment: nil, errors: [], message: "Person already has an active membership", already_existed: true)
       end
 
       membership_type = MembershipType.find(membership_type_id)
@@ -45,7 +45,7 @@ module People
       )
 
       ActiveSupport::Notifications.instrument(
-        'membership.created',
+        "membership.created",
         person_id: person.id, membership_id: membership_data[:membership].id, payment_id: membership_data[:payment].id,
         membership_type_id: membership_type.id, payment_method: payment_method
       )
@@ -55,19 +55,19 @@ module People
         membership: membership_data[:membership],
         payment: membership_data[:payment],
         errors: [],
-        message: 'Membership created successfully',
+        message: "Membership created successfully",
         already_existed: false
       )
     rescue ActiveRecord::RecordNotFound => e
-      ActiveSupport::Notifications.instrument('membership.failed', error: e.message, reason: 'record_not_found')
+      ActiveSupport::Notifications.instrument("membership.failed", error: e.message, reason: "record_not_found")
       failure("Record not found: #{e.message}")
     rescue ActiveRecord::RecordInvalid => e
-      ActiveSupport::Notifications.instrument('membership.failed', error: e.message, reason: 'validation')
+      ActiveSupport::Notifications.instrument("membership.failed", error: e.message, reason: "validation")
       failure("Validation error: #{e.message}")
     rescue StandardError => e
       db_path = ActiveRecord::Base.connection_db_config&.database
       Rails.logger.error("[People::MembershipCreator] db=#{db_path} #{e.class}: #{e.message}\n#{e.backtrace.take(5).join("\n")}")
-      ActiveSupport::Notifications.instrument('membership.failed', error: e.message, reason: 'exception')
+      ActiveSupport::Notifications.instrument("membership.failed", error: e.message, reason: "exception")
       failure("Error creating membership: #{e.message}")
     end
 
@@ -81,7 +81,7 @@ module People
       elsif Current.respond_to?(:user) && Current.user.present?
         @recorded_by = Current.user
       else
-        raise 'A recorded_by user is required to create a membership'
+        raise "A recorded_by user is required to create a membership"
       end
     end
 

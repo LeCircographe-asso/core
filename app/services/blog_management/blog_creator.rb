@@ -28,13 +28,13 @@ module BlogManagement
 
         # Instrumentation pour audit
         ActiveSupport::Notifications.instrument(
-          'blog.created',
+          "blog.created",
           blog_id: blog.id,
           title: title,
           tag_count: tag_ids.length
         )
 
-        success(blog: blog, message: 'Blog created successfully')
+        success(blog: blog, message: "Blog created successfully")
       rescue ActiveRecord::RecordNotFound => e
         failure("Tag not found: #{e.message}")
       rescue StandardError => e

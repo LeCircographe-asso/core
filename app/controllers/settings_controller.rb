@@ -19,14 +19,14 @@ class SettingsController < ApplicationController
       user_id: @user.id,
       email_address: user_only_params[:email_address],
       person_attributes: person_params,
-      newsletter_subscribed: ['1', true, 1].include?(newsletter_flag),
+      newsletter_subscribed: [ "1", true, 1 ].include?(newsletter_flag),
       updated_by_id: @user.id
     )
 
     result = updater.call
 
     if result.success?
-      flash[:notice] = 'Vos modifications ont été enregistrées avec succès'
+      flash[:notice] = "Vos modifications ont été enregistrées avec succès"
       redirect_to user_path(@user), status: :see_other
     else
       flash.now[:alert] = result.message

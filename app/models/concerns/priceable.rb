@@ -8,13 +8,13 @@ module Priceable
     # Support pour différents noms de colonnes
     cents = if respond_to?(:price_cents)
               price_cents
-            elsif respond_to?(:total_cents)
+    elsif respond_to?(:total_cents)
               total_cents
-            elsif respond_to?(:amount_cents)
+    elsif respond_to?(:amount_cents)
               amount_cents
-            else
+    else
               0
-            end
+    end
     cents / 100.0
   end
 

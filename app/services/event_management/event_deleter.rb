@@ -4,7 +4,7 @@ module EventManagement
   class EventDeleter < BaseService
     attribute :event_id, :integer
     attribute :deleted_by_id, :integer
-    attribute :reason, :string, default: -> { 'Deleted from admin dashboard' }
+    attribute :reason, :string, default: -> { "Deleted from admin dashboard" }
 
     validates :event_id, presence: true
     validates :deleted_by_id, presence: true
@@ -26,7 +26,7 @@ module EventManagement
           # Delete the event
           event.destroy!
 
-          success(event: event, message: 'Event deleted successfully')
+          success(event: event, message: "Event deleted successfully")
         end
       rescue ActiveRecord::RecordNotFound => e
         failure("Event or User not found: #{e.message}")

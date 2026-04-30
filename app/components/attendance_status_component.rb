@@ -15,14 +15,14 @@ class AttendanceStatusComponent < ViewComponent::Base
   delegate :present?, to: :attendance
 
   def badge_class
-    present? ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
+    present? ? "bg-green-100 text-green-800" : "bg-gray-100 text-gray-800"
   end
 
   def icon_class
-    present? ? 'fas fa-check-circle text-green-600' : 'fas fa-clock text-gray-400'
+    present? ? "fas fa-check-circle text-green-600" : "fas fa-clock text-gray-400"
   end
 
   def status_text
-    present? ? 'Présent' : 'Absent'
+    present? ? "Présent" : "Absent"
   end
 end

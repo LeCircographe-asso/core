@@ -29,32 +29,32 @@ module Admin
       end
 
       def format_date(date)
-        date.strftime('%d/%m/%Y à %H:%M')
+        date.strftime("%d/%m/%Y à %H:%M")
       end
 
       def duration_display(history_item)
         if history_item.current?
-          'Actuel'
+          "Actuel"
         elsif history_item.replaced_at.present?
           duration = history_item.duration
           days = (duration / 1.day).round
           if days < 1
             "Moins d'un jour"
           elsif days == 1
-            '1 jour'
+            "1 jour"
           else
             "#{days} jours"
           end
         else
-          'En cours'
+          "En cours"
         end
       end
 
       def status_class(history_item)
         if history_item.current?
-          'bg-green-100 text-green-800'
+          "bg-green-100 text-green-800"
         else
-          'bg-gray-100 text-gray-600'
+          "bg-gray-100 text-gray-600"
         end
       end
     end

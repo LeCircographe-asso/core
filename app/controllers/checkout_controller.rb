@@ -8,20 +8,20 @@ class CheckoutController < ApplicationController
     price_in_cents = 1000
 
     session = Stripe::Checkout::Session.create(
-      payment_method_types: ['card'],
+      payment_method_types: [ "card" ],
       line_items: [
         {
           price_data: {
-            currency: 'eur',
+            currency: "eur",
             unit_amount: price_in_cents,
             product_data: {
-              name: '@event.title'
+              name: "@event.title"
             }
           },
           quantity: 1
         }
       ],
-      mode: 'payment',
+      mode: "payment",
       success_url: "#{checkout_success_url}?session_id={CHECKOUT_SESSION_ID}&event_id=#{@event.id}",
 
       cancel_url: checkout_cancel_url,
@@ -38,7 +38,7 @@ class CheckoutController < ApplicationController
     @event = Event.find(params[:event_id])
     @payment_intent = Stripe::PaymentIntent.retrieve(@session.payment_intent)
 
-    if @payment_intent.status == 'succeeded'
+    if @payment_intent.status == "succeeded"
 
       # payment = Payment.create!(
       #   amount: 10,
@@ -54,13 +54,13 @@ class CheckoutController < ApplicationController
         interested: true
       )
 
-      redirect_to @event, notice: 'Paiement réussi et commande mise à jour.'
+      redirect_to @event, notice: "Paiement réussi et commande mise à jour."
     else
-      redirect_to page_path('news', anchor: 'evenements'), alert: 'Paiement non réussi, commande non mise à jour.'
+      redirect_to page_path("news", anchor: "evenements"), alert: "Paiement non réussi, commande non mise à jour."
     end
   end
 
   def cancel
-    redirect_to page_path('news', anchor: 'evenements'), alert: 'Le paiement a été annulé.'
+    redirect_to page_path("news", anchor: "evenements"), alert: "Le paiement a été annulé."
   end
 end
