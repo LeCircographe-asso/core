@@ -43,3 +43,5 @@ Rails/PluralizationGrammar:
   Enabled: true
 Rails/UniqBeforePluck:
   Enabled: true
+Rails/HelperInstanceVariable:
+  Enabled: true
