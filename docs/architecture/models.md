@@ -2,7 +2,7 @@
 
 > **Statut** : stable
 > **Public cible** : contributeur
-> **Dernière vérification** : 2026-04-27
+> **Dernière vérification** : 2026-05-01
 > **Sources de vérité** : `app/models/`, `app/models/concerns/`, `db/schema.rb`, `spec/models/`.
 
 > **Vocabulaire DDD-light** (voir [`../glossary.md`](../glossary.md))
@@ -20,7 +20,7 @@ Ce document remplace l'ancien trio `docs/MODEL_EVALUATION.md` + `docs/CONCERNS_A
 
 ```
 Person (CRM, données personnelles)
-  ├─> User (authentification, optionnel)
+  ├─> User (authentification — au plus un ; tout User a une Person)
   ├─> Membership (adhésion annuelle)
   ├─> Payment (transactions)
   ├─> BookOfEntry (cible : Contribution — cotisation cirque)
@@ -33,9 +33,10 @@ Les formules de cotisation sont stockées dans `SubscriptionPlan` *(cible : `Con
 ### Points forts confirmés
 
 - Séparation claire **auth** (`User`) vs **profil** (`Person`).
+- **Invariant** : `User` → `Person` obligatoire (`person_id` NOT NULL) ; `Person` peut exister sans `User`.
 - One Source of Truth pour les données personnelles.
 - Délégation propre `User → Person`.
-- Soft-delete `Person` sans perdre `User`.
+- Côté `Person`, `has_one :user, dependent: :restrict_with_error` : pas de suppression incompatible tant qu’un compte web existe (archive / RGPD).
 - `Payment` → `PaymentLine` polymorphique = un paiement peut regrouper adhésion + cotisation + don.
 - Audit trail complet via `PaymentAuditLog` + UUID externe.
 - Versioning sur `MembershipType` et `SubscriptionPlan` *(cible : `ContributionFormula`)* (`version`, `effective_from/until`, `change_reason`, `created_by_user_id`).
@@ -136,7 +137,7 @@ Cadre de **stabilité / risque** pour prioriser les tests. Pour les priorités a
 
 #### Zone 2 — fonctionnels mais à stabiliser
 
-`Web::UserRegistration`, `People::Register`, `People::PaymentUpdater`, `People::PaymentCanceller`, `People::PaymentRestorer`, `People::AccountLinker`, `UserManagement::UserDeleter`, `People::AccountMerger`.
+`Web::UserRegistration`, `People::Register`, `People::PaymentUpdater`, `People::PaymentCanceller`, `People::PaymentRestorer`, `People::AttachUserToPerson`, `People::AccountLinker`, `UserManagement::UserDeleter`, `People::AccountMerger`.
 
 > Les classes `EventManagement::EventCreator/Updater/Deleter` existent dans `app/services/event_management/` mais sont **orphelines** : aucun contrôleur ne les appelle (CRUD inline dans `Admin::EventsController`). Cleanup tracé dans [`../internal/todo.md`](../internal/todo.md).
 
