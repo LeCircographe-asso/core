@@ -18,7 +18,7 @@ Le projet utilise un vocabulaire DDD-light strict. **Avant toute contribution, l
 - [docs/payments.md](docs/payments.md) — paiements, lignes, dons.
 - [docs/migrations/vocabulary_migration.md](docs/migrations/vocabulary_migration.md) — plan de migration en cours.
 
-> Résumé express : `Person` (CRM) ⟶ `User` (compte web optionnel) ⟶ `Membership` (adhésion annuelle) ⟶ `Contribution` (cotisation cirque) selon une `ContributionFormula`. Les paiements (`Payment`) regroupent une ou plusieurs `PaymentLine` (adhésion, cotisation, don).
+> Résumé express : `Person` (CRM) ⟶ `User` (compte web, toujours rattaché à une `Person`) ⟶ `Membership` (adhésion annuelle) ⟶ `Contribution` (cotisation cirque) selon une `ContributionFormula`. Les paiements (`Payment`) regroupent une ou plusieurs `PaymentLine` (adhésion, cotisation, don).
 
 ---
 
@@ -38,6 +38,7 @@ Application disponible sur `http://localhost:3000`. Letter Opener Web (emails de
 ## Tests (RSpec only)
 
 Le projet utilise **RSpec uniquement**. Le legacy Minitest (`test/`) a ete retire.
+La stack d'authentification reste **native Rails 8** (pas Devise).
 
 ```bash
 bin/test                # suite complète + couverture
