@@ -5,7 +5,7 @@ require 'rails_helper'
 RSpec.describe MaintenanceModeMiddleware do
   let(:app) do
     lambda do |_env|
-      [200, { 'Content-Type' => 'text/plain' }, ['OK']]
+      [ 200, { 'Content-Type' => 'text/plain' }, [ 'OK' ] ]
     end
   end
 

@@ -12,7 +12,7 @@ module Admin
 
     def edit
       add_breadcrumb "Horaires d'ouverture", admin_opening_hours_path
-      add_breadcrumb 'Modifier', nil
+      add_breadcrumb "Modifier", nil
     end
 
     def update
@@ -23,8 +23,8 @@ module Admin
       days.each do |day|
         # Vérifier si le jour est fermé
         closed_param = params["closed_#{day}"]
-        if closed_param == '1'
-          updated_hours[day] = 'Fermé'
+        if closed_param == "1"
+          updated_hours[day] = "Fermé"
         else
           # Reconstruire les horaires à partir des sélecteurs
           open_hour = params["open_hour_#{day}"].to_i
@@ -37,14 +37,14 @@ module Admin
       end
 
       # Persist via cache for now (can be moved to a Setting model later)
-      Rails.cache.write('opening_hours', updated_hours)
-      redirect_to admin_opening_hours_path, notice: 'Horaires mis à jour avec succès'
+      Rails.cache.write("opening_hours", updated_hours)
+      redirect_to admin_opening_hours_path, notice: "Horaires mis à jour avec succès"
     end
 
     private
 
     def set_opening_hours
-      @opening_hours = Rails.cache.fetch('opening_hours') || default_opening_hours
+      @opening_hours = Rails.cache.fetch("opening_hours") || default_opening_hours
     end
 
     def set_breadcrumbs

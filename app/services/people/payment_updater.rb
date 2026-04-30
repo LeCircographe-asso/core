@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'ostruct'
+require "ostruct"
 
 module People
   class PaymentUpdater
@@ -30,7 +30,7 @@ module People
       target_payment = resolve_payment
       updater = resolve_updater
 
-      return failure('Insufficient permissions to update payment') unless updater.super_admin? || updater.admin?
+      return failure("Insufficient permissions to update payment") unless updater.super_admin? || updater.admin?
 
       update_attrs = build_update_attributes
 
@@ -38,14 +38,14 @@ module People
         target_payment.update!(update_attrs) if update_attrs.any?
 
         ActiveSupport::Notifications.instrument(
-          'payment.updated',
+          "payment.updated",
           payment_id: target_payment.id,
           person_id: target_payment.person_id,
           updated_by_id: updater.id,
           changes: target_payment.previous_changes
         )
 
-        success(payment: target_payment, message: 'Payment updated successfully')
+        success(payment: target_payment, message: "Payment updated successfully")
       end
     rescue ActiveRecord::RecordNotFound => e
       failure("Record not found: #{e.message}")
@@ -78,7 +78,7 @@ module People
     end
 
     def payment_identifier_present
-      errors.add(:payment_id, 'must be provided') if payment.blank? && payment_id.blank?
+      errors.add(:payment_id, "must be provided") if payment.blank? && payment_id.blank?
     end
 
     def success(payment:, message:)

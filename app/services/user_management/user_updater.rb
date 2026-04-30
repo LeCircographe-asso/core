@@ -20,7 +20,7 @@ module UserManagement
         updated_by = User.find(updated_by_id)
 
         # Vérifier les permissions
-        return failure('Insufficient permissions to update this user') unless can_update_user?(user, updated_by)
+        return failure("Insufficient permissions to update this user") unless can_update_user?(user, updated_by)
 
         ActiveRecord::Base.transaction do
           # Mettre à jour User (seulement si des attributs sont fournis)
@@ -46,14 +46,14 @@ module UserManagement
           if user_updated && person_updated
             # Instrumentation pour audit
             ActiveSupport::Notifications.instrument(
-              'user.updated',
+              "user.updated",
               user_id: user.id,
               person_id: user.person&.id,
               updated_by_id: updated_by_id,
               changes: user.previous_changes.merge(user.person&.previous_changes || {})
             )
 
-            success(user: user, person: user.person, message: 'User updated successfully')
+            success(user: user, person: user.person, message: "User updated successfully")
           else
             errors_array = []
             errors_array.concat(user.errors.full_messages) if user.errors.any?
@@ -80,13 +80,13 @@ module UserManagement
     end
 
     def update_newsletter(person)
-      return success(message: 'Newsletter update skipped (no email)') if person.email.blank?
+      return success(message: "Newsletter update skipped (no email)") if person.email.blank?
 
       updater = NewsletterManagement::NewsletterUpdater.new(
         person_id: person.id,
         email: person.email,
         subscribed: newsletter_subscribed,
-        source: 'authenticated',
+        source: "authenticated",
         updated_by_id: updated_by_id
       )
 

@@ -11,7 +11,7 @@ class Attendance < ApplicationRecord
   validates :date, presence: true
   validates :person_id, uniqueness: {
     scope: :event_id,
-    message: 'est déjà intéressé par cet événement'
+    message: "est déjà intéressé par cet événement"
   }, if: -> { event_id.present? }
   validates :person_id, uniqueness: {
     scope: :date,

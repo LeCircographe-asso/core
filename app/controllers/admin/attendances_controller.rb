@@ -19,11 +19,11 @@ module Admin
       # Pagination
       @attendances = @attendances.order(date: :desc).page(params[:page]).per(20)
 
-      add_breadcrumb 'Gestion des présences', nil
+      add_breadcrumb "Gestion des présences", nil
     end
 
     def show
-      add_breadcrumb 'Gestion des présences', admin_attendances_path
+      add_breadcrumb "Gestion des présences", admin_attendances_path
       add_breadcrumb "Présence ##{@attendance.id}", nil
     end
 
@@ -32,8 +32,8 @@ module Admin
       @people = Person.order(:first_name, :last_name)
       @events = Event.upcoming.order(:date)
 
-      add_breadcrumb 'Gestion des présences', admin_attendances_path
-      add_breadcrumb 'Nouvelle présence', nil
+      add_breadcrumb "Gestion des présences", admin_attendances_path
+      add_breadcrumb "Nouvelle présence", nil
     end
 
     def create
@@ -48,7 +48,7 @@ module Admin
       result = creator.call
 
       if result.success?
-        redirect_to admin_attendance_path(result.attendance), notice: 'Présence enregistrée avec succès'
+        redirect_to admin_attendance_path(result.attendance), notice: "Présence enregistrée avec succès"
       else
         @attendance = Attendance.new(attendance_params)
         @people = Person.order(:first_name, :last_name)
@@ -66,9 +66,9 @@ module Admin
 
     def destroy
       if @attendance.destroy
-        redirect_to admin_attendances_path, notice: 'Présence supprimée avec succès'
+        redirect_to admin_attendances_path, notice: "Présence supprimée avec succès"
       else
-        redirect_to admin_attendances_path, alert: 'Erreur lors de la suppression'
+        redirect_to admin_attendances_path, alert: "Erreur lors de la suppression"
       end
     end
 

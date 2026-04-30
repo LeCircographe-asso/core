@@ -11,8 +11,8 @@ module Admin
   class UsersController < BaseController
     before_action :set_user, only: %i[edit update destroy]
     before_action :set_breadcrumbs, except: %i[index new]
-    before_action :check_deletion_permissions, only: [:destroy]
-    before_action :require_super_admin, only: [:restore]
+    before_action :check_deletion_permissions, only: [ :destroy ]
+    before_action :require_super_admin, only: [ :restore ]
 
     # GET /admin/users or /admin/users.json
     def index
@@ -54,9 +54,9 @@ module Admin
     # GET /admin/users/1 or /admin/users/1.json
     def show
       # Adapter pour accepter les ID de Person ET de User
-      if params[:id].to_s.start_with?('person_')
+      if params[:id].to_s.start_with?("person_")
         # ID de Person (format: person_123)
-        person_id = params[:id].gsub('person_', '')
+        person_id = params[:id].gsub("person_", "")
 
         # Chercher d'abord dans les Person actives
         @person = PersonQuery.active.includes(:user, memberships: :membership_type, contributions: :contribution_formula, payments: %i[payment_lines recorded_by])
@@ -67,7 +67,7 @@ module Admin
           archived_person = Person.find_by(id: person_id)
           raise ActiveRecord::RecordNotFound if archived_person&.deleted_at.blank?
 
-          redirect_to admin_users_path, notice: 'Cette fiche a été fusionnée avec une autre. Retour à la liste des utilisateurs.'
+          redirect_to admin_users_path, notice: "Cette fiche a été fusionnée avec une autre. Retour à la liste des utilisateurs."
           return
 
         end
@@ -130,29 +130,29 @@ module Admin
         @person = PersonQuery.active.find(params[:person_id])
         @user.person = @person
         @user.email_address = @person.email
-        @user.system_role = 'web_visitor' # Rôle par défaut
+        @user.system_role = "web_visitor" # Rôle par défaut
         add_breadcrumb "Liste d'adhérents", admin_users_path
         add_breadcrumb @person.full_name, admin_user_path("person_#{@person.id}")
-        add_breadcrumb 'Créer un compte web', nil
+        add_breadcrumb "Créer un compte web", nil
       else
         add_breadcrumb "Liste d'adhérents", admin_users_path
-        add_breadcrumb 'Nouvel adhérent', nil
+        add_breadcrumb "Nouvel adhérent", nil
       end
     end
 
     # GET /admin/users/person_1/edit_person
     def edit_person
-      person_id = params[:id].to_s.gsub('person_', '')
+      person_id = params[:id].to_s.gsub("person_", "")
       @person = PersonQuery.active.find(person_id)
       add_breadcrumb "Liste d'adhérents", admin_users_path
       add_breadcrumb @person.full_name, admin_user_path("person_#{@person.id}")
-      add_breadcrumb 'Modifier', nil
+      add_breadcrumb "Modifier", nil
     end
 
     # GET /admin/users/1/edit
     def edit
       # Adapter pour gérer les Person
-      if params[:id].to_s.start_with?('person_')
+      if params[:id].to_s.start_with?("person_")
         # Rediriger vers l'édition Person
         redirect_to edit_person_admin_user_path(params[:id])
         return
@@ -163,8 +163,8 @@ module Admin
       Rails.logger.debug { "current_user: #{current_user.inspect}" }
 
       if @user.nil?
-        Rails.logger.debug 'User is nil, redirecting to users list'
-        redirect_to admin_users_path, alert: 'Utilisateur non trouvé.'
+        Rails.logger.debug "User is nil, redirecting to users list"
+        redirect_to admin_users_path, alert: "Utilisateur non trouvé."
         return
       end
 
@@ -182,7 +182,7 @@ module Admin
 
       add_breadcrumb "Liste d'adhérents", admin_users_path
       add_breadcrumb @user.person&.full_name.present? ? @user.person.full_name : "Utilisateur ##{@user.id}", admin_user_path(@user)
-      add_breadcrumb 'Modifier', nil
+      add_breadcrumb "Modifier", nil
     end
 
     # POST /admin/users or /admin/users.json
@@ -203,8 +203,8 @@ module Admin
     # PATCH/PUT /admin/users/1 or /admin/users/1.json
     def update
       # Adapter pour gérer les Person
-      if params[:id].to_s.start_with?('person_')
-        person_id = params[:id].to_s.gsub('person_', '')
+      if params[:id].to_s.start_with?("person_")
+        person_id = params[:id].to_s.gsub("person_", "")
         @person = PersonQuery.active.find(person_id)
 
         person_attributes = person_params.to_h.deep_symbolize_keys
@@ -214,7 +214,7 @@ module Admin
           person_params: person_attributes.merge(allow_blank_attributes: true),
           existing_person: @person,
           newsletter_subscribed: newsletter_flag,
-          newsletter_source: 'admin',
+          newsletter_source: "admin",
           create_user_account: false,
           create_membership: false
         ).call
@@ -226,10 +226,10 @@ module Admin
             render json: {
               success: true,
               member_number: updated_person.reload.member_number,
-              message: 'Informations mises à jour avec succès.'
+              message: "Informations mises à jour avec succès."
             }
           else
-            redirect_to admin_user_path("person_#{updated_person.id}"), notice: 'Informations mises à jour avec succès.'
+            redirect_to admin_user_path("person_#{updated_person.id}"), notice: "Informations mises à jour avec succès."
           end
         elsif request.xhr?
           render json: {
@@ -255,20 +255,20 @@ module Admin
           email_address: user_only_params[:email_address],
           system_role: user_only_params[:system_role],
           person_attributes: person_params_flat,
-          newsletter_subscribed: ['1', true, 1].include?(newsletter_flag),
+          newsletter_subscribed: [ "1", true, 1 ].include?(newsletter_flag),
           updated_by_id: Current.user.id
         )
 
         result = updater.call
 
         if result.success?
-          format.html { redirect_to admin_user_path(@user), notice: 'Utilisateur mis à jour avec succès.' }
+          format.html { redirect_to admin_user_path(@user), notice: "Utilisateur mis à jour avec succès." }
           format.json { render json: @user }
           format.turbo_stream do
-            flash.now[:notice] = 'Utilisateur mis à jour avec succès.'
+            flash.now[:notice] = "Utilisateur mis à jour avec succès."
             render turbo_stream: [
               turbo_stream.replace(@user),
-              turbo_stream.replace('flash', partial: 'shared/flash')
+              turbo_stream.replace("flash", partial: "shared/flash")
             ]
           end
         else
@@ -276,8 +276,8 @@ module Admin
           format.json { render json: { errors: result.errors }, status: :unprocessable_content }
           format.turbo_stream do
             render turbo_stream: turbo_stream.replace(
-              'error_explanation',
-              partial: 'shared/error_messages',
+              "error_explanation",
+              partial: "shared/error_messages",
               locals: { resource: @user, errors: result.errors }
             )
           end
@@ -288,27 +288,27 @@ module Admin
     # DELETE /admin/users/1 or /admin/users/1.json
     def destroy
       # Adapter pour gérer les Person
-      if params[:id].to_s.start_with?('person_')
+      if params[:id].to_s.start_with?("person_")
         # Supprimer la Person (déjà chargée dans set_user)
         person = @person
 
         # Debug: vérifier si @person est défini
         if person.nil?
           Rails.logger.error "DEBUG: @person is nil for params[:id] = #{params[:id]}"
-          redirect_to admin_users_path, alert: 'Personne non trouvée.' and return
+          redirect_to admin_users_path, alert: "Personne non trouvée." and return
         end
 
         # Utiliser le service UserManagement::UserDeleter
         deleter = UserManagement::UserDeleter.new(
           person_id: person.id,
           deleted_by_id: current_user.id,
-          reason: 'Suppression via interface admin'
+          reason: "Suppression via interface admin"
         )
 
         result = deleter.call
 
         if result.success?
-          redirect_to admin_users_path, status: :see_other, notice: 'Personne supprimée avec succès.'
+          redirect_to admin_users_path, status: :see_other, notice: "Personne supprimée avec succès."
         else
           redirect_to admin_users_path, alert: "❌ #{result.message}"
         end
@@ -317,7 +317,7 @@ module Admin
 
       respond_to do |format|
         if @user.archive!
-          format.html { redirect_to admin_users_path, status: :see_other, notice: 'Utilisateur archivé avec succès.' }
+          format.html { redirect_to admin_users_path, status: :see_other, notice: "Utilisateur archivé avec succès." }
           format.json { head :no_content }
         else
           format.html { redirect_to admin_users_path, status: :see_other, alert: "Impossible d'archiver cet utilisateur." }
@@ -331,9 +331,9 @@ module Admin
       @user = User.unscoped.find(params[:id])
 
       if @user.update(deleted: false, deleted_at: nil)
-        redirect_to admin_users_path, notice: 'Utilisateur restauré avec succès.'
+        redirect_to admin_users_path, notice: "Utilisateur restauré avec succès."
       else
-        redirect_to admin_users_path, alert: 'Impossible de restaurer cet utilisateur.'
+        redirect_to admin_users_path, alert: "Impossible de restaurer cet utilisateur."
       end
     end
 
@@ -342,13 +342,13 @@ module Admin
     # Use callbacks to share common setup or constraints between actions.
     def set_user
       # Adapter pour gérer les IDs de Person (format: person_123)
-      if params[:id].to_s.start_with?('person_')
+      if params[:id].to_s.start_with?("person_")
         # Pour les Person, charger la Person
-        person_id = params[:id].gsub('person_', '')
+        person_id = params[:id].gsub("person_", "")
         @person = Person.find_by(id: person_id)
 
         # If person not found, redirect to index with alert
-        redirect_to admin_users_path, alert: 'Utilisateur non trouvé.' and return if @person.nil?
+        redirect_to admin_users_path, alert: "Utilisateur non trouvé." and return if @person.nil?
 
         @user = @person.user # Peut être nil si pas de compte utilisateur
       else
@@ -356,12 +356,12 @@ module Admin
         @user = User.unscoped.find_by(id: params[:id])
 
         # If user not found, redirect to index with alert
-        redirect_to admin_users_path, alert: 'Utilisateur non trouvé.' and return if @user.nil?
+        redirect_to admin_users_path, alert: "Utilisateur non trouvé." and return if @user.nil?
       end
     end
 
     def set_breadcrumbs
-      add_breadcrumb 'Dashboard', admin_dashboard_index_path
+      add_breadcrumb "Dashboard", admin_dashboard_index_path
     end
 
     # Check if current user has permission to delete the target user
@@ -371,23 +371,23 @@ module Admin
       # Prevent deleting users with equal or higher privileges
       return if current_user.has_higher_permissions?(@user)
 
-      redirect_to admin_users_path, alert: 'Impossible de supprimer un utilisateur avec des privilèges égaux ou supérieurs.'
+      redirect_to admin_users_path, alert: "Impossible de supprimer un utilisateur avec des privilèges égaux ou supérieurs."
     end
 
     # Méthodes privées pour les filtres et la recherche
     def apply_person_filters
       case params[:filter]
-      when 'with_active_membership'
+      when "with_active_membership"
         @people = @people.with_active_membership
-      when 'with_expiring_membership'
+      when "with_expiring_membership"
         @people = @people.with_expiring_membership
-      when 'with_expired_membership'
+      when "with_expired_membership"
         @people = @people.with_expired_membership
-      when 'without_membership'
+      when "without_membership"
         @people = @people.without_membership
-      when 'with_user_account'
+      when "with_user_account"
         @people = @people.with_user_account
-      when 'without_user_account'
+      when "without_user_account"
         @people = @people.without_user_account
       end
     end
@@ -399,7 +399,7 @@ module Admin
     # Only allow a list of trusted parameters through.
     def user_params
       params.expect(
-        user: [:email_address,
+        user: [ :email_address,
                :system_role,
                :created_by_admin,
                :create_web_account,
@@ -451,7 +451,7 @@ module Admin
                    reduced_rate_reason
                    reduced_rate_proof
                  ]
-               }]
+               } ]
       )
     end
 
@@ -520,7 +520,7 @@ module Admin
 
       # Un super_admin peut assigner tous les rôles sauf super_admin
       if Current.user&.super_admin?
-        User.system_roles.keys.reject { |role| role == 'super_admin' }
+        User.system_roles.keys.reject { |role| role == "super_admin" }
       # Un admin peut assigner volunteer et web_visitor
       elsif Current.user&.admin?
         %w[volunteer web_visitor]
@@ -532,7 +532,7 @@ module Admin
     def require_super_admin
       return if Current.user&.super_admin?
 
-      redirect_to admin_users_path, alert: 'Seul le super-admin peut restaurer des utilisateurs.'
+      redirect_to admin_users_path, alert: "Seul le super-admin peut restaurer des utilisateurs."
     end
   end
 end

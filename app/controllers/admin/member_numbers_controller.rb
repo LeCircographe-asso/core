@@ -7,7 +7,7 @@ module Admin
     # POST /admin/member_numbers/suggest
     def suggest
       suggester = MemberNumberManagement::MemberNumberSuggester.new(
-        membership_type: params[:membership_type] || 'BASIQUE'
+        membership_type: params[:membership_type] || "BASIQUE"
       )
 
       result = suggester.call

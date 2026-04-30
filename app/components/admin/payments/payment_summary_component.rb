@@ -30,9 +30,9 @@ module Admin
       end
 
       def format_currency(amount_cents)
-        return '0,00 €' if amount_cents.blank? || amount_cents.zero?
+        return "0,00 €" if amount_cents.blank? || amount_cents.zero?
 
-        number_to_currency(amount_cents / 100.0, unit: '€', separator: ',', delimiter: ' ')
+        number_to_currency(amount_cents / 100.0, unit: "€", separator: ",", delimiter: " ")
       end
 
       def total_amount_formatted

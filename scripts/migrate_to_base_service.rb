@@ -7,7 +7,7 @@
 require 'fileutils'
 
 SERVICES_DIR = 'app/services'
-EXCLUDED_FILES = ['base_service.rb', '.disabled'].freeze
+EXCLUDED_FILES = [ 'base_service.rb', '.disabled' ].freeze
 
 def find_services_to_migrate
   Dir.glob("#{SERVICES_DIR}/**/*.rb").select do |file|

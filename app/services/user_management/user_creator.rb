@@ -21,13 +21,13 @@ module UserManagement
     validate :person_has_no_user_account
 
     def call
-      return failure('Invalid user data') unless valid?
+      return failure("Invalid user data") unless valid?
 
       person = Person.find(person_id)
       created_by = User.find(created_by_id)
       validate_creator_permissions!(created_by)
 
-      return failure('Insufficient permissions to create accounts') unless creator_can_manage_accounts?(created_by)
+      return failure("Insufficient permissions to create accounts") unless creator_can_manage_accounts?(created_by)
 
       result = People::UserAccountCreator.new(
         person: person,
@@ -66,7 +66,7 @@ module UserManagement
 
       return if Person.exists?(person_id)
 
-      errors.add(:person_id, 'Person not found')
+      errors.add(:person_id, "Person not found")
     end
 
     def person_has_no_user_account
@@ -75,13 +75,13 @@ module UserManagement
       person = Person.find_by(id: person_id)
       return if person&.user.blank?
 
-      errors.add(:person_id, 'Person already has a user account')
+      errors.add(:person_id, "Person already has a user account")
     end
 
     def validate_creator_permissions!(created_by)
       return if created_by.super_admin? || created_by.admin?
 
-      errors.add(:created_by_id, 'User does not have permissions to create accounts')
+      errors.add(:created_by_id, "User does not have permissions to create accounts")
       raise ActiveRecord::RecordInvalid, created_by
     end
 

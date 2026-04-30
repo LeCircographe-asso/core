@@ -22,8 +22,8 @@ module Admin
 
       def membership_type_options
         [
-          ['Basique (U)', 'BASIQUE'],
-          ['Cirque (C)', 'CIRQUE']
+          [ "Basique (U)", "BASIQUE" ],
+          [ "Cirque (C)", "CIRQUE" ]
         ]
       end
 
@@ -33,9 +33,9 @@ module Admin
 
       def current_membership_type
         if person.current_membership&.membership_type&.circus?
-          'CIRQUE'
+          "CIRQUE"
         else
-          'BASIQUE'
+          "BASIQUE"
         end
       end
     end

@@ -8,7 +8,7 @@ class Payment < ApplicationRecord
 
   # Relations — voir docs/domain_model.md et docs/payments.md.
   belongs_to :person
-  belongs_to :recorded_by, class_name: 'User'
+  belongs_to :recorded_by, class_name: "User"
   has_many :payment_lines, dependent: :destroy
   has_many :payment_audit_logs, dependent: :destroy
 
@@ -31,18 +31,18 @@ class Payment < ApplicationRecord
 
   # Class method to get total successful payments amount
   def self.total_successful_amount
-    Rails.cache.fetch('total_successful_payments', expires_in: 1.hour) do
+    Rails.cache.fetch("total_successful_payments", expires_in: 1.hour) do
       where(status: :success).sum(:total_cents)
     end
   end
 
   # Class method to get total donations
   def self.total_donations
-    Rails.cache.fetch('total_donations', expires_in: 1.hour) do
+    Rails.cache.fetch("total_donations", expires_in: 1.hour) do
       joins(:payment_lines)
         .where(status: :success)
-        .where(payment_lines: { item_type: 'Donation' })
-        .sum('payment_lines.amount_cents')
+        .where(payment_lines: { item_type: "Donation" })
+        .sum("payment_lines.amount_cents")
     end
   end
 
@@ -50,14 +50,14 @@ class Payment < ApplicationRecord
   def payment_type
     # Déterminer le type de paiement basé sur les payment_lines
     if payment_lines.memberships.any?
-      'Adhésion'
+      "Adhésion"
     elsif payment_lines.contribution_formulas.any?
-      'Cotisation'
+      "Cotisation"
     elsif payment_lines.any?
       # Utiliser la description de la première ligne
       payment_lines.first.item_description
     else
-      'Autre'
+      "Autre"
     end
   end
 
@@ -65,15 +65,15 @@ class Payment < ApplicationRecord
   # (total_euros et payment_method_humanized maintenant dans les modules)
 
   def is_offered?
-    payment_method == 'offered'
+    payment_method == "offered"
   end
 
   def is_paid?
-    status == 'success'
+    status == "success"
   end
 
   def can_be_cancelled?
-    status != 'cancel' && created_at > 24.hours.ago
+    status != "cancel" && created_at > 24.hours.ago
   end
 
   def membership_related?
@@ -93,7 +93,7 @@ class Payment < ApplicationRecord
 
   # Create an audit log entry for new payments
   def create_audit_log
-    PaymentAuditLog.log(self, recorded_by, 'create')
+    PaymentAuditLog.log(self, recorded_by, "create")
   end
 
   # Log status changes
@@ -106,17 +106,17 @@ class Payment < ApplicationRecord
         to: status
       }
     }
-    PaymentAuditLog.log(self, recorded_by, 'status_change', change_data)
+    PaymentAuditLog.log(self, recorded_by, "status_change", change_data)
 
     # Invalidate cache when status changes
-    Rails.cache.delete('total_successful_payments')
-    Rails.cache.delete('total_donations')
+    Rails.cache.delete("total_successful_payments")
+    Rails.cache.delete("total_donations")
   end
 
   # Invalidate totals cache when payment amount changes
   def invalidate_totals_cache
-    Rails.cache.delete('total_successful_payments')
-    Rails.cache.delete('total_donations')
+    Rails.cache.delete("total_successful_payments")
+    Rails.cache.delete("total_donations")
   end
 
   # Handle when user is soft deleted
@@ -128,29 +128,29 @@ class Payment < ApplicationRecord
       # We keep the payment record but mark it as associated with a deleted user
       status: :cancel,
       # Add a note that the user was deleted
-      notes: 'User deleted - payment cancelled'
+      notes: "User deleted - payment cancelled"
     )
 
     # Log the user deletion effect on payment
-    PaymentAuditLog.log(self, nil, 'user_deleted')
+    PaymentAuditLog.log(self, nil, "user_deleted")
 
     # Invalidate cache
-    Rails.cache.delete('total_successful_payments')
-    Rails.cache.delete('total_donations')
+    Rails.cache.delete("total_successful_payments")
+    Rails.cache.delete("total_donations")
   end
 
   # Check if a payment can be safely canceled
   def can_cancel?
-    status != 'cancel'
+    status != "cancel"
   end
 
   # Override destroy method to ensure audit trail
   def destroy
-    PaymentAuditLog.log(self, recorded_by, 'delete')
+    PaymentAuditLog.log(self, recorded_by, "delete")
 
     # Invalidate cache
-    Rails.cache.delete('total_successful_payments')
-    Rails.cache.delete('total_donations')
+    Rails.cache.delete("total_successful_payments")
+    Rails.cache.delete("total_donations")
 
     super
   end

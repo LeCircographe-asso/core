@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'ostruct'
+require "ostruct"
 
 module Admin
   class DashboardStatisticsService
@@ -42,11 +42,11 @@ module Admin
     end
 
     def basic_memberships
-      Membership.joins(:membership_type).where(membership_types: { name: 'Basic' }).count
+      Membership.joins(:membership_type).where(membership_types: { name: "Basic" }).count
     end
 
     def circus_memberships
-      Membership.joins(:membership_type).where(membership_types: { name: 'Cirque' }).count
+      Membership.joins(:membership_type).where(membership_types: { name: "Cirque" }).count
     end
 
     def active_memberships

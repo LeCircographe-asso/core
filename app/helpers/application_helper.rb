@@ -18,7 +18,7 @@ module ApplicationHelper
   end
 
   def render_card_component(title:, description:, image:, alt_text:, link:, button_text:)
-    render partial: 'shared/card',
+    render partial: "shared/card",
            locals: { title: title,
                      description: description,
                      image: image,
@@ -28,7 +28,7 @@ module ApplicationHelper
   end
 
   def render_card_component_reverse(title:, description:, image:, alt_text:, link:, button_text:)
-    render partial: 'shared/card_reverse',
+    render partial: "shared/card_reverse",
            locals: { title: title,
                      description: description,
                      image: image,
@@ -40,22 +40,22 @@ module ApplicationHelper
   def flash_class(level)
     case level.to_sym
     when :notice, :success
-      'bg-green-100 border-green-400 text-green-700'
+      "bg-green-100 border-green-400 text-green-700"
     when :alert, :error
-      'bg-red-100 border-red-400 text-red-700'
+      "bg-red-100 border-red-400 text-red-700"
     when :warning
-      'bg-yellow-100 border-yellow-400 text-yellow-700'
+      "bg-yellow-100 border-yellow-400 text-yellow-700"
     else
-      'bg-blue-100 border-blue-400 text-blue-700'
+      "bg-blue-100 border-blue-400 text-blue-700"
     end
   end
 
   def active_class(path)
-    current_page?(path) ? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white'
+    current_page?(path) ? "bg-gray-900 text-white" : "text-gray-300 hover:bg-gray-700 hover:text-white"
   end
 
   def format_phone_number(phone)
-    return 'Non renseigné' if phone.blank?
+    return "Non renseigné" if phone.blank?
 
     # Format: +33 6 12 34 56 78
     phone.gsub(/(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})/, '\1 \2 \3 \4 \5')
@@ -76,7 +76,7 @@ module ApplicationHelper
     return pool if pool.any?
 
     fallback = fallback_hero_image
-    fallback && exclusions.exclude?(fallback.to_s) ? [fallback] : []
+    fallback && exclusions.exclude?(fallback.to_s) ? [ fallback ] : []
   end
 
   def asset_available?(logical_path)
@@ -86,7 +86,7 @@ module ApplicationHelper
       return true
     end
 
-    asset_full_path = Rails.root.join('app/assets/images', logical_path)
+    asset_full_path = Rails.root.join("app/assets/images", logical_path)
     asset_full_path.exist?
   rescue StandardError
     false
@@ -96,7 +96,7 @@ module ApplicationHelper
 
   def hero_image_pool
     @hero_image_pool ||= begin
-      files = Rails.root.glob('app/assets/images/hero_*.webp').map { |path| File.basename(path) }
+      files = Rails.root.glob("app/assets/images/hero_*.webp").map { |path| File.basename(path) }
       files.select! { |file| asset_available?(file) }
       fallback = fallback_hero_image(files)
       files << fallback if fallback && files.exclude?(fallback)
@@ -105,13 +105,13 @@ module ApplicationHelper
   end
 
   def fallback_hero_image(existing = nil)
-    candidate = 'hero_01.webp'
+    candidate = "hero_01.webp"
     return candidate if (existing || hero_image_pool_without_cache).include?(candidate)
 
     asset_available?(candidate) ? candidate : existing&.first
   end
 
   def hero_image_pool_without_cache
-    Rails.root.glob('app/assets/images/hero_*.webp').map { |path| File.basename(path) }
+    Rails.root.glob("app/assets/images/hero_*.webp").map { |path| File.basename(path) }
   end
 end

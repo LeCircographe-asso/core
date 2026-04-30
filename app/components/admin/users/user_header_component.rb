@@ -25,43 +25,43 @@ module Admin
 
       def role_text
         if is_person_without_user
-          'Créer un espace utilisateur'
+          "Créer un espace utilisateur"
         elsif user.system_role.present?
           case user.system_role
-          when 'volunteer' then 'Bénévole'
-          when 'super_admin' then 'Super Admin'
-          when 'admin' then 'Admin'
-          when 'web_visitor' then 'Visiteur Web'
+          when "volunteer" then "Bénévole"
+          when "super_admin" then "Super Admin"
+          when "admin" then "Admin"
+          when "web_visitor" then "Visiteur Web"
           else user.system_role.humanize
           end
         else
-          'Créer un espace utilisateur'
+          "Créer un espace utilisateur"
         end
       end
 
       def avatar_image
         case user.system_role
-        when 'super_admin' then 'super_admin.webp'
-        when 'admin' then 'admin.webp'
-        when 'volunteer' then 'volunteer.webp'
-        when 'web_visitor' then 'users.png'
-        else 'users.png'
+        when "super_admin" then "super_admin.webp"
+        when "admin" then "admin.webp"
+        when "volunteer" then "volunteer.webp"
+        when "web_visitor" then "users.png"
+        else "users.png"
         end
       end
 
       def avatar_alt
         case user.system_role
-        when 'super_admin' then 'Avatar Super Admin'
-        when 'admin' then 'Avatar Admin'
-        when 'volunteer' then 'Avatar Bénévole'
-        when 'web_visitor' then 'Avatar Utilisateur'
-        else 'Avatar'
+        when "super_admin" then "Avatar Super Admin"
+        when "admin" then "Avatar Admin"
+        when "volunteer" then "Avatar Bénévole"
+        when "web_visitor" then "Avatar Utilisateur"
+        else "Avatar"
         end
       end
 
       # Show crown overlay for super admins
       def crown?
-        user.system_role == 'super_admin'
+        user.system_role == "super_admin"
       end
     end
   end

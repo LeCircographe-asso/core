@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'ostruct'
+require "ostruct"
 
 module People
   class UserAccountCreator
@@ -11,7 +11,7 @@ module People
 
     attribute :person
     attribute :email_address, :string
-    attribute :system_role, :string, default: 'web_visitor'
+    attribute :system_role, :string, default: "web_visitor"
     attribute :password, :string
     attribute :created_by_admin, :boolean, default: false
     attribute :cgu, :boolean, default: true
@@ -21,7 +21,7 @@ module People
     validates :system_role, inclusion: { in: %w[super_admin admin volunteer web_visitor] }, allow_blank: true
 
     def call
-      return failure('Invalid data', errors.full_messages) unless valid?
+      return failure("Invalid data", errors.full_messages) unless valid?
 
       ActiveRecord::Base.transaction do
         target_person = person.reload
@@ -47,21 +47,21 @@ module People
       attrs[:email_address] = email_address if email_address.present? && email_address != user.email_address
       attrs[:system_role] = system_role if system_role.present? && system_role != user.system_role
 
-      return success(user: user, message: 'User already up to date', created: false) if attrs.empty? && password.blank?
+      return success(user: user, message: "User already up to date", created: false) if attrs.empty? && password.blank?
 
       user.assign_attributes(attrs) if attrs.any?
       user.password = password if password.present?
       user.password_confirmation = password if password.present?
       user.save!
 
-      success(user: user, message: 'User account updated successfully', created: false)
+      success(user: user, message: "User account updated successfully", created: false)
     end
 
     def create_user(target_person)
       return failure("Cette personne a déjà un compte web. ID User: #{target_person.user.id}") if target_person.user.present?
 
       final_email = email_address.presence || target_person.email
-      raise 'An email is required to create a user account' if final_email.blank?
+      raise "An email is required to create a user account" if final_email.blank?
 
       generated_password = password.presence || SecureRandom.hex(12)
 
@@ -69,7 +69,7 @@ module People
         email_address: final_email,
         password: generated_password,
         password_confirmation: generated_password,
-        system_role: system_role.presence || 'web_visitor',
+        system_role: system_role.presence || "web_visitor",
         created_by_admin: created_by_admin
       )
 
@@ -80,7 +80,7 @@ module People
 
       success(
         user: user,
-        message: 'User account created successfully',
+        message: "User account created successfully",
         created: true,
         generated_password: password.present? ? nil : generated_password
       )

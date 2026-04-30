@@ -16,7 +16,7 @@ class MaintenanceModeMiddleware
   private
 
   def maintenance_enabled?
-    env_enabled = truthy_env?(ENV.fetch('MAINTENANCE_MODE', nil))
+    env_enabled = truthy_env?(ENV.fetch("MAINTENANCE_MODE", nil))
 
     file_enabled = maintenance_flag_enabled?
 
@@ -28,7 +28,7 @@ class MaintenanceModeMiddleware
   end
 
   def healthcheck?(request)
-    request.path == '/up'
+    request.path == "/up"
   end
 
   def pwa_request?(request)
@@ -36,18 +36,18 @@ class MaintenanceModeMiddleware
 
     path = request.path
     pwa_paths = [
-      '/manifest',
-      '/manifest.json',
-      '/manifest.webmanifest',
-      '/service-worker',
-      '/service-worker.js'
+      "/manifest",
+      "/manifest.json",
+      "/manifest.webmanifest",
+      "/service-worker",
+      "/service-worker.js"
     ]
 
     pwa_paths.include?(path)
   end
 
   def maintenance_response
-    logo_src = inline_asset_data('logo.webp') || asset_path('logo.webp')
+    logo_src = inline_asset_data("logo.webp") || asset_path("logo.webp")
     body = <<~HTML
       <!DOCTYPE html>
       <html lang="fr">
@@ -123,12 +123,12 @@ class MaintenanceModeMiddleware
     HTML
 
     headers = {
-      'Content-Type' => 'text/html; charset=utf-8',
-      'Cache-Control' => 'no-store, no-cache, must-revalidate, max-age=0',
-      'Retry-After' => '300'
+      "Content-Type" => "text/html; charset=utf-8",
+      "Cache-Control" => "no-store, no-cache, must-revalidate, max-age=0",
+      "Retry-After" => "300"
     }
 
-    [503, headers, [body]]
+    [ 503, headers, [ body ] ]
   end
 
   def maintenance_flag_enabled?
@@ -136,7 +136,7 @@ class MaintenanceModeMiddleware
       next false unless File.exist?(path)
 
       content = File.read(path).strip.downcase
-      content.empty? || content == 'true'
+      content.empty? || content == "true"
     end
   rescue StandardError
     false
@@ -144,40 +144,40 @@ class MaintenanceModeMiddleware
 
   def maintenance_flag_paths
     @maintenance_flag_paths ||= [
-      Rails.root.join('tmp/maintenance.flag').to_s,
-      '/tmp/maintenance'
+      Rails.root.join("tmp/maintenance.flag").to_s,
+      "/tmp/maintenance"
     ]
   end
 
   def truthy_env?(value)
     return false if value.nil?
 
-    value.to_s.strip.casecmp('true').zero?
+    value.to_s.strip.casecmp("true").zero?
   end
 
   def google_url
-    url = ENV['GOOGLE_PAGE_URL'].to_s.strip
-    url.empty? ? 'https://share.google/ljLBRjVB5FoNNJV3o' : url
+    url = ENV["GOOGLE_PAGE_URL"].to_s.strip
+    url.empty? ? "https://share.google/ljLBRjVB5FoNNJV3o" : url
   end
 
   def instagram_url
-    url = ENV['INSTAGRAM_URL'].to_s.strip
-    url.empty? ? 'https://www.instagram.com/lecircographe/?hl=fr' : url
+    url = ENV["INSTAGRAM_URL"].to_s.strip
+    url.empty? ? "https://www.instagram.com/lecircographe/?hl=fr" : url
   end
 
   def whatsapp_url
-    url = ENV['WHATSAPP_COMMUNITY_URL'].to_s.strip
-    url.empty? ? 'https://chat.whatsapp.com/HUd6jvELxqVD642vfgVXBq' : url
+    url = ENV["WHATSAPP_COMMUNITY_URL"].to_s.strip
+    url.empty? ? "https://chat.whatsapp.com/HUd6jvELxqVD642vfgVXBq" : url
   end
 
   def facebook_url
-    url = ENV['FACEBOOK_URL'].to_s.strip
-    url.empty? ? 'https://www.facebook.com/lecircographe' : url
+    url = ENV["FACEBOOK_URL"].to_s.strip
+    url.empty? ? "https://www.facebook.com/lecircographe" : url
   end
 
   # Auto-redirect supprimé selon la demande
   def auto_redirect_meta
-    ''
+    ""
   end
 
   def asset_path(name)
@@ -187,16 +187,16 @@ class MaintenanceModeMiddleware
   end
 
   def inline_asset_data(name)
-    path = File.join(Rails.root.to_s, 'app', 'assets', 'images', name)
+    path = File.join(Rails.root.to_s, "app", "assets", "images", name)
     return nil unless File.file?(path)
 
     mime = case File.extname(name).downcase
-           when '.webp' then 'image/webp'
-           when '.png' then 'image/png'
-           when '.jpg', '.jpeg' then 'image/jpeg'
-           when '.svg' then 'image/svg+xml'
-           else 'application/octet-stream'
-           end
+    when ".webp" then "image/webp"
+    when ".png" then "image/png"
+    when ".jpg", ".jpeg" then "image/jpeg"
+    when ".svg" then "image/svg+xml"
+    else "application/octet-stream"
+    end
 
     data = ::Base64.strict_encode64(File.binread(path))
     "data:#{mime};base64,#{data}"
