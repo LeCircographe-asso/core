@@ -20,7 +20,7 @@
       <%= form.label :membership_type_id, @is_upgrade ? "Nouveau type d'adhésion" : "Type d'adhésion", class: "block text-sm font-medium text-gray-700" %>
       <%= form.select :membership_type_id, 
           @is_upgrade ? 
-            @membership_types.map { |mt| [upgrade_name_with_price(mt), mt.id] } :
+            @membership_types.map { |mt| [upgrade_name_with_price(mt, current_membership: @current_membership), mt.id] } :
             options_from_collection_for_select(@membership_types, :id, :name_with_price), 
           { prompt: @is_upgrade ? "Sélectionner le nouveau type" : "Sélectionner un type d'adhésion" },
           { class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#1F5C55] focus:ring-[#1F5C55] sm:text-sm", required: true } %>

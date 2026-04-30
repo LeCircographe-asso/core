@@ -3,6 +3,9 @@
 module ApplicationHelper
   include Pagy::Frontend
 
+  HERO_IMAGE_ASSIGNMENTS_REQUEST_KEY = "_circographe.hero_image_assignments"
+  HERO_IMAGE_POOL_REQUEST_KEY = "_circographe.hero_image_pool"
+
   def current_user
     return unless authenticated?
 
@@ -62,12 +65,12 @@ module ApplicationHelper
   end
 
   def hero_image(identifier = :default)
-    @hero_image_assignments ||= {}
-    return @hero_image_assignments[identifier] if @hero_image_assignments.key?(identifier)
+    assignments = hero_image_assignments_storage
+    return assignments[identifier] if assignments.key?(identifier)
 
     images = hero_image_pool
     fallback = fallback_hero_image(images)
-    @hero_image_assignments[identifier] = images.sample || fallback
+    assignments[identifier] = images.sample || fallback
   end
 
   def available_hero_images(except: [])
@@ -94,8 +97,16 @@ module ApplicationHelper
 
   private
 
+  def hero_image_assignments_storage
+    raise "hero_image_* helpers require request" unless request.respond_to?(:env)
+
+    request.env[HERO_IMAGE_ASSIGNMENTS_REQUEST_KEY] ||= {}
+  end
+
   def hero_image_pool
-    @hero_image_pool ||= begin
+    raise "hero_image_* helpers require request" unless request.respond_to?(:env)
+
+    request.env[HERO_IMAGE_POOL_REQUEST_KEY] ||= begin
       files = Rails.root.glob("app/assets/images/hero_*.webp").map { |path| File.basename(path) }
       files.select! { |file| asset_available?(file) }
       fallback = fallback_hero_image(files)

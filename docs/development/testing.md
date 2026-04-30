@@ -283,6 +283,41 @@ bundle exec rspec
 - CI : le job `lint` dans [`.github/workflows/ci-lint-audit.yml`](../../.github/workflows/ci-lint-audit.yml) exécute `bundle exec rubocop --format github --force-exclusion` (mêmes règles, format pour les annotations GitHub).
 - Ciblage : `bundle exec rubocop --only NomDuCop chemins… --force-exclusion`
 
+### Voir les offenses dans ton terminal
+
+- **Synthèse** (compte par cop) :
+
+  ```bash
+  bundle exec rubocop --format offenses --force-exclusion
+  ```
+
+- **Liste détaillée fichier/ligne** (lisible vite) :
+
+  ```bash
+  bundle exec rubocop --format clang --force-exclusion
+  ```
+
+- **Limiter à un dossier ou un fichier** :
+
+  ```bash
+  bundle exec rubocop app/helpers --force-exclusion
+  bundle exec rubocop app/models/user.rb --force-exclusion
+  ```
+
+- **Tester un ou plusieurs cops précis** (utile avant d’activer quelque chose dans `.rubocop.yml`) :
+
+  ```bash
+  bundle exec rubocop app --only Rails/HelperInstanceVariable --force-exclusion
+  ```
+
+- **Prévoir l’auto-correction sans écrire** :
+
+  ```bash
+  bundle exec rubocop -A --dry-run --force-exclusion
+  ```
+
+  Puis corriger avec `bundle exec rubocop -a` (**safe**) ou `-A` (plus agressif — à utiliser avec prudence).
+
 ### RSpec
 
 ```bash
@@ -401,7 +436,9 @@ L'ensemble des services `People::*`, `AccountClaimManagement::*`, `AttendanceMan
 
 ### RuboCop — rollout progressif (Phase 2+)
 
-- **Baseline** : `rubocop-rails-omakase` dans [`.rubocop.yml`](../../.rubocop.yml) comme **seule** base héritée ; exclusions projet documentées (permanent / temporaire / à revoir en Lot B2) + override Ezam `Layout/EndOfLine: lf`.
+- **Baseline** : `rubocop-rails-omakase` dans [`.rubocop.yml`](../../.rubocop.yml) comme **seule** base héritée ; exclusions projet documentées (permanent / temporaire) + override Ezam `Layout/EndOfLine: lf`. Le dossier `test/**/*` est **linté** avec le reste du Ruby applicatif (`spec/` l’était déjà).
+
+- **Lot B2 (élargissement)** — périmètre + conventions Rails cumulées : `test/**/*` inclus ; cops `Rails/` activés localement avec prudence (Omakase laisse la plupart du département `Rails` désactivé) — actuellement : `Rails/HttpStatus`, `Rails/Output`, `Rails/Delegate`, `Rails/StrongParametersExpect`, `Rails/PluralizationGrammar`, `Rails/UniqBeforePluck`, `Rails/HelperInstanceVariable`. Étendre la liste uniquement via petites PR après `bundle exec rubocop` / `bundle exec rspec` verts.
 - **Jobs** : [`.github/workflows/ci-lint-audit.yml`](../../.github/workflows/ci-lint-audit.yml) (`lint`) et [`.github/workflows/ci-auto-lint.yml`](../../.github/workflows/ci-auto-lint.yml) — RuboCop est **bloquant** lorsque la baseline est verte (`bundle exec rubocop --format github --force-exclusion`).
 - **Élargissement** : activer les cops **par petits lots**, une PR par lot ; pas de refactors métier ni renommage de vocabulaire domaine sans accord ([glossaire](../glossary.md)).
 - **Lots suivants suggérés** : après vérif des offenses — LOW (`Style/TrailingCommaInArrayLiteral` / `HashLiteral` si pertinent), puis MEDIUM (`Performance/*`, `Rails/*` au cas par cas), puis HIGH (`Lint/*` sur flux, `Metrics/*`, fichiers `app/models` / `app/services` sensibles) en revue manuelle uniquement.
