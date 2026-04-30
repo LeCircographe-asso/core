@@ -16,7 +16,7 @@ class Person < ApplicationRecord
   # TODO: Replace all newsletter_subscribed references with NewsletterSubscriber
   # ===================================================================
 
-  has_one :user, dependent: :nullify
+  has_one :user, dependent: :restrict_with_error
   has_many :memberships, dependent: :restrict_with_error
   has_many :payments, dependent: :restrict_with_error
   has_many :attendances, dependent: :destroy

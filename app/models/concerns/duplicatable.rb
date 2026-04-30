@@ -91,7 +91,9 @@ module Duplicatable
       next unless secondary.respond_to?(relation)
 
       # Mettre à jour les clés étrangères
+      # rubocop:disable Rails/SkipsModelValidations
       secondary.send(relation).update_all("#{primary.class.name.downcase}_id" => primary.id)
+      # rubocop:enable Rails/SkipsModelValidations
     end
   end
 

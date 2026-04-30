@@ -32,6 +32,7 @@ module People
         merge_memberships(source, target)
         merge_payments(source, target)
         merge_contributions(source, target)
+        merge_attendances(source, target)
         merge_newsletter(source, target)
         merge_attributes(source, target)
 
@@ -69,15 +70,19 @@ module People
     end
 
     def merge_memberships(source, target)
-      source.memberships.update_all(person_id: target.id)
+      transfer_relation(source.memberships, target.id)
     end
 
     def merge_payments(source, target)
-      source.payments.update_all(person_id: target.id)
+      transfer_relation(source.payments, target.id)
     end
 
     def merge_contributions(source, target)
-      source.contributions.update_all(person_id: target.id)
+      transfer_relation(source.contributions, target.id)
+    end
+
+    def merge_attendances(source, target)
+      transfer_relation(source.attendances, target.id)
     end
 
     def merge_newsletter(source, target)
@@ -88,9 +93,36 @@ module People
     end
 
     def merge_attributes(source, target)
-      return if target.email.present?
+      attrs = {}
+      if source.email.present? && (target.email.blank? || target_email_is_auth_placeholder?(target))
+        source_email = source.email
+        # When we intend to destroy source, free unique email first.
+        # rubocop:disable Rails/SkipsModelValidations
+        source.update_column(:email, nil) if destroy_source
+        # rubocop:enable Rails/SkipsModelValidations
+        attrs[:email] = source_email
+      end
+      attrs[:first_name] = source.first_name if should_replace_identity_value?(target.first_name) && source.first_name.present?
+      attrs[:last_name] = source.last_name if should_replace_identity_value?(target.last_name) && source.last_name.present?
+      return if attrs.empty?
 
-      target.update!(email: source.email)
+      target.update!(attrs)
+    end
+
+    def should_replace_identity_value?(value)
+      value.blank? || value.in?(%w[Web User])
+    end
+
+    def target_email_is_auth_placeholder?(target)
+      target.user.present? && target.email.present? && target.email.casecmp?(target.user.email_address.to_s)
+    end
+
+    # Intentional batch reassignment for large merges.
+    # This runs inside a transaction and avoids callback storms.
+    def transfer_relation(relation_scope, target_person_id)
+      # rubocop:disable Rails/SkipsModelValidations
+      relation_scope.update_all(person_id: target_person_id)
+      # rubocop:enable Rails/SkipsModelValidations
     end
 
     def instrument_success(source, target)

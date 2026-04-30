@@ -20,22 +20,24 @@ module AccountClaimManagement
         admin_person = claim.person
 
         if user_person.nil?
-          link_result = People::AccountLinker.new(
+          link_result = People::AttachUserToPerson.new(
             user: claim.user,
-            target_person: admin_person,
-            destroy_source_person: false,
-            audit_reason: "account_claim"
+            person: admin_person,
+            audit_reason: "account_claim_attach"
           ).call
 
           return failure("Erreur lors du rattachement du compte: #{link_result.message}") unless link_result.success?
 
-          user_person = link_result.target_person
+          user_person = link_result.person
         else
+          claim.update!(person: user_person)
+
           merge_result = People::AccountMerger.new(
             source_person: admin_person,
             target_person: user_person,
             actor_id: claim.user.id,
-            merge_type: "account_claim"
+            merge_type: "account_claim",
+            destroy_source: true
           ).call
 
           return failure("Erreur lors de la fusion: #{merge_result.message}") unless merge_result.success?
