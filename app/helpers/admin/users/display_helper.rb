@@ -5,7 +5,7 @@ module Admin
     module DisplayHelper
       # Formatage du nom avec fallback
       def display_name(person)
-        person.full_name.presence || content_tag(:span, "Non renseigné", class: "text-gray-400 italic")
+        person.full_name.presence || content_tag(:span, I18n.t("helpers.admin.users.display.not_provided"), class: "text-gray-400 italic")
       end
 
       # Formatage de l'email avec fallback
@@ -15,7 +15,7 @@ module Admin
         elsif person.email.present?
           content_tag :span, person.email, class: "text-gray-600"
         else
-          content_tag :span, "Pas d'email", class: "text-gray-400 italic"
+          content_tag :span, I18n.t("helpers.admin.users.display.no_email"), class: "text-gray-400 italic"
         end
       end
 
@@ -24,7 +24,7 @@ module Admin
         if person.phone.present?
           format_phone_number(person.phone)
         else
-          content_tag :span, "Non renseigné", class: "text-gray-400 italic"
+          content_tag :span, I18n.t("helpers.admin.users.display.not_provided"), class: "text-gray-400 italic"
         end
       end
 
@@ -42,7 +42,7 @@ module Admin
         elsif person.last_name.present?
           person.last_name
         else
-          "Nom non renseigné"
+          I18n.t("helpers.admin.users.display.name_not_provided")
         end
       end
 

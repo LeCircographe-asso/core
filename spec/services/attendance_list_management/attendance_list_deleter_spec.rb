@@ -31,7 +31,7 @@ RSpec.describe AttendanceListManagement::AttendanceListDeleter do
         result = described_class.new(deleted_by_id: admin_user.id).call
 
         expect(result.success?).to be false
-        expect(result.message).to include('Invalid data')
+        expect(result.message).to include(I18n.t('services.validation.invalid_data'))
       end
 
       it 'fails when attendance list does not exist' do

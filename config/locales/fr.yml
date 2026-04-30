@@ -1,22 +1,23 @@
-# French UI strings — Le Circographe (Rails/I18nLocaleTexts compliant)
-#
-# Controllers use lazy lookups under fr.<controller_path>.<action>.* unless noted.
-#
+---
 fr:
+  flash:
+    generic:
+      error_detail: 'Erreur: %{message}'
   account_claims:
     create:
-      success: "Demande de réclamation envoyée. Vérifiez vos emails."
+      success: Demande de réclamation envoyée. Vérifiez vos emails.
+      rescue_alert: 'Erreur: %{message}'
     confirm:
       success: "✅ Compte revendiqué ! Votre historique est maintenant disponible."
-
+      rescue_alert: 'Erreur lors de la réclamation: %{message}'
   activerecord:
     errors:
       models:
         attendance:
           attributes:
             person_id:
-              event_interest_taken: "est déjà intéressé par cet événement"
-              daily_presence_taken: "est déjà marqué présent aujourd'hui"
+              event_interest_taken: est déjà intéressé par cet événement
+              daily_presence_taken: est déjà marqué présent aujourd'hui
         payment_line:
           attributes:
             item_type:
@@ -24,235 +25,376 @@ fr:
         user:
           attributes:
             cgu:
-              must_accept: "Vous devez accepter les CGU pour continuer."
+              must_accept: Vous devez accepter les CGU pour continuer.
             privacy_policy:
-              must_accept: "Vous devez accepter la politique de confidentialité pour continuer."
-
+              must_accept: Vous devez accepter la politique de confidentialité pour continuer.
   admin:
     base:
-      unauthorized_alert: "Vous n'avez pas accès à cette page."
-
+      unauthorized_alert: Vous n'avez pas accès à cette page.
     attendances:
       create:
-        success: "Présence enregistrée avec succès"
+        success: Présence enregistrée avec succès
       destroy:
-        destroyed: "Présence supprimée avec succès"
-        failure: "Erreur lors de la suppression"
-
+        destroyed: Présence supprimée avec succès
+        failure: Erreur lors de la suppression
     blogs:
       create:
-        created: "Blog créé avec succès"
+        created: Blog créé avec succès
       update:
-        updated: "Blog mis à jour avec succès"
+        updated: Blog mis à jour avec succès
       destroy:
-        destroyed: "Blog supprimé avec succès"
-
+        destroyed: Blog supprimé avec succès
     donations:
       create:
-        recorded: "Donation prise en compte"
-
+        recorded: Donation prise en compte
     events:
       create:
-        created: "Événement créé avec succès"
+        created: Événement créé avec succès
       update:
-        updated: "Événement modifié avec succès"
+        updated: Événement modifié avec succès
       destroy:
-        destroyed_notice: "Événement supprimé avec succès"
-
+        destroyed_notice: Événement supprimé avec succès
     membership_types:
       create:
-        html_notice: "Type d'adhésion créé avec succès !"
-        turbo_notice: "Type d'adhésion créé avec succès !"
+        html_notice: Type d'adhésion créé avec succès !
+        turbo_notice: Type d'adhésion créé avec succès !
       update:
-        html_notice: "Type d'adhésion mis à jour avec succès !"
-        turbo_notice: "Type d'adhésion mis à jour avec succès !"
+        html_notice: Type d'adhésion mis à jour avec succès !
+        turbo_notice: Type d'adhésion mis à jour avec succès !
       destroy:
-        destroyed: "Type d'adhésion supprimé avec succès !"
-
+        destroyed: Type d'adhésion supprimé avec succès !
     memberships:
       update:
-        success: "Adhésion mise à jour avec succès."
+        success: Adhésion mise à jour avec succès.
       destroy:
-        deactivated: "Adhésion désactivée avec succès."
+        deactivated: Adhésion désactivée avec succès.
       create:
-        duplicate_active: "Cette personne possède déjà une adhésion active."
-        success_with_contribution_hint: "Adhésion créée avec succès ! Vous pouvez maintenant ajouter une cotisation depuis la fiche utilisateur."
-
+        duplicate_active: Cette personne possède déjà une adhésion active.
+        success_with_contribution_hint: Adhésion créée avec succès ! Vous pouvez maintenant ajouter une cotisation depuis la fiche utilisateur.
+        upgrade_failed_alert: 'Erreur lors de l''upgrade: %{message}'
+        membership_creation_failed_alert: 'Erreur lors de la création de l''adhésion: %{message}'
+        upgrade_notice_offered: Adhésion upgradée avec succès ! %{name} - Offert
+        upgrade_notice_paid: 'Adhésion upgradée avec succès ! %{name} - Montant: %{amount}€'
+        upgrade_notice_member_number_suffix: " | Numéro d'adhérent changé: %{old_number} → %{new_number}"
     notepads:
       edit:
-        breadcrumb_modify: "Modifier le bloc-note"
+        breadcrumb_modify: Modifier le bloc-note
       update:
-        updated: "Bloc-note mis à jour !"
-
+        updated: Bloc-note mis à jour !
     opening_hours:
       update:
-        success: "Horaires mis à jour avec succès"
-
+        success: Horaires mis à jour avec succès
     payments:
       show:
-        use_inline_notice: "Utilisez l'édition inline pour modifier les paiements"
+        use_inline_notice: Utilisez l'édition inline pour modifier les paiements
       new:
-        creation_disabled_notice: "Création de paiement temporairement désactivée"
+        creation_disabled_notice: Création de paiement temporairement désactivée
       create:
-        created_notice: "Paiement créé avec succès"
+        created_notice: Paiement créé avec succès
+        failure_alert: 'Erreur lors de la création du paiement: %{message}'
       update:
-        success_notice: "Mise à jour réussie"
+        success_notice: Mise à jour réussie
+        failure_alert: 'Échec de la mise à jour: %{message}'
       destroy:
-        cancelled_notice: "Paiement annulé avec succès"
+        cancelled_notice: Paiement annulé avec succès
+        cancel_failed_alert: 'Échec de l''annulation du paiement: %{message}'
       restore:
-        restored_notice: "Paiement restauré avec succès"
-
+        restored_notice: Paiement restauré avec succès
+        restore_failed_alert: 'Échec de la restauration du paiement: %{message}'
     sessions:
-      rate_limited_alert: "Rééssayez plus tard"
+      rate_limited_alert: Rééssayez plus tard
       create:
-        success: "Connexion réussie !"
-        invalid_credentials: "Email ou mot de passe invalide"
+        success: Connexion réussie !
+        invalid_credentials: Email ou mot de passe invalide
       destroy:
-        signed_out: "Déconnecté avec succès !"
-
+        signed_out: Déconnecté avec succès !
     subscription_plans:
       new:
-        needs_circus_membership_alert: "Cette personne doit avoir une adhésion Cirque pour acheter des plans de cotisation"
+        needs_circus_membership_alert: Cette personne doit avoir une adhésion Cirque pour acheter des plans de cotisation
       create:
-        purchased: "Plan de cotisation acheté avec succès !"
+        purchased: Plan de cotisation acheté avec succès !
+        purchase_failed_alert: 'Erreur lors de l''achat du plan: %{message}'
       update:
-        updated: "Plan de cotisation mis à jour avec succès !"
+        updated: Plan de cotisation mis à jour avec succès !
       destroy:
-        destroyed: "Plan de cotisation supprimé avec succès !"
+        destroyed: Plan de cotisation supprimé avec succès !
       require_super_admin:
-        forbidden: "Seul le super-admin peut modifier ou supprimer des cotisations."
-
+        forbidden: Seul le super-admin peut modifier ou supprimer des cotisations.
+    subscriptions:
+      upgrade:
+        success_notice: Cotisation upgradée avec succès.
+        credit_applied_suffix: " Crédit appliqué: %{amount}€"
+        failure_alert: 'Erreur lors de l''upgrade: %{message}'
     users:
+      create:
+        invalid_data_alert: 'Données invalides : %{details}'
+        success_person_user_membership: Personne, compte web et adhésion créés avec succès !
+        success_person_user: Personne et compte web créés avec succès !
+        success_person_membership: Personne et adhésion créées avec succès !
+        success_person_only: Personne créée avec succès !
+        error_existing_web_account: Cette personne a déjà un compte web.
+        error_email_required: Un email est obligatoire pour créer un compte web.
       show:
-        merged_person_notice: "Cette fiche a été fusionnée avec une autre. Retour à la liste des utilisateurs."
+        merged_person_notice: Cette fiche a été fusionnée avec une autre. Retour à la liste des utilisateurs.
       edit:
-        user_not_found: "Utilisateur non trouvé."
-        edit_error: "Une erreur est survenue lors de l'édition de l'utilisateur."
+        user_not_found: Utilisateur non trouvé.
+        edit_error: Une erreur est survenue lors de l'édition de l'utilisateur.
       update:
-        person_saved_notice: "Informations mises à jour avec succès."
-        ajax_success_json_message: "Informations mises à jour avec succès."
-        html_updated: "Utilisateur mis à jour avec succès."
-        turbo_notice: "Utilisateur mis à jour avec succès."
+        person_saved_notice: Informations mises à jour avec succès.
+        ajax_success_json_message: Informations mises à jour avec succès.
+        html_updated: Utilisateur mis à jour avec succès.
+        turbo_notice: Utilisateur mis à jour avec succès.
       destroy:
-        person_not_found_alert: "Personne non trouvée."
-        person_deleted_notice: "Personne supprimée avec succès."
+        person_not_found_alert: Personne non trouvée.
+        person_deleted_notice: Personne supprimée avec succès.
         destruction_failed_alert_html: "❌ %{message}"
-        user_archived_notice: "Utilisateur archivé avec succès."
-        archive_failed_alert: "Impossible d'archiver cet utilisateur."
+        user_archived_notice: Utilisateur archivé avec succès.
+        archive_failed_alert: Impossible d'archiver cet utilisateur.
       restore:
-        restored_notice: "Utilisateur restauré avec succès."
-        restore_failed_alert: "Impossible de restaurer cet utilisateur."
+        restored_notice: Utilisateur restauré avec succès.
+        restore_failed_alert: Impossible de restaurer cet utilisateur.
       set_user:
-        person_or_user_missing_alert: "Utilisateur non trouvé."
+        person_or_user_missing_alert: Utilisateur non trouvé.
       check_deletion_permissions:
-        higher_privileges: "Impossible de supprimer un utilisateur avec des privilèges égaux ou supérieurs."
+        higher_privileges: Impossible de supprimer un utilisateur avec des privilèges égaux ou supérieurs.
       require_super_admin:
-        restore_denied_alert: "Seul le super-admin peut restaurer des utilisateurs."
+        restore_denied_alert: Seul le super-admin peut restaurer des utilisateurs.
       payments:
         create:
-          success: "Paiement créé avec succès"
+          success: Paiement créé avec succès
+          failure_alert: 'Erreur lors de la création du paiement: %{message}'
         update:
-          success: "Paiement mis à jour avec succès"
+          success: Paiement mis à jour avec succès
+          failure_alert: 'Erreur lors de la mise à jour: %{message}'
         destroy:
-          destroyed: "Paiement supprimé avec succès"
+          destroyed: Paiement supprimé avec succès
+          failure_alert: 'Erreur lors de la suppression: %{message}'
         process_payment:
-          processed: "Paiement traité avec succès"
-          already_processed: "Paiement déjà traité"
-
+          processed: Paiement traité avec succès
+          already_processed: Paiement déjà traité
+          failure_alert: 'Erreur lors du traitement: %{message}'
   checkout:
     success:
-      payment_ok: "Paiement réussi et commande mise à jour."
-      payment_failed_alert: "Paiement non réussi, commande non mise à jour."
+      payment_ok: Paiement réussi et commande mise à jour.
+      payment_failed_alert: Paiement non réussi, commande non mise à jour.
     cancel:
-      cancelled_alert: "Le paiement a été annulé."
-
+      cancelled_alert: Le paiement a été annulé.
   contacts:
     create:
-      blank_fields: "Veuillez remplir tous les champs du formulaire."
-      sent_notice: "Votre message a été envoyé avec succès ! Nous revenons vers vous rapidement."
-      send_error: "Une erreur est survenue lors de l'envoi. Réessaie dans quelques instants."
-
+      blank_fields: Veuillez remplir tous les champs du formulaire.
+      sent_notice: Votre message a été envoyé avec succès ! Nous revenons vers vous rapidement.
+      send_error: Une erreur est survenue lors de l'envoi. Réessaie dans quelques instants.
   event_interests:
     create:
-      profile_incomplete: "Votre profil n'est pas complet. Veuillez contacter l'administration."
-      interest_added: "Vous êtes maintenant intéressé par cet événement !"
-      interest_error: "Erreur lors de l'ajout de votre intérêt"
+      profile_incomplete: Votre profil n'est pas complet. Veuillez contacter l'administration.
+      interest_added: Vous êtes maintenant intéressé par cet événement !
+      interest_error: Erreur lors de l'ajout de votre intérêt
     destroy:
-      interest_removed: "Vous n'êtes plus intéressé par cet événement"
-      interest_remove_error: "Erreur lors de la suppression de votre intérêt"
-
+      interest_removed: Vous n'êtes plus intéressé par cet événement
+      interest_remove_error: Erreur lors de la suppression de votre intérêt
   passwords:
     create:
-      reset_instructions_sent_generic: "Instructions de réinitialisation du mot de passe envoyées (si un utilisateur avec cette adresse e-mail existe)."
+      reset_instructions_sent_generic: Instructions de réinitialisation du mot de passe envoyées (si un utilisateur avec cette adresse e-mail existe).
     update:
-      password_reset_success: "Le mot de passe a été réinitialisé."
+      password_reset_success: Le mot de passe a été réinitialisé.
     request_reset:
-      sent_to_email_notice: "Instructions de réinitialisation du mot de passe envoyées à %{email}."
-      must_be_signed_in_alert: "Vous devez être connecté pour effectuer cette action."
-    invalid_token_alert: "Le lien de réinitialisation du mot de passe est invalide ou a expiré."
-
+      sent_to_email_notice: Instructions de réinitialisation du mot de passe envoyées à %{email}.
+      must_be_signed_in_alert: Vous devez être connecté pour effectuer cette action.
+    invalid_token_alert: Le lien de réinitialisation du mot de passe est invalide ou a expiré.
   registrations:
     create:
-      success_notice: "Inscription réussie !"
-
+      success_notice: Inscription réussie !
   sessions:
-    rate_limited_alert: "Rééssayez plus tard"
+    rate_limited_alert: Rééssayez plus tard
     create:
-      login_success_notice: "Connexion réussie !"
-      invalid_credentials_flash: "Email ou mot de passe invalide"
-      invalid_credentials_redirect: "Email ou mot de passe invalide"
+      login_success_notice: Connexion réussie !
+      invalid_credentials_flash: Email ou mot de passe invalide
+      invalid_credentials_redirect: Email ou mot de passe invalide
     destroy:
-      signed_out_notice: "Déconnecté avec succès !"
-
+      signed_out_notice: Déconnecté avec succès !
   settings:
     update:
-      saved_notice: "Vos modifications ont été enregistrées avec succès"
-
+      saved_notice: Vos modifications ont été enregistrées avec succès
   users:
     update:
-      profile_updated: "Votre profil a été mis à jour avec succès."
+      profile_updated: Votre profil a été mis à jour avec succès.
     destroy:
-      deleted_notice: "Votre compte a été supprimé avec succès."
-      destroy_failed_alert: "Impossible de supprimer votre compte. Veuillez contacter l'assistance."
+      deleted_notice: Votre compte a été supprimé avec succès.
+      destroy_failed_alert: Impossible de supprimer votre compte. Veuillez contacter l'assistance.
     change_newsletter_status:
-      redirect_manage_in_settings_alert: "Gérez votre newsletter depuis vos paramètres."
+      redirect_manage_in_settings_alert: Gérez votre newsletter depuis vos paramètres.
     newsletter_signup:
-      honeypot_thanks_notice: "Merci pour votre inscription!"
-      email_blank_alert: "Veuillez entrer une adresse email valide."
-      manage_newsletter_notice: "Gérez votre newsletter depuis vos paramètres en cochant/décochant la case."
+      honeypot_thanks_notice: Merci pour votre inscription!
+      email_blank_alert: Veuillez entrer une adresse email valide.
+      manage_newsletter_notice: Gérez votre newsletter depuis vos paramètres en cochant/décochant la case.
     unsubscribe_by_token:
-      invalid_token_alert: "Token de désinscription invalide."
-
+      invalid_token_alert: Token de désinscription invalide.
   payment_line:
     item_description:
-      membership_fallback: "Adhésion"
-      membership_type_fallback: "Type d'adhésion"
-      contribution_fallback: "Cotisation"
-      donation_fallback: "Donation"
+      membership_fallback: Adhésion
+      membership_type_fallback: Type d'adhésion
+      contribution_fallback: Cotisation
+      donation_fallback: Donation
     descriptions:
-      membership: "Adhésion %{name}"
+      membership: Adhésion %{name}
       contribution_formula: "%{name} (%{duration})"
-      membership_type: "Adhésion %{name}"
-
+      membership_type: Adhésion %{name}
   services:
     web:
       user_registration:
-        accept_cgu: "Vous devez accepter les CGU pour continuer."
-        accept_privacy: "Vous devez accepter la politique de confidentialité pour continuer."
-
+        accept_cgu: Vous devez accepter les CGU pour continuer.
+        accept_privacy: Vous devez accepter la politique de confidentialité pour continuer.
+    validation:
+      invalid_data: Données invalides
+      invalid_data_with_details: 'Données invalides : %{details}'
   mailers:
     account_claim_mailer:
       confirmation_email:
-        subject: "Confirmez votre revendication de compte - Le Circographe"
-
+        subject: Confirmez votre revendication de compte - Le Circographe
     passwords_mailer:
       reset:
-        subject: "Réinitialisez votre mot de passe"
-
+        subject: Réinitialisez votre mot de passe
     user_mailer:
       welcome_by_admin:
-        subject: "Bienvenue au Circographe ! "
+        subject: 'Bienvenue au Circographe ! '
       welcome_email:
-        subject: "Bienvenue au Circographe ! "
+        subject: 'Bienvenue au Circographe ! '
       membership_expiration_reminder:
-        subject: "Votre adhésion arrive à expiration !"
+        subject: Votre adhésion arrive à expiration !
+  breadcrumbs:
+    admin:
+      common:
+        administration: Administration
+        dashboard: Tableau de bord
+        edit: Modifier
+      users:
+        members_list: Liste d'adhérents
+        create_web_account: Créer un compte web
+        new_member: Nouvel adhérent
+      memberships:
+        management: Gestion des Adhésions
+        membership: Adhésion
+        upgrade_to_circus: Upgrade vers Cirque
+        new_membership: Nouvelle adhésion
+        edit_membership: Modifier adhésion
+      payments:
+        history: Historique des paiements
+        management: Gestion des paiements
+      subscription_plans:
+        plans: Plans de cotisation
+        plan_named: 'Plan : %{name}'
+        new_contribution: Nouvelle cotisation
+        edit_named: 'Modifier : %{name}'
+      opening_hours:
+        title: Horaires d'ouverture
+      events:
+        events: Événements
+        new_event: Nouvel événement
+      attendances:
+        management: Gestion des présences
+        attendance_number: 'Présence #%{id}'
+        new_attendance: Nouvelle présence
+      membership_types:
+        types: Types d'Adhésion
+        type_named: 'Type : %{name}'
+        new_type: Nouveau type d'adhésion
+        edit_named: 'Modifier : %{name}'
+      attendance_lists:
+        lists: Listes de présence
+        new_list: Nouvelle liste
+      health_reports:
+        integrity_report: Rapport d'intégrité
+  helpers:
+    admin:
+      users:
+        display:
+          not_provided: Non renseigné
+          no_email: Pas d'email
+          name_not_provided: Nom non renseigné
+  layouts:
+    application:
+      title: Le Circographe
+  views:
+    shared:
+      flash:
+        close: Fermer
+      navbar:
+        open_menu: Ouvrir le menu
+        place: Le Lieu
+        circus: Le Cirque
+        graphic_arts: Les Arts Graphiques
+        how_it_works: Fonctionnement
+        activities: Nos Activités
+        join: Adhérer
+        about: À Propos
+        contact: Nous contacter
+        faq: F.A.Q
+        my_space: Mon Espace
+        user: Utilisateur
+        profile: Profil
+        dashboard: Tableau de bord
+        settings: Paramètres
+        logout: Déconnexion
+        sign_in: Se connecter
+        sign_up: S'inscrire
+        association: L'Association
+        news: Actualités
+        our_news: Nos actualités
+        blog_newsletters: Blog & Newsletters
+        photo_gallery: Galerie Photos
+        events: Nos Événements
+      footer:
+        newsletter_cta: Restez informé en souscrivant à notre newsletter
+        email_placeholder: Votre Adresse Email
+        sign_up: S'inscrire
+        discover: Découvrir
+        about: À propos
+        place: Le Lieu
+        activities: Nos activités
+        participate: Participer
+        join: Adhérer
+        contact: Nous contacter
+        map: Plan d’accès
+        resources: Ressources
+        faq: F.A.Q
+        terms: Mentions légales
+        privacy: Politique de confidentialité
+        brand: Le Circographe
+        all_rights_reserved: Tous Droits Réservés.
+    admin:
+      users:
+        new:
+          page_title: Créer un nouvel utilisateur
+          page_subtitle: Ajoutez un nouvel utilisateur au système
+          user_information: Informations de l'utilisateur
+          create_web_account: Créer un compte web
+          create_web_account_help: Permettre à cette personne de se connecter et gérer son profil en ligne
+          system_role: Rôle système
+          roles:
+            web_visitor: Visiteur web
+            volunteer: Bénévole
+            admin: Administrateur
+          temporary_password_notice: Un mot de passe temporaire sera généré et envoyé par email
+        index:
+          page_title: Gestion des Adhérents
+          page_subtitle: Interface unifiée pour gérer les personnes, adhésions et cotisations
+          statistics: Statistiques
+          total_people: Total personnes
+          new_yesterday: Nouveaux (hier)
+          basic_memberships: Adhésions Basic
+          circus_memberships: Adhésions Circus
+          active_memberships: Adhésions actives
+          without_account: Sans compte
+          create_member: Créer un Adhérent
+    pages:
+      about:
+        page_title: Le Circographe - À propos
+        join_community: Rejoindre la communauté
+        heading: À propos du Circographe
+        hero_description: Laboratoire de pratiques artistiques partagées où cirque et arts graphiques se rencontrent — autogestion et solidarité.
+        join: Nous rejoindre
+        discover_place: Découvrir le lieu
+        our_mission: Notre mission
+        mission_heading: Un espace de création partagé et accessible
+        mission_text_1: Offrir un espace de pratique, de création et de transmission accessible à toutes et tous.
+        mission_text_2: 'Gouvernance autogérée : les membres s’engagent bénévolement, partagent les clés et co-programment la vie du lieu.'

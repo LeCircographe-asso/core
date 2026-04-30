@@ -21,7 +21,7 @@ module People
     validates :system_role, inclusion: { in: %w[super_admin admin volunteer web_visitor] }, allow_blank: true
 
     def call
-      return failure("Invalid data", errors.full_messages) unless valid?
+      return failure(I18n.t("services.validation.invalid_data"), errors.full_messages) unless valid?
 
       ActiveRecord::Base.transaction do
         target_person = person.reload

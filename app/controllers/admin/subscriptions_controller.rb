@@ -14,16 +14,18 @@ module Admin
       ).call
 
       if result.success?
-        credit_message = result.credit_applied.positive? ? " Crédit appliqué: #{result.credit_applied / 100.0}€" : ""
-        redirect_to admin_user_path("person_#{@person.id}"),
-                    notice: "Cotisation upgradée avec succès.#{credit_message}"
+        notice = t(".success_notice")
+        if result.credit_applied.positive?
+          notice += t(".credit_applied_suffix", amount: (result.credit_applied / 100.0).round(2))
+        end
+        redirect_to admin_user_path("person_#{@person.id}"), notice: notice
       else
         redirect_to admin_user_path("person_#{@person.id}"),
-                    alert: "Erreur lors de l'upgrade: #{result.message}"
+                    alert: t(".failure_alert", message: result.message)
       end
     rescue StandardError => e
       redirect_to admin_user_path("person_#{@person.id}"),
-                  alert: "Erreur lors de l'upgrade: #{e.message}"
+                  alert: t(".failure_alert", message: e.message)
     end
 
     private

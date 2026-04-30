@@ -6,6 +6,7 @@ class User < ApplicationRecord
 
   attr_accessor :cgu, :privacy_policy
 
+  before_validation :ensure_person_for_new_record, on: :create
   after_create :generate_password_reset_token
   after_create :welcome_send
 
@@ -22,7 +23,7 @@ class User < ApplicationRecord
   alias_attribute :email, :email_address
 
   # Relation avec Person (nouvelle architecture)
-  belongs_to :person, optional: true
+  belongs_to :person
 
   # Relations Person-Based Architecture
   has_many :sessions, dependent: :destroy
@@ -52,6 +53,7 @@ class User < ApplicationRecord
   normalizes :email_address, with: ->(e) { e&.strip&.downcase }
 
   validates :email_address, presence: true
+  validates :person, presence: true
   validate :email_uniqueness_unless_person_email
   validates :cgu, acceptance: { message: :must_accept }, unless: :created_by_admin?
   validates :privacy_policy, acceptance: { message: :must_accept }, unless: :created_by_admin?
@@ -70,12 +72,12 @@ class User < ApplicationRecord
 
   # Anonymize personal data after soft deletion
   def anonymize_personal_data
-    update_columns(
+    update!(
       email_address: "deleted_#{id}@example.com"
     )
 
     # Anonymiser les données de la Person liée
-    person&.update_columns(
+    person&.update!(
       first_name: "Deleted",
       last_name: "User",
       address: nil,
@@ -84,7 +86,9 @@ class User < ApplicationRecord
     )
 
     # Deactivate any active memberships
-    memberships.where(status: "active").update_all(status: "inactive")
+    memberships.where(status: "active").find_each do |membership|
+      membership.update!(status: "inactive")
+    end
   end
 
   # Check if the user has any active payments
@@ -240,6 +244,17 @@ class User < ApplicationRecord
   end
 
   private
+
+  def ensure_person_for_new_record
+    return if person.present?
+
+    self.person = Person.new(
+      first_name: "Web",
+      last_name: "User",
+      email: email_address
+    )
+    person.skip_membership_validation = true
+  end
 
   def generate_password_reset_token
     return if Rails.env.test?

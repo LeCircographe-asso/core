@@ -2,7 +2,7 @@
 
 > **Statut** : stable
 > **Public cible** : contributeur
-> **Dernière vérification** : 2026-04-27
+> **Dernière vérification** : 2026-05-01
 > **Sources de vérité** : `app/models/person.rb`, `app/models/user.rb`, `app/components/`, `app/services/people/`.
 
 > **Vocabulaire** : le composant a été renommé `contribution_status_badge_component` (cible). Les services `People::Subscription*` restent à renommer en `People::Contribution*` lors de la migration DB. Voir [`../glossary.md`](../glossary.md).
@@ -24,12 +24,12 @@ Ce document consolide les bonnes pratiques et l'architecture mise en place lors 
 ## 👤 Person / User - Règles de Cycle de Vie
 
 - **Person = source de vérité** pour l'identité et la finance.
-- **User = compte web** (authentification + permissions), optionnel.
+- **User = compte web** (authentification + permissions). **Données : chaque User a une Person** (`person_id` NOT NULL) ; le compte web reste **optionnel au niveau métier** pour une Person donnée (CRM sans login).
 - **Cas supportés** :
   - Person sans User (inscription IRL d'abord).
-  - User sans Person (inscription web d'abord).
-- **Lien explicite uniquement** : le lien User ↔ Person se fait via un service dédié.
-- **Pas de reliaison implicite** si une Person a déjà un User lié.
+  - Inscription web : création d’un **couple User + Person** (personne minimale puis enrichissement / rattachement à une fiche existante).
+- **Lien / rattachement explicite** : `People::AttachUserToPerson` (nominal), `People::AccountLinker` (orchestration), jamais d’assign direct dans un controller.
+- **Pas de reliaison implicite** si une Person a déjà un User lié (garde-fous dans `AttachUserToPerson`).
 - **Pas d'orphelins financiers** : paiements et adhésions restent rattachés à la Person.
 
 ---
@@ -37,7 +37,7 @@ Ce document consolide les bonnes pratiques et l'architecture mise en place lors 
 ## 🧭 Service Entry Points (Flux Unifiés)
 
 - **Création Person / User / Membership** : `People::Register`
-- **Lien User ↔ Person** : `People::AccountLinker`
+- **Rattachement User ↔ Person** : `People::AttachUserToPerson` ; **orchestration** : `People::AccountLinker`
 - **Achat adhésion** : `People::MembershipCreator`
 - **Achat cotisation** : `People::SubscriptionCreator` *(cible : `People::ContributionCreator`)*
 - **Mise à jour User + Person** : `UserManagement::UserUpdater`

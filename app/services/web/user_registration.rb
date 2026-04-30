@@ -31,7 +31,7 @@ module Web
     validate :password_confirmation_matches
 
     def call
-      return failure("Invalid data: #{errors.full_messages.join(', ')}") unless valid?
+      return failure(I18n.t("services.validation.invalid_data_with_details", details: errors.full_messages.join(", "))) unless valid?
 
       existing_person = Person.active.find_by(email: email)
 

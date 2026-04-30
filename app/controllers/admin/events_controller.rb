@@ -8,20 +8,20 @@ module Admin
 
     def index
       @events = Event.all
-      add_breadcrumb "Événements", nil
+      add_breadcrumb I18n.t("breadcrumbs.admin.events.events"), nil
     end
 
     def new
       @event = Event.new
-      add_breadcrumb "Événements", admin_events_path
-      add_breadcrumb "Nouvel événement", nil
+      add_breadcrumb I18n.t("breadcrumbs.admin.events.events"), admin_events_path
+      add_breadcrumb I18n.t("breadcrumbs.admin.events.new_event"), nil
     end
 
     def edit
       @event = Event.find params[:id]
-      add_breadcrumb "Événements", admin_events_path
+      add_breadcrumb I18n.t("breadcrumbs.admin.events.events"), admin_events_path
       add_breadcrumb @event.title, event_path(@event)
-      add_breadcrumb "Modifier", nil
+      add_breadcrumb I18n.t("breadcrumbs.admin.common.edit"), nil
     end
 
     def create

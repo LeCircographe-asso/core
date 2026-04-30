@@ -10,7 +10,7 @@ module ContributionFormulaManagement
     validates :updated_by_id, presence: true
 
     def call
-      return failure("Invalid data: #{errors.full_messages.join(', ')}") unless valid?
+      return failure(I18n.t("services.validation.invalid_data_with_details", details: errors.full_messages.join(", "))) unless valid?
 
       begin
         contribution_formula = ContributionFormula.find(contribution_formula_id)

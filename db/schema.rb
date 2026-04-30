@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_04_27_092706) do
+ActiveRecord::Schema[8.1].define(version: 2026_04_30_204500) do
   create_table "account_claims", force: :cascade do |t|
     t.string "confirmation_token", null: false
     t.datetime "created_at", null: false
@@ -360,7 +360,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_27_092706) do
     t.datetime "password_reset_sent_at"
     t.string "password_reset_token"
     t.string "password_salt"
-    t.bigint "person_id"
+    t.bigint "person_id", null: false
     t.integer "system_role", default: 3, null: false
     t.datetime "updated_at", null: false
     t.index ["deleted"], name: "index_users_on_deleted"

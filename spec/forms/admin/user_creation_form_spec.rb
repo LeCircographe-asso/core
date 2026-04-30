@@ -91,7 +91,9 @@ RSpec.describe Admin::UserCreationForm do
         result = form.call
 
         expect(result.success?).to be(false)
-        expect(result.errors.join(', ')).to include('Invalid data')
+        expect(result.errors.join(', ')).to start_with(
+          I18n.t('admin.users.create.invalid_data_alert', details: '').rstrip
+        )
       end
     end
 
