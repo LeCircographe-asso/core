@@ -3,13 +3,18 @@
 module Admin
   module Payments
     class PaymentActionsComponent < ViewComponent::Base
-      def initialize(payment:)
+      def initialize(payment:, list_filter_params: {})
         @payment = payment
+        @list_filter_params = list_filter_params
       end
 
       private
 
-      attr_reader :payment
+      attr_reader :payment, :list_filter_params
+
+      def path_filters
+        helpers.payments_index_query_filters(list_filter_params)
+      end
 
       def view_action
         # Rediriger vers la personne si elle a un user, sinon vers la liste
@@ -51,7 +56,7 @@ module Admin
       end
 
       def edit_action
-        link_to edit_admin_payment_path(payment),
+        link_to helpers.edit_admin_payment_path(payment, **path_filters),
                 class: "text-blue-600 hover:text-blue-800 mr-2",
                 title: "Modifier",
                 data: {
@@ -75,11 +80,12 @@ module Admin
       def cancel_action
         return unless payment.status != "cancel"
 
-        button_to admin_payment_path(payment),
+        button_to helpers.admin_payment_path(payment, **path_filters),
                   method: :delete,
                   form: {
                     data: {
-                      turbo_confirm: "Êtes-vous sûr de vouloir annuler ce paiement ?"
+                      turbo_confirm: "Êtes-vous sûr de vouloir annuler ce paiement ?",
+                      turbo_frame: "_top"
                     }
                   },
                   class: "text-red-600 hover:text-red-800",
