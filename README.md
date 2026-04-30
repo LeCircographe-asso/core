@@ -35,12 +35,16 @@ Application disponible sur `http://localhost:3000`. Letter Opener Web (emails de
 
 ---
 
-## Tests
+## Tests (RSpec only)
+
+Le projet utilise **RSpec uniquement**. Le legacy Minitest (`test/`) a ete retire.
 
 ```bash
 bin/test                # suite complète + couverture
 bin/test_fast           # models + services (rapide)
 bin/test --no-coverage  # sans SimpleCov
+bundle exec rspec       # commande RSpec canonique
+bundle exec rubocop --force-exclusion
 ```
 
 ---

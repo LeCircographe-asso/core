@@ -19,6 +19,7 @@ AllCops:
     - 'vendor/**/*'
     - 'tmp/**/*'
     - '.bundle/**/*'
+    - 'test/**/*'
 
 # Ezam override kept on purpose (not enforced by Omakase)
 Layout/EndOfLine:
