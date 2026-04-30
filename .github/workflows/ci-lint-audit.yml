@@ -25,10 +25,8 @@ jobs:
       - uses: actions/setup-node@v6
         with:
           node-version: "22"
-      # TODO: drop `|| true` once baseline offenses are fixed and RuboCop should
-      # fail the check again (branch protection). Annotations still appear from stdout.
       - name: Run RuboCop
-        run: bundle exec rubocop --format github --force-exclusion || true
+        run: bundle exec rubocop --format github --force-exclusion
 
   security:
     runs-on: ubuntu-latest
