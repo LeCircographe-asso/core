@@ -2,7 +2,7 @@
 
 > **Statut** : stable
 > **Public cible** : contributeur
-> **Dernière vérification** : 2026-04-27
+> **Dernière vérification** : 2026-05-01
 > **Sources de vérité** : `app/services/people/`, `app/services/event_management/`, `app/services/attendance_management/`, `app/services/user_management/`.
 
 **Création initiale:** 2025-01-31  
@@ -23,17 +23,18 @@ Les services suivent le pattern **Service Object avec ActiveModel::Model** :
 ### Person (Entity) vs User (Account)
 
 - **Person = Entity CRM** : fiche métier unique qui contient l'identité, l'historique financier (adhésions, cotisations, paiements) et tous les attributs d’usage.
-- **User = Account** : accès web optionnel (email, mot de passe, rôle) qui délègue tous ses attributs de profil à `Person` via `delegate`.
+- **User = Account** : accès web (email, mot de passe, rôle) qui délègue tous ses attributs de profil à `Person` via `delegate`. **Données : tout `User` a une `Person`** (`belongs_to :person`, NOT NULL) ; à la création web sans fiche existante, une `Person` minimale est créée par callback sur `User`.
 - **Règles clés** :
   - Créer/éditer la fiche métier via `People::Register` / `People::PersonCreator` ; le compte web est créé via `People::UserAccountCreator` si besoin.
-  - Supprimer un `User` ne détruit pas la `Person` (relation `has_one :user, dependent: :nullify`).
+  - Rattacher un compte existant à une fiche CRM : **`People::AttachUserToPerson`** (nominal) ; **`People::AccountLinker`** encapsule attach + nettoyage éventuel (`People::AccountMerger`).
+  - Supprimer un `User` ne détruit pas la `Person`. Côté `Person`, `has_one :user, dependent: :restrict_with_error` empêche une suppression de fiche incompatible tant qu’un `User` existe — passer par archive / RGPD.
   - Supprimer une `Person` passe par `SoftDeletable` (`Person#archive!`) avec garde-fous financiers (`has_financial_data?`).
   - Toutes les opérations financières (`People::Payment*`, `People::Subscription*` *(cible : `People::Contribution*`)*, `People::Register`) travaillent **exclusivement** sur `Person`.
 
 Cette séparation “Entity / Account” garantit :
 - pas de perte d’historique quand un utilisateur supprime son compte web,
 - la possibilité de gérer des personnes sans compte web (inscriptions papier, mineurs, bénévoles),
-- une liaison safe quand un compte web est créé après coup ou par l’admin.
+- une liaison explicite et auditée (`AttachUserToPerson` / `AccountLinker`) quand un compte web doit être relié à une fiche existante.
 
 ## Organisation par Domaine
 
@@ -66,17 +67,18 @@ Cette séparation “Entity / Account” garantit :
 - `Admin::Users::PaymentsController` (create, update, destroy via `People::PaymentCreator` multi-lignes)
 
 **Donations — état actuel et cible**
-- **Cible** : une donation est une `PaymentLine` avec `item_type: "Donation"`. Aucune `PaymentLine` ne doit avoir `item_type: "Payment"`.
-- **Code actuel** : `People::PaymentCreator` réécrit silencieusement les lignes de don en `item_type: "Payment"` et `item_id: payment.id` (cf. `app/services/people/payment_creator.rb` L92). Cette dette technique est tracée dans `phase1-donation-fix` (voir [`../payments.md`](../payments.md)).
-- **Comportement attendu côté appelant** : passer `item_type: "Donation"` et `item_id: payment.id` (ou `person.id` selon le flow). Le service fait le reste — y compris la réécriture legacy temporaire.
+- **Cible** : une donation est une `PaymentLine` avec `item_type: "Donation"` et `item_id` adapté (souvent `payment.id` pour les dons « libres »). Aucune nouvelle ligne ne doit utiliser `item_type: "Payment"` pour un don.
+- **Code actuel** : `People::PaymentCreator` garde `item_type: "Donation"` sur la ligne simple lorsque le flux est un don (`donation_line?`). Les anciennes lignes en base peuvent encore être `item_type: "Payment"` — backfill / reporting : voir [`../payments.md`](../payments.md) et `phase1-donation-fix`.
+- **Comportement attendu côté appelant** : passer `item_type: "Donation"` (ou laisser le défaut du service) ; fournir montants cohérents avec `total_cents`.
 - **Validation** : la somme des `payment_lines` doit égaler `total_cents` ; sinon, `failure`.
 
-### ✅ People::AccountLinker (Support CRM)
-- `People::AccountLinker` relie un compte web existant à une fiche CRM (`people.account_linked`)
-- Utilisé par scripts de maintenance (`scripts/fix_person_user_merge.rb`)
+### ✅ People::AttachUserToPerson & People::AccountLinker (liaison CRM)
+- **`People::AttachUserToPerson`** : rattache un `User` à une `Person` cible (refuse si la cible a déjà un autre `User`), instrumentation `people.user_attached`.
+- **`People::AccountLinker`** : orchestration (attach via `AttachUserToPerson`, merge optionnel de l’ancienne fiche avec `People::AccountMerger`). Événement `people.account_linked`.
+- Utilisé aussi par `AccountClaimManagement::AccountClaimConfirmer` (attach direct possible) et scripts (`scripts/fix_person_user_merge.rb`).
 
 ### ⚠️ PersonManagement (Legacy ciblé)
-- Ancien namespace conservé uniquement pour compatibilité. Les nouvelles fusions doivent passer par `People::AccountLinker` ou `People::AccountMerger`.
+- Ancien namespace conservé uniquement pour compatibilité. Les nouvelles fusions / liaisons doivent passer par `People::AttachUserToPerson`, `People::AccountLinker` ou `People::AccountMerger`.
 
 ### ✅ UserManagement (Stable)
 - `UserDeleter` - Suppression d'utilisateurs (Person)

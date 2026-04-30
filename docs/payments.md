@@ -2,7 +2,7 @@
 
 > **Statut** : stable
 > **Public cible** : contributeur
-> **Dernière vérification** : 2026-04-27
+> **Dernière vérification** : 2026-05-01
 > **Sources de vérité** : `app/models/payment.rb`, `app/models/payment_line.rb`, `app/services/people/payment_creator.rb`.
 
 > Vocabulaire utilisé : voir [glossary.md](glossary.md).
@@ -17,7 +17,7 @@ Payment (transaction)
 ├── PaymentLine                        ── item_type ──> ContributionFormula  (legacy: SubscriptionPlan)
 ├── PaymentLine                        ── item_type ──> Contribution         (legacy: BookOfEntry, rare)
 ├── PaymentLine                        ── item_type ──> MembershipType
-└── PaymentLine                        ── item_type ──> Donation             (cible — actuel: "Payment", voir §4)
+└── PaymentLine                        ── item_type ──> Donation             (création actuelle via `PaymentCreator` ; données anciennes peuvent encore avoir `Payment`, voir §4)
 ```
 
 **Invariant fondamental** : `payment.payment_lines.sum(:amount_cents) == payment.total_cents`.
@@ -58,7 +58,7 @@ Payment#anonymize!
 | Renouvellement / catalogue | `"MembershipType"` | `membership_type.id` | rare, surtout pour audit |
 | Achat de cotisation | `"ContributionFormula"` | `formula.id` | legacy : `"SubscriptionPlan"` |
 | Cotisation existante (réf.) | `"Contribution"` | `contribution.id` | legacy : `"BookOfEntry"` (rare) |
-| Don | `"Donation"` | `payment.id` (provisoire) | actuel : `"Payment"` — voir §4 |
+| Don | `"Donation"` | `payment.id` (provisoire) | création : service ci-dessous ; legacy DB : encore `"Payment"` jusqu’à backfill complet — voir §4 |
 
 ### 3.2 Création multi-lignes
 
@@ -97,28 +97,20 @@ PaymentLine.new(
 
 **Aucune `PaymentLine` ne doit avoir `item_type: "Payment"`**.
 
-### 4.2 État actuel — dette technique
+### 4.2 État actuel — code vs données legacy
 
-Le service [`People::PaymentCreator`](../app/services/people/payment_creator.rb) (L87-100) **réécrit** automatiquement les lignes de don :
+**Code (`People::PaymentCreator`)** : la ligne simple utilise `item_type` défaut `"Donation"` et **conserve** ce type pour les dons (`donation_line?` → `item_id` = `payment.id`). Il n’y a plus de réécriture systématique vers `"Payment"` dans ce chemin.
 
 ```ruby
-# app/services/people/payment_creator.rb
-def create_single_line(payment)
-  line_item_type = item_type.presence || "Donation"
+# app/services/people/payment_creator.rb (extrait)
+payment.payment_lines.create!(
+  item_type: line_item_type, # ex. "Donation"
+  item_id: donation_line?(line_item_type) ? payment.id : item_id,
   ...
-  resolved_item_type = donation_line?(line_item_type) ? "Payment" : line_item_type
-  payment.payment_lines.create!(
-    item_type: resolved_item_type,                                  # ← écrase "Donation" en "Payment"
-    item_id: donation_line?(line_item_type) ? payment.id : item_id,
-    ...
-  )
-end
+)
 ```
 
-**Conséquences** :
-- En base, `payment_lines.item_type = 'Payment'` pour tous les dons existants.
-- Les requêtes de filtrage (`Admin::PaymentsService` L67, `Payment` L44) doivent matcher `item_type = 'Donation'` **OU** `description LIKE '%don%'` pour rétro-compat.
-- Le commentaire de [`Person#create_payment_for_donation`](../app/models/person.rb) L450 (« utiliser Payment comme item_type pour cohérence avec PaymentCreator ») documente le hack mais ne le justifie pas conceptuellement.
+**Données** : des lignes historiques peuvent encore avoir `item_type: "Payment"` jusqu’à application complète des migrations de backfill (`db/migrate/*backfill_donation*`). Les requêtes métier doivent couvrir **Donation** comme canon et **Payment** comme legacy le temps du nettoyage (voir `phase1-donation-fix`).
 
 ### 4.3 Plan de migration (phase `phase1-donation-fix`)
 
@@ -128,7 +120,7 @@ end
               .where("description ILIKE ? OR description = ?", "%don%", "Donation")
               .update_all(item_type: "Donation")
    ```
-2. **Suppression du hack** : retirer la réécriture L92 dans `People::PaymentCreator` et le commentaire L450 dans `Person`.
+2. **Nettoyage code résiduel** : retirer toute référence encore basée sur `item_type: "Payment"` pour les dons dans les modèles/helpers commentés ; aligner les specs/factories sur `"Donation"` uniquement.
 3. **Mise à jour des requêtes** : simplifier `Payment#with_donations` et `Admin::PaymentsService` à `where(payment_lines: { item_type: "Donation" })`.
 4. **Specs à ajuster** : `spec/factories/payments.rb` trait `:with_donation` doit créer une `PaymentLine` `item_type: "Donation"`.
 5. **Validation modèle** : ajouter `validates :item_type, inclusion: { in: %w[Membership MembershipType ContributionFormula Contribution Donation] }` sur `PaymentLine`.

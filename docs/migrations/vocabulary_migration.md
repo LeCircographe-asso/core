@@ -2,7 +2,7 @@
 
 > **Statut** : stable (transitionnel — disparaît à la fin de phase 4)
 > **Public cible** : contributeur
-> **Dernière vérification** : 2026-04-27
+> **Dernière vérification** : 2026-05-01
 > **Sources de vérité** : `app/models/`, `app/services/people/`, [`../glossary.md`](../glossary.md).
 
 > Plan progressif d'alignement vocabulaire / code / documentation, sans big-bang. Chaque phase est livrable seule, sans casser la précédente.
@@ -71,7 +71,7 @@
 - ✅ **Tests à mettre à jour** : remplacer les usages existants.
 
 ### Phase 1 — Donations propres
-- `People::PaymentCreator` : retirer la réécriture `item_type: "Donation" → "Payment"` (L92 de `app/services/people/payment_creator.rb`).
+- ✅ `People::PaymentCreator` : la réécriture `item_type: "Donation" → "Payment"` **n’existe plus** sur le chemin simple ; conserver les migrations / specs jusqu’à disparition totale des lignes legacy.
 - Data migration : `PaymentLine.where(item_type: "Payment").where("description ILIKE '%don%' OR description = 'Donation'").update_all(item_type: "Donation")`.
 - Backfill : pour chaque `Payment.where("donation > 0")`, créer une `PaymentLine` `item_type: "Donation"` si absente.
 - Migration DB : `remove_column :payments, :donation`.

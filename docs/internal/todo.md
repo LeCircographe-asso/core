@@ -2,8 +2,10 @@
 
 > **Statut** : internal
 > **Public cible** : équipe dev
-> **Dernière mise à jour** : 2026-04-27
+> **Dernière mise à jour** : 2026-05-01
 > **Provenance** : fusion de l'ancien `to-do.md` (racine) et `docs/TODO.md` (doublon).
+>
+> **Identity note (2026-05)** — tout `User` a une `Person` (création minimale si besoin, DB `users.person_id` NOT NULL). Pas de « User sans Person » en données. Voir résumé dans le [README](../../README.md) et la règle [naming-rules.mdc](../../.cursor/rules/naming-rules.mdc).
 >
 > **Vocabulary note** — the words `subscription`, `SubscriptionCreator`, `SubscriptionUpgrader`, `SubscriptionPlan`, `BookOfEntry` below refer to the **current code**.
 > Target domain vocabulary: `contribution`, `ContributionCreator`, `ContributionUpgrader`, `ContributionFormula`, `Contribution`.
@@ -13,7 +15,7 @@
 Ordered from quick wins to long-term work. Each item can be handled incrementally.
 
 ## 0) Ground Rules (Architecture + MVC)
-- Document the Person/User lifecycle and ownership rules.
+- Document the Person/User lifecycle and ownership rules. (partial: résumé README + règles Cursor ; manque encore un doc « happy-path » dédié, cf. §3)
 - Enforce “Person is source of truth for identity + finance.”
 - Ensure controllers remain thin: call services, render/redirect.
 - Keep domain logic in models and workflows in services.
@@ -32,14 +34,14 @@ Ordered from quick wins to long-term work. Each item can be handled incrementall
 
 ## 2) Medium (flow consistency + integrity)
 - Ensure admin registration uses `People::Register` only.
-- Ensure account linking uses `People::AccountLinker` only.
+- Ensure account linking goes through services — **no ad-hoc `user.person = …` in controllers.** Nominal attach: `People::AttachUserToPerson` ; orchestration / compat: `People::AccountLinker` (délègue à `AttachUserToPerson` + merge cleanup si besoin). Les flux « account claim » peuvent appeler `AttachUserToPerson` directement.
 - Ensure membership creation uses `People::MembershipCreator` only.
 - Ensure subscription purchase uses `People::SubscriptionCreator` only.
 - Ensure upgrades use `People::MembershipUpgrader` / `People::SubscriptionUpgrader`.
 - Support Person without User (real-life registration first).
-- Support User without Person (web-first signup).
-- Provide explicit admin action to link User ↔ Person.
-- Prevent implicit relinks when a Person already has a User.
+- Web signup: **chaque `User` a une `Person`** (stub minimale à la création) ; enrichissement via édition Person / rattachement / fusion — plus de cas métier « user orphelin sans Person ».
+- Provide explicit admin action to link User ↔ Person. (partial: services prêts ; vérifier couverture UI + permissions)
+- Prevent implicit relinks when a Person already has a User. (partial: `AttachUserToPerson` refuse si la Person cible a déjà un autre User)
 - Show offer reason in payment history for offered payments.
 - Enforce offer_reason on payments when payment_method == offered (admin edit too).
 - Display offer reason in membership/subscription history when offered.
@@ -57,10 +59,10 @@ Ordered from quick wins to long-term work. Each item can be handled incrementall
 - Add “Data integrity rules” checklist (no orphans, no overlap, unlimited plan rules).
 - Add “Role permissions” doc (who can offer, delete, link, anonymize).
 - Maintain `docs/README.md` as the index of truth.
- - Keep `docs/development/testing.md` + `docs/architecture/controllers.md` revalidated against current tests.
+- Keep `docs/development/testing.md` + `docs/architecture/controllers.md` revalidated against current tests (invariant User→Person, RSpec-only, auth native Rails 8 résumés dans README / testing.md).
 
 ## 4) Tests (medium -> long)
-- Service specs: Register, AccountLinker, MembershipCreator, SubscriptionCreator.
+- Service specs: Register, AttachUserToPerson, AccountLinker, MembershipCreator, SubscriptionCreator.
 - Controller specs for admin flows (success + failure).
 - ViewComponent specs for badges/contextual actions.
 - Integrity specs for orphan queries.
@@ -73,6 +75,7 @@ Ordered from quick wins to long-term work. Each item can be handled incrementall
 - Spec for payment_lines sum == payment total.
 
 ## 5) Payments Accountability (longer)
+- Align legacy donation lines: aucune ligne ne doit rester avec `item_type: "Payment"` pour un don (canonique `Donation` ; migration de backfill existante — vérifier jeux de données réels et reporting).
 - Remove any user_id references for payments (payments belong to Person). (partially done: User#destroy)
 - Require `recorded_by` in all payment flows.
 - Use “void/cancel” instead of delete.
@@ -99,7 +102,7 @@ Ordered from quick wins to long-term work. Each item can be handled incrementall
 ## 8) Rollout Order
 1. Health Report panel (visibility first). (done)
 2. Fix invalid payment/user linking logic. (done: admin payment/donation links use person_id; removed user_id filter in payments service)
-3. Force registration + linking through services.
+3. Force registration + linking through services. (partial: `People::Register` sur chemins admin/form/web ; rattachement via `AttachUserToPerson` / `AccountLinker` ; auditer le reste des controllers)
 4. Replace deletes with anonymization.
 5. Clean legacy views.
 6. Add/extend tests.
