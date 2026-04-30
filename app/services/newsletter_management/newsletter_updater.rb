@@ -12,7 +12,7 @@ module NewsletterManagement
     validates :email, presence: true, format: { with: URI::MailTo::EMAIL_REGEXP }, if: -> { email.present? }
 
     def call
-      return failure("Invalid data: #{errors.full_messages.join(', ')}") unless valid?
+      return failure(I18n.t("services.validation.invalid_data_with_details", details: errors.full_messages.join(", "))) unless valid?
 
       begin
         updated_by = User.find(updated_by_id)

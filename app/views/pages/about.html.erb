@@ -1,15 +1,15 @@
-<% content_for :title, "Le Circographe - À propos" %>
+<% content_for :title, t("views.pages.about.page_title") %>
 
 <section class="relative overflow-hidden rounded-[32px] shadow-2xl mb-14">
   <%= image_tag hero_image(:about_hero), class: "absolute inset-0 w-full h-full object-cover hero-img-filter", alt: "" %>
   <div class="hero-overlay"></div>
   <div class="relative hero-panel space-y-6">
-    <p class="text-sm uppercase tracking-[0.4em] text-white/70">Rejoindre la communauté</p>
-    <h1 class="font-circographe text-3xl sm:text-4xl lg:text-5xl font-bold">À propos du Circographe</h1>
-    <p class="max-w-3xl text-lg text-white/85 leading-relaxed">Laboratoire de pratiques artistiques partagées où cirque et arts graphiques se rencontrent — autogestion et solidarité.</p>
+    <p class="text-sm uppercase tracking-[0.4em] text-white/70"><%= t("views.pages.about.join_community") %></p>
+    <h1 class="font-circographe text-3xl sm:text-4xl lg:text-5xl font-bold"><%= t("views.pages.about.heading") %></h1>
+    <p class="max-w-3xl text-lg text-white/85 leading-relaxed"><%= t("views.pages.about.hero_description") %></p>
     <div class="flex flex-wrap gap-4">
-      <%= link_to "Nous rejoindre", page_path('become_member'), class: "btn-primary shadow-lg" %>
-      <%= link_to "Découvrir le lieu", page_path('association'), class: "btn-secondary shadow-lg" %>
+      <%= link_to t("views.pages.about.join"), page_path('become_member'), class: "btn-primary shadow-lg" %>
+      <%= link_to t("views.pages.about.discover_place"), page_path('association'), class: "btn-secondary shadow-lg" %>
     </div>
   </div>
 </section>
@@ -17,10 +17,10 @@
 <section class="bg-white/95 rounded-[28px] shadow-lg p-6 sm:p-10 fade-in border border-white/80">
   <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
     <div class="lg:col-span-2 space-y-4">
-      <p class="text-sm uppercase tracking-[0.3em] text-brand-primary/70">Notre mission</p>
-      <h2 class="text-3xl font-semibold text-gray-900">Un espace de création partagé et accessible</h2>
-      <p class="text-gray-700 leading-relaxed">Offrir un espace de pratique, de création et de transmission accessible à toutes et tous.</p>
-      <p class="text-gray-700 leading-relaxed">Gouvernance autogérée : les membres s’engagent bénévolement, partagent les clés et co‑programment la vie du lieu.</p>
+      <p class="text-sm uppercase tracking-[0.3em] text-brand-primary/70"><%= t("views.pages.about.our_mission") %></p>
+      <h2 class="text-3xl font-semibold text-gray-900"><%= t("views.pages.about.mission_heading") %></h2>
+      <p class="text-gray-700 leading-relaxed"><%= t("views.pages.about.mission_text_1") %></p>
+      <p class="text-gray-700 leading-relaxed"><%= t("views.pages.about.mission_text_2") %></p>
     </div>
     <div class="bg-brand-primary/5 border border-brand-primary/20 rounded-3xl p-6 space-y-4">
       <p class="text-sm uppercase tracking-[0.3em] text-brand-primary/70">Nos valeurs</p>
@@ -145,5 +145,5 @@
 </section>
 
 <section class="text-center mt-12 mb-12 fade-in">
-  <%= link_to "Nous rejoindre", page_path('become_member'), class: "btn-primary px-8 py-4 tracking-wide font-bold shadow-lg" %>
+  <%= link_to t("views.pages.about.join"), page_path('become_member'), class: "btn-primary px-8 py-4 tracking-wide font-bold shadow-lg" %>
 </section>

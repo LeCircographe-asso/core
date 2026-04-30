@@ -7,7 +7,7 @@ module AccountClaimManagement
     validates :confirmation_token, presence: true
 
     def call
-      return failure("Invalid data: #{errors.full_messages.join(', ')}") unless valid?
+      return failure(I18n.t("services.validation.invalid_data_with_details", details: errors.full_messages.join(", "))) unless valid?
 
       begin
         claim = AccountClaim.find_by!(confirmation_token: confirmation_token)

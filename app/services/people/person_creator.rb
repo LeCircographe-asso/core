@@ -44,7 +44,7 @@ module People
     validates :last_name, presence: true, unless: :person_present?
 
     def call
-      return failure("Invalid data", errors.full_messages) unless valid?
+      return failure(I18n.t("services.validation.invalid_data"), errors.full_messages) unless valid?
 
       ActiveRecord::Base.transaction do
         target_person, created = resolve_person

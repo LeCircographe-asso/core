@@ -157,9 +157,9 @@ module Admin
       end
 
       def set_breadcrumbs
-        add_breadcrumb "Liste d'adhérents", admin_users_path
+        add_breadcrumb I18n.t("breadcrumbs.admin.users.members_list"), admin_users_path
         add_breadcrumb @person.full_name, admin_user_path("person_#{@person.id}")
-        add_breadcrumb "Gestion des paiements", nil
+        add_breadcrumb I18n.t("breadcrumbs.admin.payments.management"), nil
       end
 
       def payment_params

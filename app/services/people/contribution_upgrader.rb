@@ -24,7 +24,7 @@ module People
     validate :person_identifier_present
 
     def call
-      return failure("Invalid data: #{errors.full_messages.join(', ')}") unless valid?
+      return failure(I18n.t("services.validation.invalid_data_with_details", details: errors.full_messages.join(", "))) unless valid?
 
       target_person = resolve_person
       recorded_by = resolve_user

@@ -48,7 +48,7 @@ module Admin
       @active_memberships = statistics[:active_memberships]
       @users_this_month = statistics[:users_this_month]
 
-      add_breadcrumb "Liste d'adhérents", nil
+      add_breadcrumb I18n.t("breadcrumbs.admin.users.members_list"), nil
     end
 
     # GET /admin/users/1 or /admin/users/1.json
@@ -94,7 +94,7 @@ module Admin
         @users = User.where(person: nil) # Users non liés
         @recent_payments = @person.payments.includes(:payment_lines, :recorded_by).order(created_at: :desc).limit(10)
 
-        add_breadcrumb "Liste d'adhérents", admin_users_path
+        add_breadcrumb I18n.t("breadcrumbs.admin.users.members_list"), admin_users_path
         add_breadcrumb @person.full_name, nil
 
       else
@@ -110,7 +110,7 @@ module Admin
         @is_person_without_user = false
         @recent_payments = @person&.payments&.includes(:payment_lines, :recorded_by)&.order(created_at: :desc)&.limit(10) || []
 
-        add_breadcrumb "Liste d'adhérents", admin_users_path
+        add_breadcrumb I18n.t("breadcrumbs.admin.users.members_list"), admin_users_path
         add_breadcrumb @user&.person&.full_name.present? ? @user.person.full_name : "Utilisateur ##{@user.id}", nil
       end
 
@@ -131,12 +131,12 @@ module Admin
         @user.person = @person
         @user.email_address = @person.email
         @user.system_role = "web_visitor" # Rôle par défaut
-        add_breadcrumb "Liste d'adhérents", admin_users_path
+        add_breadcrumb I18n.t("breadcrumbs.admin.users.members_list"), admin_users_path
         add_breadcrumb @person.full_name, admin_user_path("person_#{@person.id}")
-        add_breadcrumb "Créer un compte web", nil
+        add_breadcrumb I18n.t("breadcrumbs.admin.users.create_web_account"), nil
       else
-        add_breadcrumb "Liste d'adhérents", admin_users_path
-        add_breadcrumb "Nouvel adhérent", nil
+        add_breadcrumb I18n.t("breadcrumbs.admin.users.members_list"), admin_users_path
+        add_breadcrumb I18n.t("breadcrumbs.admin.users.new_member"), nil
       end
     end
 
@@ -144,9 +144,9 @@ module Admin
     def edit_person
       person_id = params[:id].to_s.gsub("person_", "")
       @person = PersonQuery.active.find(person_id)
-      add_breadcrumb "Liste d'adhérents", admin_users_path
+      add_breadcrumb I18n.t("breadcrumbs.admin.users.members_list"), admin_users_path
       add_breadcrumb @person.full_name, admin_user_path("person_#{@person.id}")
-      add_breadcrumb "Modifier", nil
+      add_breadcrumb I18n.t("breadcrumbs.admin.common.edit"), nil
     end
 
     # GET /admin/users/1/edit
@@ -180,9 +180,9 @@ module Admin
         return
       end
 
-      add_breadcrumb "Liste d'adhérents", admin_users_path
+      add_breadcrumb I18n.t("breadcrumbs.admin.users.members_list"), admin_users_path
       add_breadcrumb @user.person&.full_name.present? ? @user.person.full_name : "Utilisateur ##{@user.id}", admin_user_path(@user)
-      add_breadcrumb "Modifier", nil
+      add_breadcrumb I18n.t("breadcrumbs.admin.common.edit"), nil
     end
 
     # POST /admin/users or /admin/users.json
@@ -361,7 +361,7 @@ module Admin
     end
 
     def set_breadcrumbs
-      add_breadcrumb "Dashboard", admin_dashboard_index_path
+      add_breadcrumb I18n.t("breadcrumbs.admin.common.dashboard"), admin_dashboard_index_path
     end
 
     # Check if current user has permission to delete the target user

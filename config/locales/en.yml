@@ -1,57 +1,195 @@
-# English locale — user-visible strings mirror keys under fr.yml; fill incrementally.
-# Keys added for dynamic flash / membership upgrade flows ship with translations here.
-
+---
 en:
-  hello: "Hello world"
-
+  hello: Hello world
   flash:
     generic:
-      error_detail: "Error: %{message}"
-
+      error_detail: 'Error: %{message}'
   account_claims:
     create:
-      rescue_alert: "Error: %{message}"
+      rescue_alert: 'Error: %{message}'
     confirm:
-      rescue_alert: "Error while claiming account: %{message}"
-
+      rescue_alert: 'Error while claiming account: %{message}'
   admin:
     memberships:
       create:
-        upgrade_failed_alert: "Error during upgrade: %{message}"
-        membership_creation_failed_alert: "Error creating membership: %{message}"
-        upgrade_notice_offered: "Membership upgraded successfully! %{name} — Complimentary"
-        upgrade_notice_paid: "Membership upgraded successfully! %{name} — Amount: %{amount}€"
+        upgrade_failed_alert: 'Error during upgrade: %{message}'
+        membership_creation_failed_alert: 'Error creating membership: %{message}'
+        upgrade_notice_offered: Membership upgraded successfully! %{name} — Complimentary
+        upgrade_notice_paid: 'Membership upgraded successfully! %{name} — Amount: %{amount}€'
         upgrade_notice_member_number_suffix: " | Member number changed: %{old_number} → %{new_number}"
-
     payments:
       create:
-        failure_alert: "Error creating payment: %{message}"
+        failure_alert: 'Error creating payment: %{message}'
       update:
-        failure_alert: "Update failed: %{message}"
+        failure_alert: 'Update failed: %{message}'
       destroy:
-        cancel_failed_alert: "Failed to cancel payment: %{message}"
+        cancel_failed_alert: 'Failed to cancel payment: %{message}'
       restore:
-        restore_failed_alert: "Failed to restore payment: %{message}"
-
+        restore_failed_alert: 'Failed to restore payment: %{message}'
     subscription_plans:
       create:
-        purchase_failed_alert: "Error purchasing plan: %{message}"
-
+        purchase_failed_alert: 'Error purchasing plan: %{message}'
     subscriptions:
       upgrade:
-        success_notice: "Contribution upgraded successfully."
+        success_notice: Contribution upgraded successfully.
         credit_applied_suffix: " Credit applied: %{amount}€"
-        failure_alert: "Error during upgrade: %{message}"
-
+        failure_alert: 'Error during upgrade: %{message}'
     users:
       create:
-        invalid_data_alert: "Invalid data: %{details}"
+        invalid_data_alert: 'Invalid data: %{details}'
+        success_person_user_membership: Person, web account and membership created successfully!
+        success_person_user: Person and web account created successfully!
+        success_person_membership: Person and membership created successfully!
+        success_person_only: Person created successfully!
+        error_existing_web_account: This person already has a web account.
+        error_email_required: An email is required to create a web account.
       payments:
         create:
-          failure_alert: "Error creating payment: %{message}"
+          failure_alert: 'Error creating payment: %{message}'
         update:
-          failure_alert: "Error updating payment: %{message}"
+          failure_alert: 'Error updating payment: %{message}'
         destroy:
-          failure_alert: "Error deleting payment: %{message}"
+          failure_alert: 'Error deleting payment: %{message}'
         process_payment:
-          failure_alert: "Error processing payment: %{message}"
+          failure_alert: 'Error processing payment: %{message}'
+  breadcrumbs:
+    admin:
+      common:
+        administration: Administration
+        dashboard: Dashboard
+        edit: Edit
+      users:
+        members_list: Members list
+        create_web_account: Create web account
+        new_member: New member
+      memberships:
+        management: Membership management
+        membership: Membership
+        upgrade_to_circus: Upgrade to Circus
+        new_membership: New membership
+        edit_membership: Edit membership
+      payments:
+        history: Payment history
+        management: Payments management
+      subscription_plans:
+        plans: Contribution plans
+        plan_named: 'Plan: %{name}'
+        new_contribution: New contribution
+        edit_named: 'Edit: %{name}'
+      opening_hours:
+        title: Opening hours
+      events:
+        events: Events
+        new_event: New event
+      attendances:
+        management: Attendance management
+        attendance_number: 'Attendance #%{id}'
+        new_attendance: New attendance
+      membership_types:
+        types: Membership types
+        type_named: 'Type: %{name}'
+        new_type: New membership type
+        edit_named: 'Edit: %{name}'
+      attendance_lists:
+        lists: Attendance lists
+        new_list: New list
+      health_reports:
+        integrity_report: Integrity report
+  helpers:
+    admin:
+      users:
+        display:
+          not_provided: Not provided
+          no_email: No email
+          name_not_provided: Name not provided
+  layouts:
+    application:
+      title: Le Circographe
+  views:
+    shared:
+      flash:
+        close: Close
+      navbar:
+        open_menu: Open menu
+        place: The Place
+        circus: Circus
+        graphic_arts: Graphic Arts
+        how_it_works: How it works
+        activities: Our Activities
+        join: Join
+        about: About
+        contact: Contact us
+        faq: FAQ
+        my_space: My Space
+        user: User
+        profile: Profile
+        dashboard: Dashboard
+        settings: Settings
+        logout: Sign out
+        sign_in: Sign in
+        sign_up: Sign up
+        association: Association
+        news: News
+        our_news: Our news
+        blog_newsletters: Blog & Newsletters
+        photo_gallery: Photo gallery
+        events: Our Events
+      footer:
+        newsletter_cta: Stay informed by subscribing to our newsletter
+        email_placeholder: Your email address
+        sign_up: Sign up
+        discover: Discover
+        about: About
+        place: The Place
+        activities: Our activities
+        participate: Participate
+        join: Join
+        contact: Contact us
+        map: Map
+        resources: Resources
+        faq: FAQ
+        terms: Legal notice
+        privacy: Privacy policy
+        brand: Le Circographe
+        all_rights_reserved: All rights reserved.
+    admin:
+      users:
+        new:
+          page_title: Create a new user
+          page_subtitle: Add a new user to the system
+          user_information: User information
+          create_web_account: Create a web account
+          create_web_account_help: Allow this person to sign in and manage their online profile
+          system_role: System role
+          roles:
+            web_visitor: Web visitor
+            volunteer: Volunteer
+            admin: Administrator
+          temporary_password_notice: A temporary password will be generated and sent by email
+        index:
+          page_title: Members Management
+          page_subtitle: Unified interface to manage people, memberships and contributions
+          statistics: Statistics
+          total_people: Total people
+          new_yesterday: New (yesterday)
+          basic_memberships: Basic memberships
+          circus_memberships: Circus memberships
+          active_memberships: Active memberships
+          without_account: Without account
+          create_member: Create a Member
+    pages:
+      about:
+        page_title: Le Circographe - About
+        join_community: Join the community
+        heading: About Le Circographe
+        hero_description: A laboratory of shared artistic practices where circus and graphic arts meet — self-management and solidarity.
+        join: Join us
+        discover_place: Discover the place
+        our_mission: Our mission
+        mission_heading: A shared and accessible creative space
+        mission_text_1: Provide a space for practice, creation and transmission that is accessible to everyone.
+        mission_text_2: 'Self-managed governance: members volunteer, share responsibilities, and co-program the life of the venue.'
+  services:
+    validation:
+      invalid_data: Invalid data
+      invalid_data_with_details: 'Invalid data: %{details}'

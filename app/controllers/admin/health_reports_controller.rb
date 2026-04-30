@@ -19,13 +19,13 @@ module Admin
       @duplicate_people_by_phone_groups = report.duplicate_people_by_phone.group_by { |person| person.phone.to_s }
       @list_limit = Admin::HealthReport::MAX_LIST
 
-      add_breadcrumb "Rapport d'intégrité", nil
+      add_breadcrumb I18n.t("breadcrumbs.admin.health_reports.integrity_report"), nil
     end
 
     private
 
     def set_breadcrumbs
-      add_breadcrumb "Administration", admin_dashboard_index_path
+      add_breadcrumb I18n.t("breadcrumbs.admin.common.administration"), admin_dashboard_index_path
     end
   end
 end
