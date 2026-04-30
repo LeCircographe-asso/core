@@ -122,8 +122,17 @@ en:
       destroy:
         destroyed: Blog supprimé avec succès
     donations:
+      new:
+        title: Record a donation
+        heading: New donation
+        donor_label: Recipient (person record)
+        amount_label: Amount (EUR)
+        amount_placeholder: "0.00"
+        submit: Save donation
+        cancel: Cancel
+        missing_person: Select a person to record a donation.
       create:
-        recorded: Donation prise en compte
+        recorded: Donation recorded
     events:
       create:
         created: Événement créé avec succès

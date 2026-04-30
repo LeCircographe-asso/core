@@ -45,6 +45,15 @@ fr:
       destroy:
         destroyed: Blog supprimé avec succès
     donations:
+      new:
+        title: Enregistrer un don
+        heading: Nouveau don
+        donor_label: Bénéficiaire (fiche personne)
+        amount_label: Montant (€)
+        amount_placeholder: "0.00"
+        submit: Enregistrer le don
+        cancel: Annuler
+        missing_person: Sélectionnez une personne pour enregistrer un don.
       create:
         recorded: Donation prise en compte
     events:
