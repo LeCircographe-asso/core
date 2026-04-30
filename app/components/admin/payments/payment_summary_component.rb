@@ -43,8 +43,10 @@ module Admin
         format_currency(total_donation)
       end
 
+      # « Montant total » est déjà la somme des +Payment.total_cents+ réussis (adhésion + cotisation + don, etc.).
+      # « Donations » est une ventilation (somme des lignes don) — elle ne doit pas s’ajouter aux revenus.
       def total_revenue
-        total_amount + total_donation
+        total_amount
       end
 
       def total_revenue_formatted
