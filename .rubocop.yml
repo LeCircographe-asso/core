@@ -28,6 +28,8 @@ Layout/EndOfLine:
 # Phase 2 Batch 1 — LOW: Gemfile gem order within groups (non-domain)
 Bundler/OrderedGems:
   Enabled: true
+Bundler/DuplicatedGem:
+  Enabled: true
 
 # Lot B2 — Omakase disables the Rails department by default except a few test-only
 # cops (e.g. AssertNot). We selectively enable high-value Rails cops here; add
@@ -44,7 +46,25 @@ Rails/PluralizationGrammar:
   Enabled: true
 Rails/UniqBeforePluck:
   Enabled: true
+Rails/Pluck:
+  Enabled: true
+Rails/WhereEquals:
+  Enabled: true
+Rails/Present:
+  Enabled: true
 Rails/HelperInstanceVariable:
   Enabled: true
 Rails/I18nLocaleTexts:
+  Enabled: true
+Performance/RedundantEqualityComparisonBlock:
+  Enabled: true
+Performance/CollectionLiteralInLoop:
+  Enabled: true
+Performance/MapMethodChain:
+  Enabled: true
+Performance/Sum:
+  Enabled: true
+Performance/Detect:
+  Enabled: true
+Rails/SkipsModelValidations:
   Enabled: true
