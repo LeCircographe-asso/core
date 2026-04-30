@@ -49,6 +49,7 @@ group :development, :test do
   gem 'dotenv-rails' # Environment variables
   gem 'faker' # Generate fake data
   gem 'rubocop' # Code linter
+  gem 'rubocop-rake', require: false
   gem 'rubocop-rails-omakase', require: false # Rails-specific linting
 
   # RSpec testing framework - ESSENTIELS
