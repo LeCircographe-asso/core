@@ -28,10 +28,10 @@ class RegistrationsController < ApplicationController
         UserMailer.welcome_email(result.user).deliver_later
         start_new_session_for result.user
         format.turbo_stream do
-          flash.now[:notice] = "Inscription réussie !"
+          flash.now[:notice] = t(".success_notice")
           render turbo_stream: navigation_streams
         end
-        format.html { redirect_to root_path, notice: "Inscription réussie !" }
+        format.html { redirect_to root_path, notice: t(".success_notice") }
       else
         # Créer un objet User temporaire pour afficher les erreurs dans la vue
         @user = User.new(user_only_params)

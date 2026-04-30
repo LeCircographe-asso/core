@@ -67,7 +67,7 @@ module Admin
           archived_person = Person.find_by(id: person_id)
           raise ActiveRecord::RecordNotFound if archived_person&.deleted_at.blank?
 
-          redirect_to admin_users_path, notice: "Cette fiche a été fusionnée avec une autre. Retour à la liste des utilisateurs."
+          redirect_to admin_users_path, notice: t(".merged_person_notice")
           return
 
         end
@@ -164,7 +164,7 @@ module Admin
 
       if @user.nil?
         Rails.logger.debug "User is nil, redirecting to users list"
-        redirect_to admin_users_path, alert: "Utilisateur non trouvé."
+        redirect_to admin_users_path, alert: t(".user_not_found")
         return
       end
 
@@ -176,7 +176,7 @@ module Admin
       rescue StandardError => e
         Rails.logger.error "Error in edit action: #{e.message}"
         Rails.logger.error e.backtrace.join("\n")
-        redirect_to admin_users_path, alert: "Une erreur est survenue lors de l'édition de l'utilisateur."
+        redirect_to admin_users_path, alert: t(".edit_error")
         return
       end
 
@@ -226,10 +226,10 @@ module Admin
             render json: {
               success: true,
               member_number: updated_person.reload.member_number,
-              message: "Informations mises à jour avec succès."
+              message: t(".ajax_success_json_message")
             }
           else
-            redirect_to admin_user_path("person_#{updated_person.id}"), notice: "Informations mises à jour avec succès."
+            redirect_to admin_user_path("person_#{updated_person.id}"), notice: t(".person_saved_notice")
           end
         elsif request.xhr?
           render json: {
@@ -262,10 +262,10 @@ module Admin
         result = updater.call
 
         if result.success?
-          format.html { redirect_to admin_user_path(@user), notice: "Utilisateur mis à jour avec succès." }
+          format.html { redirect_to admin_user_path(@user), notice: t(".html_updated") }
           format.json { render json: @user }
           format.turbo_stream do
-            flash.now[:notice] = "Utilisateur mis à jour avec succès."
+            flash.now[:notice] = t(".turbo_notice")
             render turbo_stream: [
               turbo_stream.replace(@user),
               turbo_stream.replace("flash", partial: "shared/flash")
@@ -295,7 +295,7 @@ module Admin
         # Debug: vérifier si @person est défini
         if person.nil?
           Rails.logger.error "DEBUG: @person is nil for params[:id] = #{params[:id]}"
-          redirect_to admin_users_path, alert: "Personne non trouvée." and return
+          redirect_to admin_users_path, alert: t(".person_not_found_alert") and return
         end
 
         # Utiliser le service UserManagement::UserDeleter
@@ -308,19 +308,19 @@ module Admin
         result = deleter.call
 
         if result.success?
-          redirect_to admin_users_path, status: :see_other, notice: "Personne supprimée avec succès."
+          redirect_to admin_users_path, status: :see_other, notice: t(".person_deleted_notice")
         else
-          redirect_to admin_users_path, alert: "❌ #{result.message}"
+          redirect_to admin_users_path, alert: t(".destruction_failed_alert_html", message: result.message)
         end
         return
       end
 
       respond_to do |format|
         if @user.archive!
-          format.html { redirect_to admin_users_path, status: :see_other, notice: "Utilisateur archivé avec succès." }
+          format.html { redirect_to admin_users_path, status: :see_other, notice: t(".user_archived_notice") }
           format.json { head :no_content }
         else
-          format.html { redirect_to admin_users_path, status: :see_other, alert: "Impossible d'archiver cet utilisateur." }
+          format.html { redirect_to admin_users_path, status: :see_other, alert: t(".archive_failed_alert") }
           format.json { head :unprocessable_content }
         end
       end
@@ -331,9 +331,9 @@ module Admin
       @user = User.unscoped.find(params[:id])
 
       if @user.update(deleted: false, deleted_at: nil)
-        redirect_to admin_users_path, notice: "Utilisateur restauré avec succès."
+        redirect_to admin_users_path, notice: t(".restored_notice")
       else
-        redirect_to admin_users_path, alert: "Impossible de restaurer cet utilisateur."
+        redirect_to admin_users_path, alert: t(".restore_failed_alert")
       end
     end
 
@@ -348,7 +348,7 @@ module Admin
         @person = Person.find_by(id: person_id)
 
         # If person not found, redirect to index with alert
-        redirect_to admin_users_path, alert: "Utilisateur non trouvé." and return if @person.nil?
+        redirect_to admin_users_path, alert: t(".person_or_user_missing_alert") and return if @person.nil?
 
         @user = @person.user # Peut être nil si pas de compte utilisateur
       else
@@ -356,7 +356,7 @@ module Admin
         @user = User.unscoped.find_by(id: params[:id])
 
         # If user not found, redirect to index with alert
-        redirect_to admin_users_path, alert: "Utilisateur non trouvé." and return if @user.nil?
+        redirect_to admin_users_path, alert: t(".person_or_user_missing_alert") and return if @user.nil?
       end
     end
 
@@ -371,7 +371,7 @@ module Admin
       # Prevent deleting users with equal or higher privileges
       return if current_user.has_higher_permissions?(@user)
 
-      redirect_to admin_users_path, alert: "Impossible de supprimer un utilisateur avec des privilèges égaux ou supérieurs."
+      redirect_to admin_users_path, alert: I18n.t("admin.users.check_deletion_permissions.higher_privileges")
     end
 
     # Méthodes privées pour les filtres et la recherche
@@ -532,7 +532,7 @@ module Admin
     def require_super_admin
       return if Current.user&.super_admin?
 
-      redirect_to admin_users_path, alert: "Seul le super-admin peut restaurer des utilisateurs."
+      redirect_to admin_users_path, alert: I18n.t("admin.users.require_super_admin.restore_denied_alert")
     end
   end
 end

@@ -68,7 +68,7 @@ module Admin
       ).call
 
       if result.success?
-        redirect_to admin_user_path("person_#{@person.id}"), notice: "Adhésion mise à jour avec succès."
+        redirect_to admin_user_path("person_#{@person.id}"), notice: t(".success")
       else
         flash[:alert] = result.message
         redirect_to edit_admin_membership_path(@membership)
@@ -85,7 +85,7 @@ module Admin
       ).call
 
       if result.success?
-        redirect_to admin_memberships_path, notice: "Adhésion désactivée avec succès."
+        redirect_to admin_memberships_path, notice: t(".deactivated")
       else
         redirect_to admin_memberships_path, alert: result.message
       end
@@ -165,10 +165,10 @@ module Admin
       if result.success?
         if result.already_existed
           redirect_to new_admin_membership_path(person_id: person.id),
-                      alert: "Cette personne possède déjà une adhésion active."
+                      alert: t(".duplicate_active")
         else
           redirect_to admin_user_path("person_#{person.id}"),
-                      notice: "Adhésion créée avec succès ! Vous pouvez maintenant ajouter une cotisation depuis la fiche utilisateur."
+                      notice: t(".success_with_contribution_hint")
         end
       else
         redirect_to new_admin_membership_path(person_id: person.id),

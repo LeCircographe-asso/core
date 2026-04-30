@@ -37,7 +37,7 @@ module Admin
       @event.creator = current_user if @event.respond_to?(:creator=)
 
       if @event.save
-        redirect_to admin_events_path, notice: "Événement créé avec succès"
+        redirect_to admin_events_path, notice: t(".created")
       else
         render :new, status: :unprocessable_content
       end
@@ -54,7 +54,7 @@ module Admin
         location: event_params[:location]
       }.compact_blank
       if @event.update(attrs)
-        redirect_to event_path(@event), notice: "Événement modifié avec succès"
+        redirect_to event_path(@event), notice: t(".updated")
       else
         render :edit, status: :unprocessable_content
       end
@@ -64,9 +64,9 @@ module Admin
       event = Event.find(params.expect(:id))
       if event.destroy
         respond_to do |format|
-          format.html { redirect_to admin_events_path, notice: "Événement supprimé avec succès" }
+          format.html { redirect_to admin_events_path, notice: t(".destroyed_notice") }
           format.turbo_stream do
-            flash.now[:notice] = "Événement supprimé avec succès"
+            flash.now[:notice] = t(".destroyed_notice")
             render turbo_stream: [
               turbo_stream.remove(dom_id(event)),
               turbo_stream.replace("flash", partial: "shared/flash")

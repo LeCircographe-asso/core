@@ -31,7 +31,7 @@ class UsersController < ApplicationController
     result = updater.call
 
     if result.success?
-      redirect_to @user, notice: "Votre profil a été mis à jour avec succès."
+      redirect_to @user, notice: t(".profile_updated")
     else
       flash.now[:alert] = result.message
       render :edit, status: :unprocessable_content
@@ -44,15 +44,15 @@ class UsersController < ApplicationController
     if @user.destroy
       # End the user's session
       reset_session
-      redirect_to root_path, notice: "Votre compte a été supprimé avec succès."
+      redirect_to root_path, notice: t(".deleted_notice")
     else
-      redirect_to edit_user_path(@user), alert: "Impossible de supprimer votre compte. Veuillez contacter l'assistance."
+      redirect_to edit_user_path(@user), alert: t(".destroy_failed_alert")
     end
   end
 
   # Newsletter subscription management (legacy, redirect to settings)
   def change_newsletter_status
-    redirect_to settings_path, alert: "Gérez votre newsletter depuis vos paramètres."
+    redirect_to settings_path, alert: t(".redirect_manage_in_settings_alert")
   end
 
   # Handle newsletter signup from footer
@@ -61,21 +61,21 @@ class UsersController < ApplicationController
     # Check honeypot - if filled, it's likely a bot
     if params[:user][:website].present?
       # Don't show an error, just silently redirect to avoid tipping off bots
-      redirect_back_or_to(root_path, notice: "Merci pour votre inscription!")
+      redirect_back_or_to(root_path, notice: t(".honeypot_thanks_notice"))
       return
     end
 
     email = params[:user][:email_address]
 
     if email.blank?
-      flash[:alert] = "Veuillez entrer une adresse email valide."
+      flash[:alert] = t(".email_blank_alert")
       redirect_back_or_to(root_path)
       return
     end
 
     # If authenticated, redirect to settings (no form for connected users)
     if authenticated? && Current.user.present?
-      redirect_to settings_path, notice: "Gérez votre newsletter depuis vos paramètres en cochant/décochant la case."
+      redirect_to settings_path, notice: t(".manage_newsletter_notice")
       return
     end
 
@@ -99,7 +99,7 @@ class UsersController < ApplicationController
       subscriber.unsubscribe!
       redirect_to page_path("newsletter_unsubscribe_success")
     else
-      redirect_to root_path, alert: "Token de désinscription invalide."
+      redirect_to root_path, alert: t(".invalid_token_alert")
     end
   end
 

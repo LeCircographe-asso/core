@@ -27,31 +27,31 @@ RSpec.describe ContributionFormula, type: :model do
         effective_from: Date.current
       )
       expect(plan).not_to be_valid
-      expect(plan.errors[:membership_type]).to include('must exist')
+      expect(plan.errors[:membership_type]).to include(I18n.t('errors.messages.required'))
     end
 
     it 'requires a name' do
       plan = build(:contribution_formula, membership_type: circus_membership_type, name: nil)
       expect(plan).not_to be_valid
-      expect(plan.errors[:name]).to include("can't be blank")
+      expect(plan.errors[:name]).to include(I18n.t('errors.messages.blank'))
     end
 
     it 'requires a duration' do
       plan = build(:contribution_formula, membership_type: circus_membership_type, duration: nil)
       expect(plan).not_to be_valid
-      expect(plan.errors[:duration]).to include("can't be blank")
+      expect(plan.errors[:duration]).to include(I18n.t('errors.messages.blank'))
     end
 
     it 'requires a price_cents' do
       plan = build(:contribution_formula, membership_type: circus_membership_type, price_cents: nil)
       expect(plan).not_to be_valid
-      expect(plan.errors[:price_cents]).to include("can't be blank")
+      expect(plan.errors[:price_cents]).to include(I18n.t('errors.messages.blank'))
     end
 
     it 'requires price_cents to be greater than 0' do
       plan = build(:contribution_formula, membership_type: circus_membership_type, price_cents: 0)
       expect(plan).not_to be_valid
-      expect(plan.errors[:price_cents]).to include('must be greater than 0')
+      expect(plan.errors[:price_cents]).to include(I18n.t('errors.messages.greater_than', count: 0))
     end
 
     it 'requires price_cents to be a number' do
@@ -62,19 +62,19 @@ RSpec.describe ContributionFormula, type: :model do
     it 'requires a version' do
       plan = build(:contribution_formula, membership_type: circus_membership_type, version: nil)
       expect(plan).not_to be_valid
-      expect(plan.errors[:version]).to include("can't be blank")
+      expect(plan.errors[:version]).to include(I18n.t('errors.messages.blank'))
     end
 
     it 'requires version to be greater than 0' do
       plan = build(:contribution_formula, membership_type: circus_membership_type, version: 0)
       expect(plan).not_to be_valid
-      expect(plan.errors[:version]).to include('must be greater than 0')
+      expect(plan.errors[:version]).to include(I18n.t('errors.messages.greater_than', count: 0))
     end
 
     it 'requires effective_from' do
       plan = build(:contribution_formula, membership_type: circus_membership_type, effective_from: nil)
       expect(plan).not_to be_valid
-      expect(plan.errors[:effective_from]).to include("can't be blank")
+      expect(plan.errors[:effective_from]).to include(I18n.t('errors.messages.blank'))
     end
 
     describe 'name uniqueness scoped by version' do
@@ -103,7 +103,7 @@ RSpec.describe ContributionFormula, type: :model do
         it 'requires sessions_count to be greater than 0' do
           plan = build(:contribution_formula, membership_type: circus_membership_type, duration: :pack10, sessions_count: 0)
           expect(plan).not_to be_valid
-          expect(plan.errors[:sessions_count]).to include('must be greater than 0')
+          expect(plan.errors[:sessions_count]).to include(I18n.t('errors.messages.greater_than', count: 0))
         end
 
         it 'requires validity_days' do
@@ -115,7 +115,7 @@ RSpec.describe ContributionFormula, type: :model do
         it 'requires validity_days to be greater than 0' do
           plan = build(:contribution_formula, membership_type: circus_membership_type, duration: :pack10, validity_days: 0)
           expect(plan).not_to be_valid
-          expect(plan.errors[:validity_days]).to include('must be greater than 0')
+          expect(plan.errors[:validity_days]).to include(I18n.t('errors.messages.greater_than', count: 0))
         end
 
         it 'is valid with sessions_count and validity_days present' do

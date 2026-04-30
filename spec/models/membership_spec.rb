@@ -15,14 +15,14 @@ RSpec.describe Membership, type: :model do
       membership_type = create(:membership_type)
       membership = Membership.new(membership_type: membership_type, status: :active)
       expect(membership).not_to be_valid
-      expect(membership.errors[:person]).to include('must exist')
+      expect(membership.errors[:person]).to include(I18n.t('errors.messages.required'))
     end
 
     it 'requires a membership_type' do
       person = create(:person)
       membership = Membership.new(person: person, status: :active)
       expect(membership).not_to be_valid
-      expect(membership.errors[:membership_type]).to include('must exist')
+      expect(membership.errors[:membership_type]).to include(I18n.t('errors.messages.required'))
     end
 
     it 'requires started_at' do
@@ -30,7 +30,7 @@ RSpec.describe Membership, type: :model do
       membership_type = create(:membership_type)
       membership = Membership.new(person: person, membership_type: membership_type, status: :active, ended_at: Date.current + 1.year)
       expect(membership).not_to be_valid
-      expect(membership.errors[:started_at]).to include("can't be blank")
+      expect(membership.errors[:started_at]).to include(I18n.t('errors.messages.blank'))
     end
 
     it 'requires ended_at' do
@@ -38,7 +38,7 @@ RSpec.describe Membership, type: :model do
       membership_type = create(:membership_type)
       membership = Membership.new(person: person, membership_type: membership_type, status: :active, started_at: Date.current)
       expect(membership).not_to be_valid
-      expect(membership.errors[:ended_at]).to include("can't be blank")
+      expect(membership.errors[:ended_at]).to include(I18n.t('errors.messages.blank'))
     end
 
     it 'requires status' do
@@ -46,7 +46,7 @@ RSpec.describe Membership, type: :model do
       membership_type = create(:membership_type)
       membership = Membership.new(person: person, membership_type: membership_type, started_at: Date.current, ended_at: Date.current + 1.year, status: nil)
       expect(membership).not_to be_valid
-      expect(membership.errors[:status]).to include("can't be blank")
+      expect(membership.errors[:status]).to include(I18n.t('errors.messages.blank'))
     end
 
     it 'validates end_date is after start_date' do

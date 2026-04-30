@@ -6,16 +6,16 @@ class EventInterestsController < ApplicationController
   def create
     # Utiliser le nouveau système Person-Based
     if current_user.person.nil?
-      redirect_to @event, alert: "Votre profil n'est pas complet. Veuillez contacter l'administration."
+      redirect_to @event, alert: t(".profile_incomplete")
       return
     end
 
     @attendance = current_user.person.attendances.build(event: @event, date: Date.current)
 
     if @attendance.save
-      redirect_to @event, notice: "Vous êtes maintenant intéressé par cet événement !"
+      redirect_to @event, notice: t(".interest_added")
     else
-      redirect_to @event, alert: "Erreur lors de l'ajout de votre intérêt"
+      redirect_to @event, alert: t(".interest_error")
     end
   end
 
@@ -23,9 +23,9 @@ class EventInterestsController < ApplicationController
     @attendance = current_user.person.attendances.find_by(event: @event)
 
     if @attendance&.destroy
-      redirect_to @event, notice: "Vous n'êtes plus intéressé par cet événement"
+      redirect_to @event, notice: t(".interest_removed")
     else
-      redirect_to @event, alert: "Erreur lors de la suppression de votre intérêt"
+      redirect_to @event, alert: t(".interest_remove_error")
     end
   end
 

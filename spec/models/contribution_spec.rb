@@ -25,19 +25,19 @@ RSpec.describe Contribution, type: :model do
     it 'validates presence of status' do
       contribution = build(:contribution, status: nil)
       expect(contribution).not_to be_valid
-      expect(contribution.errors[:status]).to include("can't be blank")
+      expect(contribution.errors[:status]).to include(I18n.t('errors.messages.blank'))
     end
 
     it 'validates presence of purchased_at' do
       contribution = build(:contribution, purchased_at: nil)
       expect(contribution).not_to be_valid
-      expect(contribution.errors[:purchased_at]).to include("can't be blank")
+      expect(contribution.errors[:purchased_at]).to include(I18n.t('errors.messages.blank'))
     end
 
     it 'validates presence of expires_at for non-pack10 plans' do
       contribution = build(:contribution, contribution_formula: day_plan, expires_at: nil)
       expect(contribution).not_to be_valid
-      expect(contribution.errors[:expires_at]).to include("can't be blank")
+      expect(contribution.errors[:expires_at]).to include(I18n.t('errors.messages.blank'))
     end
 
     it 'does not validate presence of expires_at for pack10 plans' do

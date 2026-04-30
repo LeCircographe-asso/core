@@ -16,7 +16,7 @@ RSpec.describe NewsletterSubscriber, type: :model do
     it 'requires email' do
       subscriber = NewsletterSubscriber.new(subscribed: true, source: 'web')
       expect(subscriber).not_to be_valid
-      expect(subscriber.errors[:email]).to include("can't be blank")
+      expect(subscriber.errors[:email]).to include(I18n.t('errors.messages.blank'))
     end
 
     it 'requires valid email format' do
@@ -30,7 +30,7 @@ RSpec.describe NewsletterSubscriber, type: :model do
 
       duplicate = NewsletterSubscriber.new(email: 'test@example.com', subscribed: true, source: 'web')
       expect(duplicate).not_to be_valid
-      expect(duplicate.errors[:email]).to include('has already been taken')
+      expect(duplicate.errors[:email]).to include(I18n.t('errors.messages.taken'))
     end
 
     it 'defaults to subscribed' do

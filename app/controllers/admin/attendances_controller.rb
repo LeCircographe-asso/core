@@ -48,7 +48,7 @@ module Admin
       result = creator.call
 
       if result.success?
-        redirect_to admin_attendance_path(result.attendance), notice: "Présence enregistrée avec succès"
+        redirect_to admin_attendance_path(result.attendance), notice: t(".success")
       else
         @attendance = Attendance.new(attendance_params)
         @people = Person.order(:first_name, :last_name)
@@ -66,9 +66,9 @@ module Admin
 
     def destroy
       if @attendance.destroy
-        redirect_to admin_attendances_path, notice: "Présence supprimée avec succès"
+        redirect_to admin_attendances_path, notice: t(".destroyed")
       else
-        redirect_to admin_attendances_path, alert: "Erreur lors de la suppression"
+        redirect_to admin_attendances_path, alert: t(".failure")
       end
     end
 

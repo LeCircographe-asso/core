@@ -33,8 +33,8 @@ module Admin
 
       if @membership_type.save
         respond_to do |format|
-          format.html { redirect_to admin_membership_types_path, notice: "Type d'adhésion créé avec succès !" }
-          format.turbo_stream { redirect_to admin_membership_types_path, notice: "Type d'adhésion créé avec succès !" }
+          format.html { redirect_to admin_membership_types_path, notice: t(".html_notice") }
+          format.turbo_stream { redirect_to admin_membership_types_path, notice: t(".turbo_notice") }
         end
       else
         flash.now[:alert] = @membership_type.errors.full_messages.to_sentence
@@ -45,8 +45,8 @@ module Admin
     def update
       if @membership_type.update(membership_type_params)
         respond_to do |format|
-          format.html { redirect_to admin_membership_types_path, notice: "Type d'adhésion mis à jour avec succès !" }
-          format.turbo_stream { redirect_to admin_membership_types_path, notice: "Type d'adhésion mis à jour avec succès !" }
+          format.html { redirect_to admin_membership_types_path, notice: t(".html_notice") }
+          format.turbo_stream { redirect_to admin_membership_types_path, notice: t(".turbo_notice") }
         end
       else
         flash.now[:alert] = @membership_type.errors.full_messages.to_sentence
@@ -56,7 +56,7 @@ module Admin
 
     def destroy
       if @membership_type.destroy
-        redirect_to admin_membership_types_path, notice: "Type d'adhésion supprimé avec succès !"
+        redirect_to admin_membership_types_path, notice: t(".destroyed")
       else
         redirect_to admin_membership_types_path, alert: @membership_type.errors.full_messages.to_sentence
       end

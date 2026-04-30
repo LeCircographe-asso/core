@@ -18,25 +18,25 @@ RSpec.describe MembershipType, type: :model do
     it 'requires name' do
       membership_type = MembershipType.new(category: :basic, price_cents: 1500, version: 1, effective_from: Date.current)
       expect(membership_type).not_to be_valid
-      expect(membership_type.errors[:name]).to include("can't be blank")
+      expect(membership_type.errors[:name]).to include(I18n.t('errors.messages.blank'))
     end
 
     it 'requires category' do
       membership_type = MembershipType.new(name: 'Test', price_cents: 1500, version: 1, effective_from: Date.current)
       expect(membership_type).not_to be_valid
-      expect(membership_type.errors[:category]).to include("can't be blank")
+      expect(membership_type.errors[:category]).to include(I18n.t('errors.messages.blank'))
     end
 
     it 'requires price_cents' do
       membership_type = MembershipType.new(name: 'Test', category: :basic, version: 1, effective_from: Date.current)
       expect(membership_type).not_to be_valid
-      expect(membership_type.errors[:price_cents]).to include("can't be blank")
+      expect(membership_type.errors[:price_cents]).to include(I18n.t('errors.messages.blank'))
     end
 
     it 'requires price_cents to be greater than 0' do
       membership_type = MembershipType.new(name: 'Test', category: :basic, price_cents: 0, version: 1, effective_from: Date.current)
       expect(membership_type).not_to be_valid
-      expect(membership_type.errors[:price_cents]).to include('must be greater than 0')
+      expect(membership_type.errors[:price_cents]).to include(I18n.t('errors.messages.greater_than', count: 0))
     end
 
     # SKIP: version has default value 1, so no error when missing
@@ -46,13 +46,13 @@ RSpec.describe MembershipType, type: :model do
     it 'requires version to be greater than 0' do
       membership_type = MembershipType.new(name: 'Test', category: :basic, price_cents: 1500, version: 0, effective_from: Date.current)
       expect(membership_type).not_to be_valid
-      expect(membership_type.errors[:version]).to include('must be greater than 0')
+      expect(membership_type.errors[:version]).to include(I18n.t('errors.messages.greater_than', count: 0))
     end
 
     it 'requires effective_from' do
       membership_type = MembershipType.new(name: 'Test', category: :basic, price_cents: 1500, version: 1)
       expect(membership_type).not_to be_valid
-      expect(membership_type.errors[:effective_from]).to include("can't be blank")
+      expect(membership_type.errors[:effective_from]).to include(I18n.t('errors.messages.blank'))
     end
 
     it 'validates name uniqueness scoped to version' do
@@ -60,7 +60,7 @@ RSpec.describe MembershipType, type: :model do
 
       duplicate = MembershipType.new(name: 'Test Type', version: 1, category: :basic, price_cents: 1500, effective_from: Date.current)
       expect(duplicate).not_to be_valid
-      expect(duplicate.errors[:name]).to include('has already been taken')
+      expect(duplicate.errors[:name]).to include(I18n.t('errors.messages.taken'))
     end
 
     it 'allows same name with different version' do

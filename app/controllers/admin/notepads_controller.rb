@@ -8,13 +8,13 @@ module Admin
 
     def edit
       @notepad = Rails.cache.fetch("notepad") || default_notepad
-      add_breadcrumb "Modifier le bloc-note", nil
+      add_breadcrumb t(".breadcrumb_modify"), nil
     end
 
     def update
       updated_notepad = params[:notepad]
       Rails.cache.write("notepad", updated_notepad)
-      redirect_to admin_dashboard_index_path, notice: "Bloc-note mis à jour !"
+      redirect_to admin_dashboard_index_path, notice: t(".updated")
     end
 
     private

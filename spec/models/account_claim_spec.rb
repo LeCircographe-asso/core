@@ -26,7 +26,7 @@ RSpec.describe AccountClaim, type: :model do
     it 'validates presence of expires_at' do
       claim = build(:account_claim, expires_at: nil)
       expect(claim).not_to be_valid
-      expect(claim.errors[:expires_at]).to include("can't be blank")
+      expect(claim.errors[:expires_at]).to include(I18n.t('errors.messages.blank'))
     end
 
     it 'auto-generates unique confirmation_token' do

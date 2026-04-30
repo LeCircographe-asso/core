@@ -12,13 +12,13 @@ RSpec.describe Person, type: :model do
     it 'requires first_name' do
       person = Person.new(last_name: 'Doe')
       expect(person).not_to be_valid
-      expect(person.errors[:first_name]).to include("can't be blank")
+      expect(person.errors[:first_name]).to include(I18n.t('errors.messages.blank'))
     end
 
     it 'requires last_name' do
       person = Person.new(first_name: 'John')
       expect(person).not_to be_valid
-      expect(person.errors[:last_name]).to include("can't be blank")
+      expect(person.errors[:last_name]).to include(I18n.t('errors.messages.blank'))
     end
 
     it 'allows blank email even if newsletter_subscribed is true' do
@@ -37,21 +37,21 @@ RSpec.describe Person, type: :model do
       create(:person, email: 'test@example.com')
       person = Person.new(first_name: 'John', last_name: 'Doe', email: 'test@example.com')
       expect(person).not_to be_valid
-      expect(person.errors[:email]).to include('has already been taken')
+      expect(person.errors[:email]).to include(I18n.t('errors.messages.taken'))
     end
 
     it 'validates phone uniqueness' do
       create(:person, phone: '0123456789')
       person = Person.new(first_name: 'John', last_name: 'Doe', phone: '0123456789')
       expect(person).not_to be_valid
-      expect(person.errors[:phone]).to include('has already been taken')
+      expect(person.errors[:phone]).to include(I18n.t('errors.messages.taken'))
     end
 
     it 'validates member_number uniqueness' do
       create(:person, member_number: '25U001')
       person = Person.new(first_name: 'John', last_name: 'Doe', member_number: '25U001')
       expect(person).not_to be_valid
-      expect(person.errors[:member_number]).to include('has already been taken')
+      expect(person.errors[:member_number]).to include(I18n.t('errors.messages.taken'))
     end
 
     # DEPRECATED: Person can exist without membership (newsletter subscribers, prospects, etc.)

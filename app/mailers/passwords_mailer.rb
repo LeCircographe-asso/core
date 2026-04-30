@@ -3,6 +3,6 @@
 class PasswordsMailer < ApplicationMailer
   def reset(user)
     @user = user
-    mail subject: "Réinitialisez votre mot de passe", to: user.email_address
+    mail subject: I18n.t("mailers.passwords_mailer.reset.subject"), to: user.email_address
   end
 end

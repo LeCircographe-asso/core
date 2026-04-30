@@ -19,7 +19,7 @@ RSpec.describe Attendance, type: :model do
     it 'validates presence of date' do
       attendance = build(:attendance, date: nil)
       expect(attendance).not_to be_valid
-      expect(attendance.errors[:date]).to include("can't be blank")
+      expect(attendance.errors[:date]).to include(I18n.t('errors.messages.blank'))
     end
 
     context 'with event' do

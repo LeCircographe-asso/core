@@ -45,3 +45,5 @@ Rails/UniqBeforePluck:
   Enabled: true
 Rails/HelperInstanceVariable:
   Enabled: true
+Rails/I18nLocaleTexts:
+  Enabled: true

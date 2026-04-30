@@ -26,7 +26,7 @@ module Admin
         ).call
 
         if result.success?
-          redirect_to admin_payment_path(result.payment), notice: "Donation prise en compte"
+          redirect_to admin_payment_path(result.payment), notice: t(".recorded")
         else
           flash[:alert] = "Erreur lors de la création de la donation: #{result.message}"
           render :new

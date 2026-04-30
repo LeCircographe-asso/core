@@ -16,7 +16,7 @@ class PaymentLine < ApplicationRecord
   belongs_to :item, polymorphic: true, optional: true
 
   validates :amount_cents, presence: true, numericality: { greater_than_or_equal_to: 0 }
-  validates :item_type, presence: true, inclusion: { in: ALLOWED_ITEM_TYPES, message: "%{value} is not a supported item_type" }
+  validates :item_type, presence: true, inclusion: { in: ALLOWED_ITEM_TYPES, message: :not_allowed }
   validates :item_id, presence: true
   validates :payment_id, uniqueness: { scope: %i[item_type item_id] }
 
@@ -24,19 +24,19 @@ class PaymentLine < ApplicationRecord
   def item_description
     case item_type
     when "Membership"
-      item&.membership_type&.name || "Adhésion"
+      item&.membership_type&.name || I18n.t("payment_line.item_description.membership_fallback")
     when "MembershipType"
-      item&.name || "Type d'adhésion"
+      item&.name || I18n.t("payment_line.item_description.membership_type_fallback")
     when "Contribution"
       if item&.contribution_formula
         item.contribution_formula.duration_humanized
       else
-        "Cotisation"
+        I18n.t("payment_line.item_description.contribution_fallback")
       end
     when "ContributionFormula"
-      item&.duration_humanized || "Cotisation"
+      item&.duration_humanized || I18n.t("payment_line.item_description.contribution_fallback")
     when "Donation"
-      description.presence || "Donation"
+      description.presence || I18n.t("payment_line.item_description.donation_fallback")
     else
       item_type.humanize
     end
@@ -57,7 +57,7 @@ class PaymentLine < ApplicationRecord
       payment: payment,
       item: membership,
       amount_cents: amount_cents,
-      description: "Adhésion #{membership.membership_type.name}"
+      description: I18n.t("payment_line.descriptions.membership", name: membership.membership_type.name)
     )
   end
 
@@ -66,7 +66,9 @@ class PaymentLine < ApplicationRecord
       payment: payment,
       item: contribution_formula,
       amount_cents: amount_cents,
-      description: "#{contribution_formula.name} (#{contribution_formula.duration})"
+      description: I18n.t("payment_line.descriptions.contribution_formula",
+                          name: contribution_formula.name,
+                          duration: contribution_formula.duration)
     )
   end
 
@@ -75,7 +77,7 @@ class PaymentLine < ApplicationRecord
       payment: payment,
       item: membership_type,
       amount_cents: amount_cents,
-      description: "Adhésion #{membership_type.name}"
+      description: I18n.t("payment_line.descriptions.membership_type", name: membership_type.name)
     )
   end
 end

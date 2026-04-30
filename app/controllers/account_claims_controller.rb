@@ -16,7 +16,7 @@ class AccountClaimsController < ApplicationController
     result = creator.call
 
     if result.success?
-      redirect_to root_path, notice: "Demande de réclamation envoyée. Vérifiez vos emails."
+      redirect_to root_path, notice: t(".success")
     else
       redirect_to root_path, alert: result.message
     end
@@ -32,7 +32,7 @@ class AccountClaimsController < ApplicationController
     result = confirmer.call
 
     if result.success?
-      redirect_to user_path(result.user), notice: "✅ Compte revendiqué ! Votre historique est maintenant disponible."
+      redirect_to user_path(result.user), notice: t(".success")
     else
       redirect_to root_path, alert: result.message
     end

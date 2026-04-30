@@ -21,7 +21,7 @@ module Admin
       @person = Person.find(params[:person_id]) if params[:person_id]
 
       unless @person&.can_buy_contribution_formulas?
-        flash[:alert] = "Cette personne doit avoir une adhésion Cirque pour acheter des plans de cotisation"
+        flash[:alert] = t(".needs_circus_membership_alert")
         redirect_to admin_users_path
         return
       end
@@ -53,7 +53,7 @@ module Admin
       ).call
 
       if result.success?
-        redirect_to admin_user_path("person_#{@person.id}"), notice: "Plan de cotisation acheté avec succès !"
+        redirect_to admin_user_path("person_#{@person.id}"), notice: t(".purchased")
       else
         redirect_to new_admin_subscription_plan_path(person_id: @person.id),
                     alert: "Erreur lors de l'achat du plan: #{result.message}"
@@ -65,7 +65,7 @@ module Admin
 
     def update
       if @contribution_formula.update(contribution_formula_params)
-        redirect_to admin_subscription_plans_path, notice: "Plan de cotisation mis à jour avec succès !"
+        redirect_to admin_subscription_plans_path, notice: t(".updated")
       else
         flash.now[:alert] = @contribution_formula.errors.full_messages.to_sentence
         render :edit, status: :unprocessable_content
@@ -74,7 +74,7 @@ module Admin
 
     def destroy
       if @contribution_formula.destroy
-        redirect_to admin_subscription_plans_path, notice: "Plan de cotisation supprimé avec succès !"
+        redirect_to admin_subscription_plans_path, notice: t(".destroyed")
       else
         redirect_to admin_subscription_plans_path, alert: @contribution_formula.errors.full_messages.to_sentence
       end
@@ -85,7 +85,7 @@ module Admin
     def require_super_admin
       return if Current.user&.super_admin?
 
-      redirect_to admin_subscription_plans_path, alert: "Seul le super-admin peut modifier ou supprimer des cotisations."
+      redirect_to admin_subscription_plans_path, alert: I18n.t("admin.subscription_plans.require_super_admin.forbidden")
     end
 
     def set_contribution_formula

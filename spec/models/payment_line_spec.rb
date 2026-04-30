@@ -15,7 +15,7 @@ RSpec.describe PaymentLine, type: :model do
       membership = create(:membership)
       payment_line = PaymentLine.new(item: membership, amount_cents: 1500)
       expect(payment_line).not_to be_valid
-      expect(payment_line.errors[:payment]).to include('must exist')
+      expect(payment_line.errors[:payment]).to include(I18n.t('errors.messages.required'))
     end
 
     it 'does not require a backing item record (polymorphic optional)' do
@@ -36,7 +36,7 @@ RSpec.describe PaymentLine, type: :model do
       membership = create(:membership)
       payment_line = PaymentLine.new(payment: payment, item: membership)
       expect(payment_line).not_to be_valid
-      expect(payment_line.errors[:amount_cents]).to include("can't be blank")
+      expect(payment_line.errors[:amount_cents]).to include(I18n.t('errors.messages.blank'))
     end
 
     it 'allows amount_cents to be 0 (for free/offered items)' do
@@ -52,7 +52,7 @@ RSpec.describe PaymentLine, type: :model do
       payment_line = PaymentLine.new(payment: payment, item: membership, amount_cents: 1500)
       payment_line.item_type = nil
       expect(payment_line).not_to be_valid
-      expect(payment_line.errors[:item_type]).to include("can't be blank")
+      expect(payment_line.errors[:item_type]).to include(I18n.t('errors.messages.blank'))
     end
 
     it 'requires item_id' do
@@ -61,7 +61,7 @@ RSpec.describe PaymentLine, type: :model do
       payment_line = PaymentLine.new(payment: payment, item: membership, amount_cents: 1500)
       payment_line.item_id = nil
       expect(payment_line).not_to be_valid
-      expect(payment_line.errors[:item_id]).to include("can't be blank")
+      expect(payment_line.errors[:item_id]).to include(I18n.t('errors.messages.blank'))
     end
 
     it 'validates uniqueness of payment_id scoped to item_type and item_id' do
@@ -71,7 +71,7 @@ RSpec.describe PaymentLine, type: :model do
 
       duplicate_line = PaymentLine.new(payment: payment, item: membership, amount_cents: 2000)
       expect(duplicate_line).not_to be_valid
-      expect(duplicate_line.errors[:payment_id]).to include('has already been taken')
+      expect(duplicate_line.errors[:payment_id]).to include(I18n.t('errors.messages.taken'))
     end
 
     it "rejects legacy item_type 'Payment' for donations" do
@@ -83,7 +83,9 @@ RSpec.describe PaymentLine, type: :model do
         amount_cents: 500
       )
       expect(payment_line).not_to be_valid
-      expect(payment_line.errors[:item_type]).to include(/not a supported item_type/)
+      expect(payment_line.errors[:item_type]).to include(
+        I18n.t('activerecord.errors.models.payment_line.attributes.item_type.not_allowed', value: 'Payment')
+      )
     end
 
     it 'accepts the canonical Donation item_type' do
