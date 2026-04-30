@@ -271,6 +271,18 @@ end
 - `bin/test_fast` — models + services uniquement.
 - `bin/test_watch` — watch mode (requiert Guard, gem optionnelle).
 
+### Workflow lint local (aligné CI)
+
+Avant une PR : pas de refactor métier ni renommage de concepts domaine sans accord — voir le [glossaire](../glossary.md).
+
+```bash
+bundle exec rubocop --format simple --force-exclusion
+bundle exec rspec
+```
+
+- CI : le job `lint` dans [`.github/workflows/ci-lint-audit.yml`](../../.github/workflows/ci-lint-audit.yml) exécute `bundle exec rubocop --format github --force-exclusion` (mêmes règles, format pour les annotations GitHub).
+- Ciblage : `bundle exec rubocop --only NomDuCop chemins… --force-exclusion`
+
 ### RSpec
 
 ```bash
@@ -389,11 +401,11 @@ L'ensemble des services `People::*`, `AccountClaimManagement::*`, `AttendanceMan
 
 ### RuboCop — rollout progressif (Phase 2+)
 
-- **Baseline** : `rubocop-rails-omakase` dans [`.rubocop.yml`](../../.rubocop.yml) + exclusions projet + override Ezam `Layout/EndOfLine: lf`.
+- **Baseline** : `rubocop-rails-omakase` dans [`.rubocop.yml`](../../.rubocop.yml) comme **seule** base héritée ; exclusions projet documentées (permanent / temporaire / à revoir en Lot B2) + override Ezam `Layout/EndOfLine: lf`.
 - **Jobs** : [`.github/workflows/ci-lint-audit.yml`](../../.github/workflows/ci-lint-audit.yml) (`lint`) et [`.github/workflows/ci-auto-lint.yml`](../../.github/workflows/ci-auto-lint.yml) — RuboCop est **bloquant** lorsque la baseline est verte (`bundle exec rubocop --format github --force-exclusion`).
 - **Élargissement** : activer les cops **par petits lots**, une PR par lot ; pas de refactors métier ni renommage de vocabulaire domaine sans accord ([glossaire](../glossary.md)).
 - **Lots suivants suggérés** : après vérif des offenses — LOW (`Style/TrailingCommaInArrayLiteral` / `HashLiteral` si pertinent), puis MEDIUM (`Performance/*`, `Rails/*` au cas par cas), puis HIGH (`Lint/*` sur flux, `Metrics/*`, fichiers `app/models` / `app/services` sensibles) en revue manuelle uniquement.
-- **Commandes** : `bundle exec rubocop --format simple --force-exclusion` ; ciblage : `bundle exec rubocop --only NomDuCop chemins… --force-exclusion`.
+- **Commandes locales** : même séquence recommandée qu’avant CI — RuboCop puis RSpec (section 6, *Workflow lint local*) ; ciblage : `bundle exec rubocop --only NomDuCop chemins… --force-exclusion`.
 
 ### `.github/workflows/01-ci.yml`
 
