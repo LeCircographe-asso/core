@@ -65,11 +65,11 @@ RSpec.describe Admin::Users::DisplayHelper, type: :helper do
 
   describe '#format_currency' do
     it 'formats currency correctly' do
-      expect(helper.format_currency(12.50)).to eq('€12,50')
+      expect(helper.format_currency(12.50)).to eq('12,50 €')
     end
 
     it 'handles zero' do
-      expect(helper.format_currency(0)).to eq('€0,00')
+      expect(helper.format_currency(0)).to eq('0,00 €')
     end
 
     it 'handles nil' do
@@ -77,7 +77,7 @@ RSpec.describe Admin::Users::DisplayHelper, type: :helper do
     end
 
     it 'handles integer' do
-      expect(helper.format_currency(10)).to eq('€10,00')
+      expect(helper.format_currency(10)).to eq('10,00 €')
     end
   end
 end

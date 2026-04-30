@@ -24,8 +24,8 @@ module Web
     validates :user_password, presence: true, length: { minimum: 6 }
     validates :user_password_confirmation, presence: true
     validates :user_system_role, inclusion: { in: %w[super_admin admin volunteer web_visitor] }
-    validates :cgu, acceptance: { message: "Vous devez accepter les CGU pour continuer." }, allow_nil: false
-    validates :privacy_policy, acceptance: { message: "Vous devez accepter la politique de confidentialité pour continuer." }, allow_nil: false
+    validates :cgu, acceptance: { message: I18n.t("services.web.user_registration.accept_cgu") }, allow_nil: false
+    validates :privacy_policy, acceptance: { message: I18n.t("services.web.user_registration.accept_privacy") }, allow_nil: false
     validate :email_uniqueness
     validate :user_email_uniqueness
     validate :password_confirmation_matches

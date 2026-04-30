@@ -2,7 +2,7 @@
 
 > **Statut** : stable
 > **Public cible** : contributeur
-> **Dernière vérification** : 2026-04-27
+> **Dernière vérification** : 2026-04-30
 > **Sources de vérité** : `spec/`, `bin/test`, `bin/test_fast`, `spec/rails_helper.rb`, `.rspec`.
 
 > Vocabulaire : voir [`../glossary.md`](../glossary.md). Les exemples de code peuvent encore utiliser des noms legacy (`SubscriptionPlan`, `BookOfEntry`) pendant la migration progressive vers `ContributionFormula` / `Contribution` (cf. [`../migrations/vocabulary_migration.md`](../migrations/vocabulary_migration.md)).
@@ -438,7 +438,8 @@ L'ensemble des services `People::*`, `AccountClaimManagement::*`, `AttendanceMan
 
 - **Baseline** : `rubocop-rails-omakase` dans [`.rubocop.yml`](../../.rubocop.yml) comme **seule** base héritée ; exclusions projet documentées (permanent / temporaire) + override Ezam `Layout/EndOfLine: lf`. Le dossier `test/**/*` est **linté** avec le reste du Ruby applicatif (`spec/` l’était déjà).
 
-- **Lot B2 (élargissement)** — périmètre + conventions Rails cumulées : `test/**/*` inclus ; cops `Rails/` activés localement avec prudence (Omakase laisse la plupart du département `Rails` désactivé) — actuellement : `Rails/HttpStatus`, `Rails/Output`, `Rails/Delegate`, `Rails/StrongParametersExpect`, `Rails/PluralizationGrammar`, `Rails/UniqBeforePluck`, `Rails/HelperInstanceVariable`. Étendre la liste uniquement via petites PR après `bundle exec rubocop` / `bundle exec rspec` verts.
+- **Lot B2 (élargissement)** — périmètre + conventions Rails cumulées : `test/**/*` inclus ; cops `Rails/` activés localement avec prudence (Omakase laisse la plupart du département `Rails` désactivé) — actuellement : `Rails/HttpStatus`, `Rails/Output`, `Rails/Delegate`, `Rails/StrongParametersExpect`, `Rails/PluralizationGrammar`, `Rails/UniqBeforePluck`, `Rails/HelperInstanceVariable`, `Rails/I18nLocaleTexts` (messages utilisateur en `t()` / YAML, pas de chaînes littérales dans contrôleurs, mailers et modèles). Étendre la liste uniquement via petites PR après `bundle exec rubocop` / `bundle exec rspec` verts.
+- **Specs et locale** : `config.i18n.default_locale` est `:fr` ; les messages ActiveRecord / `number_to_currency` suivent `rails-i18n` (fr). Dans les tests de validations, préférer `I18n.t('errors.messages.blank')`, `I18n.t('errors.messages.required')`, etc., plutôt que du texte anglais codé en dur ; pour les flashes ou sujets de mail, utiliser `I18n.t('…')` avec la même clé que l’application.
 - **Jobs** : [`.github/workflows/ci-lint-audit.yml`](../../.github/workflows/ci-lint-audit.yml) (`lint`) et [`.github/workflows/ci-auto-lint.yml`](../../.github/workflows/ci-auto-lint.yml) — RuboCop est **bloquant** lorsque la baseline est verte (`bundle exec rubocop --format github --force-exclusion`).
 - **Élargissement** : activer les cops **par petits lots**, une PR par lot ; pas de refactors métier ni renommage de vocabulaire domaine sans accord ([glossaire](../glossary.md)).
 - **Lots suivants suggérés** : après vérif des offenses — LOW (`Style/TrailingCommaInArrayLiteral` / `HashLiteral` si pertinent), puis MEDIUM (`Performance/*`, `Rails/*` au cas par cas), puis HIGH (`Lint/*` sur flux, `Metrics/*`, fichiers `app/models` / `app/services` sensibles) en revue manuelle uniquement.

@@ -17,19 +17,19 @@ RSpec.describe Event, type: :model do
     it 'validates presence of name' do
       event = build(:event, name: nil)
       expect(event).not_to be_valid
-      expect(event.errors[:name]).to include("can't be blank")
+      expect(event.errors[:name]).to include(I18n.t('errors.messages.blank'))
     end
 
     it 'validates presence of date' do
       event = build(:event, date: nil)
       expect(event).not_to be_valid
-      expect(event.errors[:date]).to include("can't be blank")
+      expect(event.errors[:date]).to include(I18n.t('errors.messages.blank'))
     end
 
     it 'validates presence of category' do
       event = build(:event, category: nil)
       expect(event).not_to be_valid
-      expect(event.errors[:category]).to include("can't be blank")
+      expect(event.errors[:category]).to include(I18n.t('errors.messages.blank'))
     end
   end
 

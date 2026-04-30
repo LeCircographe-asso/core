@@ -8,7 +8,7 @@ class AccountClaimMailer < ApplicationMailer
 
     mail(
       to: claim.user.email_address,
-      subject: "Confirmez votre revendication de compte - Le Circographe"
+      subject: I18n.t("mailers.account_claim_mailer.confirmation_email.subject")
     )
   end
 end

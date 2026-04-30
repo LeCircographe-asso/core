@@ -15,14 +15,14 @@ RSpec.describe Payment, type: :model do
       user = create(:user)
       payment = Payment.new(recorded_by: user, total_cents: 1500, status: :pending)
       expect(payment).not_to be_valid
-      expect(payment.errors[:person]).to include('must exist')
+      expect(payment.errors[:person]).to include(I18n.t('errors.messages.required'))
     end
 
     it 'requires a recorded_by user' do
       person = create(:person)
       payment = Payment.new(person: person, total_cents: 1500, status: :pending)
       expect(payment).not_to be_valid
-      expect(payment.errors[:recorded_by]).to include('must exist')
+      expect(payment.errors[:recorded_by]).to include(I18n.t('errors.messages.required'))
     end
 
     it 'has valid status values' do

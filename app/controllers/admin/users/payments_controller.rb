@@ -62,7 +62,7 @@ module Admin
         result = People::PaymentCreator.new(service_params).call
 
         if result.success?
-          redirect_to admin_user_path("person_#{@person.id}"), notice: "Paiement créé avec succès"
+          redirect_to admin_user_path("person_#{@person.id}"), notice: t(".success")
         else
           @membership_types = MembershipType.all
           @contribution_formulas = ContributionFormula.all
@@ -93,7 +93,7 @@ module Admin
         ).call
 
         if result.success?
-          redirect_to admin_user_path("person_#{@person.id}"), notice: "Paiement mis à jour avec succès"
+          redirect_to admin_user_path("person_#{@person.id}"), notice: t(".success")
         else
           redirect_to admin_user_path("person_#{@person.id}"), alert: "Erreur lors de la mise à jour: #{result.message}"
         end
@@ -110,7 +110,7 @@ module Admin
         ).call
 
         if result.success?
-          redirect_to admin_user_path("person_#{@person.id}"), notice: "Paiement supprimé avec succès"
+          redirect_to admin_user_path("person_#{@person.id}"), notice: t(".destroyed")
         else
           redirect_to admin_user_path("person_#{@person.id}"), alert: "Erreur lors de la suppression: #{result.message}"
         end
@@ -129,12 +129,12 @@ module Admin
             ).call
 
             if result.success?
-              redirect_to admin_user_path("person_#{@person.id}"), notice: "Paiement traité avec succès"
+              redirect_to admin_user_path("person_#{@person.id}"), notice: t(".processed")
             else
               redirect_to admin_user_path("person_#{@person.id}"), alert: "Erreur lors du traitement: #{result.message}"
             end
           else
-            redirect_to admin_user_path("person_#{@person.id}"), notice: "Paiement déjà traité"
+            redirect_to admin_user_path("person_#{@person.id}"), notice: t(".already_processed")
           end
         rescue StandardError => e
           redirect_to admin_user_path("person_#{@person.id}"), alert: "Erreur lors du traitement: #{e.message}"

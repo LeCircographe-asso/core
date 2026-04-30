@@ -54,13 +54,13 @@ class CheckoutController < ApplicationController
         interested: true
       )
 
-      redirect_to @event, notice: "Paiement réussi et commande mise à jour."
+      redirect_to @event, notice: t(".payment_ok")
     else
-      redirect_to page_path("news", anchor: "evenements"), alert: "Paiement non réussi, commande non mise à jour."
+      redirect_to page_path("news", anchor: "evenements"), alert: t(".payment_failed_alert")
     end
   end
 
   def cancel
-    redirect_to page_path("news", anchor: "evenements"), alert: "Le paiement a été annulé."
+    redirect_to page_path("news", anchor: "evenements"), alert: t(".cancelled_alert")
   end
 end

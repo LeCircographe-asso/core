@@ -34,12 +34,12 @@ module Admin
 
     def show
       # Rediriger vers la liste des paiements avec un message
-      redirect_to admin_payments_path, notice: "Utilisez l'édition inline pour modifier les paiements"
+      redirect_to admin_payments_path, notice: t(".use_inline_notice")
     end
 
     def new
       # Payment creation is currently disabled, redirect to index
-      redirect_to admin_payments_path, notice: "Création de paiement temporairement désactivée"
+      redirect_to admin_payments_path, notice: t(".creation_disabled_notice")
     end
 
     def edit
@@ -73,7 +73,8 @@ module Admin
 
       respond_to do |format|
         if result.success?
-          format.html { redirect_to admin_payments_path, notice: "Paiement créé avec succès" }
+          created_msg = t(".created_notice")
+          format.html { redirect_to admin_payments_path, notice: created_msg }
           format.turbo_stream do
             payments_service = Admin::PaymentsService.new({})
             payments_service.call
@@ -85,7 +86,7 @@ module Admin
                                      total_amount: Payment.total_successful_amount,
                                      total_donation: Payment.total_donations
                                    }),
-              turbo_stream.replace("flash", partial: "shared/flash", locals: { notice: "Paiement créé avec succès" })
+              turbo_stream.replace("flash", partial: "shared/flash", locals: { notice: created_msg })
             ]
           end
         else
@@ -143,7 +144,8 @@ module Admin
 
       respond_to do |format|
         if result.success?
-          format.html { redirect_to admin_payments_path, notice: "Mise à jour réussie" }
+          updated_msg = t(".success_notice")
+          format.html { redirect_to admin_payments_path, notice: updated_msg }
           format.turbo_stream do
             # Recalculer les totaux
             payments_service = Admin::PaymentsService.new({})
@@ -157,7 +159,7 @@ module Admin
                                      total_amount: Payment.total_successful_amount,
                                      total_donation: Payment.total_donations
                                    }),
-              turbo_stream.replace("flash", partial: "shared/flash", locals: { notice: "Mise à jour réussie" })
+              turbo_stream.replace("flash", partial: "shared/flash", locals: { notice: updated_msg })
             ]
           end
         else
@@ -187,7 +189,8 @@ module Admin
 
       respond_to do |format|
         if result.success?
-          format.html { redirect_to admin_payments_path, notice: "Paiement annulé avec succès" }
+          cancelled_msg = t(".cancelled_notice")
+          format.html { redirect_to admin_payments_path, notice: cancelled_msg }
           format.turbo_stream do
             # Recalculer les totaux
             payments_service = Admin::PaymentsService.new({})
@@ -200,7 +203,7 @@ module Admin
                                      total_amount: Payment.total_successful_amount,
                                      total_donation: Payment.total_donations
                                    }),
-              turbo_stream.replace("flash", partial: "shared/flash", locals: { notice: "Paiement annulé avec succès" })
+              turbo_stream.replace("flash", partial: "shared/flash", locals: { notice: cancelled_msg })
             ]
           end
         else
@@ -233,7 +236,7 @@ module Admin
       ).call
 
       if result.success?
-        redirect_to admin_payment_path(result.payment), notice: "Paiement restauré avec succès"
+        redirect_to admin_payment_path(result.payment), notice: t(".restored_notice")
       else
         redirect_to admin_payments_path, alert: "Échec de la restauration du paiement: #{result.message}"
       end

@@ -11,11 +11,11 @@ class Attendance < ApplicationRecord
   validates :date, presence: true
   validates :person_id, uniqueness: {
     scope: :event_id,
-    message: "est déjà intéressé par cet événement"
+    message: :event_interest_taken
   }, if: -> { event_id.present? }
   validates :person_id, uniqueness: {
     scope: :date,
-    message: "est déjà marqué présent aujourd'hui"
+    message: :daily_presence_taken
   }, if: -> { event_id.nil? }
 
   before_create :set_date_if_missing

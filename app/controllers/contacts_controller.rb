@@ -5,7 +5,7 @@ class ContactsController < ApplicationController
     @contact = params.expect(contact: %i[name email message category])
 
     if @contact.values.any?(&:blank?)
-      respond_with_error("Veuillez remplir tous les champs du formulaire.")
+      respond_with_error(t(".blank_fields"))
       return
     end
 
@@ -31,17 +31,17 @@ class ContactsController < ApplicationController
 
       respond_to do |format|
         format.turbo_stream do
-          flash.now[:notice] = "Votre message a été envoyé avec succès ! Nous revenons vers vous rapidement."
+          flash.now[:notice] = t(".sent_notice")
           render turbo_stream: turbo_stream.update("contact_form", partial: "pages/contact/form", locals: { contact: {}, status: :success })
         end
         format.html do
-          flash[:notice] = "Votre message a été envoyé avec succès ! Nous revenons vers vous rapidement."
+          flash[:notice] = t(".sent_notice")
           redirect_to page_path("contact_us")
         end
       end
     rescue StandardError => e
       Rails.logger.error("Échec d'envoi d'email: #{e.message}")
-      respond_with_error("Une erreur est survenue lors de l'envoi. Réessaie dans quelques instants.")
+      respond_with_error(t(".send_error"))
     end
   end
 

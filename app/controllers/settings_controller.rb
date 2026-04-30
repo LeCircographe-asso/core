@@ -26,7 +26,7 @@ class SettingsController < ApplicationController
     result = updater.call
 
     if result.success?
-      flash[:notice] = "Vos modifications ont été enregistrées avec succès"
+      flash[:notice] = t(".saved_notice")
       redirect_to user_path(@user), status: :see_other
     else
       flash.now[:alert] = result.message

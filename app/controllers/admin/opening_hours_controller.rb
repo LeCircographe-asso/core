@@ -38,7 +38,7 @@ module Admin
 
       # Persist via cache for now (can be moved to a Setting model later)
       Rails.cache.write("opening_hours", updated_hours)
-      redirect_to admin_opening_hours_path, notice: "Horaires mis à jour avec succès"
+      redirect_to admin_opening_hours_path, notice: t(".success")
     end
 
     private

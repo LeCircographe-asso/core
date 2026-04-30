@@ -53,8 +53,8 @@ class User < ApplicationRecord
 
   validates :email_address, presence: true
   validate :email_uniqueness_unless_person_email
-  validates :cgu, acceptance: { message: "Vous devez accepter les CGU pour continuer." }, unless: :created_by_admin?
-  validates :privacy_policy, acceptance: { message: "Vous devez accepter la politique de confidentialité pour continuer." }, unless: :created_by_admin?
+  validates :cgu, acceptance: { message: :must_accept }, unless: :created_by_admin?
+  validates :privacy_policy, acceptance: { message: :must_accept }, unless: :created_by_admin?
 
   # (can_edit_member_numbers? maintenant dans le module Roleable)
 
