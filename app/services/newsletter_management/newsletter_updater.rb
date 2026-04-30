@@ -18,7 +18,7 @@ module NewsletterManagement
         updated_by = User.find(updated_by_id)
 
         # Vérifier les permissions
-        return failure("Insufficient permissions to update newsletter subscription") unless updated_by.super_admin? || updated_by.admin? || updated_by.id == person&.user_id
+        return failure("Insufficient permissions to update newsletter subscription") unless updated_by.super_admin? || updated_by.admin? || updated_by.id == person&.user&.id
 
         # Trouver ou créer le subscriber
         subscriber = NewsletterSubscriber.find_or_initialize_by(email: email || person.email)
