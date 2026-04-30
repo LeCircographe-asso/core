@@ -11,6 +11,9 @@ AllCops:
     - 'db/**/*.rb'
     - '**/*.erb' # rubocop actually break (uglify) template file
     - 'test/**/*.rb'
+    - 'vendor/**/*'
+    - 'tmp/**/*'
+    - '.bundle/**/*'
 
 Layout/IndentationWidth:
   Width: 2
