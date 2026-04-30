@@ -6,29 +6,18 @@ module Admin
     # before_action :set_breadcrumbs
 
     def index
-      # Use service to handle business logic
-      payments_service = Admin::PaymentsService.new(params)
-      service_result = payments_service.call
+      @filter_params = payments_index_filter_params
+      service_result = Admin::PaymentsService.new(@filter_params.to_unsafe_h).call
 
-      @payments = service_result[:payments]
       @total_amount = service_result[:total_amount]
       @total_donation = service_result[:total_donation]
 
-      # Handle pagination in controller (service returns the query)
-      sort_column = params[:sort] || "payments.created_at"
-      sort_direction = params[:direction] || "desc"
+      sorted_payments = apply_payments_sort(service_result[:payments], @filter_params)
+      @payments_for_summary = sorted_payments.includes(:person, :recorded_by, :payment_lines)
 
-      # Ensure sort_column is properly qualified with table name
-      @payments = if sort_column.include?(".")
-                    @payments.order("#{sort_column} #{sort_direction}")
-      else
-                    @payments.order("payments.#{sort_column} #{sort_direction}")
-      end
+      items_per_page = @filter_params[:items]&.to_i || 15
+      @pagy, @payments = pagy(sorted_payments, items: items_per_page)
 
-      items_per_page = params[:items]&.to_i || 15
-      @pagy, @payments = pagy(@payments, items: items_per_page)
-
-      # Set breadcrumbs
       set_payments_breadcrumbs
     end
 
@@ -44,11 +33,18 @@ module Admin
 
     def edit
       @payment = Payment.find(params[:id])
+      @list_filter_params = payments_index_filter_params.to_unsafe_h
 
       respond_to do |format|
-        format.html { render partial: "edit_form", locals: { payment: @payment } }
+        format.html do
+          render partial: "edit_form", locals: { payment: @payment, list_filter_params: @list_filter_params }
+        end
         format.turbo_stream do
-          render turbo_stream: turbo_stream.replace("payment_#{@payment.id}_actions", partial: "edit_form", locals: { payment: @payment })
+          render turbo_stream: turbo_stream.replace(
+            "payment_#{@payment.id}_actions",
+            partial: "edit_form",
+            locals: { payment: @payment, list_filter_params: @list_filter_params }
+          )
         end
       end
     end
@@ -76,16 +72,13 @@ module Admin
           created_msg = t(".created_notice")
           format.html { redirect_to admin_payments_path, notice: created_msg }
           format.turbo_stream do
-            payments_service = Admin::PaymentsService.new({})
-            payments_service.call
-
+            filter_locals = payments_index_filter_params.to_unsafe_h
+            fresh = payment_for_ui_row(result.payment)
             render turbo_stream: [
-              turbo_stream.append("payments", partial: "payment_row", locals: { payment: result.payment }),
-              turbo_stream.replace("payment-summary", partial: "payment_summary", locals: {
-                                     payments: Payment.includes(:person, :recorded_by, :payment_lines).order(created_at: :desc),
-                                     total_amount: Payment.total_successful_amount,
-                                     total_donation: Payment.total_donations
-                                   }),
+              turbo_stream.append("payments", partial: "payment_row",
+                                             locals: { payment: fresh, list_filter_params: filter_locals }),
+              turbo_stream.replace("payment-summary", partial: "payment_summary",
+                                                     locals: payment_summary_locals(payments_index_filter_params)),
               turbo_stream.replace("flash", partial: "shared/flash", locals: { notice: created_msg })
             ]
           end
@@ -153,18 +146,15 @@ module Admin
           updated_msg = t(".success_notice")
           format.html { redirect_to admin_payments_path, notice: updated_msg }
           format.turbo_stream do
-            # Recalculer les totaux
-            payments_service = Admin::PaymentsService.new({})
-            payments_service.call
-
+            filter_locals = payments_index_filter_params.to_unsafe_h
+            fresh = payment_for_ui_row(result.payment)
             render turbo_stream: [
-              turbo_stream.replace("payment_#{result.payment.id}_actions", partial: "payment_actions", locals: { payment: result.payment }),
-              turbo_stream.replace("payment_row_#{result.payment.id}", partial: "payment_row", locals: { payment: result.payment }),
-              turbo_stream.replace("payment-summary", partial: "payment_summary", locals: {
-                                     payments: Payment.includes(:person, :recorded_by, :payment_lines).order(created_at: :desc),
-                                     total_amount: Payment.total_successful_amount,
-                                     total_donation: Payment.total_donations
-                                   }),
+              turbo_stream.replace("payment_#{fresh.id}_actions", partial: "payment_actions",
+                                                                   locals: { payment: fresh, list_filter_params: filter_locals }),
+              turbo_stream.replace("payment_row_#{fresh.id}", partial: "payment_row",
+                                                               locals: { payment: fresh, list_filter_params: filter_locals }),
+              turbo_stream.replace("payment-summary", partial: "payment_summary",
+                                                       locals: payment_summary_locals(payments_index_filter_params)),
               turbo_stream.replace("flash", partial: "shared/flash", locals: { notice: updated_msg })
             ]
           end
@@ -200,17 +190,10 @@ module Admin
           cancelled_msg = t(".cancelled_notice")
           format.html { redirect_to admin_payments_path, notice: cancelled_msg }
           format.turbo_stream do
-            # Recalculer les totaux
-            payments_service = Admin::PaymentsService.new({})
-            payments_service.call
-
             render turbo_stream: [
               turbo_stream.remove("payment_row_#{result.payment.id}"),
-              turbo_stream.replace("payment-summary", partial: "payment_summary", locals: {
-                                     payments: Payment.includes(:person, :recorded_by, :payment_lines).order(created_at: :desc),
-                                     total_amount: Payment.total_successful_amount,
-                                     total_donation: Payment.total_donations
-                                   }),
+              turbo_stream.replace("payment-summary", partial: "payment_summary",
+                                                     locals: payment_summary_locals(payments_index_filter_params)),
               turbo_stream.replace("flash", partial: "shared/flash", locals: { notice: cancelled_msg })
             ]
           end
@@ -253,6 +236,69 @@ module Admin
     end
 
     private
+
+    FILTER_PARAM_KEYS = Admin::PaymentsHelper::PAYMENTS_INDEX_QUERY_KEYS
+
+    # Filtres liste : uniquement la query string (pas le corps form PATCH), pour éviter les logs
+    # Strong Parameters « Unpermitted » sur :payment, :authenticity_token, :controller, etc.
+    # Ordre : query courante → GET index → Referer vers la liste.
+    def payments_index_filter_params
+      direct = permit_payment_index_filters(request.query_parameters)
+      return direct if payments_filter_values_present?(direct)
+
+      raw =
+        if request.get? && request.path == admin_payments_path
+          ActionController::Parameters.new(request.query_parameters)
+        elsif request.referer.present?
+          uri = URI.parse(request.referer)
+          if uri.path == admin_payments_path
+            ActionController::Parameters.new(Rack::Utils.parse_nested_query(uri.query.to_s))
+          else
+            ActionController::Parameters.new({})
+          end
+        else
+          ActionController::Parameters.new({})
+        end
+
+      raw.permit(*FILTER_PARAM_KEYS)
+    rescue URI::InvalidURIError
+      ActionController::Parameters.new({}).permit(*FILTER_PARAM_KEYS)
+    end
+
+    def permit_payment_index_filters(query_hash)
+      ActionController::Parameters.new(query_hash.to_h).permit(*FILTER_PARAM_KEYS)
+    end
+
+    def payments_filter_values_present?(permitted)
+      permitted.to_unsafe_h.values.any?(&:present?)
+    end
+
+    def payment_for_ui_row(payment_or_id)
+      id = payment_or_id.is_a?(Payment) ? payment_or_id.id : payment_or_id
+      Payment.includes(:person, :recorded_by, :payment_lines).find(id)
+    end
+
+    def apply_payments_sort(relation, filter_params)
+      sort_column = filter_params[:sort].presence || "payments.created_at"
+      sort_direction = filter_params[:direction].presence || "desc"
+
+      if sort_column.to_s.include?(".")
+        relation.order("#{sort_column} #{sort_direction}")
+      else
+        relation.order("payments.#{sort_column} #{sort_direction}")
+      end
+    end
+
+    def payment_summary_locals(filter_params)
+      service_result = Admin::PaymentsService.new(filter_params.to_unsafe_h).call
+      sorted = apply_payments_sort(service_result[:payments], filter_params)
+
+      {
+        payments: sorted.includes(:person, :recorded_by, :payment_lines),
+        total_amount: service_result[:total_amount],
+        total_donation: service_result[:total_donation]
+      }
+    end
 
     def payment_params
       params.expect(
