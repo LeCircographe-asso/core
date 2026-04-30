@@ -3,11 +3,17 @@
 # Controllers use lazy lookups under fr.<controller_path>.<action>.* unless noted.
 #
 fr:
+  flash:
+    generic:
+      error_detail: "Erreur: %{message}"
+
   account_claims:
     create:
       success: "Demande de réclamation envoyée. Vérifiez vos emails."
+      rescue_alert: "Erreur: %{message}"
     confirm:
       success: "✅ Compte revendiqué ! Votre historique est maintenant disponible."
+      rescue_alert: "Erreur lors de la réclamation: %{message}"
 
   activerecord:
     errors:
@@ -77,6 +83,11 @@ fr:
       create:
         duplicate_active: "Cette personne possède déjà une adhésion active."
         success_with_contribution_hint: "Adhésion créée avec succès ! Vous pouvez maintenant ajouter une cotisation depuis la fiche utilisateur."
+        upgrade_failed_alert: "Erreur lors de l'upgrade: %{message}"
+        membership_creation_failed_alert: "Erreur lors de la création de l'adhésion: %{message}"
+        upgrade_notice_offered: "Adhésion upgradée avec succès ! %{name} - Offert"
+        upgrade_notice_paid: "Adhésion upgradée avec succès ! %{name} - Montant: %{amount}€"
+        upgrade_notice_member_number_suffix: " | Numéro d'adhérent changé: %{old_number} → %{new_number}"
 
     notepads:
       edit:
@@ -95,12 +106,16 @@ fr:
         creation_disabled_notice: "Création de paiement temporairement désactivée"
       create:
         created_notice: "Paiement créé avec succès"
+        failure_alert: "Erreur lors de la création du paiement: %{message}"
       update:
         success_notice: "Mise à jour réussie"
+        failure_alert: "Échec de la mise à jour: %{message}"
       destroy:
         cancelled_notice: "Paiement annulé avec succès"
+        cancel_failed_alert: "Échec de l'annulation du paiement: %{message}"
       restore:
         restored_notice: "Paiement restauré avec succès"
+        restore_failed_alert: "Échec de la restauration du paiement: %{message}"
 
     sessions:
       rate_limited_alert: "Rééssayez plus tard"
@@ -115,6 +130,7 @@ fr:
         needs_circus_membership_alert: "Cette personne doit avoir une adhésion Cirque pour acheter des plans de cotisation"
       create:
         purchased: "Plan de cotisation acheté avec succès !"
+        purchase_failed_alert: "Erreur lors de l'achat du plan: %{message}"
       update:
         updated: "Plan de cotisation mis à jour avec succès !"
       destroy:
@@ -122,7 +138,15 @@ fr:
       require_super_admin:
         forbidden: "Seul le super-admin peut modifier ou supprimer des cotisations."
 
+    subscriptions:
+      upgrade:
+        success_notice: "Cotisation upgradée avec succès."
+        credit_applied_suffix: " Crédit appliqué: %{amount}€"
+        failure_alert: "Erreur lors de l'upgrade: %{message}"
+
     users:
+      create:
+        invalid_data_alert: "Données invalides : %{details}"
       show:
         merged_person_notice: "Cette fiche a été fusionnée avec une autre. Retour à la liste des utilisateurs."
       edit:
@@ -151,13 +175,17 @@ fr:
       payments:
         create:
           success: "Paiement créé avec succès"
+          failure_alert: "Erreur lors de la création du paiement: %{message}"
         update:
           success: "Paiement mis à jour avec succès"
+          failure_alert: "Erreur lors de la mise à jour: %{message}"
         destroy:
           destroyed: "Paiement supprimé avec succès"
+          failure_alert: "Erreur lors de la suppression: %{message}"
         process_payment:
           processed: "Paiement traité avec succès"
           already_processed: "Paiement déjà traité"
+          failure_alert: "Erreur lors du traitement: %{message}"
 
   checkout:
     success:

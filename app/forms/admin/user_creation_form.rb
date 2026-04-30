@@ -51,7 +51,7 @@ module Admin
     validates :payment_method, inclusion: { in: %w[cash card cheque transfer offered] }
 
     def call
-      return failure("Invalid data: #{errors.full_messages.join(', ')}") unless valid?
+      return failure(I18n.t("admin.users.create.invalid_data_alert", details: errors.full_messages.join(", "))) unless valid?
 
       existing_person = person_id.present? ? Person.active.find_by(id: person_id) : nil
       return failure("Person not found") if person_id.present? && existing_person.nil?

@@ -56,10 +56,10 @@ module Admin
         redirect_to admin_user_path("person_#{@person.id}"), notice: t(".purchased")
       else
         redirect_to new_admin_subscription_plan_path(person_id: @person.id),
-                    alert: "Erreur lors de l'achat du plan: #{result.message}"
+                    alert: t(".purchase_failed_alert", message: result.message)
       end
     rescue StandardError => e
-      flash[:alert] = "Erreur lors de l'achat du plan: #{e.message}"
+      flash[:alert] = t(".purchase_failed_alert", message: e.message)
       redirect_to new_admin_subscription_plan_path(person_id: @person.id)
     end
 
