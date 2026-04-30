@@ -146,7 +146,7 @@ module Admin
         redirect_to admin_user_path("person_#{person.id}"), notice: build_upgrade_notice(membership_type, result, payment_method_from(params_hash))
       else
         redirect_to new_admin_membership_path(person_id: person.id, upgrade: params_hash[:upgrade]),
-                    alert: "Erreur lors de l'upgrade: #{result.message}"
+                    alert: t("admin.memberships.create.upgrade_failed_alert", message: result.message)
       end
     end
 
@@ -172,19 +172,30 @@ module Admin
         end
       else
         redirect_to new_admin_membership_path(person_id: person.id),
-                    alert: "Erreur lors de la création de l'adhésion: #{result.message}"
+                    alert: t("admin.memberships.create.membership_creation_failed_alert", message: result.message)
       end
     end
 
     def build_upgrade_notice(membership_type, result, payment_method)
-      message = if payment_method == "offered"
-                  "Adhésion upgradée avec succès ! #{membership_type.name} - Offert"
-      else
-                  amount = result.payment&.total_cents || membership_type.price_cents
-                  "Adhésion upgradée avec succès ! #{membership_type.name} - Montant: #{(amount / 100.0).round(2)}€"
-      end
+      message =
+        if payment_method == "offered"
+          I18n.t("admin.memberships.create.upgrade_notice_offered", name: membership_type.name)
+        else
+          amount = result.payment&.total_cents || membership_type.price_cents
+          I18n.t(
+            "admin.memberships.create.upgrade_notice_paid",
+            name: membership_type.name,
+            amount: (amount / 100.0).round(2)
+          )
+        end
 
-      message += " | Numéro d'adhérent changé: #{result.old_member_number} → #{result.new_member_number}" if result.member_number_changed
+      if result.member_number_changed
+        message += I18n.t(
+          "admin.memberships.create.upgrade_notice_member_number_suffix",
+          old_number: result.old_member_number,
+          new_number: result.new_member_number
+        )
+      end
 
       message
     end

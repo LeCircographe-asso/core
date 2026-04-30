@@ -21,7 +21,7 @@ class AccountClaimsController < ApplicationController
       redirect_to root_path, alert: result.message
     end
   rescue StandardError => e
-    redirect_to root_path, alert: "Erreur: #{e.message}"
+    redirect_to root_path, alert: t(".rescue_alert", message: e.message)
   end
 
   def confirm
@@ -37,6 +37,6 @@ class AccountClaimsController < ApplicationController
       redirect_to root_path, alert: result.message
     end
   rescue StandardError => e
-    redirect_to root_path, alert: "Erreur lors de la réclamation: #{e.message}"
+    redirect_to root_path, alert: t(".rescue_alert", message: e.message)
   end
 end
