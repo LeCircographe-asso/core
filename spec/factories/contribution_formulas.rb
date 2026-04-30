@@ -30,7 +30,7 @@ FactoryBot.define do
     trait :annual do
       duration { :annual }
       sequence(:name) { |n| "Annuel #{n}" }
-      price_cents { 20000 }
+      price_cents { 20_000 }
       sessions_count { nil }
       validity_days { nil }
     end

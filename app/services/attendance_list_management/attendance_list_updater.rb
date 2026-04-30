@@ -15,7 +15,7 @@ module AttendanceListManagement
 
       begin
         attendance_list = AttendanceList.find(attendance_list_id)
-        updated_by = User.find(updated_by_id)
+        User.find(updated_by_id)
 
         ActiveRecord::Base.transaction do
           attendance_list.update!(
@@ -27,25 +27,23 @@ module AttendanceListManagement
 
           # Instrumentation pour audit
           ActiveSupport::Notifications.instrument(
-            "attendance_list.updated",
+            'attendance_list.updated',
             attendance_list_id: attendance_list.id,
             updated_by_id: updated_by_id,
             changes: attendance_list.previous_changes
           )
 
-          success(attendance_list: attendance_list, message: "Liste de présence mise à jour avec succès !")
+          success(attendance_list: attendance_list, message: 'Liste de présence mise à jour avec succès !')
         end
       rescue ActiveRecord::RecordNotFound => e
         failure("Attendance list or User not found: #{e.message}")
       rescue ActiveRecord::RecordInvalid => e
         failure("Validation error: #{e.message}")
-      rescue => e
+      rescue StandardError => e
         Rails.logger.error "[AttendanceListUpdater] Error: #{e.message}"
         failure("Error updating attendance list: #{e.message}")
       end
     end
-
-    private
 
     # success et failure hérités de BaseService
   end

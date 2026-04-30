@@ -1,4 +1,4 @@
-require "ostruct"
+require 'ostruct'
 
 module People
   class PersonCreator
@@ -36,13 +36,13 @@ module People
     end
 
     attribute :newsletter_subscribed, :boolean, default: nil
-    attribute :newsletter_source, :string, default: "admin"
+    attribute :newsletter_source, :string, default: 'admin'
 
     validates :first_name, presence: true, unless: :person_present?
     validates :last_name, presence: true, unless: :person_present?
 
     def call
-      return failure("Invalid data", errors.full_messages) unless valid?
+      return failure('Invalid data', errors.full_messages) unless valid?
 
       ActiveRecord::Base.transaction do
         target_person, created = resolve_person
@@ -52,13 +52,13 @@ module People
 
         success(
           person: target_person,
-          message: created ? "Person created successfully" : "Person updated successfully",
+          message: created ? 'Person created successfully' : 'Person updated successfully',
           created: created
         )
       end
     rescue ActiveRecord::RecordInvalid => e
       failure("Validation error: #{e.message}")
-    rescue => e
+    rescue StandardError => e
       Rails.logger.error("[People::PersonCreator] #{e.class}: #{e.message}\n#{e.backtrace.take(5).join("\n")}")
       failure("Error creating or updating person: #{e.message}")
     end
@@ -66,19 +66,19 @@ module People
     private
 
     def resolve_person
-      return [ person, false ] if person.present?
+      return [person, false] if person.present?
 
       new_person = Person.new
       new_person.skip_membership_validation = true
 
       creation_attributes = if allow_blank_attributes
-        person_attributes
-      else
-        person_attributes.reject { |_k, v| v.nil? || (v.respond_to?(:empty?) && v.empty?) }
-      end
+                              person_attributes
+                            else
+                              person_attributes.reject { |_k, v| v.nil? || (v.respond_to?(:empty?) && v.empty?) }
+                            end
       new_person.assign_attributes(creation_attributes)
       new_person.save!
-      [ new_person, true ]
+      [new_person, true]
     end
 
     def update_person!(target_person)
@@ -116,8 +116,7 @@ module People
     def selected_person_attributes
       attributes = person_attributes
       attributes = attributes.slice(*@provided_attribute_keys) if @provided_attribute_keys.present?
-      attributes = allow_blank_attributes ? attributes : attributes.compact_blank
-      attributes
+      allow_blank_attributes ? attributes : attributes.compact_blank
     end
 
     def extract_provided_attribute_keys(attributes)

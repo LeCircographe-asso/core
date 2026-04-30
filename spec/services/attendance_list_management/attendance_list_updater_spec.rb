@@ -30,9 +30,9 @@ RSpec.describe AttendanceListManagement::AttendanceListUpdater do
           updated_by_id: admin_user.id
         }
 
-        expect {
+        expect do
           described_class.new(params).call
-        }.to instrument('attendance_list.updated')
+        end.to instrument('attendance_list.updated')
       end
     end
 

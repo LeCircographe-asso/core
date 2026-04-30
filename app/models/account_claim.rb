@@ -7,12 +7,12 @@ class AccountClaim < ApplicationRecord
 
   has_secure_token :confirmation_token
 
-  enum :status, { pending: "pending", confirmed: "confirmed", rejected: "rejected", expired: "expired" }
+  enum :status, { pending: 'pending', confirmed: 'confirmed', rejected: 'rejected', expired: 'expired' }
 
   validates :confirmation_token, presence: true, uniqueness: true
   validates :expires_at, presence: true
 
-  scope :active, -> { where(status: :pending).where("expires_at > ?", Time.current) }
+  scope :active, -> { where(status: :pending).where('expires_at > ?', Time.current) }
 
   # Override Dateable's expired? method to check expires_at instead of status
   def expired?

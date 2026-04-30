@@ -9,7 +9,7 @@ RSpec.describe NewsletterSignupService do
         result = NewsletterSignupService.new(email).call_newsletter
 
         expect(result[:success]).to be true
-        expect(result[:message]).to eq("Inscription à la newsletter réussie !")
+        expect(result[:message]).to eq('Inscription à la newsletter réussie !')
 
         subscriber = NewsletterSubscriber.find_by(email: email)
         expect(subscriber).to be_present
@@ -59,7 +59,7 @@ RSpec.describe NewsletterSignupService do
 
           expect(result[:success]).to be false
           expect(result[:redirect_to]).to be true
-          expect(result[:message]).to include("déjà dans notre liste")
+          expect(result[:message]).to include('déjà dans notre liste')
 
           subscriber.reload
           expect(subscriber.subscribed).to be true # Still subscribed
@@ -74,7 +74,7 @@ RSpec.describe NewsletterSignupService do
 
           expect(result[:success]).to be false
           expect(result[:redirect_to]).to be true
-          expect(result[:message]).to include("déjà dans notre liste")
+          expect(result[:message]).to include('déjà dans notre liste')
 
           subscriber.reload
           expect(subscriber.subscribed).to be false # Still unsubscribed

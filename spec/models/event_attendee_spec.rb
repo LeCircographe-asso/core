@@ -16,7 +16,7 @@ RSpec.describe EventAttendee, type: :model do
   end
 
   describe 'creation' do
-    it "can be created with user and event" do
+    it 'can be created with user and event' do
       attendee = EventAttendee.create!(user: user, event: event)
       expect(attendee).to be_persisted
     end

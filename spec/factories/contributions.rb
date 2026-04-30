@@ -1,7 +1,7 @@
 FactoryBot.define do
   factory :contribution do
     association :person
-    association :contribution_formula, factory: [ :contribution_formula, :pack10 ]
+    association :contribution_formula, factory: %i[contribution_formula pack10]
     sessions_remaining { contribution_formula.sessions_count || 10 }
     status { :active }
     purchased_at { Time.current }

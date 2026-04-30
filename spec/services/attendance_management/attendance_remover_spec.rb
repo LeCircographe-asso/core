@@ -16,10 +16,10 @@ RSpec.describe AttendanceManagement::AttendanceRemover do
       it 'removes attendance and refunds a session' do
         initial_after_creation = contribution.reload.sessions_remaining
         remover = described_class.new(attendance_id: attendance.id, deleted_by_id: admin_user.id)
-        expect {
+        expect do
           result = remover.call
           expect(result.success?).to be true
-        }.to change(Attendance, :count).by(-1)
+        end.to change(Attendance, :count).by(-1)
 
         expect(contribution.reload.sessions_remaining).to eq(initial_after_creation + 1)
         expect(contribution.status).to eq('active')

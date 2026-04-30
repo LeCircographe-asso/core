@@ -4,8 +4,8 @@ RSpec.describe MemberNumberManagement::MemberNumberChanger do
   let(:person) { create(:person) }
   let(:admin_user) { create(:user, :admin) }
   let(:volunteer) { create(:user, :volunteer) }
-  let(:generated_number) { format("%02dC400", Date.current.year % 100) }
-  let(:manual_number) { format("%02dC900", Date.current.year % 100) }
+  let(:generated_number) { format('%02dC400', Date.current.year % 100) }
+  let(:manual_number) { format('%02dC900', Date.current.year % 100) }
 
   before do
     MemberManagementService.assign_member_number(person, 'BASIQUE')
@@ -42,9 +42,9 @@ RSpec.describe MemberNumberManagement::MemberNumberChanger do
       end
 
       it 'fires member_number.changed instrumentation' do
-        expect {
+        expect do
           described_class.new(params).call
-        }.to instrument('member_number.changed')
+        end.to instrument('member_number.changed')
       end
     end
 

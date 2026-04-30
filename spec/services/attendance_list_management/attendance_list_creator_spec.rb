@@ -29,9 +29,9 @@ RSpec.describe AttendanceListManagement::AttendanceListCreator do
       end
 
       it 'fires attendance_list.created instrumentation' do
-        expect {
+        expect do
           described_class.new(params).call
-        }.to instrument('attendance_list.created')
+        end.to instrument('attendance_list.created')
       end
     end
 

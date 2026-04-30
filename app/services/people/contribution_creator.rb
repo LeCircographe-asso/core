@@ -1,4 +1,4 @@
-require "ostruct"
+require 'ostruct'
 
 module People
   class ContributionCreator
@@ -11,7 +11,7 @@ module People
 
     attribute :person_id, :integer
     attribute :contribution_formula_id, :integer
-    attribute :payment_method, :string, default: "cash"
+    attribute :payment_method, :string, default: 'cash'
     attribute :recorded_by_id, :integer
     attribute :record_attendance, :boolean, default: false
     attribute :custom_amount_cents, :integer
@@ -45,14 +45,14 @@ module People
       success(
         contribution: result[:contribution],
         payment: result[:payment],
-        message: "Contribution created successfully"
+        message: 'Contribution created successfully'
       )
     rescue ActiveRecord::RecordNotFound => e
-      ActiveSupport::Notifications.instrument("contribution.failed", error: e.message, reason: "record_not_found")
+      ActiveSupport::Notifications.instrument('contribution.failed', error: e.message, reason: 'record_not_found')
       failure("Record not found: #{e.message}")
-    rescue => e
+    rescue StandardError => e
       Rails.logger.error("[People::ContributionCreator] #{e.class}: #{e.message}\n#{e.backtrace.take(5).join("\n")}")
-      ActiveSupport::Notifications.instrument("contribution.failed", error: e.message, reason: "exception")
+      ActiveSupport::Notifications.instrument('contribution.failed', error: e.message, reason: 'exception')
       failure("Error creating contribution: #{e.message}")
     end
 
@@ -60,7 +60,7 @@ module People
 
     def resolve_person
       return person if person.present?
-      raise ActiveRecord::RecordNotFound, "Person not found" if person_id.blank?
+      raise ActiveRecord::RecordNotFound, 'Person not found' if person_id.blank?
 
       Person.find(person_id)
     end
@@ -68,16 +68,14 @@ module People
     def resolve_recorded_by
       return User.find(recorded_by_id) if recorded_by_id.present?
 
-      if Current.respond_to?(:user) && Current.user.present?
-        Current.user
-      else
-        raise ActiveRecord::RecordNotFound, "Recorded_by user not provided"
-      end
+      raise ActiveRecord::RecordNotFound, 'Recorded_by user not provided' unless Current.respond_to?(:user) && Current.user.present?
+
+      Current.user
     end
 
     def instrument_contribution_created(person, contribution_formula, recorded_by, contribution, payment)
       ActiveSupport::Notifications.instrument(
-        "contribution.created",
+        'contribution.created',
         person_id: person.id,
         contribution_id: contribution.id,
         contribution_formula: contribution_formula.name,
@@ -98,13 +96,13 @@ module People
     def person_present
       return if person.present? || person_id.present?
 
-      errors.add(:person, "must be provided")
+      errors.add(:person, 'must be provided')
     end
 
     def recorded_by_present
       return if recorded_by_id.present? || (Current.respond_to?(:user) && Current.user.present?)
 
-      errors.add(:recorded_by_id, "must be provided")
+      errors.add(:recorded_by_id, 'must be provided')
     end
   end
 end

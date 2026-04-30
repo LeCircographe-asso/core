@@ -10,13 +10,9 @@ module AccountClaimManagement
       begin
         claim = AccountClaim.find_by!(confirmation_token: confirmation_token)
 
-        if claim.expired?
-          return failure("Lien expiré (24h)")
-        end
+        return failure('Lien expiré (24h)') if claim.expired?
 
-        if claim.confirmed?
-          return failure("Cette réclamation a déjà été confirmée")
-        end
+        return failure('Cette réclamation a déjà été confirmée') if claim.confirmed?
 
         user_person = resolve_user_person(claim)
         admin_person = claim.person
@@ -26,12 +22,10 @@ module AccountClaimManagement
             user: claim.user,
             target_person: admin_person,
             destroy_source_person: false,
-            audit_reason: "account_claim"
+            audit_reason: 'account_claim'
           ).call
 
-          unless link_result.success?
-            return failure("Erreur lors du rattachement du compte: #{link_result.message}")
-          end
+          return failure("Erreur lors du rattachement du compte: #{link_result.message}") unless link_result.success?
 
           user_person = link_result.target_person
         else
@@ -39,18 +33,16 @@ module AccountClaimManagement
             source_person: admin_person,
             target_person: user_person,
             actor_id: claim.user.id,
-            merge_type: "account_claim"
+            merge_type: 'account_claim'
           ).call
 
-          unless merge_result.success?
-            return failure("Erreur lors de la fusion: #{merge_result.message}")
-          end
+          return failure("Erreur lors de la fusion: #{merge_result.message}") unless merge_result.success?
         end
 
         claim.update!(status: :confirmed)
 
         ActiveSupport::Notifications.instrument(
-          "account_claim.confirmed",
+          'account_claim.confirmed',
           account_claim_id: claim.id,
           admin_person_id: admin_person.id,
           user_id: claim.user.id,
@@ -61,11 +53,11 @@ module AccountClaimManagement
           claim: claim,
           user_person: user_person,
           user: user_person.user,
-          message: "✅ Compte revendiqué ! Votre historique est maintenant disponible."
+          message: '✅ Compte revendiqué ! Votre historique est maintenant disponible.'
         )
       rescue ActiveRecord::RecordNotFound => e
         failure("Account claim not found: #{e.message}")
-      rescue => e
+      rescue StandardError => e
         Rails.logger.error "[AccountClaimConfirmer] Error: #{e.message}"
         Rails.logger.error "[AccountClaimConfirmer] Backtrace: #{e.backtrace.first(5).join('\n')}"
         failure("Error confirming account claim: #{e.message}")

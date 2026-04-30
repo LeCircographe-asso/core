@@ -1,6 +1,6 @@
 module Admin
   class MembershipTypesController < BaseController
-    before_action :set_membership_type, only: [ :show, :edit, :update, :destroy ]
+    before_action :set_membership_type, only: %i[show edit update destroy]
     before_action :set_breadcrumbs
 
     def index
@@ -22,6 +22,10 @@ module Admin
       add_breadcrumb "Nouveau type d'adhésion", nil
     end
 
+    def edit
+      add_breadcrumb "Modifier: #{@membership_type.name}", nil
+    end
+
     def create
       @membership_type = MembershipType.new(membership_type_params.merge(created_by_user: Current.user))
 
@@ -34,10 +38,6 @@ module Admin
         flash.now[:alert] = @membership_type.errors.full_messages.to_sentence
         render :new, status: :unprocessable_content
       end
-    end
-
-    def edit
-      add_breadcrumb "Modifier: #{@membership_type.name}", nil
     end
 
     def update
@@ -67,7 +67,7 @@ module Admin
     end
 
     def set_breadcrumbs
-      add_breadcrumb "Administration", admin_dashboard_index_path
+      add_breadcrumb 'Administration', admin_dashboard_index_path
       add_breadcrumb "Types d'Adhésion", admin_membership_types_path
     end
 

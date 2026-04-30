@@ -20,9 +20,7 @@ module MemberNumberManagement
         changed_by = User.find(changed_by_id)
 
         # Vérifier les permissions
-        unless can_change_member_number?(person, changed_by)
-          return failure("Insufficient permissions to change member number")
-        end
+        return failure('Insufficient permissions to change member number') unless can_change_member_number?(person, changed_by)
 
         old_number = person.member_number
 
@@ -30,9 +28,7 @@ module MemberNumberManagement
           # Changer le numéro via la méthode métier du modèle
           result = person.change_member_number(new_membership_type, change_notes)
 
-          unless result
-            return failure("Impossible de changer le numéro d'adhérent")
-          end
+          return failure("Impossible de changer le numéro d'adhérent") unless result
 
           # Mettre à jour le numéro actuel
           person.update!(member_number: new_member_number)
@@ -42,13 +38,13 @@ module MemberNumberManagement
           if current_history
             current_history.update!(
               member_number: new_member_number,
-              notes: change_notes.present? ? change_notes : "Changement manuel de #{old_number} vers #{new_member_number}"
+              notes: change_notes.presence || "Changement manuel de #{old_number} vers #{new_member_number}"
             )
           end
 
           # Instrumentation pour audit
           ActiveSupport::Notifications.instrument(
-            "member_number.changed",
+            'member_number.changed',
             person_id: person.id,
             old_number: old_number,
             new_number: new_member_number,
@@ -66,7 +62,7 @@ module MemberNumberManagement
         failure("Person or User not found: #{e.message}")
       rescue ActiveRecord::RecordInvalid => e
         failure("Validation error: #{e.message}")
-      rescue => e
+      rescue StandardError => e
         Rails.logger.error "[MemberNumberChanger] Error: #{e.message}"
         failure("Error changing member number: #{e.message}")
       end
@@ -75,9 +71,9 @@ module MemberNumberManagement
     private
 
     def valid_member_number_format
-      unless MemberManagementService.valid_member_number_format?(new_member_number)
-        errors.add(:new_member_number, "Format invalide. Utilisez le format YYTNNN (ex: 25C001)")
-      end
+      return if MemberManagementService.valid_member_number_format?(new_member_number)
+
+      errors.add(:new_member_number, 'Format invalide. Utilisez le format YYTNNN (ex: 25C001)')
     end
 
     def member_number_uniqueness
@@ -87,7 +83,7 @@ module MemberNumberManagement
       end
     end
 
-    def can_change_member_number?(person, changed_by)
+    def can_change_member_number?(_person, changed_by)
       # Un admin/super_admin peut changer n'importe quel numéro
       changed_by.super_admin? || changed_by.admin?
     end

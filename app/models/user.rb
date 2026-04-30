@@ -3,6 +3,7 @@ class User < ApplicationRecord
   include Dateable
 
   attr_accessor :cgu, :privacy_policy
+
   after_create :generate_password_reset_token
   after_create :welcome_send
 
@@ -14,7 +15,7 @@ class User < ApplicationRecord
 
   has_secure_password
 
-  enum :system_role, %i[ super_admin admin volunteer web_visitor ]
+  enum :system_role, { super_admin: 0, admin: 1, volunteer: 2, web_visitor: 3 }
 
   alias_attribute :email, :email_address
 
@@ -42,6 +43,7 @@ class User < ApplicationRecord
   # Override newsletter_subscribed to read from NewsletterSubscriber
   def newsletter_subscribed
     return false unless person.present? && person.email.present?
+
     person.newsletter_subscribed?
   end
 
@@ -49,8 +51,8 @@ class User < ApplicationRecord
 
   validates :email_address, presence: true
   validate :email_uniqueness_unless_person_email
-  validates :cgu, acceptance: { message: "Vous devez accepter les CGU pour continuer." }, unless: :created_by_admin?
-  validates :privacy_policy, acceptance: { message: "Vous devez accepter la politique de confidentialité pour continuer." }, unless: :created_by_admin?
+  validates :cgu, acceptance: { message: 'Vous devez accepter les CGU pour continuer.' }, unless: :created_by_admin?
+  validates :privacy_policy, acceptance: { message: 'Vous devez accepter la politique de confidentialité pour continuer.' }, unless: :created_by_admin?
 
   # (can_edit_member_numbers? maintenant dans le module Roleable)
 
@@ -73,8 +75,8 @@ class User < ApplicationRecord
     # Anonymiser les données de la Person liée
     if person
       person.update_columns(
-        first_name: "Deleted",
-        last_name: "User",
+        first_name: 'Deleted',
+        last_name: 'User',
         address: nil,
         phone: nil,
         email: "deleted_#{id}@example.com"
@@ -82,7 +84,7 @@ class User < ApplicationRecord
     end
 
     # Deactivate any active memberships
-    memberships.where(status: "active").update_all(status: "inactive")
+    memberships.where(status: 'active').update_all(status: 'inactive')
   end
 
   # Check if the user has any active payments
@@ -108,7 +110,7 @@ class User < ApplicationRecord
     return if email_address.blank? # Don't send email if no email address
 
     # Skip email sending in seeds
-    return if caller.any? { |line| line.include?("db/seeds") }
+    return if caller.any? { |line| line.include?('db/seeds') }
 
     if created_by_admin?
       # Generate password reset URL for admin-created users
@@ -120,21 +122,22 @@ class User < ApplicationRecord
   end
 
   def has_privileges?
-    %w[admin super_admin volunteer].include?(self.system_role)
+    %w[admin super_admin volunteer].include?(system_role)
   end
 
   def admin?
-    %w[admin super_admin].include?(self.system_role)
+    %w[admin super_admin].include?(system_role)
   end
 
   def created_by_admin?
     created_by_admin == true
   end
+
   def has_higher_permissions?(other_user)
     return false if other_user.nil?
 
     # Get the integer values of the roles
-    self_role_value = User.system_roles[self.system_role]
+    self_role_value = User.system_roles[system_role]
     other_role_value = User.system_roles[other_user.system_role]
 
     # Handle nil roles - nil means no permissions (lowest level)
@@ -179,9 +182,9 @@ class User < ApplicationRecord
   end
 
   # Date scopes (using created_at via Dateable)
-  scope :today, -> { where("created_at >= ? AND created_at < ?", Date.current.beginning_of_day, Date.current.end_of_day) }
-  scope :this_week, -> { where("created_at >= ? AND created_at <= ?", Date.current.beginning_of_week.beginning_of_day, Date.current.end_of_week.end_of_day) }
-  scope :this_month, -> { where("created_at >= ? AND created_at <= ?", Date.current.beginning_of_month.beginning_of_day, Date.current.end_of_month.end_of_day) }
+  scope :today, -> { where('created_at >= ? AND created_at < ?', Date.current.beginning_of_day, Date.current.end_of_day) }
+  scope :this_week, -> { where('created_at >= ? AND created_at <= ?', Date.current.beginning_of_week.beginning_of_day, Date.current.end_of_week.end_of_day) }
+  scope :this_month, -> { where('created_at >= ? AND created_at <= ?', Date.current.beginning_of_month.beginning_of_day, Date.current.end_of_month.end_of_day) }
   scope :with_deleted, -> { all }
 
   # Class method to find or create a user with the same email
@@ -225,14 +228,12 @@ class User < ApplicationRecord
     return if email_address.blank?
 
     # Si on a une Person associée avec le même email, c'est OK
-    if person&.email == email_address
-      return
-    end
+    return if person&.email == email_address
 
     # Sinon, vérifier l'unicité normale
-    if User.where(email_address: email_address).where.not(id: id).exists?
-      errors.add(:email_address, "est déjà utilisé")
-    end
+    return unless User.where(email_address: email_address).where.not(id: id).exists?
+
+    errors.add(:email_address, 'est déjà utilisé')
   end
 
   # Check if user is interested in an event (Person-Based Architecture)
@@ -246,6 +247,7 @@ class User < ApplicationRecord
 
   def generate_password_reset_token
     return if Rails.env.test?
+
     generate_token_for(:password_reset)
   end
 

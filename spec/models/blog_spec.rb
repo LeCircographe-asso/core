@@ -9,7 +9,7 @@ RSpec.describe Blog, type: :model do
   end
 
   describe 'creation' do
-    it "can be created with title" do
+    it 'can be created with title' do
       expect(blog).to be_persisted
       expect(blog.title).to be_present
     end

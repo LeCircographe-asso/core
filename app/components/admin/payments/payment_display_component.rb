@@ -9,21 +9,17 @@ module Admin
 
       def display_date
         if payment.created_at.present?
-          payment.created_at.strftime("%d/%m/%Y")
+          payment.created_at.strftime('%d/%m/%Y')
         else
-          "-"
+          '-'
         end
       end
 
       def display_person
         if payment.person.present?
-          if payment.person.full_name.present?
-            payment.person.full_name
-          else
-            "Personne ##{payment.person.id}"
-          end
+          payment.person.full_name.presence || "Personne ##{payment.person.id}"
         else
-          "Personne inconnue"
+          'Personne inconnue'
         end
       end
 
@@ -35,8 +31,9 @@ module Admin
       end
 
       def display_amount
-        return "-" if payment.total_cents.blank?
-        number_to_currency(payment.price_euros, unit: "€", separator: ",", delimiter: " ")
+        return '-' if payment.total_cents.blank?
+
+        number_to_currency(payment.price_euros, unit: '€', separator: ',', delimiter: ' ')
       end
 
       def display_payment_method
@@ -46,12 +43,12 @@ module Admin
       def display_payment_lines
         if payment.payment_lines.any?
           payment.payment_lines.map do |line|
-            content_tag :div, class: "text-xs" do
-              "#{line.description || line.item_type}: #{number_to_currency(line.amount_cents / 100.0, unit: "€", separator: ",", delimiter: " ")}"
+            content_tag :div, class: 'text-xs' do
+              "#{line.description || line.item_type}: #{number_to_currency(line.amount_cents / 100.0, unit: '€', separator: ',', delimiter: ' ')}"
             end
           end.join.html_safe
         else
-          content_tag :span, "-", class: "text-gray-400"
+          content_tag :span, '-', class: 'text-gray-400'
         end
       end
 
@@ -59,14 +56,14 @@ module Admin
         if payment.recorded_by.present?
           payment.recorded_by.email_address || "Utilisateur ##{payment.recorded_by.id}"
         else
-          "Inconnu"
+          'Inconnu'
         end
       end
 
       def format_currency(amount_cents)
-        return "-" if amount_cents.blank?
+        return '-' if amount_cents.blank?
 
-        number_to_currency(amount_cents / 100.0, unit: "€", separator: ",", delimiter: " ")
+        number_to_currency(amount_cents / 100.0, unit: '€', separator: ',', delimiter: ' ')
       end
     end
   end

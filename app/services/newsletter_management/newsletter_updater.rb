@@ -3,7 +3,7 @@ module NewsletterManagement
     attribute :person_id, :integer
     attribute :email, :string
     attribute :subscribed, :boolean
-    attribute :source, :string, default: "admin"
+    attribute :source, :string, default: 'admin'
     attribute :updated_by_id, :integer
 
     validates :updated_by_id, presence: true
@@ -16,9 +16,7 @@ module NewsletterManagement
         updated_by = User.find(updated_by_id)
 
         # Vérifier les permissions
-        unless updated_by.super_admin? || updated_by.admin? || updated_by.id == person&.user_id
-          return failure("Insufficient permissions to update newsletter subscription")
-        end
+        return failure('Insufficient permissions to update newsletter subscription') unless updated_by.super_admin? || updated_by.admin? || updated_by.id == person&.user_id
 
         # Trouver ou créer le subscriber
         subscriber = NewsletterSubscriber.find_or_initialize_by(email: email || person.email)
@@ -41,7 +39,7 @@ module NewsletterManagement
 
         # Instrumentation pour audit
         ActiveSupport::Notifications.instrument(
-          "newsletter.updated",
+          'newsletter.updated',
           newsletter_subscriber_id: subscriber.id,
           person_id: person_id,
           email: subscriber.email,
@@ -50,10 +48,10 @@ module NewsletterManagement
           source: source
         )
 
-          success(subscriber: subscriber, message: "Newsletter subscription updated successfully")
+        success(subscriber: subscriber, message: 'Newsletter subscription updated successfully')
       rescue ActiveRecord::RecordNotFound => e
         failure("User or Person not found: #{e.message}")
-      rescue => e
+      rescue StandardError => e
         Rails.logger.error "[NewsletterUpdater] Error: #{e.message}"
         failure("Error updating newsletter subscription: #{e.message}")
       end

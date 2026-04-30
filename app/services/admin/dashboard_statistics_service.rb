@@ -1,4 +1,4 @@
-require "ostruct"
+require 'ostruct'
 
 module Admin
   class DashboardStatisticsService
@@ -32,19 +32,19 @@ module Admin
     end
 
     def people_without_user
-      base_people.left_joins(:user).where(users: { id: nil }).count
+      base_people.where.missing(:user).count
     end
 
     def new_users_yesterday
-      User.where(created_at: 1.day.ago.beginning_of_day..1.day.ago.end_of_day).count
+      User.where(created_at: 1.day.ago.all_day).count
     end
 
     def basic_memberships
-      Membership.joins(:membership_type).where(membership_types: { name: "Basic" }).count
+      Membership.joins(:membership_type).where(membership_types: { name: 'Basic' }).count
     end
 
     def circus_memberships
-      Membership.joins(:membership_type).where(membership_types: { name: "Cirque" }).count
+      Membership.joins(:membership_type).where(membership_types: { name: 'Cirque' }).count
     end
 
     def active_memberships

@@ -17,7 +17,7 @@ module PaymentManagement
     validates :reason, presence: true
 
     def call
-      return failure("Invalid refund data") unless valid?
+      return failure('Invalid refund data') unless valid?
 
       begin
         ActiveRecord::Base.transaction do
@@ -26,15 +26,11 @@ module PaymentManagement
           recorded_by = User.find(recorded_by_id)
 
           # Validate refund amount doesn't exceed payment amount
-          if amount_cents > payment.amount_cents
-            return failure("Refund amount cannot exceed original payment amount")
-          end
+          return failure('Refund amount cannot exceed original payment amount') if amount_cents > payment.amount_cents
 
           # Check if total refunds would exceed payment amount
           total_refunded = payment.refunds.sum(:amount_cents)
-          if total_refunded + amount_cents > payment.amount_cents
-            return failure("Total refunds would exceed original payment amount")
-          end
+          return failure('Total refunds would exceed original payment amount') if total_refunded + amount_cents > payment.amount_cents
 
           # Create refund
           refund = payment.refunds.create!(
@@ -45,18 +41,16 @@ module PaymentManagement
             notes: notes
           )
 
-          success(refund: refund, message: "Refund created successfully")
+          success(refund: refund, message: 'Refund created successfully')
         end
       rescue ActiveRecord::RecordNotFound => e
         failure("Payment or User not found: #{e.message}")
       rescue ActiveRecord::RecordInvalid => e
         failure("Validation error: #{e.message}")
-      rescue => e
+      rescue StandardError => e
         failure("Unexpected error: #{e.message}")
       end
     end
-
-    private
 
     # success et failure hérités de BaseService
   end

@@ -14,7 +14,7 @@ module AttendanceListManagement
       return failure("Invalid data: #{errors.full_messages.join(', ')}") unless valid?
 
       begin
-        created_by = User.find(created_by_id)
+        User.find(created_by_id)
 
         # Set default start date to current time if not provided
         actual_start_date = start_date || Time.current
@@ -24,7 +24,7 @@ module AttendanceListManagement
 
         attendance_list = AttendanceList.create!(
           name: name,
-          status: status || "open", # Utiliser l'enum par défaut du modèle (open, close, archived)
+          status: status || 'open', # Utiliser l'enum par défaut du modèle (open, close, archived)
           list_type: list_type,
           start_date: actual_start_date,
           end_date: end_date
@@ -32,24 +32,22 @@ module AttendanceListManagement
 
         # Instrumentation pour audit
         ActiveSupport::Notifications.instrument(
-          "attendance_list.created",
+          'attendance_list.created',
           attendance_list_id: attendance_list.id,
           name: attendance_list.name,
           created_by_id: created_by_id
         )
 
-          success(attendance_list: attendance_list, message: "Liste de présence créée avec succès !")
+        success(attendance_list: attendance_list, message: 'Liste de présence créée avec succès !')
       rescue ActiveRecord::RecordNotFound => e
         failure("User not found: #{e.message}")
       rescue ActiveRecord::RecordInvalid => e
         failure("Validation error: #{e.message}")
-      rescue => e
+      rescue StandardError => e
         Rails.logger.error "[AttendanceListCreator] Error: #{e.message}"
         failure("Error creating attendance list: #{e.message}")
       end
     end
-
-    private
 
     # success et failure hérités de BaseService
   end

@@ -5,9 +5,9 @@ class ContributionStatusBadgeComponent < ViewComponent::Base
 
   def badge_class
     if has_active_contributions?
-      "px-2 py-1 inline-block text-xs leading-tight font-semibold rounded-full bg-indigo-100 text-indigo-800 cursor-help text-center"
+      'px-2 py-1 inline-block text-xs leading-tight font-semibold rounded-full bg-indigo-100 text-indigo-800 cursor-help text-center'
     else
-      "px-2 py-1 inline-block text-xs leading-tight font-semibold rounded-full bg-gray-100 text-gray-800 text-center"
+      'px-2 py-1 inline-block text-xs leading-tight font-semibold rounded-full bg-gray-100 text-gray-800 text-center'
     end
   end
 
@@ -15,21 +15,21 @@ class ContributionStatusBadgeComponent < ViewComponent::Base
     if has_active_contributions?
       contribution = active_contribution
       case contribution.contribution_formula.duration
-      when "pack10"
+      when 'pack10'
         sessions_remaining = contribution.sessions_remaining
-        plural_s = (sessions_remaining > 1) ? "s" : ""
+        plural_s = sessions_remaining > 1 ? 's' : ''
         "<div class='block'>#{sessions_remaining} séance#{plural_s}</div><div class='text-xs opacity-75'>restante#{plural_s}</div>".html_safe
-      when "day"
-        "Journée"
-      when "trimester"
-        "Trimestriel"
-      when "annual"
-        "Annuel"
+      when 'day'
+        'Journée'
+      when 'trimester'
+        'Trimestriel'
+      when 'annual'
+        'Annuel'
       else
         "#{total_sessions} séances"
       end
     else
-      "Aucune"
+      'Aucune'
     end
   end
 
@@ -37,27 +37,27 @@ class ContributionStatusBadgeComponent < ViewComponent::Base
     if has_active_contributions?
       contribution = active_contribution
       case contribution.contribution_formula.duration
-      when "pack10"
-        "Carnet de 10 séances"
-      when "day"
-        "Cotisation journée"
-      when "trimester"
+      when 'pack10'
+        'Carnet de 10 séances'
+      when 'day'
+        'Cotisation journée'
+      when 'trimester'
         "Cotisation trimestrielle - Expire le #{contribution.expires_at.strftime('%d/%m/%Y')}"
-      when "annual"
+      when 'annual'
         "Cotisation annuelle - Expire le #{contribution.expires_at.strftime('%d/%m/%Y')}"
       else
         "#{total_sessions} séances restantes"
       end
     else
-      ""
+      ''
     end
   end
 
   def tooltip_data
     if has_active_contributions?
       {
-        controller: "tooltip",
-        "tooltip-content-value": tooltip_text
+        controller: 'tooltip',
+        'tooltip-content-value': tooltip_text
       }
     else
       {}

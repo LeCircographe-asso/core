@@ -39,6 +39,7 @@ class Membership < ApplicationRecord
     return false if membership_type == self.membership_type
     return true if basic? && membership_type.circus?
     return true if circus? && membership_type.circus?
+
     false
   end
 
@@ -52,7 +53,7 @@ class Membership < ApplicationRecord
 
   def upgrade_to!(new_membership_type, started_at = Date.current)
     # Vérifier qu'on peut faire l'upgrade
-    raise "Cannot upgrade to this membership type" unless can_upgrade_to?(new_membership_type)
+    raise 'Cannot upgrade to this membership type' unless can_upgrade_to?(new_membership_type)
 
     # Préserver la date de première adhésion
     first_joined = first_joined_at || started_at
@@ -76,10 +77,10 @@ class Membership < ApplicationRecord
   end
 
   # Scopes
-  scope :current, -> { where("started_at <= ? AND ended_at >= ?", Date.current, Date.current) }
+  scope :current, -> { where('started_at <= ? AND ended_at >= ?', Date.current, Date.current) }
   scope :active, -> { where(status: :active) }
   scope :expired, -> { where(status: :expired) }
-  scope :expired_by_date, -> { where("ended_at < ?", Date.current) }
+  scope :expired_by_date, -> { where('ended_at < ?', Date.current) }
   scope :inactive, -> { where(status: :inactive) }
   scope :basic, -> { joins(:membership_type).where(membership_types: { category: :basic }) }
   scope :circus, -> { joins(:membership_type).where(membership_types: { category: :circus }) }
@@ -89,15 +90,15 @@ class Membership < ApplicationRecord
   def end_date_after_start_date
     return unless started_at && ended_at
 
-    errors.add(:ended_at, "must be after start date") if ended_at <= started_at
+    errors.add(:ended_at, 'must be after start date') if ended_at <= started_at
   end
 
   def no_overlapping_active_memberships
     return unless person && started_at && ended_at
 
     overlapping = person.memberships.active.where.not(id: id)
-                       .where("started_at <= ? AND ended_at >= ?", ended_at, started_at)
+                        .where('started_at <= ? AND ended_at >= ?', ended_at, started_at)
 
-    errors.add(:base, "Person already has an active membership during this period") if overlapping.exists?
+    errors.add(:base, 'Person already has an active membership during this period') if overlapping.exists?
   end
 end

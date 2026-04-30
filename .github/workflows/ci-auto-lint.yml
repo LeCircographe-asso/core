@@ -15,7 +15,6 @@ concurrency:
 jobs:
   autocorrect:
     runs-on: ubuntu-latest
-    continue-on-error: true
     steps:
       - uses: actions/checkout@v6
         with:
@@ -24,5 +23,6 @@ jobs:
         with:
           ruby-version: "4.0.1"
           bundler-cache: true
+      # TODO: drop `|| true` when RuboCop should fail this advisory job again.
       - name: Run RuboCop (report only)
-        run: bundle exec rubocop --format github
+        run: bundle exec rubocop --format github --force-exclusion || true

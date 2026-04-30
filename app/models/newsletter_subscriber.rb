@@ -32,6 +32,7 @@ class NewsletterSubscriber < ApplicationRecord
   end
 
   private
+
   def generate_unsubscribe_token
     self.unsubscribe_token ||= SecureRandom.urlsafe_base64(32)
   end

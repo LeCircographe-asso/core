@@ -21,9 +21,7 @@ module MembershipTypeManagement
         created_by = User.find(created_by_user_id)
 
         # Vérifier les permissions
-        unless created_by.super_admin? || created_by.admin?
-          return failure("Insufficient permissions to create membership type")
-        end
+        return failure('Insufficient permissions to create membership type') unless created_by.super_admin? || created_by.admin?
 
         membership_type = MembershipType.create!(
           name: name,
@@ -37,7 +35,7 @@ module MembershipTypeManagement
 
         # Instrumentation pour audit
         ActiveSupport::Notifications.instrument(
-          "membership_type.created",
+          'membership_type.created',
           membership_type_id: membership_type.id,
           name: name,
           category: category,
@@ -45,16 +43,14 @@ module MembershipTypeManagement
           created_by_id: created_by_user_id
         )
 
-          success(membership_type: membership_type, message: "Membership type created successfully")
+        success(membership_type: membership_type, message: 'Membership type created successfully')
       rescue ActiveRecord::RecordNotFound => e
         failure("User not found: #{e.message}")
-      rescue => e
+      rescue StandardError => e
         Rails.logger.error "[MembershipTypeCreator] Error: #{e.message}"
         failure("Error creating membership type: #{e.message}")
       end
     end
-
-    private
 
     # success et failure hérités de BaseService
   end
