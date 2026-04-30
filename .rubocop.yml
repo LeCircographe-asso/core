@@ -1,4 +1,5 @@
 # Rails 8 Omakase baseline + Ezam overrides (non-redundant only)
+# Unique rules baseline: rubocop-rails-omakase only (no extra inherit_yaml).
 inherit_gem:
   rubocop-rails-omakase: rubocop.yml
 
@@ -8,11 +9,15 @@ AllCops:
   TargetRubyVersion: 4.0.1
   TargetRailsVersion: 8.1.3
   Exclude:
+    # Permanent / operational
     - 'bin'
-    # temporaly excluded
+    # Temporary: noisy generated DB Ruby (revisit if we lint migrations selectively)
     - 'db/**/*.rb'
-    - '**/*.erb' # rubocop actually break (uglify) template file
+    # Temporary: RuboCop autocorrect can corrupt ERB templates
+    - '**/*.erb'
+    # To revisit — Lot B2: minitest tree; `spec/` is not excluded (RSpec)
     - 'test/**/*.rb'
+    # Permanent / operational
     - 'vendor/**/*'
     - 'tmp/**/*'
     - '.bundle/**/*'
