@@ -69,6 +69,13 @@ RSpec.describe 'Registrations', type: :request do
         expect(response).to redirect_to(root_path)
       end
 
+      it 'redirects to root for Turbo Stream requests (same as HTML login flow)' do
+        post registration_path,
+             params: valid_params,
+             headers: { 'Accept' => 'text/vnd.turbo-stream.html' }
+        expect(response).to redirect_to(root_path)
+      end
+
       it 'sends welcome email' do
         expect do
           post registration_path, params: valid_params
