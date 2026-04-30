@@ -131,7 +131,7 @@ module Admin
 
       def make_donation_action
         link_to "Faire un don",
-                admin_donations_path(person_id: person.id),
+                new_admin_donation_path(person_id: person.id),
                 class: "text-[#1F5C55] hover:text-[#194A45] hover:underline"
       end
 
