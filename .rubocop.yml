@@ -20,3 +20,7 @@ AllCops:
 # Ezam override kept on purpose (not enforced by Omakase)
 Layout/EndOfLine:
   EnforcedStyle: lf
+
+# Phase 2 Batch 1 — LOW: Gemfile gem order within groups (non-domain)
+Bundler/OrderedGems:
+  Enabled: true

@@ -387,6 +387,14 @@ L'ensemble des services `People::*`, `AccountClaimManagement::*`, `AttendanceMan
 
 ## 9. CI/CD
 
+### RuboCop — rollout progressif (Phase 2+)
+
+- **Baseline** : `rubocop-rails-omakase` dans [`.rubocop.yml`](../../.rubocop.yml) + exclusions projet + override Ezam `Layout/EndOfLine: lf`.
+- **Jobs** : [`.github/workflows/ci-lint-audit.yml`](../../.github/workflows/ci-lint-audit.yml) (`lint`) et [`.github/workflows/ci-auto-lint.yml`](../../.github/workflows/ci-auto-lint.yml) — RuboCop est **bloquant** lorsque la baseline est verte (`bundle exec rubocop --format github --force-exclusion`).
+- **Élargissement** : activer les cops **par petits lots**, une PR par lot ; pas de refactors métier ni renommage de vocabulaire domaine sans accord ([glossaire](../glossary.md)).
+- **Lots suivants suggérés** : après vérif des offenses — LOW (`Style/TrailingCommaInArrayLiteral` / `HashLiteral` si pertinent), puis MEDIUM (`Performance/*`, `Rails/*` au cas par cas), puis HIGH (`Lint/*` sur flux, `Metrics/*`, fichiers `app/models` / `app/services` sensibles) en revue manuelle uniquement.
+- **Commandes** : `bundle exec rubocop --format simple --force-exclusion` ; ciblage : `bundle exec rubocop --only NomDuCop chemins… --force-exclusion`.
+
 ### `.github/workflows/01-ci.yml`
 
 - Suite RSpec complète.
