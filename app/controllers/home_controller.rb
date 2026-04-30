@@ -1,15 +1,14 @@
 class HomeController < ApplicationController
   include OpeningHoursHelper
-  allow_unauthenticated_access only: %i[index font_examples]
 
+  allow_unauthenticated_access only: %i[index font_examples]
 
   def index
     @upcoming_events = Event.upcoming.by_date.limit(1)
-    @opening_hours = Rails.cache.fetch("opening_hours") || default_opening_hours
+    @opening_hours = Rails.cache.fetch('opening_hours') || default_opening_hours
   end
 
-  def dashboard
-  end
+  def dashboard; end
 
   def font_examples
     # This is just a view-only action

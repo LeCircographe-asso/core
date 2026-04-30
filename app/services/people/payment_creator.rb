@@ -1,4 +1,4 @@
-require "ostruct"
+require 'ostruct'
 
 module People
   class PaymentCreator
@@ -12,14 +12,14 @@ module People
     attribute :person_id, :integer
     attribute :amount_cents, :integer
     attribute :total_cents, :integer
-    attribute :payment_method, :string, default: "cash"
+    attribute :payment_method, :string, default: 'cash'
     attribute :recorded_by_id, :integer
     attribute :payment_lines, default: []
     attribute :item_type, :string
     attribute :item_id, :integer
     attribute :description, :string
     attribute :notes, :string
-    attribute :status, :string, default: "success"
+    attribute :status, :string, default: 'success'
 
     validates :payment_method, presence: true, inclusion: { in: %w[cash card cheque transfer offered pending] }
     validate :person_present
@@ -47,10 +47,10 @@ module People
         )
 
         created_lines = if normalized_lines.any?
-          create_multiple_lines(payment, normalized_lines)
-        else
-          [ create_single_line(payment) ]
-        end
+                          create_multiple_lines(payment, normalized_lines)
+                        else
+                          [create_single_line(payment)]
+                        end
 
         instrument_payment_created(payment, created_lines.length)
 
@@ -60,7 +60,7 @@ module People
       failure("Record not found: #{e.message}")
     rescue ActiveRecord::RecordInvalid => e
       failure("Validation error: #{e.message}")
-    rescue => e
+    rescue StandardError => e
       Rails.logger.error("[People::PaymentCreator] #{e.class}: #{e.message}\n#{e.backtrace.take(5).join("\n")}")
       failure("Error creating payment: #{e.message}")
     end
@@ -69,7 +69,7 @@ module People
 
     def resolve_person
       return person if person.present?
-      raise ActiveRecord::RecordNotFound, "Person not found" if person_id.blank?
+      raise ActiveRecord::RecordNotFound, 'Person not found' if person_id.blank?
 
       Person.find(person_id)
     end
@@ -77,16 +77,14 @@ module People
     def resolve_recorded_by
       return User.find(recorded_by_id) if recorded_by_id.present?
 
-      if Current.respond_to?(:user) && Current.user.present?
-        Current.user
-      else
-        raise ActiveRecord::RecordNotFound, "Recorded_by user not provided"
-      end
+      raise ActiveRecord::RecordNotFound, 'Recorded_by user not provided' unless Current.respond_to?(:user) && Current.user.present?
+
+      Current.user
     end
 
     def create_single_line(payment)
       line_amount = amount_cents.to_i
-      line_item_type = item_type.presence || "Donation"
+      line_item_type = item_type.presence || 'Donation'
       line_description = description.presence || default_description_for(line_item_type)
 
       payment.payment_lines.create!(
@@ -126,19 +124,19 @@ module People
     def default_description_for(item_type)
       base = item_type.to_s.downcase
       if donation_line?(item_type)
-        "Donation"
+        'Donation'
       else
         "Paiement #{base}"
       end
     end
 
     def donation_line?(item_type)
-      item_type.to_s.casecmp("donation").zero?
+      item_type.to_s.casecmp('donation').zero?
     end
 
     def instrument_payment_created(payment, lines_count)
       ActiveSupport::Notifications.instrument(
-        "payment.created",
+        'payment.created',
         payment_id: payment.id,
         person_id: payment.person_id,
         total_cents: payment.total_cents,
@@ -149,7 +147,7 @@ module People
     end
 
     def success(payment:, payment_lines: [])
-      Result.new(success?: true, payment: payment, payment_lines: payment_lines, errors: [], message: "Payment created successfully")
+      Result.new(success?: true, payment: payment, payment_lines: payment_lines, errors: [], message: 'Payment created successfully')
     end
 
     def failure(message, errors = nil)
@@ -159,27 +157,21 @@ module People
     def person_present
       return if person.present? || person_id.present?
 
-      errors.add(:person, "must be provided")
+      errors.add(:person, 'must be provided')
     end
 
     def recorded_by_present
       return if recorded_by_id.present? || (Current.respond_to?(:user) && Current.user.present?)
 
-      errors.add(:recorded_by_id, "must be provided")
+      errors.add(:recorded_by_id, 'must be provided')
     end
 
     def validate_amount_requirements
       if Array(payment_lines).any?
-        if total_cents.blank? || total_cents.to_i <= 0
-          errors.add(:total_cents, "must be greater than zero when payment lines are provided")
-        end
+        errors.add(:total_cents, 'must be greater than zero when payment lines are provided') if total_cents.blank? || total_cents.to_i <= 0
       else
-        if amount_cents.blank? || amount_cents.to_i <= 0
-          errors.add(:amount_cents, "must be greater than zero")
-        end
-        if item_type.blank? && description.blank?
-          errors.add(:item_type, "cannot be blank when no payment lines provided")
-        end
+        errors.add(:amount_cents, 'must be greater than zero') if amount_cents.blank? || amount_cents.to_i <= 0
+        errors.add(:item_type, 'cannot be blank when no payment lines provided') if item_type.blank? && description.blank?
       end
     end
 
@@ -188,9 +180,9 @@ module People
       return if lines.empty?
 
       lines_sum = lines.sum { |line| line[:amount_cents].to_i }
-      if total_cents.to_i != lines_sum
-        errors.add(:payment_lines, "La somme des lignes (#{lines_sum} cents) ne correspond pas au total (#{total_cents.to_i} cents)")
-      end
+      return unless total_cents.to_i != lines_sum
+
+      errors.add(:payment_lines, "La somme des lignes (#{lines_sum} cents) ne correspond pas au total (#{total_cents.to_i} cents)")
     end
   end
 end

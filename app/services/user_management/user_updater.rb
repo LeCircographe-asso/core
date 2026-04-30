@@ -18,9 +18,7 @@ module UserManagement
         updated_by = User.find(updated_by_id)
 
         # Vérifier les permissions
-        unless can_update_user?(user, updated_by)
-          return failure("Insufficient permissions to update this user")
-        end
+        return failure('Insufficient permissions to update this user') unless can_update_user?(user, updated_by)
 
         ActiveRecord::Base.transaction do
           # Mettre à jour User (seulement si des attributs sont fournis)
@@ -28,7 +26,7 @@ module UserManagement
           user_attrs[:email_address] = email_address if email_address.present?
           user_attrs[:system_role] = system_role if system_role.present?
 
-          user_updated = user_attrs.empty? ? true : user.update(user_attrs)
+          user_updated = user_attrs.empty? || user.update(user_attrs)
 
           # Mettre à jour Person si présente
           person_updated = true
@@ -40,22 +38,20 @@ module UserManagement
           # Gérer newsletter si nécessaire
           if person_updated && user.person.present? && !newsletter_subscribed.nil?
             newsletter_result = update_newsletter(user.person)
-            unless newsletter_result.success?
-              return failure("Error updating newsletter: #{newsletter_result.message}")
-            end
+            return failure("Error updating newsletter: #{newsletter_result.message}") unless newsletter_result.success?
           end
 
           if user_updated && person_updated
             # Instrumentation pour audit
             ActiveSupport::Notifications.instrument(
-              "user.updated",
+              'user.updated',
               user_id: user.id,
               person_id: user.person&.id,
               updated_by_id: updated_by_id,
               changes: user.previous_changes.merge(user.person&.previous_changes || {})
             )
 
-            success(user: user, person: user.person, message: "User updated successfully")
+            success(user: user, person: user.person, message: 'User updated successfully')
           else
             errors_array = []
             errors_array.concat(user.errors.full_messages) if user.errors.any?
@@ -65,7 +61,7 @@ module UserManagement
         end
       rescue ActiveRecord::RecordNotFound => e
         failure("User not found: #{e.message}")
-      rescue => e
+      rescue StandardError => e
         Rails.logger.error "[UserUpdater] Error: #{e.message}"
         failure("Error updating user: #{e.message}")
       end
@@ -82,13 +78,13 @@ module UserManagement
     end
 
     def update_newsletter(person)
-      return success(message: "Newsletter update skipped (no email)") if person.email.blank?
+      return success(message: 'Newsletter update skipped (no email)') if person.email.blank?
 
       updater = NewsletterManagement::NewsletterUpdater.new(
         person_id: person.id,
         email: person.email,
         subscribed: newsletter_subscribed,
-        source: "authenticated",
+        source: 'authenticated',
         updated_by_id: updated_by_id
       )
 

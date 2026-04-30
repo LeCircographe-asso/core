@@ -1,4 +1,4 @@
-require "ostruct"
+require 'ostruct'
 
 module People
   class MembershipDeactivator
@@ -17,14 +17,12 @@ module People
     validate :membership_presence
 
     def call
-      return failure("Invalid data", errors.full_messages) unless valid?
+      return failure('Invalid data', errors.full_messages) unless valid?
 
       target_membership = membership || Membership.find(membership_id)
       user = resolve_user
 
-      unless can_deactivate?(user)
-        return failure("Insufficient permissions to deactivate this membership")
-      end
+      return failure('Insufficient permissions to deactivate this membership') unless can_deactivate?(user)
 
       ActiveRecord::Base.transaction do
         target_membership.update!(status: :inactive)
@@ -33,14 +31,14 @@ module People
           success?: true,
           membership: target_membership,
           errors: [],
-          message: "Membership deactivated successfully"
+          message: 'Membership deactivated successfully'
         )
       end
     rescue ActiveRecord::RecordNotFound => e
       failure("Record not found: #{e.message}")
     rescue ActiveRecord::RecordInvalid => e
       failure("Validation error: #{e.message}")
-    rescue => e
+    rescue StandardError => e
       Rails.logger.error("[People::MembershipDeactivator] #{e.class}: #{e.message}\n#{e.backtrace.take(5).join("\n")}")
       failure("Error deactivating membership: #{e.message}")
     end
@@ -55,7 +53,7 @@ module People
       elsif Current.respond_to?(:user) && Current.user.present?
         @user = Current.user
       else
-        raise "A deactivated_by user is required to deactivate a membership"
+        raise 'A deactivated_by user is required to deactivate a membership'
       end
     end
 
@@ -64,7 +62,7 @@ module People
     end
 
     def membership_presence
-      errors.add(:membership_id, "must be provided") if membership.nil? && membership_id.blank?
+      errors.add(:membership_id, 'must be provided') if membership.nil? && membership_id.blank?
     end
 
     def failure(message, error_list = nil)

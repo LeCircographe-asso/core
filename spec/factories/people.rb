@@ -11,10 +11,10 @@ FactoryBot.define do
     notes { Faker::Lorem.paragraph }
     occupation { Faker::Job.title }
     specialty { Faker::Job.seniority }
-    image_rights { [ true, false ].sample }
-    get_involved { [ true, false ].sample }
-    newsletter_subscribed { [ true, false ].sample }
-    dyslexic_font { [ true, false ].sample }
+    image_rights { [true, false].sample }
+    get_involved { [true, false].sample }
+    newsletter_subscribed { [true, false].sample }
+    dyslexic_font { [true, false].sample }
     is_minor { false }
 
     trait :with_user do
@@ -22,7 +22,7 @@ FactoryBot.define do
     end
 
     trait :with_member_number do
-      sequence(:member_number) { |n| format("%02dU%03d", Date.current.year % 100, n + 100) }
+      sequence(:member_number) { |n| format('%02dU%03d', Date.current.year % 100, n + 100) }
     end
 
     trait :with_active_membership do

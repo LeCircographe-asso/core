@@ -14,9 +14,7 @@ module BlogManagement
         deleted_by = User.find(deleted_by_id)
 
         # Vérifier les permissions
-        unless deleted_by.super_admin? || deleted_by.admin?
-          return failure("Insufficient permissions to delete blog")
-        end
+        return failure('Insufficient permissions to delete blog') unless deleted_by.super_admin? || deleted_by.admin?
 
         # Supprimer les associations de tags
         blog.tags.clear
@@ -26,22 +24,20 @@ module BlogManagement
 
         # Instrumentation pour audit
         ActiveSupport::Notifications.instrument(
-          "blog.deleted",
+          'blog.deleted',
           blog_id: blog_id,
           deleted_by_id: deleted_by_id,
           title: blog.title
         )
 
-        success(message: "Blog deleted successfully")
+        success(message: 'Blog deleted successfully')
       rescue ActiveRecord::RecordNotFound => e
         failure("Blog or User not found: #{e.message}")
-      rescue => e
+      rescue StandardError => e
         Rails.logger.error "[BlogDeleter] Error: #{e.message}"
         failure("Error deleting blog: #{e.message}")
       end
     end
-
-    private
 
     # success et failure hérités de BaseService
   end

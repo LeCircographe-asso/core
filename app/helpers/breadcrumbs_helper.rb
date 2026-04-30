@@ -4,6 +4,6 @@ module BreadcrumbsHelper
   end
 
   def add_breadcrumb(text, path = nil)
-    breadcrumbs << [ text, path ]
+    breadcrumbs << [text, path]
   end
 end

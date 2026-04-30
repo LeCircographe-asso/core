@@ -1,4 +1,4 @@
-require "ostruct"
+require 'ostruct'
 
 module People
   class AccountMerger
@@ -12,7 +12,7 @@ module People
     attribute :source_person_id, :integer
     attribute :target_person_id, :integer
     attribute :actor_id, :integer
-    attribute :merge_type, :string, default: "manual"
+    attribute :merge_type, :string, default: 'manual'
     attribute :destroy_source, :boolean, default: true
 
     validates :source_person_id, presence: true, unless: -> { source_person.present? }
@@ -24,9 +24,7 @@ module People
       source = resolve_source_person
       target = resolve_target_person
 
-      if source == target
-        return failure("Source and target persons are identical")
-      end
+      return failure('Source and target persons are identical') if source == target
 
       ActiveRecord::Base.transaction do
         merge_memberships(source, target)
@@ -49,7 +47,7 @@ module People
       failure("Record not found: #{e.message}")
     rescue ActiveRecord::RecordInvalid => e
       failure("Validation error: #{e.message}")
-    rescue => e
+    rescue StandardError => e
       Rails.logger.error("[People::AccountMerger] #{e.class}: #{e.message}\n#{e.backtrace.take(5).join("\n")}")
       failure("Error merging accounts: #{e.message}")
     end
@@ -88,14 +86,14 @@ module People
     end
 
     def merge_attributes(source, target)
-      return unless target.email.blank?
+      return if target.email.present?
 
       target.update!(email: source.email)
     end
 
     def instrument_success(source, target)
       ActiveSupport::Notifications.instrument(
-        "people.account_merged",
+        'people.account_merged',
         source_person_id: source.id,
         target_person_id: target.id,
         actor_id: actor_id,
@@ -104,7 +102,7 @@ module People
     end
 
     def success(source_person:, target_person:)
-      Result.new(success?: true, source_person: source_person, target_person: target_person, errors: [], message: "Accounts merged successfully")
+      Result.new(success?: true, source_person: source_person, target_person: target_person, errors: [], message: 'Accounts merged successfully')
     end
 
     def failure(message, errors = nil)

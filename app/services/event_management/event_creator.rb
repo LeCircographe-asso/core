@@ -34,18 +34,16 @@ module EventManagement
             category: category
           )
 
-          success(event: event, message: "Event created successfully")
+          success(event: event, message: 'Event created successfully')
         end
       rescue ActiveRecord::RecordNotFound => e
         failure("Creator not found: #{e.message}")
       rescue ActiveRecord::RecordInvalid => e
         failure("Validation error: #{e.message}")
-      rescue => e
+      rescue StandardError => e
         failure("Unexpected error: #{e.message}")
       end
     end
-
-    private
 
     # success et failure hérités de BaseService
   end

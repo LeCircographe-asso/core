@@ -21,9 +21,9 @@ RSpec.describe AttendanceListManagement::DailyListGenerator do
 
       it 'fires attendance_list.daily_created instrumentation' do
         travel_to(Date.parse('2025-02-05')) do
-          expect {
+          expect do
             described_class.new(created_by_id: 42).call
-          }.to instrument('attendance_list.daily_created')
+          end.to instrument('attendance_list.daily_created')
         end
       end
     end

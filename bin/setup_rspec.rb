@@ -2,19 +2,19 @@
 require 'fileutils'
 
 # Set up RSpec
-puts "Setting up RSpec for your application..."
+puts 'Setting up RSpec for your application...'
 
 # Create backup of test folder
 if Dir.exist?('test')
-  puts "Creating backup of test directory..."
+  puts 'Creating backup of test directory...'
   backup_dir = "test_backup_#{Time.now.strftime('%Y%m%d%H%M%S')}"
   FileUtils.cp_r 'test', backup_dir
   puts "Test directory backed up to #{backup_dir}"
-  
+
   # Remove test directory
-  puts "Removing test directory..."
+  puts 'Removing test directory...'
   FileUtils.rm_rf 'test'
-  puts "Test directory removed."
+  puts 'Test directory removed.'
 end
 
 # Create all necessary directories for RSpec
@@ -38,4 +38,4 @@ end
 
 puts "\nRSpec is now set up as your testing framework!"
 puts "\nYou may need to run 'bundle install' to install any new gems."
-puts "To run your tests, use 'bundle exec rspec'." 
+puts "To run your tests, use 'bundle exec rspec'."

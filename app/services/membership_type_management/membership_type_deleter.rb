@@ -14,36 +14,30 @@ module MembershipTypeManagement
         deleted_by = User.find(deleted_by_id)
 
         # Vérifier les permissions - seul le super_admin peut supprimer
-        unless deleted_by.super_admin?
-          return failure("Seul le super-admin peut supprimer des types d'adhésion")
-        end
+        return failure("Seul le super-admin peut supprimer des types d'adhésion") unless deleted_by.super_admin?
 
         # Vérifier que le type n'est pas utilisé
-        if membership_type.memberships.any?
-          return failure("Impossible de supprimer ce type d'adhésion car il est utilisé par des membres")
-        end
+        return failure("Impossible de supprimer ce type d'adhésion car il est utilisé par des membres") if membership_type.memberships.any?
 
         # Supprimer le type d'adhésion
         membership_type.destroy!
 
         # Instrumentation pour audit
         ActiveSupport::Notifications.instrument(
-          "membership_type.deleted",
+          'membership_type.deleted',
           membership_type_id: membership_type_id,
           deleted_by_id: deleted_by_id,
           name: membership_type.name
         )
 
-        success(message: "Membership type deleted successfully")
+        success(message: 'Membership type deleted successfully')
       rescue ActiveRecord::RecordNotFound => e
         failure("MembershipType or User not found: #{e.message}")
-      rescue => e
+      rescue StandardError => e
         Rails.logger.error "[MembershipTypeDeleter] Error: #{e.message}"
         failure("Error deleting membership type: #{e.message}")
       end
     end
-
-    private
 
     # success et failure hérités de BaseService
   end

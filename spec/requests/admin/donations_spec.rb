@@ -1,14 +1,14 @@
-require "rails_helper"
+require 'rails_helper'
 
-RSpec.describe "Admin::Donations", type: :request do
+RSpec.describe 'Admin::Donations', type: :request do
   let(:admin) { create(:user, :admin) }
 
   before { login_as(admin) }
 
-  describe "POST /admin/donations" do
+  describe 'POST /admin/donations' do
     let(:person) { create(:person) }
 
-    it "creates a donation payment with person_id" do
+    it 'creates a donation payment with person_id' do
       expect do
         post admin_donations_path, params: {
           person_id: person.id,
@@ -24,7 +24,7 @@ RSpec.describe "Admin::Donations", type: :request do
       expect(payment.total_cents).to eq(1250)
     end
 
-    it "creates a donation payment with legacy user_id" do
+    it 'creates a donation payment with legacy user_id' do
       user = create(:user, :admin, person: person)
 
       expect do

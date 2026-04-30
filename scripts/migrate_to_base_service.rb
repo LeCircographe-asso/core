@@ -5,7 +5,7 @@
 require 'fileutils'
 
 SERVICES_DIR = 'app/services'
-EXCLUDED_FILES = [ 'base_service.rb', '.disabled' ]
+EXCLUDED_FILES = ['base_service.rb', '.disabled']
 
 def find_services_to_migrate
   Dir.glob("#{SERVICES_DIR}/**/*.rb").select do |file|
@@ -33,29 +33,27 @@ def migrate_service(file_path)
   # 3. Adapter les appels success() - pattern simple
   # Note: Les appels complexes nécessitent une vérification manuelle
 
-  if content != original_content
+  if content == original_content
+    puts "⚠️  Aucun changement: #{file_path}"
+    false
+  else
     File.write(file_path, content)
     puts "✅ Migré: #{file_path}"
     true
-  else
-    puts "⚠️  Aucun changement: #{file_path}"
-    false
   end
 end
 
 # Script principal
 services = find_services_to_migrate
-puts "=== Migration BaseService ==="
+puts '=== Migration BaseService ==='
 puts "Services à migrer: #{services.count}"
-puts ""
+puts ''
 
 migrated = 0
 services.each do |file|
-  if migrate_service(file)
-    migrated += 1
-  end
+  migrated += 1 if migrate_service(file)
 end
 
-puts ""
+puts ''
 puts "✅ Migration terminée: #{migrated}/#{services.count} services migrés"
-puts "⚠️  Note: Vérifiez manuellement les appels success() avec arguments complexes"
+puts '⚠️  Note: Vérifiez manuellement les appels success() avec arguments complexes'

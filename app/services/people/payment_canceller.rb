@@ -1,4 +1,4 @@
-require "ostruct"
+require 'ostruct'
 
 module People
   class PaymentCanceller
@@ -23,32 +23,28 @@ module People
       target_payment = resolve_payment
       deleter = resolve_deleter
 
-      unless deleter.super_admin? || deleter.admin?
-        return failure("Insufficient permissions to delete payment")
-      end
+      return failure('Insufficient permissions to delete payment') unless deleter.super_admin? || deleter.admin?
 
-      if target_payment.status == "cancel"
-        return failure("Payment is already cancelled")
-      end
+      return failure('Payment is already cancelled') if target_payment.status == 'cancel'
 
       ActiveRecord::Base.transaction do
         target_payment.update!(status: :cancel, notes: append_note(target_payment.notes, "Cancelled: #{reason}"))
 
         ActiveSupport::Notifications.instrument(
-          "payment.cancelled",
+          'payment.cancelled',
           payment_id: target_payment.id,
           person_id: target_payment.person_id,
           deleted_by_id: deleter.id,
           reason: reason
         )
 
-        success(payment: target_payment, message: "Payment cancelled successfully")
+        success(payment: target_payment, message: 'Payment cancelled successfully')
       end
     rescue ActiveRecord::RecordNotFound => e
       failure("Record not found: #{e.message}")
     rescue ActiveRecord::RecordInvalid => e
       failure("Validation error: #{e.message}")
-    rescue => e
+    rescue StandardError => e
       Rails.logger.error("[People::PaymentCanceller] #{e.class}: #{e.message}\n#{e.backtrace.take(5).join("\n")}")
       failure("Error cancelling payment: #{e.message}")
     end
@@ -66,11 +62,11 @@ module People
     end
 
     def append_note(existing_notes, suffix)
-      [ existing_notes.presence, suffix ].compact.join(" - ")
+      [existing_notes.presence, suffix].compact.join(' - ')
     end
 
     def payment_identifier_present
-      errors.add(:payment_id, "must be provided") if payment.blank? && payment_id.blank?
+      errors.add(:payment_id, 'must be provided') if payment.blank? && payment_id.blank?
     end
 
     def success(payment:, message:)

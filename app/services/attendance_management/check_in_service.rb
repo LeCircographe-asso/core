@@ -22,7 +22,7 @@ module AttendanceManagement
       creator.call
     rescue ActiveRecord::RecordNotFound => e
       failure("Record not found: #{e.message}")
-    rescue => e
+    rescue StandardError => e
       Rails.logger.error "[CheckInService] Error: #{e.message}"
       failure("Error during check-in: #{e.message}")
     end
@@ -37,7 +37,7 @@ module AttendanceManagement
             .joins(:contribution_formula)
             .where(contribution_formulas: { duration: %w[pack10 day trimester annual] })
             .usable
-            .order("contribution_formulas.duration DESC")
+            .order('contribution_formulas.duration DESC')
             .first
     end
 
@@ -47,7 +47,7 @@ module AttendanceManagement
       target_date = attendance_list_date || Date.current
 
       list = AttendanceList.where(list_type: :training)
-                           .where(start_date: target_date.beginning_of_day..target_date.end_of_day)
+                           .where(start_date: target_date.all_day)
                            .first
       return list if list
 

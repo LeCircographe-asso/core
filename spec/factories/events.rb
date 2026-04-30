@@ -2,7 +2,7 @@ FactoryBot.define do
   factory :event do
     association :creator, factory: :user
     name { Faker::Lorem.words(number: 3).join(' ').titleize }
-    category { [ :show, :workshop, :volunteering, :other ].sample }
+    category { %i[show workshop volunteering other].sample }
     date { Faker::Date.forward(days: 30) }
     description { Faker::Lorem.paragraph }
 
