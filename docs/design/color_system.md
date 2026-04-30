@@ -186,7 +186,7 @@ Exemple :
 2. Appliquer les étapes ci-dessus progressivement (commit par step).  
 3. Tester en local :
    - `bin/dev` + vérifier pages `home`, `faq`, `about`, `news`, formulaires.  
-   - `bin/rails test` pour s’assurer qu’aucune régression JavaScript.  
+   - `bundle exec rspec` pour s’assurer qu’aucune régression applicative.  
 4. Ouvrir une PR pour revue, intégrer feedback, merger une fois validé.
 
 ## 10. Bonnes Pratiques
