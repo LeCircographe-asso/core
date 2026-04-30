@@ -1,12 +1,12 @@
 @layer components {
   @keyframes flash-slide-in-right {
     from {
-      transform: translateX(100%);
+      transform: translateX(100%) translateY(6px);
       opacity: 0;
     }
 
     to {
-      transform: translateX(0);
+      transform: translateX(0) translateY(0);
       opacity: 1;
     }
   }
@@ -23,9 +23,24 @@
     }
   }
 
+  @keyframes flash-progress-shrink {
+    from {
+      transform: scaleX(1);
+    }
+
+    to {
+      transform: scaleX(0);
+    }
+  }
+
   .flash-notification {
-    @apply fixed bottom-4 right-4 z-50 max-w-sm w-full bg-white rounded-lg shadow-lg border-l-4 p-4 transform transition-all duration-300 ease-in-out;
-    animation: flash-slide-in-right 0.3s ease-out;
+    --flash-duration: 8s;
+    --flash-exit-duration: 350ms;
+
+    @apply fixed bottom-4 right-4 z-50 max-w-lg w-full overflow-hidden rounded-lg shadow-lg border-l-4 transform;
+    @apply px-5 py-5;
+
+    animation: flash-slide-in-right 0.42s cubic-bezier(0.22, 1, 0.36, 1) both;
   }
 
   .flash-notification.flash-notice,
@@ -46,8 +61,45 @@
     @apply border-blue-500 bg-blue-50;
   }
 
-  .flash-notification.closing {
-    animation: flash-slide-out-right 0.3s ease-in forwards;
+  .flash-notification__body {
+    @apply flex items-start gap-4 pb-2;
+  }
+
+  .flash-notification.flash-closing {
+    animation: flash-slide-out-right var(--flash-exit-duration) cubic-bezier(0.4, 0, 1, 1) forwards;
+  }
+
+  .flash-progress-track {
+    @apply pointer-events-none absolute bottom-0 left-0 right-0 h-1.5 overflow-hidden bg-black/[0.06];
+  }
+
+  .flash-progress-fill {
+    @apply h-full w-full;
+
+    transform-origin: right center;
+    animation: flash-progress-shrink var(--flash-duration) linear forwards;
+  }
+
+  .flash-progress-fill.flash-progress-paused {
+    animation-play-state: paused;
+  }
+
+  .flash-notification.flash-notice .flash-progress-fill,
+  .flash-notification.flash-success .flash-progress-fill {
+    @apply bg-green-600/45;
+  }
+
+  .flash-notification.flash-alert .flash-progress-fill,
+  .flash-notification.flash-error .flash-progress-fill {
+    @apply bg-red-600/45;
+  }
+
+  .flash-notification.flash-warning .flash-progress-fill {
+    @apply bg-yellow-600/45;
+  }
+
+  .flash-notification.flash-info .flash-progress-fill {
+    @apply bg-blue-600/45;
   }
 
   @media (max-width: 640px) {
@@ -56,4 +108,3 @@
     }
   }
 }
-

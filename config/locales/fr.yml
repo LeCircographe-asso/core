@@ -45,6 +45,15 @@ fr:
       destroy:
         destroyed: Blog supprimé avec succès
     donations:
+      new:
+        title: Enregistrer un don
+        heading: Nouveau don
+        donor_label: Bénéficiaire (fiche personne)
+        amount_label: Montant (€)
+        amount_placeholder: "0.00"
+        submit: Enregistrer le don
+        cancel: Annuler
+        missing_person: Sélectionnez une personne pour enregistrer un don.
       create:
         recorded: Donation prise en compte
     events:
@@ -244,6 +253,11 @@ fr:
       user_registration:
         accept_cgu: Vous devez accepter les CGU pour continuer.
         accept_privacy: Vous devez accepter la politique de confidentialité pour continuer.
+        errors:
+          email_in_use_login: Cette adresse email est déjà utilisée. Veuillez utiliser une autre adresse ou vous connecter.
+          email_in_use_orphan_user: Cette adresse est déjà associée à un compte utilisateur.
+          user_email_login_taken: Cette adresse de connexion est déjà utilisée.
+          user_email_person_has_account: Cette adresse email est déjà utilisée pour un compte web.
     validation:
       invalid_data: Données invalides
       invalid_data_with_details: 'Données invalides : %{details}'

@@ -6,7 +6,12 @@ Rails.application.routes.draw do
     resources :blogs
     resources :dashboard, only: %i[index], path: "dashboard"
     resource :opening_hours, only: %i[show edit update]
-    resources :donations, only: %i[create]
+    # Legacy: "Faire un don" used GET /admin/donations?person_id=… before +new+ existed.
+    get "donations", to: redirect { |_path_params, request|
+      query = request.query_string
+      query.present? ? "/admin/donations/new?#{query}" : "/admin/donations/new"
+    }
+    resources :donations, only: %i[new create]
     resources :users do
       post :restore, on: :member
       # Actions pour gérer Person

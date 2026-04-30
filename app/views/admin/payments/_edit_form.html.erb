@@ -1,10 +1,12 @@
+<% qp = payments_index_query_filters(local_assigns.fetch(:list_filter_params, {})) %>
 <%= turbo_frame_tag "payment_#{payment.id}_actions" do %>
-  <%= form_with model: [:admin, payment], 
+  <%= form_with model: [:admin, payment],
+                url: admin_payment_path(payment, **qp),
                 method: :patch,
-                data: { 
+                data: {
                   controller: "payment-form",
                   action: "turbo:submit-end->payment-form#handleSubmit",
-                  turbo_frame: "payment_#{payment.id}_actions"
+                  turbo_frame: "_top"
                 },
                 class: "inline-block" do |f| %>
     
@@ -59,8 +61,8 @@
     <div class="flex items-center space-x-2 mt-2">
       <%= f.submit "Enregistrer", 
           class: "px-3 py-1 text-xs bg-[#1F5C55] text-white rounded hover:bg-[#194A45] focus:outline-none focus:ring-2 focus:ring-[#1F5C55]" %>
-      <%= link_to "Annuler", 
-          admin_payment_path(payment),
+      <%= link_to "Annuler",
+          admin_payment_path(payment, **qp),
           class: "px-3 py-1 text-xs bg-gray-200 text-gray-700 rounded hover:bg-gray-300",
           data: { turbo_frame: "payment_#{payment.id}_actions" } %>
     </div>
