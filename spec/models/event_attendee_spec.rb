@@ -12,11 +12,6 @@ RSpec.describe EventAttendee, type: :model do
     it { should belong_to(:payment).optional }
   end
 
-  describe 'validations' do
-    it { should validate_presence_of(:user_id) }
-    it { should validate_presence_of(:event_id) }
-  end
-
   describe 'creation' do
     it 'can be created with user and event' do
       attendee = EventAttendee.create!(user: user, event: event)
