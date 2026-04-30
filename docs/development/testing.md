@@ -310,10 +310,10 @@ bundle exec rspec
   bundle exec rubocop app --only Rails/HelperInstanceVariable --force-exclusion
   ```
 
-- **Prévoir l’auto-correction sans écrire** :
+- **Prévisualiser un lot de cops sans écrire** :
 
   ```bash
-  bundle exec rubocop -A --dry-run --force-exclusion
+  bundle exec rubocop --only NomDuCop chemins... --force-exclusion
   ```
 
   Puis corriger avec `bundle exec rubocop -a` (**safe**) ou `-A` (plus agressif — à utiliser avec prudence).
@@ -497,7 +497,8 @@ L'ensemble des services `People::*`, `AccountClaimManagement::*`, `AttendanceMan
 
 ## 11. Audit `Rails/SkipsModelValidations` (classification)
 
-- `risky_bypass` (à corriger): `app/models/user.rb`, `app/models/payment.rb`.
+- `risky_bypass` (priorité traitée): `app/models/user.rb` (anonymisation), suivi ciblé `app/models/payment.rb`.
 - `intentional_batch` (gardé sous transaction + commentaire explicite): `app/services/people/account_merger.rb`, `app/models/concerns/versionable.rb`, `app/models/concerns/duplicatable.rb`.
 - `legacy/archive` (exclusion ciblée possible): `docs/rake_archive/migrate_to_person_architecture.rake`.
 - `consolidated_path`: la fusion applicative doit passer par `People::AccountMerger` (éviter les duplications de logique dans d'autres services).
+- `identity_invariant`: en cible projet, un `User` est toujours rattaché à une `Person` (phase de verrouillage en cours).
