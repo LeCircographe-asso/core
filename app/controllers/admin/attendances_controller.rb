@@ -19,12 +19,12 @@ module Admin
       # Pagination
       @attendances = @attendances.order(date: :desc).page(params[:page]).per(20)
 
-      add_breadcrumb "Gestion des présences", nil
+      add_breadcrumb I18n.t("breadcrumbs.admin.attendances.management"), nil
     end
 
     def show
-      add_breadcrumb "Gestion des présences", admin_attendances_path
-      add_breadcrumb "Présence ##{@attendance.id}", nil
+      add_breadcrumb I18n.t("breadcrumbs.admin.attendances.management"), admin_attendances_path
+      add_breadcrumb I18n.t("breadcrumbs.admin.attendances.attendance_number", id: @attendance.id), nil
     end
 
     def new
@@ -32,8 +32,8 @@ module Admin
       @people = Person.order(:first_name, :last_name)
       @events = Event.upcoming.order(:date)
 
-      add_breadcrumb "Gestion des présences", admin_attendances_path
-      add_breadcrumb "Nouvelle présence", nil
+      add_breadcrumb I18n.t("breadcrumbs.admin.attendances.management"), admin_attendances_path
+      add_breadcrumb I18n.t("breadcrumbs.admin.attendances.new_attendance"), nil
     end
 
     def create

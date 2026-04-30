@@ -1,4 +1,4 @@
-<% content_for :title, "Gestion des Adhérents" %>
+<% content_for :title, t("views.admin.users.index.page_title") %>
 
 <div class="min-h-screen py-6" data-controller="admin-users">
   <div class="max-w-7xl mx-auto">
@@ -8,23 +8,23 @@
     <!-- Header avec gradient -->
     <div class="bg-white shadow-lg rounded-lg overflow-hidden mb-6">
       <div class="bg-gradient-to-r from-[#1F5C55] to-[#194A45] px-6 py-4">
-        <h1 class="text-2xl font-bold text-white">Gestion des Adhérents</h1>
+        <h1 class="text-2xl font-bold text-white"><%= t("views.admin.users.index.page_title") %></h1>
         <p class="text-white/80 mt-1">
-          Interface unifiée pour gérer les personnes, adhésions et cotisations
+          <%= t("views.admin.users.index.page_subtitle") %>
         </p>
       </div>
 
       <div class="p-6">
         <!-- Statistiques -->
         <div class="mb-6">
-          <h2 class="text-lg font-semibold text-gray-900 mb-3">Statistiques</h2>
+          <h2 class="text-lg font-semibold text-gray-900 mb-3"><%= t("views.admin.users.index.statistics") %></h2>
           <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4">
             <!-- Total personnes -->
             <div class="stat-card bg-blue-50 rounded-lg p-4 cursor-pointer" 
                  data-admin-users-target="statCard" 
                  data-stat-type=""
                  data-action="click->admin-users#statCardClick">
-              <p class="text-sm text-blue-500">Total personnes</p>
+              <p class="text-sm text-blue-500"><%= t("views.admin.users.index.total_people") %></p>
               <p class="text-2xl font-bold text-blue-800"><%= @total_people %></p>
             </div>
             
@@ -33,7 +33,7 @@
                  data-admin-users-target="statCard" 
                  data-stat-type=""
                  data-action="click->admin-users#statCardClick">
-              <p class="text-sm text-teal-500">Nouveaux (hier)</p>
+              <p class="text-sm text-teal-500"><%= t("views.admin.users.index.new_yesterday") %></p>
               <p class="text-2xl font-bold text-teal-800"><%= @new_users_yesterday %></p>
             </div>
             
@@ -42,7 +42,7 @@
                  data-admin-users-target="statCard" 
                  data-stat-type="basic"
                  data-action="click->admin-users#statCardClick">
-              <p class="text-sm text-green-500">Adhésions Basic</p>
+              <p class="text-sm text-green-500"><%= t("views.admin.users.index.basic_memberships") %></p>
               <p class="text-2xl font-bold text-green-800"><%= @basic_memberships %></p>
             </div>
             
@@ -51,7 +51,7 @@
                  data-admin-users-target="statCard" 
                  data-stat-type="circus"
                  data-action="click->admin-users#statCardClick">
-              <p class="text-sm text-indigo-500">Adhésions Circus</p>
+              <p class="text-sm text-indigo-500"><%= t("views.admin.users.index.circus_memberships") %></p>
               <p class="text-2xl font-bold text-indigo-800"><%= @circus_memberships %></p>
             </div>
             
@@ -60,7 +60,7 @@
                  data-admin-users-target="statCard" 
                  data-stat-type="with_active_membership"
                  data-action="click->admin-users#statCardClick">
-              <p class="text-sm text-purple-500">Adhésions actives</p>
+              <p class="text-sm text-purple-500"><%= t("views.admin.users.index.active_memberships") %></p>
               <p class="text-2xl font-bold text-purple-800"><%= @active_memberships %></p>
             </div>
             
@@ -69,7 +69,7 @@
                  data-admin-users-target="statCard" 
                  data-stat-type="without_user_account"
                  data-action="click->admin-users#statCardClick">
-              <p class="text-sm text-orange-500">Sans compte</p>
+              <p class="text-sm text-orange-500"><%= t("views.admin.users.index.without_account") %></p>
               <p class="text-2xl font-bold text-orange-800"><%= @people_without_user %></p>
             </div>
           </div>
@@ -77,7 +77,7 @@
 
         <!-- Actions principales -->
         <div class="flex flex-wrap gap-3 mb-6">
-          <%= link_to "Créer un Adhérent", new_admin_user_path, 
+          <%= link_to t("views.admin.users.index.create_member"), new_admin_user_path, 
               class: "inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#1F5C55] hover:bg-[#194A45] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1F5C55]" %>
           
           <%= link_to "Export CSV", all_users_admin_exports_path, 

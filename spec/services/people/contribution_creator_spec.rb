@@ -71,7 +71,7 @@ RSpec.describe People::ContributionCreator do
         ).call
 
         expect(result.success?).to be(false)
-        expect(result.message).to include('Invalid data')
+        expect(result.message).to include(I18n.t('services.validation.invalid_data'))
       end
 
       it 'fails when plan missing' do

@@ -21,7 +21,7 @@ module People
     validates :target_person_id, presence: true, unless: -> { target_person.present? }
 
     def call
-      return failure("Invalid data: #{errors.full_messages.join(', ')}") unless valid?
+      return failure(I18n.t("services.validation.invalid_data_with_details", details: errors.full_messages.join(", "))) unless valid?
 
       resolved_user = resolve_user
       resolved_target = resolve_target_person
@@ -32,7 +32,12 @@ module People
       return failure("Target person already has a user account") if resolved_target.user.present? && resolved_target.user != resolved_user
 
       ActiveRecord::Base.transaction do
-        resolved_user.update!(person: resolved_target)
+        attach_result = People::AttachUserToPerson.new(
+          user: resolved_user,
+          person: resolved_target,
+          audit_reason: audit_reason
+        ).call
+        return failure(attach_result.message, attach_result.errors) unless attach_result.success?
 
         cleanup_source_person(previous_person) if previous_person.present? && previous_person != resolved_target
 
@@ -65,10 +70,15 @@ module People
 
     def cleanup_source_person(previous_person)
       return unless destroy_source_person
+      previous_person.reload
 
-      previous_person.update!(email: nil, phone: nil) if anonymize_source_person
-
-      previous_person.destroy!
+      merge_result = People::AccountMerger.new(
+        source_person: previous_person,
+        target_person: target_person,
+        merge_type: "account_linker_cleanup",
+        destroy_source: true
+      ).call
+      raise ActiveRecord::RecordInvalid, previous_person unless merge_result.success?
     end
 
     def instrument_success(user, target_person, source_person)

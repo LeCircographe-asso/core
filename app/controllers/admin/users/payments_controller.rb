@@ -66,13 +66,13 @@ module Admin
         else
           @membership_types = MembershipType.all
           @contribution_formulas = ContributionFormula.all
-          flash.now[:alert] = "Erreur lors de la création du paiement: #{result.message}"
+          flash.now[:alert] = t(".failure_alert", message: result.message)
           render :new, status: :unprocessable_content
         end
       rescue StandardError => e
         @membership_types = MembershipType.all
         @contribution_formulas = ContributionFormula.all
-        flash.now[:alert] = "Erreur lors de la création du paiement: #{e.message}"
+        flash.now[:alert] = t(".failure_alert", message: e.message)
         render :new, status: :unprocessable_content
       end
 
@@ -95,7 +95,7 @@ module Admin
         if result.success?
           redirect_to admin_user_path("person_#{@person.id}"), notice: t(".success")
         else
-          redirect_to admin_user_path("person_#{@person.id}"), alert: "Erreur lors de la mise à jour: #{result.message}"
+          redirect_to admin_user_path("person_#{@person.id}"), alert: t(".failure_alert", message: result.message)
         end
       end
 
@@ -112,7 +112,7 @@ module Admin
         if result.success?
           redirect_to admin_user_path("person_#{@person.id}"), notice: t(".destroyed")
         else
-          redirect_to admin_user_path("person_#{@person.id}"), alert: "Erreur lors de la suppression: #{result.message}"
+          redirect_to admin_user_path("person_#{@person.id}"), alert: t(".failure_alert", message: result.message)
         end
       end
 
@@ -131,13 +131,13 @@ module Admin
             if result.success?
               redirect_to admin_user_path("person_#{@person.id}"), notice: t(".processed")
             else
-              redirect_to admin_user_path("person_#{@person.id}"), alert: "Erreur lors du traitement: #{result.message}"
+              redirect_to admin_user_path("person_#{@person.id}"), alert: t(".failure_alert", message: result.message)
             end
           else
             redirect_to admin_user_path("person_#{@person.id}"), notice: t(".already_processed")
           end
         rescue StandardError => e
-          redirect_to admin_user_path("person_#{@person.id}"), alert: "Erreur lors du traitement: #{e.message}"
+          redirect_to admin_user_path("person_#{@person.id}"), alert: t(".failure_alert", message: e.message)
         end
       end
 
@@ -157,9 +157,9 @@ module Admin
       end
 
       def set_breadcrumbs
-        add_breadcrumb "Liste d'adhérents", admin_users_path
+        add_breadcrumb I18n.t("breadcrumbs.admin.users.members_list"), admin_users_path
         add_breadcrumb @person.full_name, admin_user_path("person_#{@person.id}")
-        add_breadcrumb "Gestion des paiements", nil
+        add_breadcrumb I18n.t("breadcrumbs.admin.payments.management"), nil
       end
 
       def payment_params

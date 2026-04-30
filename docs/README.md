@@ -2,7 +2,7 @@
 
 > **Statut** : stable
 > **Public cible** : contributeur, équipe
-> **Dernière vérification** : 2026-04-27
+> **Dernière vérification** : 2026-05-01
 > **Sources de vérité** : structure réelle du dossier `docs/`.
 
 Index de la documentation Markdown du projet. Pour le démarrage et le déploiement, voir le [`README.md`](../README.md) à la racine.
@@ -77,7 +77,7 @@ Chaque document Markdown déclare un statut dans son header :
 ## Domaine et vocabulaire
 
 - [`glossary.md`](glossary.md) — lexique canonique FR/EN, termes interdits.
-- [`domain_model.md`](domain_model.md) — diagramme Mermaid + responsabilités des agrégats.
+- [`domain_model.md`](domain_model.md) — diagramme Mermaid + responsabilités des agrégats (invariant `User` → `Person`).
 - [`payments.md`](payments.md) — `Payment`, `PaymentLine`, `Donation` et la dette legacy `item_type:"Payment"`.
 - [`domain/business_logic.md`](domain/business_logic.md) — règles métier complètes (adhésion, cotisation, paiements).
 

@@ -310,10 +310,10 @@ bundle exec rspec
   bundle exec rubocop app --only Rails/HelperInstanceVariable --force-exclusion
   ```
 
-- **Prévoir l’auto-correction sans écrire** :
+- **Prévisualiser un lot de cops sans écrire** :
 
   ```bash
-  bundle exec rubocop -A --dry-run --force-exclusion
+  bundle exec rubocop --only NomDuCop chemins... --force-exclusion
   ```
 
   Puis corriger avec `bundle exec rubocop -a` (**safe**) ou `-A` (plus agressif — à utiliser avec prudence).
@@ -436,10 +436,14 @@ L'ensemble des services `People::*`, `AccountClaimManagement::*`, `AttendanceMan
 
 ### RuboCop — rollout progressif (Phase 2+)
 
-- **Baseline** : `rubocop-rails-omakase` dans [`.rubocop.yml`](../../.rubocop.yml) comme **seule** base héritée ; exclusions projet documentées (permanent / temporaire) + override Ezam `Layout/EndOfLine: lf`. Le dossier `test/**/*` est **linté** avec le reste du Ruby applicatif (`spec/` l’était déjà).
+- **Baseline** : `rubocop-rails-omakase` dans [`.rubocop.yml`](../../.rubocop.yml) comme **seule** base héritée ; exclusions projet documentées (permanent / temporaire) + override Ezam `Layout/EndOfLine: lf`. Le projet est en mode **RSpec-only** et le dossier legacy `test/` est retire.
 
-- **Lot B2 (élargissement)** — périmètre + conventions Rails cumulées : `test/**/*` inclus ; cops `Rails/` activés localement avec prudence (Omakase laisse la plupart du département `Rails` désactivé) — actuellement : `Rails/HttpStatus`, `Rails/Output`, `Rails/Delegate`, `Rails/StrongParametersExpect`, `Rails/PluralizationGrammar`, `Rails/UniqBeforePluck`, `Rails/HelperInstanceVariable`, `Rails/I18nLocaleTexts` (messages utilisateur en `t()` / YAML, pas de chaînes littérales dans contrôleurs, mailers et modèles). Étendre la liste uniquement via petites PR après `bundle exec rubocop` / `bundle exec rspec` verts.
+- **Lot B2 (historique)** — le rollout `Rails/*` a ete fait par petits lots. Aujourd'hui, conserver la meme approche: petites PR, puis `bundle exec rubocop` + `bundle exec rspec` verts.
 - **Specs et locale** : `config.i18n.default_locale` est `:fr` ; les messages ActiveRecord / `number_to_currency` suivent `rails-i18n` (fr). Dans les tests de validations, préférer `I18n.t('errors.messages.blank')`, `I18n.t('errors.messages.required')`, etc., plutôt que du texte anglais codé en dur ; pour les flashes ou sujets de mail, utiliser `I18n.t('…')` avec la même clé que l’application.
+- **Parite FR/EN** : `config/locales/en.yml` est maintenu en parite de cles avec `config/locales/fr.yml`. Utiliser `bundle exec rake i18n:check_keys` avant merge.
+- **Auth** : la stack d'authentification reste le systeme natif Rails 8 ; ne pas introduire Devise.
+- **Fallback transitoire** : `config.i18n.fallbacks = { en: %i[fr] }` est volontairement temporaire pendant la complétion de `config/locales/en.yml`. Objectif long terme : parité `fr/en` sans fallback implicite pour l’UX anglaise.
+- **Parité des clés locales** : utiliser `bundle exec rake i18n:check_keys` pour lister les clés manquantes entre `fr.yml` et `en.yml` et prioriser les traductions manquantes.
 - **Jobs** : [`.github/workflows/ci-lint-audit.yml`](../../.github/workflows/ci-lint-audit.yml) (`lint`) et [`.github/workflows/ci-auto-lint.yml`](../../.github/workflows/ci-auto-lint.yml) — RuboCop est **bloquant** lorsque la baseline est verte (`bundle exec rubocop --format github --force-exclusion`).
 - **Élargissement** : activer les cops **par petits lots**, une PR par lot ; pas de refactors métier ni renommage de vocabulaire domaine sans accord ([glossaire](../glossary.md)).
 - **Lots suivants suggérés** : après vérif des offenses — LOW (`Style/TrailingCommaInArrayLiteral` / `HashLiteral` si pertinent), puis MEDIUM (`Performance/*`, `Rails/*` au cas par cas), puis HIGH (`Lint/*` sur flux, `Metrics/*`, fichiers `app/models` / `app/services` sensibles) en revue manuelle uniquement.
@@ -490,3 +494,11 @@ L'ensemble des services `People::*`, `AccountClaimManagement::*`, `AttendanceMan
 - [`../architecture/services.md`](../architecture/services.md) — catalogue de services.
 - [`../architecture/controllers.md`](../architecture/controllers.md) — état des contrôleurs.
 - [`../architecture/models.md`](../architecture/models.md) — modèles, concerns, zones de stabilité.
+
+## 11. Audit `Rails/SkipsModelValidations` (classification)
+
+- `risky_bypass` (priorité traitée): `app/models/user.rb` (anonymisation), suivi ciblé `app/models/payment.rb`.
+- `intentional_batch` (gardé sous transaction + commentaire explicite): `app/services/people/account_merger.rb`, `app/models/concerns/versionable.rb`, `app/models/concerns/duplicatable.rb`.
+- `legacy/archive` (exclusion ciblée possible): `docs/rake_archive/migrate_to_person_architecture.rake`.
+- `consolidated_path`: la fusion applicative doit passer par `People::AccountMerger` (éviter les duplications de logique dans d'autres services).
+- `identity_invariant`: en cible projet, un `User` est toujours rattaché à une `Person` (phase de verrouillage en cours).

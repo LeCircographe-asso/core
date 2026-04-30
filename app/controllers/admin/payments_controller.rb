@@ -90,25 +90,31 @@ module Admin
             ]
           end
         else
-          format.html { redirect_to admin_payments_path, alert: "Erreur lors de la création du paiement: #{result.message}" }
+          fail_msg = t(".failure_alert", message: result.message)
+          err_detail = I18n.t("flash.generic.error_detail", message: result.message)
+          format.html { redirect_to admin_payments_path, alert: fail_msg }
           format.turbo_stream do
-            render turbo_stream: turbo_stream.replace("flash", partial: "shared/flash", locals: { alert: "Erreur: #{result.message}" })
+            render turbo_stream: turbo_stream.replace("flash", partial: "shared/flash", locals: { alert: err_detail })
           end
         end
       end
     rescue ActiveRecord::RecordNotFound => e
       respond_to do |format|
-        format.html { redirect_to admin_payments_path, alert: "Erreur lors de la création du paiement: #{e.message}" }
+        fail_msg = t("admin.payments.create.failure_alert", message: e.message)
+        err_detail = I18n.t("flash.generic.error_detail", message: e.message)
+        format.html { redirect_to admin_payments_path, alert: fail_msg }
         format.turbo_stream do
-          render turbo_stream: turbo_stream.replace("flash", partial: "shared/flash", locals: { alert: "Erreur: #{e.message}" })
+          render turbo_stream: turbo_stream.replace("flash", partial: "shared/flash", locals: { alert: err_detail })
         end
       end
     rescue StandardError => e
       Rails.logger.error("[Admin::PaymentsController#create] #{e.class}: #{e.message}")
       respond_to do |format|
-        format.html { redirect_to admin_payments_path, alert: "Erreur lors de la création du paiement: #{e.message}" }
+        fail_msg = t("admin.payments.create.failure_alert", message: e.message)
+        err_detail = I18n.t("flash.generic.error_detail", message: e.message)
+        format.html { redirect_to admin_payments_path, alert: fail_msg }
         format.turbo_stream do
-          render turbo_stream: turbo_stream.replace("flash", partial: "shared/flash", locals: { alert: "Erreur: #{e.message}" })
+          render turbo_stream: turbo_stream.replace("flash", partial: "shared/flash", locals: { alert: err_detail })
         end
       end
     end
@@ -163,9 +169,11 @@ module Admin
             ]
           end
         else
-          format.html { redirect_to admin_payment_path(params[:id]), alert: "Échec de la mise à jour: #{result.message}" }
+          fail_msg = t(".failure_alert", message: result.message)
+          err_detail = I18n.t("flash.generic.error_detail", message: result.message)
+          format.html { redirect_to admin_payment_path(params[:id]), alert: fail_msg }
           format.turbo_stream do
-            render turbo_stream: turbo_stream.replace("flash", partial: "shared/flash", locals: { alert: "Erreur: #{result.message}" })
+            render turbo_stream: turbo_stream.replace("flash", partial: "shared/flash", locals: { alert: err_detail })
           end
         end
       end
@@ -207,9 +215,11 @@ module Admin
             ]
           end
         else
-          format.html { redirect_to admin_payments_path, alert: "Échec de l'annulation du paiement: #{result.message}" }
+          fail_msg = t(".cancel_failed_alert", message: result.message)
+          err_detail = I18n.t("flash.generic.error_detail", message: result.message)
+          format.html { redirect_to admin_payments_path, alert: fail_msg }
           format.turbo_stream do
-            render turbo_stream: turbo_stream.replace("flash", partial: "shared/flash", locals: { alert: "Erreur: #{result.message}" })
+            render turbo_stream: turbo_stream.replace("flash", partial: "shared/flash", locals: { alert: err_detail })
           end
         end
       end
@@ -238,7 +248,7 @@ module Admin
       if result.success?
         redirect_to admin_payment_path(result.payment), notice: t(".restored_notice")
       else
-        redirect_to admin_payments_path, alert: "Échec de la restauration du paiement: #{result.message}"
+        redirect_to admin_payments_path, alert: t(".restore_failed_alert", message: result.message)
       end
     end
 
@@ -256,9 +266,9 @@ module Admin
       if params[:person_id].present?
         person = Person.find_by(id: params[:person_id])
         if person
-          add_breadcrumb "Liste d'adhérents", admin_users_path
+          add_breadcrumb I18n.t("breadcrumbs.admin.users.members_list"), admin_users_path
           add_breadcrumb person.full_name, admin_user_path("person_#{person.id}")
-          add_breadcrumb "Historique des paiements", nil
+          add_breadcrumb I18n.t("breadcrumbs.admin.payments.history"), nil
           return
         end
       end
@@ -266,15 +276,15 @@ module Admin
       if params[:user_id].present?
         user = User.find_by(id: params[:user_id])
         if user
-          add_breadcrumb "Liste d'adhérents", admin_users_path
+          add_breadcrumb I18n.t("breadcrumbs.admin.users.members_list"), admin_users_path
           label = user.full_name.presence || "Utilisateur ##{user.id}"
           add_breadcrumb label, admin_user_path(user)
-          add_breadcrumb "Historique des paiements", nil
+          add_breadcrumb I18n.t("breadcrumbs.admin.payments.history"), nil
           return
         end
       end
 
-      add_breadcrumb "Historique des paiements", nil
+      add_breadcrumb I18n.t("breadcrumbs.admin.payments.history"), nil
     end
   end
 end

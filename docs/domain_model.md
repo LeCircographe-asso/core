@@ -2,7 +2,7 @@
 
 > **Statut** : stable
 > **Public cible** : contributeur
-> **Dernière vérification** : 2026-04-27
+> **Dernière vérification** : 2026-05-01
 > **Sources de vérité** : `db/schema.rb`, `app/models/person.rb`, `app/models/membership.rb`, `app/models/payment.rb`, `app/models/payment_line.rb`.
 
 > Vocabulaire utilisé : voir [glossary.md](glossary.md). Quand le code n'est pas encore aligné sur le vocabulaire cible, l'alias legacy est indiqué entre parenthèses.
@@ -14,7 +14,7 @@
 
 ```mermaid
 erDiagram
-  Person ||--o| User : "compte web (optionnel)"
+  Person ||--o| User : "≤1 compte web par Person"
   Person ||--o{ Membership : "souscrit"
   Person ||--o{ Contribution : "achète"
   Person ||--o{ Attendance : "présence"
@@ -40,7 +40,7 @@ erDiagram
 > **Légende** :
 > - `Contribution` : code actuel `BookOfEntry` (rename planifié `phase3-model-rename`).
 > - `ContributionFormula` : code actuel `SubscriptionPlan` (rename planifié `phase3-model-rename`).
-> - `Donation` : pas encore matérialisé en modèle distinct ; dette legacy `item_type: "Payment"` à éliminer (voir [payments.md](payments.md)).
+> - `Donation` : pas encore un modèle ActiveRecord dédié ; lignes `PaymentLine` en `"Donation"` à la création ; legacy DB `item_type: "Payment"` à éliminer (voir [payments.md](payments.md)).
 
 ---
 
@@ -49,6 +49,7 @@ erDiagram
 ### 2.1 Personnes et comptes
 
 #### `Person` — Aggregate Root CRM
+- **Compte web** : `has_one :user, dependent: :restrict_with_error` — au plus un `User` ; pas de suppression « dure » de la fiche tant qu'un compte web existe (flux RGPD / archive à utiliser).
 - **Identité** : `full_name`, `phone`, `email`, `address`, `birth_date`.
 - **Tarif réduit** : `reduced_rate_eligible`, `reduced_rate_reason`, `reduced_rate_proof`.
 - **Soft delete** : `deleted_at` (concern `SoftDeletable`).
@@ -61,10 +62,12 @@ erDiagram
   - `Person#archive!` / `Person#restore!`.
 - **Garde-fou** : `has_financial_data?` empêche la suppression dure si l'historique financier est non vide.
 
-#### `User` — Compte web (optionnel)
+#### `User` — Compte web
+- **Invariant** : `belongs_to :person` **obligatoire** en base (`users.person_id` NOT NULL). À la création sans `person` explicite, le modèle attache une `Person` minimale (prénom/nom stub + email aligné sur le compte).
 - **Authentification** : email, password, sessions, password_reset_token.
 - **Rôle** : `system_role` enum `:super_admin | :admin | :volunteer | :web_visitor`.
 - **Délégation** : `delegate :full_name, :phone, ... to: :person`.
+- **Liaison / fusion** : rattachement nominal `People::AttachUserToPerson` ; orchestration admin/scripts `People::AccountLinker` ; fusion de fiches `People::AccountMerger`.
 - **Soft delete** : `User#archive!` (admin uniquement).
 
 ---
@@ -117,7 +120,7 @@ erDiagram
 - **Invariant** : `payment.payment_lines.sum(:amount_cents) == payment.total_cents`.
 
 #### `Donation` (cible)
-- Pas encore un modèle distinct. Représenté actuellement par une `PaymentLine` avec `item_type: "Payment"` (réécriture par `People::PaymentCreator`). Migration en `phase1-donation-fix` (voir [payments.md](payments.md)).
+- Pas encore un modèle ActiveRecord distinct. Représenté par une `PaymentLine` avec `item_type: "Donation"` à la création (`People::PaymentCreator`). Des lignes historiques peuvent encore avoir `item_type: "Payment"` jusqu’au backfill complet — voir [payments.md](payments.md) et `phase1-donation-fix`.
 
 ---
 
@@ -220,6 +223,8 @@ sequenceDiagram
   Reg-->>UI: success(person, user?, membership?)
 ```
 
+> **Inscription web** : les flux qui ne passent pas par `People::Register` créent tout de même un couple `User` + `Person` via le callback `User` (personne minimale), puis enrichissement CRM au fil du temps.
+
 ---
 
 ## 5. Documents liés
@@ -228,4 +233,4 @@ sequenceDiagram
 - [payments.md](payments.md) — détail Payment / PaymentLine / Donation.
 - [migrations/vocabulary_migration.md](migrations/vocabulary_migration.md) — mapping ancien → nouveau.
 - [domain/business_logic.md](domain/business_logic.md) — règles métier complètes.
-- [architecture/services.md](architecture/services.md) — services `People::*` et orchestrateurs.
+- [architecture/services.md](architecture/services.md) — services `People::*` et orchestrateurs (`Register`, `AttachUserToPerson`, `AccountLinker`, paiements).

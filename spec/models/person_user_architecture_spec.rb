@@ -34,13 +34,14 @@ RSpec.describe 'Person-User Architecture', type: :model do
     end
   end
 
-  describe 'User without Person' do
-    it 'handles user without person gracefully' do
-      user = create(:user, person: nil)
+  describe 'User-Person invariant' do
+    it 'auto-creates a minimal person when missing on create' do
+      user = create(:user, person: nil, email_address: 'orphan@example.com')
 
-      expect(user.first_name).to be_nil
-      expect(user.last_name).to be_nil
-      expect(user.full_name).to be_nil
+      expect(user.person).to be_present
+      expect(user.person.first_name).to eq('Web')
+      expect(user.person.last_name).to eq('User')
+      expect(user.person.email).to eq('orphan@example.com')
     end
   end
 end
