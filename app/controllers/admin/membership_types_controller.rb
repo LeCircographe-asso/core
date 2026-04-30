@@ -7,12 +7,12 @@ module Admin
 
     def index
       @membership_types = MembershipType.order(:category, :price_cents)
-      add_breadcrumb "Types d'Adhésion", nil
+      add_breadcrumb I18n.t("breadcrumbs.admin.membership_types.types"), nil
     end
 
     def show
       @memberships = @membership_type.memberships.includes(:person).order(created_at: :desc).limit(10)
-      add_breadcrumb "Type: #{@membership_type.name}", nil
+      add_breadcrumb I18n.t("breadcrumbs.admin.membership_types.type_named", name: @membership_type.name), nil
     end
 
     def new
@@ -21,11 +21,11 @@ module Admin
         version: 1,
         created_by_user: Current.user
       )
-      add_breadcrumb "Nouveau type d'adhésion", nil
+      add_breadcrumb I18n.t("breadcrumbs.admin.membership_types.new_type"), nil
     end
 
     def edit
-      add_breadcrumb "Modifier: #{@membership_type.name}", nil
+      add_breadcrumb I18n.t("breadcrumbs.admin.membership_types.edit_named", name: @membership_type.name), nil
     end
 
     def create
@@ -69,8 +69,8 @@ module Admin
     end
 
     def set_breadcrumbs
-      add_breadcrumb "Administration", admin_dashboard_index_path
-      add_breadcrumb "Types d'Adhésion", admin_membership_types_path
+      add_breadcrumb I18n.t("breadcrumbs.admin.common.administration"), admin_dashboard_index_path
+      add_breadcrumb I18n.t("breadcrumbs.admin.membership_types.types"), admin_membership_types_path
     end
 
     def membership_type_params

@@ -9,12 +9,12 @@ module Admin
 
     def index
       @contribution_formulas = ContributionFormula.includes(:membership_type).order(:duration, :price_cents)
-      add_breadcrumb "Plans de cotisation", nil
+      add_breadcrumb I18n.t("breadcrumbs.admin.subscription_plans.plans"), nil
     end
 
     def show
       @contributions = @contribution_formula.contributions.includes(:person)
-      add_breadcrumb "Plan: #{@contribution_formula.name}", nil
+      add_breadcrumb I18n.t("breadcrumbs.admin.subscription_plans.plan_named", name: @contribution_formula.name), nil
     end
 
     def new
@@ -28,11 +28,11 @@ module Admin
 
       @contribution_formulas = ContributionFormula.available_for(@person)
 
-      add_breadcrumb "Nouvelle cotisation", nil
+      add_breadcrumb I18n.t("breadcrumbs.admin.subscription_plans.new_contribution"), nil
     end
 
     def edit
-      add_breadcrumb "Modifier: #{@contribution_formula.name}", nil
+      add_breadcrumb I18n.t("breadcrumbs.admin.subscription_plans.edit_named", name: @contribution_formula.name), nil
     end
 
     def create
@@ -97,8 +97,8 @@ module Admin
     end
 
     def set_breadcrumbs
-      add_breadcrumb "Administration", admin_dashboard_index_path
-      add_breadcrumb "Plans de cotisation", admin_subscription_plans_path
+      add_breadcrumb I18n.t("breadcrumbs.admin.common.administration"), admin_dashboard_index_path
+      add_breadcrumb I18n.t("breadcrumbs.admin.subscription_plans.plans"), admin_subscription_plans_path
     end
 
     def contribution_formula_params
