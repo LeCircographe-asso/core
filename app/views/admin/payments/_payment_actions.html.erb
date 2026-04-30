@@ -1,1 +1,6 @@
-<%= render Admin::Payments::PaymentActionsComponent.new(payment: payment) %>
+<%= turbo_frame_tag "payment_#{payment.id}_actions" do %>
+  <%= render Admin::Payments::PaymentActionsComponent.new(
+        payment: payment,
+        list_filter_params: local_assigns.fetch(:list_filter_params, {})
+      ) %>
+<% end %>

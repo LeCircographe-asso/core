@@ -28,8 +28,8 @@
   </td>
   
   <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-    <%= turbo_frame_tag "payment_#{payment.id}_actions" do %>
-      <%= render Admin::Payments::PaymentActionsComponent.new(payment: payment) %>
-    <% end %>
+    <%= render "payment_actions",
+               payment: payment,
+               list_filter_params: local_assigns.fetch(:list_filter_params, {}) %>
   </td>
 </tr>
