@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # =====================================================================
 # LEGACY ARCHIVE — NE PAS RECHARGER
 # ---------------------------------------------------------------------
@@ -167,7 +169,7 @@ namespace :migration do
       payment.update!(
         person: person,
         recorded_by: User.first, # Fallback
-        total_cents: payment.total_payment&.*(100)&.to_i || 0,
+        total_cents: payment.total_payment&.*(100).to_i,
         payment_method: map_payment_method(payment.payment_type)
       )
 
@@ -238,15 +240,15 @@ namespace :migration do
 
     # Vérifier que tous les users ont une person
     users_without_person = User.where(person_id: nil).count
-    puts "  Users without person: #{users_without_person}" if users_without_person > 0
+    puts "  Users without person: #{users_without_person}" if users_without_person.positive?
 
     # Vérifier que tous les paiements ont une person
     payments_without_person = Payment.where(person_id: nil).count
-    puts "  Payments without person: #{payments_without_person}" if payments_without_person > 0
+    puts "  Payments without person: #{payments_without_person}" if payments_without_person.positive?
 
     # Vérifier que toutes les adhésions ont une person
     memberships_without_person = Membership.where(person_id: nil).count
-    puts "  Memberships without person: #{memberships_without_person}" if memberships_without_person > 0
+    puts "  Memberships without person: #{memberships_without_person}" if memberships_without_person.positive?
 
     puts '  ✅ Validation completed'
   end
@@ -301,7 +303,7 @@ namespace :migration do
   def calculate_amount_cents(product_order)
     # Logique pour calculer le montant
     # À adapter selon les données existantes
-    product_order.product.price_entries.order(created_at: :desc).first&.price_catalog&.price&.*(100)&.to_i || 0
+    product_order.product.price_entries.order(created_at: :desc).first&.price_catalog&.price&.*(100).to_i
   end
 
   def determine_subscription_plan(product)

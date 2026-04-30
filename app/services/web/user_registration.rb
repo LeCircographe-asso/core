@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Web
   class UserRegistration < BaseService
     # Attributs pour la création de personne
@@ -91,7 +93,7 @@ module Web
 
       # Vérifier s'il existe un User avec le même email mais sans Person liée
       # (cas où User existe mais Person n'existe pas encore)
-      return unless User.where(email_address: email).where(person_id: nil).exists?
+      return unless User.where(email_address: email).exists?(person_id: nil)
 
       errors.add(:email, 'is already used by an existing user account')
     end

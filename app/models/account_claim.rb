@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class AccountClaim < ApplicationRecord
   include Statusable
   include Dateable

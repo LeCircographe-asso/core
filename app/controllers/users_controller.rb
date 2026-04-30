@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class UsersController < ApplicationController
   # This controller handles user profile management for authenticated users.
   # It allows users to view and edit their profile information and
@@ -110,16 +112,16 @@ class UsersController < ApplicationController
 
   # Permitted parameters for person data (migrated from user)
   def person_params
-    params.require(:user).permit(
-      :phone,
-      :address,
-      :zip_code,
-      :town,
-      :country,
-      :image_rights,
-      :get_involved,
-      :newsletter_subscribed,
-      :dyslexic_font
+    params.expect(
+      user: %i[phone
+               address
+               zip_code
+               town
+               country
+               image_rights
+               get_involved
+               newsletter_subscribed
+               dyslexic_font]
     )
   end
 end

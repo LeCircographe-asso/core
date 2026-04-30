@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class EventInterestsController < ApplicationController
   before_action :set_event
 

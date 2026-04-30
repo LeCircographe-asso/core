@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Middleware pour protéger l'environnement staging
 class StagingAuth
   def initialize(app)

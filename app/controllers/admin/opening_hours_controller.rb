@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Admin
   class OpeningHoursController < BaseController
     before_action :set_opening_hours, only: %i[show edit]

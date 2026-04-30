@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 FactoryBot.define do
   factory :attendance_list do
     name { "Liste de présence du #{Date.current.strftime('%d/%m/%Y')}" }

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class SettingsController < ApplicationController
   before_action :require_authentication
   def show
@@ -35,10 +37,10 @@ class SettingsController < ApplicationController
   private
 
   def user_params
-    params.require(:user).permit(
-      :email_address, :image_rights,
-      :newsletter_subscribed, :get_involved,
-      :dyslexic_font
+    params.expect(
+      user: %i[email_address image_rights
+               newsletter_subscribed get_involved
+               dyslexic_font]
     )
   end
 end

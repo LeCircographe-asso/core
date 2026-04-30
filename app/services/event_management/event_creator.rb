@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module EventManagement
   class EventCreator < BaseService
     attribute :name, :string

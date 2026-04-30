@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class CheckoutController < ApplicationController
   before_action :require_authentication
   def create

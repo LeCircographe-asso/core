@@ -1,18 +1,20 @@
 #!/usr/bin/env ruby
+# frozen_string_literal: true
+
 # Script pour migrer automatiquement les services vers BaseService
 # Usage: ruby scripts/migrate_to_base_service.rb
 
 require 'fileutils'
 
 SERVICES_DIR = 'app/services'
-EXCLUDED_FILES = ['base_service.rb', '.disabled']
+EXCLUDED_FILES = ['base_service.rb', '.disabled'].freeze
 
 def find_services_to_migrate
   Dir.glob("#{SERVICES_DIR}/**/*.rb").select do |file|
     next if EXCLUDED_FILES.any? { |excluded| file.include?(excluded) }
 
     content = File.read(file)
-    content.include?('require "ostruct"') && !content.include?('< BaseService')
+    content.include?('require "ostruct"') && content.exclude?('< BaseService')
   end
 end
 

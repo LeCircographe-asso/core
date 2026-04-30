@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module ApplicationHelper
   include Pagy::Frontend
 
@@ -74,13 +76,13 @@ module ApplicationHelper
     return pool if pool.any?
 
     fallback = fallback_hero_image
-    fallback && !exclusions.include?(fallback.to_s) ? [fallback] : []
+    fallback && exclusions.exclude?(fallback.to_s) ? [fallback] : []
   end
 
   def asset_available?(logical_path)
     return false if logical_path.blank?
 
-    if (assembly = Rails.application.assets)&.respond_to?(:load_path) && assembly.load_path.find(logical_path).present?
+    if (assembly = Rails.application.assets).respond_to?(:load_path) && assembly.load_path.find(logical_path).present?
       return true
     end
 
@@ -94,10 +96,10 @@ module ApplicationHelper
 
   def hero_image_pool
     @hero_image_pool ||= begin
-      files = Dir[Rails.root.join('app/assets/images/hero_*.webp')].map { |path| File.basename(path) }
+      files = Rails.root.glob('app/assets/images/hero_*.webp').map { |path| File.basename(path) }
       files.select! { |file| asset_available?(file) }
       fallback = fallback_hero_image(files)
-      files << fallback if fallback && !files.include?(fallback)
+      files << fallback if fallback && files.exclude?(fallback)
       files
     end
   end
@@ -110,6 +112,6 @@ module ApplicationHelper
   end
 
   def hero_image_pool_without_cache
-    Dir[Rails.root.join('app/assets/images/hero_*.webp')].map { |path| File.basename(path) }
+    Rails.root.glob('app/assets/images/hero_*.webp').map { |path| File.basename(path) }
   end
 end

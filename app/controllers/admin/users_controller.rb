@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Admin
   # Admin::UsersController handles user management for administrators.
   # This controller provides full CRUD functionality and management features
@@ -63,7 +65,7 @@ module Admin
         # Si Person archivée (fusion), rediriger vers la liste
         if @person.nil?
           archived_person = Person.find_by(id: person_id)
-          raise ActiveRecord::RecordNotFound unless archived_person&.deleted_at.present?
+          raise ActiveRecord::RecordNotFound if archived_person&.deleted_at.blank?
 
           redirect_to admin_users_path, notice: 'Cette fiche a été fusionnée avec une autre. Retour à la liste des utilisateurs.'
           return
@@ -396,58 +398,60 @@ module Admin
 
     # Only allow a list of trusted parameters through.
     def user_params
-      params.require(:user).permit(
-        :email_address,
-        :system_role,
-        :created_by_admin,
-        :create_web_account,
-        # Attributs délégués à Person (paramètres plats)
-        :first_name,
-        :last_name,
-        :email,
-        :phone,
-        :birth_date,
-        :address,
-        :emergency_contact_name,
-        :emergency_contact_phone,
-        :notes,
-        :specialty,
-        :is_minor,
-        :image_rights,
-        :get_involved,
-        :newsletter_subscribed,
-        :dyslexic_font,
-        :zip_code,
-        :town,
-        :country,
-        :reduced_rate_eligible,
-        :reduced_rate_reason,
-        :reduced_rate_proof,
-        # Paramètres imbriqués (pour compatibilité)
-        person: %i[
-          id
-          first_name
-          last_name
-          email
-          phone
-          birth_date
-          address
-          emergency_contact_name
-          emergency_contact_phone
-          notes
-          specialty
-          is_minor
-          image_rights
-          get_involved
-          newsletter_subscribed
-          dyslexic_font
-          zip_code
-          town
-          country
-          reduced_rate_eligible
-          reduced_rate_reason
-          reduced_rate_proof
-        ]
+      params.expect(
+        user: [:email_address,
+               :system_role,
+               :created_by_admin,
+               :create_web_account,
+               # Attributs délégués à Person (paramètres plats)
+               :first_name,
+               :last_name,
+               :email,
+               :phone,
+               :birth_date,
+               :address,
+               :emergency_contact_name,
+               :emergency_contact_phone,
+               :notes,
+               :specialty,
+               :is_minor,
+               :image_rights,
+               :get_involved,
+               :newsletter_subscribed,
+               :dyslexic_font,
+               :zip_code,
+               :town,
+               :country,
+               :reduced_rate_eligible,
+               :reduced_rate_reason,
+               :reduced_rate_proof,
+               # Paramètres imbriqués (pour compatibilité)
+               {
+                 person: %i[
+                   id
+                   first_name
+                   last_name
+                   email
+                   phone
+                   birth_date
+                   address
+                   emergency_contact_name
+                   emergency_contact_phone
+                   notes
+                   specialty
+                   is_minor
+                   image_rights
+                   get_involved
+                   newsletter_subscribed
+                   dyslexic_font
+                   zip_code
+                   town
+                   country
+                   reduced_rate_eligible
+                   reduced_rate_reason
+                   reduced_rate_proof
+                 ]
+               }]
       )
     end
 
@@ -488,26 +492,26 @@ module Admin
     end
 
     def person_params
-      params.require(:person).permit(
-        :first_name,
-        :last_name,
-        :email,
-        :phone,
-        :address,
-        :zip_code,
-        :town,
-        :country,
-        :birth_date,
-        :emergency_contact_name,
-        :emergency_contact_phone,
-        :notes,
-        :newsletter_subscribed,
-        :get_involved,
-        :image_rights,
-        :is_minor,
-        :reduced_rate_eligible,
-        :reduced_rate_reason,
-        :reduced_rate_proof
+      params.expect(
+        person: %i[first_name
+                   last_name
+                   email
+                   phone
+                   address
+                   zip_code
+                   town
+                   country
+                   birth_date
+                   emergency_contact_name
+                   emergency_contact_phone
+                   notes
+                   newsletter_subscribed
+                   get_involved
+                   image_rights
+                   is_minor
+                   reduced_rate_eligible
+                   reduced_rate_reason
+                   reduced_rate_proof]
       )
     end
 

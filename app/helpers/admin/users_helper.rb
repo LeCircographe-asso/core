@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Admin
   module UsersHelper
     # Formatage du nom avec fallback

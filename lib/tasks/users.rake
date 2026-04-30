@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 namespace :users do
   desc 'Update all users with their full_name and ensure last names are fully capitalized'
   task update_full_names: :environment do

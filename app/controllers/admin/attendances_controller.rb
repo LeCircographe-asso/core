@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Admin
   class AttendancesController < BaseController
     before_action :set_attendance, only: %i[show destroy]
@@ -77,7 +79,7 @@ module Admin
     end
 
     def attendance_params
-      params.require(:attendance).permit(:person_id, :event_id, :date, :contribution_id, :attendance_list_id, :notes).tap do |permitted|
+      params.expect(attendance: %i[person_id event_id date contribution_id attendance_list_id notes]).tap do |permitted|
         legacy = params[:attendance][:book_of_entry_id]
         permitted[:contribution_id] ||= legacy if legacy.present?
       end

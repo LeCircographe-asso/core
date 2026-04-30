@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class AttendanceStatusComponent < ViewComponent::Base
   def initialize(person:, date: Date.current)
     @person = person
@@ -5,7 +7,9 @@ class AttendanceStatusComponent < ViewComponent::Base
   end
 
   def attendance
-    @attendance ||= @person.attendances.find_by(date: @date)
+    return @attendance if defined?(@attendance)
+
+    @attendance = @person.attendances.find_by(date: @date)
   end
 
   delegate :present?, to: :attendance

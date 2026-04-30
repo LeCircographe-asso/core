@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 namespace :security do
   desc 'Audit des fusions de comptes'
   task audit_merges: :environment do
@@ -39,7 +41,7 @@ namespace :security do
 
     email_duplicates.each do |email, count|
       puts "\n#{email}: #{count} Person"
-      Person.active.where(email: email).each do |p|
+      Person.active.where(email: email).find_each do |p|
         puts "  - Person #{p.id}: #{p.full_name} (User: #{p.user_id || 'aucun'})"
       end
     end

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class MemberNumberHistory < ApplicationRecord
   belongs_to :person
 

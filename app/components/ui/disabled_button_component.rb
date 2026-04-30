@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Ui
   class DisabledButtonComponent < ViewComponent::Base
     def initialize(text:, disabled: false, disabled_reason: nil, **options)

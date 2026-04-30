@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Admin
   class HealthReportsController < BaseController
     before_action :set_breadcrumbs

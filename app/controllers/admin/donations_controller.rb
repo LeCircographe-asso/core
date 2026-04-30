@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Admin
   class DonationsController < BaseController
     def create
@@ -38,7 +40,7 @@ module Admin
     private
 
     def payment_params
-      params.require(:payment).permit(:payment_amount, :payment_date, :payment_type, :status, :donation, :total_payment, :user_id, :person_id)
+      params.expect(payment: %i[payment_amount payment_date payment_type status donation total_payment user_id person_id])
     end
   end
 end

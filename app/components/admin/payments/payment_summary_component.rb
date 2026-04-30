@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Admin
   module Payments
     class PaymentSummaryComponent < ViewComponent::Base
@@ -28,7 +30,7 @@ module Admin
       end
 
       def format_currency(amount_cents)
-        return '0,00 €' if amount_cents.blank? || amount_cents == 0
+        return '0,00 €' if amount_cents.blank? || amount_cents.zero?
 
         number_to_currency(amount_cents / 100.0, unit: '€', separator: ',', delimiter: ' ')
       end

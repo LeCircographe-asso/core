@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module AttendanceManagement
   class AttendanceCreator < BaseService
     attribute :person_id, :integer

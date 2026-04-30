@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Helper pour la gestion des fonts dans l'application
 module FontHelper
   # Fonts disponibles dans l'application

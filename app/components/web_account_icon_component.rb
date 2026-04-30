@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class WebAccountIconComponent < ViewComponent::Base
   def initialize(person:)
     @person = person

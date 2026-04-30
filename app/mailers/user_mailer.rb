@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class UserMailer < ApplicationMailer
   def welcome_by_admin(user, reset_password_url)
     @user = user
@@ -25,7 +27,7 @@ class UserMailer < ApplicationMailer
     @name = name
     @message = message
     @category = category
-    @submitted_at = Time.now
+    @submitted_at = Time.zone.now
     mail(to: recipient_email, subject: "Nouveau message : #{category.capitalize}", reply_to: email)
   end
 end

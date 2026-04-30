@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class MemberManagementService
   # Génère un numéro d'adhérent unique selon le format YYTNNN
   def self.generate_member_number(membership_type = 'U')
@@ -205,14 +207,14 @@ class MemberManagementService
 
   # Assigne des numéros d'adhérent à toutes les Person qui n'en ont pas
   def self.assign_missing_member_numbers
-    Person.where(member_number: [nil, '']).each do |person|
+    Person.where(member_number: [nil, '']).find_each do |person|
       assign_member_number(person)
     end
   end
 
   # Analyse un numéro d'adhérent existant
   def self.parse_member_number(member_number)
-    return nil unless member_number.present?
+    return nil if member_number.blank?
 
     # Format: YYTNNN
     match = member_number.match(/^(\d{2})([CU])(\d+)$/)
@@ -229,7 +231,7 @@ class MemberManagementService
 
   # Valide le format d'un numéro d'adhérent
   def self.valid_member_number_format?(member_number)
-    return false unless member_number.present?
+    return false if member_number.blank?
 
     member_number.match?(/^\d{2}[CU]\d{3,5}$/)
   end

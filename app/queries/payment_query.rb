@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module PaymentQuery
   def self.by_person(person_id)
     Payment.where(person_id: person_id)

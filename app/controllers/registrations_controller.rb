@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class RegistrationsController < ApplicationController
   allow_unauthenticated_access only: %i[new create]
 
@@ -56,10 +58,10 @@ class RegistrationsController < ApplicationController
   private
 
   def user_params
-    params.require(:user).permit(:email_address, :password, :password_confirmation, :cgu, :privacy_policy, :newsletter_subscribed, :first_name, :last_name)
+    params.expect(user: %i[email_address password password_confirmation cgu privacy_policy newsletter_subscribed first_name last_name])
   end
 
   def user_only_params
-    params.require(:user).permit(:email_address, :password, :password_confirmation, :cgu, :privacy_policy)
+    params.expect(user: %i[email_address password password_confirmation cgu privacy_policy])
   end
 end

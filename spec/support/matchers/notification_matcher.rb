@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 RSpec::Matchers.define :instrument do |expected_event_name|
   supports_block_expectations
 

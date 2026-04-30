@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Membership < ApplicationRecord
   include Statusable
   include Dateable
@@ -80,7 +82,7 @@ class Membership < ApplicationRecord
   scope :current, -> { where('started_at <= ? AND ended_at >= ?', Date.current, Date.current) }
   scope :active, -> { where(status: :active) }
   scope :expired, -> { where(status: :expired) }
-  scope :expired_by_date, -> { where('ended_at < ?', Date.current) }
+  scope :expired_by_date, -> { where(ended_at: ...Date.current) }
   scope :inactive, -> { where(status: :inactive) }
   scope :basic, -> { joins(:membership_type).where(membership_types: { category: :basic }) }
   scope :circus, -> { joins(:membership_type).where(membership_types: { category: :circus }) }

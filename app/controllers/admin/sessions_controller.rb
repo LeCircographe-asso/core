@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Admin
   class SessionsController < BaseController
     allow_unauthenticated_access only: %i[new create]
@@ -10,7 +12,7 @@ module Admin
     end
 
     def create
-      if user = User.authenticate_by(params.permit(:email_address, :password))
+      if (user = User.authenticate_by(params.permit(:email_address, :password)))
         start_new_session_for user
         redirect_to after_authentication_url, notice: 'Connexion réussie !'
       else

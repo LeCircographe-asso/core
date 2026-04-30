@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class MembershipTypeBadgeComponent < ViewComponent::Base
   def initialize(person:)
     @person = person

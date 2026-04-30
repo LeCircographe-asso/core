@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module ContributionFormulaManagement
   class ContributionFormulaUpdater < BaseService
     attribute :contribution_formula_id, :integer

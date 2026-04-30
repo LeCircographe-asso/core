@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module AttendanceListManagement
   class AttendanceListCreator < BaseService
     attribute :name, :string

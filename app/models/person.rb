@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Person < ApplicationRecord
   # ===================================================================
   # ⚠️ DEPRECATED: newsletter_subscribed column
@@ -35,7 +37,7 @@ class Person < ApplicationRecord
   end
 
   def formatted_member_number
-    return 'Non assigné' unless member_number.present?
+    return 'Non assigné' if member_number.blank?
 
     parsed = MemberManagementService.parse_member_number(member_number)
     return member_number unless parsed
@@ -44,7 +46,7 @@ class Person < ApplicationRecord
   end
 
   def member_number_details
-    return nil unless member_number.present?
+    return nil if member_number.blank?
 
     MemberManagementService.parse_member_number(member_number)
   end
@@ -164,7 +166,7 @@ class Person < ApplicationRecord
   include EmailNormalizable
 
   def has_financial_data?
-    payments.exists? || memberships.where(status: :active).exists?
+    payments.exists? || memberships.exists?(status: :active)
   end
 
   def archive!
@@ -429,7 +431,7 @@ class Person < ApplicationRecord
       current = current_membership
       raise "Adhésion encore active jusqu'au #{current.ended_at}. Renouvellement impossible." if current&.active?
 
-      current&.update!(status: :expired) if current
+      current&.update!(status: :expired)
 
       result = create_membership!(membership_type, payment_method: payment_method, recorded_by: recorded_by, custom_amount_cents: custom_amount_cents, offer_reason: offer_reason)
 
@@ -689,7 +691,7 @@ class Person < ApplicationRecord
   end
 
   def newsletter_subscribed?
-    return false unless email.present?
+    return false if email.blank?
 
     subscriber = NewsletterSubscriber.find_by(email: email)
     subscriber&.subscribed? || false

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Admin
   module Users
     # Admin::Users::PaymentsController handles payment management
@@ -161,12 +163,12 @@ module Admin
       end
 
       def payment_params
-        params.require(:payment).permit(
-          :total_cents,
-          :payment_method,
-          :status,
-          :notes,
-          :recorded_by_id
+        params.expect(
+          payment: %i[total_cents
+                      payment_method
+                      status
+                      notes
+                      recorded_by_id]
         )
       end
 

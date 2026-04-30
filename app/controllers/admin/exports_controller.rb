@@ -1,9 +1,11 @@
+# frozen_string_literal: true
+
 module Admin
   class ExportsController < BaseController
     require 'csv'
 
     def index
-      p '#' * 111
+      Rails.logger.debug '#' * 111
     end
 
     def newsletter_subscribed

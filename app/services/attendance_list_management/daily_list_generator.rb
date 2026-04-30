@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module AttendanceListManagement
   class DailyListGenerator < BaseService
     attribute :date, :date
@@ -39,8 +41,7 @@ module AttendanceListManagement
 
     def attendance_list_exists_for?(target_date)
       AttendanceList.where(list_type: :training)
-                    .where(start_date: target_date.all_day)
-                    .exists?
+                    .exists?(start_date: target_date.all_day)
     end
 
     def build_start_datetime(target_date)

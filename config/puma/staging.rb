@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Configuration Puma pour Staging - VPS Ionos Linux M
 # workers défini via WEB_CONCURRENCY dans puma.rb (0 pour staging)
 threads 2, 2

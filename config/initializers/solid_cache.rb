@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Configure SolidCache to use SQLite database
 Rails.application.config.to_prepare do
   # SolidCache uses different configuration method in Rails 8.0.2

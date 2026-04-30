@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Admin
   class SubscriptionsController < BaseController
     before_action :set_person

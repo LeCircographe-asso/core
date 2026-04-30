@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module BlogManagement
   class BlogCreator < BaseService
     attribute :title, :string

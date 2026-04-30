@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Configuration Puma pour Production - VPS Ionos Linux M
 # workers défini via WEB_CONCURRENCY dans puma.rb
 threads 4, 4

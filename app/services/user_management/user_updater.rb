@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module UserManagement
   class UserUpdater < BaseService
     attribute :user_id, :integer

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Versionable
   extend ActiveSupport::Concern
 
@@ -30,7 +32,7 @@ module Versionable
 
     # Obtenir toutes les versions expirées
     def expired_versions
-      where.not(effective_until: nil).where('effective_until < ?', Date.current)
+      where.not(effective_until: nil).where(effective_until: ...Date.current)
     end
 
     # Obtenir la version active à une date donnée

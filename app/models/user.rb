@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class User < ApplicationRecord
   include Roleable
   include Dateable
@@ -73,15 +75,13 @@ class User < ApplicationRecord
     )
 
     # Anonymiser les données de la Person liée
-    if person
-      person.update_columns(
-        first_name: 'Deleted',
-        last_name: 'User',
-        address: nil,
-        phone: nil,
-        email: "deleted_#{id}@example.com"
-      )
-    end
+    person&.update_columns(
+      first_name: 'Deleted',
+      last_name: 'User',
+      address: nil,
+      phone: nil,
+      email: "deleted_#{id}@example.com"
+    )
 
     # Deactivate any active memberships
     memberships.where(status: 'active').update_all(status: 'inactive')
@@ -182,9 +182,9 @@ class User < ApplicationRecord
   end
 
   # Date scopes (using created_at via Dateable)
-  scope :today, -> { where('created_at >= ? AND created_at < ?', Date.current.beginning_of_day, Date.current.end_of_day) }
-  scope :this_week, -> { where('created_at >= ? AND created_at <= ?', Date.current.beginning_of_week.beginning_of_day, Date.current.end_of_week.end_of_day) }
-  scope :this_month, -> { where('created_at >= ? AND created_at <= ?', Date.current.beginning_of_month.beginning_of_day, Date.current.end_of_month.end_of_day) }
+  scope :today, -> { where(created_at: Date.current.beginning_of_day...Date.current.end_of_day) }
+  scope :this_week, -> { where(created_at: Date.current.beginning_of_week.beginning_of_day..Date.current.end_of_week.end_of_day) }
+  scope :this_month, -> { where(created_at: Date.current.beginning_of_month.beginning_of_day..Date.current.end_of_month.end_of_day) }
   scope :with_deleted, -> { all }
 
   # Class method to find or create a user with the same email
@@ -219,10 +219,6 @@ class User < ApplicationRecord
   end
 
   # Standard destroy method - no soft deletion
-  def destroy
-    # Payments belong to Person, not User; do not attempt reassignment here.
-    super # Standard ActiveRecord destroy
-  end
 
   def email_uniqueness_unless_person_email
     return if email_address.blank?

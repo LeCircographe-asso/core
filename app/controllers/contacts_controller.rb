@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class ContactsController < ApplicationController
   def create
     @contact = params.expect(contact: %i[name email message category])

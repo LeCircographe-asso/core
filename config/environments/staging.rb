@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Configuration pour l'environnement staging
 require_relative 'shared'
 
@@ -47,7 +49,7 @@ Rails.application.configure do
   # ou via des initializers si nécessaire
 
   # Logs spécifiques
-  config.logger = ActiveSupport::Logger.new(STDOUT)
+  config.logger = ActiveSupport::Logger.new($stdout)
   config.logger.formatter = proc do |severity, datetime, _progname, msg|
     "[STAGING] #{datetime.strftime('%Y-%m-%d %H:%M:%S')} #{severity}: #{msg}\n"
   end

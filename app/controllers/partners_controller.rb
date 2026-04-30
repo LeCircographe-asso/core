@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class PartnersController < ApplicationController
   allow_unauthenticated_access only: :index
 

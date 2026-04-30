@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module MemberNumberManagement
   class MemberNumberChanger < BaseService
     attribute :person_id, :integer
@@ -35,12 +37,10 @@ module MemberNumberManagement
 
           # Mettre à jour l'historique avec le bon numéro
           current_history = person.current_member_number_history
-          if current_history
-            current_history.update!(
-              member_number: new_member_number,
-              notes: change_notes.presence || "Changement manuel de #{old_number} vers #{new_member_number}"
-            )
-          end
+          current_history&.update!(
+            member_number: new_member_number,
+            notes: change_notes.presence || "Changement manuel de #{old_number} vers #{new_member_number}"
+          )
 
           # Instrumentation pour audit
           ActiveSupport::Notifications.instrument(

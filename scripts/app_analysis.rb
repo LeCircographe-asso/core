@@ -1,4 +1,6 @@
 #!/usr/bin/env ruby
+# frozen_string_literal: true
+
 # Script d'analyse complète de l'application Le Circographe
 # Usage: ruby scripts/app_analysis.rb
 
@@ -67,7 +69,7 @@ class AppAnalyzer
         used_in_helpers: usage[:helpers],
         used_in_tests: usage[:tests],
         usage_count: usage[:total_count],
-        is_used: usage[:total_count] > 0,
+        is_used: usage[:total_count].positive?,
         has_template: File.exist?(file.gsub('.rb', '.html.erb'))
       }
     end
@@ -170,7 +172,7 @@ class AppAnalyzer
         used_in_helpers: usage[:helpers],
         used_in_views: usage[:views],
         usage_count: usage[:total_count],
-        is_used: usage[:total_count] > 0
+        is_used: usage[:total_count].positive?
       }
     end
   end
@@ -368,7 +370,7 @@ class AppAnalyzer
         used_in_other_services: usage[:services],
         used_in_jobs: usage[:jobs],
         usage_count: usage[:total_count],
-        is_used: usage[:total_count] > 0
+        is_used: usage[:total_count].positive?
       }
     end
   end
@@ -444,7 +446,7 @@ class AppAnalyzer
         used_in_views: usage[:views],
         used_in_controllers: usage[:controllers],
         usage_count: usage[:total_count],
-        is_used: usage[:total_count] > 0
+        is_used: usage[:total_count].positive?
       }
     end
   end
@@ -604,7 +606,7 @@ class AppAnalyzer
     puts "\n💡 Génération des recommandations..."
 
     # Composants non utilisés
-    unused_components = @results[:components].select { |_, info| !info[:is_used] }
+    unused_components = @results[:components].reject { |_, info| info[:is_used] }
     if unused_components.any?
       @results[:recommendations] << {
         type: 'cleanup',
@@ -617,7 +619,7 @@ class AppAnalyzer
     end
 
     # Services non utilisés
-    unused_services = @results[:services].select { |_, info| !info[:is_used] }
+    unused_services = @results[:services].reject { |_, info| info[:is_used] }
     if unused_services.any?
       @results[:recommendations] << {
         type: 'cleanup',
@@ -630,7 +632,7 @@ class AppAnalyzer
     end
 
     # Contrôleurs sans vues
-    controllers_without_views = @results[:controllers].select { |_, info| !info[:has_views] }
+    controllers_without_views = @results[:controllers].reject { |_, info| info[:has_views] }
     return unless controllers_without_views.any?
 
     @results[:recommendations] << {
@@ -682,7 +684,7 @@ class AppAnalyzer
       f.puts
 
       # Composants non utilisés
-      unused_components = @results[:components].select { |_, info| !info[:is_used] }
+      unused_components = @results[:components].reject { |_, info| info[:is_used] }
       if unused_components.any?
         f.puts 'COMPOSANTS NON UTILISÉS'
         f.puts '-' * 30
@@ -693,7 +695,7 @@ class AppAnalyzer
       end
 
       # Services non utilisés
-      unused_services = @results[:services].select { |_, info| !info[:is_used] }
+      unused_services = @results[:services].reject { |_, info| info[:is_used] }
       if unused_services.any?
         f.puts 'SERVICES NON UTILISÉS'
         f.puts '-' * 25
@@ -748,7 +750,7 @@ class AppAnalyzer
 end
 
 # Exécution du script
-if __FILE__ == $0
+if __FILE__ == $PROGRAM_NAME
   analyzer = AppAnalyzer.new
   analyzer.analyze_all
 end

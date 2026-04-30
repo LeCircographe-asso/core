@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # =====================================================================
 # LEGACY ARCHIVE — NE PAS RECHARGER
 # ---------------------------------------------------------------------
@@ -51,7 +53,7 @@ namespace :migrate do
     puts '   Voulez-vous continuer? (y/N)'
 
     unless ENV['FORCE'] == 'true'
-      response = STDIN.gets.chomp.downcase
+      response = $stdin.gets.chomp.downcase
       unless %w[y yes].include?(response)
         puts '❌ Migration annulée.'
         exit 0
@@ -93,7 +95,7 @@ namespace :migrate do
       id: Person.joins(:memberships).where(memberships: { status: :active }).select(:id)
     ).count
 
-    if remaining_without_membership == 0
+    if remaining_without_membership.zero?
       puts '✅ Toutes les Person ont maintenant une adhésion active!'
     else
       puts "⚠️  #{remaining_without_membership} Person n'ont toujours pas d'adhésion active."
