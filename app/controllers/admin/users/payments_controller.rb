@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Admin
   module Users
     # Admin::Users::PaymentsController handles payment management
@@ -35,13 +37,13 @@ module Admin
 
         total_cents = if normalized_lines.any?
                         normalized_lines.sum { |line| line[:amount_cents].to_i }
-                      else
+        else
                         payment_params[:total_cents].to_i
-                      end
+        end
 
         service_params = {
           person: @person,
-          payment_method: payment_params[:payment_method] || 'cash',
+          payment_method: payment_params[:payment_method] || "cash",
           recorded_by_id: Current.user&.id,
           notes: payment_params[:notes]
         }
@@ -52,15 +54,15 @@ module Admin
         else
           first_line = normalized_lines.first
           service_params[:amount_cents] = total_cents
-          service_params[:item_type] = first_line ? first_line[:item_type] : 'Donation'
+          service_params[:item_type] = first_line ? first_line[:item_type] : "Donation"
           service_params[:item_id] = first_line ? first_line[:item_id] : @person.id
-          service_params[:description] = first_line ? first_line[:description] : 'Paiement'
+          service_params[:description] = first_line ? first_line[:description] : "Paiement"
         end
 
         result = People::PaymentCreator.new(service_params).call
 
         if result.success?
-          redirect_to admin_user_path("person_#{@person.id}"), notice: 'Paiement créé avec succès'
+          redirect_to admin_user_path("person_#{@person.id}"), notice: "Paiement créé avec succès"
         else
           @membership_types = MembershipType.all
           @contribution_formulas = ContributionFormula.all
@@ -91,7 +93,7 @@ module Admin
         ).call
 
         if result.success?
-          redirect_to admin_user_path("person_#{@person.id}"), notice: 'Paiement mis à jour avec succès'
+          redirect_to admin_user_path("person_#{@person.id}"), notice: "Paiement mis à jour avec succès"
         else
           redirect_to admin_user_path("person_#{@person.id}"), alert: "Erreur lors de la mise à jour: #{result.message}"
         end
@@ -104,11 +106,11 @@ module Admin
         result = People::PaymentCanceller.new(
           payment_id: @payment.id,
           deleted_by_id: Current.user.id,
-          reason: 'Suppression via interface admin'
+          reason: "Suppression via interface admin"
         ).call
 
         if result.success?
-          redirect_to admin_user_path("person_#{@person.id}"), notice: 'Paiement supprimé avec succès'
+          redirect_to admin_user_path("person_#{@person.id}"), notice: "Paiement supprimé avec succès"
         else
           redirect_to admin_user_path("person_#{@person.id}"), alert: "Erreur lors de la suppression: #{result.message}"
         end
@@ -122,17 +124,17 @@ module Admin
           if @payment.pending?
             result = People::PaymentUpdater.new(
               payment_id: @payment.id,
-              status: 'success',
+              status: "success",
               updated_by_id: Current.user.id
             ).call
 
             if result.success?
-              redirect_to admin_user_path("person_#{@person.id}"), notice: 'Paiement traité avec succès'
+              redirect_to admin_user_path("person_#{@person.id}"), notice: "Paiement traité avec succès"
             else
               redirect_to admin_user_path("person_#{@person.id}"), alert: "Erreur lors du traitement: #{result.message}"
             end
           else
-            redirect_to admin_user_path("person_#{@person.id}"), notice: 'Paiement déjà traité'
+            redirect_to admin_user_path("person_#{@person.id}"), notice: "Paiement déjà traité"
           end
         rescue StandardError => e
           redirect_to admin_user_path("person_#{@person.id}"), alert: "Erreur lors du traitement: #{e.message}"
@@ -143,10 +145,10 @@ module Admin
 
       def set_person
         identifier = params[:person_id].presence || params[:user_id].presence
-        raise ActiveRecord::RecordNotFound, 'person identifier missing' if identifier.blank?
+        raise ActiveRecord::RecordNotFound, "person identifier missing" if identifier.blank?
 
-        if identifier.to_s.start_with?('person_')
-          person_id = identifier.to_s.delete_prefix('person_')
+        if identifier.to_s.start_with?("person_")
+          person_id = identifier.to_s.delete_prefix("person_")
           @person = Person.find(person_id)
         else
           user = User.find(identifier)
@@ -157,16 +159,16 @@ module Admin
       def set_breadcrumbs
         add_breadcrumb "Liste d'adhérents", admin_users_path
         add_breadcrumb @person.full_name, admin_user_path("person_#{@person.id}")
-        add_breadcrumb 'Gestion des paiements', nil
+        add_breadcrumb "Gestion des paiements", nil
       end
 
       def payment_params
-        params.require(:payment).permit(
-          :total_cents,
-          :payment_method,
-          :status,
-          :notes,
-          :recorded_by_id
+        params.expect(
+          payment: %i[total_cents
+                      payment_method
+                      status
+                      notes
+                      recorded_by_id]
         )
       end
 

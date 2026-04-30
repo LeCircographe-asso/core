@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'rails_helper'
 
 RSpec.describe BlogManagement::BlogUpdater do
@@ -30,7 +32,7 @@ RSpec.describe BlogManagement::BlogUpdater do
           blog_id: blog.id,
           title: blog.title,
           content: blog.content,
-          tag_ids: [tag2.id],
+          tag_ids: [ tag2.id ],
           updated_by_id: admin_user.id
         )
 

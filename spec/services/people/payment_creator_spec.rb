@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'rails_helper'
 
 RSpec.describe People::PaymentCreator do
@@ -120,7 +122,7 @@ RSpec.describe People::PaymentCreator do
       it 'fails when payment lines total mismatch' do
         result = described_class.new(
           person: person,
-          payment_lines: [{ item_type: 'Membership', item_id: membership.id, amount_cents: 1_000 }],
+          payment_lines: [ { item_type: 'Membership', item_id: membership.id, amount_cents: 1_000 } ],
           total_cents: 2_000,
           payment_method: 'cash',
           recorded_by_id: admin_user.id

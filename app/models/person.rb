@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Person < ApplicationRecord
   # ===================================================================
   # ⚠️ DEPRECATED: newsletter_subscribed column
@@ -35,7 +37,7 @@ class Person < ApplicationRecord
   end
 
   def formatted_member_number
-    return 'Non assigné' unless member_number.present?
+    return "Non assigné" if member_number.blank?
 
     parsed = MemberManagementService.parse_member_number(member_number)
     return member_number unless parsed
@@ -44,7 +46,7 @@ class Person < ApplicationRecord
   end
 
   def member_number_details
-    return nil unless member_number.present?
+    return nil if member_number.blank?
 
     MemberManagementService.parse_member_number(member_number)
   end
@@ -65,13 +67,13 @@ class Person < ApplicationRecord
     return false if member_number.blank?
 
     normalized_type = case new_membership_type.to_s.upcase
-                      when 'CIRQUE', 'C'
-                        'Cirque'
-                      when 'BASIQUE', 'U', 'BASIC'
-                        'Basique'
-                      else
-                        'Basique'
-                      end
+    when "CIRQUE", "C"
+                        "Cirque"
+    when "BASIQUE", "U", "BASIC"
+                        "Basique"
+    else
+                        "Basique"
+    end
 
     current_history = current_member_number_history
     current_history&.mark_as_replaced!
@@ -121,11 +123,11 @@ class Person < ApplicationRecord
   scope :with_user_account, -> { joins(:user) }
   scope :without_user_account, -> { where.missing(:user) }
   scope :by_name, lambda { |query|
-    where('first_name LIKE ? OR last_name LIKE ?',
+    where("first_name LIKE ? OR last_name LIKE ?",
           "%#{query}%", "%#{query}%")
   }
-  scope :with_email, -> { where.not(email: [nil, '']) }
-  scope :with_phone, -> { where.not(phone: [nil, '']) }
+  scope :with_email, -> { where.not(email: [ nil, "" ]) }
+  scope :with_phone, -> { where.not(phone: [ nil, "" ]) }
   scope :minors, -> { where(is_minor: true) }
   scope :adults, -> { where(is_minor: false) }
 
@@ -137,7 +139,7 @@ class Person < ApplicationRecord
     ).or(
       where(
         id: Person.group(:first_name, :last_name)
-            .having('COUNT(*) = 1')
+            .having("COUNT(*) = 1")
             .select(:id)
       )
     )
@@ -146,7 +148,7 @@ class Person < ApplicationRecord
   scope :with_expiring_membership, lambda {
     joins(:memberships)
       .where(memberships: { status: :active })
-      .where('memberships.ended_at BETWEEN ? AND ?', Date.current, 30.days.from_now)
+      .where("memberships.ended_at BETWEEN ? AND ?", Date.current, 30.days.from_now)
   }
   scope :with_expired_membership, lambda {
     joins(:memberships)
@@ -154,7 +156,7 @@ class Person < ApplicationRecord
   }
   scope :without_membership, -> { where.missing(:memberships) }
   scope :search_by_contact, lambda { |query|
-    where('first_name LIKE ? OR last_name LIKE ? OR email LIKE ? OR phone LIKE ?',
+    where("first_name LIKE ? OR last_name LIKE ? OR email LIKE ? OR phone LIKE ?",
           "%#{query}%", "%#{query}%", "%#{query}%", "%#{query}%")
   }
 
@@ -164,7 +166,7 @@ class Person < ApplicationRecord
   include EmailNormalizable
 
   def has_financial_data?
-    payments.exists? || memberships.where(status: :active).exists?
+    payments.exists? || memberships.exists?(status: :active)
   end
 
   def archive!
@@ -192,9 +194,9 @@ class Person < ApplicationRecord
 
   def create_membership!(membership_type, recorded_by:, payment_method: :cash, custom_amount_cents: nil, offer_reason: nil, donation_cents: nil)
     ActiveRecord::Base.transaction do
-      validate_offer_permissions!(recorded_by, 'membership', offer_reason) if payment_method.to_s == 'offered'
+      validate_offer_permissions!(recorded_by, "membership", offer_reason) if payment_method.to_s == "offered"
 
-      raise 'Cette personne a déjà une adhésion active' if memberships.active.current.exists?
+      raise "Cette personne a déjà une adhésion active" if memberships.active.current.exists?
 
       membership = memberships.create!(
         membership_type: membership_type,
@@ -205,13 +207,13 @@ class Person < ApplicationRecord
 
       if member_number.blank?
         normalized_category = case membership_type.category
-                              when 'circus'
-                                'CIRQUE'
-                              when 'basic'
-                                'BASIQUE'
-                              else
-                                'BASIQUE'
-                              end
+        when "circus"
+                                "CIRQUE"
+        when "basic"
+                                "BASIQUE"
+        else
+                                "BASIQUE"
+        end
 
         MemberManagementService.assign_member_number(self, normalized_category) unless Rails.env.test?
       end
@@ -221,7 +223,7 @@ class Person < ApplicationRecord
       donation_cents = nil if donation_cents.to_i <= 0
       total_cents = amount_cents + (donation_cents || 0)
 
-      description = generate_payment_description(payment_method, membership_type.name, 'Membership')
+      description = generate_payment_description(payment_method, membership_type.name, "Membership")
       payment = payments.create!(
         total_cents: total_cents,
         payment_method: payment_method,
@@ -231,7 +233,7 @@ class Person < ApplicationRecord
       )
 
       payment.payment_lines.create!(
-        item_type: 'Membership',
+        item_type: "Membership",
         item_id: membership.id,
         amount_cents: amount_cents,
         description: description
@@ -239,10 +241,10 @@ class Person < ApplicationRecord
 
       if donation_cents.present?
         payment.payment_lines.create!(
-          item_type: 'Donation',
+          item_type: "Donation",
           item_id: payment.id,
           amount_cents: donation_cents,
-          description: 'Donation'
+          description: "Donation"
         )
       end
 
@@ -252,33 +254,33 @@ class Person < ApplicationRecord
 
   def create_contribution!(contribution_formula, recorded_by:, payment_method: :cash, record_attendance: false, custom_amount_cents: nil, offer_reason: nil, donation_cents: nil)
     ActiveRecord::Base.transaction do
-      validate_offer_permissions!(recorded_by, 'contribution', offer_reason, contribution_formula) if payment_method.to_s == 'offered'
+      validate_offer_permissions!(recorded_by, "contribution", offer_reason, contribution_formula) if payment_method.to_s == "offered"
 
-      raise 'Cette personne doit avoir une adhésion Cirque active pour acheter une cotisation' unless can_buy_contribution_formulas?
+      raise "Cette personne doit avoir une adhésion Cirque active pour acheter une cotisation" unless can_buy_contribution_formulas?
 
       sessions_remaining = case contribution_formula.duration
-                           when 'pack10'
+      when "pack10"
                              contribution_formula.sessions_count || 10
-                           when 'day'
+      when "day"
                              1
-                           when 'trimester', 'annual'
+      when "trimester", "annual"
                              nil
-                           else
+      else
                              contribution_formula.sessions_count || 1
-                           end
+      end
 
       expires_at = case contribution_formula.duration
-                   when 'pack10'
+      when "pack10"
                      nil
-                   when 'day'
+      when "day"
                      Date.current.end_of_day
-                   when 'trimester'
+      when "trimester"
                      Date.current + 90.days
-                   when 'annual'
+      when "annual"
                      Date.current + 1.year
-                   else
+      else
                      contribution_formula.validity_days ? Date.current + contribution_formula.validity_days.days : nil
-                   end
+      end
 
       contribution = contributions.create!(
         contribution_formula: contribution_formula,
@@ -293,7 +295,7 @@ class Person < ApplicationRecord
       donation_cents = nil if donation_cents.to_i <= 0
       total_cents = amount_cents + (donation_cents || 0)
 
-      description = generate_payment_description(payment_method, contribution_formula.name, 'Contribution')
+      description = generate_payment_description(payment_method, contribution_formula.name, "Contribution")
       payment = payments.create!(
         total_cents: total_cents,
         payment_method: payment_method,
@@ -303,7 +305,7 @@ class Person < ApplicationRecord
       )
 
       payment.payment_lines.create!(
-        item_type: 'Contribution',
+        item_type: "Contribution",
         item_id: contribution.id,
         amount_cents: amount_cents,
         description: description
@@ -311,10 +313,10 @@ class Person < ApplicationRecord
 
       if donation_cents.present?
         payment.payment_lines.create!(
-          item_type: 'Donation',
+          item_type: "Donation",
           item_id: payment.id,
           amount_cents: donation_cents,
-          description: 'Donation'
+          description: "Donation"
         )
       end
 
@@ -328,7 +330,7 @@ class Person < ApplicationRecord
 
   def upgrade_contribution!(from_contribution_id:, to_formula_id:, recorded_by:, payment_method: :cash)
     ActiveRecord::Base.transaction do
-      raise 'Adhésion Cirque active requise' unless can_buy_contribution_formulas?
+      raise "Adhésion Cirque active requise" unless can_buy_contribution_formulas?
 
       from_contribution = contributions.find(from_contribution_id)
       to_formula = ContributionFormula.find(to_formula_id)
@@ -341,7 +343,7 @@ class Person < ApplicationRecord
 
       new_result = create_contribution!(to_formula, payment_method: payment_method, recorded_by: recorded_by)
 
-      amount_to_pay = [to_formula.price_cents - credit_cents, 0].max
+      amount_to_pay = [ to_formula.price_cents - credit_cents, 0 ].max
 
       payment = payments.create!(
         total_cents: amount_to_pay,
@@ -352,10 +354,10 @@ class Person < ApplicationRecord
       )
 
       payment.payment_lines.create!(
-        item_type: 'Contribution',
+        item_type: "Contribution",
         item_id: new_result[:contribution].id,
         amount_cents: amount_to_pay,
-        description: 'Upgrade avec crédit prorata'
+        description: "Upgrade avec crédit prorata"
       )
 
       {
@@ -367,7 +369,7 @@ class Person < ApplicationRecord
     end
   end
 
-  def create_donation!(amount_cents, recorded_by:, payment_method: :cash, notes: 'Donation')
+  def create_donation!(amount_cents, recorded_by:, payment_method: :cash, notes: "Donation")
     ActiveRecord::Base.transaction do
       payment = payments.create!(
         total_cents: amount_cents,
@@ -378,7 +380,7 @@ class Person < ApplicationRecord
       )
 
       payment.payment_lines.create!(
-        item_type: 'Donation',
+        item_type: "Donation",
         item_id: payment.id,
         amount_cents: amount_cents,
         description: notes
@@ -391,9 +393,9 @@ class Person < ApplicationRecord
   def upgrade_membership!(new_membership_type, recorded_by:, payment_method: :cash, custom_amount_cents: nil, offer_reason: nil, donation_cents: nil)
     ActiveRecord::Base.transaction do
       current_membership = self.current_membership
-      raise 'Aucune adhésion active à upgrader' unless current_membership
+      raise "Aucune adhésion active à upgrader" unless current_membership
 
-      validate_offer_permissions!(recorded_by, 'membership_upgrade', offer_reason) if payment_method.to_s == 'offered'
+      validate_offer_permissions!(recorded_by, "membership_upgrade", offer_reason) if payment_method.to_s == "offered"
 
       old_membership_type = current_membership.membership_type
 
@@ -408,7 +410,7 @@ class Person < ApplicationRecord
         amount_cents: amount_to_pay,
         payment_method: payment_method,
         recorded_by: recorded_by,
-        item_type: 'Membership',
+        item_type: "Membership",
         item_id: new_membership.id,
         description: "Upgrade d'adhésion de #{old_membership_type.name} vers #{new_membership_type.name} (plein tarif)",
         donation_cents: donation_cents
@@ -429,7 +431,7 @@ class Person < ApplicationRecord
       current = current_membership
       raise "Adhésion encore active jusqu'au #{current.ended_at}. Renouvellement impossible." if current&.active?
 
-      current&.update!(status: :expired) if current
+      current&.update!(status: :expired)
 
       result = create_membership!(membership_type, payment_method: payment_method, recorded_by: recorded_by, custom_amount_cents: custom_amount_cents, offer_reason: offer_reason)
 
@@ -439,7 +441,7 @@ class Person < ApplicationRecord
       create_member_number_change_history!(
         old_member_number: old_number,
         new_member_number: new_number,
-        old_type: current ? get_membership_type_code(current.membership_type) : 'AUCUN',
+        old_type: current ? get_membership_type_code(current.membership_type) : "AUCUN",
         new_type: get_membership_type_code(membership_type),
         recorded_by: recorded_by
       )
@@ -479,23 +481,23 @@ class Person < ApplicationRecord
 
   def get_membership_type_code(membership_type)
     case membership_type.category
-    when 'circus'
-      'CIRQUE'
-    when 'basic'
-      'BASIQUE'
+    when "circus"
+      "CIRQUE"
+    when "basic"
+      "BASIQUE"
     else
-      'BASIQUE'
+      "BASIQUE"
     end
   end
 
   def get_membership_type_name(membership_type)
     case membership_type.category
-    when 'circus'
-      'Cirque'
-    when 'basic'
-      'Basique'
+    when "circus"
+      "Cirque"
+    when "basic"
+      "Basique"
     else
-      'Basique'
+      "Basique"
     end
   end
 
@@ -505,8 +507,8 @@ class Person < ApplicationRecord
       old_history&.mark_as_replaced!
     end
 
-    old_type_name = old_type == 'CIRQUE' ? 'Cirque' : 'Basique'
-    new_type_name = new_type == 'CIRQUE' ? 'Cirque' : 'Basique'
+    old_type_name = old_type == "CIRQUE" ? "Cirque" : "Basique"
+    new_type_name = new_type == "CIRQUE" ? "Cirque" : "Basique"
 
     member_number_histories.create!(
       member_number: new_member_number,
@@ -519,7 +521,7 @@ class Person < ApplicationRecord
 
   def calculate_amount_cents(payment_method, base_price_cents, custom_amount_cents = nil)
     case payment_method.to_s
-    when 'offered'
+    when "offered"
       custom_amount_cents || 0
     else
       base_price_cents
@@ -528,18 +530,18 @@ class Person < ApplicationRecord
 
   def generate_payment_description(payment_method, item_name, item_type)
     case payment_method.to_s
-    when 'offered'
+    when "offered"
       case item_type
-      when 'Membership' then "Adhésion offerte #{item_name}"
-      when 'Contribution' then "Cotisation offerte #{item_name}"
-      when 'MembershipUpgrade' then "Upgrade offert d'adhésion vers #{item_name}"
+      when "Membership" then "Adhésion offerte #{item_name}"
+      when "Contribution" then "Cotisation offerte #{item_name}"
+      when "MembershipUpgrade" then "Upgrade offert d'adhésion vers #{item_name}"
       else "#{item_type} offert #{item_name}"
       end
     else
       case item_type
-      when 'Membership' then "Adhésion #{item_name}"
-      when 'Contribution' then "Plan d'abonnement #{item_name}"
-      when 'MembershipUpgrade' then "Upgrade d'adhésion vers #{item_name}"
+      when "Membership" then "Adhésion #{item_name}"
+      when "Contribution" then "Plan d'abonnement #{item_name}"
+      when "MembershipUpgrade" then "Upgrade d'adhésion vers #{item_name}"
       else "#{item_type} #{item_name}"
       end
     end
@@ -550,7 +552,7 @@ class Person < ApplicationRecord
 
     raise "Une raison doit être fournie pour offrir une #{offer_type}" if offer_reason.blank?
 
-    raise "Les bénévoles ne peuvent offrir que des cotisations 'journée'" if recorded_by.volunteer? && offer_type == 'contribution' && contribution_formula&.duration != 'day'
+    raise "Les bénévoles ne peuvent offrir que des cotisations 'journée'" if recorded_by.volunteer? && offer_type == "contribution" && contribution_formula&.duration != "day"
 
     create_offer_audit_log!(recorded_by, offer_type, offer_reason, contribution_formula)
   end
@@ -581,10 +583,10 @@ class Person < ApplicationRecord
 
     if donation_cents.present?
       payment.payment_lines.create!(
-        item_type: 'Donation',
+        item_type: "Donation",
         item_id: payment.id,
         amount_cents: donation_cents,
-        description: 'Donation'
+        description: "Donation"
       )
     end
 
@@ -596,8 +598,8 @@ class Person < ApplicationRecord
     to_duration = to_formula.duration
 
     valid_upgrades = {
-      'pack10' => %w[trimester annual],
-      'trimester' => ['annual']
+      "pack10" => %w[trimester annual],
+      "trimester" => [ "annual" ]
     }
 
     allowed = valid_upgrades[from_duration]
@@ -608,13 +610,13 @@ class Person < ApplicationRecord
     formula = contribution.contribution_formula
 
     case formula.duration
-    when 'pack10'
+    when "pack10"
       0
-    when 'trimester'
+    when "trimester"
       total_days = 90
       days_remaining = (contribution.expires_at.to_date - Date.current).to_i
       (formula.price_cents * days_remaining / total_days.to_f).round
-    when 'annual'
+    when "annual"
       total_days = 365
       days_remaining = (contribution.expires_at.to_date - Date.current).to_i
       (formula.price_cents * days_remaining / total_days.to_f).round
@@ -626,56 +628,56 @@ class Person < ApplicationRecord
   public
 
   def offered_payments_count
-    payments.where(payment_method: 'offered').count
+    payments.where(payment_method: "offered").count
   end
 
   def offered_payments_total
-    payments.where(payment_method: 'offered').sum(:total_cents)
+    payments.where(payment_method: "offered").sum(:total_cents)
   end
 
   def free_offers_count
-    payments.where(payment_method: 'offered', total_cents: 0).count
+    payments.where(payment_method: "offered", total_cents: 0).count
   end
 
   def paid_offers_count
-    payments.where(payment_method: 'offered').where('total_cents > 0').count
+    payments.where(payment_method: "offered").where("total_cents > 0").count
   end
 
   def membership_upgrades_count
     payments.joins(:payment_lines)
-            .where(payment_lines: { item_type: 'MembershipUpgrade' })
+            .where(payment_lines: { item_type: "MembershipUpgrade" })
             .count
   end
 
   def contribution_purchases_count
     payments.joins(:payment_lines)
-            .where(payment_lines: { item_type: 'Contribution' })
+            .where(payment_lines: { item_type: "Contribution" })
             .count
   end
 
   def self.total_offered_payments
-    joins(:payments).where(payments: { payment_method: 'offered' }).count
+    joins(:payments).where(payments: { payment_method: "offered" }).count
   end
 
   def self.total_free_offers
-    joins(:payments).where(payments: { payment_method: 'offered', total_cents: 0 }).count
+    joins(:payments).where(payments: { payment_method: "offered", total_cents: 0 }).count
   end
 
   def self.total_paid_offers
-    joins(:payments).where(payments: { payment_method: 'offered' }).where('payments.total_cents > 0').count
+    joins(:payments).where(payments: { payment_method: "offered" }).where("payments.total_cents > 0").count
   end
 
   def self.offered_payments_by_reason
     joins(:payments)
-      .where(payments: { payment_method: 'offered' })
-      .group('payments.notes')
+      .where(payments: { payment_method: "offered" })
+      .group("payments.notes")
       .count
   end
 
   def self.upgrades_today
     joins(:payments)
-      .joins('JOIN payment_lines ON payments.id = payment_lines.payment_id')
-      .where(payment_lines: { item_type: 'MembershipUpgrade' })
+      .joins("JOIN payment_lines ON payments.id = payment_lines.payment_id")
+      .where(payment_lines: { item_type: "MembershipUpgrade" })
       .where(payments: { created_at: Date.current.all_day })
       .count
   end
@@ -685,11 +687,11 @@ class Person < ApplicationRecord
     return if memberships.active.any?
     return if skip_membership_validation
 
-    errors.add(:base, 'Une adhésion active est obligatoire')
+    errors.add(:base, "Une adhésion active est obligatoire")
   end
 
   def newsletter_subscribed?
-    return false unless email.present?
+    return false if email.blank?
 
     subscriber = NewsletterSubscriber.find_by(email: email)
     subscriber&.subscribed? || false

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Contribution < ApplicationRecord
   include Statusable
   include Dateable
@@ -25,7 +27,7 @@ class Contribution < ApplicationRecord
   def can_use?
     return false unless active?
 
-    return false if has_session_limit? && !(sessions_remaining.present? && sessions_remaining > 0)
+    return false if has_session_limit? && !(sessions_remaining.present? && sessions_remaining.positive?)
 
     return false if expired? && !is_pack10?
 
@@ -40,7 +42,7 @@ class Contribution < ApplicationRecord
     if has_session_limit?
       self.sessions_remaining -= 1
 
-      self.status = :consumed if sessions_remaining == 0
+      self.status = :consumed if sessions_remaining.zero?
     end
 
     save!
@@ -53,7 +55,7 @@ class Contribution < ApplicationRecord
     max_sessions ||= is_pack10? ? 10 : 1
 
     self.sessions_remaining ||= 0
-    self.sessions_remaining = [sessions_remaining + 1, max_sessions].min
+    self.sessions_remaining = [ sessions_remaining + 1, max_sessions ].min
     self.status = :active if sessions_remaining.positive?
     save!
   end
@@ -61,25 +63,25 @@ class Contribution < ApplicationRecord
   def expired?
     return false if is_pack10?
 
-    return Time.current > expires_at.end_of_day if contribution_formula.duration == 'day'
+    return Time.current > expires_at.end_of_day if contribution_formula.duration == "day"
 
     Date.current > expires_at
   end
 
   def is_pack10?
-    contribution_formula.duration == 'pack10'
+    contribution_formula.duration == "pack10"
   end
 
   def has_session_limit?
-    is_pack10? || contribution_formula.duration == 'day'
+    is_pack10? || contribution_formula.duration == "day"
   end
 
   def remaining_entries
     sessions_remaining
   end
 
-  scope :expired_by_date, -> { where('expires_at < ?', Date.current) }
-  scope :not_expired_by_date, -> { where('expires_at IS NULL OR expires_at > ?', Date.current) }
+  scope :expired_by_date, -> { where(expires_at: ...Date.current) }
+  scope :not_expired_by_date, -> { where("expires_at IS NULL OR expires_at > ?", Date.current) }
   scope :with_expiration, -> { where.not(expires_at: nil) }
   scope :without_expiration, -> { where(expires_at: nil) }
 
@@ -90,18 +92,18 @@ class Contribution < ApplicationRecord
 
   scope :usable, lambda {
     active
-      .where('expires_at IS NULL OR expires_at > ?', Date.current)
-      .where('sessions_remaining IS NULL OR sessions_remaining > 0')
+      .where("expires_at IS NULL OR expires_at > ?", Date.current)
+      .where("sessions_remaining IS NULL OR sessions_remaining > 0")
   }
 
   def self.reactivate_suspended_packs_for_person(person)
     return unless person.can_buy_contribution_formulas?
 
-    active_plans = person.contributions.active.joins(:contribution_formula).where.not(contribution_formulas: { duration: 'pack10' })
+    active_plans = person.contributions.active.joins(:contribution_formula).where.not(contribution_formulas: { duration: "pack10" })
 
     return unless active_plans.empty?
 
-    person.contributions.suspended.joins(:contribution_formula).where(contribution_formulas: { duration: 'pack10' }).each(&:reactivate!)
+    person.contributions.suspended.joins(:contribution_formula).where(contribution_formulas: { duration: "pack10" }).find_each(&:reactivate!)
   end
 
   def suspend!(reason:)
@@ -113,16 +115,16 @@ class Contribution < ApplicationRecord
   end
 
   def suspended?
-    status == 'suspended'
+    status == "suspended"
   end
 
   private
 
   def sessions_remaining_validation
     if contribution_formula&.duration.in?(%w[trimester annual])
-      errors.add(:sessions_remaining, 'doit être vide pour les cotisations illimitées') if sessions_remaining.present?
+      errors.add(:sessions_remaining, "doit être vide pour les cotisations illimitées") if sessions_remaining.present?
     elsif has_session_limit?
-      errors.add(:sessions_remaining, 'doit être présent et positif pour les Pack 10 et les Journées') if sessions_remaining.blank? || sessions_remaining < 0
+      errors.add(:sessions_remaining, "doit être présent et positif pour les Pack 10 et les Journées") if sessions_remaining.blank? || sessions_remaining.negative?
     end
   end
 

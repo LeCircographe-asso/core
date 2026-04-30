@@ -1,10 +1,12 @@
+# frozen_string_literal: true
+
 module Duplicatable
   extend ActiveSupport::Concern
 
   # Méthodes de détection de doublons
   def self.find_duplicates_by_email(model_class, email_field = :email)
     model_class.group(email_field)
-               .having('COUNT(*) > 1')
+               .having("COUNT(*) > 1")
                .count
                .reject { |email, _| email.blank? }
                .map do |email, count|
@@ -19,7 +21,7 @@ module Duplicatable
 
   def self.find_duplicates_by_name(model_class, first_name_field = :first_name, last_name_field = :last_name)
     model_class.group(first_name_field, last_name_field)
-               .having('COUNT(*) > 1')
+               .having("COUNT(*) > 1")
                .count
                .map do |(first_name, last_name), count|
       {
@@ -33,7 +35,7 @@ module Duplicatable
 
   def self.find_duplicates_by_phone(model_class, phone_field = :phone)
     model_class.group(phone_field)
-               .having('COUNT(*) > 1')
+               .having("COUNT(*) > 1")
                .count
                .reject { |phone, _| phone.blank? }
                .map do |phone, count|
@@ -63,7 +65,7 @@ module Duplicatable
   end
 
   def self.merge_duplicate_records(primary, secondary, options = {})
-    return { success: false, error: 'Cannot merge record with itself' } if primary.id == secondary.id
+    return { success: false, error: "Cannot merge record with itself" } if primary.id == secondary.id
 
     ActiveRecord::Base.transaction do
       # Transférer les relations
@@ -135,7 +137,7 @@ module Duplicatable
 
         # Déterminer l'enregistrement principal
         primary = determine_primary_record(records)
-        secondary = records - [primary]
+        secondary = records - [ primary ]
 
         # Fusionner
         result = Duplicatable.merge_duplicates(primary, secondary, options)

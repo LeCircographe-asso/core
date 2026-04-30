@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module AttendanceListManagement
   class AttendanceListDeleter < BaseService
     attribute :attendance_list_id, :integer
@@ -18,13 +20,13 @@ module AttendanceListManagement
 
           # Instrumentation pour audit
           ActiveSupport::Notifications.instrument(
-            'attendance_list.deleted',
+            "attendance_list.deleted",
             attendance_list_id: attendance_list.id,
             name: attendance_list.name,
             deleted_by_id: deleted_by_id
           )
 
-          success(message: 'La liste a été supprimée avec succès.')
+          success(message: "La liste a été supprimée avec succès.")
         end
       rescue ActiveRecord::RecordNotFound => e
         failure("Attendance list or User not found: #{e.message}")

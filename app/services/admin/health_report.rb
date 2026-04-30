@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Admin
   class HealthReport
     MAX_LIST = 50
@@ -42,28 +44,28 @@ module Admin
     private
 
     def duplicate_keys(scope, field, normalize: true)
-      raise ArgumentError, 'unsupported field' unless DUPLICATE_FIELDS.include?(field)
+      raise ArgumentError, "unsupported field" unless DUPLICATE_FIELDS.include?(field)
 
       t = scope.klass.arel_table
       col = t[field]
-      expr = normalize ? Arel::Nodes::NamedFunction.new('LOWER', [col]) : col
+      expr = normalize ? Arel::Nodes::NamedFunction.new("LOWER", [ col ]) : col
 
-      scope.where.not(field => [nil, ''])
+      scope.where.not(field => [ nil, "" ])
            .group(expr)
-           .having('COUNT(*) > 1')
+           .having("COUNT(*) > 1")
            .pluck(expr)
     end
 
     def people_by_keys(scope, field, keys, normalize: true)
       return scope.none if keys.empty?
 
-      raise ArgumentError, 'unsupported field' unless DUPLICATE_FIELDS.include?(field)
+      raise ArgumentError, "unsupported field" unless DUPLICATE_FIELDS.include?(field)
 
       t = scope.klass.arel_table
       col = t[field]
 
       if normalize
-        lowered = Arel::Nodes::NamedFunction.new('LOWER', [col])
+        lowered = Arel::Nodes::NamedFunction.new("LOWER", [ col ])
         scope.where(lowered.in(keys))
              .order(lowered, t[:last_name], t[:first_name])
       else

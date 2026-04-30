@@ -1,4 +1,6 @@
-require 'ostruct'
+# frozen_string_literal: true
+
+require "ostruct"
 
 module People
   class NewsletterSignup
@@ -8,12 +10,12 @@ module People
     Result = Struct.new(:success?, :message, :redirect_to, keyword_init: true)
 
     attribute :email, :string
-    attribute :source, :string, default: 'web'
+    attribute :source, :string, default: "web"
 
     validates :email, presence: true
 
     def call
-      return failure('Veuillez entrer une adresse email valide.') unless valid?
+      return failure("Veuillez entrer une adresse email valide.") unless valid?
 
       normalized_email = email.to_s.strip.downcase
       person = Person.find_by(email: normalized_email)
@@ -21,10 +23,10 @@ module People
 
       if existing
         ActiveSupport::Notifications.instrument(
-          'people.newsletter_signup.skipped',
-          email: normalized_email, reason: 'already_subscribed', person_id: existing.person_id, source: source
+          "people.newsletter_signup.skipped",
+          email: normalized_email, reason: "already_subscribed", person_id: existing.person_id, source: source
         )
-        return Result.new(success?: false, message: 'Cette adresse est déjà dans notre liste. Connectez-vous pour gérer votre inscription.', redirect_to: true)
+        return Result.new(success?: false, message: "Cette adresse est déjà dans notre liste. Connectez-vous pour gérer votre inscription.", redirect_to: true)
       end
 
       subscriber = NewsletterSubscriber.new(
@@ -36,13 +38,13 @@ module People
 
       if subscriber.save
         ActiveSupport::Notifications.instrument(
-          'people.newsletter_signed_up',
+          "people.newsletter_signed_up",
           email: normalized_email, person_id: subscriber.person_id, subscriber_id: subscriber.id, source: source
         )
-        success('Inscription à la newsletter réussie !')
+        success("Inscription à la newsletter réussie !")
       else
         ActiveSupport::Notifications.instrument(
-          'people.newsletter_signup.failed',
+          "people.newsletter_signup.failed",
           email: normalized_email, errors: subscriber.errors.full_messages, source: source
         )
         failure("Une erreur s'est produite. Veuillez réessayer.")

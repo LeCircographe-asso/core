@@ -1,4 +1,6 @@
-require 'ostruct'
+# frozen_string_literal: true
+
+require "ostruct"
 
 module People
   class PersonCreator
@@ -36,13 +38,13 @@ module People
     end
 
     attribute :newsletter_subscribed, :boolean, default: nil
-    attribute :newsletter_source, :string, default: 'admin'
+    attribute :newsletter_source, :string, default: "admin"
 
     validates :first_name, presence: true, unless: :person_present?
     validates :last_name, presence: true, unless: :person_present?
 
     def call
-      return failure('Invalid data', errors.full_messages) unless valid?
+      return failure("Invalid data", errors.full_messages) unless valid?
 
       ActiveRecord::Base.transaction do
         target_person, created = resolve_person
@@ -52,7 +54,7 @@ module People
 
         success(
           person: target_person,
-          message: created ? 'Person created successfully' : 'Person updated successfully',
+          message: created ? "Person created successfully" : "Person updated successfully",
           created: created
         )
       end
@@ -66,19 +68,19 @@ module People
     private
 
     def resolve_person
-      return [person, false] if person.present?
+      return [ person, false ] if person.present?
 
       new_person = Person.new
       new_person.skip_membership_validation = true
 
       creation_attributes = if allow_blank_attributes
                               person_attributes
-                            else
+      else
                               person_attributes.reject { |_k, v| v.nil? || (v.respond_to?(:empty?) && v.empty?) }
-                            end
+      end
       new_person.assign_attributes(creation_attributes)
       new_person.save!
-      [new_person, true]
+      [ new_person, true ]
     end
 
     def update_person!(target_person)

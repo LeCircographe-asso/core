@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class PaymentLine < ApplicationRecord
   include Priceable
 
@@ -14,27 +16,27 @@ class PaymentLine < ApplicationRecord
   belongs_to :item, polymorphic: true, optional: true
 
   validates :amount_cents, presence: true, numericality: { greater_than_or_equal_to: 0 }
-  validates :item_type, presence: true, inclusion: { in: ALLOWED_ITEM_TYPES, message: '%{value} is not a supported item_type' }
+  validates :item_type, presence: true, inclusion: { in: ALLOWED_ITEM_TYPES, message: "%{value} is not a supported item_type" }
   validates :item_id, presence: true
   validates :payment_id, uniqueness: { scope: %i[item_type item_id] }
 
   # Méthodes
   def item_description
     case item_type
-    when 'Membership'
-      item&.membership_type&.name || 'Adhésion'
-    when 'MembershipType'
+    when "Membership"
+      item&.membership_type&.name || "Adhésion"
+    when "MembershipType"
       item&.name || "Type d'adhésion"
-    when 'Contribution'
+    when "Contribution"
       if item&.contribution_formula
         item.contribution_formula.duration_humanized
       else
-        'Cotisation'
+        "Cotisation"
       end
-    when 'ContributionFormula'
-      item&.duration_humanized || 'Cotisation'
-    when 'Donation'
-      description.presence || 'Donation'
+    when "ContributionFormula"
+      item&.duration_humanized || "Cotisation"
+    when "Donation"
+      description.presence || "Donation"
     else
       item_type.humanize
     end
@@ -43,10 +45,10 @@ class PaymentLine < ApplicationRecord
   # (amount_euros maintenant dans le module Priceable)
 
   # Scopes
-  scope :memberships, -> { where(item_type: 'Membership') }
-  scope :contribution_formulas, -> { where(item_type: 'ContributionFormula') }
-  scope :membership_types, -> { where(item_type: 'MembershipType') }
-  scope :donations, -> { where(item_type: 'Donation') }
+  scope :memberships, -> { where(item_type: "Membership") }
+  scope :contribution_formulas, -> { where(item_type: "ContributionFormula") }
+  scope :membership_types, -> { where(item_type: "MembershipType") }
+  scope :donations, -> { where(item_type: "Donation") }
   scope :by_item_type, ->(type) { where(item_type: type) }
 
   # Méthodes de classe pour créer des lignes de paiement

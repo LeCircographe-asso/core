@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module EventManagement
   class EventUpdater < BaseService
     attribute :event_id, :integer
@@ -35,7 +37,7 @@ module EventManagement
 
           # Update event
           if event.update!(update_attrs)
-            success(event: event, message: 'Event updated successfully')
+            success(event: event, message: "Event updated successfully")
           else
             failure("Failed to update event: #{event.errors.full_messages.join(', ')}")
           end

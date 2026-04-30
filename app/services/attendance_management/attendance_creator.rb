@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module AttendanceManagement
   class AttendanceCreator < BaseService
     attribute :person_id, :integer
@@ -23,7 +25,7 @@ module AttendanceManagement
         )
 
         ActiveSupport::Notifications.instrument(
-          'attendance.created',
+          "attendance.created",
           attendance_id: attendance.id,
           person_id: person_id,
           event_id: event_id,
@@ -31,7 +33,7 @@ module AttendanceManagement
           contribution_id: contribution_id
         )
 
-        success(attendance: attendance, message: 'Attendance created successfully')
+        success(attendance: attendance, message: "Attendance created successfully")
       rescue ActiveRecord::RecordNotFound => e
         failure("Person or Event not found: #{e.message}")
       rescue ActiveRecord::RecordInvalid => e

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class ApplicationController < ActionController::Base
   include Authentication
   include BreadcrumbsHelper
@@ -10,8 +12,8 @@ class ApplicationController < ActionController::Base
 
   def navigation_streams
     [
-      turbo_stream.replace('navigation', render_to_string(partial: 'shared/navbar')),
-      turbo_stream.replace('flash', render_to_string(partial: 'shared/flash'))
+      turbo_stream.replace("navigation", render_to_string(partial: "shared/navbar")),
+      turbo_stream.replace("flash", render_to_string(partial: "shared/flash"))
     ]
   end
 end

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Admin
   class HealthReportsController < BaseController
     before_action :set_breadcrumbs
@@ -23,7 +25,7 @@ module Admin
     private
 
     def set_breadcrumbs
-      add_breadcrumb 'Administration', admin_dashboard_index_path
+      add_breadcrumb "Administration", admin_dashboard_index_path
     end
   end
 end

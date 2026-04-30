@@ -1,24 +1,26 @@
+# frozen_string_literal: true
+
 class MemberManagementService
   # Génère un numéro d'adhérent unique selon le format YYTNNN
-  def self.generate_member_number(membership_type = 'U')
+  def self.generate_member_number(membership_type = "U")
     loop do
       # Format: YYTNNN (ex: 25C001, 25U400)
       year = Date.current.year.to_s.last(2) # 2025 -> 25
-      type_code = %w[CIRQUE C].include?(membership_type.upcase) ? 'C' : 'U'
+      type_code = %w[CIRQUE C].include?(membership_type.upcase) ? "C" : "U"
 
       # Chercher le dernier numéro pour cette année et ce type
       # Utiliser l'historique ET les numéros actuels pour éviter les conflits
       pattern = "#{year}#{type_code}%"
 
       # Numéros actuels
-      current_numbers = Person.where('member_number LIKE ?', pattern)
+      current_numbers = Person.where("member_number LIKE ?", pattern)
                               .pluck(:member_number)
-                              .map { |num| num.gsub(/^\d{2}[CU]/, '').to_i }
+                              .map { |num| num.gsub(/^\d{2}[CU]/, "").to_i }
 
       # Numéros dans l'historique
-      history_numbers = MemberNumberHistory.where('member_number LIKE ?', pattern)
+      history_numbers = MemberNumberHistory.where("member_number LIKE ?", pattern)
                                            .pluck(:member_number)
-                                           .map { |num| num.gsub(/^\d{2}[CU]/, '').to_i }
+                                           .map { |num| num.gsub(/^\d{2}[CU]/, "").to_i }
 
       # Prendre le maximum entre les deux
       last_number = (current_numbers + history_numbers).max || 0
@@ -49,17 +51,17 @@ class MemberManagementService
       membership_type = if active_membership
                           # Utiliser la catégorie pour déterminer le type
                           case active_membership.membership_type.category
-                          when 'circus'
-                            'CIRQUE'
-                          when 'basic'
-                            'BASIQUE'
+                          when "circus"
+                            "CIRQUE"
+                          when "basic"
+                            "BASIQUE"
                           else
-                            'BASIQUE' # Par défaut
+                            "BASIQUE" # Par défaut
                           end
-                        else
+      else
                           # Par défaut, utiliser 'U' (Basique) si pas d'adhésion
-                          'U'
-                        end
+                          "U"
+      end
     end
 
     # Générer le nouveau numéro
@@ -71,13 +73,13 @@ class MemberManagementService
 
     # Normaliser le type d'adhésion pour l'historique
     normalized_type = case membership_type.to_s.upcase
-                      when 'CIRQUE', 'C'
-                        'Cirque'
-                      when 'BASIQUE', 'U', 'BASIC'
-                        'Basique'
-                      else
-                        'Basique'
-                      end
+    when "CIRQUE", "C"
+                        "Cirque"
+    when "BASIQUE", "U", "BASIC"
+                        "Basique"
+    else
+                        "Basique"
+    end
 
     # Créer l'historique
     person.member_number_histories.create!(
@@ -165,7 +167,7 @@ class MemberManagementService
 
     # Doublons par nom
     Person.group(:first_name, :last_name)
-          .having('COUNT(*) > 1')
+          .having("COUNT(*) > 1")
           .pluck(:first_name, :last_name)
           .each do |first_name, last_name|
       group = Person.where(first_name: first_name, last_name: last_name)
@@ -205,14 +207,14 @@ class MemberManagementService
 
   # Assigne des numéros d'adhérent à toutes les Person qui n'en ont pas
   def self.assign_missing_member_numbers
-    Person.where(member_number: [nil, '']).each do |person|
+    Person.where(member_number: [ nil, "" ]).find_each do |person|
       assign_member_number(person)
     end
   end
 
   # Analyse un numéro d'adhérent existant
   def self.parse_member_number(member_number)
-    return nil unless member_number.present?
+    return nil if member_number.blank?
 
     # Format: YYTNNN
     match = member_number.match(/^(\d{2})([CU])(\d+)$/)
@@ -220,7 +222,7 @@ class MemberManagementService
 
     {
       year: "20#{match[1]}", # 25 -> 2025
-      type: match[2] == 'C' ? 'Cirque' : 'Basique',
+      type: match[2] == "C" ? "Cirque" : "Basique",
       number: match[3].to_i,
       full_year: match[1],
       type_code: match[2]
@@ -229,17 +231,17 @@ class MemberManagementService
 
   # Valide le format d'un numéro d'adhérent
   def self.valid_member_number_format?(member_number)
-    return false unless member_number.present?
+    return false if member_number.blank?
 
     member_number.match?(/^\d{2}[CU]\d{3,5}$/)
   end
 
   # Génère des numéros d'adhérent pour les tests
-  def self.generate_test_numbers(count = 5, membership_type = 'U')
+  def self.generate_test_numbers(count = 5, membership_type = "U")
     # Créer des Person temporaires pour tester la séquence
     temp_people = []
     count.times do
-      temp_person = Person.new(first_name: 'Test', last_name: 'User', is_minor: false)
+      temp_person = Person.new(first_name: "Test", last_name: "User", is_minor: false)
       temp_person.skip_membership_validation = true
       temp_person.member_number = generate_member_number(membership_type)
       temp_person.save!(validate: false) # Save to ensure sequential generation

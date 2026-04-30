@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class AttendanceList < ApplicationRecord
   include Statusable
   include Dateable
@@ -21,21 +23,21 @@ class AttendanceList < ApplicationRecord
   def end_after_start
     return unless start_date.present? && end_date.present? && end_date <= start_date
 
-    errors.add(:end_date, 'doit être après la date de début')
+    errors.add(:end_date, "doit être après la date de début")
   end
 
   def set_default_name
-    return unless start_date.present?
+    return if start_date.blank?
 
     self.name = case list_type
-                when 'training'
+    when "training"
                   "Registre de présence #{start_date.strftime('%d/%m/%Y')}"
-                when 'event'
+    when "event"
                   "Événement du #{start_date.strftime('%d/%m/%Y')}"
-                when 'meeting'
+    when "meeting"
                   "Réunion du #{start_date.strftime('%d/%m/%Y')}"
-                else
+    else
                   "Liste de présence ##{id || Time.current.to_i}"
-                end
+    end
   end
 end

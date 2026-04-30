@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module UserManagement
   class UserCreator < BaseService
     attribute :email, :string
@@ -19,13 +21,13 @@ module UserManagement
     validate :person_has_no_user_account
 
     def call
-      return failure('Invalid user data') unless valid?
+      return failure("Invalid user data") unless valid?
 
       person = Person.find(person_id)
       created_by = User.find(created_by_id)
       validate_creator_permissions!(created_by)
 
-      return failure('Insufficient permissions to create accounts') unless creator_can_manage_accounts?(created_by)
+      return failure("Insufficient permissions to create accounts") unless creator_can_manage_accounts?(created_by)
 
       result = People::UserAccountCreator.new(
         person: person,
@@ -60,27 +62,27 @@ module UserManagement
     end
 
     def person_exists
-      return unless person_id.present?
+      return if person_id.blank?
 
       return if Person.exists?(person_id)
 
-      errors.add(:person_id, 'Person not found')
+      errors.add(:person_id, "Person not found")
     end
 
     def person_has_no_user_account
-      return unless person_id.present?
+      return if person_id.blank?
 
       person = Person.find_by(id: person_id)
-      return unless person&.user.present?
+      return if person&.user.blank?
 
-      errors.add(:person_id, 'Person already has a user account')
+      errors.add(:person_id, "Person already has a user account")
     end
 
     def validate_creator_permissions!(created_by)
       return if created_by.super_admin? || created_by.admin?
 
-      errors.add(:created_by_id, 'User does not have permissions to create accounts')
-      raise ActiveRecord::RecordInvalid.new(created_by)
+      errors.add(:created_by_id, "User does not have permissions to create accounts")
+      raise ActiveRecord::RecordInvalid, created_by
     end
 
     def creator_can_manage_accounts?(created_by)

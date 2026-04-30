@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'rails_helper'
 
 RSpec.describe User, type: :model do
@@ -12,10 +14,10 @@ RSpec.describe User, type: :model do
     let!(:today_user) { create(:user, created_at: Date.current.beginning_of_day + 12.hours) }
     let!(:this_week_user) do
       week_date = if Date.current.beginning_of_week == Date.current
-                    [Date.current.end_of_week, Date.current.end_of_month].min.beginning_of_day + 12.hours
-                  else
+                    [ Date.current.end_of_week, Date.current.end_of_month ].min.beginning_of_day + 12.hours
+      else
                     Date.current.beginning_of_week.beginning_of_day + 12.hours
-                  end
+      end
       create(:user, created_at: week_date)
     end
     let!(:last_week_user) do
@@ -23,9 +25,9 @@ RSpec.describe User, type: :model do
       # If last week is in a different month, use a date from earlier this month (but not this week)
       user_date = if last_week_date.month == Date.current.month
                     last_week_date.beginning_of_day + 12.hours
-                  else
-                    [Date.current.beginning_of_month, Date.current.beginning_of_week - 1.day].max.beginning_of_day + 12.hours
-                  end
+      else
+                    [ Date.current.beginning_of_month, Date.current.beginning_of_week - 1.day ].max.beginning_of_day + 12.hours
+      end
       create(:user, created_at: user_date)
     end
 

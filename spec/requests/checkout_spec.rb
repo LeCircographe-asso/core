@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'rails_helper'
 
 RSpec.describe 'Checkout', type: :request do
@@ -19,7 +21,7 @@ RSpec.describe 'Checkout', type: :request do
 
       it 'creates a Stripe checkout session' do
         expect(Stripe::Checkout::Session).to receive(:create).with(
-          payment_method_types: ['card'],
+          payment_method_types: [ 'card' ],
           line_items: [
             {
               price_data: {

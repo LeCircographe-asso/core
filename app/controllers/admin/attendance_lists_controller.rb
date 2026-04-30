@@ -1,27 +1,29 @@
+# frozen_string_literal: true
+
 module Admin
   class AttendanceListsController < BaseController
     before_action :set_attendance_list, only: %i[show edit update destroy]
     before_action :set_breadcrumbs
 
     def index
-      @attendance_list = AttendanceList.all.order(created_at: :desc)
-      add_breadcrumb 'Listes de présence', nil
+      @attendance_list = AttendanceList.order(created_at: :desc)
+      add_breadcrumb "Listes de présence", nil
     end
 
     def show
-      add_breadcrumb 'Listes de présence', admin_attendance_lists_path
+      add_breadcrumb "Listes de présence", admin_attendance_lists_path
       add_breadcrumb @attendance_list.name, nil
     end
 
     def new
-      add_breadcrumb 'Listes de présence', admin_attendance_lists_path
-      add_breadcrumb 'Nouvelle liste', nil
+      add_breadcrumb "Listes de présence", admin_attendance_lists_path
+      add_breadcrumb "Nouvelle liste", nil
     end
 
     def edit
-      add_breadcrumb 'Listes de présence', admin_attendance_lists_path
+      add_breadcrumb "Listes de présence", admin_attendance_lists_path
       add_breadcrumb @attendance_list.name, admin_attendance_list_path(@attendance_list)
-      add_breadcrumb 'Modifier', nil
+      add_breadcrumb "Modifier", nil
     end
 
     def create
@@ -85,7 +87,7 @@ module Admin
     end
 
     def attendance_list_params
-      params.require(:attendance_list).permit(:name, :status, :list_type, :start_date)
+      params.expect(attendance_list: %i[name status list_type start_date])
     end
 
     def set_breadcrumbs

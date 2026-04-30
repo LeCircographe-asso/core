@@ -1,4 +1,6 @@
 #!/usr/bin/env ruby
+# frozen_string_literal: true
+
 require 'fileutils'
 
 # Set up RSpec
@@ -7,7 +9,7 @@ puts 'Setting up RSpec for your application...'
 # Create backup of test folder
 if Dir.exist?('test')
   puts 'Creating backup of test directory...'
-  backup_dir = "test_backup_#{Time.now.strftime('%Y%m%d%H%M%S')}"
+  backup_dir = "test_backup_#{Time.zone.now.strftime('%Y%m%d%H%M%S')}"
   FileUtils.cp_r 'test', backup_dir
   puts "Test directory backed up to #{backup_dir}"
 

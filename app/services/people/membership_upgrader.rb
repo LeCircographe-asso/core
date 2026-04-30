@@ -1,4 +1,6 @@
-require 'ostruct'
+# frozen_string_literal: true
+
+require "ostruct"
 
 module People
   class MembershipUpgrader
@@ -9,7 +11,7 @@ module People
 
     attribute :person
     attribute :new_membership_type_id, :integer
-    attribute :payment_method, :string, default: 'cash'
+    attribute :payment_method, :string, default: "cash"
     attribute :recorded_by_id, :integer
     attribute :custom_amount_cents, :integer
     attribute :offer_reason, :string
@@ -20,7 +22,7 @@ module People
     validates :payment_method, inclusion: { in: %w[cash card cheque transfer offered] }
 
     def call
-      return failure('Invalid data', errors.full_messages) unless valid?
+      return failure("Invalid data", errors.full_messages) unless valid?
 
       new_membership_type = MembershipType.find(new_membership_type_id)
       recorded_by = resolve_recorded_by
@@ -35,7 +37,7 @@ module People
       )
 
       ActiveSupport::Notifications.instrument(
-        'membership.upgraded',
+        "membership.upgraded",
         person_id: person.id, old_member_number: result[:old_member_number], new_member_number: result[:new_member_number],
         membership_id: result[:membership].id, payment_id: result[:payment].id, new_membership_type_id: new_membership_type.id,
         payment_method: payment_method
@@ -49,14 +51,14 @@ module People
         old_member_number: result[:old_member_number],
         new_member_number: result[:new_member_number],
         errors: [],
-        message: 'Membership upgraded successfully'
+        message: "Membership upgraded successfully"
       )
     rescue ActiveRecord::RecordNotFound => e
-      ActiveSupport::Notifications.instrument('membership.upgrade_failed', error: e.message, reason: 'record_not_found')
+      ActiveSupport::Notifications.instrument("membership.upgrade_failed", error: e.message, reason: "record_not_found")
       failure("Record not found: #{e.message}")
     rescue StandardError => e
       Rails.logger.error("[People::MembershipUpgrader] #{e.class}: #{e.message}\n#{e.backtrace.take(5).join("\n")}")
-      ActiveSupport::Notifications.instrument('membership.upgrade_failed', error: e.message, reason: 'exception')
+      ActiveSupport::Notifications.instrument("membership.upgrade_failed", error: e.message, reason: "exception")
       failure("Error upgrading membership: #{e.message}")
     end
 
@@ -70,7 +72,7 @@ module People
       elsif Current.respond_to?(:user) && Current.user.present?
         @recorded_by = Current.user
       else
-        raise 'A recorded_by user is required to upgrade a membership'
+        raise "A recorded_by user is required to upgrade a membership"
       end
     end
 

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module EventManagement
   class EventCreator < BaseService
     attribute :name, :string
@@ -34,7 +36,7 @@ module EventManagement
             category: category
           )
 
-          success(event: event, message: 'Event created successfully')
+          success(event: event, message: "Event created successfully")
         end
       rescue ActiveRecord::RecordNotFound => e
         failure("Creator not found: #{e.message}")
