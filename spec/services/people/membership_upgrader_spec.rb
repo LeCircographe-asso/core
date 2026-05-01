@@ -26,6 +26,43 @@ RSpec.describe People::MembershipUpgrader do
       expect(result.payment).to be_present
     end
 
+    it "adds an optional donation line to the payment" do
+      result = described_class.new(
+        person: person,
+        new_membership_type_id: circus_type.id,
+        payment_method: "cash",
+        recorded_by_id: admin_user.id,
+        donation_cents: 500
+      ).call
+
+      expect(result.success?).to be(true)
+      expect(result.payment.total_cents).to eq(circus_type.price_cents + 500)
+      expect(result.payment.payment_lines.pluck(:item_type, :amount_cents)).to contain_exactly(
+        [ "Membership", circus_type.price_cents ],
+        [ "Donation", 500 ]
+      )
+    end
+
+    it "persists offer_reason for an offered upgrade" do
+      super_admin = create(:user, :super_admin)
+
+      result = described_class.new(
+        person: person,
+        new_membership_type_id: circus_type.id,
+        payment_method: "offered",
+        recorded_by_id: super_admin.id,
+        offer_reason: "Solidarity"
+      ).call
+
+      expect(result.success?).to be(true)
+      expect(result.payment.payment_method).to eq("offered")
+      expect(result.payment.total_cents).to eq(0)
+      expect(result.payment.offer_reason).to eq("Solidarity")
+      expect(result.payment.payment_lines.pluck(:item_type, :amount_cents)).to contain_exactly(
+        [ "Membership", 0 ]
+      )
+    end
+
     it "fails with invalid params" do
       result = described_class.new(
         person: person,
