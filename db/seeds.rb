@@ -22,12 +22,21 @@ puts %(
 puts "\nLe Circographe — initialisation des données de référence\n\n"
 
 # Nettoyage complet des données existantes (comportement volontaire de db:seed).
+# Toutes les tables applicatives sont vidées avec les FK désactivées, pour éviter
+# une liste de modèles incomplète (ex. event_attendees, payment_audit_logs, …)
+# qui laissait la base partiellement peuplée ou faisait échouer les suppressions.
 puts "Nettoyage complet des données existantes..."
-[ PaymentLine, Payment, Attendance, Contribution, Membership,
-  Event, ContributionFormula, MembershipType, Session, User, Person ].each do |model|
-  count = model.count
-  model.delete_all if count > 0
-  puts "  - #{count} #{model.name.pluralize.downcase} supprimé(s)"
+skip_tables = %w[schema_migrations ar_internal_metadata sqlite_sequence]
+conn = ActiveRecord::Base.connection
+conn.disable_referential_integrity do
+  (conn.tables - skip_tables).each do |table|
+    quoted = conn.quote_table_name(table)
+    count = conn.select_value("SELECT COUNT(*) FROM #{quoted}").to_i
+    next if count.zero?
+
+    conn.execute("DELETE FROM #{quoted}")
+    puts "  - #{count} enregistrement(s) supprimé(s) — #{table}"
+  end
 end
 
 # Chargement des seeds modulaires
