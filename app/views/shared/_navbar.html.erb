@@ -134,7 +134,16 @@
             <!-- Visitor buttons -->
             <div class="flex items-center space-x-2">
                 <%= link_to t("views.shared.navbar.sign_in"), new_session_path, class: "btn-tertiary text-sm" %>
-                <%= link_to t("views.shared.navbar.sign_up"), new_registration_path, class: "btn-primary text-sm shadow-lg" %>
+                <% if public_registration_enabled? %>
+                  <%= link_to t("views.shared.navbar.sign_up"), new_registration_path, class: "btn-primary text-sm shadow-lg" %>
+                <% else %>
+                  <%= render Ui::DisabledButtonComponent.new(
+                        text: t("views.shared.navbar.sign_up"),
+                        disabled: true,
+                        disabled_reason: t("views.shared.navbar.sign_up_disabled_reason"),
+                        classes: "btn-primary text-sm shadow-lg"
+                      ) %>
+                <% end %>
             </div>
             <% end %>
         </div>
@@ -275,9 +284,24 @@
                 </div>
                 <% end %>
                 <% else %>
-                <div class="grid grid-cols-2 gap-3">
-                    <%= link_to t("views.shared.navbar.sign_in"), new_session_path, class: "text-center font-bold py-2 px-4 border border-gray-300 rounded-lg hover:bg-gray-50" %>
-                    <%= link_to t("views.shared.navbar.sign_up"), new_registration_path, class: "text-center px-6 py-2 tracking-wide text-white font-bold bg-[#1F5C55] border-2 border-[#1F5C55] rounded-lg shadow-lg hover:bg-gray-100 hover:text-[#1F5C55] hover:border-[#1F5C55] transition-colors duration-300" %>
+                <div class="grid grid-cols-2 gap-3 items-stretch">
+                    <%= link_to t("views.shared.navbar.sign_in"), new_session_path, class: "flex h-full min-h-[2.75rem] w-full items-center justify-center text-center text-sm font-bold px-3 py-2 border border-gray-300 rounded-lg hover:bg-gray-50" %>
+                    <% if public_registration_enabled? %>
+                      <%= link_to t("views.shared.navbar.sign_up"), new_registration_path, class: "flex h-full min-h-[2.75rem] w-full items-center justify-center text-center text-sm font-bold px-3 py-2 tracking-wide text-white bg-[#1F5C55] border-2 border-[#1F5C55] rounded-lg shadow-lg hover:bg-gray-100 hover:text-[#1F5C55] hover:border-[#1F5C55] transition-colors duration-300" %>
+                    <% else %>
+                      <%= render Ui::DisabledButtonComponent.new(
+                            text: t("views.shared.navbar.sign_up"),
+                            disabled: true,
+                            disabled_reason: t("views.shared.navbar.sign_up_disabled_reason"),
+                            additional_aria_describedby: "navbar-mobile-signup-disabled-note",
+                            classes: "inline-flex h-full min-h-[2.75rem] w-full items-center justify-center text-center text-sm font-bold px-3 py-2 tracking-wide text-white bg-[#1F5C55] border-2 border-[#1F5C55] rounded-lg shadow-lg"
+                          ) %>
+                    <% end %>
+                    <% unless public_registration_enabled? %>
+                      <p id="navbar-mobile-signup-disabled-note" class="col-span-2 md:hidden text-xs font-normal text-gray-600 leading-snug text-center px-1">
+                        <%= t("views.shared.navbar.sign_up_disabled_reason") %>
+                      </p>
+                    <% end %>
                 </div>
                 <% end %>
             </div>

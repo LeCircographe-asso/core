@@ -28,6 +28,8 @@ config/secrets/
 ## 🔧 Configuration par Environnement
 
 ### **Development (Local)**
+- **Inscriptions publiques** : variable `PUBLIC_REGISTRATION_ENABLED` (initializer `config/initializers/public_registration.rb`). Valeurs `false` / `0` / `no` / `off` → désactive `/registration` et le lien « S'inscrire » ; la connexion reste disponible (mode vitrine). Sinon ou absent → inscriptions actives. Local : `.env` ou `.env.local` via `dotenv-rails`, puis redémarrer le serveur. Déploiement Kamal : `.kamal/secrets` (voir `.kamal/secrets.example`).
+- **Revendication de compte** (« Récupérer mon compte » / lien fiche adhérent) : variable `ACCOUNT_CLAIM_ENABLED` (initializer `config/initializers/account_claim.rb`). Mêmes valeurs de désactivation que ci-dessus. Sinon ou absent → flux actif.
 - **Assets** : Live reload, pas de précompilation
 - **Base de données** : `storage/development.sqlite3`
 - **Mail** : letter_opener (preview)

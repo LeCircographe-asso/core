@@ -4,6 +4,7 @@ fr:
     generic:
       error_detail: 'Erreur: %{message}'
   account_claims:
+    disabled_notice: La récupération de compte en ligne est indisponible pour le moment.
     create:
       success: Demande de réclamation envoyée. Vérifiez vos emails.
       rescue_alert: 'Erreur: %{message}'
@@ -191,6 +192,7 @@ fr:
   contacts:
     create:
       blank_fields: Veuillez remplir tous les champs du formulaire.
+      success_title: Merci !
       sent_notice: Votre message a été envoyé avec succès ! Nous revenons vers vous rapidement.
       send_error: Une erreur est survenue lors de l'envoi. Réessaie dans quelques instants.
   event_interests:
@@ -211,9 +213,15 @@ fr:
       must_be_signed_in_alert: Vous devez être connecté pour effectuer cette action.
     invalid_token_alert: Le lien de réinitialisation du mot de passe est invalide ou a expiré.
   registrations:
+    disabled_notice: Les inscriptions publiques sont temporairement fermées.
     create:
       success_notice: Inscription réussie !
   sessions:
+    new:
+      sign_up_prompt: Pas encore de compte ? S'inscrire
+      registration_closed_hint: Les inscriptions en ligne sont indisponibles pour le moment. Connectez-vous si vous avez déjà un compte.
+      account_claim_lead: Déjà adhérent du Circographe ?
+      account_claim_recover_link: Récupérer mon compte
     rate_limited_alert: Rééssayez plus tard
     create:
       login_success_notice: Connexion réussie !
@@ -351,6 +359,7 @@ fr:
         logout: Déconnexion
         sign_in: Se connecter
         sign_up: S'inscrire
+        sign_up_disabled_reason: Création de compte en ligne indisponible pour le moment.
         association: L'Association
         news: Actualités
         our_news: Nos actualités

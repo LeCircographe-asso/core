@@ -3,6 +3,8 @@
 class RegistrationsController < ApplicationController
   allow_unauthenticated_access only: %i[new create]
 
+  before_action :ensure_public_registration_enabled!, only: %i[new create]
+
   def new
     redirect_to root_path if authenticated?
     @user = User.new(email_address: session[:newsletter_email])
@@ -39,7 +41,7 @@ class RegistrationsController < ApplicationController
         flash.now[:alert] = result.message
         if result.message.include?("Mot de passe oublié")
           flash.now[:help_link] = { text: "Mot de passe oublié", url: new_password_reset_path }
-        elsif result.message.include?("Récupérer mon compte")
+        elsif Rails.application.config.x.account_claim_enabled && result.message.include?("Récupérer mon compte")
           flash.now[:help_link] = { text: "Récupérer mon compte", url: new_account_claim_path }
         end
 
@@ -54,6 +56,12 @@ class RegistrationsController < ApplicationController
   end
 
   private
+
+  def ensure_public_registration_enabled!
+    return if Rails.application.config.x.public_registration_enabled
+
+    redirect_to root_path, alert: t("registrations.disabled_notice"), status: :see_other
+  end
 
   def user_params
     params.expect(user: %i[email_address password password_confirmation cgu privacy_policy newsletter_subscribed first_name last_name])

@@ -1,10 +1,14 @@
 # frozen_string_literal: true
 
 class ContactsController < ApplicationController
-  def create
-    @contact = params.expect(contact: %i[name email message category])
+  allow_unauthenticated_access only: :create
 
-    if @contact.values.any?(&:blank?)
+  CONTACT_SUBMISSION_KEYS = %i[name email message category].freeze
+
+  def create
+    @contact = contact_submission_params
+
+    unless contact_submission_complete?
       respond_with_error(t(".blank_fields"))
       return
     end
@@ -31,8 +35,7 @@ class ContactsController < ApplicationController
 
       respond_to do |format|
         format.turbo_stream do
-          flash.now[:notice] = t(".sent_notice")
-          render turbo_stream: turbo_stream.update("contact_form", partial: "pages/contact/form", locals: { contact: {}, status: :success })
+          render turbo_stream: turbo_stream.update("contact_form", partial: "pages/contact/form_inner", locals: { contact: {}, status: :success })
         end
         format.html do
           flash[:notice] = t(".sent_notice")
@@ -47,11 +50,23 @@ class ContactsController < ApplicationController
 
   private
 
+  # Formulaire public : champs à la racine (`name`, `email`, …), pas `contact[...]`.
+  # Toujours inclure les clés requises : `permit` seul omet les paramètres absents, ce qui faisait
+  # passer des requêtes incomplètes jusqu’au mailer.
+  def contact_submission_params
+    permitted = params.permit(*CONTACT_SUBMISSION_KEYS).to_h.symbolize_keys
+    CONTACT_SUBMISSION_KEYS.index_with { |key| permitted[key] }
+  end
+
+  def contact_submission_complete?
+    CONTACT_SUBMISSION_KEYS.all? { |key| @contact[key].present? }
+  end
+
   def respond_with_error(message)
     respond_to do |format|
       format.turbo_stream do
         flash.now[:alert] = message
-        render turbo_stream: turbo_stream.update("contact_form", partial: "pages/contact/form", locals: { contact: @contact, status: :error })
+        render turbo_stream: turbo_stream.update("contact_form", partial: "pages/contact/form_inner", locals: { contact: @contact, status: :error })
       end
       format.html do
         flash[:alert] = message
