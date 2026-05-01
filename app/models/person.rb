@@ -194,40 +194,6 @@ class Person < ApplicationRecord
     true
   end
 
-  def create_membership!(membership_type, recorded_by:, payment_method: :cash, custom_amount_cents: nil, offer_reason: nil, donation_cents: nil)
-    result = People::MembershipCreator.new(
-      person: self,
-      membership_type_id: membership_type.id,
-      payment_method: payment_method.to_s,
-      recorded_by_id: recorded_by.id,
-      custom_amount_cents: custom_amount_cents,
-      offer_reason: offer_reason,
-      donation_cents: donation_cents
-    ).call
-
-    raise "Cette personne a déjà une adhésion active" if result.success? && result.already_existed
-    raise result.message unless result.success?
-
-    { membership: result.membership, payment: result.payment }
-  end
-
-  def create_contribution!(contribution_formula, recorded_by:, payment_method: :cash, record_attendance: false, custom_amount_cents: nil, offer_reason: nil, donation_cents: nil)
-    result = People::ContributionCreator.new(
-      person: self,
-      contribution_formula_id: contribution_formula.id,
-      payment_method: payment_method.to_s,
-      recorded_by_id: recorded_by.id,
-      record_attendance: record_attendance,
-      custom_amount_cents: custom_amount_cents,
-      offer_reason: offer_reason,
-      donation_cents: donation_cents
-    ).call
-
-    raise result.message unless result.success?
-
-    { contribution: result.contribution, payment: result.payment }
-  end
-
   def renew_membership!(membership_type, recorded_by:, payment_method: :cash, custom_amount_cents: nil, offer_reason: nil)
     ActiveRecord::Base.transaction do
       current = current_membership
@@ -235,7 +201,17 @@ class Person < ApplicationRecord
 
       current&.update!(status: :expired)
 
-      result = create_membership!(membership_type, payment_method: payment_method, recorded_by: recorded_by, custom_amount_cents: custom_amount_cents, offer_reason: offer_reason)
+      creation_result = People::MembershipCreator.new(
+        person: self,
+        membership_type_id: membership_type.id,
+        payment_method: payment_method.to_s,
+        recorded_by_id: recorded_by.id,
+        custom_amount_cents: custom_amount_cents,
+        offer_reason: offer_reason
+      ).call
+
+      raise "Cette personne a déjà une adhésion active" if creation_result.success? && creation_result.already_existed
+      raise creation_result.message unless creation_result.success?
 
       old_number = member_number
       new_number = MemberManagementService.generate_member_number(get_membership_type_code(membership_type))
@@ -250,11 +226,13 @@ class Person < ApplicationRecord
 
       update!(member_number: new_number)
 
-      result.merge(
+      {
+        membership: creation_result.membership,
+        payment: creation_result.payment,
         renewed: true,
         old_member_number: old_number,
         new_member_number: new_number
-      )
+      }
     end
   end
 
