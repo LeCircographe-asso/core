@@ -99,6 +99,8 @@
   html {
     @apply h-full;
     overflow-y: auto;
+    /* Réserve l’espace scrollbar + évite le collage au bord droit (nav, etc.) */
+    scrollbar-gutter: stable;
   }
 
   html::-webkit-scrollbar {
@@ -140,8 +142,11 @@
   .text-brand-accent { color: #5836A5; }
   .bg-brand-accent { background-color: #5836A5; }
   .bg-brand-accent\/10 { background-color: rgba(88, 54, 165, 0.1); }
+  /* Opacity variants used in markup; not always emitted by Tailwind v4 scan */
+  .bg-brand-accent\/72 { background-color: rgba(88, 54, 165, 0.72); }
   .border-brand-accent { border-color: #5836A5; }
   .border-brand-accent\/20 { border-color: rgba(88, 54, 165, 0.2); }
+  .border-brand-accent\/45 { border-color: rgba(88, 54, 165, 0.45); }
 
   .focus-visible\:outline-brand-primary:focus-visible { outline-color: #1F5C55; }
   .focus-visible\:outline-brand-accent:focus-visible { outline-color: #5836A5; }
