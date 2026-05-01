@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 class BlogsController < ApplicationController
+  skip_before_action :require_authentication, only: %i[latest]
   before_action :set_blog, only: %i[show]
 
   # def article
