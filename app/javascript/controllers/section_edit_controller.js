@@ -3,7 +3,7 @@ import { openRichConfirmModal } from "confirm_modal"
 
 // data-controller="section-edit"
 export default class extends Controller {
-  static targets = ["read", "edit", "form", "save", "modifyButton", "acceptButton", "cancelButton", "field", "protectedAction"]
+  static targets = ["read", "edit", "form", "save", "modifyWrap", "cancelWrap", "acceptWrap", "modifyButton", "acceptButton", "cancelButton", "field", "protectedAction"]
   static values = {
     editing: Boolean,
     warningMessage: String,
@@ -89,7 +89,7 @@ export default class extends Controller {
       this.saveTarget.disabled = true
     }
 
-    if (this.hasAcceptButtonTarget && !this.acceptButtonTarget.classList.contains("hidden")) {
+    if (this.hasAcceptWrapTarget && !this.acceptWrapTarget.classList.contains("hidden")) {
       this.acceptButtonTarget.disabled = true
       const loading = this.acceptButtonTarget.dataset.loadingText
       if (loading) this.acceptButtonTarget.textContent = loading
@@ -103,32 +103,36 @@ export default class extends Controller {
     this.readTargets.forEach((element) => element.classList.toggle("hidden", editing))
     this.editTargets.forEach((element) => element.classList.toggle("hidden", !editing))
 
-    if (this.hasCancelButtonTarget) {
-      this.cancelButtonTarget.classList.toggle("hidden", !editing)
+    // Visibility on wrappers only — never combine Tailwind `hidden` with `inline-flex`
+    // on the same node (display utilities fight; buttons stayed visible).
+    if (this.hasModifyWrapTarget) {
+      const showModify = !editing || (editing && !dirty)
+      this.modifyWrapTarget.classList.toggle("hidden", !showModify)
+    }
+
+    if (this.hasCancelWrapTarget) {
+      this.cancelWrapTarget.classList.toggle("hidden", !editing)
+    }
+
+    if (this.hasAcceptWrapTarget) {
+      this.acceptWrapTarget.classList.toggle("hidden", !(editing && dirty))
     }
 
     if (this.hasModifyButtonTarget) {
       if (!editing) {
-        this.modifyButtonTarget.classList.remove("hidden")
         this.modifyButtonTarget.disabled = false
         this.modifyButtonTarget.textContent = this.modifyLabelValue
       } else if (!dirty) {
-        this.modifyButtonTarget.classList.remove("hidden")
         this.modifyButtonTarget.disabled = true
         this.modifyButtonTarget.textContent = this.modifyLabelValue
       } else {
-        this.modifyButtonTarget.classList.add("hidden")
+        this.modifyButtonTarget.disabled = false
       }
     }
 
-    if (this.hasAcceptButtonTarget) {
-      if (editing && dirty) {
-        this.acceptButtonTarget.classList.remove("hidden")
-        this.acceptButtonTarget.disabled = false
-        this.acceptButtonTarget.textContent = this.acceptLabelValue
-      } else {
-        this.acceptButtonTarget.classList.add("hidden")
-      }
+    if (this.hasAcceptButtonTarget && editing && dirty) {
+      this.acceptButtonTarget.disabled = false
+      this.acceptButtonTarget.textContent = this.acceptLabelValue
     }
 
     this.protectedActionTargets.forEach((element) => {
