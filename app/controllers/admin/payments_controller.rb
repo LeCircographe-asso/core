@@ -50,66 +50,13 @@ module Admin
     end
 
     def create
-      # Convertir le montant en centimes si fourni en euros
-      total_cents = payment_params[:total_cents]
-      total_cents = (total_cents.to_f * 100).to_i if total_cents.present?
-
-      person = Person.find(payment_params[:person_id])
-
-      result = People::PaymentCreator.new(
-        person: person,
-        amount_cents: total_cents,
-        payment_method: payment_params[:payment_method] || "cash",
-        recorded_by_id: Current.user&.id,
-        item_type: "Donation",
-        item_id: person.id,
-        description: "Paiement direct",
-        notes: payment_params[:notes]
-      ).call
-
-      respond_to do |format|
-        if result.success?
-          created_msg = t(".created_notice")
-          format.html { redirect_to admin_payments_path, notice: created_msg }
-          format.turbo_stream do
-            filter_locals = payments_index_filter_params.to_unsafe_h
-            fresh = payment_for_ui_row(result.payment)
-            render turbo_stream: [
-              turbo_stream.append("payments", partial: "payment_row",
-                                             locals: { payment: fresh, list_filter_params: filter_locals }),
-              turbo_stream.replace("payment-summary", partial: "payment_summary",
-                                                     locals: payment_summary_locals(payments_index_filter_params)),
-              turbo_flash_replace(:notice, created_msg)
-            ]
-          end
-        else
-          fail_msg = t(".failure_alert", message: result.message)
-          err_detail = I18n.t("flash.generic.error_detail", message: result.message)
-          format.html { redirect_to admin_payments_path, alert: fail_msg }
-          format.turbo_stream do
-            render turbo_stream: turbo_flash_replace(:alert, err_detail)
-          end
-        end
-      end
+      result = build_payment_create_result
+      result.success? ? respond_to_created_payment(result) : respond_to_failed_payment_create(result.message)
     rescue ActiveRecord::RecordNotFound => e
-      respond_to do |format|
-        fail_msg = t("admin.payments.create.failure_alert", message: e.message)
-        err_detail = I18n.t("flash.generic.error_detail", message: e.message)
-        format.html { redirect_to admin_payments_path, alert: fail_msg }
-        format.turbo_stream do
-          render turbo_stream: turbo_flash_replace(:alert, err_detail)
-        end
-      end
+      respond_to_failed_payment_create(e.message)
     rescue StandardError => e
       Rails.logger.error("[Admin::PaymentsController#create] #{e.class}: #{e.message}")
-      respond_to do |format|
-        fail_msg = t("admin.payments.create.failure_alert", message: e.message)
-        err_detail = I18n.t("flash.generic.error_detail", message: e.message)
-        format.html { redirect_to admin_payments_path, alert: fail_msg }
-        format.turbo_stream do
-          render turbo_stream: turbo_flash_replace(:alert, err_detail)
-        end
-      end
+      respond_to_failed_payment_create(e.message)
     end
 
     # OLD: logique directe (commentée pour rollback)
@@ -138,6 +85,7 @@ module Admin
         payment_method: payment_params[:payment_method],
         status: payment_params[:status],
         notes: payment_params[:notes],
+        offer_reason: payment_params[:offer_reason],
         updated_by_id: Current.user.id
       ).call
 
@@ -239,6 +187,61 @@ module Admin
 
     FILTER_PARAM_KEYS = Admin::PaymentsHelper::PAYMENTS_INDEX_QUERY_KEYS
 
+    def build_payment_create_result
+      person = Person.find(payment_create_params[:person_id])
+
+      People::PaymentCreator.new(
+        person: person,
+        amount_cents: normalized_total_cents(payment_create_params[:total_cents]),
+        payment_method: payment_create_params[:payment_method] || "cash",
+        recorded_by_id: Current.user&.id,
+        item_type: "Donation",
+        item_id: person.id,
+        description: "Paiement direct",
+        notes: payment_create_params[:notes],
+        offer_reason: payment_create_params[:offer_reason]
+      ).call
+    end
+
+    def respond_to_created_payment(result)
+      created_msg = t(".created_notice")
+
+      respond_to do |format|
+        format.html { redirect_to admin_payments_path, notice: created_msg }
+        format.turbo_stream do
+          filter_locals = payments_index_filter_params.to_unsafe_h
+          fresh = payment_for_ui_row(result.payment)
+          render turbo_stream: [
+            turbo_stream.append("payments", partial: "payment_row",
+                                           locals: { payment: fresh, list_filter_params: filter_locals }),
+            turbo_stream.replace("payment-summary", partial: "payment_summary",
+                                                   locals: payment_summary_locals(payments_index_filter_params)),
+            turbo_flash_replace(:notice, created_msg)
+          ]
+        end
+      end
+    end
+
+    def respond_to_failed_payment_create(message)
+      fail_msg = t("admin.payments.create.failure_alert", message: message)
+      err_detail = I18n.t("flash.generic.error_detail", message: message)
+
+      respond_to do |format|
+        format.html { redirect_to admin_payments_path, alert: fail_msg }
+        format.turbo_stream { render turbo_stream: turbo_flash_replace(:alert, err_detail) }
+      end
+    end
+
+    def payment_create_params
+      @payment_create_params ||= payment_params.to_h.symbolize_keys
+    end
+
+    def normalized_total_cents(total_cents)
+      return total_cents unless total_cents.present?
+
+      (total_cents.to_f * 100).to_i
+    end
+
     # Filtres liste : uniquement la query string (pas le corps form PATCH), pour éviter les logs
     # Strong Parameters « Unpermitted » sur :payment, :authenticity_token, :controller, etc.
     # Ordre : query courante → GET index → Referer vers la liste.
@@ -302,7 +305,7 @@ module Admin
 
     def payment_params
       params.expect(
-        payment: [ :person_id, :recorded_by_id, :total_cents, :payment_method, :status, :notes,
+        payment: [ :person_id, :recorded_by_id, :total_cents, :payment_method, :status, :notes, :offer_reason,
                   # Compatibilité avec l'ancien modèle
                   :payment_id, :payment_date, :payment_amount, :payment_type, :order_id, :donation, :total_payment ]
       )

@@ -38,6 +38,7 @@ FactoryBot.define do
 
     trait :offered do
       payment_method { :offered }
+      offer_reason { "Offre validée" }
     end
 
     trait :with_membership_line do

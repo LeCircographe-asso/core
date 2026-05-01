@@ -15,6 +15,7 @@ module People
     attribute :payment_method, :string, default: "cash"
     attribute :status, :string, default: "success"
     attribute :notes, :string
+    attribute :offer_reason, :string
     attribute :payment_lines, default: []
 
     validates :payment_method, presence: true, inclusion: { in: %w[cash card cheque transfer offered] }
@@ -24,6 +25,7 @@ module People
     validate :payment_lines_present
     validate :total_matches_lines
     validate :total_allowed_for_payment_method
+    validate :offer_reason_required_for_offered
 
     def call
       return failure("Invalid payment data: #{errors.full_messages.join(', ')}") unless valid?
@@ -41,7 +43,8 @@ module People
           payment_method: payment_method,
           status: status,
           recorded_by: recorder,
-          notes: notes
+          notes: notes,
+          offer_reason: normalized_offer_reason
         )
 
         created_lines = normalized_lines.map do |line|
@@ -101,6 +104,12 @@ module People
       item_type.to_s.casecmp("donation").zero?
     end
 
+    def normalized_offer_reason
+      return if payment_method != "offered"
+
+      offer_reason.to_s.strip.presence
+    end
+
     def instrument_payment_created(payment, lines_count)
       ActiveSupport::Notifications.instrument(
         "payment.created",
@@ -144,6 +153,13 @@ module People
       return if payment_method == "offered" && total_cents.to_i >= 0
 
       errors.add(:total_cents, "must be greater than zero")
+    end
+
+    def offer_reason_required_for_offered
+      return unless payment_method == "offered"
+      return if normalized_offer_reason.present?
+
+      errors.add(:offer_reason, "must be provided for an offered payment")
     end
 
     def success(payment:, payment_lines:)

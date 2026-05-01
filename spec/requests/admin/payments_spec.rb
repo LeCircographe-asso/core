@@ -164,6 +164,20 @@ RSpec.describe 'Admin::Payments', type: :request do
         expect(line.amount_cents).to eq(1500)
         expect(line.description).to eq('Paiement direct')
       end
+
+      it 'persists offer_reason on an offered payment' do
+        post admin_payments_path, params: {
+          payment: {
+            person_id: person.id,
+            total_cents: 0,
+            payment_method: 'offered',
+            offer_reason: 'Solidarity'
+          }
+        }
+
+        payment = Payment.order(:created_at).last
+        expect(payment.offer_reason).to eq('Solidarity')
+      end
     end
 
     context 'with invalid attributes' do
@@ -238,6 +252,20 @@ RSpec.describe 'Admin::Payments', type: :request do
         }
 
         expect(response).to redirect_to(admin_payments_path)
+      end
+
+      it 'updates offer_reason' do
+        patch admin_payment_path(payment), params: {
+          payment: {
+            payment_method: 'offered',
+            offer_reason: 'Solidarity',
+            status: 'success'
+          }
+        }
+
+        payment.reload
+        expect(payment.payment_method).to eq('offered')
+        expect(payment.offer_reason).to eq('Solidarity')
       end
     end
 

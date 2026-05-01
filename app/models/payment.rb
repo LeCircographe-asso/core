@@ -15,6 +15,8 @@ class Payment < ApplicationRecord
   enum :status, { success: 0, pending: 1, cancel: 2 }, default: :pending
   enum :payment_method, { cash: 0, card: 1, cheque: 2, transfer: 3, offered: 4 }, default: :cash
 
+  validates :offer_reason, presence: true, if: :is_offered?
+
   before_create :generate_uuid
   after_create :create_audit_log
   # Callbacks legacy supprimés : la création/mise à jour cascade passe désormais par les services People::*.
@@ -177,7 +179,6 @@ class Payment < ApplicationRecord
     return if anonymized_at.present?
 
     self.original_person_identifier = "ANON_#{Digest::SHA256.hexdigest("#{person_id}_#{id}_#{created_at}")}"
-    self.person_id = nil
     self.anonymized_at = Time.current
     save!
   end
