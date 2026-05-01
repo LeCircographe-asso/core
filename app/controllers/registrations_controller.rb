@@ -41,7 +41,7 @@ class RegistrationsController < ApplicationController
         flash.now[:alert] = result.message
         if result.message.include?("Mot de passe oublié")
           flash.now[:help_link] = { text: "Mot de passe oublié", url: new_password_reset_path }
-        elsif result.message.include?("Récupérer mon compte")
+        elsif Rails.application.config.x.account_claim_enabled && result.message.include?("Récupérer mon compte")
           flash.now[:help_link] = { text: "Récupérer mon compte", url: new_account_claim_path }
         end
 

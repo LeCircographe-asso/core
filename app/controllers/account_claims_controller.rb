@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 class AccountClaimsController < ApplicationController
+  before_action :ensure_account_claim_enabled!, only: %i[new create confirm]
   before_action :require_authentication, only: [ :create ]
 
   def new
@@ -38,5 +39,13 @@ class AccountClaimsController < ApplicationController
     end
   rescue StandardError => e
     redirect_to root_path, alert: t(".rescue_alert", message: e.message)
+  end
+
+  private
+
+  def ensure_account_claim_enabled!
+    return if Rails.application.config.x.account_claim_enabled
+
+    redirect_to root_path, alert: t("account_claims.disabled_notice"), status: :see_other
   end
 end
