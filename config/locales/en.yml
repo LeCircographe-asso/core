@@ -240,7 +240,7 @@ en:
         logout: Sign out
         sign_in: Sign in
         sign_up: Sign up
-        sign_up_disabled_reason: Sign-up is closed for now (showcase site).
+        sign_up_disabled_reason: Online account creation is temporarily unavailable.
         association: Association
         news: News
         our_news: Our news

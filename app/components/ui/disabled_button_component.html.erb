@@ -1,3 +1,19 @@
-<button <%= button_attributes.map { |k, v| "#{k}=\"#{v}\"" }.join(" ") %>>
-  <%= text %>
-</button>
+<% if hint.present? || reason_below_md? %>
+  <div class="<%= wrapper_classes_for_fragment %>">
+    <%= tag.button(**button_attributes) do %>
+      <%= text %>
+    <% end %>
+    <% if hint.present? %>
+      <span id="<%= hint_dom_id %>" class="<%= effective_hint_classes %>"><%= hint %></span>
+    <% end %>
+    <% if reason_below_md? %>
+      <p id="<%= reason_below_md_dom_id %>" class="md:hidden text-xs font-normal font-sans text-gray-600 leading-snug text-left mt-0.5">
+        <%= disabled_reason %>
+      </p>
+    <% end %>
+  </div>
+<% else %>
+  <%= tag.button(**button_attributes) do %>
+    <%= text %>
+  <% end %>
+<% end %>
