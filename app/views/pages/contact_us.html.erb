@@ -35,7 +35,7 @@
           </div>
           <div class="rounded-2xl border border-[#1F5C55]/30 bg-white px-5 py-5 shadow-sm">
             <p class="text-xs uppercase tracking-[0.25em] text-[#1F5C55] mb-2">Accès</p>
-            <p class="font-semibold text-gray-900 leading-relaxed">Tram T1/T2 – Arrêt Cartoucherie<br>Bus L2/L9 – Arrêt Cartoucherie</p>
+            <p class="font-semibold text-gray-900 leading-relaxed">Bus 15 (Tisséo) — dessert le boulevard de Suisse ; descends à l’arrêt le plus proche de ton numéro.</p>
           </div>
           <div class="rounded-2xl border border-[#5836A5]/30 bg-white px-5 py-5 shadow-sm">
             <p class="text-xs uppercase tracking-[0.25em] text-[#5836A5] mb-2">Suivre l'actu</p>
@@ -47,7 +47,7 @@
           </div>
         </div>
 
-        <div class="rounded-2xl border border-[#1F5C55]/25 bg-white px-5 py-6 space-y-3 shadow-sm">
+        <div id="horaires" class="rounded-2xl border border-[#1F5C55]/25 bg-white px-5 py-6 space-y-3 shadow-sm scroll-mt-24">
           <p class="text-xs uppercase tracking-[0.25em] text-[#1F5C55]">Horaires d'accueil</p>
           <p class="text-sm text-gray-600">Ouverture du mardi au dimanche selon disponibilité bénévoles — Fermé le lundi.</p>
           <%= render "shared/opening_hours", horaires: @opening_hours, bare: true %>

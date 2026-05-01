@@ -1,17 +1,17 @@
 <%
   height = local_assigns.fetch(:height, 320)
-  caption = local_assigns.fetch(:caption, "Tram T1/T2 \u2013 Arr\u00eat Cartoucherie \u2022 Bus L2/L9 \u2013 Arr\u00eat Cartoucherie")
+  caption = local_assigns.fetch(:caption, "Bus 15 (Tiss\u00e9o) \u2014 dessert le boulevard de Suisse sur toute sa longueur (arr\u00eats selon ton sens de marche). Infos : tisseo.fr")
 %>
+<%# Carte centrée sur 97 bis bd de Suisse (quartier Minimes) — coordonnées approx. %>
 <div class="rounded-2xl overflow-hidden border border-gray-200 shadow-inner">
   <iframe
-    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d858.7320762106817!2d1.422364267936696!3d43.618639564522674!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x12aebb1b7b5096ef%3A0x710f3096ea206f0!2sLe%20Circographe!5e0!3m2!1sfr!2sfr!4v1745437455061!5m2!1sfr!2sfr"
+    src="https://www.openstreetmap.org/export/embed.html?bbox=1.407%2C43.612%2C1.432%2C43.622&layer=mapnik&marker=43.61701%2C1.41911"
     width="100%"
     height="<%= height %>"
     style="border:0;"
-    allowfullscreen=""
     loading="lazy"
     referrerpolicy="no-referrer-when-downgrade"
-    title="Carte \u2014 Le Circographe \u00e0 la Cartoucherie, Toulouse"></iframe>
+    title="Carte — 97 bis Boulevard de Suisse, Toulouse"></iframe>
 </div>
 <% if caption.present? %>
   <p class="text-sm text-gray-500 mt-3"><%= caption %></p>

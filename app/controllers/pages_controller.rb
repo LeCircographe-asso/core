@@ -79,7 +79,7 @@ class PagesController < ApplicationController
 
   def general_faq_entries
     [
-      { question: "Où se situe le Circographe ?", answer: "Au 27 bis allée Maurice Sarraut, Toulouse — dans le quartier de la Cartoucherie. Consulte la page Contact pour la carte et l'accès." },
+      { question: "Où se situe le Circographe ?", answer: "Au 97 bis boulevard de Suisse, 31200 Toulouse. Consulte la page Contact pour la carte et l’accès en bus (ligne 15)." },
       { question: "Quels sont les horaires d'ouverture ?", answer: "Les créneaux publics évoluent chaque saison ; on les met à jour sur les pages Accueil, Adhérer et Contact. Pense à vérifier avant de te déplacer." },
       { question: "Comment soutenir financièrement le projet ?", answer: "En adhérant, en faisant un don ponctuel, ou en devenant partenaire. Écris-nous pour en discuter." },
       { question: "J'ai une question administrative, qui contacter ?", answer: "Utilise le formulaire de contact (catégorie 'Question générale') ou écris à contact@lecircographe.fr ; l'équipe bénévole te répondra rapidement." }
