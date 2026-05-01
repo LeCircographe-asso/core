@@ -21,18 +21,23 @@ RSpec.describe People::ContributionUpgrader do
       it 'upgrades subscription and returns payment info' do
         contribution # ensure existing pack
 
-        result = described_class.new(
-          person: person,
-          from_contribution_id: person.contributions.first.id,
-          to_formula_id: to_plan.id,
-          payment_method: 'cash',
-          recorded_by_id: admin_user.id
-        ).call
+        result = nil
+        expect do
+          result = described_class.new(
+            person: person,
+            from_contribution_id: person.contributions.first.id,
+            to_formula_id: to_plan.id,
+            payment_method: 'cash',
+            recorded_by_id: admin_user.id
+          ).call
+        end.to change(Payment, :count).by(1)
 
         expect(result.success?).to be(true)
         expect(result.new_contribution).to be_present
         expect(result.payment).to be_present
         expect(result.credit_applied).to be >= 0
+        expect(result.payment.payment_lines.sum(:amount_cents)).to eq(result.payment.total_cents)
+        expect(result.payment.payment_lines.pluck(:item_type).uniq).to eq([ "Contribution" ])
       end
 
       it 'fires instrumentation' do
@@ -86,7 +91,7 @@ RSpec.describe People::ContributionUpgrader do
         ).call
 
         expect(result.success?).to be(false)
-        expect(result.message).to include('Record not found')
+        expect(result.message).to include(I18n.t("services.errors.record_not_found", message: ""))
       end
 
       it 'fails when to_plan not found' do
@@ -101,7 +106,7 @@ RSpec.describe People::ContributionUpgrader do
         ).call
 
         expect(result.success?).to be(false)
-        expect(result.message).to include('Record not found')
+        expect(result.message).to include(I18n.t("services.errors.record_not_found", message: ""))
       end
     end
   end

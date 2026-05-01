@@ -43,13 +43,13 @@ module People
         new_contribution: result[:new_contribution],
         payment: result[:payment],
         credit_applied: result[:credit_applied] || 0,
-        message: "Contribution upgraded successfully"
+        message: I18n.t("services.success.contribution_upgraded")
       )
     rescue ActiveRecord::RecordNotFound => e
-      failure("Record not found: #{e.message}")
+      failure(I18n.t("services.errors.record_not_found", message: e.message))
     rescue StandardError => e
       Rails.logger.error("[People::ContributionUpgrader] #{e.class}: #{e.message}\n#{e.backtrace.take(5).join("\n")}")
-      failure("Error upgrading contribution: #{e.message}")
+      failure(I18n.t("services.errors.unexpected_error", action: "contribution upgrade", message: e.message))
     end
 
     private

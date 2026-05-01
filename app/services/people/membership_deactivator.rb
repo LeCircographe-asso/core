@@ -24,7 +24,7 @@ module People
       target_membership = membership || Membership.find(membership_id)
       user = resolve_user
 
-      return failure("Insufficient permissions to deactivate this membership") unless can_deactivate?(user)
+      return failure(I18n.t("services.errors.insufficient_permissions.membership_deactivate")) unless can_deactivate?(user)
 
       ActiveRecord::Base.transaction do
         target_membership.update!(status: :inactive)
@@ -33,16 +33,16 @@ module People
           success?: true,
           membership: target_membership,
           errors: [],
-          message: "Membership deactivated successfully"
+          message: I18n.t("services.success.membership_deactivated")
         )
       end
     rescue ActiveRecord::RecordNotFound => e
-      failure("Record not found: #{e.message}")
+      failure(I18n.t("services.errors.record_not_found", message: e.message))
     rescue ActiveRecord::RecordInvalid => e
-      failure("Validation error: #{e.message}")
+      failure(I18n.t("services.errors.validation_error", message: e.message))
     rescue StandardError => e
       Rails.logger.error("[People::MembershipDeactivator] #{e.class}: #{e.message}\n#{e.backtrace.take(5).join("\n")}")
-      failure("Error deactivating membership: #{e.message}")
+      failure(I18n.t("services.errors.unexpected_error", action: "membership deactivation", message: e.message))
     end
 
     private
