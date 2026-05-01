@@ -66,7 +66,6 @@
         <span class="block text-gray-600">Tarif réduit : 7 € / an (sur justificatif).</span>
         <span class="block text-gray-600">Chaque adhésion est valable de date à date.</span>
       </li>
-      <li><strong class="text-gray-800">Adhésion soutien :</strong> 20 € / an – pour contribuer davantage à l'autogestion et accompagner nos projets.</li>
     </ul>
     <p class="text-sm text-gray-500 bg-[#1F5C55]/10 border border-[#1F5C55]/20 rounded-2xl px-4 py-3">Le paiement se fait sur place (CB ou espèces). Un reçu fiscal peut être remis sur demande.</p>
   </article>
@@ -78,34 +77,19 @@
     <ul class="space-y-2 text-gray-600">
       <li><strong class="text-gray-800">Séance libre :</strong> 4 € la journée pour profiter d’un créneau d’entraînement.</li>
       <li><strong class="text-gray-800">Carnet 10 séances :</strong> 30 € pour venir quand tu veux et partager l’espace en toute autonomie.</li>
-      <li><strong class="text-gray-800">Trimestre (3 mois) :</strong> 65 € pour t’installer durablement dans la dynamique de la salle.</li>
-      <li><strong class="text-gray-800">Cotisation annuelle « super soutiens » :</strong> 120 € pour accompagner l’autogestion sur la durée.</li>
+      <li><strong class="text-gray-800">Trimestre (3 mois) :</strong> 60 € pour t’installer durablement dans la dynamique de la salle.</li>
+      <li><strong class="text-gray-800">Cotisation annuelle :</strong> 120 € pour accompagner l’autogestion sur la durée.</li>
     </ul>
     <p class="text-gray-600">Tu peux t’impliquer selon tes disponibilités : accueil, maintenance, communication… l’équipe bénévole t’aide à trouver ta place et à rester branché·e sur la communauté.</p>
   </article>
 </section>
 
-<section class="bg-white/95 rounded-[28px] shadow-lg p-6 sm:p-8 mt-10 fade-in">
-  <header class="text-center space-y-3 mb-6">
-    <p class="text-sm uppercase tracking-[0.3em] text-[#1F5C55]/70">S'impliquer au quotidien</p>
-    <h2 class="text-2xl font-semibold text-gray-800">Bénévolat et vie associative</h2>
-    <p class="text-gray-600 max-w-3xl mx-auto">Au Circographe, chaque adhésion se prolonge par une participation active : l’autogestion repose sur les bénévoles qui accueillent, maintiennent et imaginent les projets du lieu.</p>
-  </header>
-  <div class="grid gap-6 md:grid-cols-3">
-    <article class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 transition-transform duration-300 hover:-translate-y-1">
-      <h3 class="text-lg font-semibold text-gray-800 mb-2">Accueil & convivialité</h3>
-      <p class="text-gray-600">Tenir un créneau, présenter les règles du lieu et s’assurer que tout le monde se sente bienvenu·e.</p>
-    </article>
-    <article class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 transition-transform duration-300 hover:-translate-y-1">
-      <h3 class="text-lg font-semibold text-gray-800 mb-2">Technique & maintenance</h3>
-      <p class="text-gray-600">Installer ou régler un agrès, bricoler un équipement, maintenir l’espace propre et sécurisé.</p>
-    </article>
-    <article class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 transition-transform duration-300 hover:-translate-y-1">
-      <h3 class="text-lg font-semibold text-gray-800 mb-2">Communication & projets</h3>
-      <p class="text-gray-600">Partager les actualités, documenter la vie du lieu, impulser des événements qui relient cirque et arts graphiques.</p>
-    </article>
-  </div>
-  <p class="mt-6 text-center text-sm text-gray-500">Pour te proposer, passe sur un créneau d’ouverture ou contacte-nous via le <%= link_to "formulaire de contact", page_path('contact_us'), class: "text-[#1F5C55] underline" %>.</p>
+<section class="bg-white/95 rounded-[28px] shadow-lg p-6 sm:p-8 mt-10 fade-in text-center space-y-3">
+  <p class="text-sm uppercase tracking-[0.3em] text-[#1F5C55]/70">S'impliquer au quotidien</p>
+  <h2 class="text-2xl font-semibold text-gray-800">Bénévolat et vie associative</h2>
+  <p class="text-gray-600 max-w-3xl mx-auto">Chaque adhésion se prolonge par une participation active : accueil, technique, communication. Tout est expliqué sur la page Association.</p>
+  <%= link_to "Découvrir l'autogestion & le bénévolat", page_path("association", anchor: "fonctionnement"),
+              class: "inline-flex items-center justify-center px-6 py-3 text-sm font-semibold text-white bg-[#1F5C55] border border-[#1F5C55] rounded-full shadow-md hover:bg-white hover:text-[#1F5C55] transition-colors duration-300" %>
 </section>
 <section class="mt-10 fade-in">
   <%= render "shared/faq_section", id: "adhesion-faq", label: "Questions fréquentes", title: "Avant de te déplacer", subtitle: "Quelques repères supplémentaires pour préparer ton adhésion.", faqs: @adhesion_faqs, footer: "Besoin d'un coup de main ? Contacte-nous en amont ou passe pendant un créneau d'ouverture." %>
@@ -120,11 +104,10 @@
 
   <article class="bg-white/95 rounded-[28px] shadow-lg p-6 sm:p-8 space-y-4">
     <p class="text-sm uppercase tracking-[0.3em] text-[#1F5C55]/70">Nous trouver</p>
-    <h2 class="text-2xl font-semibold text-gray-800">Le Circographe sur la carte</h2>
-    <div class="rounded-2xl overflow-hidden border border-gray-200 shadow-inner">
-      <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d858.7320762106817!2d1.422364267936696!3d43.618639564522674!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x12aebb1b7b5096ef%3A0x710f3096ea206f0!2sLe%20Circographe!5e0!3m2!1sfr!2sfr!4v1745437455061!5m2!1sfr!2sfr" width="100%" height="300" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
-    </div>
-    <p class="text-sm text-gray-500">27 bis allée Maurice Sarraut – 31300 Toulouse • Tram T1/T2 – Arrêt Cartoucherie.</p>
+    <h2 class="text-2xl font-semibold text-gray-800">27 bis allée Maurice Sarraut – 31300 Toulouse</h2>
+    <p class="text-gray-600">Tram T1/T2 – Arrêt Cartoucherie.</p>
+    <%= link_to "Voir la carte et l'accès", page_path("contact_us", anchor: "map"),
+                class: "inline-flex items-center gap-2 text-sm font-semibold text-[#1F5C55] hover:text-[#15403c] transition-colors" %>
   </article>
 </section>
 
