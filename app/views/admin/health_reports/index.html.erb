@@ -11,7 +11,7 @@
       </div>
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-8 gap-4 mb-6">
       <div class="bg-white rounded-lg shadow p-4 border border-gray-200">
         <p class="text-sm text-gray-600">Utilisateurs sans Person</p>
         <p class="text-2xl font-bold text-gray-900"><%= @users_without_person_count %></p>
@@ -27,6 +27,22 @@
       <div class="bg-white rounded-lg shadow p-4 border border-gray-200">
         <p class="text-sm text-gray-600">Doublons telephone</p>
         <p class="text-2xl font-bold text-gray-900"><%= @duplicate_people_by_phone_count %></p>
+      </div>
+      <div class="bg-white rounded-lg shadow p-4 border border-gray-200">
+        <p class="text-sm text-gray-600">Paiements sans ligne</p>
+        <p class="text-2xl font-bold text-gray-900"><%= @payments_without_lines_count %></p>
+      </div>
+      <div class="bg-white rounded-lg shadow p-4 border border-gray-200">
+        <p class="text-sm text-gray-600">Totaux incoherents</p>
+        <p class="text-2xl font-bold text-gray-900"><%= @payments_with_mismatched_totals_count %></p>
+      </div>
+      <div class="bg-white rounded-lg shadow p-4 border border-gray-200">
+        <p class="text-sm text-gray-600">Lignes don legacy</p>
+        <p class="text-2xl font-bold text-gray-900"><%= @legacy_donation_lines_count %></p>
+      </div>
+      <div class="bg-white rounded-lg shadow p-4 border border-gray-200">
+        <p class="text-sm text-gray-600">Cotisations incoherentes</p>
+        <p class="text-2xl font-bold text-gray-900"><%= @contribution_invariant_issues_count %></p>
       </div>
     </div>
 
@@ -174,6 +190,173 @@
         <% end %>
       <% else %>
         <p class="text-sm text-gray-600">Aucun paiement orphelin detecte.</p>
+      <% end %>
+    </div>
+
+    <div class="bg-white rounded-lg shadow p-6 border border-gray-200 mt-6">
+      <h2 class="text-lg font-semibold text-gray-900 mb-3">Paiements sans ligne</h2>
+      <% if @payments_without_lines.any? %>
+        <div class="overflow-x-auto">
+          <table class="min-w-full text-sm">
+            <thead>
+              <tr class="text-left text-gray-600">
+                <th class="py-2">ID</th>
+                <th class="py-2">Person</th>
+                <th class="py-2">Montant</th>
+                <th class="py-2">Statut</th>
+                <th class="py-2">Cree le</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-200">
+              <% @payments_without_lines.each do |payment| %>
+                <tr>
+                  <td class="py-2 font-medium text-gray-900"><%= payment.id %></td>
+                  <td class="py-2">
+                    <% if payment.person.present? %>
+                      <%= link_to payment.person.full_name, admin_user_path(Admin::Users::PersonRouteKey.call(payment.person)), class: "text-[#1F5C55] hover:underline" %>
+                    <% else %>
+                      -
+                    <% end %>
+                  </td>
+                  <td class="py-2"><%= payment.total_euros %>€</td>
+                  <td class="py-2"><%= payment.status_humanized %></td>
+                  <td class="py-2"><%= l(payment.created_at.to_date) %></td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+        <% if @payments_without_lines_count > @payments_without_lines.size %>
+          <p class="text-xs text-gray-500 mt-2">Liste limitee a <%= @list_limit %> elements.</p>
+        <% end %>
+      <% else %>
+        <p class="text-sm text-gray-600">Aucun paiement sans ligne detecte.</p>
+      <% end %>
+    </div>
+
+    <div class="bg-white rounded-lg shadow p-6 border border-gray-200 mt-6">
+      <h2 class="text-lg font-semibold text-gray-900 mb-3">Paiements dont le total ne correspond pas aux lignes</h2>
+      <% if @payments_with_mismatched_totals.any? %>
+        <div class="overflow-x-auto">
+          <table class="min-w-full text-sm">
+            <thead>
+              <tr class="text-left text-gray-600">
+                <th class="py-2">ID</th>
+                <th class="py-2">Person</th>
+                <th class="py-2">Total paiement</th>
+                <th class="py-2">Somme lignes</th>
+                <th class="py-2">Nb lignes</th>
+                <th class="py-2">Cree le</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-200">
+              <% @payments_with_mismatched_totals.each do |payment| %>
+                <tr>
+                  <td class="py-2 font-medium text-gray-900"><%= payment.id %></td>
+                  <td class="py-2">
+                    <% if payment.person.present? %>
+                      <%= link_to payment.person.full_name, admin_user_path(Admin::Users::PersonRouteKey.call(payment.person)), class: "text-[#1F5C55] hover:underline" %>
+                    <% else %>
+                      -
+                    <% end %>
+                  </td>
+                  <td class="py-2"><%= payment.total_euros %>€</td>
+                  <td class="py-2"><%= payment[:lines_total_cents].to_i / 100.0 %>€</td>
+                  <td class="py-2"><%= payment[:payment_lines_count].to_i %></td>
+                  <td class="py-2"><%= l(payment.created_at.to_date) %></td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+        <% if @payments_with_mismatched_totals_count > @payments_with_mismatched_totals.size %>
+          <p class="text-xs text-gray-500 mt-2">Liste limitee a <%= @list_limit %> elements.</p>
+        <% end %>
+      <% else %>
+        <p class="text-sm text-gray-600">Aucun paiement avec total incoherent detecte.</p>
+      <% end %>
+    </div>
+
+    <div class="bg-white rounded-lg shadow p-6 border border-gray-200 mt-6">
+      <h2 class="text-lg font-semibold text-gray-900 mb-3">Lignes de don legacy</h2>
+      <% if @legacy_donation_lines.any? %>
+        <div class="overflow-x-auto">
+          <table class="min-w-full text-sm">
+            <thead>
+              <tr class="text-left text-gray-600">
+                <th class="py-2">Ligne</th>
+                <th class="py-2">Paiement</th>
+                <th class="py-2">Person</th>
+                <th class="py-2">Description</th>
+                <th class="py-2">Montant</th>
+                <th class="py-2">Cree le</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-200">
+              <% @legacy_donation_lines.each do |line| %>
+                <tr>
+                  <td class="py-2 font-medium text-gray-900"><%= line.id %></td>
+                  <td class="py-2 text-gray-900"><%= line.payment_id %></td>
+                  <td class="py-2">
+                    <% if line.payment&.person.present? %>
+                      <%= link_to line.payment.person.full_name, admin_user_path(Admin::Users::PersonRouteKey.call(line.payment.person)), class: "text-[#1F5C55] hover:underline" %>
+                    <% else %>
+                      -
+                    <% end %>
+                  </td>
+                  <td class="py-2"><%= line.description.presence || "-" %></td>
+                  <td class="py-2"><%= line.amount_euros %>€</td>
+                  <td class="py-2"><%= l(line.created_at.to_date) %></td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+        <% if @legacy_donation_lines_count > @legacy_donation_lines.size %>
+          <p class="text-xs text-gray-500 mt-2">Liste limitee a <%= @list_limit %> elements.</p>
+        <% end %>
+      <% else %>
+        <p class="text-sm text-gray-600">Aucune ligne de don legacy detectee.</p>
+      <% end %>
+    </div>
+
+    <div class="bg-white rounded-lg shadow p-6 border border-gray-200 mt-6">
+      <h2 class="text-lg font-semibold text-gray-900 mb-3">Cotisations incoherentes</h2>
+      <% if @contribution_invariant_issues.any? %>
+        <div class="overflow-x-auto">
+          <table class="min-w-full text-sm">
+            <thead>
+              <tr class="text-left text-gray-600">
+                <th class="py-2">ID</th>
+                <th class="py-2">Person</th>
+                <th class="py-2">Formule</th>
+                <th class="py-2">Sessions</th>
+                <th class="py-2">Expire le</th>
+                <th class="py-2">Anomalie</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-200">
+              <% @contribution_invariant_issues.each do |issue| %>
+                <% contribution = issue.contribution %>
+                <tr>
+                  <td class="py-2 font-medium text-gray-900"><%= contribution.id %></td>
+                  <td class="py-2">
+                    <%= link_to contribution.person.full_name, admin_user_path(Admin::Users::PersonRouteKey.call(contribution.person)), class: "text-[#1F5C55] hover:underline" %>
+                  </td>
+                  <td class="py-2"><%= contribution.contribution_formula.name %></td>
+                  <td class="py-2"><%= contribution.sessions_remaining.nil? ? "-" : contribution.sessions_remaining %></td>
+                  <td class="py-2"><%= contribution.expires_at.present? ? l(contribution.expires_at.to_date) : "-" %></td>
+                  <td class="py-2 text-red-700"><%= issue.message %></td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+        <% if @contribution_invariant_issues_count > @contribution_invariant_issues.size %>
+          <p class="text-xs text-gray-500 mt-2">Liste limitee a <%= @list_limit %> elements.</p>
+        <% end %>
+      <% else %>
+        <p class="text-sm text-gray-600">Aucune cotisation incoherente detectee.</p>
       <% end %>
     </div>
   </div>
