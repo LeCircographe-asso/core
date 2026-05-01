@@ -11,11 +11,12 @@
         <p class="text-xs text-gray-500 mb-2"><%= plan.duration_humanized %></p>
         <div class="text-lg font-bold text-[#1F5C55] mb-2"><%= plan.price_euros %>€</div>
         
-        <%= form_with url: admin_subscription_plans_path, 
+        <%= form_with url: admin_contribution_formulas_path, 
                       method: :post, 
+                      scope: :contribution_formula,
                       data: { turbo_stream: true },
                       class: "space-y-2" do |form| %>
-          <%= form.hidden_field :subscription_plan_id, value: plan.id %>
+          <%= form.hidden_field :contribution_formula_id, value: plan.id %>
           <%= form.hidden_field :person_id, value: person.id %>
           <%= form.hidden_field :record_attendance, value: true %>
           <%= form.hidden_field :attendance_date, value: date %>
