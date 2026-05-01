@@ -52,15 +52,12 @@
             Découvrir l'autogestion & le bénévolat
           <% end %>
         </div>
-      <section class="bg-white/95 rounded-[28px] shadow-lg p-6 sm:p-8 space-y-4" aria-labelledby="find-us">
-        <header class="text-center space-y-2">
-          <p class="text-sm uppercase tracking-[0.3em] text-brand-primary/70">Nous trouver</p>
-          <h2 id="find-us" class="text-2xl font-semibold text-gray-800">Le Circographe sur la carte</h2>
-          <p class="text-gray-600 max-w-2xl mx-auto">Chapiteau, ateliers graphiques et convivialité : pousse la porte au 27 bis Allée Maurice Sarraut, Toulouse.</p>
-        </header>
-        <div class="rounded-2xl overflow-hidden border border-gray-200 shadow-inner">
-          <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d858.7320762106817!2d1.422364267936696!3d43.618639564522674!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x12aebb1b7b5096ef%3A0x710f3096ea206f0!2sLe%20Circographe!5e0!3m2!1sfr!2sfr!4v1745437455061!5m2!1sfr!2sfr" width="100%" height="340" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
-        </div>
+      <section class="bg-white/95 rounded-[28px] shadow-lg p-6 sm:p-8 space-y-4 text-center" aria-labelledby="find-us">
+        <p class="text-sm uppercase tracking-[0.3em] text-brand-primary/70">Nous trouver</p>
+        <h2 id="find-us" class="text-2xl font-semibold text-gray-800">27 bis Allée Maurice Sarraut, Toulouse</h2>
+        <p class="text-gray-600 max-w-2xl mx-auto">Chapiteau, ateliers graphiques et convivialité — pousse la porte à la Cartoucherie.</p>
+        <%= link_to "Voir la carte et l'accès", page_path("contact_us", anchor: "map"),
+                    class: "inline-flex items-center justify-center px-6 py-3 text-sm font-semibold text-white bg-[#1F5C55] border border-[#1F5C55] rounded-full shadow-md hover:bg-white hover:text-[#1F5C55] transition-colors duration-300" %>
       </section>
     </div>
   </section>

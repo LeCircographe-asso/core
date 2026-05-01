@@ -71,7 +71,7 @@ class PagesController < ApplicationController
   def adhesion_faq_entries
     [
       { question: "Puis-je adhérer en ligne ?", answer: "L'inscription se fait uniquement sur place afin de te présenter le lieu et les règles d'autogestion." },
-      { question: "Quels moyens de paiement acceptez-vous ?", answer: "Carte bancaire et espèces. Une adhésion de soutien peut également être effectuée par virement sur demande." },
+      { question: "Quels moyens de paiement acceptez-vous ?", answer: "Carte bancaire et espèces, sur place." },
       { question: "Faut-il être autonome pour les entraînements libres ?", answer: "Oui, les créneaux libres s'adressent aux pratiquant·es autonomes. Pour débuter, on peut te recommander des écoles partenaires." },
       { question: "Puis-je proposer un atelier ou un événement ?", answer: "Tout est possible ! Passe nous voir avec ton idée, on regardera ensemble comment l'inscrire dans la programmation." }
     ]
@@ -81,8 +81,8 @@ class PagesController < ApplicationController
     [
       { question: "Où se situe le Circographe ?", answer: "Au 27 bis allée Maurice Sarraut, Toulouse — dans le quartier de la Cartoucherie. Consulte la page Contact pour la carte et l'accès." },
       { question: "Quels sont les horaires d'ouverture ?", answer: "Les créneaux publics évoluent chaque saison ; on les met à jour sur les pages Accueil, Adhérer et Contact. Pense à vérifier avant de te déplacer." },
-      { question: "Comment soutenir financièrement le projet ?", answer: "En adhérant, en souscrivant à l'adhésion soutien ou en faisant un don ponctuel. Écris-nous si tu souhaites devenir partenaire." },
-      { question: "J'ai une question administrative, qui contacter ?", answer: "Utilise le formulaire de contact (catégorie 'Question générale') ou écris à contact@circographe.fr ; l'équipe bénévole te répondra rapidement." }
+      { question: "Comment soutenir financièrement le projet ?", answer: "En adhérant, en faisant un don ponctuel, ou en devenant partenaire. Écris-nous pour en discuter." },
+      { question: "J'ai une question administrative, qui contacter ?", answer: "Utilise le formulaire de contact (catégorie 'Question générale') ou écris à contact@lecircographe.fr ; l'équipe bénévole te répondra rapidement." }
     ]
   end
 

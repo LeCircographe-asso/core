@@ -73,13 +73,10 @@
     <%= render "pages/contact/faq", faqs: @faqs %>
 
     <%= turbo_frame_tag "map" do %>
-      <article class="bg-white/95 rounded-[28px] shadow-lg p-6 sm:p-8 space-y-4">
+      <article id="map" class="bg-white/95 rounded-[28px] shadow-lg p-6 sm:p-8 space-y-4">
         <p class="text-sm uppercase tracking-[0.3em] text-[#1F5C55]/70">Nous trouver</p>
         <h2 class="text-2xl font-semibold text-gray-800">Le Circographe sur la carte</h2>
-        <div class="rounded-2xl overflow-hidden border border-gray-200 shadow-inner">
-          <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d858.7320762106817!2d1.422364267936696!3d43.618639564522674!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x12aebb1b7b5096ef%3A0x710f3096ea206f0!2sLe%20Circographe!5e0!3m2!1sfr!2sfr!4v1745437455061!5m2!1sfr!2sfr" width="100%" height="320" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
-        </div>
-        <p class="text-sm text-gray-500">Tram T1/T2 – Arrêt Cartoucherie • Bus L2/L9 – Arrêt Cartoucherie</p>
+        <%= render "shared/map_embed", height: 320 %>
       </article>
     <% end %>
   </div>
