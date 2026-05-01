@@ -30,15 +30,15 @@ module UserManagement
 
           user_updated = user_attrs.empty? || user.update(user_attrs)
 
-          # Mettre à jour Person si présente
+          # Mettre à jour Person si présente (tester person_attributes en premier pour éviter un load Person inutile)
           person_updated = true
-          if user.person.present? && person_attributes.present?
+          if person_attributes.present? && user.person.present?
             user.person.skip_membership_validation = true
             person_updated = user.person.update(person_attributes.except(:newsletter_subscribed))
           end
 
-          # Gérer newsletter si nécessaire
-          if person_updated && user.person.present? && !newsletter_subscribed.nil?
+          # Gérer newsletter si nécessaire (nil d'abord pour ne pas charger Person quand la clé était absente de la requête)
+          if person_updated && !newsletter_subscribed.nil? && user.person.present?
             newsletter_result = update_newsletter(user.person)
             return failure("Error updating newsletter: #{newsletter_result.message}") unless newsletter_result.success?
           end

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_04_30_204500) do
+ActiveRecord::Schema[8.1].define(version: 2026_05_01_130000) do
   create_table "account_claims", force: :cascade do |t|
     t.string "confirmation_token", null: false
     t.datetime "created_at", null: false
@@ -356,10 +356,13 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_30_204500) do
     t.boolean "deleted", default: false
     t.datetime "deleted_at"
     t.string "email_address"
+    t.string "email_change_code_digest"
+    t.datetime "email_change_code_sent_at"
     t.string "password_digest", null: false
     t.datetime "password_reset_sent_at"
     t.string "password_reset_token"
     t.string "password_salt"
+    t.string "pending_email_address"
     t.bigint "person_id", null: false
     t.integer "system_role", default: 3, null: false
     t.datetime "updated_at", null: false

@@ -15,12 +15,7 @@
         wrapper_classes: "max-w-none mb-0" %>
   </section>
 
-  <div class="grid grid-cols-1 xl:grid-cols-2 gap-6">
+  <div class="grid grid-cols-1 gap-6">
     <%= render "users/contact_section", user: @user, frame_id: ProfileSectionDomIds::CONTACT_SECTION %>
-    <%= render "settings/account_section",
-        user: @user,
-        frame_id: ProfileSectionDomIds::ACCOUNT_SECTION,
-        embedded: true,
-        compact: true %>
   </div>
 </div>

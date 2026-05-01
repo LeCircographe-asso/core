@@ -37,6 +37,18 @@ class UserMailer < ApplicationMailer
     )
   end
 
+  def email_change_verification(user, new_email, code)
+    @user = user
+    @new_email = new_email
+    @code = code
+    @ttl_minutes = (User::EMAIL_CHANGE_CODE_TTL / 60).to_i
+
+    mail(
+      to: @new_email,
+      subject: I18n.t("mailers.user_mailer.email_change_verification.subject")
+    )
+  end
+
   private
 
   def contact_category_label(category)

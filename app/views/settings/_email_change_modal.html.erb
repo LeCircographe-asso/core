@@ -1,0 +1,106 @@
+<%# locals: embedded:, frame_id: %>
+<div data-email-change-modal-target="panel"
+     class="hidden fixed inset-0 z-[130] flex items-center justify-center px-4 py-8"
+     role="dialog"
+     aria-modal="true"
+     aria-labelledby="email-change-modal-title">
+  <div class="absolute inset-0 bg-gray-900/60"
+       tabindex="-1"
+       data-action="click->email-change-modal#close"></div>
+
+  <div class="relative z-10 w-full max-w-lg rounded-2xl bg-white shadow-2xl ring-1 ring-gray-200 max-h-[90vh] overflow-y-auto"
+       data-action="click->email-change-modal#stopPropagation">
+    <div class="px-6 py-5 border-b border-gray-100 flex items-start justify-between gap-3">
+      <h2 id="email-change-modal-title" class="text-lg font-semibold text-gray-900 pr-2">
+        <%= t("settings.show.email_change_modal_title") %>
+      </h2>
+      <button type="button"
+              class="shrink-0 rounded-full p-1.5 text-gray-500 hover:bg-gray-100 hover:text-gray-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1F5C55]"
+              data-action="click->email-change-modal#close"
+              aria-label="<%= t("settings.show.email_change_close") %>">
+        <span class="text-xl leading-none" aria-hidden="true">&times;</span>
+      </button>
+    </div>
+
+    <div class="px-6 py-5 space-y-4">
+      <p class="text-sm text-gray-600 leading-relaxed">
+        <%= t("settings.show.email_change_modal_intro") %>
+      </p>
+
+      <p data-email-change-modal-target="error"
+         class="hidden text-sm text-red-600"
+         role="alert"></p>
+
+      <%= form_with scope: :user, url: settings_path, method: :patch,
+          html: {
+            id: "email-change-modal-form",
+            data: {
+              email_change_modal_target: "form",
+              turbo_frame: frame_id
+            },
+            class: "space-y-4"
+          } do |f| %>
+        <%= hidden_field_tag :ui_context, embedded ? "profile" : "settings" %>
+        <div class="space-y-3">
+          <div>
+            <%= f.label :email_address, t("settings.show.field_email"), class: "block text-sm font-medium text-gray-700 mb-1" %>
+            <%= f.email_field :email_address,
+                value: "",
+                autocomplete: "email",
+                data: { email_change_modal_target: "email" },
+                class: "block w-full rounded-lg border-gray-300 shadow-sm text-sm focus:border-[#1F5C55] focus:ring-[#1F5C55]",
+                placeholder: t("settings.show.email_change_placeholder") %>
+          </div>
+          <div>
+            <%= label_tag :email_change_confirm, t("settings.show.email_change_confirm_field"), class: "block text-sm font-medium text-gray-700 mb-1" %>
+            <%= email_field_tag :email_confirm, "",
+                id: "email_change_confirm",
+                autocomplete: "off",
+                data: { email_change_modal_target: "emailConfirm" },
+                class: "block w-full rounded-lg border-gray-300 shadow-sm text-sm focus:border-[#1F5C55] focus:ring-[#1F5C55]",
+                placeholder: t("settings.show.email_change_placeholder") %>
+          </div>
+          <div class="rounded-lg border border-dashed border-gray-200 bg-gray-50 px-3 py-3 space-y-2">
+            <label class="block text-xs font-medium text-gray-500">
+              <%= t("settings.show.email_change_code_label") %>
+            </label>
+            <%= text_field_tag :email_verification_code, "",
+                maxlength: 6,
+                autocomplete: "one-time-code",
+                data: { email_change_modal_target: "code" },
+                class: "block w-full rounded-md border-gray-300 bg-white text-sm text-gray-900 uppercase tracking-[0.25em] focus:border-[#1F5C55] focus:ring-[#1F5C55]",
+                placeholder: "123456" %>
+            <p class="text-xs text-gray-500 leading-snug">
+              <%= t("settings.show.email_change_code_hint") %>
+            </p>
+          </div>
+          <% if current_user.pending_email_address.present? %>
+            <p class="text-xs text-amber-700 bg-amber-50 border border-amber-200 rounded-md px-3 py-2">
+              <%= t("settings.show.email_change_pending_notice", email: current_user.pending_email_address) %>
+            </p>
+          <% end %>
+        </div>
+
+        <div class="flex flex-col-reverse sm:flex-row sm:justify-end gap-3 pt-2">
+          <button type="button"
+                  class="inline-flex justify-center rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-gray-400"
+                  data-action="click->email-change-modal#close">
+            <%= t("users.space.cancel") %>
+          </button>
+          <button type="submit"
+                  class="inline-flex justify-center rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-gray-400"
+                  name="email_change_intent"
+                  value="request_code">
+            <%= t("settings.show.email_change_send_code") %>
+          </button>
+          <button type="submit"
+                  class="inline-flex justify-center rounded-lg border border-transparent bg-[#1F5C55] px-4 py-2 text-sm font-medium text-white hover:bg-[#1F5C55]/90 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[#1F5C55]"
+                  name="email_change_intent"
+                  value="confirm_code">
+            <%= t("settings.show.email_change_confirm_code") %>
+          </button>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>

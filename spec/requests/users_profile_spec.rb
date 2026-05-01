@@ -14,7 +14,7 @@ RSpec.describe "User profile (users#show)", type: :request do
       expect(response).to have_http_status(:ok)
       expect(response.body).to include('id="overview"')
       expect(response.body).to include('id="contact"')
-      expect(response.body).to include('id="account"')
+      expect(response.body).not_to include('id="account"')
       expect(response.body).to include(page_path("faq"))
       expect(response.body).to include("Adhérer")
       expect(response.body).to include(page_path("become_member"))

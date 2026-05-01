@@ -66,5 +66,91 @@ RSpec.describe "Settings", type: :request do
       expect(response.body).to include(%(target="#{ProfileSectionDomIds::ACCOUNT_SECTION}"))
       expect(response.body).to include(%(target="#{ProfileSectionDomIds::FLASH_FRAME}"))
     end
+
+    it "updates email only when only email_address is submitted (dedicated flow)" do
+      new_email = "new-email-#{user.id}@example.com"
+
+      patch settings_path, params: { user: { email_address: new_email } }
+
+      expect(response).to redirect_to(settings_path)
+      expect(user.reload.email_address).to eq(new_email)
+    end
+
+    it "returns turbo-stream when updating email only from profile context" do
+      new_email = "profile-email-#{user.id}@example.com"
+
+      patch settings_path,
+            params: {
+              ui_context: "profile",
+              user: { email_address: new_email }
+            },
+            headers: { "Accept" => Mime[:turbo_stream].to_s }
+
+      expect(response).to have_http_status(:ok)
+      expect(response.media_type).to eq(Mime[:turbo_stream])
+      expect(user.reload.email_address).to eq(new_email)
+    end
+
+    it "sends a verification code when requesting an email change" do
+      ActionMailer::Base.deliveries.clear
+      new_email = "verify-email-#{user.id}@example.com"
+
+      patch settings_path,
+            params: {
+              ui_context: "profile",
+              email_confirm: new_email,
+              user: { email_address: new_email }
+            },
+            headers: { "Accept" => Mime[:turbo_stream].to_s }
+
+      expect(response).to have_http_status(:ok)
+      expect(user.reload.email_address).not_to eq(new_email)
+      expect(user.pending_email_address).to eq(new_email)
+      expect(user.email_change_code_digest).to be_present
+      expect(user.email_change_code_sent_at).to be_present
+      expect(ActionMailer::Base.deliveries.last&.to).to include(new_email)
+    end
+
+    it "updates the email only after a valid verification code" do
+      new_email = "verified-final-#{user.id}@example.com"
+      user.store_email_change_request!(new_email: new_email, code: "123456")
+
+      patch settings_path,
+            params: {
+              ui_context: "profile",
+              email_confirm: new_email,
+              email_verification_code: "123456",
+              user: { email_address: new_email }
+            },
+            headers: { "Accept" => Mime[:turbo_stream].to_s }
+
+      expect(response).to have_http_status(:ok)
+      expect(user.reload.email_address).to eq(new_email)
+      expect(user.pending_email_address).to be_nil
+      expect(user.email_change_code_digest).to be_nil
+      expect(user.email_change_code_sent_at).to be_nil
+    end
+
+    it "does not alter newsletter subscription when only email is submitted (modal-style payload)" do
+      person = user.person
+      NewsletterSubscriber.where(email: person.email).delete_all
+      subscriber = NewsletterSubscriber.create!(
+        email: person.email,
+        person: person,
+        subscribed: true,
+        source: "authenticated"
+      )
+
+      patch settings_path,
+            params: {
+              ui_context: "profile",
+              email_confirm: "confirm-field-present",
+              user: { email_address: user.email_address }
+            },
+            headers: { "Accept" => Mime[:turbo_stream].to_s }
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(subscriber.reload.subscribed).to be(true)
+    end
   end
 end
