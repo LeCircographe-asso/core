@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class UsersController < ApplicationController
+  include ProfileSectionTurboStreams
+
   # This controller handles user profile management for authenticated users.
   # It allows users to view and edit their profile information and
   # delete their account (GDPR compliance).
@@ -32,10 +34,25 @@ class UsersController < ApplicationController
     result = updater.call
 
     if result.success?
-      redirect_to user_path(@user, anchor: "contact"), notice: t(".coordinates_updated")
+      respond_to do |format|
+        format.turbo_stream do
+          flash.now[:notice] = t(".coordinates_updated")
+          render turbo_stream: profile_contact_section_update_streams(@user)
+        end
+        format.html { redirect_to user_path(@user, anchor: "contact"), notice: t(".coordinates_updated") }
+      end
     else
-      flash.now[:alert] = result.message
-      render :show, status: :unprocessable_content
+      respond_to do |format|
+        format.turbo_stream do
+          flash.now[:alert] = result.message
+          render turbo_stream: profile_contact_section_update_streams(@user),
+                 status: :unprocessable_content
+        end
+        format.html do
+          flash.now[:alert] = result.message
+          render :show, status: :unprocessable_content
+        end
+      end
     end
   end
 

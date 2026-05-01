@@ -285,6 +285,12 @@ fr:
       field_zip: Code postal
       field_town: Ville
       field_country: Pays
+      edit: Modifier
+      cancel: Annuler
+      'yes': Oui
+      'no': Non
+      saving: Enregistrement...
+      unsaved_changes_warning: Vous avez des modifications non enregistrées.
       contact_submit: Enregistrer mes coordonnées
     update:
       profile_updated: Votre profil a été mis à jour avec succès.

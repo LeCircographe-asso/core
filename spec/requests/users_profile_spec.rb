@@ -103,5 +103,24 @@ RSpec.describe "User profile (users#show)", type: :request do
       expect(person_without_membership.town).to eq("Paris")
       expect(person_without_membership.country).to eq("France")
     end
+
+    it "returns turbo-stream replacements for the contact section and flash" do
+      patch user_path(user),
+            params: {
+              user: {
+                phone: "0612345678",
+                address: "1 rue du Cirque",
+                zip_code: "75001",
+                town: "Paris",
+                country: "France"
+              }
+            },
+            headers: { "Accept" => Mime[:turbo_stream].to_s }
+
+      expect(response).to have_http_status(:ok)
+      expect(response.media_type).to eq(Mime[:turbo_stream])
+      expect(response.body).to include(%(target="#{ProfileSectionDomIds::CONTACT_SECTION}"))
+      expect(response.body).to include(%(target="#{ProfileSectionDomIds::FLASH_FRAME}"))
+    end
   end
 end

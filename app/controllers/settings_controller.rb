@@ -1,14 +1,17 @@
 # frozen_string_literal: true
 
 class SettingsController < ApplicationController
+  include ProfileSectionTurboStreams
+
   before_action :require_authentication
 
   def show
-    redirect_to user_path(current_user, anchor: "account"), status: :see_other
+    @user = current_user
   end
 
   def update
     @user = current_user
+    profile_context = params[:ui_context] == "profile"
 
     user_only_params = user_params.slice(:email_address)
     person_params = user_params.except(:email_address)
@@ -25,11 +28,32 @@ class SettingsController < ApplicationController
     result = updater.call
 
     if result.success?
-      flash[:notice] = t(".saved_notice")
-      redirect_to user_path(@user, anchor: "account"), status: :see_other
+      respond_to do |format|
+        format.turbo_stream do
+          flash.now[:notice] = t(".saved_notice")
+          render turbo_stream: profile_account_section_update_streams(
+            @user,
+            embedded: profile_context,
+            compact: profile_context
+          )
+        end
+        format.html { redirect_to settings_path, notice: t(".saved_notice"), status: :see_other }
+      end
     else
-      flash.now[:alert] = result.message
-      render :show, status: :unprocessable_content
+      respond_to do |format|
+        format.turbo_stream do
+          flash.now[:alert] = result.message
+          render turbo_stream: profile_account_section_update_streams(
+            @user,
+            embedded: profile_context,
+            compact: profile_context
+          ), status: :unprocessable_content
+        end
+        format.html do
+          flash.now[:alert] = result.message
+          render :show, status: :unprocessable_content
+        end
+      end
     end
   end
 
