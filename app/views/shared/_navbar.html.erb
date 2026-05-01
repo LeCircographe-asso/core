@@ -1,11 +1,11 @@
 <%= turbo_frame_tag "navigation", target: "_top" do %>
-<nav class="bg-white border-gray-200 sticky top-0 z-50" data-controller="nav-active">
-    <div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto">
+<nav class="bg-white border-gray-200 sticky top-0 z-50 py-2 sm:py-2.5" data-controller="nav-active">
+    <div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto px-4 sm:px-6 lg:px-8 xl:px-10 2xl:px-12 min-[844px]:flex-nowrap min-[844px]:gap-x-3">
         <!-- Logo and profile combined for mobile -->
-        <div class="flex items-center justify-between w-full min-[844px]:w-auto">
+        <div class="flex shrink-0 items-center justify-between w-full min-[844px]:w-auto min-[844px]:justify-start">
             <!-- Logo -->
             <%= link_to root_path, class: "flex items-center space-x-3 rtl:space-x-reverse", data: { 'nav-active-target': 'link', 'nav-active-path': root_path, 'nav-active-active-classes': 'nav-active-link', 'nav-active-starts-with': 'true' } do %>
-            <%= image_tag("logo.webp", alt: "le-circographe Logo", class: "w-40 h-auto") %>
+            <%= image_tag("logo.webp", alt: "le-circographe Logo", class: "w-40 h-auto min-[844px]:w-36 xl:w-40") %>
             <% end %>
 
             <!-- Elements grouped on the right for mobile -->
@@ -27,8 +27,8 @@
         </div>
 
         <!-- Main menu (desktop) -->
-        <div class="hidden min-[844px]:flex flex-grow justify-center items-center mx-4">
-            <ul class="flex flex-row space-x-8 font-medium">
+        <div class="hidden min-[844px]:flex min-w-0 flex-1 justify-center items-center mx-2 xl:mx-5 2xl:mx-6">
+            <ul class="flex flex-row gap-x-4 xl:gap-x-8 2xl:gap-x-10 font-medium text-base 2xl:text-lg whitespace-nowrap">
                 <!-- The association -->
                 <li class="group relative">
                     <%= link_to page_path('association'),
@@ -81,7 +81,7 @@
         </div>
 
         <!-- User buttons (desktop only) -->
-        <div class="hidden min-[844px]:flex items-center min-[844px]:space-x-3">
+        <div class="hidden min-[844px]:flex shrink-0 items-center min-[844px]:space-x-3 min-[844px]:pl-1 xl:pr-3 2xl:pr-5">
             <% if authenticated? && Current.user %>
             <!-- Clickable profile picture -->
             <%= link_to user_path(Current.user), class: "flex mr-3" do %>
