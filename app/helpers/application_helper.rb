@@ -3,6 +3,10 @@
 module ApplicationHelper
   include Pagy::Frontend
 
+  def public_registration_enabled?
+    Rails.application.config.x.public_registration_enabled
+  end
+
   HERO_IMAGE_ASSIGNMENTS_REQUEST_KEY = "_circographe.hero_image_assignments"
   HERO_IMAGE_POOL_REQUEST_KEY = "_circographe.hero_image_pool"
 

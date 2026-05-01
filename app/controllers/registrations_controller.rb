@@ -3,6 +3,8 @@
 class RegistrationsController < ApplicationController
   allow_unauthenticated_access only: %i[new create]
 
+  before_action :ensure_public_registration_enabled!, only: %i[new create]
+
   def new
     redirect_to root_path if authenticated?
     @user = User.new(email_address: session[:newsletter_email])
@@ -54,6 +56,12 @@ class RegistrationsController < ApplicationController
   end
 
   private
+
+  def ensure_public_registration_enabled!
+    return if Rails.application.config.x.public_registration_enabled
+
+    redirect_to root_path, alert: t("registrations.disabled_notice"), status: :see_other
+  end
 
   def user_params
     params.expect(user: %i[email_address password password_confirmation cgu privacy_policy newsletter_subscribed first_name last_name])

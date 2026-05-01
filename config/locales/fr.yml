@@ -211,9 +211,13 @@ fr:
       must_be_signed_in_alert: Vous devez être connecté pour effectuer cette action.
     invalid_token_alert: Le lien de réinitialisation du mot de passe est invalide ou a expiré.
   registrations:
+    disabled_notice: Les inscriptions publiques sont temporairement fermées.
     create:
       success_notice: Inscription réussie !
   sessions:
+    new:
+      sign_up_prompt: Pas encore de compte ? S'inscrire
+      registration_closed_hint: Les inscriptions en ligne sont indisponibles pour le moment. Connectez-vous si vous avez déjà un compte.
     rate_limited_alert: Rééssayez plus tard
     create:
       login_success_notice: Connexion réussie !
@@ -351,6 +355,7 @@ fr:
         logout: Déconnexion
         sign_in: Se connecter
         sign_up: S'inscrire
+        sign_up_disabled_reason: Inscriptions fermées pour le moment (site vitrine).
         association: L'Association
         news: Actualités
         our_news: Nos actualités

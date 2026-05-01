@@ -240,6 +240,7 @@ en:
         logout: Sign out
         sign_in: Sign in
         sign_up: Sign up
+        sign_up_disabled_reason: Sign-up is closed for now (showcase site).
         association: Association
         news: News
         our_news: Our news
@@ -343,9 +344,13 @@ en:
       must_be_signed_in_alert: Vous devez être connecté pour effectuer cette action.
     invalid_token_alert: Le lien de réinitialisation du mot de passe est invalide ou a expiré.
   registrations:
+    disabled_notice: Public sign-up is temporarily disabled.
     create:
       success_notice: Inscription réussie !
   sessions:
+    new:
+      sign_up_prompt: No account yet? Sign up
+      registration_closed_hint: Online sign-up is unavailable for now. Sign in if you already have an account.
     rate_limited_alert: Rééssayez plus tard
     create:
       login_success_notice: Connexion réussie !
