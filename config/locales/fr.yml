@@ -374,6 +374,8 @@ fr:
         blog_newsletters: Blog & Newsletters
         photo_gallery: Galerie Photos
         events: Nos Événements
+      scroll_hint:
+        down_to_main: Descendre au contenu principal
       footer:
         newsletter_cta: Restez informé en souscrivant à notre newsletter
         email_placeholder: Votre Adresse Email

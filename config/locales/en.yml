@@ -248,6 +248,8 @@ en:
         blog_newsletters: Blog & Newsletters
         photo_gallery: Photo gallery
         events: Our Events
+      scroll_hint:
+        down_to_main: Scroll to main content
       footer:
         newsletter_cta: Stay informed by subscribing to our newsletter
         email_placeholder: Your email address
