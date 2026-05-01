@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_05_01_130000) do
+ActiveRecord::Schema[8.1].define(version: 2026_05_01_183000) do
   create_table "account_claims", force: :cascade do |t|
     t.string "confirmation_token", null: false
     t.datetime "created_at", null: false
@@ -306,7 +306,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_01_130000) do
     t.boolean "is_minor", default: false, null: false
     t.string "last_name", null: false
     t.string "member_number"
-    t.boolean "newsletter_subscribed", default: false
     t.string "newsletter_unsubscribe_token"
     t.text "notes"
     t.string "occupation"
