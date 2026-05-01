@@ -79,16 +79,18 @@
              footer: "Besoin d'un coup de main ? Écris-nous ou passe pendant un créneau d'ouverture." %>
 </section>
 
-<%# Horaires pleine largeur, puis bande accès (plus équilibré que deux colonnes) %>
-<section class="mt-6 mb-8 fade-in">
-  <article class="bg-white/95 rounded-[28px] shadow-lg p-5 sm:p-6 lg:p-8 space-y-6">
-    <div class="space-y-3">
+<%# Horaires centrés (lisibilité), bande accès en dessous %>
+<section class="mt-4 mb-8 fade-in" id="horaires">
+  <article class="bg-white/95 rounded-[28px] shadow-lg p-4 sm:p-5 lg:p-6 space-y-4">
+    <div class="text-center space-y-1 max-w-xl mx-auto">
       <p class="text-sm uppercase tracking-[0.3em] text-[#1F5C55]/70">Horaires</p>
       <h2 class="text-xl font-semibold text-gray-800">Créneaux d’accueil</h2>
-      <%= render "shared/opening_hours", horaires: @opening_hours, bare: true %>
+    </div>
+    <div class="max-w-lg mx-auto w-full">
+      <%= render "shared/opening_hours", horaires: @opening_hours, bare: true, compact: true %>
     </div>
 
-    <div class="flex flex-col gap-4 pt-5 border-t border-gray-200 sm:flex-row sm:items-center sm:justify-between sm:gap-6">
+    <div class="flex flex-col gap-3 pt-4 border-t border-gray-200 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
       <div class="space-y-1 min-w-0">
         <p class="text-sm uppercase tracking-[0.3em] text-[#1F5C55]/70">Accès</p>
         <p class="text-base font-semibold text-gray-900">97 bis bd de Suisse, 31200 Toulouse</p>
