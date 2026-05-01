@@ -46,13 +46,13 @@ module Admin
     end
 
     def create
-      @person = Person.find(membership_purchase_params[:person_id])
-      membership_type = MembershipType.find(membership_purchase_params[:membership_type_id])
+      params_hash = membership_purchase_params
+      membership_type = MembershipType.find(params_hash[:membership_type_id])
 
-      if membership_purchase_params[:upgrade] == "true" && @person.current_membership&.basic?
-        handle_upgrade_flow(@person, membership_type)
+      if upgrade_request_for?(@person, params_hash)
+        handle_upgrade_flow(@person, membership_type, params_hash)
       else
-        handle_creation_flow(@person, membership_type)
+        handle_creation_flow(@person, membership_type, params_hash)
       end
     end
 
@@ -134,8 +134,7 @@ module Admin
       cents.positive? ? cents : nil
     end
 
-    def handle_upgrade_flow(person, membership_type)
-      params_hash = membership_purchase_params
+    def handle_upgrade_flow(person, membership_type, params_hash)
       result = People::MembershipUpgrader.new(
         person: person,
         new_membership_type_id: membership_type.id,
@@ -154,8 +153,7 @@ module Admin
       end
     end
 
-    def handle_creation_flow(person, membership_type)
-      params_hash = membership_purchase_params
+    def handle_creation_flow(person, membership_type, params_hash)
       result = People::MembershipCreator.new(
         person: person,
         membership_type_id: membership_type.id,
@@ -178,6 +176,10 @@ module Admin
         redirect_to new_admin_membership_path(person_id: person.id),
                     alert: t("admin.memberships.create.membership_creation_failed_alert", message: result.message)
       end
+    end
+
+    def upgrade_request_for?(person, params_hash)
+      params_hash[:upgrade] == "true" && person.current_membership&.basic?
     end
 
     def build_upgrade_notice(membership_type, result, payment_method)

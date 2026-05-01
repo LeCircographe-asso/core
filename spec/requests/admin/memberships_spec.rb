@@ -153,6 +153,26 @@ RSpec.describe 'Admin::Memberships', type: :request do
             }
           end.to change { Payment.count }.by(1)
         end
+
+        it 'records a full-price membership payment line for the upgraded membership' do
+          post admin_memberships_path, params: {
+            membership: {
+              person_id: person.id,
+              membership_type_id: circus_type.id,
+              payment_method: 'cash',
+              upgrade: 'true'
+            }
+          }
+
+          payment = Payment.order(:created_at).last
+          line = payment.payment_lines.sole
+
+          expect(payment.total_cents).to eq(circus_type.price_cents)
+          expect(line.item_type).to eq('Membership')
+          expect(line.amount_cents).to eq(circus_type.price_cents)
+          expect(line.item_id).to eq(person.reload.current_membership.id)
+          expect(line.description).to include('plein tarif')
+        end
       end
     end
   end
