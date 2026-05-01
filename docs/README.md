@@ -80,6 +80,9 @@ Chaque document Markdown déclare un statut dans son header :
 - [`domain_model.md`](domain_model.md) — diagramme Mermaid + responsabilités des agrégats (invariant `User` → `Person`).
 - [`payments.md`](payments.md) — `Payment`, `PaymentLine`, `Donation` et la dette legacy `item_type:"Payment"`.
 - [`domain/business_logic.md`](domain/business_logic.md) — règles métier complètes (adhésion, cotisation, paiements).
+- [`domain/happy_path_flows.md`](domain/happy_path_flows.md) — flux nominaux : Register, Link, Membership, Contribution, Donation.
+- [`domain/data_integrity_rules.md`](domain/data_integrity_rules.md) — checklist des invariants + requêtes d'intégrité.
+- [`domain/role_permissions.md`](domain/role_permissions.md) — matrice rôles/permissions + feature flags.
 
 ## Architecture
 

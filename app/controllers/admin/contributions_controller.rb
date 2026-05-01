@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Admin
-  class SubscriptionsController < BaseController
+  class ContributionsController < BaseController
     before_action :set_person
 
     def upgrade

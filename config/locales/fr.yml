@@ -120,7 +120,7 @@ fr:
         invalid_credentials: Email ou mot de passe invalide
       destroy:
         signed_out: Déconnecté avec succès !
-    subscription_plans:
+    contribution_formulas:
       new:
         needs_circus_membership_alert: Cette personne doit avoir une adhésion Cirque pour acheter des plans de cotisation
       create:
@@ -132,7 +132,7 @@ fr:
         destroyed: Plan de cotisation supprimé avec succès !
       require_super_admin:
         forbidden: Seul le super-admin peut modifier ou supprimer des cotisations.
-    subscriptions:
+    contributions:
       upgrade:
         success_notice: Cotisation upgradée avec succès.
         credit_applied_suffix: " Crédit appliqué: %{amount}€"
@@ -456,7 +456,7 @@ fr:
       payments:
         history: Historique des paiements
         management: Gestion des paiements
-      subscription_plans:
+      contribution_formulas:
         plans: Plans de cotisation
         plan_named: 'Plan : %{name}'
         new_contribution: Nouvelle cotisation

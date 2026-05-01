@@ -2,7 +2,7 @@
 
 > **Statut** : stable (snapshot daté à recouper avec le code)
 > **Public cible** : contributeur
-> **Dernière vérification** : 2026-04-27
+> **Dernière vérification** : 2026-05-01
 > **Sources de vérité** : `app/controllers/`, `config/routes.rb`, [`models.md`](models.md), [`../internal/todo.md`](../internal/todo.md).
 >
 > **À vérifier** :
@@ -269,7 +269,7 @@
 |------------|-----------|---------------|--------------|
 | `AccountClaimsController` | ⭐⭐ | Workflow à finaliser | Après validation business |
 | `PasswordsController` | ⭐⭐ | Feature à stabiliser | Après validation business |
-| `Admin::SubscriptionPlansController` *(cible : `Admin::ContributionFormulasController`)* | ⭐⭐⭐ | Flux achat/upgrade via `People::Subscription*` *(cible : `People::Contribution*`)* | Après stabilisation |
+| `Admin::ContributionFormulasController` | ⭐⭐⭐ | Flux achat/upgrade via `People::Contribution*` | Après stabilisation |
 | `Admin::MemberNumbersController` | ⭐⭐ | Admin access | Après stabilisation |
 | `Admin::MembershipTypesController` | ⭐⭐⭐ | CRUD standard | Après stabilisation |
 | `Admin::DonationsController` | ⭐⭐ | CRUD simple | Après stabilisation |

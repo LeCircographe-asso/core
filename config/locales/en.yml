@@ -46,7 +46,7 @@ en:
         use_inline_notice: Utilisez l'édition inline pour modifier les paiements
       new:
         creation_disabled_notice: Création de paiement temporairement désactivée
-    subscription_plans:
+    contribution_formulas:
       create:
         purchase_failed_alert: 'Error purchasing plan: %{message}'
         purchased: Plan de cotisation acheté avec succès !
@@ -58,7 +58,7 @@ en:
         destroyed: Plan de cotisation supprimé avec succès !
       require_super_admin:
         forbidden: Seul le super-admin peut modifier ou supprimer des cotisations.
-    subscriptions:
+    contributions:
       upgrade:
         success_notice: Contribution upgraded successfully.
         credit_applied_suffix: " Credit applied: %{amount}€"
@@ -188,7 +188,7 @@ en:
       payments:
         history: Payment history
         management: Payments management
-      subscription_plans:
+      contribution_formulas:
         plans: Contribution plans
         plan_named: 'Plan: %{name}'
         new_contribution: New contribution

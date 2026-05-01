@@ -37,7 +37,7 @@ Rails.application.routes.draw do
     resources :memberships, only: %i[index show new create edit update destroy]
     resources :membership_types, only: %i[index show new create edit update destroy]
     resources :contribution_formulas, only: %i[index show new create edit update destroy]
-    resources :subscriptions, only: [] do
+    resources :contributions, only: [] do
       post :upgrade, on: :collection
     end
     resources :member_numbers, only: [] do

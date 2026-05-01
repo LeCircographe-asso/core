@@ -7,19 +7,14 @@ module Admin
     before_action :set_breadcrumbs
     before_action :require_super_admin, only: %i[edit update destroy]
 
-    # Keep current templates under admin/subscription_plans during transition.
-    def self.controller_path
-      "admin/subscription_plans"
-    end
-
     def index
       @contribution_formulas = ContributionFormula.includes(:membership_type).order(:duration, :price_cents)
-      add_breadcrumb I18n.t("breadcrumbs.admin.subscription_plans.plans"), nil
+      add_breadcrumb I18n.t("breadcrumbs.admin.contribution_formulas.plans"), nil
     end
 
     def show
       @contributions = @contribution_formula.contributions.includes(:person)
-      add_breadcrumb I18n.t("breadcrumbs.admin.subscription_plans.plan_named", name: @contribution_formula.name), nil
+      add_breadcrumb I18n.t("breadcrumbs.admin.contribution_formulas.plan_named", name: @contribution_formula.name), nil
     end
 
     def new
@@ -33,11 +28,11 @@ module Admin
 
       @contribution_formulas = ContributionFormula.available_for(@person)
 
-      add_breadcrumb I18n.t("breadcrumbs.admin.subscription_plans.new_contribution"), nil
+      add_breadcrumb I18n.t("breadcrumbs.admin.contribution_formulas.new_contribution"), nil
     end
 
     def edit
-      add_breadcrumb I18n.t("breadcrumbs.admin.subscription_plans.edit_named", name: @contribution_formula.name), nil
+      add_breadcrumb I18n.t("breadcrumbs.admin.contribution_formulas.edit_named", name: @contribution_formula.name), nil
     end
 
     def create
@@ -90,7 +85,7 @@ module Admin
     def require_super_admin
       return if Current.user&.super_admin?
 
-      redirect_to admin_contribution_formulas_path, alert: I18n.t("admin.subscription_plans.require_super_admin.forbidden")
+      redirect_to admin_contribution_formulas_path, alert: I18n.t("admin.contribution_formulas.require_super_admin.forbidden")
     end
 
     def set_contribution_formula
@@ -103,7 +98,7 @@ module Admin
 
     def set_breadcrumbs
       add_breadcrumb I18n.t("breadcrumbs.admin.common.administration"), admin_dashboard_index_path
-      add_breadcrumb I18n.t("breadcrumbs.admin.subscription_plans.plans"), admin_contribution_formulas_path
+      add_breadcrumb I18n.t("breadcrumbs.admin.contribution_formulas.plans"), admin_contribution_formulas_path
     end
 
     def contribution_formula_params

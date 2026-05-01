@@ -54,56 +54,10 @@ module Admin
 
     # GET /admin/users/1 or /admin/users/1.json
     def show
-      # Adapter pour accepter les ID de Person ET de User
       if person_identifier?(params[:id])
-        # ID de Person (format: person_123)
-        person_id = extracted_person_id(params[:id])
-
-        # Chercher d'abord dans les Person actives
-        @person = PersonQuery.active.includes(:user, memberships: :membership_type, contributions: :contribution_formula, payments: %i[payment_lines recorded_by])
-                             .find_by(id: person_id)
-
-        # Si Person archivée (fusion), rediriger vers la liste
-        if @person.nil?
-          archived_person = Person.find_by(id: person_id)
-          raise ActiveRecord::RecordNotFound if archived_person&.deleted_at.blank?
-
-          redirect_to admin_users_path, notice: t(".merged_person_notice")
-          return
-
-        end
-        @user = @person.user # Peut être nil
-
-        # Si pas de User, créer un User temporaire pour la vue
-        if @user.nil?
-          @user = Admin::Users::ViewUserAdapter.from_person(@person)
-          @is_person_without_user = true
-        else
-          @is_person_without_user = false
-        end
-
-        # Données pour les formulaires
-        @membership_types = MembershipType.all
-        @contribution_formulas = ContributionFormula.all
-        @users = User.where(person: nil) # Users non liés
-        @recent_payments = load_recent_payments(@person)
-
-        add_admin_user_breadcrumbs(@person.full_name)
-
+        return unless load_show_context_for_person
       else
-        # ID de User (format classique)
-        @user = User.unscoped.includes(
-          :person,
-          :memberships,
-          payments: { payment_lines: :item }
-        ).find_by(id: params[:id])
-
-        @person = @user.person
-        @array_right = available_roles_for_user(@user)
-        @is_person_without_user = false
-        @recent_payments = load_recent_payments(@person)
-
-        add_admin_user_breadcrumbs(user_label(@user))
+        load_show_context_for_user
       end
 
       respond_to do |format|
@@ -284,29 +238,7 @@ module Admin
     def destroy
       # Adapter pour gérer les Person
       if person_identifier?(params[:id])
-        # Supprimer la Person (déjà chargée dans set_user)
-        person = @person
-
-        # Debug: vérifier si @person est défini
-        if person.nil?
-          Rails.logger.error "DEBUG: @person is nil for params[:id] = #{params[:id]}"
-          redirect_to admin_users_path, alert: t(".person_not_found_alert") and return
-        end
-
-        # Utiliser le service UserManagement::UserDeleter
-        deleter = UserManagement::UserDeleter.new(
-          person_id: person.id,
-          deleted_by_id: current_user.id,
-          reason: "Suppression via interface admin"
-        )
-
-        result = deleter.call
-
-        if result.success?
-          redirect_to admin_users_path, status: :see_other, notice: t(".person_deleted_notice")
-        else
-          redirect_to admin_users_path, alert: t(".destruction_failed_alert_html", message: result.message)
-        end
+        destroy_person_entity
         return
       end
 
@@ -551,6 +483,66 @@ module Admin
 
     def user_label(user)
       user&.person&.full_name.presence || "Utilisateur ##{user.id}"
+    end
+
+    def load_show_context_for_person
+      person_id = extracted_person_id(params[:id])
+      @person = PersonQuery.active.includes(:user, memberships: :membership_type, contributions: :contribution_formula, payments: %i[payment_lines recorded_by])
+                         .find_by(id: person_id)
+
+      return handle_missing_person_in_show(person_id) if @person.nil?
+
+      @user = @person.user
+      @is_person_without_user = @user.nil?
+      @user = Admin::Users::ViewUserAdapter.from_person(@person) if @is_person_without_user
+      @membership_types = MembershipType.all
+      @contribution_formulas = ContributionFormula.all
+      @users = User.where(person: nil)
+      @recent_payments = load_recent_payments(@person)
+      add_admin_user_breadcrumbs(@person.full_name)
+      true
+    end
+
+    def handle_missing_person_in_show(person_id)
+      archived_person = Person.find_by(id: person_id)
+      raise ActiveRecord::RecordNotFound if archived_person&.deleted_at.blank?
+
+      redirect_to admin_users_path, notice: t(".merged_person_notice")
+      false
+    end
+
+    def load_show_context_for_user
+      @user = User.unscoped.includes(
+        :person,
+        :memberships,
+        payments: { payment_lines: :item }
+      ).find_by(id: params[:id])
+
+      @person = @user.person
+      @array_right = available_roles_for_user(@user)
+      @is_person_without_user = false
+      @recent_payments = load_recent_payments(@person)
+      add_admin_user_breadcrumbs(user_label(@user))
+    end
+
+    def destroy_person_entity
+      person = @person
+      if person.nil?
+        redirect_to admin_users_path, alert: t(".person_not_found_alert")
+        return
+      end
+
+      deleter = UserManagement::UserDeleter.new(
+        person_id: person.id,
+        deleted_by_id: current_user.id,
+        reason: "Suppression via interface admin"
+      )
+      result = deleter.call
+      if result.success?
+        redirect_to admin_users_path, status: :see_other, notice: t(".person_deleted_notice")
+      else
+        redirect_to admin_users_path, alert: t(".destruction_failed_alert_html", message: result.message)
+      end
     end
   end
 end

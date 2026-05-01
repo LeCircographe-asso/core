@@ -13,9 +13,9 @@
                  date: @date %>
                    
     <% elsif @result.needs_subscription? %>
-      <%= render "admin/users/attendance_subscription_options", 
-                 person: @person, 
-                 available_plans: @result.available_plans, 
+      <%= render "admin/users/attendance_contribution_options",
+                 person: @person,
+                 available_plans: @result.available_plans,
                  date: @date %>
                    
     <% elsif @result.already_present? %>
