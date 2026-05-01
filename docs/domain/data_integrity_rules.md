@@ -30,7 +30,7 @@ Checklist des invariants qui ne doivent jamais être violés. Chaque règle indi
 | `ended_at > started_at` | Validation modèle `Membership` |
 | Upgrade Circus → Basic interdit | `Membership#can_upgrade_to?` retourne `false` |
 | Upgrade même type interdit | `Membership#can_upgrade_to?` retourne `false` |
-| Création adhésion → génère toujours un `Payment` | `Person#create_membership!` en transaction |
+| Création adhésion → génère toujours un `Payment` | `People::MembershipCreator` en transaction |
 
 ---
 
@@ -40,7 +40,8 @@ Checklist des invariants qui ne doivent jamais être violés. Chaque règle indi
 |-------|-------|
 | Achat cotisation requiert une `Membership` Cirque active | `Person#can_buy_contribution_formulas?` vérifié dans `ContributionFormulasController#new` |
 | Pack 10 : `sessions_remaining` initialisé à `sessions_count`, jamais nil pour un plan à séances | `ContributionFormula#sessions_count` par défaut 10 |
-| Plans illimités (Trimestre, Annuel, Day) : `sessions_remaining` doit être `nil` | Invariant à vérifier — pas encore de validation DB, voir todo §4 |
+| Trimestre / Annuel : `sessions_remaining` doit être `nil` | Invariant métier/documentation à garder aligné avec le modèle |
+| Day : `sessions_remaining` doit être `1` puis `0`, avec expiration fin de journée | Validation modèle `Contribution` |
 | `Contribution#use_session!` refuse si `sessions_remaining == 0` | `can_use?` vérifié avant `use_session!` |
 | Upgrade Day → autre : interdit | `upgrade_contribution!` bloque ce cas |
 
@@ -52,10 +53,10 @@ Checklist des invariants qui ne doivent jamais être violés. Chaque règle indi
 |-------|-------|
 | `recorded_by_id` toujours présent | Validation présence dans tous les services `People::Payment*` |
 | Montants toujours en centimes en DB (`price_cents`, `total_cents`) | Convention uniforme — jamais de flottants |
-| Somme des `PaymentLine.amount_cents` = `Payment.total_cents` | `People::PaymentCreator` vérifie la cohérence avant sauvegarde |
-| Don : `PaymentLine.item_type` = `"Donation"` (pas `"Payment"`) | `PaymentCreator` force le bon `item_type` sur les lignes de don |
-| Suppression paiement → soft-delete uniquement | `Payment#cancel!` (pas de hard delete) |
-| `offer_reason` requis si `payment_method == "offered"` | Validation `requires_offer_reason` dans `People::PaymentCreator` |
+| Somme des `PaymentLine.amount_cents` = `Payment.total_cents` | `People::PaymentRecorder` vérifie la cohérence avant sauvegarde |
+| Don : `PaymentLine.item_type` = `"Donation"` (pas `"Payment"`) | `PaymentRecorder` force le bon `item_type` sur les lignes de don |
+| Suppression paiement → annulation uniquement | `People::PaymentCanceller` (pas de hard delete admin) |
+| `offer_reason` requis si `payment_method == "offered"` | `People::OfferPolicy`, `Payment`, `People::PaymentRecorder` |
 
 ---
 
@@ -94,6 +95,12 @@ Payment.left_joins(:payment_lines).where(payment_lines: { id: nil }).where("tota
 Payment.joins(:payment_lines)
        .group("payments.id, payments.total_cents")
        .having("SUM(payment_lines.amount_cents) != payments.total_cents")
+
+# Dons legacy à migrer si présents
+PaymentLine.where(item_type: "Payment")
+
+# Anonymisation paiement à aligner avec la contrainte NOT NULL actuelle
+Payment.where(person_id: nil)
 ```
 
-> Ces requêtes sont candidates pour une tâche Rake de rapport d'intégrité (voir [`../internal/todo.md`](../internal/todo.md) §7).
+> Ces requêtes sont candidates pour une tâche Rake de rapport d'intégrité (voir [`../internal/todo.md`](../internal/todo.md)).

@@ -5,7 +5,7 @@
 > **Dernière vérification** : 2026-05-01
 > **Sources de vérité** : `db/schema.rb`, `app/models/person.rb`, `app/models/membership.rb`, `app/models/payment.rb`, `app/models/payment_line.rb`.
 
-> Vocabulaire utilisé : voir [glossary.md](glossary.md). Quand le code n'est pas encore aligné sur le vocabulaire cible, l'alias legacy est indiqué entre parenthèses.
+> Vocabulaire utilisé : voir [glossary.md](glossary.md).
 > **Pattern** : Person-Based / DDD-light.
 
 ---
@@ -38,9 +38,8 @@ erDiagram
 ```
 
 > **Légende** :
-> - `Contribution` : code actuel `BookOfEntry` (rename planifié `phase3-model-rename`).
-> - `ContributionFormula` : code actuel `SubscriptionPlan` (rename planifié `phase3-model-rename`).
-> - `Donation` : pas encore un modèle ActiveRecord dédié ; lignes `PaymentLine` en `"Donation"` à la création ; legacy DB `item_type: "Payment"` à éliminer (voir [payments.md](payments.md)).
+> - `Contribution` et `ContributionFormula` sont les noms canoniques actuels.
+> - `Donation` n'a pas de table dédiée ; elle est représentée par `PaymentLine.item_type = "Donation"`.
 
 ---
 
@@ -54,11 +53,11 @@ erDiagram
 - **Tarif réduit** : `reduced_rate_eligible`, `reduced_rate_reason`, `reduced_rate_proof`.
 - **Soft delete** : `deleted_at` (concern `SoftDeletable`).
 - **Méthodes métier** :
-  - `Person#create_membership!(type, ...)` — adhésion + paiement + numéro d'adhérent.
-  - `Person#upgrade_membership!(new_type, ...)` — plein tarif du nouveau type.
+  - `People::MembershipCreator` — adhésion + paiement + numéro d'adhérent.
+  - `People::MembershipUpgrader` — plein tarif du nouveau type.
   - `Person#renew_membership!(...)` — nouvelle adhésion + nouveau numéro annuel.
-  - `Person#create_contribution!(...)` (cible) / `Person#create_subscription!(...)` (legacy).
-  - `Person#upgrade_contribution!(...)` (cible) / `Person#upgrade_subscription!(...)` (legacy).
+  - `People::ContributionCreator` — création cotisation + paiement.
+  - `People::ContributionUpgrader` — upgrade cotisation + paiement.
   - `Person#archive!` / `Person#restore!`.
 - **Garde-fou** : `has_financial_data?` empêche la suppression dure si l'historique financier est non vide.
 
@@ -89,8 +88,8 @@ erDiagram
 
 ### 2.3 Cotisation (accès cirque)
 
-#### `Contribution` (cible) / `BookOfEntry` (legacy) — Instance achetée
-- **Lien** : `belongs_to :person`, `belongs_to :contribution_formula` (alias legacy : `subscription_plan`).
+#### `Contribution` — Instance achetée
+- **Lien** : `belongs_to :person`, `belongs_to :contribution_formula`.
 - **Champs** : `sessions_remaining` (Pack 10 uniquement), `purchased_at`, `expires_at`, `status`.
 - **Statuts** : `:inactive | :active | :expired | :consumed | :suspended`.
 - **Méthodes** :
@@ -98,9 +97,9 @@ erDiagram
   - `#use_session!` — décrémente `sessions_remaining` (Pack 10).
   - `#refund_session!` — recrédite (annulation présence).
   - `#suspend!(reason:)` / `#reactivate!`.
-- **Note** : aujourd'hui ce modèle n'est exploité que pour les Pack 10 ; les durées Trimestre/Annuel/Day sont hors périmètre malgré la présence des champs. La phase 3 du plan de migration unifiera explicitement.
+- **Note** : `day` est une cotisation à usage unique valable jusqu'à la fin du jour d'achat ; `trimester` et `annual` restent des cotisations à durée avec expiration.
 
-#### `ContributionFormula` (cible) / `SubscriptionPlan` (legacy) — Catalogue versionné
+#### `ContributionFormula` — Catalogue versionné
 - **Champs** : `name`, `duration` enum (`:day | :trimester | :annual | :pack10`), `price_cents`, `sessions_count`, `validity_days`, `version`, `effective_from`, `effective_until`.
 - **Méthode** : `.available_for(person)` — exige une adhésion Cirque active.
 
@@ -110,17 +109,18 @@ erDiagram
 
 #### `Payment` — Transaction
 - **Lien** : `belongs_to :person`, `belongs_to :recorded_by, class_name: "User"`.
-- **Champs** : `total_cents`, `status` (`:pending | :success | :cancel`), `payment_method` (`:cash | :card | :cheque | :transfer | :offered`), `offer_reason`, `uuid`.
-- **RGPD** : `Payment#anonymize!` (`person_id → NULL`, garde un hash de traçabilité).
+- **Champs** : `total_cents`, `status` (`:pending | :success | :cancel`), `payment_method` (`:cash | :card | :cheque | :transfer | :offered`), `uuid`, `notes`.
+- `offer_reason` est persisté dans `payments` et requis pour un paiement `:offered`.
+- **RGPD** : `Payment#anonymize!` garde `payments.person_id`, stocke un hash de traçabilité dans `original_person_identifier` et marque `anonymized_at`.
 - **Audit** : `PaymentAuditLog`.
 
 #### `PaymentLine` — Ligne polymorphique
 - **Champs** : `payment_id`, `item_type`, `item_id`, `amount_cents`, `description`.
-- **Items canoniques** : `Membership`, `MembershipType`, `ContributionFormula` (legacy `SubscriptionPlan`), `Contribution` (legacy `BookOfEntry`), `Donation` (cible).
+- **Items canoniques** : `Membership`, `MembershipType`, `ContributionFormula`, `Contribution`, `Donation`.
 - **Invariant** : `payment.payment_lines.sum(:amount_cents) == payment.total_cents`.
 
-#### `Donation` (cible)
-- Pas encore un modèle ActiveRecord distinct. Représenté par une `PaymentLine` avec `item_type: "Donation"` à la création (`People::PaymentCreator`). Des lignes historiques peuvent encore avoir `item_type: "Payment"` jusqu’au backfill complet — voir [payments.md](payments.md) et `phase1-donation-fix`.
+#### `Donation`
+- Pas de table dédiée. Représenté par une `PaymentLine` avec `item_type: "Donation"` à la création (`People::PaymentRecorder`). Vérifier les données historiques `item_type: "Payment"` avant suppression de compatibilité — voir [payments.md](payments.md).
 
 ---
 
@@ -205,7 +205,7 @@ sequenceDiagram
   participant PC as People::PersonCreator
   participant UAC as People::UserAccountCreator
   participant MC as People::MembershipCreator
-  participant PayC as People::PaymentCreator
+  participant PayR as People::PaymentRecorder
 
   UI->>Reg: call(person_attrs, user_attrs?, membership_type_id?)
   Reg->>PC: create Person
@@ -216,8 +216,8 @@ sequenceDiagram
   end
   alt membership_type_id présent
     Reg->>MC: create Membership + Payment
-    MC->>PayC: create Payment + PaymentLine
-    PayC-->>MC: Payment
+    MC->>PayR: create Payment + PaymentLine
+    PayR-->>MC: Payment
     MC-->>Reg: Membership
   end
   Reg-->>UI: success(person, user?, membership?)

@@ -55,9 +55,9 @@
 - **Renouvellement:** Crée une nouvelle adhésion datée à partir de la nouvelle souscription
 
 #### Types d'Adhésions
-- **Basic:** 1€ - Adhésion standard sans accès cirque
-- **Circus Plein:** 10€ - Adhésion avec accès cirque tarif normal
-- **Circus Réduit:** 7€ - Adhésion avec accès cirque tarif réduit (RSA, Mineur, Handicap, Étudiant)
+- **Simple:** 1€ - Adhésion standard sans accès cirque
+- **Cirque:** 10€ - Adhésion avec accès cirque - tarif plein
+- **Cirque:** 7€ - Adhésion avec accès cirque - tarif réduit (RSA, Mineur, Handicap, Étudiant)
 
 #### Règles de Référence
 ```ruby
@@ -81,8 +81,8 @@ Membership#can_upgrade_to?(membership_type)
 Membership#upgrade_to!(new_type, started_at)
 Membership#basic?
 Membership#circus?
-Person#create_membership!(membership_type, ...) # Crée + paiement + numéro
-Person#upgrade_membership!(new_type, ...) # Full price du nouveau type
+People::MembershipCreator.call(...) # Crée + paiement + numéro
+People::MembershipUpgrader.call(...) # Full price du nouveau type
 Person#renew_membership!(membership_type, ...) # Nouveau numéro chaque année
 ```
 
@@ -116,10 +116,10 @@ Person#renew_membership!(membership_type, ...) # Nouveau numéro chaque année
 #### Logique Métier Person-Based
 
 ```ruby
-Person#create_membership!(...)    # Crée membership + payment + payment_line
-Person#upgrade_membership!(...)   # Crée payment full price + payment_line
-Person#create_contribution!(...)  # Crée contribution + payment + payment_line
-Person#upgrade_contribution!(...) # Prorata + payment + payment_line
+People::MembershipCreator.call(...)   # Crée membership + payment + payment_line
+People::MembershipUpgrader.call(...)  # Crée payment full price + payment_line
+People::ContributionCreator.call(...) # Crée contribution + payment + payment_line
+People::ContributionUpgrader.call(...) # Prorata + payment + payment_line
 ```
 
 #### Payment Lines
@@ -129,7 +129,7 @@ Person#upgrade_contribution!(...) # Prorata + payment + payment_line
 
 #### Anonymisation RGPD
 ```ruby
-Payment#anonymize! # Person_id → NULL, garde hash traçabilité
+Payment#anonymize! # garde person_id, stocke original_person_identifier, marque anonymized_at
 ```
 
 ### Zone 2: En Cours de Validation
@@ -533,12 +533,12 @@ NewsletterSubscriber#link_to_person!(person)
 ## Modèles Zone 1 (Testés)
 
 ✅ `Person#create_membership!` - Création adhésion + paiement + numéro  
-✅ `Person#upgrade_membership!` - Upgrade plein tarif  
 ✅ `Person#renew_membership!` - Renouvellement avec nouveau numéro  
 ✅ `Person#create_contribution!` - Création cotisation + paiement  
-✅ `Person#upgrade_contribution!` - Upgrade cotisation avec prorata  
+✅ `People::MembershipUpgrader` - Upgrade plein tarif
+✅ `People::ContributionUpgrader` - Upgrade cotisation avec prorata
 ✅ `Contribution#suspend!` / `reactivate!` - Suspension cotisations  
-✅ `Payment#anonymize!` - Anonymisation RGPD  
+✅ `Payment#anonymize!` - Marquage RGPD compatible DB
 
 ## Services Zone 2 (En Exploration)
 
@@ -712,7 +712,7 @@ Admin::UserCreationForm
 **Upgrades d'Adhésions:**
 - **Changement:** Upgrade = **plein tarif** du nouveau type (pas de prorata)
 - **Impact:** Basic 1€ → Circus Réduit 7€ = payer 7€ (pas 6€)
-- **Méthode:** `Person#upgrade_membership!` - Facture new_type.price_cents
+- **Méthode:** `People::MembershipUpgrader` - Facture `new_type.price_cents`
 
 **Renouvellements:**
 - **Nouveau:** `Person#renew_membership!` - Crée nouvelle adhésion + **nouveau numéro d'adhérent**
@@ -740,8 +740,8 @@ Admin::UserCreationForm
 - **Affichage:** Carte bleue dans UserInfoComponent si éligible
 
 **Anonymisation RGPD:**
-- **Nouveau:** `Payment#anonymize!` - Person_id → NULL, garde hash traçabilité
-- **Usage:** Suppression données personnelles tout en gardant compta
+- **Nouveau:** `Payment#anonymize!` - garde `person_id`, stocke un hash de traçabilité, marque `anonymized_at`
+- **Usage:** marquage d'anonymisation sans casser l'historique CRM/comptable
 
 **Seed Amélioré:**
 - **Nouveau:** `db/seeds/add_memberships_and_payments.rb` - Utilise logique métier complète

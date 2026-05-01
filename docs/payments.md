@@ -3,7 +3,7 @@
 > **Statut** : stable
 > **Public cible** : contributeur
 > **Dernière vérification** : 2026-05-01
-> **Sources de vérité** : `app/models/payment.rb`, `app/models/payment_line.rb`, `app/services/people/payment_creator.rb`.
+> **Sources de vérité** : `app/models/payment.rb`, `app/models/payment_line.rb`, `app/services/people/payment_recorder.rb`, `app/services/people/payment_creator.rb`.
 
 > Vocabulaire utilisé : voir [glossary.md](glossary.md).
 
@@ -14,10 +14,10 @@
 ```
 Payment (transaction)
 ├── PaymentLine (item polymorphique)  ── item_type ──> Membership
-├── PaymentLine                        ── item_type ──> ContributionFormula  (legacy: SubscriptionPlan)
-├── PaymentLine                        ── item_type ──> Contribution         (legacy: BookOfEntry, rare)
+├── PaymentLine                        ── item_type ──> ContributionFormula
+├── PaymentLine                        ── item_type ──> Contribution
 ├── PaymentLine                        ── item_type ──> MembershipType
-└── PaymentLine                        ── item_type ──> Donation             (création actuelle via `PaymentCreator` ; données anciennes peuvent encore avoir `Payment`, voir §4)
+└── PaymentLine                        ── item_type ──> Donation
 ```
 
 **Invariant fondamental** : `payment.payment_lines.sum(:amount_cents) == payment.total_cents`.
@@ -28,18 +28,18 @@ Payment (transaction)
 
 - `belongs_to :person` — qui paie.
 - `belongs_to :recorded_by, class_name: "User"` — qui enregistre.
-- Champs principaux : `total_cents`, `status`, `payment_method`, `offer_reason`, `uuid`, `donation` (champ historique à éliminer — voir §4.4).
+- Champs principaux : `total_cents`, `status`, `payment_method`, `uuid`, `notes`, `offer_reason`.
 - Statuts : `:pending → :success | :cancel`.
 - Méthodes de paiement : `:cash`, `:card`, `:cheque`, `:transfer`, `:offered`.
-- **Règle** : `payment_method == :offered` impose un `offer_reason`.
+- `offer_reason` est persisté sur `payments` et requis si `payment_method == "offered"`.
 
 ### 2.1 Anonymisation RGPD
 
 ```ruby
 Payment#anonymize!
-# - person_id → NULL
+# - cible : détacher l'identité tout en gardant une trace comptable
 # - garde un hash de traçabilité pour la comptabilité
-# - utilisé par People::AccountAnonymizer (cible)
+# - à vérifier : le schéma courant impose payments.person_id NOT NULL
 ```
 
 ---
@@ -56,16 +56,16 @@ Payment#anonymize!
 | --- | --- | --- | --- |
 | Adhésion créée par ce paiement | `"Membership"` | `membership.id` | adhésion fraîchement créée |
 | Renouvellement / catalogue | `"MembershipType"` | `membership_type.id` | rare, surtout pour audit |
-| Achat de cotisation | `"ContributionFormula"` | `formula.id` | legacy : `"SubscriptionPlan"` |
-| Cotisation existante (réf.) | `"Contribution"` | `contribution.id` | legacy : `"BookOfEntry"` (rare) |
-| Don | `"Donation"` | `payment.id` (provisoire) | création : service ci-dessous ; legacy DB : encore `"Payment"` jusqu’à backfill complet — voir §4 |
+| Achat de cotisation | `"ContributionFormula"` | `formula.id` | catalogue |
+| Cotisation existante (réf.) | `"Contribution"` | `contribution.id` | instance achetée |
+| Don | `"Donation"` | `payment.id` | création actuelle ; données anciennes à vérifier |
 
 ### 3.2 Création multi-lignes
 
 ```ruby
-People::PaymentCreator.new(
+People::PaymentRecorder.new(
   person: person,
-  recorded_by_id: current_user.id,
+  recorded_by: current_user,
   total_cents: 1700,
   payment_method: "cash",
   payment_lines: [
@@ -75,7 +75,7 @@ People::PaymentCreator.new(
 ).call
 ```
 
-> Le service vérifie que la somme des lignes = `total_cents`. Sinon, `failure`.
+> `People::PaymentRecorder` est le service canonique. `People::PaymentCreator` reste une façade compatible.
 
 ---
 
@@ -99,39 +99,23 @@ PaymentLine.new(
 
 ### 4.2 État actuel — code vs données legacy
 
-**Code (`People::PaymentCreator`)** : la ligne simple utilise `item_type` défaut `"Donation"` et **conserve** ce type pour les dons (`donation_line?` → `item_id` = `payment.id`). Il n’y a plus de réécriture systématique vers `"Payment"` dans ce chemin.
+**Code (`People::PaymentRecorder`)** : les lignes de don utilisent `item_type: "Donation"` et `item_id = payment.id`. `PaymentLine` valide désormais les `item_type` autorisés.
 
 ```ruby
-# app/services/people/payment_creator.rb (extrait)
+# app/services/people/payment_recorder.rb (extrait)
 payment.payment_lines.create!(
-  item_type: line_item_type, # ex. "Donation"
-  item_id: donation_line?(line_item_type) ? payment.id : item_id,
+  item_type: line[:item_type],
+  item_id: donation_line?(line[:item_type]) ? payment.id : line[:item_id],
   ...
 )
 ```
 
-**Données** : des lignes historiques peuvent encore avoir `item_type: "Payment"` jusqu’à application complète des migrations de backfill (`db/migrate/*backfill_donation*`). Les requêtes métier doivent couvrir **Donation** comme canon et **Payment** comme legacy le temps du nettoyage (voir `phase1-donation-fix`).
+**Données** : la migration `20260427084000_backfill_donation_item_type_on_payment_lines.rb` couvre le backfill historique. Vérifier en base de production qu'aucune ligne `item_type: "Payment"` ne subsiste.
 
-### 4.3 Plan de migration (phase `phase1-donation-fix`)
+### 4.3 Nettoyage restant
 
-1. **Backfill** : data migration mettant à jour les lignes existantes
-   ```ruby
-   PaymentLine.where(item_type: "Payment")
-              .where("description ILIKE ? OR description = ?", "%don%", "Donation")
-              .update_all(item_type: "Donation")
-   ```
-2. **Nettoyage code résiduel** : retirer toute référence encore basée sur `item_type: "Payment"` pour les dons dans les modèles/helpers commentés ; aligner les specs/factories sur `"Donation"` uniquement.
-3. **Mise à jour des requêtes** : simplifier `Payment#with_donations` et `Admin::PaymentsService` à `where(payment_lines: { item_type: "Donation" })`.
-4. **Specs à ajuster** : `spec/factories/payments.rb` trait `:with_donation` doit créer une `PaymentLine` `item_type: "Donation"`.
-5. **Validation modèle** : ajouter `validates :item_type, inclusion: { in: %w[Membership MembershipType ContributionFormula Contribution Donation] }` sur `PaymentLine`.
-
-### 4.4 Champ `Payment#donation` (historique)
-
-Le champ `donation` sur la table `payments` est un vestige : il duplique l'information stockée dans une ligne. À éliminer dans la même phase :
-
-- Backfill : pour chaque `payment` avec `donation > 0`, vérifier qu'une `PaymentLine` `item_type: "Donation"` existe ; sinon, en créer une.
-- Migration : `remove_column :payments, :donation`.
-- Code : retirer toutes les références (services, vues, helpers, factories).
+- Ajout d'un rapport d'intégrité paiement/lignes.
+- Vérifier l'affichage uniforme de `offer_reason` dans tous les écrans admin de paiement.
 
 ---
 
@@ -140,7 +124,7 @@ Le champ `donation` sur la table `payments` est un vestige : il duplique l'infor
 ### 5.1 `PaymentAuditLog`
 
 Trace toute opération sur `Payment` :
-- création (`People::PaymentCreator`)
+- création (`People::PaymentRecorder`)
 - annulation / soft-delete (`People::PaymentCanceller`)
 - restauration (`People::PaymentRestorer`)
 - anonymisation (`Payment#anonymize!`)
@@ -157,11 +141,11 @@ Trace toute opération sur `Payment` :
 
 | Règle | Statut | Tracé dans |
 | --- | --- | --- |
-| Somme `payment_lines` == `payment.total_cents` | ✅ vérifié dans `People::PaymentCreator` | service |
-| `payment_method == :offered` ⇒ `offer_reason` présent | ✅ vérifié | UI + service |
-| Pas de paiement orphelin (`person_id` ou hash post-anonymisation) | ✅ | `Payment#anonymize!` |
-| Aucune `PaymentLine.item_type == "Payment"` | ❌ legacy actif | `phase1-donation-fix` |
-| Inclusion stricte des `item_type` autorisés | ❌ pas de validation | `phase1-donation-fix` |
+| Somme `payment_lines` == `payment.total_cents` | ✅ vérifié dans `People::PaymentRecorder` | service |
+| `payment_method == :offered` ⇒ raison présente | ✅ vérifié et persisté | `People::OfferPolicy`, `Payment`, `People::PaymentRecorder` |
+| Anonymisation paiement compatible DB | ✅ aligné | `Payment#anonymize!` garde `person_id`, stocke `original_person_identifier`, marque `anonymized_at` |
+| Aucune `PaymentLine.item_type == "Payment"` | À vérifier en données | todo |
+| Inclusion stricte des `item_type` autorisés | ✅ validation modèle | `PaymentLine::ALLOWED_ITEM_TYPES` |
 
 ---
 

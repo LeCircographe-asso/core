@@ -391,7 +391,7 @@ Rapport : `coverage/index.html`.
 
 ### Seuils recommandés
 
-- Minimum CI : 12 % (actuel).
+- Minimum CI : 52 % (actuel, suite complète).
 - Acceptable : 30–40 %.
 - Bon : 50–60 %.
 - Excellent : 70 %+ avec qualité.
@@ -475,7 +475,8 @@ L'ensemble des services `People::*`, `AccountClaimManagement::*`, `AttendanceMan
 ### CI bloquée par la couverture
 
 - Vérifier en local : `open coverage/index.html`.
-- Ajouter les tests manquants ou ajuster temporairement le seuil dans `spec/spec_helper.rb` (avec discussion équipe).
+- Ajouter les tests manquants si la suite complète passe sous le seuil.
+- Les runs ciblés (`bundle exec rspec spec/models/payment_spec.rb`) génèrent un rapport mais n'appliquent pas le seuil global.
 
 ### Tests lents
 
