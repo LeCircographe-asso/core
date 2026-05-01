@@ -44,6 +44,12 @@ RSpec.describe 'Admin::Donations', type: :request do
       expect(payment.person).to eq(person)
       expect(payment.recorded_by).to eq(admin)
       expect(payment.total_cents).to eq(1250)
+
+      line = payment.payment_lines.sole
+      expect(line.item_type).to eq('Donation')
+      expect(line.item_id).to eq(payment.id)
+      expect(line.amount_cents).to eq(1250)
+      expect(line.description).to eq('Donation')
     end
 
     it 'creates a donation payment with legacy user_id' do
@@ -62,6 +68,11 @@ RSpec.describe 'Admin::Donations', type: :request do
       expect(payment.person).to eq(person)
       expect(payment.recorded_by).to eq(admin)
       expect(payment.total_cents).to eq(500)
+
+      line = payment.payment_lines.sole
+      expect(line.item_type).to eq('Donation')
+      expect(line.item_id).to eq(payment.id)
+      expect(line.amount_cents).to eq(500)
     end
   end
 end
