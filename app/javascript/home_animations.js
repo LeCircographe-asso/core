@@ -67,10 +67,10 @@ function animateTextLetterByLetter(element) {
     for (let i = 0; i < text.length; i++) {
         const letterSpan = document.createElement('span');
         
-        // Si c'est un espace, utiliser un espace insécable pour préserver la largeur
+        // Espace normal (pas &nbsp;) : un espace insécable empêchait le retour à la ligne
+        // entre « Le » et « Circographe » sur mobile (troncature + overflow).
         if (text[i] === ' ') {
-            letterSpan.innerHTML = '&nbsp;';
-            letterSpan.style.marginRight = '0.25em'; // Assurer un espace visible
+            letterSpan.textContent = ' ';
         } else {
             letterSpan.textContent = text[i];
         }

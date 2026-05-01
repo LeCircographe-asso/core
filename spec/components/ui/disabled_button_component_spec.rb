@@ -15,7 +15,7 @@ RSpec.describe Ui::DisabledButtonComponent, type: :component do
     doc = Nokogiri::HTML::DocumentFragment.parse(rendered_content)
     btn = doc.at_css("button")
     expect(btn["type"]).to eq("button")
-    expect(btn["class"]).to include("btn-primary", "inline-flex")
+    expect(btn["class"]).to include("btn-primary", "cursor-not-allowed")
     expect(btn["disabled"]).to be_present
     expect(btn["title"]).to eq("Indisponible")
   end
@@ -51,5 +51,17 @@ RSpec.describe Ui::DisabledButtonComponent, type: :component do
     expect(note["class"]).to include("md:hidden")
     expect(note.text).to include("indisponible")
     expect(button["aria-describedby"]).to eq(note["id"])
+  end
+
+  it "appends additional_aria_describedby for an external hint element" do
+    render_inline(described_class.new(
+      text: "X",
+      disabled: true,
+      disabled_reason: "Reason",
+      additional_aria_describedby: "external-note-id"
+    ))
+
+    doc = Nokogiri::HTML::DocumentFragment.parse(rendered_content)
+    expect(doc.at_css("button")["aria-describedby"]).to eq("external-note-id")
   end
 end
