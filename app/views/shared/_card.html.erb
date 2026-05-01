@@ -31,7 +31,11 @@
 
         <figure class="w-full lg:w-1/2 h-screen/2 lg:h-auto">
             <div class="h-full">
-                <%= image_tag image, class: "w-full h-full object-cover", alt: "Artiste réalisant une performance acrobatique lors des entraînements libres" %>
+                <%= image_tag image,
+                              class: "w-full h-full object-cover",
+                              alt: "Artiste réalisant une performance acrobatique lors des entraînements libres",
+                              loading: "lazy",
+                              decoding: "async" %>
             </div>
         </figure>
     </article>

@@ -31,9 +31,13 @@
     <% dynamic_hero_images = hero_pool.sample([needed, hero_pool.size].min) %>
     <% image_files = (base_images + dynamic_hero_images).uniq.first(12) %>
 
-        <% image_files.each do |image| %>
+        <% image_files.each_with_index do |image, index| %>
         <div class="relative fade-in">
-            <%= image_tag asset_path(image), alt: "Image du Circographe", class: "w-full h-64 object-cover rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300" %>
+            <%= image_tag asset_path(image),
+                          alt: "Image du Circographe",
+                          class: "w-full h-64 object-cover rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300",
+                          loading: (index.zero? ? "eager" : "lazy"),
+                          decoding: "async" %>
         </div>
         <% end %>
     </div>
