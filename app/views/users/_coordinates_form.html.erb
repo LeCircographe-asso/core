@@ -1,5 +1,4 @@
 <% form_class = local_assigns.fetch(:form_class, "space-y-5") %>
-<% submit_class = local_assigns.fetch(:submit_class, "w-full sm:w-auto inline-flex justify-center py-2.5 px-5 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-[#1F5C55] hover:bg-[#1F5C55]/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1F5C55] transition-colors") %>
 <% user_record = local_assigns.fetch(:user, @user) %>
 
 <%= form_with model: user_record, url: user_path(user_record), method: :patch, class: form_class, data: { section_edit_target: "form", action: "submit->section-edit#handleFormSubmit input->section-edit#handleInput change->section-edit#handleInput" } do |f| %>
@@ -48,9 +47,7 @@
           class: "block w-full rounded-lg border-gray-300 shadow-sm text-sm focus:border-[#1F5C55] focus:ring-[#1F5C55]" %>
     </div>
   </div>
-  <div>
-    <%= f.submit t("users.space.contact_submit"),
-        data: { section_edit_target: "save", loading_text: t("users.space.saving") },
-        class: submit_class %>
+  <div class="hidden" aria-hidden="true">
+    <%= f.submit "submit", data: { section_edit_target: "save", loading_text: t("users.space.saving") } %>
   </div>
 <% end %>
