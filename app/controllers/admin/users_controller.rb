@@ -86,10 +86,9 @@ module Admin
         @membership_types = MembershipType.all
         @contribution_formulas = ContributionFormula.all
         @users = User.where(person: nil) # Users non liés
-        @recent_payments = @person.payments.includes(:payment_lines, :recorded_by).order(created_at: :desc).limit(10)
+        @recent_payments = load_recent_payments(@person)
 
-        add_breadcrumb I18n.t("breadcrumbs.admin.users.members_list"), admin_users_path
-        add_breadcrumb @person.full_name, nil
+        add_admin_user_breadcrumbs(@person.full_name)
 
       else
         # ID de User (format classique)
@@ -102,10 +101,9 @@ module Admin
         @person = @user.person
         @array_right = available_roles_for_user(@user)
         @is_person_without_user = false
-        @recent_payments = @person&.payments&.includes(:payment_lines, :recorded_by)&.order(created_at: :desc)&.limit(10) || []
+        @recent_payments = load_recent_payments(@person)
 
-        add_breadcrumb I18n.t("breadcrumbs.admin.users.members_list"), admin_users_path
-        add_breadcrumb @user&.person&.full_name.present? ? @user.person.full_name : "Utilisateur ##{@user.id}", nil
+        add_admin_user_breadcrumbs(user_label(@user))
       end
 
       respond_to do |format|
@@ -538,6 +536,21 @@ module Admin
 
     def extracted_person_id(raw_id)
       raw_id.to_s.delete_prefix("person_")
+    end
+
+    def load_recent_payments(person)
+      return [] unless person
+
+      person.payments.includes(:payment_lines, :recorded_by).order(created_at: :desc).limit(10)
+    end
+
+    def add_admin_user_breadcrumbs(label)
+      add_breadcrumb I18n.t("breadcrumbs.admin.users.members_list"), admin_users_path
+      add_breadcrumb label, nil
+    end
+
+    def user_label(user)
+      user&.person&.full_name.presence || "Utilisateur ##{user.id}"
     end
   end
 end

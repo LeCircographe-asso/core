@@ -174,6 +174,7 @@ RSpec.describe 'Admin::Users', type: :request do
         get admin_user_path("person_#{person.id}")
         expect(response).to have_http_status(:success)
         expect(response.body).to include('John')
+        expect(response.body).to include("Créer un espace utilisateur")
       end
 
       it 'returns 404 for non-existent person' do
