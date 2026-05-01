@@ -4,6 +4,29 @@
 
 @import "tailwindcss";
 
+/*
+ * Leaflet CSS is loaded via <link> in layouts/application.html.erb (before tailwind.css).
+ * Embedding @import url(leaflet) here breaks Tailwind v4 output: "@import must precede @layer".
+ *
+ * Preflight img { max-width: 100% } breaks tiles — reset inside maps only.
+ */
+.leaflet-container img {
+  max-width: none !important;
+}
+
+.leaflet-map-shell {
+  position: relative;
+}
+
+/* Force full bleed inside the rounded shell (Leaflet defaults + % heights are fragile). */
+.leaflet-map-shell-inner.leaflet-container {
+  position: absolute !important;
+  inset: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  outline: none;
+}
+
 @import "./components/buttons.css";
 @import "./components/forms.css";
 @import "./components/hero.css";
