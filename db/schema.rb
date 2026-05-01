@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_05_01_183000) do
+ActiveRecord::Schema[8.1].define(version: 2026_05_01_194500) do
   create_table "account_claims", force: :cascade do |t|
     t.string "confirmation_token", null: false
     t.datetime "created_at", null: false
@@ -273,6 +273,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_01_183000) do
     t.datetime "anonymized_at"
     t.datetime "created_at", null: false
     t.text "notes"
+    t.text "offer_reason"
     t.string "original_person_identifier"
     t.integer "payment_method", default: 0, null: false
     t.bigint "person_id", null: false

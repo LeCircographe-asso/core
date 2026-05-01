@@ -59,6 +59,7 @@ RSpec.describe People::ContributionCreator do
 
         expect(result.success?).to be(true)
         expect(result.payment.total_cents).to eq(0)
+        expect(result.payment.offer_reason).to eq('Solidarity')
       end
     end
 

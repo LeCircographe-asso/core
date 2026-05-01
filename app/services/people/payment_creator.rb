@@ -21,6 +21,7 @@ module People
     attribute :item_id, :integer
     attribute :description, :string
     attribute :notes, :string
+    attribute :offer_reason, :string
     attribute :status, :string, default: "success"
 
     validates :payment_method, presence: true, inclusion: { in: %w[cash card cheque transfer offered pending] }
@@ -44,6 +45,7 @@ module People
         payment_method: payment_method,
         status: status,
         notes: notes,
+        offer_reason: offer_reason,
         payment_lines: lines
       ).call
     rescue ActiveRecord::RecordNotFound => e

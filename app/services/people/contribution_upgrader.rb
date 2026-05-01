@@ -16,6 +16,7 @@ module People
     attribute :to_formula_id, :integer
     attribute :payment_method, :string, default: "cash"
     attribute :recorded_by_id, :integer
+    attribute :offer_reason, :string
 
     validates :from_contribution_id, presence: true
     validates :to_formula_id, presence: true
@@ -37,6 +38,14 @@ module People
         to_formula = ContributionFormula.find(to_formula_id)
 
         validate_contribution_upgrade!(from_contribution, to_formula)
+
+        People::OfferPolicy.validate!(
+          recorded_by: recorded_by,
+          person: target_person,
+          offer_type: "contribution_upgrade",
+          offer_reason: offer_reason,
+          contribution_formula: to_formula
+        ) if payment_method == "offered"
 
         credit_cents = calculate_contribution_credit(from_contribution)
         from_contribution.suspend!(reason: "Upgrade vers #{to_formula.name}")
@@ -111,6 +120,7 @@ module People
         payment_method: payment_method,
         status: "success",
         notes: notes,
+        offer_reason: offer_reason,
         total_cents: amount_cents,
         payment_lines: [
           {

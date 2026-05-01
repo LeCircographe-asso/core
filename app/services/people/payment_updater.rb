@@ -16,6 +16,7 @@ module People
     attribute :payment_method, :string
     attribute :status, :string
     attribute :notes, :string
+    attribute :offer_reason, :string
     attribute :updated_by_id, :integer
 
     validates :updated_by_id, presence: true
@@ -23,6 +24,7 @@ module People
     validates :total_cents, numericality: { greater_than: 0 }, allow_nil: true
     validates :payment_method, inclusion: { in: %w[cash card cheque transfer offered] }, allow_nil: true
     validates :status, inclusion: { in: %w[pending success cancel] }, allow_nil: true
+    validate :offer_reason_required_for_offered_update
 
     def call
       return failure("Invalid payment data: #{errors.full_messages.join(', ')}") unless valid?
@@ -74,11 +76,38 @@ module People
         attrs[:payment_method] = payment_method if payment_method.present?
         attrs[:status] = status if status.present?
         attrs[:notes] = notes if notes.present?
+        attrs[:offer_reason] = normalized_offer_reason if should_update_offer_reason?
+        attrs[:offer_reason] = nil if clears_offer_reason?
       end
     end
 
     def payment_identifier_present
       errors.add(:payment_id, "must be provided") if payment.blank? && payment_id.blank?
+    end
+
+    def normalized_offer_reason
+      offer_reason.to_s.strip.presence
+    end
+
+    def should_update_offer_reason?
+      offer_reason.present? || payment_method == "offered"
+    end
+
+    def clears_offer_reason?
+      payment_method.present? && payment_method != "offered"
+    end
+
+    def resulting_payment_method
+      payment_method.presence || resolve_payment.payment_method
+    end
+
+    def offer_reason_required_for_offered_update
+      return unless resulting_payment_method == "offered"
+      return if normalized_offer_reason.present? || resolve_payment.offer_reason.present?
+
+      errors.add(:offer_reason, "must be provided for an offered payment")
+    rescue ActiveRecord::RecordNotFound
+      nil
     end
 
     def success(payment:, message:)

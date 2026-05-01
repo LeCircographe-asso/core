@@ -39,6 +39,33 @@ RSpec.describe People::PaymentUpdater do
         expect(payment.reload.notes).to eq('Only change note')
       end
 
+      it 'updates offer_reason for offered payment' do
+        result = described_class.new(
+          payment: payment,
+          payment_method: 'offered',
+          offer_reason: 'Solidarity',
+          updated_by_id: admin_user.id
+        ).call
+
+        expect(result.success?).to be(true)
+        expect(payment.reload.payment_method).to eq('offered')
+        expect(payment.offer_reason).to eq('Solidarity')
+      end
+
+      it 'clears offer_reason when payment is no longer offered' do
+        payment.update!(payment_method: :offered, offer_reason: 'Solidarity')
+
+        result = described_class.new(
+          payment: payment,
+          payment_method: 'cash',
+          updated_by_id: admin_user.id
+        ).call
+
+        expect(result.success?).to be(true)
+        expect(payment.reload.payment_method).to eq('cash')
+        expect(payment.offer_reason).to be_nil
+      end
+
       it 'fires instrumentation' do
         updater = described_class.new(
           payment: payment,
@@ -76,6 +103,17 @@ RSpec.describe People::PaymentUpdater do
 
         expect(result.success?).to be(false)
         expect(result.message).to include('Invalid payment data')
+      end
+
+      it 'fails when offered payment has no reason' do
+        result = described_class.new(
+          payment: payment,
+          payment_method: 'offered',
+          updated_by_id: admin_user.id
+        ).call
+
+        expect(result.success?).to be(false)
+        expect(result.message).to include('Offer reason')
       end
     end
 

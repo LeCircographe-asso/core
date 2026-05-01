@@ -38,6 +38,13 @@ RSpec.describe Payment, type: :model do
       payment = Payment.new(person: person, recorded_by: user, total_cents: 1500, payment_method: :card)
       expect(payment.payment_method).to eq('card')
     end
+
+    it 'requires offer_reason for offered payments' do
+      payment = build(:payment, payment_method: :offered, offer_reason: nil)
+
+      expect(payment).not_to be_valid
+      expect(payment.errors[:offer_reason]).to include(I18n.t("errors.messages.blank"))
+    end
   end
 
   describe 'associations' do
@@ -369,6 +376,38 @@ RSpec.describe Payment, type: :model do
 
       expect(Rails.cache.read('total_successful_payments')).to be_nil
       expect(Rails.cache.read('total_donations')).to be_nil
+    end
+  end
+
+  describe '#anonymize!' do
+    include ActiveSupport::Testing::TimeHelpers
+
+    it 'marks the payment as anonymized while keeping the person link' do
+      payment = create(:payment)
+
+      expect do
+        payment.anonymize!
+      end.to change { payment.reload.anonymized_at.present? }.from(false).to(true)
+
+      expect(payment.original_person_identifier).to be_present
+      expect(payment.person_id).to be_present
+    end
+
+    it 'is idempotent once anonymized' do
+      payment = create(:payment)
+      payment.anonymize!
+
+      first_timestamp = payment.anonymized_at
+      first_identifier = payment.original_person_identifier
+
+      travel 1.second do
+        payment.anonymize!
+      end
+
+      payment.reload
+
+      expect(payment.anonymized_at).to eq(first_timestamp)
+      expect(payment.original_person_identifier).to eq(first_identifier)
     end
   end
 

@@ -53,6 +53,67 @@ RSpec.describe People::ContributionUpgrader do
 
         expect { upgrader.call }.to instrument('contribution.upgraded')
       end
+
+      it 'persists offer_reason for an offered upgrade' do
+        contribution
+        super_admin = create(:user, :super_admin, person: create(:person))
+
+        result = described_class.new(
+          person: person,
+          from_contribution_id: person.contributions.first.id,
+          to_formula_id: to_plan.id,
+          payment_method: 'offered',
+          recorded_by_id: super_admin.id,
+          offer_reason: 'Solidarity'
+        ).call
+
+        expect(result.success?).to be(true)
+        expect(result.payment.offer_reason).to eq('Solidarity')
+      end
+
+      it 'returns no credit when upgrading from pack10' do
+        contribution
+
+        result = described_class.new(
+          person: person,
+          from_contribution_id: person.contributions.first.id,
+          to_formula_id: to_plan.id,
+          payment_method: 'cash',
+          recorded_by_id: admin_user.id
+        ).call
+
+        expect(result.success?).to be(true)
+        expect(result.old_contribution.reload.status).to eq('suspended')
+        expect(result.credit_applied).to eq(0)
+      end
+
+      it 'applies prorata credit when upgrading from trimester to annual' do
+        annual_plan = create(:contribution_formula, :annual)
+        trimester_plan = create(
+          :contribution_formula,
+          :trimester
+        )
+        trimester_contribution = create(
+          :contribution,
+          person: person,
+          contribution_formula: trimester_plan,
+          status: :active,
+          expires_at: Date.current + 30.days,
+          sessions_remaining: nil
+        )
+
+        result = described_class.new(
+          person: person,
+          from_contribution_id: trimester_contribution.id,
+          to_formula_id: annual_plan.id,
+          payment_method: 'cash',
+          recorded_by_id: admin_user.id
+        ).call
+
+        expect(result.success?).to be(true)
+        expect(result.old_contribution.reload.status).to eq('suspended')
+        expect(result.credit_applied).to be > 0
+      end
     end
 
     context 'with invalid data' do
@@ -77,6 +138,22 @@ RSpec.describe People::ContributionUpgrader do
         ).call
 
         expect(result.success?).to be(false)
+      end
+
+      it 'fails when person has no active circus membership' do
+        basic_person = create(:person, :with_basic_membership)
+        basic_book = create(:contribution, person: basic_person, contribution_formula: from_plan)
+
+        result = described_class.new(
+          person: basic_person,
+          from_contribution_id: basic_book.id,
+          to_formula_id: to_plan.id,
+          payment_method: 'cash',
+          recorded_by_id: admin_user.id
+        ).call
+
+        expect(result.success?).to be(false)
+        expect(result.message).to include('Adhésion Cirque active requise')
       end
     end
 
@@ -107,6 +184,21 @@ RSpec.describe People::ContributionUpgrader do
 
         expect(result.success?).to be(false)
         expect(result.message).to include(I18n.t("services.errors.record_not_found", message: ""))
+      end
+
+      it 'fails for an invalid upgrade path' do
+        contribution
+
+        result = described_class.new(
+          person: person,
+          from_contribution_id: person.contributions.first.id,
+          to_formula_id: from_plan.id,
+          payment_method: 'cash',
+          recorded_by_id: admin_user.id
+        ).call
+
+        expect(result.success?).to be(false)
+        expect(result.message).to match(/non autorisé/)
       end
     end
   end

@@ -131,6 +131,7 @@ module People
         payment_method: payment_method,
         status: "success",
         notes: notes,
+        offer_reason: offer_reason,
         total_cents: lines.sum { |line| line[:amount_cents].to_i },
         payment_lines: lines
       ).call
