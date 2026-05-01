@@ -423,6 +423,12 @@ en:
       field_town: City / town
       field_country: Country
       edit: Edit
+      accept: Accept
+      recap_modal_title: Summary
+      recap_contact_intro: "Below is what we currently show for your contact details. You can edit them on the next step."
+      recap_account_intro: "Below is a snapshot of your account and preferences. You can edit them on the next step."
+      recap_continue: Continue
+      recap_back: Back
       cancel: Cancel
       'yes': 'Yes'
       'no': 'No'
