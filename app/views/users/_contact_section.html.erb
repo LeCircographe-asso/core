@@ -26,25 +26,31 @@
             <p class="text-xs text-gray-500 mt-1"><%= t("users.space.contact_intro") %></p>
           </div>
           <div class="flex flex-shrink-0 items-center gap-2">
-            <button type="button"
-                    data-section-edit-target="modifyButton"
-                    data-action="section-edit#handleModifyClick"
-                    class="inline-flex items-center rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-white">
-              <%= t("users.space.edit") %>
-            </button>
-            <button type="button"
-                    data-section-edit-target="cancelButton"
-                    data-action="section-edit#cancelEdit"
-                    class="hidden inline-flex items-center rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-50">
-              <%= t("users.space.cancel") %>
-            </button>
-            <button type="button"
-                    data-section-edit-target="acceptButton"
-                    data-action="section-edit#handleAcceptClick"
-                    data-loading-text="<%= t("users.space.saving") %>"
-                    class="hidden inline-flex items-center rounded-md border border-transparent px-3 py-1.5 text-sm font-medium text-white bg-[#1F5C55] hover:bg-[#1F5C55]/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1F5C55] shadow-sm">
-              <%= t("users.space.accept") %>
-            </button>
+            <div data-section-edit-target="modifyWrap">
+              <button type="button"
+                      data-section-edit-target="modifyButton"
+                      data-action="section-edit#handleModifyClick"
+                      class="inline-flex items-center rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-white">
+                <%= t("users.space.edit") %>
+              </button>
+            </div>
+            <div data-section-edit-target="cancelWrap" class="hidden">
+              <button type="button"
+                      data-section-edit-target="cancelButton"
+                      data-action="section-edit#cancelEdit"
+                      class="inline-flex items-center rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-50">
+                <%= t("users.space.cancel") %>
+              </button>
+            </div>
+            <div data-section-edit-target="acceptWrap" class="hidden">
+              <button type="button"
+                      data-section-edit-target="acceptButton"
+                      data-action="section-edit#handleAcceptClick"
+                      data-loading-text="<%= t("users.space.saving") %>"
+                      class="inline-flex items-center rounded-md border border-transparent px-3 py-1.5 text-sm font-medium text-white bg-[#1F5C55] hover:bg-[#1F5C55]/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1F5C55] shadow-sm">
+                <%= t("users.space.accept") %>
+              </button>
+            </div>
           </div>
         </div>
       </header>
