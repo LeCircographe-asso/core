@@ -237,6 +237,23 @@ RSpec.describe Person, type: :model do
     end
   end
 
+  describe '#most_recent_membership' do
+    it 'returns nil when person has no memberships' do
+      person = create(:person, :without_membership)
+      expect(person.most_recent_membership).to be_nil
+    end
+
+    it 'returns the membership with the latest ended_at' do
+      person = create(:person)
+      create(:membership, person: person, membership_type: create(:membership_type, :basic),
+                          started_at: 3.years.ago, ended_at: 2.years.ago, status: :inactive)
+      newer = create(:membership, person: person, membership_type: create(:membership_type, :circus),
+                                  started_at: 2.years.ago, ended_at: 1.week.ago, status: :expired)
+
+      expect(person.most_recent_membership).to eq(newer)
+    end
+  end
+
   describe '#has_active_membership?' do
     it 'returns true when person has active membership' do
       person = create(:person, :with_active_membership)

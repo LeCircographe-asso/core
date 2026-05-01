@@ -102,6 +102,11 @@ class Person < ApplicationRecord
     memberships.active.current.first
   end
 
+  # Dernière adhésion la plus récente par date de fin (profil : distinguer « jamais adhéré » / « adhésion terminée »).
+  def most_recent_membership
+    memberships.order(ended_at: :desc, started_at: :desc).first
+  end
+
   def has_active_membership?
     current_membership.present?
   end

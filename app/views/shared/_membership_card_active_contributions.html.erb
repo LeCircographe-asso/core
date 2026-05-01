@@ -1,0 +1,36 @@
+<%# locals: person (required) %>
+<% active_contributions = person.contributions.where(status: :active) %>
+<div class="flex flex-col space-y-2">
+  <div class="flex justify-between items-start gap-3">
+    <span class="text-sm text-gray-500 shrink-0">Cotisations actives :</span>
+    <% if active_contributions.exists? %>
+      <div class="flex flex-col space-y-1 text-right">
+        <% active_contributions.each do |contribution| %>
+          <div class="flex flex-col items-end gap-0.5">
+            <% if contribution.is_pack10? %>
+              <% sessions_remaining = contribution.sessions_remaining.to_i %>
+              <span class="text-sm font-medium <%= sessions_remaining > 3 ? 'text-green-600' :
+                (sessions_remaining > 0 ? 'text-yellow-600' : 'text-red-600') %>">
+                <%= contribution.contribution_formula.name %>: <%= sessions_remaining %> séances
+              </span>
+              <% if sessions_remaining <= 3 && sessions_remaining > 0 %>
+                <span class="px-2 py-0.5 text-xs bg-yellow-100 text-yellow-800 rounded-full">Bientôt épuisé</span>
+              <% end %>
+            <% elsif contribution.expires_at.present? %>
+              <span class="text-sm font-medium text-gray-800">
+                <%= contribution.contribution_formula.name %>
+                — valable jusqu'au <%= contribution.expires_at.strftime("%d/%m/%Y") %>
+              </span>
+            <% else %>
+              <span class="text-sm font-medium text-gray-800">
+                <%= contribution.contribution_formula.name %>
+              </span>
+            <% end %>
+          </div>
+        <% end %>
+      </div>
+    <% else %>
+      <span class="text-sm font-medium text-gray-800">Aucune cotisation active</span>
+    <% end %>
+  </div>
+</div>
