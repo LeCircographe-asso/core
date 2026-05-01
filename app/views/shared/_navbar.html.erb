@@ -2,14 +2,14 @@
 <nav class="bg-white border-gray-200 sticky top-0 z-50" data-controller="nav-active">
     <div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto">
         <!-- Logo and profile combined for mobile -->
-        <div class="flex items-center justify-between w-full md:w-auto">
+        <div class="flex items-center justify-between w-full min-[844px]:w-auto">
             <!-- Logo -->
             <%= link_to root_path, class: "flex items-center space-x-3 rtl:space-x-reverse", data: { 'nav-active-target': 'link', 'nav-active-path': root_path, 'nav-active-active-classes': 'nav-active-link', 'nav-active-starts-with': 'true' } do %>
             <%= image_tag("logo.webp", alt: "le-circographe Logo", class: "w-40 h-auto") %>
             <% end %>
 
             <!-- Elements grouped on the right for mobile -->
-            <div class="flex items-center md:hidden">
+            <div class="flex items-center min-[844px]:hidden">
                 <% if authenticated? && Current.user %>
                 <%= link_to user_path(Current.user), class: "flex mr-3" do %>
                 <%= image_tag("users.png", alt: "photo de profil", class: "w-8 h-8 rounded-full hover:ring-2 hover:ring-indigo-300") %>
@@ -17,7 +17,7 @@
                 <% end %>
 
                 <!-- Hamburger button (mobile and tablet) -->
-                <button data-collapse-toggle="navbar-mobile" type="button" class="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200" aria-controls="navbar-mobile" aria-expanded="false">
+                <button data-collapse-toggle="navbar-mobile" type="button" class="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-gray-500 rounded-lg min-[844px]:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200" aria-controls="navbar-mobile" aria-expanded="false">
                     <span class="sr-only"><%= t("views.shared.navbar.open_menu") %></span>
                     <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 17 14">
                         <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 1h15M1 7h15M1 13h15" />
@@ -27,7 +27,7 @@
         </div>
 
         <!-- Main menu (desktop) -->
-        <div class="hidden md:flex flex-grow justify-center items-center mx-4">
+        <div class="hidden min-[844px]:flex flex-grow justify-center items-center mx-4">
             <ul class="flex flex-row space-x-8 font-medium">
                 <!-- The association -->
                 <li class="group relative">
@@ -81,7 +81,7 @@
         </div>
 
         <!-- User buttons (desktop only) -->
-        <div class="hidden md:flex items-center md:space-x-3">
+        <div class="hidden min-[844px]:flex items-center min-[844px]:space-x-3">
             <% if authenticated? && Current.user %>
             <!-- Clickable profile picture -->
             <%= link_to user_path(Current.user), class: "flex mr-3" do %>
@@ -150,7 +150,7 @@
     </div>
 
     <!-- Mobile menu -->
-    <div class="hidden w-full md:hidden" id="navbar-mobile" data-controller="accordion">
+    <div class="hidden w-full min-[844px]:hidden" id="navbar-mobile" data-controller="accordion">
         <div class="flex flex-col items-start w-full p-4 bg-white">
             <!-- Accordions for mobile -->
             <div id="accordion-menu" class="w-full">
@@ -298,7 +298,7 @@
                           ) %>
                     <% end %>
                     <% unless public_registration_enabled? %>
-                      <p id="navbar-mobile-signup-disabled-note" class="col-span-2 md:hidden text-xs font-normal text-gray-600 leading-snug text-center px-1">
+                      <p id="navbar-mobile-signup-disabled-note" class="col-span-2 min-[844px]:hidden text-xs font-normal text-gray-600 leading-snug text-center px-1">
                         <%= t("views.shared.navbar.sign_up_disabled_reason") %>
                       </p>
                     <% end %>
