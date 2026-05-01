@@ -51,14 +51,16 @@
                 <% end %>
             </div>
             
+            <% if account_claim_enabled? %>
             <!-- Lien revendication de compte -->
             <div class="text-center mt-2">
-                <p class="text-sm text-gray-600">
-                    Déjà adhérent du Circographe ? 
-                    <%= link_to "Récupérer mon compte", new_account_claim_path, 
+                  <p class="text-sm text-gray-600">
+                    <%= t("sessions.new.account_claim_lead") %>
+                    <%= link_to t("sessions.new.account_claim_recover_link"), new_account_claim_path,
                                 class: "text-brand-primary hover:underline font-medium" %>
-                </p>
+                  </p>
             </div>
+            <% end %>
             <% end %>
         </div>
     </div>

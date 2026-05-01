@@ -4,6 +4,7 @@ en:
     generic:
       error_detail: 'Error: %{message}'
   account_claims:
+    disabled_notice: Online account recovery is temporarily unavailable.
     create:
       rescue_alert: 'Error: %{message}'
       success: Demande de réclamation envoyée. Vérifiez vos emails.
@@ -323,9 +324,10 @@ en:
       cancelled_alert: Le paiement a été annulé.
   contacts:
     create:
-      blank_fields: Veuillez remplir tous les champs du formulaire.
-      sent_notice: Votre message a été envoyé avec succès ! Nous revenons vers vous rapidement.
-      send_error: Une erreur est survenue lors de l'envoi. Réessaie dans quelques instants.
+      blank_fields: Please fill in all form fields.
+      success_title: Thank you!
+      sent_notice: Your message was sent successfully. We'll get back to you soon.
+      send_error: Something went wrong while sending. Please try again in a moment.
   event_interests:
     create:
       profile_incomplete: Votre profil n'est pas complet. Veuillez contacter l'administration.
@@ -351,6 +353,8 @@ en:
     new:
       sign_up_prompt: No account yet? Sign up
       registration_closed_hint: Online sign-up is unavailable for now. Sign in if you already have an account.
+      account_claim_lead: Already a Circographe member?
+      account_claim_recover_link: Recover my account
     rate_limited_alert: Rééssayez plus tard
     create:
       login_success_notice: Connexion réussie !

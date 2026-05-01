@@ -1,8 +1,10 @@
 # frozen_string_literal: true
 
 class ContactsController < ApplicationController
+  allow_unauthenticated_access only: :create
+
   def create
-    @contact = params.expect(contact: %i[name email message category])
+    @contact = contact_submission_params
 
     if @contact.values.any?(&:blank?)
       respond_with_error(t(".blank_fields"))
@@ -31,8 +33,7 @@ class ContactsController < ApplicationController
 
       respond_to do |format|
         format.turbo_stream do
-          flash.now[:notice] = t(".sent_notice")
-          render turbo_stream: turbo_stream.update("contact_form", partial: "pages/contact/form", locals: { contact: {}, status: :success })
+          render turbo_stream: turbo_stream.update("contact_form", partial: "pages/contact/form_inner", locals: { contact: {}, status: :success })
         end
         format.html do
           flash[:notice] = t(".sent_notice")
@@ -47,11 +48,16 @@ class ContactsController < ApplicationController
 
   private
 
+  # Formulaire public : champs à la racine (`name`, `email`, …), pas `contact[...]`.
+  def contact_submission_params
+    params.permit(:name, :email, :message, :category).to_h.symbolize_keys
+  end
+
   def respond_with_error(message)
     respond_to do |format|
       format.turbo_stream do
         flash.now[:alert] = message
-        render turbo_stream: turbo_stream.update("contact_form", partial: "pages/contact/form", locals: { contact: @contact, status: :error })
+        render turbo_stream: turbo_stream.update("contact_form", partial: "pages/contact/form_inner", locals: { contact: @contact, status: :error })
       end
       format.html do
         flash[:alert] = message
