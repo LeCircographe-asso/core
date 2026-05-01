@@ -13,6 +13,8 @@ class Contribution < ApplicationRecord
   validates :expires_at, presence: true, unless: :is_pack10?
 
   validate :sessions_remaining_validation
+  validate :day_pass_single_use_validation
+  validate :day_pass_expiration_validation
 
   enum :status, {
     inactive: 0,
@@ -126,6 +128,23 @@ class Contribution < ApplicationRecord
     elsif has_session_limit?
       errors.add(:sessions_remaining, "doit être présent et positif pour les Pack 10 et les Journées") if sessions_remaining.blank? || sessions_remaining.negative?
     end
+  end
+
+  def day_pass_single_use_validation
+    return unless contribution_formula&.duration == "day"
+    return if sessions_remaining.in?([ 0, 1 ])
+
+    errors.add(:sessions_remaining, "doit être 1 avant utilisation puis 0 après utilisation pour une cotisation journée")
+  end
+
+  def day_pass_expiration_validation
+    return unless contribution_formula&.duration == "day"
+    return if expires_at.blank? || purchased_at.blank?
+
+    expected_expiration = purchased_at.end_of_day
+    return if expires_at.to_i == expected_expiration.to_i
+
+    errors.add(:expires_at, "doit être la fin du jour d'achat pour une cotisation journée")
   end
 
   def set_initial_values

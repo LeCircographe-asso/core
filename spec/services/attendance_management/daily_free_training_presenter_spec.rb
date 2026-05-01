@@ -18,7 +18,7 @@ RSpec.describe AttendanceManagement::DailyFreeTrainingPresenter do
 
       let!(:day_attendance) do
         person = create(:person, :with_circus_membership)
-        book = create(:contribution, person: person, contribution_formula: day_plan, sessions_remaining: 0, status: :consumed, expires_at: date.end_of_day)
+        book = create(:contribution, person: person, contribution_formula: day_plan, sessions_remaining: 0, status: :consumed, purchased_at: date, expires_at: date.end_of_day)
         create(:attendance, person: person, attendance_list: training_list, contribution: book, date: date)
       end
 
