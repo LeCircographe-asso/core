@@ -286,6 +286,12 @@ fr:
       field_town: Ville
       field_country: Pays
       edit: Modifier
+      accept: Accepter
+      recap_modal_title: Récapitulatif
+      recap_contact_intro: "Résumé de tes coordonnées tel qu’affiché ci-dessous. Tu pourras les modifier à l’étape suivante."
+      recap_account_intro: "Résumé de ton compte et de tes préférences. Tu pourras les modifier à l’étape suivante."
+      recap_continue: Continuer
+      recap_back: Retour
       cancel: Annuler
       'yes': Oui
       'no': Non
