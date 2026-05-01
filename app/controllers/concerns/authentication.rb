@@ -37,12 +37,44 @@ module Authentication
   end
 
   def request_authentication
-    session[:return_to_after_authenticating] = request.url
+    begin
+      uri = URI.parse(request.url)
+      path = uri.path.to_s.presence || "/"
+      session[:return_to_after_authenticating] = request.url unless non_gettable_redirect_path?(path)
+    rescue URI::InvalidURIError
+      session[:return_to_after_authenticating] = request.url
+    end
+
     redirect_to new_session_path
   end
 
+  # Cible après login : ne jamais rediriger vers une URL en GET qui n'existe pas
+  # (ex. /session et /registration sont POST-only → 303 après POST créait GET /session → RoutingError).
   def after_authentication_url
-    session.delete(:return_to_after_authenticating) || root_url
+    stored = session.delete(:return_to_after_authenticating)
+    safe_url_after_authentication(stored)
+  end
+
+  def safe_url_after_authentication(stored)
+    return root_path if stored.blank?
+
+    uri = URI.parse(stored.to_s.strip)
+
+    if uri.host.present?
+      return root_path unless uri.host == request.host && uri.port == request.port
+    end
+
+    path = uri.path.to_s
+    path = "/" if path.blank?
+    return root_path if non_gettable_redirect_path?(path)
+
+    stored.to_s
+  rescue URI::InvalidURIError
+    root_path
+  end
+
+  def non_gettable_redirect_path?(path)
+    path == "/session" || path == "/registration"
   end
 
   def start_new_session_for(user)
@@ -55,5 +87,7 @@ module Authentication
   def terminate_session
     Current.session.destroy
     cookies.delete(:session_id)
+    # Révoque la délégation dev « connexion rapide » (voir Dev::QuickLoginController).
+    session.delete(Dev::QuickLoginController::GRANTER_SESSION_KEY)
   end
 end

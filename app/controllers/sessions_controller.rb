@@ -12,18 +12,19 @@ class SessionsController < ApplicationController
   end
 
   def create
-    respond_to do |format|
-      if (user = User.authenticate_by(params.permit(:email_address, :password)))
-        start_new_session_for user
-        flash[:notice] = t(".login_success_notice")
-        format.turbo_stream { redirect_to after_authentication_url }
-        format.html { redirect_to after_authentication_url, notice: t(".login_success_notice") }
-      else
+    email_address, password = params.expect(:email_address, :password)
+
+    if (user = User.authenticate_by(email_address:, password:))
+      start_new_session_for user
+      # 303 + Turbo : évite les redirections POST ignorées ou sans cookie ; même comportement qu’un POST HTML classique.
+      redirect_to after_authentication_url, notice: t(".login_success_notice"), status: :see_other
+    else
+      respond_to do |format|
         format.turbo_stream do
           flash.now[:alert] = t(".invalid_credentials_flash")
           render turbo_stream: turbo_stream.replace("flash", render_to_string(partial: "shared/flash")), status: :unprocessable_content
         end
-        format.html { redirect_to new_session_path, alert: t(".invalid_credentials_redirect") }
+        format.html { redirect_to new_session_path, alert: t(".invalid_credentials_redirect"), status: :see_other }
       end
     end
   end

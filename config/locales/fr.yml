@@ -1,5 +1,10 @@
 ---
 fr:
+  dev:
+    quick_login:
+      forbidden: Cette page est réservée aux super-administrateurs (development).
+      nav_link: Connexion rapide (dev)
+      delegate_notice: Tu navigues sous une session « empruntée ». Tu peux revenir sur cette page pour changer d’utilisateur tant que tu te déconnectes normalement (ça réinitialise la délégation).
   flash:
     generic:
       error_detail: 'Erreur: %{message}'
@@ -233,6 +238,10 @@ fr:
     update:
       saved_notice: Vos modifications ont été enregistrées avec succès
   users:
+    show:
+      shortcuts_title: Accès rapide
+      shortcut_home: Accueil
+      shortcut_edit_profile: Modifier mon profil
     update:
       profile_updated: Votre profil a été mis à jour avec succès.
     destroy:

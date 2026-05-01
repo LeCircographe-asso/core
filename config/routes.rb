@@ -112,6 +112,13 @@ Rails.application.routes.draw do
 
   mount LetterOpenerWeb::Engine, at: "/letter_opener" if Rails.env.development?
 
+  # Connexion instantanée entre comptes (development uniquement — absent en prod/test).
+  if Rails.env.development?
+    namespace :dev do
+      resource :quick_login, only: %i[show create], controller: "quick_login"
+    end
+  end
+
   resource :password, only: %i[new create edit update] do
     get :request_reset, on: :collection
   end

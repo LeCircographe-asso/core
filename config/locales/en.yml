@@ -1,5 +1,10 @@
 ---
 en:
+  dev:
+    quick_login:
+      forbidden: This page is restricted to super administrators (development only).
+      nav_link: Quick login (dev)
+      delegate_notice: You are browsing under a delegated dev session. You can open this page again to switch users until you sign out (which clears the delegation).
   flash:
     generic:
       error_detail: 'Error: %{message}'
@@ -368,6 +373,10 @@ en:
     update:
       saved_notice: Vos modifications ont été enregistrées avec succès
   users:
+    show:
+      shortcuts_title: Quick links
+      shortcut_home: Home
+      shortcut_edit_profile: Edit my profile
     update:
       profile_updated: Votre profil a été mis à jour avec succès.
     destroy:
