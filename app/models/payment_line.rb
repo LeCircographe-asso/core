@@ -46,6 +46,7 @@ class PaymentLine < ApplicationRecord
 
   # Scopes
   scope :memberships, -> { where(item_type: "Membership") }
+  scope :contributions, -> { where(item_type: "Contribution") }
   scope :contribution_formulas, -> { where(item_type: "ContributionFormula") }
   scope :membership_types, -> { where(item_type: "MembershipType") }
   scope :donations, -> { where(item_type: "Donation") }

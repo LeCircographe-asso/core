@@ -21,8 +21,8 @@
       </div>
 
       <!-- Form -->
-      <%= form_with model: person, url: admin_user_path("person_#{person.id}"), method: :patch, 
-          local: false, id: "member-number-change-form", 
+      <%= form_with model: person, url: admin_user_path(Admin::Users::PersonRouteKey.call(person)), method: :patch,
+          local: false, id: "member-number-change-form",
           data: { "member-number-change-target": "form" } do |form| %>
         
         <div class="space-y-4">

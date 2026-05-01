@@ -17,7 +17,7 @@ class ContextualActionsComponent < ViewComponent::Base
     actions = []
 
     # Action "Voir" (toujours disponible)
-    actions << { type: :view, icon: :view_icon, url: "person_#{person.id}",
+    actions << { type: :view, icon: :view_icon, url: Admin::Users::PersonRouteKey.call(person),
                  class: "action-icon text-gray-600 hover:text-[#1F5C55] mr-2",
                  title: "Voir la fiche", data: { turbo: false } }
 

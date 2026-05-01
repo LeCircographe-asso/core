@@ -17,7 +17,7 @@ module Admin
       @contribution_formulas = ContributionFormula.all
 
       add_breadcrumb I18n.t("breadcrumbs.admin.users.members_list"), admin_users_path
-      add_breadcrumb @person.full_name, admin_user_path("person_#{@person.id}")
+      add_breadcrumb @person.full_name, admin_person_path(@person)
       add_breadcrumb I18n.t("breadcrumbs.admin.memberships.membership"), nil
     end
 
@@ -68,7 +68,7 @@ module Admin
       ).call
 
       if result.success?
-        redirect_to admin_user_path("person_#{@person.id}"), notice: t(".success")
+        redirect_to admin_person_path(@person), notice: t(".success")
       else
         flash[:alert] = result.message
         redirect_to edit_admin_membership_path(@membership)
@@ -99,6 +99,10 @@ module Admin
 
     def set_person_for_create
       @person = Person.find(membership_purchase_params[:person_id])
+    end
+
+    def admin_person_path(person)
+      admin_user_path(Admin::Users::PersonRouteKey.call(person))
     end
 
     def set_breadcrumbs
@@ -143,7 +147,7 @@ module Admin
       ).call
 
       if result.success?
-        redirect_to admin_user_path("person_#{person.id}"), notice: build_upgrade_notice(membership_type, result, payment_method_from(params_hash))
+        redirect_to admin_person_path(person), notice: build_upgrade_notice(membership_type, result, payment_method_from(params_hash))
       else
         redirect_to new_admin_membership_path(person_id: person.id, upgrade: params_hash[:upgrade]),
                     alert: t("admin.memberships.create.upgrade_failed_alert", message: result.message)
@@ -167,7 +171,7 @@ module Admin
           redirect_to new_admin_membership_path(person_id: person.id),
                       alert: t(".duplicate_active")
         else
-          redirect_to admin_user_path("person_#{person.id}"),
+          redirect_to admin_person_path(person),
                       notice: t(".success_with_contribution_hint")
         end
       else

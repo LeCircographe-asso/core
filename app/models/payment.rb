@@ -51,7 +51,7 @@ class Payment < ApplicationRecord
     # Déterminer le type de paiement basé sur les payment_lines
     if payment_lines.memberships.any?
       "Adhésion"
-    elsif payment_lines.contribution_formulas.any?
+    elsif payment_lines.contributions.any? || payment_lines.contribution_formulas.any?
       "Cotisation"
     elsif payment_lines.any?
       # Utiliser la description de la première ligne
@@ -82,8 +82,22 @@ class Payment < ApplicationRecord
   end
 
   def carnet_related?
-    payment_lines.joins("JOIN contribution_formulas ON payment_lines.item_type = 'ContributionFormula' AND payment_lines.item_id = contribution_formulas.id")
-                 .exists?(contribution_formulas: { duration: ContributionFormula.durations[:pack10] })
+    payment_lines.joins(<<~SQL.squish)
+      LEFT JOIN contribution_formulas direct_formulas
+        ON payment_lines.item_type = 'ContributionFormula'
+       AND payment_lines.item_id = direct_formulas.id
+      LEFT JOIN contributions
+        ON payment_lines.item_type = 'Contribution'
+       AND payment_lines.item_id = contributions.id
+      LEFT JOIN contribution_formulas contribution_formulas
+        ON contributions.contribution_formula_id = contribution_formulas.id
+    SQL
+                 .where(
+                   "direct_formulas.duration = ? OR contribution_formulas.duration = ?",
+                   ContributionFormula.durations[:pack10],
+                   ContributionFormula.durations[:pack10]
+                 )
+                 .exists?
   end
 
   # Generate a UUID for the payment

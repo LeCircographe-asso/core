@@ -17,7 +17,7 @@
             <h2 class="text-lg leading-6 font-medium text-gray-900"><%= t("views.admin.users.new.user_information") %></h2>
           </div>
           <div class="p-6">
-            <%= form_with(model: [:admin, @user],method: :post, data: { turbo: false }, class: "space-y-6") do |form| %>
+            <%= form_with(model: [:admin, @user], method: :post, data: { turbo: false, controller: "form-toggle" }, class: "space-y-6") do |form| %>
           <% if @user.errors.any? %>
             <div class="bg-red-50 border-l-4 border-red-400 p-4 mb-6">
               <div class="flex">
@@ -45,7 +45,14 @@
             <div class="bg-gray-50 border border-gray-200 rounded-lg p-4">
                 <div class="flex items-start">
                   <div class="flex items-center h-5">
-                    <%= form.check_box :create_web_account, { class: "focus:ring-[#1F5C55] h-4 w-4 text-[#1F5C55] border-gray-300 rounded", checked: @person.present?, onclick: "toggleWebAccountFields()" }, "true", "false" %>
+                    <%= form.check_box :create_web_account,
+                        {
+                          class: "focus:ring-[#1F5C55] h-4 w-4 text-[#1F5C55] border-gray-300 rounded",
+                          checked: @person.present?,
+                          data: { action: "change->form-toggle#createWebAccountChanged" }
+                        },
+                        "true",
+                        "false" %>
                   </div>
                 <div class="ml-3">
                   <h3 class="text-sm font-medium text-gray-900"><%= t("views.admin.users.new.create_web_account") %></h3>
@@ -54,7 +61,7 @@
               </div>
               
               <!-- Champs conditionnels pour le compte web -->
-              <div id="web-account-fields" class="mt-4 space-y-4" style="<%= @person.present? ? 'display: block;' : 'display: none;' %>">
+              <div id="web-account-fields" class="mt-4 space-y-4 <%= 'hidden' unless @person.present? %>" data-form-toggle-target="webAccountFields">
                 <% if Current.user&.admin? || Current.user&.super_admin? %>
                   <!-- Admin/Super Admin peut choisir le rôle -->
                   <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -131,7 +138,11 @@
                     <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                       <i class="fas fa-envelope text-gray-400"></i>
                     </div>
-                    <%= person_form.email_field :email, { class: "pl-10 block w-full focus:ring-[#1F5C55] focus:border-[#1F5C55] sm:text-sm border-gray-300 rounded-md", placeholder: "email@exemple.com", id: "person_email_field" } %>
+                    <%= person_form.email_field :email,
+                        class: "pl-10 block w-full focus:ring-[#1F5C55] focus:border-[#1F5C55] sm:text-sm border-gray-300 rounded-md",
+                        placeholder: "email@exemple.com",
+                        id: "person_email_field",
+                        data: { form_toggle_target: "emailField" } %>
                   </div>
                   <p class="mt-1 text-xs text-gray-500">Obligatoire si compte web activé</p>
                 </div>
@@ -176,10 +187,15 @@
               <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div class="space-y-4">
                   <div class="flex items-center">
-                    <%= person_form.check_box :newsletter_subscribed, { class: "focus:ring-[#1F5C55] h-4 w-4 text-[#1F5C55] border-gray-300 rounded", id: "newsletter_checkbox", onclick: "toggleNewsletterNote()" } %>
+                    <%= person_form.check_box :newsletter_subscribed,
+                        {
+                          class: "focus:ring-[#1F5C55] h-4 w-4 text-[#1F5C55] border-gray-300 rounded",
+                          id: "newsletter_checkbox",
+                          data: { action: "change->form-toggle#newsletterSubscribedChanged" }
+                        } %>
                     <%= person_form.label :newsletter_subscribed, "S'abonner à la newsletter", class: "ml-2 block text-sm text-gray-900" %>
                   </div>
-                  <p class="text-xs text-gray-500 ml-6" id="newsletter_note" style="display: none;">⚠️ Un email est requis pour la newsletter</p>
+                  <p class="text-xs text-gray-500 ml-6 hidden" id="newsletter_note" data-form-toggle-target="newsletterNote">⚠️ Un email est requis pour la newsletter</p>
                   
                   <div class="flex items-center">
                     <%= person_form.check_box :get_involved, { class: "focus:ring-[#1F5C55] h-4 w-4 text-[#1F5C55] border-gray-300 rounded" } %>
@@ -244,53 +260,3 @@
     </div>
   </div>
 </div>
-
-<script>
-function toggleWebAccountFields() {
-  const checkbox = document.querySelector('input[name="user[create_web_account]"]');
-  const webAccountFields = document.getElementById('web-account-fields');
-  
-  if (checkbox && webAccountFields) {
-    if (checkbox.checked) {
-      webAccountFields.style.display = 'block';
-    } else {
-      webAccountFields.style.display = 'none';
-    }
-  }
-  
-  // Mettre à jour l'état de l'email
-  updateEmailRequirement();
-}
-
-function toggleNewsletterNote() {
-  const checkbox = document.getElementById('newsletter_checkbox');
-  const note = document.getElementById('newsletter_note');
-  
-  if (checkbox && note) {
-    if (checkbox.checked) {
-      note.style.display = 'block';
-    } else {
-      note.style.display = 'none';
-    }
-  }
-  
-  // Mettre à jour l'état de l'email
-  updateEmailRequirement();
-}
-
-function updateEmailRequirement() {
-  const emailField = document.getElementById('person_email_field');
-  const webAccountCheckbox = document.querySelector('input[name="user[create_web_account]"]');
-  const newsletterCheckbox = document.getElementById('newsletter_checkbox');
-  
-  if (emailField) {
-    // Email obligatoire si compte web OU newsletter coché
-    const webAccountChecked = webAccountCheckbox ? webAccountCheckbox.checked : false;
-    const newsletterChecked = newsletterCheckbox ? newsletterCheckbox.checked : false;
-    
-    emailField.required = webAccountChecked || newsletterChecked;
-  }
-}
-</script>
-
-

@@ -17,28 +17,14 @@ module Admin
 
     # GET /admin/users or /admin/users.json
     def index
-      # Base query avec eager loading optimisé - ne montrer que les Person principales
-      @people = PersonQuery.active.main_people.includes(
-        :user,
-        memberships: :membership_type,
-        contributions: :contribution_formula
-      )
-
-      # Filtres
-      apply_person_filters
-
-      # Recherche
-      apply_person_search
-
-      # Tri
-      @people = @people.order(:last_name, :first_name)
+      people_scope = Admin::Users::IndexQuery.new(params).call
 
       # Pagination - Réduire à 15 éléments pour une meilleure lisibilité (ou paramètre items)
       items_per_page = params[:items]&.to_i || 15
-      @pagy, @people = pagy(@people, items: items_per_page)
+      @pagy, @people = pagy(people_scope, items: items_per_page)
 
       # Statistiques pour le dashboard (basées sur les Person principales)
-      statistics_service = Admin::DashboardStatisticsService.new(base_people: @people)
+      statistics_service = Admin::DashboardStatisticsService.new(base_people: people_scope)
       statistics = statistics_service.call
       @total_people = statistics[:total_people]
       @people_with_user = statistics[:people_with_user]
@@ -78,7 +64,7 @@ module Admin
         @user.email_address = @person.email
         @user.system_role = "web_visitor" # Rôle par défaut
         add_breadcrumb I18n.t("breadcrumbs.admin.users.members_list"), admin_users_path
-        add_breadcrumb @person.full_name, admin_user_path("person_#{@person.id}")
+        add_breadcrumb @person.full_name, admin_user_path(person_route_key(@person))
         add_breadcrumb I18n.t("breadcrumbs.admin.users.create_web_account"), nil
       else
         add_breadcrumb I18n.t("breadcrumbs.admin.users.members_list"), admin_users_path
@@ -91,7 +77,7 @@ module Admin
       person_id = extracted_person_id(params[:id])
       @person = PersonQuery.active.find(person_id)
       add_breadcrumb I18n.t("breadcrumbs.admin.users.members_list"), admin_users_path
-      add_breadcrumb @person.full_name, admin_user_path("person_#{@person.id}")
+      add_breadcrumb @person.full_name, admin_user_path(person_route_key(@person))
       add_breadcrumb I18n.t("breadcrumbs.admin.common.edit"), nil
     end
 
@@ -137,7 +123,7 @@ module Admin
       result = form.call
 
       if result.success?
-        redirect_to admin_user_path("person_#{result.person.id}"), notice: result.message
+        redirect_to admin_user_path(person_route_key(result.person)), notice: result.message
       else
         @user = User.new
         @user.person = result.person if result.person
@@ -175,7 +161,7 @@ module Admin
               message: t(".ajax_success_json_message")
             }
           else
-            redirect_to admin_user_path("person_#{updated_person.id}"), notice: t(".person_saved_notice")
+            redirect_to admin_user_path(person_route_key(updated_person)), notice: t(".person_saved_notice")
           end
         elsif request.xhr?
           render json: {
@@ -299,28 +285,6 @@ module Admin
       return if current_user.has_higher_permissions?(@user)
 
       redirect_to admin_users_path, alert: I18n.t("admin.users.check_deletion_permissions.higher_privileges")
-    end
-
-    # Méthodes privées pour les filtres et la recherche
-    def apply_person_filters
-      case params[:filter]
-      when "with_active_membership"
-        @people = @people.with_active_membership
-      when "with_expiring_membership"
-        @people = @people.with_expiring_membership
-      when "with_expired_membership"
-        @people = @people.with_expired_membership
-      when "without_membership"
-        @people = @people.without_membership
-      when "with_user_account"
-        @people = @people.with_user_account
-      when "without_user_account"
-        @people = @people.without_user_account
-      end
-    end
-
-    def apply_person_search
-      @people = @people.search_by_contact(params[:search]) if params[:search].present?
     end
 
     # Only allow a list of trusted parameters through.
@@ -463,11 +427,15 @@ module Admin
     end
 
     def person_identifier?(raw_id)
-      raw_id.to_s.start_with?("person_")
+      Admin::Users::PersonRouteKey.person_identifier?(raw_id)
     end
 
     def extracted_person_id(raw_id)
-      raw_id.to_s.delete_prefix("person_")
+      Admin::Users::PersonRouteKey.extract(raw_id)
+    end
+
+    def person_route_key(person_or_id)
+      Admin::Users::PersonRouteKey.call(person_or_id)
     end
 
     def load_recent_payments(person)

@@ -1,7 +1,7 @@
 # TODO — Le Circographe (Rails 8 / MVC)
 > **Statut** : interne  
 > **Public cible** : équipe dev  
-> **Dernière mise à jour** : 2026-06-02  
+> **Dernière mise à jour** : 2026-05-01
 > **Provenance** : centralisation des anciens fichiers (`to-do.md` racine et `docs/TODO.md`).
 
 > ⚠️ **Note d'identité (2026-05)** — Tout `User` possède une `Person`. (`users.person_id` NOT NULL en DB, création minimale à l’inscription, aucune donnée « orpheline »). Cf. [README](../../README.md) + [naming-rules.mdc](../../.cursor/rules/naming-rules.mdc)
@@ -24,7 +24,7 @@
     - Garder : `People::ContributionCreator` ≠ `ContributionUpgrader`.
     - Fusionner/Alléger : controller admin user / branches user/person, prioriser helpers/présenters.
     - Reporter dette : cohabitation `subscription_*` / `contribution_*`.
-    - Attention : `Admin::SubscriptionPlansController` (nom legacy, opère sur `ContributionFormula`).
+    - Historique : `Admin::SubscriptionPlansController` a été remplacé par `Admin::ContributionFormulasController`.
 
 - [x] **PR 2 — Validation usages :** Vérification contrats d’entrée/sortie, effets de bord, couverture tests avant fusion.
   - DoD : pas de fusion sans preuve d’équivalence métier.
@@ -62,6 +62,17 @@
 
 ---
 
+## 0c) Axes DRY/Rails 8+ issus de l'audit code (2026-05-01)
+- [x] **Paiement canonique** : création `Payment + PaymentLine[]` centralisée via `People::PaymentRecorder`, avec `People::PaymentCreator` conservé comme façade compatible.
+- [x] **Offres** : permissions + `offer_reason` extraits dans `People::OfferPolicy`; stockage historique encore bloqué par absence de colonne `payments.offer_reason`.
+- [x] **Flows Person allégés** : adhésion, cotisation et upgrades orchestrés par les services `People::*`; `Person` garde des wrappers compatibles pour les appels historiques.
+- [x] **Admin users index** : filtres/recherche/tri extraits dans `Admin::Users::IndexQuery`.
+- [x] **Routing Person admin** : clé `person_123` isolée dans `Admin::Users::PersonRouteKey`; migration progressive des vues/composants restante.
+- [x] **Newsletter export** : exports branchés sur `NewsletterSubscriber`, plus sur la colonne dépréciée `people.newsletter_subscribed`.
+- [ ] **À finir** : supprimer la colonne `people.newsletter_subscribed` après migration DB.
+
+---
+
 ## 0) *Ground Rules* (Arch + MVC)
 - Documentation complète du cycle de vie Person/User : [`docs/domain/happy_path_flows.md`].
 - Person = source d’identité + finance.
@@ -87,6 +98,7 @@
   2. Lecture centralisée (helper/FeatureFlags);
   3. Garde-fou serveur/UI;
   4. Prochaines étapes : extensibilité et dashboard admin de flag.
+- `show_old.html.erb` supprimé après vérification d'absence de référence runtime.
 
 ---
 
@@ -101,14 +113,15 @@
 - [x] Empêcher relink implicite sur `Person` déjà liée
 - [x] Don n’impacte pas adhésion (ligne séparée).
 - [x] Afficher toutes les lignes (don inclus) dans onglet paiements fiche personne (2026-05-01).
-- Afficher `offer_reason` dans historique — bloqué : pas de colonne DB, seulement loggé. Nécessite `add_column :payments, :offer_reason, :text`.
+- Afficher `offer_reason` dans historique — bloqué : pas de colonne DB, seulement loggé via `People::OfferPolicy`. Nécessite `add_column :payments, :offer_reason, :text`.
 - Enforcer offer_reason admin edit paiement offert — même blocage DB.
 - Vérif/intégrité plans illimits: sessions_remaining = nil.
 - Vérif : somme payment_lines == paiement total.
 - Action admin explicite link User↔Person (UI/perm à tester)
-- Migration Stimulus pour scripts inline restants
+- [x] Migration Stimulus pour scripts inline admin restants
 - Uniformisation styles/espacement admin (paiement/adhésion/contribution)
 - Cleanup components legacy
+- [x] Finaliser migration progressive `Admin::Users::PersonRouteKey` dans vues/composants.
 
 ---
 
@@ -137,8 +150,8 @@
 ---
 
 ## 5) Paiement : intégrité et accountability (long)
-- Retirer tout usage user_id dans payments (reste Admin::PaymentsController#322)
-- recorded_by obligatoire
+- Retirer tout usage user_id dans payments — à vérifier régulièrement : `payments.user_id` absent du schéma courant, `recorded_by_id` obligatoire présent.
+- recorded_by obligatoire — fait côté DB (`payments.recorded_by_id NOT NULL`), garder validation/service.
 - Lignes don legacy fix/migration: aucun don en type "Payment"
 - Annulation (=void/cancel) à la place suppression
 - Métadonnées reçu don (numéro, date, par qui)

@@ -29,12 +29,39 @@ module People
       target_person = resolve_person
       recorded_by = resolve_user
 
-      result = target_person.upgrade_contribution!(
-        from_contribution_id: from_contribution_id,
-        to_formula_id: to_formula_id,
-        payment_method: payment_method.to_sym,
-        recorded_by: recorded_by
-      )
+      result = nil
+      ActiveRecord::Base.transaction do
+        raise "Adhésion Cirque active requise" unless target_person.can_buy_contribution_formulas?
+
+        from_contribution = target_person.contributions.find(from_contribution_id)
+        to_formula = ContributionFormula.find(to_formula_id)
+
+        validate_contribution_upgrade!(from_contribution, to_formula)
+
+        credit_cents = calculate_contribution_credit(from_contribution)
+        from_contribution.suspend!(reason: "Upgrade vers #{to_formula.name}")
+
+        amount_to_pay = [ to_formula.price_cents - credit_cents, 0 ].max
+        new_contribution = target_person.contributions.create!(
+          People::ContributionPayloadBuilder.call(to_formula)
+            .merge(contribution_formula: to_formula, status: :active, purchased_at: Time.current)
+        )
+
+        payment = record_payment!(
+          person: target_person,
+          recorded_by: recorded_by,
+          contribution: new_contribution,
+          amount_cents: amount_to_pay,
+          notes: "Upgrade cotisation: #{from_contribution.contribution_formula.name} → #{to_formula.name}. Crédit: #{credit_cents / 100.0}€"
+        )
+
+        result = {
+          old_contribution: from_contribution,
+          new_contribution: new_contribution,
+          payment: payment,
+          credit_applied: credit_cents
+        }
+      end
 
       instrument_upgrade(target_person, recorded_by, result)
 
@@ -75,6 +102,60 @@ module People
         amount_cents: result[:payment]&.total_cents || 0,
         credit_applied: result[:credit_applied] || 0
       )
+    end
+
+    def record_payment!(person:, recorded_by:, contribution:, amount_cents:, notes:)
+      payment_result = People::PaymentRecorder.new(
+        person: person,
+        recorded_by: recorded_by,
+        payment_method: payment_method,
+        status: "success",
+        notes: notes,
+        total_cents: amount_cents,
+        payment_lines: [
+          {
+            item_type: "Contribution",
+            item_id: contribution.id,
+            amount_cents: amount_cents,
+            description: "Upgrade avec crédit prorata"
+          }
+        ]
+      ).call
+
+      raise payment_result.message unless payment_result.success?
+
+      payment_result.payment
+    end
+
+    def validate_contribution_upgrade!(from_contribution, to_formula)
+      valid_upgrades = {
+        "pack10" => %w[trimester annual],
+        "trimester" => [ "annual" ]
+      }
+
+      from_duration = from_contribution.contribution_formula.duration
+      to_duration = to_formula.duration
+      allowed = valid_upgrades[from_duration]
+      raise "Upgrade #{from_duration} → #{to_duration} non autorisé" unless allowed&.include?(to_duration)
+    end
+
+    def calculate_contribution_credit(contribution)
+      formula = contribution.contribution_formula
+
+      case formula.duration
+      when "pack10"
+        0
+      when "trimester"
+        total_days = 90
+        days_remaining = (contribution.expires_at.to_date - Date.current).to_i
+        (formula.price_cents * days_remaining / total_days.to_f).round
+      when "annual"
+        total_days = 365
+        days_remaining = (contribution.expires_at.to_date - Date.current).to_i
+        (formula.price_cents * days_remaining / total_days.to_f).round
+      else
+        0
+      end
     end
 
     def person_identifier_present
