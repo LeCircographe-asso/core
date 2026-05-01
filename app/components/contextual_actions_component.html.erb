@@ -4,7 +4,7 @@
       # Construire l'URL selon le type d'action
       url = case action[:type]
             when :view
-              admin_user_path("person_#{person.id}")
+              admin_user_path(Admin::Users::PersonRouteKey.call(person))
             when :create_user
               new_admin_user_path(person_id: person.id)
             when :add_membership

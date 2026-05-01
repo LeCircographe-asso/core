@@ -18,13 +18,13 @@ module Admin
         if result.credit_applied.positive?
           notice += t(".credit_applied_suffix", amount: (result.credit_applied / 100.0).round(2))
         end
-        redirect_to admin_user_path("person_#{@person.id}"), notice: notice
+        redirect_to admin_person_path(@person), notice: notice
       else
-        redirect_to admin_user_path("person_#{@person.id}"),
+        redirect_to admin_person_path(@person),
                     alert: t(".failure_alert", message: result.message)
       end
     rescue StandardError => e
-      redirect_to admin_user_path("person_#{@person.id}"),
+      redirect_to admin_person_path(@person),
                   alert: t(".failure_alert", message: e.message)
     end
 
@@ -32,6 +32,10 @@ module Admin
 
     def set_person
       @person = Person.find(params[:person_id])
+    end
+
+    def admin_person_path(person)
+      admin_user_path(Admin::Users::PersonRouteKey.call(person))
     end
   end
 end

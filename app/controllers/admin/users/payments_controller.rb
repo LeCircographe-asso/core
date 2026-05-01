@@ -62,7 +62,7 @@ module Admin
         result = People::PaymentCreator.new(service_params).call
 
         if result.success?
-          redirect_to admin_user_path("person_#{@person.id}"), notice: t(".success")
+          redirect_to admin_person_path(@person), notice: t(".success")
         else
           @membership_types = MembershipType.all
           @contribution_formulas = ContributionFormula.all
@@ -93,9 +93,9 @@ module Admin
         ).call
 
         if result.success?
-          redirect_to admin_user_path("person_#{@person.id}"), notice: t(".success")
+          redirect_to admin_person_path(@person), notice: t(".success")
         else
-          redirect_to admin_user_path("person_#{@person.id}"), alert: t(".failure_alert", message: result.message)
+          redirect_to admin_person_path(@person), alert: t(".failure_alert", message: result.message)
         end
       end
 
@@ -110,9 +110,9 @@ module Admin
         ).call
 
         if result.success?
-          redirect_to admin_user_path("person_#{@person.id}"), notice: t(".destroyed")
+          redirect_to admin_person_path(@person), notice: t(".destroyed")
         else
-          redirect_to admin_user_path("person_#{@person.id}"), alert: t(".failure_alert", message: result.message)
+          redirect_to admin_person_path(@person), alert: t(".failure_alert", message: result.message)
         end
       end
 
@@ -129,15 +129,15 @@ module Admin
             ).call
 
             if result.success?
-              redirect_to admin_user_path("person_#{@person.id}"), notice: t(".processed")
+              redirect_to admin_person_path(@person), notice: t(".processed")
             else
-              redirect_to admin_user_path("person_#{@person.id}"), alert: t(".failure_alert", message: result.message)
+              redirect_to admin_person_path(@person), alert: t(".failure_alert", message: result.message)
             end
           else
-            redirect_to admin_user_path("person_#{@person.id}"), notice: t(".already_processed")
+            redirect_to admin_person_path(@person), notice: t(".already_processed")
           end
         rescue StandardError => e
-          redirect_to admin_user_path("person_#{@person.id}"), alert: t(".failure_alert", message: e.message)
+          redirect_to admin_person_path(@person), alert: t(".failure_alert", message: e.message)
         end
       end
 
@@ -147,8 +147,8 @@ module Admin
         identifier = params[:person_id].presence || params[:user_id].presence
         raise ActiveRecord::RecordNotFound, "person identifier missing" if identifier.blank?
 
-        if identifier.to_s.start_with?("person_")
-          person_id = identifier.to_s.delete_prefix("person_")
+        if Admin::Users::PersonRouteKey.person_identifier?(identifier)
+          person_id = Admin::Users::PersonRouteKey.extract(identifier)
           @person = Person.find(person_id)
         else
           user = User.find(identifier)
@@ -158,8 +158,12 @@ module Admin
 
       def set_breadcrumbs
         add_breadcrumb I18n.t("breadcrumbs.admin.users.members_list"), admin_users_path
-        add_breadcrumb @person.full_name, admin_user_path("person_#{@person.id}")
+        add_breadcrumb @person.full_name, admin_person_path(@person)
         add_breadcrumb I18n.t("breadcrumbs.admin.payments.management"), nil
+      end
+
+      def admin_person_path(person)
+        admin_user_path(Admin::Users::PersonRouteKey.call(person))
       end
 
       def payment_params

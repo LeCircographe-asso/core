@@ -5,59 +5,47 @@ export default class extends Controller {
   static targets = ["webAccountFields", "emailField", "newsletterNote"]
 
   connect() {
-    console.log('Form toggle controller connected!')
-    this.toggleWebAccountFields()
-    this.toggleNewsletterNote()
+    this.refresh()
   }
 
   toggleWebAccountFields() {
-    console.log('toggleWebAccountFields called')
-    const checkbox = this.element.querySelector('input[name="user[create_web_account]"]')
-    console.log('Checkbox found:', checkbox)
-    console.log('Checkbox checked:', checkbox?.checked)
-    
-    if (this.hasWebAccountFieldsTarget && checkbox) {
-      if (checkbox.checked) {
-        this.webAccountFieldsTarget.style.display = 'block'
-        console.log('Showing web account fields')
-        if (this.hasEmailFieldTarget) {
-          this.emailFieldTarget.required = true
-        }
-      } else {
-        this.webAccountFieldsTarget.style.display = 'none'
-        console.log('Hiding web account fields')
-        if (this.hasEmailFieldTarget) {
-          this.emailFieldTarget.required = false
-        }
-      }
-    }
+    this.refresh()
   }
 
   toggleNewsletterNote() {
-    const checkbox = this.element.querySelector('input[name="user[person][newsletter_subscribed]"]')
-    if (this.hasNewsletterNoteTarget && checkbox) {
-      if (checkbox.checked) {
-        this.newsletterNoteTarget.style.display = 'block'
-        if (this.hasEmailFieldTarget) {
-          this.emailFieldTarget.required = true
-        }
-      } else {
-        this.newsletterNoteTarget.style.display = 'none'
-        if (this.hasEmailFieldTarget) {
-          this.emailFieldTarget.required = false
-        }
-      }
-    }
+    this.refresh()
   }
 
-  // Actions
   createWebAccountChanged() {
-    console.log('createWebAccountChanged called')
-    this.toggleWebAccountFields()
+    this.refresh()
   }
 
   newsletterSubscribedChanged() {
-    console.log('newsletterSubscribedChanged called')
-    this.toggleNewsletterNote()
+    this.refresh()
+  }
+
+  refresh() {
+    const webAccountChecked = this.webAccountCheckbox?.checked || false
+    const newsletterChecked = this.newsletterCheckbox?.checked || false
+
+    if (this.hasWebAccountFieldsTarget) {
+      this.webAccountFieldsTarget.classList.toggle("hidden", !webAccountChecked)
+    }
+
+    if (this.hasNewsletterNoteTarget) {
+      this.newsletterNoteTarget.classList.toggle("hidden", !newsletterChecked)
+    }
+
+    if (this.hasEmailFieldTarget) {
+      this.emailFieldTarget.required = webAccountChecked || newsletterChecked
+    }
+  }
+
+  get webAccountCheckbox() {
+    return this.element.querySelector('input[name="user[create_web_account]"]')
+  }
+
+  get newsletterCheckbox() {
+    return this.element.querySelector('input[name="user[person][newsletter_subscribed]"]')
   }
 }

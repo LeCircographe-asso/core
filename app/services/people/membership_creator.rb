@@ -35,14 +35,35 @@ module People
       membership_type = MembershipType.find(membership_type_id)
       recorded_by = find_recorded_by
 
-      membership_data = person.create_membership!(
-        membership_type,
-        payment_method: payment_method.to_sym,
-        recorded_by: recorded_by,
-        custom_amount_cents: custom_amount_cents,
-        offer_reason: offer_reason,
-        donation_cents: donation_cents
-      )
+      membership_data = nil
+      ActiveRecord::Base.transaction do
+        People::OfferPolicy.validate!(
+          recorded_by: recorded_by,
+          person: person,
+          offer_type: "membership",
+          offer_reason: offer_reason
+        ) if payment_method == "offered"
+
+        membership = person.memberships.create!(
+          membership_type: membership_type,
+          started_at: Date.current,
+          ended_at: Date.current + 1.year,
+          status: :active
+        )
+
+        assign_member_number_if_needed!(membership_type)
+
+        amount_cents = amount_for(membership_type.price_cents)
+        payment = record_payment!(
+          item_type: "Membership",
+          item_id: membership.id,
+          amount_cents: amount_cents,
+          description: payment_description(membership_type.name),
+          notes: "Paiement pour #{payment_description(membership_type.name)}"
+        )
+
+        membership_data = { membership: membership, payment: payment }
+      end
 
       ActiveSupport::Notifications.instrument(
         "membership.created",
@@ -83,6 +104,61 @@ module People
       else
         raise "A recorded_by user is required to create a membership"
       end
+    end
+
+    def assign_member_number_if_needed!(membership_type)
+      return if person.member_number.present?
+
+      category = membership_type.circus? ? "CIRQUE" : "BASIQUE"
+      MemberManagementService.assign_member_number(person, category) unless Rails.env.test?
+    end
+
+    def amount_for(base_price_cents)
+      return custom_amount_cents || 0 if payment_method == "offered"
+
+      base_price_cents
+    end
+
+    def payment_description(name)
+      payment_method == "offered" ? "Adhésion offerte #{name}" : "Adhésion #{name}"
+    end
+
+    def record_payment!(item_type:, item_id:, amount_cents:, description:, notes:)
+      lines = [
+        {
+          item_type: item_type,
+          item_id: item_id,
+          amount_cents: amount_cents,
+          description: description
+        }
+      ]
+
+      if normalized_donation_cents.present?
+        lines << {
+          item_type: "Donation",
+          amount_cents: normalized_donation_cents,
+          description: "Donation"
+        }
+      end
+
+      result = People::PaymentRecorder.new(
+        person: person,
+        recorded_by: find_recorded_by,
+        payment_method: payment_method,
+        status: "success",
+        notes: notes,
+        total_cents: lines.sum { |line| line[:amount_cents].to_i },
+        payment_lines: lines
+      ).call
+
+      raise result.message unless result.success?
+
+      result.payment
+    end
+
+    def normalized_donation_cents
+      cents = donation_cents.to_i
+      cents.positive? ? cents : nil
     end
 
     def failure(message, error_list = nil)

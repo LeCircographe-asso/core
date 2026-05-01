@@ -4,7 +4,7 @@ import { Controller } from "@hotwired/stimulus"
 export default class extends Controller {
   static targets = ["trigger", "panel"]
   static values = { initial: String, useHash: Boolean }
-  static classes = ["active"]
+  static classes = ["active", "inactive"]
 
   connect() {
     const initialName = this.initialValue || this.defaultName
@@ -24,7 +24,8 @@ export default class extends Controller {
   show(name) {
     this.triggerTargets.forEach(trigger => {
       const selected = trigger.dataset.tabsNameValue === name
-      trigger.classList.toggle(this.activeClass, selected)
+      this.activeClassesList.forEach(className => trigger.classList.toggle(className, selected))
+      this.inactiveClassesList.forEach(className => trigger.classList.toggle(className, !selected))
       trigger.setAttribute("aria-selected", selected)
       trigger.setAttribute("tabindex", selected ? "0" : "-1")
     })
@@ -45,5 +46,13 @@ export default class extends Controller {
     if (!hash) return null
     const names = this.triggerTargets.map(trigger => trigger.dataset.tabsNameValue)
     return names.includes(hash) ? hash : null
+  }
+
+  get activeClassesList() {
+    return this.hasActiveClass ? this.activeClass.split(" ").filter(Boolean) : []
+  }
+
+  get inactiveClassesList() {
+    return this.hasInactiveClass ? this.inactiveClass.split(" ").filter(Boolean) : []
   }
 }

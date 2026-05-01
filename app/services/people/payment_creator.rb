@@ -32,32 +32,20 @@ module People
     def call
       return failure("Invalid payment data: #{errors.full_messages.join(', ')}") unless valid?
 
-      target_person = resolve_person
-      recorded_by = resolve_recorded_by
       normalized_lines = normalize_payment_lines
       total = determine_total(normalized_lines)
 
-      payment = nil
-
-      ActiveRecord::Base.transaction do
-        payment = target_person.payments.create!(
-          total_cents: total,
-          payment_method: payment_method,
-          status: status,
-          recorded_by: recorded_by,
-          notes: notes
-        )
-
-        created_lines = if normalized_lines.any?
-                          create_multiple_lines(payment, normalized_lines)
-        else
-                          [ create_single_line(payment) ]
-        end
-
-        instrument_payment_created(payment, created_lines.length)
-
-        return success(payment: payment, payment_lines: created_lines)
-      end
+      lines = normalized_lines.any? ? normalized_lines : [ single_line_attributes ]
+      People::PaymentRecorder.new(
+        person: person,
+        person_id: person_id,
+        recorded_by_id: recorded_by_id,
+        total_cents: total,
+        payment_method: payment_method,
+        status: status,
+        notes: notes,
+        payment_lines: lines
+      ).call
     rescue ActiveRecord::RecordNotFound => e
       failure("Record not found: #{e.message}")
     rescue ActiveRecord::RecordInvalid => e
@@ -69,49 +57,24 @@ module People
 
     private
 
-    def resolve_person
-      return person if person.present?
-      raise ActiveRecord::RecordNotFound, "Person not found" if person_id.blank?
-
-      Person.find(person_id)
-    end
-
-    def resolve_recorded_by
-      return User.find(recorded_by_id) if recorded_by_id.present?
-
-      raise ActiveRecord::RecordNotFound, "Recorded_by user not provided" unless Current.respond_to?(:user) && Current.user.present?
-
-      Current.user
-    end
-
-    def create_single_line(payment)
-      line_amount = amount_cents.to_i
+    def single_line_attributes
       line_item_type = item_type.presence || "Donation"
       line_description = description.presence || default_description_for(line_item_type)
 
-      payment.payment_lines.create!(
+      {
         item_type: line_item_type,
-        item_id: donation_line?(line_item_type) ? payment.id : item_id,
-        amount_cents: line_amount,
+        item_id: item_id,
+        amount_cents: amount_cents.to_i,
         description: line_description
-      )
-    end
-
-    def create_multiple_lines(payment, lines)
-      lines.map do |line|
-        payment.payment_lines.create!(
-          item_type: line[:item_type],
-          item_id: line[:item_id],
-          amount_cents: line[:amount_cents].to_i,
-          description: line[:description].presence || default_description_for(line[:item_type])
-        )
-      end
+      }
     end
 
     def normalize_payment_lines
       Array(payment_lines).map do |line|
         line = line.to_unsafe_h if line.respond_to?(:to_unsafe_h)
-        line.symbolize_keys
+        line.symbolize_keys.tap do |attrs|
+          attrs[:description] = attrs[:description].presence || default_description_for(attrs[:item_type])
+        end
       end
     end
 
@@ -136,18 +99,6 @@ module People
       item_type.to_s.casecmp("donation").zero?
     end
 
-    def instrument_payment_created(payment, lines_count)
-      ActiveSupport::Notifications.instrument(
-        "payment.created",
-        payment_id: payment.id,
-        person_id: payment.person_id,
-        total_cents: payment.total_cents,
-        payment_method: payment.payment_method,
-        recorded_by_id: payment.recorded_by_id,
-        lines_count: lines_count
-      )
-    end
-
     def success(payment:, payment_lines: [])
       Result.new(success?: true, payment: payment, payment_lines: payment_lines, errors: [], message: "Payment created successfully")
     end
@@ -170,15 +121,19 @@ module People
 
     def validate_amount_requirements
       if Array(payment_lines).any?
+        return if payment_method == "offered" && total_cents.to_i >= 0
+
         errors.add(:total_cents, "must be greater than zero when payment lines are provided") if total_cents.blank? || total_cents.to_i <= 0
       else
-        errors.add(:amount_cents, "must be greater than zero") if amount_cents.blank? || amount_cents.to_i <= 0
+        unless payment_method == "offered" && amount_cents.to_i >= 0
+          errors.add(:amount_cents, "must be greater than zero") if amount_cents.blank? || amount_cents.to_i <= 0
+        end
         errors.add(:item_type, "cannot be blank when no payment lines provided") if item_type.blank? && description.blank?
       end
     end
 
     def validate_payment_lines_sum
-      lines = Array(payment_lines)
+      lines = normalize_payment_lines
       return if lines.empty?
 
       lines_sum = lines.sum { |line| line[:amount_cents].to_i }

@@ -313,7 +313,7 @@ module Admin
         person = Person.find_by(id: params[:person_id])
         if person
           add_breadcrumb I18n.t("breadcrumbs.admin.users.members_list"), admin_users_path
-          add_breadcrumb person.full_name, admin_user_path("person_#{person.id}")
+          add_breadcrumb person.full_name, admin_user_path(Admin::Users::PersonRouteKey.call(person))
           add_breadcrumb I18n.t("breadcrumbs.admin.payments.history"), nil
           return
         end

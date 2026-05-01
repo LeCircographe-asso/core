@@ -53,7 +53,7 @@ module Admin
       ).call
 
       if result.success?
-        redirect_to admin_user_path("person_#{@person.id}"), notice: t(".purchased")
+        redirect_to admin_user_path(Admin::Users::PersonRouteKey.call(@person)), notice: t(".purchased")
       else
         redirect_to new_admin_contribution_formula_path(person_id: @person.id),
                     alert: t(".purchase_failed_alert", message: result.message)

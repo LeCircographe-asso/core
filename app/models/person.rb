@@ -199,213 +199,94 @@ class Person < ApplicationRecord
   end
 
   def create_membership!(membership_type, recorded_by:, payment_method: :cash, custom_amount_cents: nil, offer_reason: nil, donation_cents: nil)
-    ActiveRecord::Base.transaction do
-      validate_offer_permissions!(recorded_by, "membership", offer_reason) if payment_method.to_s == "offered"
+    result = People::MembershipCreator.new(
+      person: self,
+      membership_type_id: membership_type.id,
+      payment_method: payment_method.to_s,
+      recorded_by_id: recorded_by.id,
+      custom_amount_cents: custom_amount_cents,
+      offer_reason: offer_reason,
+      donation_cents: donation_cents
+    ).call
 
-      raise "Cette personne a déjà une adhésion active" if memberships.active.current.exists?
+    raise "Cette personne a déjà une adhésion active" if result.success? && result.already_existed
+    raise result.message unless result.success?
 
-      membership = memberships.create!(
-        membership_type: membership_type,
-        started_at: Date.current,
-        ended_at: Date.current + 1.year,
-        status: :active
-      )
-
-      if member_number.blank?
-        normalized_category = case membership_type.category
-        when "circus"
-                                "CIRQUE"
-        when "basic"
-                                "BASIQUE"
-        else
-                                "BASIQUE"
-        end
-
-        MemberManagementService.assign_member_number(self, normalized_category) unless Rails.env.test?
-      end
-
-      amount_cents = calculate_amount_cents(payment_method, membership_type.price_cents, custom_amount_cents)
-      donation_cents = donation_cents.to_i if donation_cents.present?
-      donation_cents = nil if donation_cents.to_i <= 0
-      total_cents = amount_cents + (donation_cents || 0)
-
-      description = generate_payment_description(payment_method, membership_type.name, "Membership")
-      payment = payments.create!(
-        total_cents: total_cents,
-        payment_method: payment_method,
-        status: :success,
-        recorded_by: recorded_by,
-        notes: "Paiement pour #{description}"
-      )
-
-      payment.payment_lines.create!(
-        item_type: "Membership",
-        item_id: membership.id,
-        amount_cents: amount_cents,
-        description: description
-      )
-
-      if donation_cents.present?
-        payment.payment_lines.create!(
-          item_type: "Donation",
-          item_id: payment.id,
-          amount_cents: donation_cents,
-          description: "Donation"
-        )
-      end
-
-      { membership: membership, payment: payment }
-    end
+    { membership: result.membership, payment: result.payment }
   end
 
   def create_contribution!(contribution_formula, recorded_by:, payment_method: :cash, record_attendance: false, custom_amount_cents: nil, offer_reason: nil, donation_cents: nil)
-    ActiveRecord::Base.transaction do
-      validate_offer_permissions!(recorded_by, "contribution", offer_reason, contribution_formula) if payment_method.to_s == "offered"
+    result = People::ContributionCreator.new(
+      person: self,
+      contribution_formula_id: contribution_formula.id,
+      payment_method: payment_method.to_s,
+      recorded_by_id: recorded_by.id,
+      record_attendance: record_attendance,
+      custom_amount_cents: custom_amount_cents,
+      offer_reason: offer_reason,
+      donation_cents: donation_cents
+    ).call
 
-      raise "Cette personne doit avoir une adhésion Cirque active pour acheter une cotisation" unless can_buy_contribution_formulas?
+    raise result.message unless result.success?
 
-      contribution = contributions.create!(
-        contribution_payload_for(contribution_formula)
-          .merge(contribution_formula: contribution_formula, status: :active, purchased_at: Time.current)
-      )
-
-      amount_cents = calculate_amount_cents(payment_method, contribution_formula.price_cents, custom_amount_cents)
-      donation_cents = donation_cents.to_i if donation_cents.present?
-      donation_cents = nil if donation_cents.to_i <= 0
-      total_cents = amount_cents + (donation_cents || 0)
-
-      description = generate_payment_description(payment_method, contribution_formula.name, "Contribution")
-      payment = payments.create!(
-        total_cents: total_cents,
-        payment_method: payment_method,
-        status: :success,
-        recorded_by: recorded_by,
-        notes: "Paiement pour #{description}"
-      )
-
-      payment.payment_lines.create!(
-        item_type: "Contribution",
-        item_id: contribution.id,
-        amount_cents: amount_cents,
-        description: description
-      )
-
-      if donation_cents.present?
-        payment.payment_lines.create!(
-          item_type: "Donation",
-          item_id: payment.id,
-          amount_cents: donation_cents,
-          description: "Donation"
-        )
-      end
-
-      if record_attendance
-        # Logique de présence — implémentation à compléter selon les besoins.
-      end
-
-      { contribution: contribution, payment: payment }
-    end
+    { contribution: result.contribution, payment: result.payment }
   end
 
   def upgrade_contribution!(from_contribution_id:, to_formula_id:, recorded_by:, payment_method: :cash)
-    ActiveRecord::Base.transaction do
-      raise "Adhésion Cirque active requise" unless can_buy_contribution_formulas?
+    result = People::ContributionUpgrader.new(
+      person: self,
+      from_contribution_id: from_contribution_id,
+      to_formula_id: to_formula_id,
+      payment_method: payment_method.to_s,
+      recorded_by_id: recorded_by.id
+    ).call
 
-      from_contribution = contributions.find(from_contribution_id)
-      to_formula = ContributionFormula.find(to_formula_id)
+    raise result.message.sub(/\AErreur pendant contribution upgrade : /, "") unless result.success?
 
-      validate_contribution_upgrade!(from_contribution, to_formula)
-
-      credit_cents = calculate_contribution_credit(from_contribution)
-
-      from_contribution.suspend!(reason: "Upgrade vers #{to_formula.name}")
-
-      amount_to_pay = [ to_formula.price_cents - credit_cents, 0 ].max
-
-      new_contribution = contributions.create!(
-        contribution_payload_for(to_formula)
-          .merge(contribution_formula: to_formula, status: :active, purchased_at: Time.current)
-      )
-
-      payment = payments.create!(
-        total_cents: amount_to_pay,
-        payment_method: payment_method,
-        status: :success,
-        recorded_by: recorded_by,
-        notes: "Upgrade cotisation: #{from_contribution.contribution_formula.name} → #{to_formula.name}. Crédit: #{credit_cents / 100.0}€"
-      )
-
-      payment.payment_lines.create!(
-        item_type: "Contribution",
-        item_id: new_contribution.id,
-        amount_cents: amount_to_pay,
-        description: "Upgrade avec crédit prorata"
-      )
-
-      {
-        old_contribution: from_contribution,
-        new_contribution: new_contribution,
-        payment: payment,
-        credit_applied: credit_cents
-      }
-    end
+    {
+      old_contribution: result.old_contribution,
+      new_contribution: result.new_contribution,
+      payment: result.payment,
+      credit_applied: result.credit_applied
+    }
   end
 
   def create_donation!(amount_cents, recorded_by:, payment_method: :cash, notes: "Donation")
-    ActiveRecord::Base.transaction do
-      payment = payments.create!(
-        total_cents: amount_cents,
-        payment_method: payment_method,
-        status: :success,
-        recorded_by: recorded_by,
-        notes: notes
-      )
+    result = People::PaymentCreator.new(
+      person: self,
+      amount_cents: amount_cents,
+      payment_method: payment_method.to_s,
+      recorded_by_id: recorded_by.id,
+      item_type: "Donation",
+      description: notes,
+      notes: notes
+    ).call
 
-      payment.payment_lines.create!(
-        item_type: "Donation",
-        item_id: payment.id,
-        amount_cents: amount_cents,
-        description: notes
-      )
+    raise result.message unless result.success?
 
-      payment
-    end
+    result.payment
   end
 
   def upgrade_membership!(new_membership_type, recorded_by:, payment_method: :cash, custom_amount_cents: nil, offer_reason: nil, donation_cents: nil)
-    ActiveRecord::Base.transaction do
-      current_membership = self.current_membership
-      raise "Aucune adhésion active à upgrader" unless current_membership
+    result = People::MembershipUpgrader.new(
+      person: self,
+      new_membership_type_id: new_membership_type.id,
+      payment_method: payment_method.to_s,
+      recorded_by_id: recorded_by.id,
+      custom_amount_cents: custom_amount_cents,
+      offer_reason: offer_reason,
+      donation_cents: donation_cents
+    ).call
 
-      validate_offer_permissions!(recorded_by, "membership_upgrade", offer_reason) if payment_method.to_s == "offered"
+    raise result.message unless result.success?
 
-      old_membership_type = current_membership.membership_type
-
-      amount_to_pay = new_membership_type.price_cents
-
-      new_membership = current_membership.upgrade_to!(new_membership_type)
-
-      old_member_number = member_number
-      new_member_number = handle_member_number_change!(old_membership_type, new_membership_type, recorded_by)
-
-      payment = create_payment_with_line!(
-        amount_cents: amount_to_pay,
-        payment_method: payment_method,
-        recorded_by: recorded_by,
-        item_type: "Membership",
-        item_id: new_membership.id,
-        description: "Upgrade d'adhésion de #{old_membership_type.name} vers #{new_membership_type.name} (plein tarif)",
-        donation_cents: donation_cents
-      )
-
-      {
-        membership: new_membership,
-        payment: payment,
-        member_number_changed: old_member_number != new_member_number,
-        old_member_number: old_member_number,
-        new_member_number: new_member_number
-      }
-    end
+    {
+      membership: result.membership,
+      payment: result.payment,
+      member_number_changed: result.member_number_changed,
+      old_member_number: result.old_member_number,
+      new_member_number: result.new_member_number
+    }
   end
 
   def renew_membership!(membership_type, recorded_by:, payment_method: :cash, custom_amount_cents: nil, offer_reason: nil)
@@ -440,27 +321,6 @@ class Person < ApplicationRecord
 
   private
 
-  def handle_member_number_change!(old_membership_type, new_membership_type, recorded_by)
-    old_type_code = get_membership_type_code(old_membership_type)
-    new_type_code = get_membership_type_code(new_membership_type)
-
-    if old_type_code == new_type_code
-      member_number
-    else
-      new_member_number = MemberManagementService.generate_member_number(new_type_code)
-
-      create_member_number_change_history!(old_member_number: member_number,
-                                           new_member_number: new_member_number,
-                                           old_type: old_type_code,
-                                           new_type: new_type_code,
-                                           recorded_by: recorded_by)
-
-      update!(member_number: new_member_number)
-
-      new_member_number
-    end
-  end
-
   def get_membership_type_code(membership_type)
     case membership_type.category
     when "circus"
@@ -469,17 +329,6 @@ class Person < ApplicationRecord
       "BASIQUE"
     else
       "BASIQUE"
-    end
-  end
-
-  def get_membership_type_name(membership_type)
-    case membership_type.category
-    when "circus"
-      "Cirque"
-    when "basic"
-      "Basique"
-    else
-      "Basique"
     end
   end
 
@@ -499,116 +348,6 @@ class Person < ApplicationRecord
       notes: "Changement automatique lors de l'upgrade d'adhésion (#{old_type_name} → #{new_type_name}) - Enregistré par #{recorded_by.email}",
       assigned_at: Time.current
     )
-  end
-
-  def calculate_amount_cents(payment_method, base_price_cents, custom_amount_cents = nil)
-    case payment_method.to_s
-    when "offered"
-      custom_amount_cents || 0
-    else
-      base_price_cents
-    end
-  end
-
-  def contribution_payload_for(contribution_formula)
-    People::ContributionPayloadBuilder.call(contribution_formula)
-  end
-
-  def generate_payment_description(payment_method, item_name, item_type)
-    case payment_method.to_s
-    when "offered"
-      case item_type
-      when "Membership" then "Adhésion offerte #{item_name}"
-      when "Contribution" then "Cotisation offerte #{item_name}"
-      when "MembershipUpgrade" then "Upgrade offert d'adhésion vers #{item_name}"
-      else "#{item_type} offert #{item_name}"
-      end
-    else
-      case item_type
-      when "Membership" then "Adhésion #{item_name}"
-      when "Contribution" then "Cotisation #{item_name}"
-      when "MembershipUpgrade" then "Upgrade d'adhésion vers #{item_name}"
-      else "#{item_type} #{item_name}"
-      end
-    end
-  end
-
-  def validate_offer_permissions!(recorded_by, offer_type, offer_reason, contribution_formula = nil)
-    raise "Seuls les bénévoles, admins et super-admins peuvent offrir des #{offer_type}s" unless recorded_by.super_admin? || recorded_by.admin? || recorded_by.volunteer?
-
-    raise "Une raison doit être fournie pour offrir une #{offer_type}" if offer_reason.blank?
-
-    raise "Les bénévoles ne peuvent offrir que des cotisations 'journée'" if recorded_by.volunteer? && offer_type == "contribution" && contribution_formula&.duration != "day"
-
-    create_offer_audit_log!(recorded_by, offer_type, offer_reason, contribution_formula)
-  end
-
-  def create_offer_audit_log!(recorded_by, offer_type, offer_reason, _contribution_formula = nil)
-    Rails.logger.info "OFFER AUDIT: #{recorded_by.email} offered #{offer_type} to #{full_name} (#{id}) - Reason: #{offer_reason}"
-  end
-
-  def create_payment_with_line!(amount_cents:, payment_method:, recorded_by:, item_type:, item_id:, description:, donation_cents: nil)
-    donation_cents = donation_cents.to_i if donation_cents.present?
-    donation_cents = nil if donation_cents.to_i <= 0
-    total_cents = amount_cents + (donation_cents || 0)
-
-    payment = payments.create!(
-      total_cents: total_cents,
-      payment_method: payment_method,
-      status: :success,
-      recorded_by: recorded_by,
-      notes: description
-    )
-
-    payment.payment_lines.create!(
-      item_type: item_type,
-      item_id: item_id,
-      amount_cents: amount_cents,
-      description: description
-    )
-
-    if donation_cents.present?
-      payment.payment_lines.create!(
-        item_type: "Donation",
-        item_id: payment.id,
-        amount_cents: donation_cents,
-        description: "Donation"
-      )
-    end
-
-    payment
-  end
-
-  def validate_contribution_upgrade!(from_contribution, to_formula)
-    from_duration = from_contribution.contribution_formula.duration
-    to_duration = to_formula.duration
-
-    valid_upgrades = {
-      "pack10" => %w[trimester annual],
-      "trimester" => [ "annual" ]
-    }
-
-    allowed = valid_upgrades[from_duration]
-    raise "Upgrade #{from_duration} → #{to_duration} non autorisé" unless allowed&.include?(to_duration)
-  end
-
-  def calculate_contribution_credit(contribution)
-    formula = contribution.contribution_formula
-
-    case formula.duration
-    when "pack10"
-      0
-    when "trimester"
-      total_days = 90
-      days_remaining = (contribution.expires_at.to_date - Date.current).to_i
-      (formula.price_cents * days_remaining / total_days.to_f).round
-    when "annual"
-      total_days = 365
-      days_remaining = (contribution.expires_at.to_date - Date.current).to_i
-      (formula.price_cents * days_remaining / total_days.to_f).round
-    else
-      0
-    end
   end
 
   public

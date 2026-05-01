@@ -12,7 +12,7 @@
     <h2 class="text-xl font-semibold text-gray-900 mb-4">Créer une Adhésion</h2>
   <% end %>
   
-  <%= form_with model: [:admin, @membership || Membership.new], url: admin_memberships_path, method: :post, local: true, class: "space-y-4" do |form| %>
+  <%= form_with model: [:admin, @membership || Membership.new], url: admin_memberships_path, method: :post, local: true, class: "space-y-4", data: { controller: "offer-fields" } do |form| %>
     <%= form.hidden_field :person_id, value: @person.id %>
     <%= form.hidden_field :upgrade, value: @is_upgrade %>
     
@@ -45,15 +45,17 @@
       <%= form.select :payment_method, 
           options_for_select(payment_method_options),
           { selected: 'cash' },
-          { class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#1F5C55] focus:ring-[#1F5C55] sm:text-sm", id: "membership-payment-method" } %>
+          { class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#1F5C55] focus:ring-[#1F5C55] sm:text-sm",
+            data: { offer_fields_target: "paymentMethod", action: "change->offer-fields#refresh" } } %>
     </div>
 
-    <div id="membership-offer-reason" class="hidden">
+    <div class="hidden" data-offer-fields-target="offerReason">
       <%= form.label :offer_reason, "Raison de l'offre", class: "block text-sm font-medium text-gray-700" %>
       <%= form.text_area :offer_reason,
           rows: 2,
           placeholder: "Ex: Bénévolat, geste commercial, partenariat...",
-          class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#1F5C55] focus:ring-[#1F5C55] sm:text-sm" %>
+          class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#1F5C55] focus:ring-[#1F5C55] sm:text-sm",
+          data: { offer_fields_target: "offerReasonInput" } %>
     </div>
 
     <div>
@@ -85,26 +87,3 @@
     </div>
   <% end %>
 </div>
-
-<script>
-  document.addEventListener('DOMContentLoaded', function() {
-    const paymentSelect = document.getElementById('membership-payment-method');
-    const offerReasonDiv = document.getElementById('membership-offer-reason');
-    if (!paymentSelect || !offerReasonDiv) return;
-
-    const offerReasonField = offerReasonDiv.querySelector('textarea');
-
-    function toggleOfferReason() {
-      if (paymentSelect.value === 'offered') {
-        offerReasonDiv.classList.remove('hidden');
-        if (offerReasonField) offerReasonField.required = true;
-      } else {
-        offerReasonDiv.classList.add('hidden');
-        if (offerReasonField) offerReasonField.required = false;
-      }
-    }
-
-    paymentSelect.addEventListener('change', toggleOfferReason);
-    toggleOfferReason();
-  });
-</script>

@@ -79,7 +79,7 @@
             <tbody class="divide-y divide-gray-200">
               <% @people_without_user.each do |person| %>
                 <tr>
-                  <td class="py-2"><%= link_to person.id, admin_user_path("person_#{person.id}"), class: "text-[#1F5C55] hover:underline" %></td>
+                  <td class="py-2"><%= link_to person.id, admin_user_path(Admin::Users::PersonRouteKey.call(person)), class: "text-[#1F5C55] hover:underline" %></td>
                   <td class="py-2"><%= person.full_name %></td>
                   <td class="py-2"><%= person.email.presence || "-" %></td>
                   <td class="py-2"><%= l(person.created_at.to_date) %></td>
@@ -105,7 +105,7 @@
               <p class="text-sm font-medium text-gray-900"><%= email %></p>
               <div class="mt-2 text-sm text-gray-600">
                 <% people.each do |person| %>
-                  <%= link_to person.full_name, admin_user_path("person_#{person.id}"), class: "text-[#1F5C55] hover:underline" %>
+                  <%= link_to person.full_name, admin_user_path(Admin::Users::PersonRouteKey.call(person)), class: "text-[#1F5C55] hover:underline" %>
                   <span class="text-gray-400">(##<%= person.id %>)</span>
                 <% end %>
               </div>
@@ -129,7 +129,7 @@
               <p class="text-sm font-medium text-gray-900"><%= phone %></p>
               <div class="mt-2 text-sm text-gray-600">
                 <% people.each do |person| %>
-                  <%= link_to person.full_name, admin_user_path("person_#{person.id}"), class: "text-[#1F5C55] hover:underline" %>
+                  <%= link_to person.full_name, admin_user_path(Admin::Users::PersonRouteKey.call(person)), class: "text-[#1F5C55] hover:underline" %>
                   <span class="text-gray-400">(##<%= person.id %>)</span>
                 <% end %>
               </div>
