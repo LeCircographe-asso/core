@@ -56,6 +56,11 @@ RSpec.describe 'Public pages content', type: :request do
       expect(response.body).not_to include('Pourquoi on prend le temps de répondre')
       expect(response.body).not_to include('Lis-la comme une petite histoire')
     end
+
+    it 'links FAQ answers about contacting to the contact form, not an inbox address' do
+      expect(response.body).to include('/pages/contact_us#contact-form')
+      expect(response.body).not_to include('contact@lecircographe.fr')
+    end
   end
 
   describe 'GET /pages/news' do
@@ -91,8 +96,10 @@ RSpec.describe 'Public pages content', type: :request do
       expect(response.body).to include('id="map"')
     end
 
-    it 'uses the canonical contact email' do
-      expect(response.body).to include('contact@lecircographe.fr')
+    it 'directs contact actions to the on-page form (no public mailbox string)' do
+      expect(response.body).to include('id="contact-form"')
+      expect(response.body).to include('/pages/contact_us#contact-form')
+      expect(response.body).not_to include('contact@lecircographe.fr')
     end
 
     it 'shows the unique postal address (boulevard de Suisse, no Cartoucherie)' do

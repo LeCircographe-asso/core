@@ -60,11 +60,34 @@ class PagesController < ApplicationController
   private
 
   def contact_faq_entries
+    cf = page_path("contact_us", anchor: "contact-form")
+    lc = "text-[#5836A5] underline hover:text-[#412886]"
     [
       { question: "Comment adhérer au Circographe ?", answer: "Passe sur un créneau d'ouverture : on remplit la fiche ensemble et on t'explique le fonctionnement." },
-      { question: "Puis-je réserver un créneau de résidence ?", answer: "Oui, écris-nous via la catégorie 'Résidence'. Nous te recontacterons avec les disponibilités et modalités." },
-      { question: "Le lieu est-il accessible aux débutant·es ?", answer: "Les entraînements libres sont destinés aux personnes autonomes. Pour débuter, on recommande une école partenaire : contacte-nous pour des conseils." },
-      { question: "Proposez-vous des prestations ou des partenariats ?", answer: "Oui, nous travaillons avec des structures culturelles, établissements scolaires et entreprises. Sélectionne la catégorie 'Partenariat' pour en discuter." }
+      {
+        question: "Puis-je réserver un créneau de temps d’accueil en création ?",
+        answer_html: helpers.safe_join([
+          "Oui, ",
+          helpers.link_to("envoie un message via le formulaire", cf, class: lc),
+          ", catégorie « Temps d’accueil en création ». Nous te recontacterons avec les disponibilités et modalités."
+        ])
+      },
+      {
+        question: "Le lieu est-il accessible aux débutant·es ?",
+        answer_html: helpers.safe_join([
+          "Les entraînements libres sont destinés aux personnes autonomes. Pour débuter, on recommande une école partenaire — ",
+          helpers.link_to("demande des conseils via le formulaire", cf, class: lc),
+          " (Question générale)."
+        ])
+      },
+      {
+        question: "Proposez-vous des prestations ou des partenariats ?",
+        answer_html: helpers.safe_join([
+          "Oui, nous travaillons avec des structures culturelles, établissements scolaires et entreprises. ",
+          helpers.link_to("Utilise le formulaire", cf, class: lc),
+          ", catégorie « Partenariat », pour en discuter."
+        ])
+      }
     ]
   end
 
@@ -78,11 +101,27 @@ class PagesController < ApplicationController
   end
 
   def general_faq_entries
+    cf = page_path("contact_us", anchor: "contact-form")
+    lc = "text-[#5836A5] underline hover:text-[#412886]"
     [
       { question: "Où se situe le Circographe ?", answer: "Au 97 bis boulevard de Suisse, 31200 Toulouse. Consulte la page Contact pour la carte et l’accès en bus (ligne 15)." },
       { question: "Quels sont les horaires d'ouverture ?", answer: "Les créneaux publics évoluent chaque saison ; on les met à jour sur les pages Accueil, Adhérer et Contact. Pense à vérifier avant de te déplacer." },
-      { question: "Comment soutenir financièrement le projet ?", answer: "En adhérant, en faisant un don ponctuel, ou en devenant partenaire. Écris-nous pour en discuter." },
-      { question: "J'ai une question administrative, qui contacter ?", answer: "Utilise le formulaire de contact (catégorie 'Question générale') ou écris à contact@lecircographe.fr ; l'équipe bénévole te répondra rapidement." }
+      {
+        question: "Comment soutenir financièrement le projet ?",
+        answer_html: helpers.safe_join([
+          "En adhérant, en faisant un don ponctuel, ou en devenant partenaire. Pour en discuter, passe par le ",
+          helpers.link_to("formulaire de contact", cf, class: lc),
+          "."
+        ])
+      },
+      {
+        question: "J'ai une question administrative, qui contacter ?",
+        answer_html: helpers.safe_join([
+          "Utilise le ",
+          helpers.link_to("formulaire de contact", cf, class: lc),
+          " (catégorie « Question générale ») ; l'équipe bénévole te répondra rapidement."
+        ])
+      }
     ]
   end
 

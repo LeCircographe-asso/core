@@ -393,6 +393,14 @@ en:
         subject: 'Bienvenue au Circographe ! '
       membership_expiration_reminder:
         subject: Votre adhésion arrive à expiration !
+      contact_email:
+        subject: "New message: %{category_label}"
+        category_labels:
+          general: General question
+          technical: Technical / access
+          creative_hosting: Creative hosting (creation time)
+          partnership: Partnership
+          residence: Creative hosting (creation time)
   activerecord:
     errors:
       models:

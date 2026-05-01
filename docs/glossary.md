@@ -136,6 +136,12 @@
 #### Événement — `Event`
 - **Définition** : événement organisé (cours, stage, performance), avec date, catégorie. Inscriptions via `EventAttendee` (`Person ↔ Event`).
 
+#### Temps d’accueil en création
+- **Définition** : accueil d’un projet créatif au sein du lieu (cirque, arts graphiques, etc.), à distinguer de l’adhésion ou de la cotisation cirque.
+- **Usage correct** : tout libellé public (pages Contact, FAQ, Adhérer, partenaires) utilise cette formulation.
+- **Code / formulaire de contact** : valeur de catégorie **`creative_hosting`** ; le slug legacy **`residence`** est encore accepté et normalisé vers `creative_hosting`. Boîte mail : `CONTACT_EMAIL_CREATIVE_HOSTING`, avec repli sur **`CONTACT_EMAIL_RESIDENCE`** si la nouvelle variable n’est pas définie.
+- **À éviter** : « résidence » pour désigner ce dispositif (terme legacy en communication).
+
 ---
 
 ### 1.6 Newsletter
@@ -182,6 +188,7 @@
 | Présence | `Attendance` | canonique | entraînement / événement |
 | Liste de présence | `AttendanceList` | canonique | quotidienne ou événement |
 | Événement | `Event` | canonique | inscriptions via `EventAttendee` |
+| Temps d’accueil en création | formulaire contact : `creative_hosting` (`residence` legacy) | canonique (UI FR) | env : `CONTACT_EMAIL_CREATIVE_HOSTING` (+ fallback `CONTACT_EMAIL_RESIDENCE`) |
 | Inscription événement | `EventAttendee` | canonique | jointure `Person × Event` |
 | Numéro d'adhérent | `member_number` | canonique | format `25U001` / `25C001` |
 | Newsletter | `NewsletterSubscriber` | canonique | table indépendante |
