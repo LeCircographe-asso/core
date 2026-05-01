@@ -1,120 +1,67 @@
 <% content_for :title, "Le Circographe - FAQ" %>
 
-<section class="relative overflow-hidden rounded-[32px] shadow-2xl mb-16">
+<section class="relative overflow-hidden rounded-[32px] shadow-2xl mb-10 sm:mb-12">
   <%= image_tag hero_image(:faq_hero), class: "absolute inset-0 w-full h-full object-cover hero-img-filter", alt: "" %>
   <div class="hero-overlay"></div>
-  <div class="relative hero-panel space-y-6">
-    <p class="text-sm uppercase tracking-[0.45em] text-white/70">Besoin d'un guide ?</p>
+  <div class="relative hero-panel text-center space-y-4">
     <h1 class="font-circographe text-3xl sm:text-4xl lg:text-5xl font-bold">Questions fréquentes</h1>
-    <p class="max-w-3xl text-base sm:text-lg text-white/85 leading-snug">Adhésion, contact, vie du lieu — par thème ci-dessous.</p>
-    <div class="flex flex-wrap gap-4">
-      <%= link_to "Je découvre l'esprit du lieu", page_path("association"), class: "btn-primary shadow-lg" %>
-      <%= link_to "Je prépare mon adhésion", page_path("become_member"), class: "btn-secondary shadow-lg" %>
+    <p class="max-w-xl mx-auto text-base sm:text-lg text-white/85 leading-snug">Peu de blabla — les infos utiles, avec le ton du lieu.</p>
+    <div class="flex flex-wrap gap-3 justify-center">
+      <%= link_to "L'association", page_path("association"), class: "btn-primary shadow-lg" %>
+      <%= link_to "Adhérer", page_path("become_member"), class: "btn-secondary shadow-lg" %>
     </div>
   </div>
 </section>
 
-<section class="max-w-6xl mx-auto space-y-16 px-6 sm:px-8 lg:px-12 py-12 rounded-[36px] shadow-2xl border border-white/70 bg-gradient-to-br from-white/95 via-white/90 to-white/80 backdrop-blur fade-in">
-  <article class="grid gap-10 lg:grid-cols-[320px,minmax(0,1fr)] items-start">
-    <aside class="bg-white rounded-[28px] shadow-lg p-8 space-y-6 border border-white/60">
-      <div class="space-y-3">
-        <p class="text-sm uppercase tracking-[0.3em] text-brand-primary/70">Par où commencer</p>
-        <h2 class="text-2xl font-semibold text-gray-900">Trois entrées</h2>
-        <p class="text-gray-600 text-sm leading-relaxed">Découvrir le lieu, adhérer ou écrire pour un projet — saute à la section qui t’intéresse.</p>
-      </div>
-      <ul class="space-y-3 text-gray-600">
-        <li class="flex gap-3">
-          <span class="w-8 h-8 rounded-full bg-brand-primary/10 text-brand-primary flex items-center justify-center font-semibold shrink-0">1</span>
-          <div>
-            <p class="font-semibold text-gray-900">Découvrir</p>
-            <p class="text-sm">Autogestion, créneaux, ambiance.</p>
-          </div>
-        </li>
-        <li class="flex gap-3">
-          <span class="w-8 h-8 rounded-full bg-brand-primary/10 text-brand-primary flex items-center justify-center font-semibold shrink-0">2</span>
-          <div>
-            <p class="font-semibold text-gray-900">Adhérer</p>
-            <p class="text-sm">Sur place, avec les bénévoles.</p>
-          </div>
-        </li>
-        <li class="flex gap-3">
-          <span class="w-8 h-8 rounded-full bg-brand-primary/10 text-brand-primary flex items-center justify-center font-semibold shrink-0">3</span>
-          <div>
-            <p class="font-semibold text-gray-900">Contacter</p>
-            <p class="text-sm">Création, ateliers, partenariats.</p>
-          </div>
-        </li>
-      </ul>
-      <div class="flex flex-wrap gap-3 pt-2">
-        <a href="#faq-adhesion" class="btn-tertiary">Adhésion</a>
-        <a href="#faq-contact" class="btn-tertiary">Contact</a>
-        <a href="#faq-general" class="btn-tertiary">Vie du lieu</a>
-      </div>
-    </aside>
+<section class="max-w-6xl mx-auto space-y-10 px-6 sm:px-8 lg:px-10 py-10 rounded-[28px] shadow-xl border border-white/70 bg-white/90 backdrop-blur fade-in">
+  <nav class="flex flex-wrap justify-center gap-2" aria-label="Sommaire FAQ">
+    <a href="#faq-adhesion" class="inline-flex items-center px-4 py-2 text-sm font-semibold rounded-full border border-brand-primary/35 text-brand-primary hover:bg-brand-primary/10 transition-colors">Adhérer & pratiquer</a>
+    <a href="#faq-contact" class="inline-flex items-center px-4 py-2 text-sm font-semibold rounded-full border border-brand-primary/35 text-brand-primary hover:bg-brand-primary/10 transition-colors">Écrire & proposer</a>
+    <a href="#faq-general" class="inline-flex items-center px-4 py-2 text-sm font-semibold rounded-full border border-brand-primary/35 text-brand-primary hover:bg-brand-primary/10 transition-colors">Lieu & horaires</a>
+  </nav>
 
-  </article>
-
-  <article id="faq-adhesion" class="space-y-6 lg:col-span-full">
-    <header class="space-y-2 text-center bg-white border border-white/70 rounded-[24px] px-6 py-5 shadow-lg">
-      <p class="text-sm uppercase tracking-[0.3em] text-brand-primary/70">Adhésion</p>
-      <h2 class="text-2xl sm:text-3xl font-semibold text-gray-900">Avant de venir</h2>
-      <p class="max-w-2xl mx-auto text-gray-600 text-sm sm:text-base">Adhésion sur place — questions fréquentes.</p>
-    </header>
-
+  <article id="faq-adhesion" class="scroll-mt-24 space-y-4">
     <%= render "shared/faq_section",
       id: "faq-adhesion-list",
       label: nil,
-      title: "Adhésion en pratique",
+      title: "Adhérer & pratiquer",
       subtitle: nil,
       faqs: @adhesion_faqs,
-      footer: "Tu viens d'adhérer ? Retrouve toutes les infos sur la page Adhérer : calendrier, checklist documents et infos bénévolat." %>
+      footer: "Tarifs et créneaux : page Adhérer." %>
 
     <div class="flex flex-wrap justify-center gap-3">
-      <%= link_to "Préparer ma visite", page_path("become_member"), class: "btn-primary shadow-lg" %>
-      <%= link_to "Découvrir les créneaux", page_path("association", anchor: "fonctionnement"), class: "btn-tertiary shadow" %>
+      <%= link_to "Page Adhérer", page_path("become_member"), class: "btn-primary shadow-lg" %>
+      <%= link_to "Créneaux & fonctionnement", page_path("association", anchor: "fonctionnement"), class: "btn-tertiary shadow" %>
     </div>
   </article>
 
-  <article id="faq-contact" class="space-y-6">
-    <header class="space-y-2 text-center bg-white border border-white/70 rounded-[24px] px-6 py-5 shadow-lg">
-      <p class="text-sm uppercase tracking-[0.3em] text-brand-primary/70">Contact</p>
-      <h2 class="text-2xl sm:text-3xl font-semibold text-gray-900">Projets & temps d’accueil en création</h2>
-      <p class="max-w-2xl mx-auto text-gray-600 text-sm sm:text-base">Précise ta demande (création, atelier, partenaire, logistique) pour une réponse plus rapide.</p>
-    </header>
-
+  <article id="faq-contact" class="scroll-mt-24 space-y-4">
     <%= render "shared/faq_section",
       id: "faq-contact-list",
       label: nil,
-      title: "Avant d'envoyer ton mail",
-      subtitle: "Ce qui aide les bénévoles à te répondre vite.",
+      title: "Écrire & proposer",
+      subtitle: nil,
       faqs: @contact_faqs,
-      footer: "Prêt·e ? Page Contact → formulaire en bas de page." %>
+      footer: "Formulaire sur la page Contact (bas de page)." %>
 
     <div class="flex flex-wrap justify-center gap-3">
-      <%= link_to "Écrire à l'équipe", page_path("contact_us"), class: "btn-primary shadow-lg" %>
-      <%= link_to "Consulter les horaires", page_path("contact_us", anchor: "horaires"), class: "btn-tertiary shadow" %>
+      <%= link_to "Page Contact", page_path("contact_us"), class: "btn-primary shadow-lg" %>
+      <%= link_to "Horaires", page_path("contact_us", anchor: "horaires"), class: "btn-tertiary shadow" %>
     </div>
   </article>
 
-  <article id="faq-general" class="space-y-6">
-    <header class="space-y-2 text-center bg-white border border-white/70 rounded-[24px] px-6 py-5 shadow-lg">
-      <p class="text-sm uppercase tracking-[0.3em] text-brand-primary/70">Vie du lieu</p>
-      <h2 class="text-2xl sm:text-3xl font-semibold text-gray-900">Horaires, lieu, soutien</h2>
-      <p class="max-w-2xl mx-auto text-gray-600 text-sm sm:text-base">Pour revenir souvent, faire découvrir le lieu ou soutenir l’asso.</p>
-    </header>
-
+  <article id="faq-general" class="scroll-mt-24 space-y-4">
     <%= render "shared/faq_section",
       id: "faq-general-list",
       label: nil,
-      title: "Vie du Circographe",
+      title: "Lieu & horaires",
       subtitle: nil,
       faqs: @general_faqs,
-      footer: "Pour suivre l'actualité, pense à la page Nos Activités et à la newsletter." %>
+      footer: "Programmation : Nos activités · newsletter en bas de site." %>
 
     <div class="flex flex-wrap justify-center gap-3">
-      <%= link_to "Découvrir la programmation", page_path("news"), class: "btn-primary shadow-lg" %>
-      <%= link_to "Soutenir l'association", page_path("become_member", anchor: "tarifs"), class: "btn-tertiary shadow" %>
+      <%= link_to "Nos activités", page_path("news"), class: "btn-primary shadow-lg" %>
+      <%= link_to "Tarifs / adhérer", page_path("become_member", anchor: "tarifs"), class: "btn-tertiary shadow" %>
     </div>
   </article>
-
 </section>

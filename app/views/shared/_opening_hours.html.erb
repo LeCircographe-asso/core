@@ -1,9 +1,13 @@
 <% bare = local_assigns.fetch(:bare, false) %>
+<% compact = local_assigns.fetch(:compact, false) %>
 <% wrapper_classes = bare ? "" : "bg-white rounded-lg shadow-md p-4" %>
 <% schedule = local_assigns[:horaires] || @horaires %>
+<% badge_margin = compact ? "mb-2" : "mb-4" %>
+<% cell_py = compact ? "py-2" : "py-3" %>
+<% head_py = compact ? "py-1.5" : "py-2" %>
 
 <% inner = capture do %>
-  <div class="text-center mb-4">
+  <div class="text-center <%= badge_margin %>">
     <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-brand-primary/10 text-brand-primary">
       <i class="fas fa-calendar-week mr-2"></i>
       Semaine du <%= Date.current.beginning_of_week.strftime("%d/%m") %> au <%= Date.current.end_of_week.strftime("%d/%m/%Y") %>
@@ -14,8 +18,8 @@
     <table class="w-full border-collapse">
       <thead>
         <tr>
-          <th class="border-b-2 border-brand-primary/20 py-2 text-center font-medium text-gray-600">Jour</th>
-          <th class="border-b-2 border-brand-primary/20 py-2 text-center font-medium text-gray-600">Horaires</th>
+          <th class="border-b-2 border-brand-primary/20 <%= head_py %> text-center font-medium text-gray-600">Jour</th>
+          <th class="border-b-2 border-brand-primary/20 <%= head_py %> text-center font-medium text-gray-600">Horaires</th>
         </tr>
       </thead>
       <tbody>
@@ -27,7 +31,7 @@
               row_classes = "hover:bg-gray-50"
               row_classes += " bg-brand-primary/5" if is_today
             %>
-            <td class="<%= row_classes %> py-3 text-center">
+            <td class="<%= row_classes %> <%= cell_py %> text-center">
               <div class="flex items-center justify-center">
                 <% 
                   icon_class = case day.to_s
@@ -44,7 +48,7 @@
                 </span>
               </div>
             </td>
-            <td class="<%= row_classes %> py-3 text-center">
+            <td class="<%= row_classes %> <%= cell_py %> text-center">
               <% if hours.to_s.downcase == "fermé" %>
                 <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
                   <i class="fas fa-times-circle mr-1"></i>
@@ -70,7 +74,7 @@
 <% end %>
 
 <% if bare %>
-  <div class="space-y-4">
+  <div class="<%= compact ? 'space-y-2' : 'space-y-4' %>">
     <%= inner %>
   </div>
 <% else %>

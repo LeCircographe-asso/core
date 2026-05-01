@@ -60,10 +60,12 @@
   </div>
   </div>
 
-  <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-    <div class="fade-in min-w-0">
-      <%= render "pages/contact/faq", faqs: @faqs %>
-    </div>
+  <div class="fade-in space-y-6 max-w-3xl mx-auto lg:max-w-none">
+    <p class="text-center text-sm text-gray-600">
+      <%= link_to "Questions fréquentes", page_path("faq"), class: "font-semibold text-[#5836A5] hover:text-[#412886] underline-offset-2 hover:underline" %>
+      <span class="text-gray-400 mx-1">·</span>
+      <%= link_to "contact & projets", page_path("faq", anchor: "faq-contact"), class: "text-[#5836A5] hover:text-[#412886] underline-offset-2 hover:underline" %>
+    </p>
 
     <%= turbo_frame_tag "map" do %>
       <article id="map" class="bg-white/95 rounded-[28px] shadow-lg p-6 sm:p-8 space-y-4">

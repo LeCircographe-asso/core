@@ -98,7 +98,6 @@ RSpec.describe 'Public pages content', type: :request do
 
     it 'directs contact actions to the on-page form (no public mailbox string)' do
       expect(response.body).to include('id="contact-form"')
-      expect(response.body).to include('/pages/contact_us#contact-form')
       expect(response.body).not_to include('contact@lecircographe.fr')
     end
 
