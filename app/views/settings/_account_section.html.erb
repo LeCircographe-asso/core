@@ -1,0 +1,10 @@
+<% user = local_assigns.fetch(:user, @user) %>
+<% frame_id = local_assigns.fetch(:frame_id, ProfileSectionDomIds::ACCOUNT_SECTION) %>
+<% embedded = local_assigns.fetch(:embedded, true) %>
+<% compact = local_assigns.fetch(:compact, true) %>
+
+<%= turbo_frame_tag frame_id do %>
+  <section id="account" class="scroll-mt-28">
+    <%= render "settings/account_panel", user: user, embedded: embedded, compact: compact %>
+  </section>
+<% end %>

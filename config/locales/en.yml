@@ -422,6 +422,12 @@ en:
       field_zip: Postal code
       field_town: City / town
       field_country: Country
+      edit: Edit
+      cancel: Cancel
+      'yes': 'Yes'
+      'no': 'No'
+      saving: Saving...
+      unsaved_changes_warning: You have unsaved changes.
       contact_submit: Save contact details
     update:
       profile_updated: Your profile has been updated successfully.
