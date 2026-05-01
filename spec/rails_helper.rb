@@ -7,6 +7,7 @@ require_relative '../config/environment'
 # Prevent database truncation if the environment is production
 abort('The Rails environment is running in production mode!') if Rails.env.production?
 require 'rspec/rails'
+require 'view_component/test_helpers'
 # Add additional requires below this line. Rails is not loaded until this point!
 require 'factory_bot_rails'
 require 'shoulda/matchers'
@@ -58,6 +59,7 @@ RSpec.configure do |config|
 
   # Setup factory_bot
   config.include FactoryBot::Syntax::Methods
+  config.include ViewComponent::TestHelpers, type: :component
 
   # Exclude :disabled specs
   config.filter_run_excluding :disabled
