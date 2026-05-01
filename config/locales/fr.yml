@@ -286,12 +286,11 @@ fr:
       field_town: Ville
       field_country: Pays
       edit: Modifier
-      accept: Accepter
-      recap_modal_title: Récapitulatif
-      recap_contact_intro: "Résumé de tes coordonnées tel qu’affiché ci-dessous. Tu pourras les modifier à l’étape suivante."
-      recap_account_intro: "Résumé de ton compte et de tes préférences. Tu pourras les modifier à l’étape suivante."
-      recap_continue: Continuer
-      recap_back: Retour
+      preview_submit_title: Vérification avant enregistrement
+      preview_contact_intro: "Vérifie le récapitulatif ci-dessous : ainsi tes coordonnées seront enregistrées."
+      preview_account_intro: "Vérifie le récapitulatif ci-dessous : ainsi ton compte et tes préférences seront enregistrés."
+      preview_confirm: Confirmer l’enregistrement
+      preview_back: Retour aux modifications
       cancel: Annuler
       'yes': Oui
       'no': Non

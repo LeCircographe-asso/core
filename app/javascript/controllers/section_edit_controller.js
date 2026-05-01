@@ -3,20 +3,20 @@ import { openRichConfirmModal } from "confirm_modal"
 
 // data-controller="section-edit"
 export default class extends Controller {
-  static targets = ["read", "edit", "save", "editButton", "cancelButton", "field", "protectedAction"]
+  static targets = ["read", "edit", "form", "save", "editButton", "cancelButton", "field", "protectedAction"]
   static values = {
     editing: Boolean,
     warningMessage: String,
-    modifyLabel: String,
-    acceptLabel: String,
-    recapIntro: String,
-    recapTitle: String,
-    recapConfirmLabel: String,
-    recapBackLabel: String
+    previewTitle: String,
+    previewIntro: String,
+    previewConfirmLabel: String,
+    previewBackLabel: String,
+    yesLabel: String,
+    noLabel: String
   }
 
   connect() {
-    this.preflight = false
+    this.allowNativeSubmit = false
     this.initialValues = this.fieldTargets.map((field) => this.fieldValue(field))
     this.beforeUnloadHandler = (event) => {
       if (!this.hasUnsavedChanges()) return
@@ -31,47 +31,16 @@ export default class extends Controller {
     window.removeEventListener("beforeunload", this.beforeUnloadHandler)
   }
 
-  handlePrimaryAction(event) {
+  startEdit(event) {
     event.preventDefault()
-    if (this.editingValue) return
-
-    if (this.preflight) {
-      void this.openRecapAndContinue()
-      return
-    }
-
-    this.preflight = true
-    this.render()
-  }
-
-  async openRecapAndContinue() {
-    const summaryHtml = this.buildRecapListHtml()
-    const confirmed = await openRichConfirmModal({
-      title: this.recapTitleValue,
-      introText: this.recapIntroValue,
-      htmlBody: summaryHtml,
-      confirmText: this.recapConfirmLabelValue,
-      cancelText: this.recapBackLabelValue
-    })
-
-    if (!confirmed) return
-
-    this.preflight = false
-    this.editingValue = true
     this.initialValues = this.fieldTargets.map((field) => this.fieldValue(field))
+    this.editingValue = true
     this.render()
     this.updateSaveState()
   }
 
   cancelEdit(event) {
     event.preventDefault()
-
-    if (this.preflight) {
-      this.preflight = false
-      this.render()
-      return
-    }
-
     this.resetFields()
     this.editingValue = false
     this.render()
@@ -81,7 +50,32 @@ export default class extends Controller {
     this.updateSaveState()
   }
 
-  beforeSubmit() {
+  async handleFormSubmit(event) {
+    if (this.allowNativeSubmit) {
+      this.allowNativeSubmit = false
+      this.applySavingStateToSubmit()
+      return
+    }
+
+    event.preventDefault()
+    event.stopPropagation()
+
+    const summaryHtml = this.buildRecapFromFields()
+    const confirmed = await openRichConfirmModal({
+      title: this.previewTitleValue,
+      introText: this.previewIntroValue,
+      htmlBody: summaryHtml,
+      confirmText: this.previewConfirmLabelValue,
+      cancelText: this.previewBackLabelValue
+    })
+
+    if (!confirmed) return
+
+    this.allowNativeSubmit = true
+    this.formTarget.requestSubmit()
+  }
+
+  applySavingStateToSubmit() {
     if (!this.hasSaveTarget) return
     this.saveTarget.disabled = true
     this.saveTarget.textContent = this.saveTarget.dataset.loadingText || "Enregistrement..."
@@ -89,28 +83,22 @@ export default class extends Controller {
 
   render() {
     const editing = this.editingValue
-    const preflight = this.preflight
 
     this.readTargets.forEach((element) => element.classList.toggle("hidden", editing))
     this.editTargets.forEach((element) => element.classList.toggle("hidden", !editing))
 
     if (this.hasEditButtonTarget) {
       this.editButtonTarget.classList.toggle("hidden", editing)
-      if (!editing) {
-        const primary = preflight ? this.acceptLabelValue : this.modifyLabelValue
-        this.editButtonTarget.textContent = primary
-      }
     }
 
     if (this.hasCancelButtonTarget) {
-      this.cancelButtonTarget.classList.toggle("hidden", !editing && !preflight)
+      this.cancelButtonTarget.classList.toggle("hidden", !editing)
     }
 
-    const blockProtected = editing || preflight
     this.protectedActionTargets.forEach((element) => {
-      element.classList.toggle("opacity-50", blockProtected)
-      element.classList.toggle("pointer-events-none", blockProtected)
-      element.setAttribute("aria-disabled", blockProtected ? "true" : "false")
+      element.classList.toggle("opacity-50", editing)
+      element.classList.toggle("pointer-events-none", editing)
+      element.setAttribute("aria-disabled", editing ? "true" : "false")
     })
   }
 
@@ -150,21 +138,33 @@ export default class extends Controller {
       .replace(/"/g, "&quot;")
   }
 
-  buildRecapListHtml() {
-    const root = this.readTargets[0]
-    if (!root) return ""
+  fieldLabelText(field) {
+    if (field.labels && field.labels.length > 0) {
+      const lab = field.labels[0]
+      const span = lab.querySelector(":scope > span")
+      if (span) return span.textContent.replace(/\s+/g, " ").trim()
 
-    const rows = root.querySelectorAll(":scope > div.flex")
-    if (!rows.length) return ""
+      const clone = lab.cloneNode(true)
+      clone.querySelectorAll("input, textarea, select, button").forEach((el) => el.remove())
+      return clone.textContent.replace(/\s+/g, " ").trim()
+    }
+    return field.name || ""
+  }
 
-    const items = [...rows].map((row) => {
-      const spans = row.querySelectorAll(":scope > span")
-      if (spans.length < 2) return ""
+  displayValueForField(field) {
+    if (field.type === "checkbox") {
+      return field.checked ? this.yesLabelValue : this.noLabelValue
+    }
+    const v = (field.value || "").trim()
+    return v.length ? v : "—"
+  }
 
-      const label = this.escapeHtml(spans[0].textContent.trim())
-      const value = this.escapeHtml(spans[1].textContent.trim())
+  buildRecapFromFields() {
+    const items = this.fieldTargets.map((field) => {
+      const label = this.escapeHtml(this.fieldLabelText(field))
+      const value = this.escapeHtml(this.displayValueForField(field))
       return `<li class="flex justify-between gap-3 py-1.5 border-b border-gray-100 last:border-0"><span class="text-gray-600">${label}</span><span class="font-medium text-right">${value}</span></li>`
-    }).filter(Boolean)
+    })
 
     if (!items.length) return ""
 

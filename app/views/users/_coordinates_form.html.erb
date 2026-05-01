@@ -2,7 +2,7 @@
 <% submit_class = local_assigns.fetch(:submit_class, "w-full sm:w-auto inline-flex justify-center py-2.5 px-5 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-[#1F5C55] hover:bg-[#1F5C55]/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1F5C55] transition-colors") %>
 <% user_record = local_assigns.fetch(:user, @user) %>
 
-<%= form_with model: user_record, url: user_path(user_record), method: :patch, class: form_class, data: { action: "submit->section-edit#beforeSubmit input->section-edit#handleInput change->section-edit#handleInput" } do |f| %>
+<%= form_with model: user_record, url: user_path(user_record), method: :patch, class: form_class, data: { section_edit_target: "form", action: "submit->section-edit#handleFormSubmit input->section-edit#handleInput change->section-edit#handleInput" } do |f| %>
   <% coordinate_error_fields = %i[phone address zip_code town country] %>
   <% coordinate_errors = user_record.errors.select { |error| coordinate_error_fields.include?(error.attribute) } %>
   <% if coordinate_errors.any? %>
