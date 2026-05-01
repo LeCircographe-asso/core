@@ -21,6 +21,7 @@ class SessionsController < ApplicationController
       # 303 + Turbo : évite les redirections POST ignorées ou sans cookie ; même comportement qu’un POST HTML classique.
       redirect_to after_authentication_url, notice: t(".login_success_notice"), status: :see_other
     else
+      log_system_account_login_incident(email_address)
       respond_to do |format|
         format.turbo_stream do
           flash.now[:alert] = t(".invalid_credentials_flash")
@@ -38,5 +39,24 @@ class SessionsController < ApplicationController
       format.turbo_stream { redirect_to root_path }
       format.html { redirect_to root_path, notice: t(".signed_out_notice") }
     end
+  end
+
+  private
+
+  def log_system_account_login_incident(email_address)
+    return unless Rails.env.development?
+
+    tracked_accounts = %w[super-admin@rails.com admin@rails.com volunteer@rails.com]
+    normalized_email = email_address.to_s.strip.downcase
+    return unless tracked_accounts.include?(normalized_email)
+
+    DevIncidentLogger.log!(
+      type: "system_account_login_failed",
+      details: {
+        email_address: normalized_email,
+        user_exists: User.exists?(email_address: normalized_email),
+        users_count: User.count
+      }
+    )
   end
 end
