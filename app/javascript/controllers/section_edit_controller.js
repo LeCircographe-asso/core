@@ -3,10 +3,12 @@ import { openRichConfirmModal } from "confirm_modal"
 
 // data-controller="section-edit"
 export default class extends Controller {
-  static targets = ["read", "edit", "form", "save", "editButton", "cancelButton", "field", "protectedAction"]
+  static targets = ["read", "edit", "form", "save", "modifyButton", "acceptButton", "cancelButton", "field", "protectedAction"]
   static values = {
     editing: Boolean,
     warningMessage: String,
+    modifyLabel: String,
+    acceptLabel: String,
     previewTitle: String,
     previewIntro: String,
     previewConfirmLabel: String,
@@ -31,34 +33,19 @@ export default class extends Controller {
     window.removeEventListener("beforeunload", this.beforeUnloadHandler)
   }
 
-  startEdit(event) {
+  handleModifyClick(event) {
     event.preventDefault()
+    if (this.editingValue) return
+
     this.initialValues = this.fieldTargets.map((field) => this.fieldValue(field))
     this.editingValue = true
     this.render()
     this.updateSaveState()
   }
 
-  cancelEdit(event) {
+  async handleAcceptClick(event) {
     event.preventDefault()
-    this.resetFields()
-    this.editingValue = false
-    this.render()
-  }
-
-  handleInput() {
-    this.updateSaveState()
-  }
-
-  async handleFormSubmit(event) {
-    if (this.allowNativeSubmit) {
-      this.allowNativeSubmit = false
-      this.applySavingStateToSubmit()
-      return
-    }
-
-    event.preventDefault()
-    event.stopPropagation()
+    if (!this.editingValue || !this.hasUnsavedChanges()) return
 
     const summaryHtml = this.buildRecapFromFields()
     const confirmed = await openRichConfirmModal({
@@ -75,24 +62,73 @@ export default class extends Controller {
     this.formTarget.requestSubmit()
   }
 
+  cancelEdit(event) {
+    event.preventDefault()
+    this.resetFields()
+    this.editingValue = false
+    this.render()
+  }
+
+  handleInput() {
+    this.updateSaveState()
+  }
+
+  handleFormSubmit(event) {
+    if (this.allowNativeSubmit) {
+      this.allowNativeSubmit = false
+      this.applySavingStateToSubmit()
+      return
+    }
+
+    event.preventDefault()
+    event.stopPropagation()
+  }
+
   applySavingStateToSubmit() {
-    if (!this.hasSaveTarget) return
-    this.saveTarget.disabled = true
-    this.saveTarget.textContent = this.saveTarget.dataset.loadingText || "Enregistrement..."
+    if (this.hasSaveTarget) {
+      this.saveTarget.disabled = true
+    }
+
+    if (this.hasAcceptButtonTarget && !this.acceptButtonTarget.classList.contains("hidden")) {
+      this.acceptButtonTarget.disabled = true
+      const loading = this.acceptButtonTarget.dataset.loadingText
+      if (loading) this.acceptButtonTarget.textContent = loading
+    }
   }
 
   render() {
     const editing = this.editingValue
+    const dirty = this.hasUnsavedChanges()
 
     this.readTargets.forEach((element) => element.classList.toggle("hidden", editing))
     this.editTargets.forEach((element) => element.classList.toggle("hidden", !editing))
 
-    if (this.hasEditButtonTarget) {
-      this.editButtonTarget.classList.toggle("hidden", editing)
-    }
-
     if (this.hasCancelButtonTarget) {
       this.cancelButtonTarget.classList.toggle("hidden", !editing)
+    }
+
+    if (this.hasModifyButtonTarget) {
+      if (!editing) {
+        this.modifyButtonTarget.classList.remove("hidden")
+        this.modifyButtonTarget.disabled = false
+        this.modifyButtonTarget.textContent = this.modifyLabelValue
+      } else if (!dirty) {
+        this.modifyButtonTarget.classList.remove("hidden")
+        this.modifyButtonTarget.disabled = true
+        this.modifyButtonTarget.textContent = this.modifyLabelValue
+      } else {
+        this.modifyButtonTarget.classList.add("hidden")
+      }
+    }
+
+    if (this.hasAcceptButtonTarget) {
+      if (editing && dirty) {
+        this.acceptButtonTarget.classList.remove("hidden")
+        this.acceptButtonTarget.disabled = false
+        this.acceptButtonTarget.textContent = this.acceptLabelValue
+      } else {
+        this.acceptButtonTarget.classList.add("hidden")
+      }
     }
 
     this.protectedActionTargets.forEach((element) => {
@@ -103,11 +139,7 @@ export default class extends Controller {
   }
 
   updateSaveState() {
-    if (!this.hasSaveTarget) return
-    const changed = this.fieldTargets.some((field, index) => this.fieldValue(field) !== this.initialValues[index])
-    this.saveTarget.disabled = !changed
-    this.saveTarget.classList.toggle("opacity-50", !changed)
-    this.saveTarget.classList.toggle("cursor-not-allowed", !changed)
+    this.render()
   }
 
   resetFields() {

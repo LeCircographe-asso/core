@@ -423,6 +423,7 @@ en:
       field_town: City / town
       field_country: Country
       edit: Edit
+      accept: Accept
       preview_submit_title: Check before saving
       preview_contact_intro: "Review the summary below — your contact details will be saved when you confirm."
       preview_account_intro: "Review the summary below — your account and preferences will be saved when you confirm."

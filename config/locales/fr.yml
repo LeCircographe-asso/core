@@ -286,6 +286,7 @@ fr:
       field_town: Ville
       field_country: Pays
       edit: Modifier
+      accept: Accepter
       preview_submit_title: Vérification avant enregistrement
       preview_contact_intro: "Vérifie le récapitulatif ci-dessous : ainsi tes coordonnées seront enregistrées."
       preview_account_intro: "Vérifie le récapitulatif ci-dessous : ainsi ton compte et tes préférences seront enregistrés."
