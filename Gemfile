@@ -9,7 +9,7 @@ gem "bootsnap", require: false # Reduces boot times through caching
 gem "csv" # Ruby 4+: stdlib gem, required for Admin::ExportsController and others
 gem "rails", "~> 8.1.3"
 gem "rails-i18n", "~> 8.1.0"
-gem "stringio", "~> 3.1.2"
+gem "stringio", "~> 3.2.0"
 
 # Database and ORM
 gem "bcrypt", "~> 3.1.7" # For password hashing
@@ -35,7 +35,7 @@ gem "solid_cache"  # Database-backed cache
 gem "solid_queue"  # Database-backed job queue
 
 # Pagination
-gem "pagy", "~> 6.0" # Lightweight pagination
+gem "pagy", "~> 43.5" # Lightweight pagination
 
 # API and External Services
 gem "jbuilder" # JSON API builder
