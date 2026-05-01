@@ -5,8 +5,8 @@
      data-controller="scroll-hint"
      data-scroll-hint-section-id-value="<%= section_id %>">
   <div data-scroll-hint-target="arrow">
-    <%= link_to "##{section_id}", class: "scroll-arrow inline-flex items-center justify-center rounded-full border border-white/60 bg-white/10 backdrop-blur px-4 py-3" do %>
-      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-10 sm:w-12 h-10 sm:h-12 text-white">
+    <%= link_to "##{section_id}", class: "scroll-arrow inline-flex items-center justify-center rounded-full border-2 border-brand-accent/45 bg-brand-accent/72 backdrop-blur-sm text-white shadow-lg shadow-black/15 px-4 py-3 ring-1 ring-white/35", aria: { label: t("views.shared.scroll_hint.down_to_main") } do %>
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-10 sm:w-12 h-10 sm:h-12 text-white" aria-hidden="true">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
       </svg>
     <% end %>
