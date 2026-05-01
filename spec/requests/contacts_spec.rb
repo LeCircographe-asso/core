@@ -43,5 +43,24 @@ RSpec.describe "Contacts", type: :request do
 
       expect(response).to redirect_to(page_path("contact_us"))
     end
+
+    it "rejects an empty payload without enqueuing mail" do
+      expect do
+        post submit_contact_path, params: {}, as: :turbo_stream
+      end.not_to have_enqueued_mail(UserMailer, :contact_email)
+
+      expect(response).to have_http_status(:success)
+      expect(response.body).to include("turbo-stream")
+    end
+
+    it "rejects a partial payload when required keys are omitted" do
+      expect do
+        post submit_contact_path,
+             params: { name: "Jane", email: "jane@example.com" },
+             as: :turbo_stream
+      end.not_to have_enqueued_mail(UserMailer, :contact_email)
+
+      expect(response).to have_http_status(:success)
+    end
   end
 end

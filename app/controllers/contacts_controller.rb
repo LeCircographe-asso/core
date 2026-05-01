@@ -3,10 +3,12 @@
 class ContactsController < ApplicationController
   allow_unauthenticated_access only: :create
 
+  CONTACT_SUBMISSION_KEYS = %i[name email message category].freeze
+
   def create
     @contact = contact_submission_params
 
-    if @contact.values.any?(&:blank?)
+    unless contact_submission_complete?
       respond_with_error(t(".blank_fields"))
       return
     end
@@ -49,8 +51,15 @@ class ContactsController < ApplicationController
   private
 
   # Formulaire public : champs à la racine (`name`, `email`, …), pas `contact[...]`.
+  # Toujours inclure les clés requises : `permit` seul omet les paramètres absents, ce qui faisait
+  # passer des requêtes incomplètes jusqu’au mailer.
   def contact_submission_params
-    params.permit(:name, :email, :message, :category).to_h.symbolize_keys
+    permitted = params.permit(*CONTACT_SUBMISSION_KEYS).to_h.symbolize_keys
+    CONTACT_SUBMISSION_KEYS.index_with { |key| permitted[key] }
+  end
+
+  def contact_submission_complete?
+    CONTACT_SUBMISSION_KEYS.all? { |key| @contact[key].present? }
   end
 
   def respond_with_error(message)
