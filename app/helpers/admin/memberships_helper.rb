@@ -2,33 +2,8 @@
 
 module Admin
   module MembershipsHelper
-    # Calculer et formater la différence de prix pour l'upgrade
-    def upgrade_price_difference(new_membership_type, current_membership:)
-      return "0€" unless current_membership&.membership_type
-
-      old_price = current_membership.membership_type.price_cents
-      new_price = new_membership_type.price_cents
-      difference = new_price - old_price
-
-      if difference.positive?
-        "+#{difference / 100.0}€"
-      elsif difference.negative?
-        "#{difference / 100.0}€"
-      else
-        "0€"
-      end
-    end
-
-    # Formater le nom avec la différence de prix pour l'upgrade
     def upgrade_name_with_price(membership_type, current_membership:)
-      base_name = membership_type.name
-      price_diff = upgrade_price_difference(membership_type, current_membership: current_membership)
-
-      if price_diff == "0€"
-        "#{base_name} - Gratuit"
-      else
-        "#{base_name} - #{price_diff}"
-      end
+      "#{membership_type.name} - #{membership_type.price_euros}€ (plein tarif)"
     end
   end
 end

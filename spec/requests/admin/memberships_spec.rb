@@ -69,7 +69,9 @@ RSpec.describe 'Admin::Memberships', type: :request do
         it 'shows only circus types for upgrade' do
           get new_admin_membership_path(person_id: person.id, upgrade: 'true')
           expect(response).to have_http_status(:success)
-          # Can't easily test filtered types without parsing HTML
+          expect(response.body).to include("Upgrade d&#39;adhésion")
+          expect(response.body).to include("plein tarif")
+          expect(response.body).not_to include("Tarif réduit éligible")
         end
       end
     end
