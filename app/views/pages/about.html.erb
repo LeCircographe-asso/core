@@ -114,33 +114,52 @@
   </div>
 </section>
 
-<section class="bg-white/95 rounded-[28px] shadow-lg p-6 sm:p-10 mt-12 fade-in border border-white/80">
-  <header class="text-center mb-6 space-y-2">
-    <p class="text-sm uppercase tracking-[0.3em] text-brand-primary/70">Partenaires & soutiens</p>
-    <h2 class="text-3xl font-semibold text-gray-800">Ils rendent l'aventure possible</h2>
-    <p class="text-gray-600 max-w-2xl mx-auto">Collectivités, structures culturelles, écoles de cirque, ateliers d'artistes et sponsors solidaires : merci à celles et ceux qui nous accompagnent.</p>
+<section class="bg-white/95 rounded-[28px] shadow-lg p-4 sm:p-10 mt-8 sm:mt-12 fade-in border border-white/80">
+  <header class="text-center mb-5 sm:mb-10 space-y-2 sm:space-y-3">
+    <p class="text-xs sm:text-sm uppercase tracking-[0.3em] text-brand-primary/70">Partenaires & soutiens</p>
+    <h2 class="text-2xl sm:text-3xl font-semibold text-gray-900 leading-tight">Ils rendent l'aventure possible</h2>
+    <p class="text-sm sm:text-base text-gray-600 max-w-2xl mx-auto leading-snug sm:leading-relaxed">Quelques partenaires mis en avant — la liste complète évolue avec les projets du lieu.</p>
   </header>
-  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-    <% @partners.each do |partner| %>
-      <article class="bg-white rounded-2xl border border-gray-100 shadow-sm px-6 py-5 flex items-center gap-4">
-        <% if partner[:logo].present? && asset_available?(partner[:logo]) %>
-          <div class="w-16 h-16 rounded-xl bg-gray-100 flex items-center justify-center overflow-hidden">
-            <%= image_tag partner[:logo], alt: partner[:name], class: "max-h-full max-w-full object-contain" %>
-          </div>
-        <% else %>
-          <div class="w-16 h-16 rounded-xl bg-brand-primary/10 text-brand-primary flex items-center justify-center font-semibold text-lg">
-            <%= partner[:name].to_s.first(2).upcase %>
-          </div>
-        <% end %>
-        <div class="flex-1">
-          <p class="text-sm uppercase tracking-[0.2em] text-brand-primary/70"><%= partner[:category] %></p>
-          <h3 class="text-lg font-semibold text-gray-900"><%= partner[:name] %></h3>
-          <% if partner[:url].present? %>
-            <%= link_to "Visiter", partner[:url], class: "text-sm text-brand-primary hover:text-brand-accent", target: "_blank", rel: "noopener" %>
-          <% end %>
+
+  <% partner_link_icon = tag.svg(xmlns: "http://www.w3.org/2000/svg", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", stroke_width: "1.75", class: "w-5 h-5") do
+    safe_join([
+      tag.path(stroke_linecap: "round", stroke_linejoin: "round", d: "M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5M7.5 16.5L21 3M15 3h6v6")
+    ])
+  end %>
+
+  <div class="swiper multiple-slide-carousel swiper-container relative -mx-1 sm:mx-0" data-controller="slider" data-slider-options-value='{"slidesPerView":1,"spaceBetween":12,"breakpoints":{"640":{"slidesPerView":1.45,"spaceBetween":16},"768":{"slidesPerView":2.2,"spaceBetween":20},"1280":{"slidesPerView":3.5,"spaceBetween":24}}}'>
+    <div class="swiper-wrapper mb-5 sm:mb-10">
+      <% @partners.each do |partner| %>
+        <div class="swiper-slide">
+          <article class="bg-white rounded-2xl sm:rounded-3xl border border-gray-200 shadow-md px-4 py-5 sm:px-6 sm:py-8 h-full flex flex-col items-center text-center space-y-2.5 sm:space-y-4">
+            <div class="w-24 h-24 sm:w-32 sm:h-32 rounded-full overflow-hidden bg-gray-100 shadow-inner flex items-center justify-center p-3 sm:p-4 shrink-0">
+              <% if partner[:logo].present? && asset_available?(partner[:logo]) %>
+                <%= image_tag partner[:logo], alt: partner[:name], class: "max-h-full max-w-full object-contain" %>
+              <% else %>
+                <span class="text-xl sm:text-2xl font-semibold text-brand-primary"><%= (partner[:initials].presence || partner[:name].to_s.first(2)).to_s.upcase %></span>
+              <% end %>
+            </div>
+            <div class="space-y-0.5 sm:space-y-1">
+              <h3 class="text-base sm:text-lg font-semibold text-gray-900 leading-snug"><%= partner[:name] %></h3>
+              <p class="text-xs sm:text-sm uppercase tracking-[0.2em] text-brand-primary"><%= partner[:category] %></p>
+            </div>
+            <p class="text-xs sm:text-sm text-gray-600 leading-snug sm:leading-relaxed flex-1"><%= partner[:bio].presence || "Partenaire du Circographe." %></p>
+            <% if partner[:url].present? %>
+              <div class="flex items-center justify-center gap-3 text-gray-400 pt-0.5">
+                <%= link_to partner[:url], target: "_blank", rel: "noopener", class: "hover:text-brand-primary transition", aria: { label: "Site web de #{partner[:name]}" } do %>
+                  <%= partner_link_icon %>
+                <% end %>
+              </div>
+            <% end %>
+            <span class="text-xs text-gray-400 max-sm:hidden">Partenaire</span>
+          </article>
         </div>
-      </article>
-    <% end %>
+      <% end %>
+    </div>
+    <div class="absolute flex justify-between items-center w-full -translate-x-1/2 left-1/2 top-1/2 -translate-y-1/2 z-50">
+      <button type="button" class="swiper-button-prev swiper-arrow" aria-label="Partenaire précédent"></button>
+      <button type="button" class="swiper-button-next swiper-arrow" aria-label="Partenaire suivant"></button>
+    </div>
   </div>
 </section>
 

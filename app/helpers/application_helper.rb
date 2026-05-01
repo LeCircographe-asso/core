@@ -90,6 +90,13 @@ module ApplicationHelper
     fallback && exclusions.exclude?(fallback.to_s) ? [ fallback ] : []
   end
 
+  # Filenames under app/assets/images/ (same pool as hero_image). Sorted for stable order.
+  # Swiper receives several slides but only the first image uses eager loading.
+  def news_carousel_image_sources(limit: 12)
+    max_slides = limit.to_i.clamp(1, 24)
+    hero_image_pool.uniq.sort.take(max_slides)
+  end
+
   def asset_available?(logical_path)
     return false if logical_path.blank?
 

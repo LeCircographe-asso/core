@@ -23,8 +23,9 @@
     display: block;
   }
 
+  /* Horizontal carousels need horizontal pan; pan-y blocked swipe on touch devices */
   .swiper-horizontal {
-    touch-action: pan-y;
+    touch-action: pan-x pinch-zoom;
   }
 
   .swiper-button-next,
