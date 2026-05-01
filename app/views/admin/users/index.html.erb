@@ -1,6 +1,6 @@
 <% content_for :title, t("views.admin.users.index.page_title") %>
 
-<div class="min-h-screen py-6" data-controller="admin-users">
+<div class="min-h-screen py-6" data-controller="admin-users admin-users-index">
   <div class="max-w-7xl mx-auto">
     <!-- Breadcrumbs -->
     <%= render 'shared/breadcrumbs' %>
@@ -105,10 +105,14 @@
                     id: "search",
                     value: params[:search],
                     placeholder: "Nom, email, téléphone... (Ctrl+K pour focus)",
+                    data: {
+                      admin_users_index_target: "searchInput",
+                      action: "input->admin-users-index#debouncedSearch"
+                    },
                     class: "search-input pl-10 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#1F5C55] focus:ring-[#1F5C55] sm:text-sm" %>
                 <% if params[:search].present? %>
                   <button type="button" 
-                          onclick="clearSearch(event)"
+                          data-action="click->admin-users-index#clearSearch"
                           class="absolute inset-y-0 right-0 pr-3 flex items-center"
                           aria-label="Effacer la recherche">
                     <svg class="h-4 w-4 text-gray-400 hover:text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -256,7 +260,9 @@
                   <!-- Sélecteur d'éléments par page -->
                   <div class="flex items-center space-x-2">
                     <label for="items-per-page" class="text-sm text-gray-700">Par page:</label>
-                    <select id="items-per-page" onchange="changeItemsPerPage(this.value)" 
+                    <select id="items-per-page"
+                            data-admin-users-index-target="itemsPerPage"
+                            data-action="change->admin-users-index#changeItemsPerPage"
                             class="border border-gray-300 rounded-md px-2 py-1 text-sm focus:ring-[#1F5C55] focus:border-[#1F5C55]">
                       <option value="10" <%= 'selected' if params[:items] == '10' %>>10</option>
                       <option value="15" <%= 'selected' if params[:items] == '15' || params[:items].blank? %>>15</option>
@@ -305,59 +311,3 @@
     </div>
   </div>
 </div>
-
-<script>
-function changeItemsPerPage(items) {
-  const url = new URL(window.location);
-  url.searchParams.set('items', items);
-  url.searchParams.delete('page'); // Reset to first page
-  window.location.href = url.toString();
-}
-
-let isClearingSearch = false;
-
-function clearSearch(event) {
-  // Empêcher le double-clic et le comportement par défaut
-  if (event) {
-    event.preventDefault();
-    event.stopPropagation();
-  }
-  
-  // Empêcher l'exécution multiple simultanée
-  if (isClearingSearch) {
-    return;
-  }
-  
-  isClearingSearch = true;
-  
-  // Nettoyer le timeout de l'auto-submit pour éviter les conflits
-  if (typeof searchTimeout !== 'undefined') {
-    clearTimeout(searchTimeout);
-  }
-  
-  // Utiliser une redirection directe au lieu de submit() pour éviter les conflits
-  const url = new URL(window.location);
-  url.searchParams.delete('search');
-  url.searchParams.delete('page'); // Reset à la première page
-  window.location.href = url.toString();
-}
-
-// Raccourci clavier Ctrl+K pour focus sur la recherche
-document.addEventListener('keydown', function(e) {
-  if (e.ctrlKey && e.key === 'k') {
-    e.preventDefault();
-    document.getElementById('search').focus();
-  }
-});
-
-// Auto-submit du formulaire de recherche avec debounce
-let searchTimeout;
-document.getElementById('search').addEventListener('input', function(e) {
-  clearTimeout(searchTimeout);
-  searchTimeout = setTimeout(() => {
-    if (e.target.value.length >= 2 || e.target.value.length === 0) {
-      e.target.form.submit();
-    }
-  }, 500);
-});
-</script>
