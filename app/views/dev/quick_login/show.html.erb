@@ -1,0 +1,58 @@
+<div class="max-w-3xl mx-auto py-8 px-4">
+  <div class="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-950 mb-6 space-y-2">
+    <p><strong>Development only.</strong> Accès réservé au <strong>super-admin</strong> (ou prolongé tant que tu n’as pas fermé la session / déconnecté après une impersonation lancée par un super-admin). Choisis un utilisateur pour ouvrir une session à sa place et voir <strong>son</strong> profil.</p>
+    <% if @dev_quick_login_delegate %>
+      <p class="font-medium text-amber-950"><%= t("dev.quick_login.delegate_notice") %></p>
+    <% end %>
+  </div>
+
+  <h1 class="text-2xl font-bold text-gray-900 mb-2">Connexion rapide</h1>
+  <p class="text-gray-600 text-sm mb-8">Chaque bouton crée une nouvelle session Rails et t’envoie sur la page profil de cet utilisateur.</p>
+
+  <% if @highlight_users.any? %>
+    <h2 class="text-lg font-semibold text-gray-800 mb-3">Comptes seed / démo</h2>
+    <ul class="space-y-2 mb-10">
+      <% @highlight_users.each do |user| %>
+        <li class="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-gray-200 bg-white px-4 py-3">
+          <div>
+            <span class="font-medium text-gray-900"><%= user.email_address %></span>
+            <span class="text-gray-500 text-sm ml-2">(<%= user.role_humanized %>)</span>
+            <% if user.person&.full_name.present? %>
+              <span class="block text-xs text-gray-500"><%= user.person.full_name %></span>
+            <% end %>
+          </div>
+          <%= button_to "Se connecter",
+              dev_quick_login_path,
+              params: { user_id: user.id },
+              method: :post,
+              class: "shrink-0 rounded-lg bg-[#1F5C55] px-4 py-2 text-sm font-medium text-white hover:bg-[#1F5C55]/90" %>
+        </li>
+      <% end %>
+    </ul>
+  <% end %>
+
+  <% if @other_users.any? %>
+    <h2 class="text-lg font-semibold text-gray-800 mb-3">Autres utilisateurs (<%= @other_users.size %> affichés)</h2>
+    <ul class="space-y-2 max-h-96 overflow-y-auto">
+      <% @other_users.each do |user| %>
+        <li class="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-gray-100 bg-gray-50/80 px-3 py-2 text-sm">
+          <span class="text-gray-800"><%= user.email_address %></span>
+          <span class="text-gray-500 text-xs"><%= user.role_humanized %></span>
+          <%= button_to "OK",
+              dev_quick_login_path,
+              params: { user_id: user.id },
+              method: :post,
+              class: "shrink-0 rounded-md border border-gray-300 bg-white px-3 py-1 text-xs font-medium text-gray-700 hover:bg-gray-50" %>
+        </li>
+      <% end %>
+    </ul>
+  <% elsif User.none? %>
+    <p class="text-gray-600">Aucun utilisateur en base. Lance <code class="rounded bg-gray-100 px-1">bin/rails db:seed</code> ou <code class="rounded bg-gray-100 px-1">bin/rails circographe:seed_system_accounts</code>.</p>
+  <% end %>
+
+  <p class="mt-10 text-sm text-gray-500">
+    <%= link_to "← Connexion classique", new_session_path, class: "text-[#1F5C55] underline-offset-2 hover:underline" %>
+    ·
+    <%= link_to "Accueil", root_path, class: "text-[#1F5C55] underline-offset-2 hover:underline" %>
+  </p>
+</div>

@@ -1,11 +1,26 @@
 # Seed pour les comptes système (super-admin, admin, volunteer)
 puts "\n👑 Creating system accounts..."
 
+# En développement / test : réaligner le mot de passe seed si le compte existe déjà (évite « mauvais mdp » après créations manuelles).
+# Production / staging : désactivé par défaut. Forcer avec SEED_SYNC_SYSTEM_PASSWORDS=true (à utiliser avec précaution).
+def sync_seed_system_passwords?
+  explicit = ENV["SEED_SYNC_SYSTEM_PASSWORDS"]
+  return ActiveModel::Type::Boolean.new.cast(explicit) if explicit.present?
+
+  Rails.env.development? || Rails.env.test?
+end
+
 def seed_system_account!(label:, person_attrs:, system_role:, password: "123456")
   existing_user = User.find_by(email_address: person_attrs[:email])
 
   if existing_user
     puts "  ⚠️ #{label} déjà présent: #{existing_user.person.full_name} (#{existing_user.email_address})"
+    if sync_seed_system_passwords?
+      existing_user.password = password
+      existing_user.password_confirmation = password
+      existing_user.save!
+      puts "     🔑 Mot de passe seed réappliqué (connexion : #{existing_user.email_address} / #{password})"
+    end
     return existing_user
   end
 

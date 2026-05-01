@@ -71,6 +71,7 @@ puts "\nComptes de test :"
 puts "  - Super Admin : super-admin@rails.com / 123456"
 puts "  - Admin       : admin@rails.com / 123456"
 puts "  - Volunteer   : volunteer@rails.com / 123456"
+puts "  (Dev/test : db/seeds/admin.rb réapplique ces mots de passe si les comptes existent déjà — hors production par défaut.)"
 
 puts "\nCatalogue disponible :"
 puts "  Types d'adhésion :"
