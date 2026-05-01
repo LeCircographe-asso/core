@@ -177,6 +177,16 @@ RSpec.describe 'Admin::Users', type: :request do
         expect(response.body).to include("Créer un espace utilisateur")
       end
 
+      it "shows recent payments without dead-end 'Voir détails' link" do
+        create(:payment, person: person, recorded_by: admin, total_cents: 5000, payment_method: 'cash')
+
+        get admin_user_path("person_#{person.id}")
+
+        expect(response).to have_http_status(:success)
+        expect(response.body).to include("/admin/payments?person_id=#{person.id}")
+        expect(response.body).not_to include("Voir détails")
+      end
+
       it 'returns 404 for non-existent person' do
         get admin_user_path('person_99999')
         expect(response).to have_http_status(:not_found)

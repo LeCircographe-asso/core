@@ -1,6 +1,16 @@
 # frozen_string_literal: true
 
 class Person < ApplicationRecord
+  include PersonPaymentReporting
+
+  REDUCED_RATE_REASONS = [
+    "RSA",
+    "Mineur",
+    "Situation Handicap",
+    "Étudiant",
+    "Autre"
+  ].freeze
+
   has_one :user, dependent: :restrict_with_error
   has_many :memberships, dependent: :restrict_with_error
   has_many :payments, dependent: :restrict_with_error
@@ -17,6 +27,7 @@ class Person < ApplicationRecord
   validates :phone, uniqueness: true, allow_blank: true
   validates :member_number, uniqueness: true, allow_blank: true
   validate :email_not_used_by_other_user_account
+  validate :reduced_rate_consistency
 
   def full_name
     "#{first_name} #{last_name}"
@@ -217,63 +228,6 @@ class Person < ApplicationRecord
     { contribution: result.contribution, payment: result.payment }
   end
 
-  def upgrade_contribution!(from_contribution_id:, to_formula_id:, recorded_by:, payment_method: :cash)
-    result = People::ContributionUpgrader.new(
-      person: self,
-      from_contribution_id: from_contribution_id,
-      to_formula_id: to_formula_id,
-      payment_method: payment_method.to_s,
-      recorded_by_id: recorded_by.id
-    ).call
-
-    raise result.message.sub(/\AErreur pendant contribution upgrade : /, "") unless result.success?
-
-    {
-      old_contribution: result.old_contribution,
-      new_contribution: result.new_contribution,
-      payment: result.payment,
-      credit_applied: result.credit_applied
-    }
-  end
-
-  def create_donation!(amount_cents, recorded_by:, payment_method: :cash, notes: "Donation")
-    result = People::PaymentCreator.new(
-      person: self,
-      amount_cents: amount_cents,
-      payment_method: payment_method.to_s,
-      recorded_by_id: recorded_by.id,
-      item_type: "Donation",
-      description: notes,
-      notes: notes
-    ).call
-
-    raise result.message unless result.success?
-
-    result.payment
-  end
-
-  def upgrade_membership!(new_membership_type, recorded_by:, payment_method: :cash, custom_amount_cents: nil, offer_reason: nil, donation_cents: nil)
-    result = People::MembershipUpgrader.new(
-      person: self,
-      new_membership_type_id: new_membership_type.id,
-      payment_method: payment_method.to_s,
-      recorded_by_id: recorded_by.id,
-      custom_amount_cents: custom_amount_cents,
-      offer_reason: offer_reason,
-      donation_cents: donation_cents
-    ).call
-
-    raise result.message unless result.success?
-
-    {
-      membership: result.membership,
-      payment: result.payment,
-      member_number_changed: result.member_number_changed,
-      old_member_number: result.old_member_number,
-      new_member_number: result.new_member_number
-    }
-  end
-
   def renew_membership!(membership_type, recorded_by:, payment_method: :cash, custom_amount_cents: nil, offer_reason: nil)
     ActiveRecord::Base.transaction do
       current = current_membership
@@ -335,63 +289,6 @@ class Person < ApplicationRecord
     )
   end
 
-  public
-
-  def offered_payments_count
-    payments.where(payment_method: "offered").count
-  end
-
-  def offered_payments_total
-    payments.where(payment_method: "offered").sum(:total_cents)
-  end
-
-  def free_offers_count
-    payments.where(payment_method: "offered", total_cents: 0).count
-  end
-
-  def paid_offers_count
-    payments.where(payment_method: "offered").where("total_cents > 0").count
-  end
-
-  def membership_upgrades_count
-    payments.joins(:payment_lines)
-            .where(payment_lines: { item_type: "MembershipUpgrade" })
-            .count
-  end
-
-  def contribution_purchases_count
-    payments.joins(:payment_lines)
-            .where(payment_lines: { item_type: "Contribution" })
-            .count
-  end
-
-  def self.total_offered_payments
-    joins(:payments).where(payments: { payment_method: "offered" }).count
-  end
-
-  def self.total_free_offers
-    joins(:payments).where(payments: { payment_method: "offered", total_cents: 0 }).count
-  end
-
-  def self.total_paid_offers
-    joins(:payments).where(payments: { payment_method: "offered" }).where("payments.total_cents > 0").count
-  end
-
-  def self.offered_payments_by_reason
-    joins(:payments)
-      .where(payments: { payment_method: "offered" })
-      .group("payments.notes")
-      .count
-  end
-
-  def self.upgrades_today
-    joins(:payments)
-      .joins("JOIN payment_lines ON payments.id = payment_lines.payment_id")
-      .where(payment_lines: { item_type: "MembershipUpgrade" })
-      .where(payments: { created_at: Date.current.all_day })
-      .count
-  end
-
   def must_have_active_membership
     return if new_record?
     return if memberships.active.any?
@@ -400,23 +297,6 @@ class Person < ApplicationRecord
     errors.add(:base, "Une adhésion active est obligatoire")
   end
 
-  def newsletter_subscribed?
-    return false if email.blank?
-
-    subscriber = NewsletterSubscriber.find_by(email: email)
-    subscriber&.subscribed? || false
-  end
-
-  def newsletter_subscribed
-    newsletter_subscribed?
-  end
-
-  def newsletter_subscribed=(_value)
-    # Compatibility writer for legacy forms/factories. Newsletter persistence is handled by NewsletterSubscriber.
-  end
-
-  public :newsletter_subscribed?
-
   private
 
   def email_not_used_by_other_user_account
@@ -424,5 +304,22 @@ class Person < ApplicationRecord
     return unless Identity::EmailPolicy.person_email_conflicts_with_other_user?(email: email, current_person_id: id)
 
     errors.add(:email, "est deja utilisee par un autre compte utilisateur")
+  end
+
+  def reduced_rate_consistency
+    return unless reduced_rate_eligible?
+
+    if reduced_rate_reason.blank?
+      errors.add(:reduced_rate_reason, "doit être renseigné pour un tarif réduit")
+      return
+    end
+
+    unless REDUCED_RATE_REASONS.include?(reduced_rate_reason)
+      errors.add(:reduced_rate_reason, "n'est pas une raison de tarif réduit valide")
+    end
+
+    return unless reduced_rate_reason == "Autre" && reduced_rate_proof.blank?
+
+    errors.add(:reduced_rate_proof, "doit être renseigné quand la raison de tarif réduit est Autre")
   end
 end

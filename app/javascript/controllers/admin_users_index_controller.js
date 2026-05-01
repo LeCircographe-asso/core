@@ -1,7 +1,7 @@
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
-  static targets = ["searchInput", "itemsPerPage"]
+  static targets = ["searchInput", "hiddenSearch", "itemsPerPage"]
   static values = { debounceMs: { type: Number, default: 500 } }
 
   connect() {
@@ -18,6 +18,7 @@ export default class extends Controller {
     if (this.searchTimeout) clearTimeout(this.searchTimeout)
 
     this.searchTimeout = setTimeout(() => {
+      this.syncSearchValue()
       const valueLength = event.target.value.length
       if (valueLength >= 2 || valueLength === 0) {
         event.target.form.requestSubmit()
@@ -50,5 +51,11 @@ export default class extends Controller {
       event.preventDefault()
       if (this.hasSearchInputTarget) this.searchInputTarget.focus()
     }
+  }
+
+  syncSearchValue() {
+    if (!this.hasSearchInputTarget || !this.hasHiddenSearchTarget) return
+
+    this.hiddenSearchTarget.value = this.searchInputTarget.value
   }
 }

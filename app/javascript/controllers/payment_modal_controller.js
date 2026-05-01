@@ -3,13 +3,6 @@ import { Controller } from "@hotwired/stimulus"
 export default class extends Controller {
   static targets = ["container"]
 
-  connect() {
-    // Auto-open if person_id is in params
-    if (new URLSearchParams(window.location.search).get("person_id")) {
-      this.open()
-    }
-  }
-
   open() {
     if (this.hasContainerTarget) {
       this.containerTarget.classList.remove("hidden")
