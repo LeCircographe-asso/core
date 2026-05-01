@@ -7,7 +7,7 @@ require 'rails_helper'
 # Vérifie :
 #   - les libellés tarifs publics (cohérence avec docs/glossary.md + seeds)
 #   - l'absence des termes legacy/non canoniques retirés de l'audit
-#   - la non-prolifération de la carte Google Maps (centralisée sur contact_us)
+#   - la non-prolifération de la carte embarquée (centralisée sur contact_us, OSM)
 #
 # Si un de ces tests casse : soit le contenu a évolué de manière intentionnelle
 # (mettre à jour le test + docs), soit une régression de vocabulaire est arrivée.
@@ -40,8 +40,8 @@ RSpec.describe 'Public pages content', type: :request do
       expect(response.body).not_to include('super soutiens')
     end
 
-    it 'does not duplicate the Google Maps embed (centralized on contact_us#map)' do
-      expect(response.body).not_to include('google.com/maps/embed')
+    it 'does not duplicate the map iframe (centralized on contact_us#map)' do
+      expect(response.body).not_to include('openstreetmap.org/export/embed')
     end
   end
 
@@ -81,8 +81,8 @@ RSpec.describe 'Public pages content', type: :request do
       expect(response).to have_http_status(:success)
     end
 
-    it 'is the only public page exposing the Google Maps embed' do
-      expect(response.body).to include('google.com/maps/embed')
+    it 'is the only public page exposing the embedded map' do
+      expect(response.body).to include('openstreetmap.org/export/embed')
     end
 
     it 'exposes a stable #map anchor for cross-page links' do
@@ -91,6 +91,17 @@ RSpec.describe 'Public pages content', type: :request do
 
     it 'uses the canonical contact email' do
       expect(response.body).to include('contact@lecircographe.fr')
+    end
+
+    it 'shows the unique postal address (boulevard de Suisse, no Cartoucherie)' do
+      expect(response.body).to include('97 bis Boulevard de Suisse')
+      expect(response.body).not_to include('Cartoucherie')
+      expect(response.body).not_to include('Maurice Sarraut')
+      expect(response.body).not_to include('Tram')
+    end
+
+    it 'exposes #horaires anchor for FAQ deep links' do
+      expect(response.body).to include('id="horaires"')
     end
   end
 
@@ -114,8 +125,8 @@ RSpec.describe 'Public pages content', type: :request do
       expect(response).to have_http_status(:success)
     end
 
-    it 'no longer embeds its own Google Maps iframe (links to contact_us#map)' do
-      expect(response.body).not_to include('google.com/maps/embed')
+    it 'does not embed its own map iframe (links to contact_us#map)' do
+      expect(response.body).not_to include('openstreetmap.org/export/embed')
     end
   end
 
