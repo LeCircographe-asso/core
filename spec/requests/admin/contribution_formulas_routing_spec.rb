@@ -13,9 +13,7 @@ RSpec.describe "Admin contribution formulas routes", type: :request do
     expect(response).to have_http_status(:success)
   end
 
-  it "keeps legacy subscription_plans index route working" do
-    get admin_subscription_plans_path
-
-    expect(response).to have_http_status(:success)
+  it "does not expose legacy subscription_plans index route anymore" do
+    expect { admin_subscription_plans_path }.to raise_error(NameError)
   end
 end

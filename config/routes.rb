@@ -36,9 +36,7 @@ Rails.application.routes.draw do
     resources :attendances, only: %i[index show new create destroy]
     resources :memberships, only: %i[index show new create edit update destroy]
     resources :membership_types, only: %i[index show new create edit update destroy]
-    resources :subscription_plans, only: %i[index show new create edit update destroy]
-    # Canonical domain naming (keeps legacy subscription_plans routes for compatibility)
-    resources :contribution_formulas, controller: :subscription_plans, only: %i[index show new create edit update destroy]
+    resources :contribution_formulas, only: %i[index show new create edit update destroy]
     resources :subscriptions, only: [] do
       post :upgrade, on: :collection
     end

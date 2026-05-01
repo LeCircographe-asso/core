@@ -17,8 +17,8 @@
         
         <%= form_with url: create_subscription_admin_user_path(@person), method: :post, local: true, class: "space-y-4" do |form| %>
           <div>
-            <%= form.label :subscription_plan_id, "Plan de cotisation", class: "block text-sm font-medium text-gray-700" %>
-            <%= form.select :subscription_plan_id, 
+            <%= form.label :contribution_formula_id, "Plan de cotisation", class: "block text-sm font-medium text-gray-700" %>
+            <%= form.select :contribution_formula_id, 
                 options_from_collection_for_select(@subscription_plans, :id, :name_with_price), 
                 { prompt: "Sélectionner un plan de cotisation" },
                 { class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#1F5C55] focus:ring-[#1F5C55] sm:text-sm", required: true } %>

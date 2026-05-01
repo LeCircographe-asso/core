@@ -12,7 +12,7 @@
         </div>
         <div class="flex space-x-3">
           <% if Current.user&.system_role == 'super_admin' %>
-            <%= link_to "Modifier", edit_admin_subscription_plan_path(@contribution_formula),
+            <%= link_to "Modifier", edit_admin_contribution_formula_path(@contribution_formula),
                 class: "inline-flex items-center px-4 py-2 border border-white rounded-md shadow-sm text-sm font-medium text-[#1F5C55] bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-white" %>
           <% end %>
         </div>
@@ -139,11 +139,11 @@
 
     <!-- Actions -->
     <div class="mt-6 flex justify-end space-x-3">
-      <%= link_to "Retour à la liste", admin_subscription_plans_path,
+      <%= link_to "Retour à la liste", admin_contribution_formulas_path,
           class: "inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1F5C55]" %>
       
       <% if Current.user&.system_role == 'super_admin' && @contribution_formula.contributions.empty? %>
-        <%= button_to "Supprimer ce plan", admin_subscription_plan_path(@contribution_formula), 
+        <%= button_to "Supprimer ce plan", admin_contribution_formula_path(@contribution_formula), 
             method: :delete,
             form: { data: { turbo_confirm: "Êtes-vous sûr de vouloir supprimer ce plan de cotisation ?" } },
             class: "inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500" %>

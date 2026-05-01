@@ -79,7 +79,7 @@ module Admin
                                              locals: { payment: fresh, list_filter_params: filter_locals }),
               turbo_stream.replace("payment-summary", partial: "payment_summary",
                                                      locals: payment_summary_locals(payments_index_filter_params)),
-              turbo_stream.replace("flash", partial: "shared/flash", locals: { notice: created_msg })
+              turbo_flash_replace(:notice, created_msg)
             ]
           end
         else
@@ -87,7 +87,7 @@ module Admin
           err_detail = I18n.t("flash.generic.error_detail", message: result.message)
           format.html { redirect_to admin_payments_path, alert: fail_msg }
           format.turbo_stream do
-            render turbo_stream: turbo_stream.replace("flash", partial: "shared/flash", locals: { alert: err_detail })
+            render turbo_stream: turbo_flash_replace(:alert, err_detail)
           end
         end
       end
@@ -97,7 +97,7 @@ module Admin
         err_detail = I18n.t("flash.generic.error_detail", message: e.message)
         format.html { redirect_to admin_payments_path, alert: fail_msg }
         format.turbo_stream do
-          render turbo_stream: turbo_stream.replace("flash", partial: "shared/flash", locals: { alert: err_detail })
+          render turbo_stream: turbo_flash_replace(:alert, err_detail)
         end
       end
     rescue StandardError => e
@@ -107,7 +107,7 @@ module Admin
         err_detail = I18n.t("flash.generic.error_detail", message: e.message)
         format.html { redirect_to admin_payments_path, alert: fail_msg }
         format.turbo_stream do
-          render turbo_stream: turbo_stream.replace("flash", partial: "shared/flash", locals: { alert: err_detail })
+          render turbo_stream: turbo_flash_replace(:alert, err_detail)
         end
       end
     end
@@ -155,7 +155,7 @@ module Admin
                                                                locals: { payment: fresh, list_filter_params: filter_locals }),
               turbo_stream.replace("payment-summary", partial: "payment_summary",
                                                        locals: payment_summary_locals(payments_index_filter_params)),
-              turbo_stream.replace("flash", partial: "shared/flash", locals: { notice: updated_msg })
+              turbo_flash_replace(:notice, updated_msg)
             ]
           end
         else
@@ -163,7 +163,7 @@ module Admin
           err_detail = I18n.t("flash.generic.error_detail", message: result.message)
           format.html { redirect_to admin_payment_path(params[:id]), alert: fail_msg }
           format.turbo_stream do
-            render turbo_stream: turbo_stream.replace("flash", partial: "shared/flash", locals: { alert: err_detail })
+            render turbo_stream: turbo_flash_replace(:alert, err_detail)
           end
         end
       end
@@ -194,7 +194,7 @@ module Admin
               turbo_stream.remove("payment_row_#{result.payment.id}"),
               turbo_stream.replace("payment-summary", partial: "payment_summary",
                                                      locals: payment_summary_locals(payments_index_filter_params)),
-              turbo_stream.replace("flash", partial: "shared/flash", locals: { notice: cancelled_msg })
+              turbo_flash_replace(:notice, cancelled_msg)
             ]
           end
         else
@@ -202,7 +202,7 @@ module Admin
           err_detail = I18n.t("flash.generic.error_detail", message: result.message)
           format.html { redirect_to admin_payments_path, alert: fail_msg }
           format.turbo_stream do
-            render turbo_stream: turbo_stream.replace("flash", partial: "shared/flash", locals: { alert: err_detail })
+            render turbo_stream: turbo_flash_replace(:alert, err_detail)
           end
         end
       end
@@ -331,6 +331,10 @@ module Admin
       end
 
       add_breadcrumb I18n.t("breadcrumbs.admin.payments.history"), nil
+    end
+
+    def turbo_flash_replace(type, message)
+      turbo_stream.replace("flash", partial: "shared/flash", locals: { type => message })
     end
   end
 end

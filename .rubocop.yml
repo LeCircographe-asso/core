@@ -70,3 +70,50 @@ Performance/Sum:
   Enabled: true
 Performance/Detect:
   Enabled: true
+
+# Phase audit metrics (conservative thresholds to avoid CI churn)
+Metrics/ClassLength:
+  Enabled: true
+  Max: 320
+  Include:
+    - 'app/models/person.rb'
+    - 'app/controllers/admin/users_controller.rb'
+    - 'app/controllers/admin/payments_controller.rb'
+    - 'app/services/member_management_service.rb'
+  Exclude:
+    - 'app/views/**/*'
+Metrics/ModuleLength:
+  Enabled: true
+  Max: 220
+  Include:
+    - 'app/models/person.rb'
+    - 'app/controllers/admin/users_controller.rb'
+    - 'app/controllers/admin/payments_controller.rb'
+    - 'app/services/member_management_service.rb'
+Metrics/MethodLength:
+  Enabled: true
+  Max: 45
+  Include:
+    - 'app/models/person.rb'
+    - 'app/controllers/admin/users_controller.rb'
+    - 'app/controllers/admin/payments_controller.rb'
+    - 'app/services/member_management_service.rb'
+Metrics/BlockLength:
+  Enabled: true
+  Max: 60
+  Include:
+    - 'app/models/person.rb'
+    - 'app/controllers/admin/users_controller.rb'
+    - 'app/controllers/admin/payments_controller.rb'
+    - 'app/services/member_management_service.rb'
+  Exclude:
+    - 'config/routes.rb'
+    - 'spec/**/*'
+Metrics/AbcSize:
+  Enabled: true
+  Max: 60
+  Include:
+    - 'app/models/person.rb'
+    - 'app/controllers/admin/users_controller.rb'
+    - 'app/controllers/admin/payments_controller.rb'
+    - 'app/services/member_management_service.rb'

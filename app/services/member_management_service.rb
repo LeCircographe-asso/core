@@ -6,7 +6,7 @@ class MemberManagementService
     loop do
       # Format: YYTNNN (ex: 25C001, 25U400)
       year = Date.current.year.to_s.last(2) # 2025 -> 25
-      type_code = %w[CIRQUE C].include?(membership_type.upcase) ? "C" : "U"
+      type_code = MemberNumberManagement::Policy.type_code_for(membership_type)
 
       # Chercher le dernier numéro pour cette année et ce type
       # Utiliser l'historique ET les numéros actuels pour éviter les conflits
@@ -72,14 +72,7 @@ class MemberManagementService
     person.update!(member_number: new_number)
 
     # Normaliser le type d'adhésion pour l'historique
-    normalized_type = case membership_type.to_s.upcase
-    when "CIRQUE", "C"
-                        "Cirque"
-    when "BASIQUE", "U", "BASIC"
-                        "Basique"
-    else
-                        "Basique"
-    end
+    normalized_type = MemberNumberManagement::Policy.type_label_for(membership_type)
 
     # Créer l'historique
     person.member_number_histories.create!(
@@ -202,26 +195,12 @@ class MemberManagementService
 
   # Analyse un numéro d'adhérent existant
   def self.parse_member_number(member_number)
-    return nil if member_number.blank?
-
-    # Format: YYTNNN
-    match = member_number.match(/^(\d{2})([CU])(\d+)$/)
-    return nil unless match
-
-    {
-      year: "20#{match[1]}", # 25 -> 2025
-      type: match[2] == "C" ? "Cirque" : "Basique",
-      number: match[3].to_i,
-      full_year: match[1],
-      type_code: match[2]
-    }
+    MemberNumberManagement::Policy.parse(member_number)
   end
 
   # Valide le format d'un numéro d'adhérent
   def self.valid_member_number_format?(member_number)
-    return false if member_number.blank?
-
-    member_number.match?(/^\d{2}[CU]\d{3,5}$/)
+    MemberNumberManagement::Policy.valid_format?(member_number)
   end
 
   # Génère des numéros d'adhérent pour les tests
