@@ -209,6 +209,7 @@ class User < ApplicationRecord
   def archive!
     return false if deleted?
 
+    sessions.destroy_all
     update!(deleted: true, deleted_at: Time.current)
     anonymize_personal_data
     true

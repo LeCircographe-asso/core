@@ -39,7 +39,26 @@ module Authentication
     found = Session.find_by(id: session_id)
     if found.nil?
       cookies.delete(:session_id, **SESSION_COOKIE_OPTS)
+      Rails.logger.warn(
+        "[auth.audit] stale_session_cookie cookie_session_id=#{session_id} path=#{request.path} method=#{request.request_method}"
+      )
+      return nil
     end
+
+    user = User.find_by(id: found.user_id)
+    if user.nil? || user.deleted?
+      reason = user.nil? ? "missing_user" : "user_deleted"
+      db_session_id = found.id
+      db_user_id = found.user_id
+      found.destroy
+      cookies.delete(:session_id, **SESSION_COOKIE_OPTS)
+      Rails.logger.warn(
+        "[auth.audit] invalid_session_cookie reason=#{reason} cookie_session_id=#{session_id} " \
+        "db_session_id=#{db_session_id} user_id=#{db_user_id} path=#{request.path} method=#{request.request_method}"
+      )
+      return nil
+    end
+
     found
   end
 
@@ -96,6 +115,7 @@ module Authentication
 
   def terminate_session
     Current.session&.destroy
+  ensure
     Current.session = nil
     cookies.delete(:session_id, **SESSION_COOKIE_OPTS)
   end
