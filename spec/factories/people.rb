@@ -20,7 +20,9 @@ FactoryBot.define do
     is_minor { false }
 
     trait :with_user do
-      association :user
+      after(:create) do |person|
+        create(:user, person: person, email_address: person.email)
+      end
     end
 
     trait :with_member_number do

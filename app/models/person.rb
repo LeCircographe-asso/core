@@ -31,6 +31,7 @@ class Person < ApplicationRecord
   validates :email, uniqueness: true, allow_blank: true
   validates :phone, uniqueness: true, allow_blank: true
   validates :member_number, uniqueness: true, allow_blank: true
+  validate :email_not_used_by_other_user_account
 
   def full_name
     "#{first_name} #{last_name}"
@@ -510,31 +511,7 @@ class Person < ApplicationRecord
   end
 
   def contribution_payload_for(contribution_formula)
-    sessions_remaining = case contribution_formula.duration
-    when "pack10"
-                           contribution_formula.sessions_count || 10
-    when "day"
-                           1
-    when "trimester", "annual"
-                           nil
-    else
-                           contribution_formula.sessions_count || 1
-    end
-
-    expires_at = case contribution_formula.duration
-    when "pack10"
-                   nil
-    when "day"
-                   Date.current.end_of_day
-    when "trimester"
-                   Date.current + 90.days
-    when "annual"
-                   Date.current + 1.year
-    else
-                   contribution_formula.validity_days ? Date.current + contribution_formula.validity_days.days : nil
-    end
-
-    { sessions_remaining: sessions_remaining, expires_at: expires_at }
+    People::ContributionPayloadBuilder.call(contribution_formula)
   end
 
   def generate_payment_description(payment_method, item_name, item_type)
@@ -707,4 +684,13 @@ class Person < ApplicationRecord
   end
 
   public :newsletter_subscribed?
+
+  private
+
+  def email_not_used_by_other_user_account
+    return if email.blank?
+    return unless Identity::EmailPolicy.person_email_conflicts_with_other_user?(email: email, current_person_id: id)
+
+    errors.add(:email, "est deja utilisee par un autre compte utilisateur")
+  end
 end

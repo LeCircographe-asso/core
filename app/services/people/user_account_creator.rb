@@ -77,6 +77,7 @@ module People
       user.privacy_policy = privacy_policy
 
       user.save!
+      user.welcome_send
 
       success(
         user: user,
