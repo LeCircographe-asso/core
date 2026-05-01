@@ -1,21 +1,6 @@
 # frozen_string_literal: true
 
 class Person < ApplicationRecord
-  # ===================================================================
-  # ⚠️ DEPRECATED: newsletter_subscribed column
-  # ===================================================================
-  # This column is deprecated in favor of NewsletterSubscriber model.
-  # The new table provides better tracking with source ('web', 'admin', 'import')
-  # and supports orphaned emails (without Person).
-  #
-  # Migration plan:
-  # 1. Phase 1 (current): Mark as deprecated, stop writing to it
-  # 2. Phase 2: Migrate data from Person.newsletter_subscribed → NewsletterSubscriber
-  # 3. Phase 3: Remove Person.newsletter_subscribed column
-  #
-  # TODO: Replace all newsletter_subscribed references with NewsletterSubscriber
-  # ===================================================================
-
   has_one :user, dependent: :restrict_with_error
   has_many :memberships, dependent: :restrict_with_error
   has_many :payments, dependent: :restrict_with_error
@@ -420,6 +405,14 @@ class Person < ApplicationRecord
 
     subscriber = NewsletterSubscriber.find_by(email: email)
     subscriber&.subscribed? || false
+  end
+
+  def newsletter_subscribed
+    newsletter_subscribed?
+  end
+
+  def newsletter_subscribed=(_value)
+    # Compatibility writer for legacy forms/factories. Newsletter persistence is handled by NewsletterSubscriber.
   end
 
   public :newsletter_subscribed?
