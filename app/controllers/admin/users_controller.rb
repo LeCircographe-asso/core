@@ -76,14 +76,7 @@ module Admin
 
         # Si pas de User, créer un User temporaire pour la vue
         if @user.nil?
-          @user = User.new(
-            id: "temp_#{@person.id}",
-            email_address: @person.email,
-            system_role: nil # Pas de rôle pour une Person sans User
-          )
-          # Établir la relation person manuellement
-          @user.association(:person).target = @person
-          @user.association(:person).loaded!
+          @user = Admin::Users::ViewUserAdapter.from_person(@person)
           @is_person_without_user = true
         else
           @is_person_without_user = false
