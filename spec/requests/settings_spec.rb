@@ -27,10 +27,19 @@ RSpec.describe "Settings", type: :request do
 
     before { login_as(user) }
 
+    def patch_settings(params)
+      patch settings_path, params: params
+    end
+
+    def patch_settings_turbo(params)
+      patch settings_path, params: params, headers: { "Accept" => Mime[:turbo_stream].to_s }
+    end
+
     it "updates preferences, redirects to settings, and shows the notice" do
       person = user.person
 
-      patch settings_path, params: {
+      patch_settings(
+        {
         user: {
           email_address: user.email_address,
           image_rights: person.image_rights ? "1" : "0",
@@ -39,6 +48,7 @@ RSpec.describe "Settings", type: :request do
           dyslexic_font: person.dyslexic_font ? "1" : "0"
         }
       }
+      )
 
       expect(response).to redirect_to(settings_path)
       expect(response).to have_http_status(:see_other)
@@ -49,17 +59,17 @@ RSpec.describe "Settings", type: :request do
     it "returns turbo-stream replacements for the account section and flash" do
       person = user.person
 
-      patch settings_path,
-            params: {
-              user: {
-                email_address: user.email_address,
-                image_rights: person.image_rights ? "1" : "0",
-                newsletter_subscribed: person.newsletter_subscribed? ? "1" : "0",
-                get_involved: person.get_involved ? "1" : "0",
-                dyslexic_font: person.dyslexic_font ? "1" : "0"
-              }
-            },
-            headers: { "Accept" => Mime[:turbo_stream].to_s }
+      patch_settings_turbo(
+        {
+          user: {
+            email_address: user.email_address,
+            image_rights: person.image_rights ? "1" : "0",
+            newsletter_subscribed: person.newsletter_subscribed? ? "1" : "0",
+            get_involved: person.get_involved ? "1" : "0",
+            dyslexic_font: person.dyslexic_font ? "1" : "0"
+          }
+        }
+      )
 
       expect(response).to have_http_status(:ok)
       expect(response.media_type).to eq(Mime[:turbo_stream])
@@ -70,7 +80,7 @@ RSpec.describe "Settings", type: :request do
     it "updates email only when only email_address is submitted (dedicated flow)" do
       new_email = "new-email-#{user.id}@example.com"
 
-      patch settings_path, params: { user: { email_address: new_email } }
+      patch_settings(user: { email_address: new_email })
 
       expect(response).to redirect_to(settings_path)
       expect(user.reload.email_address).to eq(new_email)
@@ -79,12 +89,12 @@ RSpec.describe "Settings", type: :request do
     it "returns turbo-stream when updating email only from profile context" do
       new_email = "profile-email-#{user.id}@example.com"
 
-      patch settings_path,
-            params: {
-              ui_context: "profile",
-              user: { email_address: new_email }
-            },
-            headers: { "Accept" => Mime[:turbo_stream].to_s }
+      patch_settings_turbo(
+        {
+          ui_context: "profile",
+          user: { email_address: new_email }
+        }
+      )
 
       expect(response).to have_http_status(:ok)
       expect(response.media_type).to eq(Mime[:turbo_stream])
@@ -95,13 +105,13 @@ RSpec.describe "Settings", type: :request do
       ActionMailer::Base.deliveries.clear
       new_email = "verify-email-#{user.id}@example.com"
 
-      patch settings_path,
-            params: {
-              ui_context: "profile",
-              email_confirm: new_email,
-              user: { email_address: new_email }
-            },
-            headers: { "Accept" => Mime[:turbo_stream].to_s }
+      patch_settings_turbo(
+        {
+          ui_context: "profile",
+          email_confirm: new_email,
+          user: { email_address: new_email }
+        }
+      )
 
       expect(response).to have_http_status(:ok)
       expect(user.reload.email_address).not_to eq(new_email)
@@ -111,24 +121,123 @@ RSpec.describe "Settings", type: :request do
       expect(ActionMailer::Base.deliveries.last&.to).to include(new_email)
     end
 
+    it "supports html request when requesting an email change code" do
+      new_email = "verify-html-#{user.id}@example.com"
+
+      patch_settings(
+        {
+        email_confirm: new_email,
+        user: { email_address: new_email }
+      }
+      )
+
+      expect(response).to have_http_status(:see_other)
+      expect(response).to redirect_to(settings_path)
+      expect(user.reload.pending_email_address).to eq(new_email)
+    end
+
     it "updates the email only after a valid verification code" do
       new_email = "verified-final-#{user.id}@example.com"
       user.store_email_change_request!(new_email: new_email, code: "123456")
 
-      patch settings_path,
-            params: {
-              ui_context: "profile",
-              email_confirm: new_email,
-              email_verification_code: "123456",
-              user: { email_address: new_email }
-            },
-            headers: { "Accept" => Mime[:turbo_stream].to_s }
+      patch_settings_turbo(
+        {
+          ui_context: "profile",
+          email_confirm: new_email,
+          email_verification_code: "123456",
+          user: { email_address: new_email }
+        }
+      )
 
       expect(response).to have_http_status(:ok)
       expect(user.reload.email_address).to eq(new_email)
       expect(user.pending_email_address).to be_nil
       expect(user.email_change_code_digest).to be_nil
       expect(user.email_change_code_sent_at).to be_nil
+    end
+
+    it "returns an error when verification code is invalid" do
+      new_email = "invalid-code-#{user.id}@example.com"
+      user.store_email_change_request!(new_email: new_email, code: "123456")
+
+      patch_settings_turbo(
+        {
+          ui_context: "profile",
+          email_confirm: new_email,
+          email_verification_code: "000000",
+          user: { email_address: new_email }
+        }
+      )
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(user.reload.email_address).not_to eq(new_email)
+    end
+
+    it "supports html request for invalid verification code" do
+      new_email = "invalid-html-#{user.id}@example.com"
+      user.store_email_change_request!(new_email: new_email, code: "123456")
+
+      patch_settings(
+        {
+        email_confirm: new_email,
+        email_verification_code: "000000",
+        user: { email_address: new_email }
+      }
+      )
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(user.reload.email_address).not_to eq(new_email)
+    end
+
+    it "returns an error when verification code is expired" do
+      new_email = "expired-code-#{user.id}@example.com"
+      user.store_email_change_request!(new_email: new_email, code: "123456")
+      user.update!(email_change_code_sent_at: 16.minutes.ago)
+
+      patch_settings_turbo(
+        {
+          ui_context: "profile",
+          email_confirm: new_email,
+          email_verification_code: "123456",
+          user: { email_address: new_email }
+        }
+      )
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(user.reload.email_address).not_to eq(new_email)
+    end
+
+    it "returns an error when pending email does not match requested email" do
+      user.store_email_change_request!(new_email: "pending-#{user.id}@example.com", code: "123456")
+      requested_email = "other-#{user.id}@example.com"
+
+      patch_settings_turbo(
+        {
+          ui_context: "profile",
+          email_confirm: requested_email,
+          email_verification_code: "123456",
+          user: { email_address: requested_email }
+        }
+      )
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(user.reload.email_address).not_to eq(requested_email)
+    end
+
+    it "returns an error when mailer fails while requesting code" do
+      allow(UserMailer).to receive(:email_change_verification).and_raise(StandardError, "smtp down")
+      new_email = "mailer-fail-#{user.id}@example.com"
+
+      patch_settings_turbo(
+        {
+          ui_context: "profile",
+          email_confirm: new_email,
+          user: { email_address: new_email }
+        }
+      )
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(user.reload.pending_email_address).to eq(new_email)
     end
 
     it "does not alter newsletter subscription when only email is submitted (modal-style payload)" do
@@ -141,13 +250,13 @@ RSpec.describe "Settings", type: :request do
         source: "authenticated"
       )
 
-      patch settings_path,
-            params: {
-              ui_context: "profile",
-              email_confirm: "confirm-field-present",
-              user: { email_address: user.email_address }
-            },
-            headers: { "Accept" => Mime[:turbo_stream].to_s }
+      patch_settings_turbo(
+        {
+          ui_context: "profile",
+          email_confirm: "confirm-field-present",
+          user: { email_address: user.email_address }
+        }
+      )
 
       expect(response).to have_http_status(:unprocessable_content)
       expect(subscriber.reload.subscribed).to be(true)
