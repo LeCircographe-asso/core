@@ -1,0 +1,17 @@
+<%# locals: person (required), current_membership, show_contributions_block %>
+<div class="space-y-3 min-h-0">
+  <h3 class="text-xs font-semibold uppercase tracking-wide text-gray-500">
+    <%= t("users.space.membership_card.section_contribution") %>
+  </h3>
+  <% if show_contributions_block %>
+    <%= render "shared/membership_card_active_contributions", person: person %>
+  <% elsif current_membership.present? %>
+    <p class="text-sm text-gray-600">
+      <%= t("users.space.membership_card.cotisation_wrong_category") %>
+    </p>
+  <% else %>
+    <p class="text-sm text-gray-600">
+      <%= t("users.space.membership_card.cotisation_no_membership") %>
+    </p>
+  <% end %>
+</div>

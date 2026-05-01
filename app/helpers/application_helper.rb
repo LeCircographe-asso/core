@@ -2,6 +2,7 @@
 
 module ApplicationHelper
   include Pagy::Frontend
+  include MembershipCardHelper
 
   def public_registration_enabled?
     Rails.application.config.x.public_registration_enabled
