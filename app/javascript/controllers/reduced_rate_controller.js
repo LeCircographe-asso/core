@@ -2,10 +2,15 @@ import { Controller } from "@hotwired/stimulus"
 
 // Connects to data-controller="reduced-rate"
 export default class extends Controller {
-  static targets = ["details", "checkbox"]
+  static targets = ["details", "checkbox", "reason", "proof"]
 
   connect() {
+    this.refresh()
+  }
+
+  refresh() {
     this.toggleDetails()
+    this.toggleProof()
   }
 
   toggleDetails() {
@@ -26,7 +31,17 @@ export default class extends Controller {
 
   // Action when checkbox changes
   checkboxChanged() {
-    this.toggleDetails()
+    this.refresh()
+  }
+
+  reasonChanged() {
+    this.toggleProof()
+  }
+
+  toggleProof() {
+    if (!this.hasProofTarget || !this.hasReasonTarget) return
+
+    const shouldShowProof = this.reasonTarget.value === "Autre"
+    this.proofTarget.classList.toggle("hidden", !shouldShowProof)
   }
 }
-
