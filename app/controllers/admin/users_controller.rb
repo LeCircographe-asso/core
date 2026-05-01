@@ -55,9 +55,9 @@ module Admin
     # GET /admin/users/1 or /admin/users/1.json
     def show
       # Adapter pour accepter les ID de Person ET de User
-      if params[:id].to_s.start_with?("person_")
+      if person_identifier?(params[:id])
         # ID de Person (format: person_123)
-        person_id = params[:id].gsub("person_", "")
+        person_id = extracted_person_id(params[:id])
 
         # Chercher d'abord dans les Person actives
         @person = PersonQuery.active.includes(:user, memberships: :membership_type, contributions: :contribution_formula, payments: %i[payment_lines recorded_by])
@@ -143,7 +143,7 @@ module Admin
 
     # GET /admin/users/person_1/edit_person
     def edit_person
-      person_id = params[:id].to_s.gsub("person_", "")
+      person_id = extracted_person_id(params[:id])
       @person = PersonQuery.active.find(person_id)
       add_breadcrumb I18n.t("breadcrumbs.admin.users.members_list"), admin_users_path
       add_breadcrumb @person.full_name, admin_user_path("person_#{@person.id}")
@@ -153,7 +153,7 @@ module Admin
     # GET /admin/users/1/edit
     def edit
       # Adapter pour gérer les Person
-      if params[:id].to_s.start_with?("person_")
+      if person_identifier?(params[:id])
         # Rediriger vers l'édition Person
         redirect_to edit_person_admin_user_path(params[:id])
         return
@@ -204,8 +204,8 @@ module Admin
     # PATCH/PUT /admin/users/1 or /admin/users/1.json
     def update
       # Adapter pour gérer les Person
-      if params[:id].to_s.start_with?("person_")
-        person_id = params[:id].to_s.gsub("person_", "")
+      if person_identifier?(params[:id])
+        person_id = extracted_person_id(params[:id])
         @person = PersonQuery.active.find(person_id)
 
         person_attributes = person_params.to_h.deep_symbolize_keys
@@ -292,7 +292,7 @@ module Admin
     # DELETE /admin/users/1 or /admin/users/1.json
     def destroy
       # Adapter pour gérer les Person
-      if params[:id].to_s.start_with?("person_")
+      if person_identifier?(params[:id])
         # Supprimer la Person (déjà chargée dans set_user)
         person = @person
 
@@ -346,9 +346,9 @@ module Admin
     # Use callbacks to share common setup or constraints between actions.
     def set_user
       # Adapter pour gérer les IDs de Person (format: person_123)
-      if params[:id].to_s.start_with?("person_")
+      if person_identifier?(params[:id])
         # Pour les Person, charger la Person
-        person_id = params[:id].gsub("person_", "")
+        person_id = extracted_person_id(params[:id])
         @person = Person.find_by(id: person_id)
 
         # If person not found, redirect to index with alert
@@ -537,6 +537,14 @@ module Admin
       return if Current.user&.super_admin?
 
       redirect_to admin_users_path, alert: I18n.t("admin.users.require_super_admin.restore_denied_alert")
+    end
+
+    def person_identifier?(raw_id)
+      raw_id.to_s.start_with?("person_")
+    end
+
+    def extracted_person_id(raw_id)
+      raw_id.to_s.delete_prefix("person_")
     end
   end
 end
