@@ -100,9 +100,9 @@
 - [x] Signup web : User ⇒ Person always (callback + DB)
 - [x] Empêcher relink implicite sur `Person` déjà liée
 - [x] Don n’impacte pas adhésion (ligne séparée).
-- À faire : afficher raison “offer_reason” partout (histo paiement/adhésion/contrib).
-- Afficher détails don ligne dans historique paiements.
-- Vérifier/enforcer offer_reason admin paiement offert aussi.
+- [x] Afficher toutes les lignes (don inclus) dans onglet paiements fiche personne (2026-05-01).
+- Afficher `offer_reason` dans historique — bloqué : pas de colonne DB, seulement loggé. Nécessite `add_column :payments, :offer_reason, :text`.
+- Enforcer offer_reason admin edit paiement offert — même blocage DB.
 - Vérif/intégrité plans illimits: sessions_remaining = nil.
 - Vérif : somme payment_lines == paiement total.
 - Action admin explicite link User↔Person (UI/perm à tester)

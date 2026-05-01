@@ -319,17 +319,6 @@ module Admin
         end
       end
 
-      if params[:user_id].present?
-        user = User.find_by(id: params[:user_id])
-        if user
-          add_breadcrumb I18n.t("breadcrumbs.admin.users.members_list"), admin_users_path
-          label = user.full_name.presence || "Utilisateur ##{user.id}"
-          add_breadcrumb label, admin_user_path(user)
-          add_breadcrumb I18n.t("breadcrumbs.admin.payments.history"), nil
-          return
-        end
-      end
-
       add_breadcrumb I18n.t("breadcrumbs.admin.payments.history"), nil
     end
 
