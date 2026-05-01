@@ -7,7 +7,7 @@ require 'rails_helper'
 # Vérifie :
 #   - les libellés tarifs publics (cohérence avec docs/glossary.md + seeds)
 #   - l'absence des termes legacy/non canoniques retirés de l'audit
-#   - la non-prolifération de la carte embarquée (centralisée sur contact_us, OSM)
+#   - la non-prolifération de la carte embarquée (centralisée sur contact_us, Leaflet)
 #
 # Si un de ces tests casse : soit le contenu a évolué de manière intentionnelle
 # (mettre à jour le test + docs), soit une régression de vocabulaire est arrivée.
@@ -40,8 +40,8 @@ RSpec.describe 'Public pages content', type: :request do
       expect(response.body).not_to include('super soutiens')
     end
 
-    it 'does not duplicate the map iframe (centralized on contact_us#map)' do
-      expect(response.body).not_to include('openstreetmap.org/export/embed')
+    it 'does not duplicate the interactive map (centralized on contact_us#map)' do
+      expect(response.body).not_to include('data-controller="map"')
     end
   end
 
@@ -81,8 +81,10 @@ RSpec.describe 'Public pages content', type: :request do
       expect(response).to have_http_status(:success)
     end
 
-    it 'is the only public page exposing the embedded map' do
-      expect(response.body).to include('openstreetmap.org/export/embed')
+    it 'is the only public page exposing the interactive map widget' do
+      expect(response.body).to include('data-controller="map"')
+      expect(response.body).to include('data-map-lat-value="43.6195896"')
+      expect(response.body).to include('data-map-lng-value="1.4223463"')
     end
 
     it 'exposes a stable #map anchor for cross-page links' do
@@ -125,8 +127,8 @@ RSpec.describe 'Public pages content', type: :request do
       expect(response).to have_http_status(:success)
     end
 
-    it 'does not embed its own map iframe (links to contact_us#map)' do
-      expect(response.body).not_to include('openstreetmap.org/export/embed')
+    it 'does not embed its own map widget (links to contact_us#map)' do
+      expect(response.body).not_to include('data-controller="map"')
     end
   end
 

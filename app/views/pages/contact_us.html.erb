@@ -11,7 +11,9 @@
   </div>
 </section>
 
-<section id="contact-details" class="fade-in space-y-12">
+<section id="contact-details" class="space-y-12">
+  <%# Ne pas mettre .fade-in sur un ancêtre de Leaflet : translateY + will-change cassent la carte et peuvent provoquer des boucles ResizeObserver. %>
+  <div class="fade-in">
   <div class="bg-white/95 border border-white/70 shadow-lg rounded-[28px] overflow-hidden">
     <header class="px-6 sm:px-10 py-8 text-center sm:text-left bg-white">
       <p class="text-xs uppercase tracking-[0.35em] text-[#5836A5]">Infos pratiques</p>
@@ -68,15 +70,19 @@
       </div>
     </div>
   </div>
+  </div>
 
   <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-    <%= render "pages/contact/faq", faqs: @faqs %>
+    <div class="fade-in min-w-0">
+      <%= render "pages/contact/faq", faqs: @faqs %>
+    </div>
 
     <%= turbo_frame_tag "map" do %>
       <article id="map" class="bg-white/95 rounded-[28px] shadow-lg p-6 sm:p-8 space-y-4">
         <p class="text-sm uppercase tracking-[0.3em] text-[#1F5C55]/70">Nous trouver</p>
         <h2 class="text-2xl font-semibold text-gray-800">Le Circographe sur la carte</h2>
-        <%= render "shared/map_embed", height: 320 %>
+        <%# Carte responsive (hauteur clamp) — passer height: N uniquement si besoin d’un px fixe %>
+        <%= render "shared/map_embed" %>
       </article>
     <% end %>
   </div>
