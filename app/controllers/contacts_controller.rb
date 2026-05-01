@@ -17,16 +17,17 @@ class ContactsController < ApplicationController
     end
 
     category = canonical_contact_category(@contact[:category])
-    recipient_email = case category
-                      when "technical"
-                        ENV.fetch("CONTACT_EMAIL_TECHNICAL", nil)
-                      when "creative_hosting"
-                        ENV.fetch("CONTACT_EMAIL_CREATIVE_HOSTING", nil) || ENV.fetch("CONTACT_EMAIL_RESIDENCE", nil)
-                      when "partnership"
-                        ENV.fetch("CONTACT_EMAIL_PARTNERSHIP", nil)
-                      else
-                        ENV.fetch("CONTACT_EMAIL_GENERAL", nil)
-                      end
+    recipient_email =
+      case category
+      when "technical"
+        ENV.fetch("CONTACT_EMAIL_TECHNICAL", nil)
+      when "creative_hosting"
+        ENV.fetch("CONTACT_EMAIL_CREATIVE_HOSTING", nil) || ENV.fetch("CONTACT_EMAIL_RESIDENCE", nil)
+      when "partnership"
+        ENV.fetch("CONTACT_EMAIL_PARTNERSHIP", nil)
+      else
+        ENV.fetch("CONTACT_EMAIL_GENERAL", nil)
+      end
 
     begin
       UserMailer.contact_email(
