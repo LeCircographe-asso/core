@@ -8,7 +8,7 @@
 **Création initiale:** 2025-01-31  
 **Dernière revue contenu:** 2025-11-09  
 **Services:** Consolidés (`People::*` pour adhésions/paiements/cotisations ; plusieurs `*Management` retirés côté admin)  
-**Controllers:** Admin simplifiés (CRUD inline pour `Events`, `MembershipTypes`, `SubscriptionPlans` *(cible : `ContributionFormulas`)*)
+**Controllers:** Admin simplifiés (CRUD inline pour `Events`, `MembershipTypes`, `ContributionFormulas`)
 
 ## Principe Fondamental
 
@@ -29,7 +29,7 @@ Les services suivent le pattern **Service Object avec ActiveModel::Model** :
   - Rattacher un compte existant à une fiche CRM : **`People::AttachUserToPerson`** (nominal) ; **`People::AccountLinker`** encapsule attach + nettoyage éventuel (`People::AccountMerger`).
   - Supprimer un `User` ne détruit pas la `Person`. Côté `Person`, `has_one :user, dependent: :restrict_with_error` empêche une suppression de fiche incompatible tant qu’un `User` existe — passer par archive / RGPD.
   - Supprimer une `Person` passe par `SoftDeletable` (`Person#archive!`) avec garde-fous financiers (`has_financial_data?`).
-  - Toutes les opérations financières (`People::Payment*`, `People::Subscription*` *(cible : `People::Contribution*`)*, `People::Register`) travaillent **exclusivement** sur `Person`.
+  - Toutes les opérations financières (`People::Payment*`, `People::Contribution*`, `People::Register`) travaillent **exclusivement** sur `Person`.
 
 Cette séparation “Entity / Account” garantit :
 - pas de perte d’historique quand un utilisateur supprime son compte web,
@@ -46,16 +46,14 @@ Cette séparation “Entity / Account” garantit :
 
 **Utilisé dans:** `Admin::MembershipsController` (create, update, destroy)
 
-### ✅ People::Contribution* (Stable — vocabulaire cible)
+### ✅ People::Contribution* (Stable)
 
-> **Vocabulaire** : services « cotisation » = `People::Contribution*`. **Code actuel : `People::Subscription*`** (rename planifié, voir [`../migrations/vocabulary_migration.md`](../migrations/vocabulary_migration.md), phase `phase3-model-rename`).
-
-- `People::SubscriptionCreator` (cible : `People::ContributionCreator`) — création de cotisations.
-- `People::SubscriptionUpgrader` (cible : `People::ContributionUpgrader`) — upgrade / prorata Trimestre → Annuel.
+- `People::ContributionCreator` — création de cotisations.
+- `People::ContributionUpgrader` — upgrade / prorata Trimestre → Annuel.
 
 **Utilisé dans :**
-- `Admin::SubscriptionPlansController` *(cible : `Admin::ContributionFormulasController`)* — `create`
-- `Admin::SubscriptionsController` *(cible : `Admin::ContributionsController`)* — `upgrade`
+- `Admin::ContributionFormulasController` — `create`
+- `Admin::ContributionsController` — `upgrade`
 
 ### ✅ People::Payment* (Stable)
 - `People::PaymentCreator` — paiements simples et multi-lignes (incluant don).
@@ -112,8 +110,8 @@ Cette séparation “Entity / Account” garantit :
 **Utilisé dans:**
 - `Admin::MemberNumbersController` (suggest, change)
 
-### ❌ SubscriptionPlanManagement (Removed) *(cible : `ContributionFormulaManagement`)*
-- Flux admin géré en CRUD inline par `Admin::SubscriptionPlansController` *(cible : `Admin::ContributionFormulasController`)*
+### ❌ ContributionFormulaManagement (Removed)
+- Flux admin géré en CRUD inline par `Admin::ContributionFormulasController`
 
 ### ❌ BlogManagement (Retiré côté admin)
 - Flux admin géré en CRUD inline par `Admin::BlogsController`
@@ -233,7 +231,7 @@ end
 ## Règles Importantes
 
 1. **Les services NE font PAS de logique métier complexe** - Ils délèguent vers les modèles
-2. **La logique métier reste dans les modèles** (`Person#create_membership!`, `Person#create_subscription!` (cible : `Person#create_contribution!`), etc.)
+2. **La logique métier reste dans les modèles** (`Person#create_membership!`, `Person#create_contribution!`, etc.)
 3. **Les services ajoutent uniquement:**
    - Validation des paramètres
    - Instrumentation (audit)

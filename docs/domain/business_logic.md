@@ -3,24 +3,12 @@
 > **Statut** : stable
 > **Public cible** : contributeur, métier
 > **Dernière vérification** : 2026-05-01
-> **Sources de vérité** : `app/models/person.rb`, `app/models/membership.rb`, `app/services/people/*.rb`, `db/seeds/membership_types.rb`, `db/seeds/subscription_plans.rb`.
+> **Sources de vérité** : `app/models/person.rb`, `app/models/membership.rb`, `app/services/people/*.rb`, `db/seeds/membership_types.rb`, `db/seeds/contribution_formulas.rb`.
 
 **Application:** Gestion complète pour association de cirque  
 **Dernière revue contenu:** 2025-11-03  
 **Classification:** Zone 1 (Stable) | Zone 2 (En cours) | Zone 3 (Future)  
 **État:** ✅ Logique métier complètement réécrite selon vraies règles business (2025-11-03)
-
-> **Vocabulaire DDD-light** (voir [`../glossary.md`](../glossary.md))
->
-> Ce document utilise les noms de classes Ruby **actuels** (`SubscriptionPlan`, `BookOfEntry`, `People::Subscription*`, `Person#create_subscription!`).
-> Vocabulaire **cible** (en cours de migration) :
->
-> - `SubscriptionPlan` → `ContributionFormula`
-> - `BookOfEntry` → `Contribution`
-> - `People::Subscription*` → `People::Contribution*`
-> - `Person#create_subscription!` → `Person#create_contribution!`
->
-> Le terme « subscription » n'est légitime que pour la **newsletter**. Plan de renommage : [`../migrations/vocabulary_migration.md`](../migrations/vocabulary_migration.md), phases 0–3.
 
 ---
 
@@ -122,18 +110,16 @@ Person#renew_membership!(membership_type, ...) # Nouveau numéro chaque année
 
 #### Types de Paiements
 - **Membership:** Activation adhésion
-- **`SubscriptionPlan`** *(cible : `ContributionFormula`)* — formule de cotisation (pack10, annual, etc.)
+- **`ContributionFormula`** — formule de cotisation (pack10, annual, etc.)
 - **MembershipType:** Nouvelle adhésion
 
 #### Logique Métier Person-Based
 
-Les méthodes ci-dessous portent les noms du code actuel ; les cibles `*_contribution!` arriveront en `phase3-model-rename`.
-
 ```ruby
 Person#create_membership!(...)    # Crée membership + payment + payment_line
 Person#upgrade_membership!(...)   # Crée payment full price + payment_line
-Person#create_subscription!(...)  # cible : Person#create_contribution!  — crée book_of_entry + payment + payment_line
-Person#upgrade_subscription!(...) # cible : Person#upgrade_contribution! — prorata + payment + payment_line
+Person#create_contribution!(...)  # Crée contribution + payment + payment_line
+Person#upgrade_contribution!(...) # Prorata + payment + payment_line
 ```
 
 #### Payment Lines
@@ -224,14 +210,14 @@ enum duration: {
 ```
 
 #### Pack10 (cas particulier)
-- **Cotisation associée** : une `Contribution` (code actuel : `BookOfEntry`) est créée automatiquement après paiement.
+- **Cotisation associée** : une `Contribution` est créée automatiquement après paiement.
 - **Sessions** : nombre défini par la formule (`sessions_count`, par défaut 10).
 - **Validité** : `validity_days` informatif. Le Pack 10 **n'expire pas** (`expires_at` nil).
 
 #### Règles métier
 - **Prix** : en centimes (`price_cents`).
 - **Versionnage** : chaque formule est versionnée (`version`, `effective_from`, `effective_until`).
-- **Disponibilité** : `SubscriptionPlan.available_for(person)` (cible : `ContributionFormula.available_for(person)`) retourne les formules autorisées (actuellement : exige une `Membership` Cirque active).
+- **Disponibilité** : `ContributionFormula.available_for(person)` retourne les formules autorisées (actuellement : exige une `Membership` Cirque active).
 
 ### Zone 2: En cours de validation
 
@@ -249,22 +235,18 @@ enum duration: {
 
 ## 5. Contribution (Cotisations)
 
-> **Vocabulaire** : « cotisation » = `Contribution`. **Code actuel : `BookOfEntry`** (rename planifié, voir [`../migrations/vocabulary_migration.md`](../migrations/vocabulary_migration.md), phase `phase3-model-rename`).
->
 > Le terme « carnet d'entrées » reste légitime quand on désigne explicitement le sous-type Pack 10. Pour parler du concept général, utiliser « cotisation ».
 
 ### Zone 1: Comportement Défini
 
-> **Note métier** : dans l'usage actuel de l'association, le modèle `BookOfEntry` ne matérialise **que les Pack 10 séances**. Les attributs liés aux durées Trimestre / Annuel / Day existent encore mais ne sont pas exploités au runtime — la phase 3 unifiera explicitement.
-
 #### Création
-- **Déclencheur** : paiement d'une `ContributionFormula` (code : `SubscriptionPlan`) de type `pack10`.
+- **Déclencheur** : paiement d'une `ContributionFormula` de type `pack10`.
 - **Personne** : `belongs_to :person` (titulaire).
 - **Sessions** : `sessions_remaining` initialisé à `sessions_count` (10 par défaut).
 
 #### Utilisation
 ```ruby
-Contribution#can_use?  # alias actuel : BookOfEntry#can_use?
+Contribution#can_use?
   # - Adhésion Cirque active ?
   # - Sessions restantes > 0 ?
   # - Statut active ?
@@ -543,7 +525,7 @@ NewsletterSubscriber#link_to_person!(person)
 ✅ `MemberManagementService` - Assignation numéros  
 ✅ `People::MembershipCreator` - Création adhésions  
 ✅ `People::MembershipUpgrader` - Upgrades membres  
-✅ `People::SubscriptionCreator` - Création cotisations  
+✅ `People::ContributionCreator` - Création cotisations  
 ✅ `People::PaymentCreator` - Création paiements  
 ✅ `Admin::PaymentsService` - Filtrage/query paiements  
 ✅ `People::NewsletterSignup` - Inscriptions newsletter  
@@ -553,9 +535,9 @@ NewsletterSubscriber#link_to_person!(person)
 ✅ `Person#create_membership!` - Création adhésion + paiement + numéro  
 ✅ `Person#upgrade_membership!` - Upgrade plein tarif  
 ✅ `Person#renew_membership!` - Renouvellement avec nouveau numéro  
-✅ `Person#create_subscription!` - Création cotisation + paiement  
-✅ `Person#upgrade_subscription!` - Upgrade cotisation avec prorata  
-✅ `BookOfEntry#suspend!` / `reactivate!` - Suspension cotisations  
+✅ `Person#create_contribution!` - Création cotisation + paiement  
+✅ `Person#upgrade_contribution!` - Upgrade cotisation avec prorata  
+✅ `Contribution#suspend!` / `reactivate!` - Suspension cotisations  
 ✅ `Payment#anonymize!` - Anonymisation RGPD  
 
 ## Services Zone 2 (En Exploration)
@@ -603,8 +585,8 @@ Admin::UserCreationForm
 
 ## Statut (2025-11-08)
 
-- **Logique écrite :** ✅ services `People::PersonCreator`, `UserAccountCreator`, `MembershipCreator`, `MembershipUpgrader`, `MembershipUpdater`, `MembershipDeactivator`, `Register`, `Payment*`, `Subscription*`
-- **Branchée UI :** ✅ Admin (`Admin::UserCreationForm`, `Admin::MembershipsController`, `Admin::PaymentsController`, `Admin::SubscriptionPlansController`) & Web (`Web::UserRegistration`) délèguent aux services People::*
+- **Logique écrite :** ✅ services `People::PersonCreator`, `UserAccountCreator`, `MembershipCreator`, `MembershipUpgrader`, `MembershipUpdater`, `MembershipDeactivator`, `Register`, `Payment*`, `Contribution*`
+- **Branchée UI :** ✅ Admin (`Admin::UserCreationForm`, `Admin::MembershipsController`, `Admin::PaymentsController`, `Admin::ContributionFormulasController`) & Web (`Web::UserRegistration`) délèguent aux services People::*
 - **Tests :** ✅ `bundle exec rspec` (1054 exemples, 0 échec)
 - **Coverage :** ✅ 53.9 % (seuil SimpleCov 12 % respecté)
 
@@ -627,7 +609,7 @@ Admin::UserCreationForm
 
 - Finaliser le retrait de `UserManagement::AccountCreator` lorsque plus aucune dépendance directe ne subsiste.
 - `People::PersonCreator` ne fusionne plus automatiquement les fiches : les créations sans `existing_person` échouent désormais si l'email ou le téléphone est déjà utilisé, ce qui protège les données CRM du dashboard admin.
-- `People::PaymentCreator` et `People::SubscriptionCreator` centralisent la création des paiements / cotisations (les services historiques `PaymentManagement::*` et `SubscriptionManagement::*` ont été retirés).
+- `People::PaymentCreator` et `People::ContributionCreator` centralisent la création des paiements / cotisations (les services historiques `PaymentManagement::*` et `SubscriptionManagement::*` ont été retirés).
 - `People::AccountLinker` gère la reliaison manuelle Person/User avec instrumentation (`people.account_linked`).
 - Retirer les appels directs à `Person#create_membership!` en dehors de `People::MembershipCreator`.
 - Supprimer les services historiques restants (ex. `Payments::Process`) une fois la migration terminée.
@@ -653,8 +635,8 @@ Admin::UserCreationForm
 | `PaymentManagement::PaymentUpdater` | `People::PaymentUpdater` | ❌ Supprimé |
 | `PaymentManagement::PaymentDeleter` | `People::PaymentCanceller` | ❌ Supprimé |
 | `PaymentManagement::PaymentRestorer` | `People::PaymentRestorer` | ❌ Supprimé |
-| `SubscriptionManagement::SubscriptionCreator` | `People::SubscriptionCreator` | ❌ Supprimé |
-| `SubscriptionManagement::SubscriptionUpgrader` | `People::SubscriptionUpgrader` | ❌ Supprimé |
+| `SubscriptionManagement::SubscriptionCreator` | `People::ContributionCreator` | ❌ Supprimé |
+| `SubscriptionManagement::SubscriptionUpgrader` | `People::ContributionUpgrader` | ❌ Supprimé |
 | Scripts/Seeds divers | `People::Register` (legacy scripts à convertir) | ⏳ En cours |
 
 ---
@@ -718,8 +700,8 @@ Admin::UserCreationForm
 
 ### Consolidation People + DRY (2025-11-09)
 
-- Admin: CRUD inline pour `MembershipTypes`, `SubscriptionPlans`, `Events` (abandon des services *Management* sur ces flux).
-- Plans: `SubscriptionPlan.available_for(person)` unifie la sélection des plans autorisés.
+- Admin: CRUD inline pour `MembershipTypes`, `ContributionFormulas`, `Events` (abandon des services *Management* sur ces flux).
+- Plans: `ContributionFormula.available_for(person)` unifie la sélection des plans autorisés.
 - UI: Options de méthode de paiement centralisées via helper.
 - Instrumentation: événements ajoutés pour adhésions, cotisations, newsletter.
 - Seeds/Tasks: migration des Person sans adhésion via `Person#create_membership!`.
@@ -738,7 +720,7 @@ Admin::UserCreationForm
 - **Historique:** Tous changements tracés dans MemberNumberHistory
 
 **Prorata Cotisations:**
-- **Contrôleur:** `Person#upgrade_subscription!`
+- **Contrôleur:** `Person#upgrade_contribution!`
 - **Jour → autre plan:** interdit (journée non cumulable, pas d’upgrade possible)
 - **Pack10 → Trimestre/Année:** pack suspendu (sessions conservées), **pas** de prorata — on paie le nouveau plan plein tarif
 - **Trimestre → Année:** prorata temporel appliqué (montant Année – valeur temps restant sur Trimestre)
