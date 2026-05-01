@@ -14,10 +14,14 @@
          data-controller="slider"
          data-slider-options-value="<%= slider_options.to_json %>">
         <div class="swiper-wrapper mb-16">
-            <% images.each do |image| %>
+            <% images.each_with_index do |image, index| %>
             <div class="swiper-slide">
                 <div class="rounded-2xl h-96 flex justify-center items-center overflow-hidden">
-                    <%= image_tag image, alt: "Carousel Image", class: "object-cover w-full h-full" %>
+                    <%= image_tag image,
+                                  alt: "Carousel Image",
+                                  class: "object-cover w-full h-full",
+                                  loading: (index.zero? ? "eager" : "lazy"),
+                                  decoding: "async" %>
                 </div>
             </div>
             <% end %>
