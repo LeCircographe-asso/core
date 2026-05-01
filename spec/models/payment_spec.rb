@@ -373,6 +373,12 @@ RSpec.describe Payment, type: :model do
   end
 
   describe 'date scopes (using created_at via Dateable)' do
+    include ActiveSupport::Testing::TimeHelpers
+
+    around do |example|
+      travel_to(Time.zone.local(2026, 4, 29, 12, 0, 0)) { example.run }
+    end
+
     let(:person1) { create(:person) }
     let(:person2) { create(:person) }
     let(:person3) { create(:person) }
@@ -381,23 +387,9 @@ RSpec.describe Payment, type: :model do
     let(:user3) { create(:user) }
 
     let!(:today_payment) { create(:payment, person: person1, recorded_by: user1, created_at: Date.current.beginning_of_day + 12.hours) }
-    let!(:this_week_payment) do
-      week_date = if Date.current.beginning_of_week == Date.current
-                    [ Date.current.end_of_week, Date.current.end_of_month ].min.beginning_of_day + 12.hours
-      else
-                    Date.current.beginning_of_week.beginning_of_day + 12.hours
-      end
-      create(:payment, person: person2, recorded_by: user2, created_at: week_date)
-    end
+    let!(:this_week_payment) { create(:payment, person: person2, recorded_by: user2, created_at: Date.current.beginning_of_week.beginning_of_day + 12.hours) }
     let!(:last_week_payment) do
-      last_week_date = Date.current - 1.week
-      # If last week is in a different month, use a date from earlier this month (but not this week)
-      payment_date = if last_week_date.month == Date.current.month
-                       last_week_date.beginning_of_day + 12.hours
-      else
-                       [ Date.current.beginning_of_month, Date.current.beginning_of_week - 1.day ].max.beginning_of_day + 12.hours
-      end
-      create(:payment, person: person3, recorded_by: user3, created_at: payment_date)
+      create(:payment, person: person3, recorded_by: user3, created_at: (Date.current.beginning_of_week - 1.day).beginning_of_day + 12.hours)
     end
 
     describe '.today' do
