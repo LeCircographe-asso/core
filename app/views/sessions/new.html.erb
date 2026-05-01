@@ -44,7 +44,11 @@
 
             <!-- Register Link -->
             <div class="text-center">
-                <%= link_to "Pas encore de compte ? S'inscrire", new_registration_path, class: "text-sm text-gray-400 hover:text-brand-accent hover:underline focus:outline-brand-accent outline-offset-1" %>
+                <% if public_registration_enabled? %>
+                  <%= link_to t("sessions.new.sign_up_prompt"), new_registration_path, class: "text-sm text-gray-400 hover:text-brand-accent hover:underline focus:outline-brand-accent outline-offset-1" %>
+                <% else %>
+                  <p class="text-sm text-gray-500"><%= t("sessions.new.registration_closed_hint") %></p>
+                <% end %>
             </div>
             
             <!-- Lien revendication de compte -->
