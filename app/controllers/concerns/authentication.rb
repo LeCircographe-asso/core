@@ -36,7 +36,11 @@ module Authentication
     session_id = cookies.signed[:session_id]
     return nil if session_id.blank?
 
-    Session.find_by(id: session_id)
+    found = Session.find_by(id: session_id)
+    if found.nil?
+      cookies.delete(:session_id, **SESSION_COOKIE_OPTS)
+    end
+    found
   end
 
   def request_authentication
