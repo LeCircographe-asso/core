@@ -9,7 +9,7 @@ RSpec.describe UserMailer, type: :mailer do
 
       label = I18n.t("mailers.user_mailer.contact_email.category_labels.creative_hosting")
       expect(mail.subject).to eq(I18n.t("mailers.user_mailer.contact_email.subject", category_label: label))
-      expect(mail.reply_to).to eq(["ada@example.com"])
+      expect(mail.reply_to).to eq([ "ada@example.com" ])
 
       body = mail.html_part.body.decoded
       expect(body).to include(label)
