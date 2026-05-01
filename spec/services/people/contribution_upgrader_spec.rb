@@ -3,6 +3,8 @@
 require 'rails_helper'
 
 RSpec.describe People::ContributionUpgrader do
+  include ActiveSupport::Testing::TimeHelpers
+
   let(:person) { create(:person, :with_circus_membership) }
   let(:admin_user) { create(:user, :admin, person: create(:person)) }
   let(:from_plan) { create(:contribution_formula, :pack10) }
@@ -88,31 +90,32 @@ RSpec.describe People::ContributionUpgrader do
       end
 
       it 'applies prorata credit when upgrading from trimester to annual' do
-        annual_plan = create(:contribution_formula, :annual)
-        trimester_plan = create(
-          :contribution_formula,
-          :trimester
-        )
-        trimester_contribution = create(
-          :contribution,
-          person: person,
-          contribution_formula: trimester_plan,
-          status: :active,
-          expires_at: Date.current + 30.days,
-          sessions_remaining: nil
-        )
+        travel_to Time.zone.local(2026, 5, 1, 12, 0, 0) do
+          annual_plan = create(:contribution_formula, :annual, price_cents: 20_000)
+          trimester_plan = create(:contribution_formula, :trimester, price_cents: 6_000)
+          trimester_contribution = create(
+            :contribution,
+            person: person,
+            contribution_formula: trimester_plan,
+            status: :active,
+            expires_at: Date.current + 30.days,
+            sessions_remaining: nil
+          )
 
-        result = described_class.new(
-          person: person,
-          from_contribution_id: trimester_contribution.id,
-          to_formula_id: annual_plan.id,
-          payment_method: 'cash',
-          recorded_by_id: admin_user.id
-        ).call
+          result = described_class.new(
+            person: person,
+            from_contribution_id: trimester_contribution.id,
+            to_formula_id: annual_plan.id,
+            payment_method: 'cash',
+            recorded_by_id: admin_user.id
+          ).call
 
-        expect(result.success?).to be(true)
-        expect(result.old_contribution.reload.status).to eq('suspended')
-        expect(result.credit_applied).to be > 0
+          expect(result.success?).to be(true)
+          expect(result.old_contribution.reload.status).to eq('suspended')
+          expect(result.credit_applied).to eq(2_000)
+          expect(result.payment.total_cents).to eq(18_000)
+          expect(result.payment.payment_lines.sole.amount_cents).to eq(18_000)
+        end
       end
     end
 

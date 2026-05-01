@@ -33,6 +33,17 @@ RSpec.describe People::ContributionCreator do
 
         expect { creator.call }.to instrument('contribution.created')
       end
+
+      it 'adds an optional donation line to the payment' do
+        result = described_class.new(params.merge(donation_cents: 700)).call
+
+        expect(result.success?).to be(true)
+        expect(result.payment.total_cents).to eq(contribution_formula.price_cents + 700)
+        expect(result.payment.payment_lines.pluck(:item_type, :amount_cents)).to contain_exactly(
+          [ "Contribution", contribution_formula.price_cents ],
+          [ "Donation", 700 ]
+        )
+      end
     end
 
     context 'with offered payment' do
