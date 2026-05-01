@@ -2,6 +2,8 @@
 
 module Admin
   class SubscriptionPlansController < BaseController
+    # Legacy controller name kept for backward compatibility.
+    # Domain name is ContributionFormula; prefer contribution_* naming in new code.
     before_action :set_contribution_formula, only: %i[show edit update destroy]
     before_action :set_person, only: %i[new create]
     before_action :set_breadcrumbs
@@ -43,7 +45,7 @@ module Admin
 
       result = People::ContributionCreator.new(
         person: @person,
-        contribution_formula_id: contribution_purchase_params[:contribution_formula_id] || contribution_purchase_params[:subscription_plan_id],
+        contribution_formula_id: resolved_contribution_formula_id(contribution_purchase_params),
         payment_method: contribution_purchase_params[:payment_method].presence || "cash",
         recorded_by_id: Current.user&.id,
         record_attendance: false,
@@ -115,6 +117,10 @@ module Admin
       params.expect(key => %i[person_id contribution_formula_id subscription_plan_id payment_method record_attendance attendance_date custom_amount_cents offer_reason donation_amount]).merge(
         recorded_by_id: Current.user.id
       )
+    end
+
+    def resolved_contribution_formula_id(params_hash)
+      params_hash[:contribution_formula_id] || params_hash[:subscription_plan_id]
     end
 
     def donation_cents_from(params_hash)
