@@ -103,4 +103,21 @@ RSpec.describe User, type: :model do
       end
     end
   end
+
+  describe "email identity consistency" do
+    it "blocks a user email already used by another person record" do
+      create(:person, email: "another.person@example.com")
+      user = build(:user, email_address: "another.person@example.com")
+
+      expect(user).not_to be_valid
+      expect(user.errors[:email_address]).to include("entre en conflit avec l'email d'une autre personne")
+    end
+
+    it "allows a user email when it matches their own person email" do
+      person = create(:person, email: "linked.identity@example.com")
+      user = build(:user, person: person, email_address: "linked.identity@example.com")
+
+      expect(user).to be_valid
+    end
+  end
 end

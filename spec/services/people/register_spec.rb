@@ -45,5 +45,22 @@ RSpec.describe People::Register do
       expect(result.success?).to be(false)
       expect(result.message).to include(I18n.t("services.errors.register_existing_web_account"))
     end
+
+    it "fails when creating a person with an email used by another user's account" do
+      existing_person = create(:person, email: "owner.person@example.com")
+      create(:user, person: existing_person, email_address: "claimed.identity@example.com")
+
+      result = described_class.new(
+        person_params: {
+          first_name: "New",
+          last_name: "Member",
+          email: "claimed.identity@example.com"
+        },
+        create_user_account: false
+      ).call
+
+      expect(result.success?).to be(false)
+      expect(result.message).to include("est deja utilisee par un autre compte utilisateur")
+    end
   end
 end

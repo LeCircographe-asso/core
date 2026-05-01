@@ -40,6 +40,23 @@ RSpec.describe Person, type: :model do
       expect(person.errors[:email]).to include(I18n.t('errors.messages.taken'))
     end
 
+    it "blocks an email already used by another user's account" do
+      other_person = create(:person, email: "other.person@example.com")
+      create(:user, person: other_person, email_address: "claimed@example.com")
+
+      person = build(:person, email: "claimed@example.com")
+
+      expect(person).not_to be_valid
+      expect(person.errors[:email]).to include("est deja utilisee par un autre compte utilisateur")
+    end
+
+    it "allows a person email when it matches their own user account email" do
+      person = create(:person, email: "same.identity@example.com")
+      create(:user, person: person, email_address: "same.identity@example.com")
+
+      expect(person).to be_valid
+    end
+
     it 'validates phone uniqueness' do
       create(:person, phone: '0123456789')
       person = Person.new(first_name: 'John', last_name: 'Doe', phone: '0123456789')
