@@ -1,9 +1,9 @@
 <% content_for :title, t("settings.show.page_title") %>
 
-<div class="max-w-2xl mx-auto px-4 sm:px-0 w-full pb-16">
+<div class="max-w-4xl mx-auto px-4 sm:px-0 w-full pb-16">
   <%= render "settings/account_section",
       user: @user,
       frame_id: ProfileSectionDomIds::ACCOUNT_SECTION,
       embedded: false,
-      compact: false %>
+      compact: true %>
 </div>

@@ -5,6 +5,10 @@
 
 <%= turbo_frame_tag frame_id do %>
   <section id="account" class="scroll-mt-28">
-    <%= render "settings/account_panel", user: user, embedded: embedded, compact: compact %>
+    <%= render "settings/account_panel",
+        user: user,
+        embedded: embedded,
+        compact: compact,
+        frame_id: frame_id %>
   </section>
 <% end %>

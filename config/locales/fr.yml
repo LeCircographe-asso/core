@@ -239,19 +239,38 @@ fr:
       profile: Profil
       settings_current: Paramètres
       back_to_profile: Retour au profil
-    update:
-      saved_notice: Vos modifications ont été enregistrées avec succès
     show:
       page_title: Paramètres du compte
       lead: Adresse de connexion, préférences du compte et sécurité.
       membership_hint_html: Adhésion, cotisations et paiements récents sont récapitulés sur votre %{link}.
       view_profile_link: fiche profil
       section_account: Compte
+      section_preferences: Préférences
+      section_preferences_edit_hint: Cochez ou décochez pour mettre à jour, puis validez avec Accepter.
       section_communication: Communication et engagement
       section_display: Affichage
       section_security: Sécurité
       section_danger: Zone sensible
+      email_shared_badge: Commun
       email_hint: Utilisée pour vous connecter et pour les emails du lieu (y compris la réinitialisation du mot de passe).
+      email_change_cta: Changer l’adresse email
+      email_change_modal_title: Nouvelle adresse email
+      email_change_modal_intro: "Renseignez la nouvelle adresse, confirmez-la, puis saisissez le code recu par email pour valider le changement."
+      email_change_confirm_field: Confirmer la nouvelle adresse
+      email_change_placeholder: nouvelle.adresse@exemple.com
+      email_change_submit: Enregistrer cette adresse
+      email_change_send_code: Envoyer le code
+      email_change_confirm_code: Valider le code
+      email_change_close: Fermer
+      email_change_code_label: Code de vérification
+      email_change_code_hint: "Laissez vide pour recevoir un code, puis soumettez de nouveau avec ce code pour finaliser."
+      email_change_pending_notice: "Une verification est deja en attente pour %{email}."
+      email_change_preview_title: Confirmer le changement d’adresse
+      email_change_preview_intro: "La nouvelle adresse de connexion sera :"
+      email_change_error_blank: Renseignez et confirmez la nouvelle adresse.
+      email_change_error_mismatch: Les deux adresses ne correspondent pas.
+      email_change_error_unchanged: L’adresse est identique à celle déjà enregistrée.
+      email_change_error_invalid_code_format: Le code doit contenir 6 chiffres.
       field_email: Adresse email
       field_image_rights: Droit à l’image
       field_newsletter: S’inscrire à la newsletter
@@ -265,6 +284,20 @@ fr:
       validation_errors_intro:
         one: "%{count} erreur à corriger :"
         other: "%{count} erreurs à corriger :"
+    update:
+      saved_notice: Vos modifications ont été enregistrées avec succès
+      email_change_code_sent_notice: "Un code de verification a ete envoye a %{email}."
+      email_change_success_notice: "Adresse email mise a jour avec succes."
+      email_change_error_blank: Renseignez et confirmez la nouvelle adresse.
+      email_change_error_mismatch: Les deux adresses ne correspondent pas.
+      email_change_error_unchanged: L’adresse est identique a celle deja enregistree.
+      email_change_error_taken: "Cette adresse est deja utilisee."
+      email_change_error_send_failed: "Impossible d'envoyer le code de verification pour le moment."
+      email_change_error_no_request: "Aucune demande de changement d'email en attente."
+      email_change_error_expired: "Le code de verification a expire. Demandez-en un nouveau."
+      email_change_error_pending_mismatch: "Cette adresse ne correspond pas a la demande en attente."
+      email_change_error_invalid_code: "Code de verification invalide."
+      email_change_error_confirm_failed: "Impossible de confirmer le changement d'email."
   users:
     space:
       page_title: Mon espace
@@ -347,6 +380,8 @@ fr:
         subject: 'Bienvenue au Circographe ! '
       welcome_email:
         subject: 'Bienvenue au Circographe ! '
+      email_change_verification:
+        subject: "Code de verification d'adresse email"
       membership_expiration_reminder:
         subject: Votre adhésion arrive à expiration !
       contact_email:

@@ -376,19 +376,38 @@ en:
       profile: Profile
       settings_current: Settings
       back_to_profile: Back to profile
-    update:
-      saved_notice: Your changes have been saved successfully.
     show:
       page_title: Account settings
       lead: Sign-in email, preferences, and security.
       membership_hint_html: Membership, contributions, and recent payments are summarized on your %{link}.
       view_profile_link: profile page
       section_account: Account
+      section_preferences: Preferences
+      section_preferences_edit_hint: Toggle the options below, then confirm with Accept.
       section_communication: Communication & involvement
       section_display: Display
       section_security: Security
       section_danger: Sensitive actions
+      email_shared_badge: Shared
       email_hint: Used to sign in and for venue emails (including password reset).
+      email_change_cta: Change email address
+      email_change_modal_title: New email address
+      email_change_modal_intro: "Enter the new address, confirm it, then submit the verification code sent to that address."
+      email_change_confirm_field: Confirm new address
+      email_change_placeholder: new.address@example.com
+      email_change_submit: Save this address
+      email_change_send_code: Send code
+      email_change_confirm_code: Confirm code
+      email_change_close: Close
+      email_change_code_label: Verification code
+      email_change_code_hint: "Leave empty to receive a code, then submit again with that code to finalize."
+      email_change_pending_notice: "A verification request is already pending for %{email}."
+      email_change_preview_title: Confirm email change
+      email_change_preview_intro: "Your sign-in address will become:"
+      email_change_error_blank: Enter and confirm the new address.
+      email_change_error_mismatch: The two addresses do not match.
+      email_change_error_unchanged: This is the same as your current address.
+      email_change_error_invalid_code_format: The code must contain 6 digits.
       field_email: Email address
       field_image_rights: Image rights consent
       field_newsletter: Subscribe to the newsletter
@@ -402,6 +421,20 @@ en:
       validation_errors_intro:
         one: "%{count} error to fix:"
         other: "%{count} errors to fix:"
+    update:
+      saved_notice: Your changes have been saved successfully.
+      email_change_code_sent_notice: "A verification code has been sent to %{email}."
+      email_change_success_notice: "Email address updated successfully."
+      email_change_error_blank: Enter and confirm the new address.
+      email_change_error_mismatch: The two addresses do not match.
+      email_change_error_unchanged: This is the same as your current address.
+      email_change_error_taken: "This email address is already in use."
+      email_change_error_send_failed: "Could not send verification code right now."
+      email_change_error_no_request: "No pending email change request was found."
+      email_change_error_expired: "This verification code has expired. Request a new one."
+      email_change_error_pending_mismatch: "This email does not match the pending request."
+      email_change_error_invalid_code: "Invalid verification code."
+      email_change_error_confirm_failed: "Could not confirm email change."
   users:
     space:
       page_title: My space
@@ -461,6 +494,8 @@ en:
         subject: 'Bienvenue au Circographe ! '
       welcome_email:
         subject: 'Bienvenue au Circographe ! '
+      email_change_verification:
+        subject: "Email change verification code"
       membership_expiration_reminder:
         subject: Votre adhésion arrive à expiration !
       contact_email:
