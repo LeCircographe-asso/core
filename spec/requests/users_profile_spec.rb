@@ -12,13 +12,15 @@ RSpec.describe "User profile (users#show)", type: :request do
     it "shows adhesion CTA for a user without membership history" do
       get user_path(user)
       expect(response).to have_http_status(:ok)
-      expect(response.body).to include("Accès rapide")
-      expect(response.body).to include(edit_user_path(user))
+      expect(response.body).to include('id="overview"')
+      expect(response.body).to include('id="contact"')
+      expect(response.body).to include('id="account"')
       expect(response.body).to include(page_path("faq"))
       expect(response.body).to include("Adhérer")
       expect(response.body).to include(page_path("become_member"))
       expect(response.body).to include("Pas d'adhésion en cours")
       expect(response.body).not_to include("Renouveler mon adhésion")
+      expect(response.body).not_to include(I18n.t("users.space.membership_card_settings_link"))
     end
 
     it "shows renewal CTA and lapsed copy when the last membership is over" do
@@ -57,6 +59,49 @@ RSpec.describe "User profile (users#show)", type: :request do
     it "does not show the administration link to standard visitors" do
       get user_path(user)
       expect(response.body).not_to include("Espace administration")
+    end
+  end
+
+  describe "GET /users/:id/edit" do
+    let(:user) { create(:user) }
+
+    before { login_as(user) }
+
+    it "redirects to mon espace with the coordinates anchor" do
+      get edit_user_path(user)
+      expect(response).to have_http_status(:see_other)
+      expect(response.location).to end_with("#{user_path(user)}#contact")
+    end
+  end
+
+  describe "PATCH /users/:id" do
+    let(:person_without_membership) { create(:person, :without_membership, phone: nil, address: nil) }
+    let(:user) { create(:user, person: person_without_membership) }
+
+    before { login_as(user) }
+
+    it "updates postal coordinates and lands on the contact section" do
+      patch user_path(user), params: {
+        user: {
+          phone: "0612345678",
+          address: "1 rue du Cirque",
+          zip_code: "75001",
+          town: "Paris",
+          country: "France"
+        }
+      }
+
+      expect(response).to be_redirect
+      expect(response.location).to end_with("#{user_path(user)}#contact")
+      follow_redirect!
+      expect(response.body).to include(I18n.t("users.update.coordinates_updated"))
+
+      person_without_membership.reload
+      expect(person_without_membership.phone).to eq("0612345678")
+      expect(person_without_membership.address).to eq("1 rue du Cirque")
+      expect(person_without_membership.zip_code).to eq("75001")
+      expect(person_without_membership.town).to eq("Paris")
+      expect(person_without_membership.country).to eq("France")
     end
   end
 end

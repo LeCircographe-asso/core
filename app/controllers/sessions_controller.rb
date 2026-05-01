@@ -6,16 +6,18 @@ class SessionsController < ApplicationController
               with: -> { redirect_to new_session_url, alert: I18n.t("sessions.rate_limited_alert") }
 
   def new
-    return unless authenticated?
-
-    redirect_to root_path
+    # Déjà connecté·e : ne pas afficher le formulaire (évite la confusion après un POST échoué avec cookie valide).
+    return redirect_to(root_path, status: :see_other) if authenticated?
   end
 
   def create
+    # Même logique que #new : si une session cookie est valide, inutile de traiter un « second » login ici.
+    return redirect_to(root_path, status: :see_other, notice: t("sessions.already_signed_in_notice")) if authenticated?
+
     email_address, password = params.expect(:email_address, :password)
 
     if (user = User.authenticate_by(email_address:, password:))
-      start_new_session_for user
+      start_new_session_for(user)
       # 303 + Turbo : évite les redirections POST ignorées ou sans cookie ; même comportement qu’un POST HTML classique.
       redirect_to after_authentication_url, notice: t(".login_success_notice"), status: :see_other
     else

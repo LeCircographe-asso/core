@@ -1,10 +1,5 @@
 ---
 fr:
-  dev:
-    quick_login:
-      forbidden: Cette page est réservée aux super-administrateurs (development).
-      nav_link: Connexion rapide (dev)
-      delegate_notice: Tu navigues sous une session « empruntée ». Tu peux revenir sur cette page pour changer d’utilisateur tant que tu te déconnectes normalement (ça réinitialise la délégation).
   flash:
     generic:
       error_detail: 'Erreur: %{message}'
@@ -37,6 +32,8 @@ fr:
   admin:
     base:
       unauthorized_alert: Vous n'avez pas accès à cette page.
+      sign_in_required_alert: Connecte-toi avec un compte autorisé pour accéder à l’administration.
+      staff_only_alert: Ton compte n’a pas les droits d’accès à l’administration. Utilise un compte admin ou super-admin, ou demande l’accès à l’équipe.
     attendances:
       create:
         success: Présence enregistrée avec succès
@@ -222,6 +219,7 @@ fr:
     create:
       success_notice: Inscription réussie !
   sessions:
+    already_signed_in_notice: Tu es déjà connecté·e. Déconnecte-toi pour te connecter avec un autre compte.
     new:
       sign_up_prompt: Pas encore de compte ? S'inscrire
       registration_closed_hint: Les inscriptions en ligne sont indisponibles pour le moment. Connectez-vous si vous avez déjà un compte.
@@ -235,15 +233,62 @@ fr:
     destroy:
       signed_out_notice: Déconnecté avec succès !
   settings:
+    nav:
+      breadcrumb_label: Fil d'Ariane
+      home: Accueil
+      profile: Profil
+      settings_current: Paramètres
+      back_to_profile: Retour au profil
     update:
       saved_notice: Vos modifications ont été enregistrées avec succès
-  users:
     show:
-      shortcuts_title: Accès rapide
-      shortcut_home: Accueil
-      shortcut_edit_profile: Modifier mon profil
+      page_title: Paramètres du compte
+      lead: Adresse de connexion, préférences du compte et sécurité.
+      membership_hint_html: Adhésion, cotisations et paiements récents sont récapitulés sur votre %{link}.
+      view_profile_link: fiche profil
+      section_account: Compte
+      section_communication: Communication et engagement
+      section_display: Affichage
+      section_security: Sécurité
+      section_danger: Zone sensible
+      email_hint: Utilisée pour vous connecter et pour les emails du lieu (y compris la réinitialisation du mot de passe).
+      field_email: Adresse email
+      field_image_rights: Droit à l’image
+      field_newsletter: S’inscrire à la newsletter
+      field_get_involved: S’investir dans le projet
+      field_dyslexic_font: Utiliser la police pour dyslexiques
+      submit: Enregistrer les modifications
+      password_reset_cta: Modifier le mot de passe
+      password_reset_confirm: Un email de réinitialisation sera envoyé à %{email}. Continuer ?
+      destroy_account_cta: Supprimer mon compte
+      destroy_confirm: Êtes-vous sûr de vouloir supprimer votre compte ? Cette action est irréversible.
+      validation_errors_intro:
+        one: "%{count} erreur à corriger :"
+        other: "%{count} erreurs à corriger :"
+  users:
+    space:
+      page_title: Mon espace
+      quick_hint: Mets à jour puis enregistre.
+      intro_title: Profil, adhésion et compte
+      intro_lead: "Gère ici ton profil, tes coordonnées et ton compte."
+      nav_aria: Sections de mon espace
+      nav_overview: Résumé
+      nav_contact: Coordonnées
+      nav_account: Compte & sécurité
+      nav_faq: FAQ
+      membership_card_settings_link: Compte et préférences (section ci-dessous)
+      contact_heading: Coordonnées postales et téléphone
+      contact_intro: "Utilisées pour les envois et la facturation."
+      account_heading: Compte, préférences et sécurité
+      field_phone: Téléphone
+      field_address: Adresse
+      field_zip: Code postal
+      field_town: Ville
+      field_country: Pays
+      contact_submit: Enregistrer mes coordonnées
     update:
       profile_updated: Votre profil a été mis à jour avec succès.
+      coordinates_updated: Coordonnées enregistrées.
     destroy:
       deleted_notice: Votre compte a été supprimé avec succès.
       destroy_failed_alert: Impossible de supprimer votre compte. Veuillez contacter l'assistance.

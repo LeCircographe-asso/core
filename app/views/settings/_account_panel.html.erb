@@ -1,0 +1,123 @@
+<% user = local_assigns.fetch(:user) %>
+<% embedded = local_assigns.fetch(:embedded, false) %>
+<% compact = local_assigns.fetch(:compact, false) %>
+
+<div class="bg-white rounded-xl shadow-md overflow-hidden border border-gray-100">
+  <header class="<%= compact ? 'px-4 sm:px-5 py-3 border-b border-gray-200 bg-gray-50' : 'h-14 sm:h-16 w-full bg-gradient-to-r from-[#1F5C55] to-[#194A45] flex flex-col justify-center px-4 py-2 sm:py-0' %>">
+    <h2 class="<%= compact ? 'text-base font-semibold text-gray-900' : 'text-lg sm:text-xl font-bold text-white text-center tracking-tight leading-tight' %>">
+      <%= embedded ? t("users.space.account_heading") : t("settings.show.page_title") %>
+    </h2>
+    <% unless embedded || compact %>
+      <p class="text-[11px] sm:text-xs text-white/85 text-center mt-0.5 leading-snug hidden sm:block">
+        <%= t("settings.show.lead") %>
+      </p>
+    <% end %>
+  </header>
+
+  <div class="<%= compact ? 'px-4 sm:px-5 py-4 sm:py-5' : 'px-4 sm:px-6 py-5 sm:py-6' %>">
+    <% unless embedded %>
+      <p class="sm:hidden text-xs text-gray-500 mb-5 leading-snug"><%= t("settings.show.lead") %></p>
+      <p class="text-sm text-gray-600 mb-6 leading-relaxed">
+        <%= t(
+              "settings.show.membership_hint_html",
+              link: link_to(t("settings.show.view_profile_link"), user_path(user), class: "font-medium text-[#1F5C55] underline hover:no-underline focus:outline-none focus:ring-2 focus:ring-[#1F5C55]/30 rounded")
+            ).html_safe %>
+      </p>
+    <% end %>
+
+    <%= form_with(model: user, url: settings_path, method: :patch, class: compact ? "space-y-5" : "space-y-6") do |f| %>
+      <% if user.errors.any? %>
+        <div class="rounded-lg border border-red-200 bg-red-50 p-4" role="alert">
+          <div class="flex gap-3">
+            <div class="flex-shrink-0 pt-0.5">
+              <svg class="h-5 w-5 text-red-500" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+              </svg>
+            </div>
+            <div>
+              <h3 class="text-sm font-semibold text-red-900">
+                <%= t("settings.show.validation_errors_intro", count: user.errors.count) %>
+              </h3>
+              <ul class="mt-2 list-disc pl-5 text-sm text-red-800 space-y-1">
+                <% user.errors.full_messages.each do |message| %>
+                  <li><%= message %></li>
+                <% end %>
+              </ul>
+            </div>
+          </div>
+        </div>
+      <% end %>
+
+      <section class="space-y-3" aria-labelledby="settings-heading-account">
+        <h3 id="settings-heading-account" class="text-base font-semibold text-gray-900">
+          <%= t("settings.show.section_account") %>
+        </h3>
+        <div>
+          <%= f.label :email_address, t("settings.show.field_email"), class: "block text-sm font-medium text-gray-700 mb-1.5" %>
+          <%= f.email_field :email_address,
+              class: "block w-full rounded-lg border-gray-300 shadow-sm text-sm transition-colors focus:border-[#1F5C55] focus:ring-[#1F5C55]" %>
+          <p class="mt-1.5 text-xs text-gray-500 leading-relaxed" id="settings-email-hint">
+            <%= t("settings.show.email_hint") %>
+          </p>
+        </div>
+      </section>
+
+      <section class="space-y-2.5" aria-labelledby="settings-heading-prefs">
+        <h3 id="settings-heading-prefs" class="text-base font-semibold text-gray-900">
+          <%= t("settings.show.section_communication") %>
+        </h3>
+        <div class="divide-y divide-gray-100 rounded-lg border border-gray-200 bg-white overflow-hidden">
+          <label class="flex items-start gap-3 px-4 py-3.5 cursor-pointer hover:bg-gray-50/80 transition-colors">
+            <%= f.check_box :image_rights, class: "mt-0.5 h-4 w-4 shrink-0 rounded border-gray-300 text-[#1F5C55] focus:ring-[#1F5C55]" %>
+            <span class="text-sm font-medium text-gray-800 leading-snug"><%= t("settings.show.field_image_rights") %></span>
+          </label>
+          <label class="flex items-start gap-3 px-4 py-3.5 cursor-pointer hover:bg-gray-50/80 transition-colors">
+            <%= f.check_box :newsletter_subscribed, class: "mt-0.5 h-4 w-4 shrink-0 rounded border-gray-300 text-[#1F5C55] focus:ring-[#1F5C55]" %>
+            <span class="text-sm font-medium text-gray-800 leading-snug"><%= t("settings.show.field_newsletter") %></span>
+          </label>
+          <label class="flex items-start gap-3 px-4 py-3.5 cursor-pointer hover:bg-gray-50/80 transition-colors rounded-b-lg">
+            <%= f.check_box :get_involved, class: "mt-0.5 h-4 w-4 shrink-0 rounded border-gray-300 text-[#1F5C55] focus:ring-[#1F5C55]" %>
+            <span class="text-sm font-medium text-gray-800 leading-snug"><%= t("settings.show.field_get_involved") %></span>
+          </label>
+        </div>
+      </section>
+
+      <section class="space-y-2.5" aria-labelledby="settings-heading-display">
+        <h3 id="settings-heading-display" class="text-base font-semibold text-gray-900">
+          <%= t("settings.show.section_display") %>
+        </h3>
+        <div class="rounded-lg border border-gray-200 bg-white">
+          <label class="flex items-start gap-3 px-4 py-3.5 cursor-pointer hover:bg-gray-50/80 transition-colors rounded-lg">
+            <%= f.check_box :dyslexic_font, class: "mt-0.5 h-4 w-4 shrink-0 rounded border-gray-300 text-[#1F5C55] focus:ring-[#1F5C55]" %>
+            <span class="text-sm font-medium text-gray-800 leading-snug"><%= t("settings.show.field_dyslexic_font") %></span>
+          </label>
+        </div>
+      </section>
+
+      <div class="pt-1">
+        <%= f.submit t("settings.show.submit"),
+            class: "w-full flex justify-center py-2.5 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-[#1F5C55] hover:bg-[#1F5C55]/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1F5C55] transition-colors" %>
+      </div>
+    <% end %>
+
+    <div class="<%= compact ? 'mt-6 pt-6 border-t border-gray-200 space-y-2.5' : 'mt-8 pt-8 border-t border-gray-200 space-y-3' %>">
+      <h3 class="text-sm font-semibold text-gray-800">
+        <%= t("settings.show.section_security") %>
+      </h3>
+      <%= button_to t("settings.show.password_reset_cta"), request_reset_password_path,
+          method: :get,
+          form: { data: { turbo_confirm: t("settings.show.password_reset_confirm", email: user.email_address) } },
+          class: "w-full flex justify-center py-2.5 px-4 border border-gray-300 rounded-lg shadow-sm text-sm font-medium text-gray-800 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1F5C55] transition-colors" %>
+    </div>
+
+    <div class="<%= compact ? 'mt-6 pt-6 border-t border-gray-200 space-y-2.5' : 'mt-8 pt-8 border-t border-gray-200 space-y-3' %>">
+      <h3 class="text-sm font-semibold text-red-800">
+        <%= t("settings.show.section_danger") %>
+      </h3>
+      <%= button_to t("settings.show.destroy_account_cta"), user,
+          method: :delete,
+          form: { data: { turbo_confirm: t("settings.show.destroy_confirm") } },
+          class: "w-full flex justify-center py-2.5 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors" %>
+    </div>
+  </div>
+</div>
