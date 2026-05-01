@@ -33,6 +33,14 @@ export default class extends Controller {
     }
 
     const options = Object.assign({}, defaultOptions, this.optionsValue || {})
+
+    if (options.pagination?.el && typeof options.pagination.el === "string") {
+      const paginationEl = this.element.querySelector(options.pagination.el)
+      if (paginationEl) {
+        options.pagination = { ...options.pagination, el: paginationEl }
+      }
+    }
+
     const slideCount = this.element.querySelectorAll(".swiper-slide").length
     const breakpointValues = Object.values(options.breakpoints || {}).map(cfg => cfg.slidesPerView || options.slidesPerView)
     const maxSlidesPerView = Math.max(options.slidesPerView || 1, ...breakpointValues, 1)
