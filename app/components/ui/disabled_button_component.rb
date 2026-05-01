@@ -3,7 +3,7 @@
 module Ui
   class DisabledButtonComponent < ViewComponent::Base
     def initialize(text:, disabled: false, disabled_reason: nil, hint: nil, hint_classes: nil, wrapper_classes: nil,
-                   show_disabled_reason_below_md: false, **options)
+                   show_disabled_reason_below_md: false, additional_aria_describedby: nil, **options)
       @text = text
       @disabled = disabled
       @disabled_reason = disabled_reason
@@ -11,12 +11,14 @@ module Ui
       @hint_classes = hint_classes
       @wrapper_classes = wrapper_classes
       @show_disabled_reason_below_md = show_disabled_reason_below_md
+      @additional_aria_describedby = additional_aria_describedby
       @options = options
     end
 
     private
 
-    attr_reader :text, :disabled, :disabled_reason, :hint, :hint_classes, :wrapper_classes, :options
+    attr_reader :text, :disabled, :disabled_reason, :hint, :hint_classes, :wrapper_classes, :options,
+                :additional_aria_describedby
 
     def show_disabled_reason_below_md
       @show_disabled_reason_below_md
@@ -54,6 +56,7 @@ module Ui
       [].tap do |ids|
         ids << hint_dom_id if hint.present?
         ids << reason_below_md_dom_id if reason_below_md?
+        ids << additional_aria_describedby if additional_aria_describedby.present?
       end.join(" ").presence
     end
 
@@ -67,7 +70,9 @@ module Ui
         inactive = "cursor-not-allowed opacity-75"
 
         if options[:classes].present?
-          "#{base_classes} #{options[:classes]} #{inactive}"
+          # Do not prepend base_classes: its px/py/rounded utilities can override @layer
+          # components (e.g. .btn-primary) in the cascade and shrink the control.
+          "#{options[:classes]} #{inactive}"
         else
           "#{base_classes} bg-gray-100 text-gray-500 border-gray-200 #{inactive}"
         end
