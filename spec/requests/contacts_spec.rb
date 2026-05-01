@@ -62,5 +62,67 @@ RSpec.describe "Contacts", type: :request do
 
       expect(response).to have_http_status(:success)
     end
+
+    context "when category is creative_hosting" do
+      around do |example|
+        prev_general = ENV.fetch("CONTACT_EMAIL_GENERAL", nil)
+        prev_hosting = ENV.fetch("CONTACT_EMAIL_CREATIVE_HOSTING", nil)
+        prev_residence = ENV.fetch("CONTACT_EMAIL_RESIDENCE", nil)
+        ENV["CONTACT_EMAIL_GENERAL"] = "general@example.com"
+        ENV["CONTACT_EMAIL_CREATIVE_HOSTING"] = "hosting@example.com"
+        ENV.delete("CONTACT_EMAIL_RESIDENCE")
+        example.run
+      ensure
+        prev_general ? ENV["CONTACT_EMAIL_GENERAL"] = prev_general : ENV.delete("CONTACT_EMAIL_GENERAL")
+        prev_hosting ? ENV["CONTACT_EMAIL_CREATIVE_HOSTING"] = prev_hosting : ENV.delete("CONTACT_EMAIL_CREATIVE_HOSTING")
+        prev_residence ? ENV["CONTACT_EMAIL_RESIDENCE"] = prev_residence : ENV.delete("CONTACT_EMAIL_RESIDENCE")
+      end
+
+      it "enqueues contact mail" do
+        expect do
+          post submit_contact_path,
+               params: {
+                 name: "Jane",
+                 email: "jane@example.com",
+                 category: "creative_hosting",
+                 message: "Projet"
+               },
+               as: :turbo_stream
+        end.to have_enqueued_mail(UserMailer, :contact_email)
+
+        expect(response).to have_http_status(:success)
+      end
+    end
+
+    context "when category is legacy residence" do
+      around do |example|
+        prev_general = ENV.fetch("CONTACT_EMAIL_GENERAL", nil)
+        prev_hosting = ENV.fetch("CONTACT_EMAIL_CREATIVE_HOSTING", nil)
+        prev_residence = ENV.fetch("CONTACT_EMAIL_RESIDENCE", nil)
+        ENV["CONTACT_EMAIL_GENERAL"] = "general@example.com"
+        ENV.delete("CONTACT_EMAIL_CREATIVE_HOSTING")
+        ENV["CONTACT_EMAIL_RESIDENCE"] = "legacy-hosting@example.com"
+        example.run
+      ensure
+        prev_general ? ENV["CONTACT_EMAIL_GENERAL"] = prev_general : ENV.delete("CONTACT_EMAIL_GENERAL")
+        prev_hosting ? ENV["CONTACT_EMAIL_CREATIVE_HOSTING"] = prev_hosting : ENV.delete("CONTACT_EMAIL_CREATIVE_HOSTING")
+        prev_residence ? ENV["CONTACT_EMAIL_RESIDENCE"] = prev_residence : ENV.delete("CONTACT_EMAIL_RESIDENCE")
+      end
+
+      it "still enqueues contact mail (normalized to creative_hosting routing)" do
+        expect do
+          post submit_contact_path,
+               params: {
+                 name: "Jane",
+                 email: "jane@example.com",
+                 category: "residence",
+                 message: "Projet"
+               },
+               as: :turbo_stream
+        end.to have_enqueued_mail(UserMailer, :contact_email)
+
+        expect(response).to have_http_status(:success)
+      end
+    end
   end
 end

@@ -283,6 +283,14 @@ fr:
         subject: 'Bienvenue au Circographe ! '
       membership_expiration_reminder:
         subject: Votre adhésion arrive à expiration !
+      contact_email:
+        subject: "Nouveau message : %{category_label}"
+        category_labels:
+          general: Question générale
+          technical: Technique / accès
+          creative_hosting: Temps d’accueil en création
+          partnership: Partenariat
+          residence: Temps d’accueil en création
   breadcrumbs:
     admin:
       common:

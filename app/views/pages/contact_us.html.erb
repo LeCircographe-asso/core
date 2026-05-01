@@ -11,7 +11,7 @@
   </div>
 </section>
 
-<section id="contact-details" class="space-y-12">
+<section id="contact-details" class="space-y-12 pb-12 sm:pb-16">
   <%# Ne pas mettre .fade-in sur un ancêtre de Leaflet : translateY + will-change cassent la carte et peuvent provoquer des boucles ResizeObserver. %>
   <div class="fade-in">
   <div class="bg-white/95 border border-white/70 shadow-lg rounded-[28px] overflow-hidden">
@@ -25,21 +25,11 @@
     <div class="px-6 sm:px-10 pb-8 grid gap-8 lg:grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)]">
       <div class="space-y-6">
         <div class="grid gap-4 sm:grid-cols-2">
-          <div class="rounded-2xl border border-[#1F5C55]/35 bg-white px-5 py-5 shadow-sm">
-            <p class="text-xs uppercase tracking-[0.25em] text-[#1F5C55] mb-2">Adresse</p>
-            <p class="font-semibold text-gray-900 leading-relaxed">97 bis Boulevard de Suisse<br>31200 Toulouse</p>
-          </div>
-          <div class="rounded-2xl border border-[#5836A5]/35 bg-white px-5 py-5 shadow-sm">
-            <p class="text-xs uppercase tracking-[0.25em] text-[#5836A5] mb-2">Nous écrire</p>
-            <p class="font-semibold text-gray-900">
-              <%= mail_to "contact@lecircographe.fr", "contact@lecircographe.fr", class: "underline text-[#5836A5] hover:text-[#412886]" %>
-            </p>
-          </div>
-          <div class="rounded-2xl border border-[#1F5C55]/30 bg-white px-5 py-5 shadow-sm">
+          <div class="rounded-2xl border border-[#1F5C55]/30 bg-white px-5 py-5 shadow-sm sm:col-span-2">
             <p class="text-xs uppercase tracking-[0.25em] text-[#1F5C55] mb-2">Accès</p>
             <p class="font-semibold text-gray-900 leading-relaxed">Bus 15 (Tisséo) — dessert le boulevard de Suisse ; descends à l’arrêt le plus proche de ton numéro.</p>
           </div>
-          <div class="rounded-2xl border border-[#5836A5]/30 bg-white px-5 py-5 shadow-sm">
+          <div class="rounded-2xl border border-[#5836A5]/30 bg-white px-5 py-5 shadow-sm sm:col-span-2">
             <p class="text-xs uppercase tracking-[0.25em] text-[#5836A5] mb-2">Suivre l'actu</p>
             <div class="flex flex-wrap gap-3 text-sm text-[#1F5C55]">
               <%= link_to "Facebook", "https://www.facebook.com/lecircographe/?locale=fr_FR", target: "_blank", rel: "noopener", class: "inline-flex items-center gap-2 px-3 py-2 rounded-full border border-[#1F5C55]/40 hover:bg-[#1F5C55] hover:text-white transition" %>
@@ -54,14 +44,12 @@
           <p class="text-sm text-gray-600">Ouverture du mardi au dimanche selon disponibilité bénévoles — Fermé le lundi.</p>
           <%= render "shared/opening_hours", horaires: @opening_hours, bare: true %>
         </div>
-
-        <p class="text-sm text-gray-600">Besoin d’écrire tout de suite ? <%= link_to "Écrire à l’équipe", "#contact-form", class: "underline text-[#5836A5] hover:text-[#412886]" %></p>
       </div>
 
       <div class="space-y-6">
         <div class="rounded-2xl border border-[#5836A5]/30 bg-white px-6 py-6 shadow-sm">
           <p class="text-xs uppercase tracking-[0.25em] text-[#5836A5] mb-2">Un doute rapide ?</p>
-          <p class="text-gray-700">Passe pendant un créneau d’ouverture : on t’oriente vers la bonne personne (adhésion, résidence, technique…).</p>
+          <p class="text-gray-700">Passe pendant un créneau d’ouverture : on t’oriente vers la bonne personne (adhésion, temps d’accueil en création, technique…).</p>
         </div>
 
         <div id="contact-form">
