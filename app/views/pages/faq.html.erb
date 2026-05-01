@@ -6,7 +6,7 @@
   <div class="relative hero-panel space-y-6">
     <p class="text-sm uppercase tracking-[0.45em] text-white/70">Besoin d'un guide ?</p>
     <h1 class="font-circographe text-3xl sm:text-4xl lg:text-5xl font-bold">Questions fréquentes</h1>
-    <p class="max-w-3xl text-lg text-white/85 leading-relaxed">Tout ce qu'on nous demande le plus souvent : adhésion, contact, vie du lieu.</p>
+    <p class="max-w-3xl text-base sm:text-lg text-white/85 leading-snug">Adhésion, contact, vie du lieu — par thème ci-dessous.</p>
     <div class="flex flex-wrap gap-4">
       <%= link_to "Je découvre l'esprit du lieu", page_path("association"), class: "btn-primary shadow-lg" %>
       <%= link_to "Je prépare mon adhésion", page_path("become_member"), class: "btn-secondary shadow-lg" %>
@@ -18,30 +18,30 @@
   <article class="grid gap-10 lg:grid-cols-[320px,minmax(0,1fr)] items-start">
     <aside class="bg-white rounded-[28px] shadow-lg p-8 space-y-6 border border-white/60">
       <div class="space-y-3">
-        <p class="text-sm uppercase tracking-[0.3em] text-brand-primary/70">Prépare ta visite</p>
-        <h2 class="text-2xl font-semibold text-gray-900">Trois portes d’entrée</h2>
-        <p class="text-gray-600 leading-relaxed">Tu viens pour découvrir, adhérer ou proposer un projet ? Ce guide te montre les étapes clés, avec des liens vers les pages détaillées.</p>
+        <p class="text-sm uppercase tracking-[0.3em] text-brand-primary/70">Par où commencer</p>
+        <h2 class="text-2xl font-semibold text-gray-900">Trois entrées</h2>
+        <p class="text-gray-600 text-sm leading-relaxed">Découvrir le lieu, adhérer ou écrire pour un projet — saute à la section qui t’intéresse.</p>
       </div>
-      <ul class="space-y-4 text-gray-600">
+      <ul class="space-y-3 text-gray-600">
         <li class="flex gap-3">
-          <span class="w-8 h-8 rounded-full bg-brand-primary/10 text-brand-primary flex items-center justify-center font-semibold">1</span>
+          <span class="w-8 h-8 rounded-full bg-brand-primary/10 text-brand-primary flex items-center justify-center font-semibold shrink-0">1</span>
           <div>
-            <p class="font-semibold text-gray-900">Découvrir le lieu</p>
-            <p class="text-sm">Comprendre l’autogestion, les créneaux publics et l’ambiance du hangar.</p>
+            <p class="font-semibold text-gray-900">Découvrir</p>
+            <p class="text-sm">Autogestion, créneaux, ambiance.</p>
           </div>
         </li>
         <li class="flex gap-3">
-          <span class="w-8 h-8 rounded-full bg-brand-primary/10 text-brand-primary flex items-center justify-center font-semibold">2</span>
+          <span class="w-8 h-8 rounded-full bg-brand-primary/10 text-brand-primary flex items-center justify-center font-semibold shrink-0">2</span>
           <div>
-            <p class="font-semibold text-gray-900">Adhérer & participer</p>
-            <p class="text-sm">Suivre les étapes d’inscription, préparer les documents et rejoindre les bénévoles.</p>
+            <p class="font-semibold text-gray-900">Adhérer</p>
+            <p class="text-sm">Sur place, avec les bénévoles.</p>
           </div>
         </li>
         <li class="flex gap-3">
-          <span class="w-8 h-8 rounded-full bg-brand-primary/10 text-brand-primary flex items-center justify-center font-semibold">3</span>
+          <span class="w-8 h-8 rounded-full bg-brand-primary/10 text-brand-primary flex items-center justify-center font-semibold shrink-0">3</span>
           <div>
-            <p class="font-semibold text-gray-900">Proposer un projet</p>
-            <p class="text-sm">Temps d’accueil en création, ateliers, partenariats : comment formuler ta demande.</p>
+            <p class="font-semibold text-gray-900">Contacter</p>
+            <p class="text-sm">Création, ateliers, partenariats.</p>
           </div>
         </li>
       </ul>
@@ -55,10 +55,10 @@
   </article>
 
   <article id="faq-adhesion" class="space-y-6 lg:col-span-full">
-    <header class="space-y-3 text-center bg-white border border-white/70 rounded-[24px] px-6 py-6 shadow-lg">
-      <p class="text-sm uppercase tracking-[0.3em] text-brand-primary/70">Étape 1 — Rejoindre la communauté</p>
-      <h2 class="text-3xl font-semibold text-gray-900">Adhérer, comprendre, participer</h2>
-      <p class="max-w-3xl mx-auto text-gray-600">On adhère sur place, parce que la rencontre humaine est au cœur du projet. Voici les réponses aux questions les plus courantes avant de franchir le pas.</p>
+    <header class="space-y-2 text-center bg-white border border-white/70 rounded-[24px] px-6 py-5 shadow-lg">
+      <p class="text-sm uppercase tracking-[0.3em] text-brand-primary/70">Adhésion</p>
+      <h2 class="text-2xl sm:text-3xl font-semibold text-gray-900">Avant de venir</h2>
+      <p class="max-w-2xl mx-auto text-gray-600 text-sm sm:text-base">Adhésion sur place — questions fréquentes.</p>
     </header>
 
     <%= render "shared/faq_section",
@@ -76,19 +76,19 @@
   </article>
 
   <article id="faq-contact" class="space-y-6">
-    <header class="space-y-3 text-center bg-white border border-white/70 rounded-[24px] px-6 py-6 shadow-lg">
-      <p class="text-sm uppercase tracking-[0.3em] text-brand-primary/70">Étape 2 — Entrer en contact</p>
-      <h2 class="text-3xl font-semibold text-gray-900">Nous écrire, proposer un projet, demander un temps d’accueil en création</h2>
-      <p class="max-w-3xl mx-auto text-gray-600">Le Circographe reçoit des demandes variées : temps d’accueil en création, ateliers, partenariats culturels, questions logistiques. Ce bloc te permet de préparer ton message et de gagner du temps.</p>
+    <header class="space-y-2 text-center bg-white border border-white/70 rounded-[24px] px-6 py-5 shadow-lg">
+      <p class="text-sm uppercase tracking-[0.3em] text-brand-primary/70">Contact</p>
+      <h2 class="text-2xl sm:text-3xl font-semibold text-gray-900">Projets & temps d’accueil en création</h2>
+      <p class="max-w-2xl mx-auto text-gray-600 text-sm sm:text-base">Précise ta demande (création, atelier, partenaire, logistique) pour une réponse plus rapide.</p>
     </header>
 
     <%= render "shared/faq_section",
       id: "faq-contact-list",
       label: nil,
       title: "Avant d'envoyer ton mail",
-      subtitle: "Les infos clés à partager pour que l'équipe bénévole puisse te répondre rapidement.",
+      subtitle: "Ce qui aide les bénévoles à te répondre vite.",
       faqs: @contact_faqs,
-      footer: "Quand tu es prêt·e, direction la page Contact pour nous écrire via le formulaire Turbo." %>
+      footer: "Prêt·e ? Page Contact → formulaire en bas de page." %>
 
     <div class="flex flex-wrap justify-center gap-3">
       <%= link_to "Écrire à l'équipe", page_path("contact_us"), class: "btn-primary shadow-lg" %>
@@ -97,10 +97,10 @@
   </article>
 
   <article id="faq-general" class="space-y-6">
-    <header class="space-y-3 text-center bg-white border border-white/70 rounded-[24px] px-6 py-6 shadow-lg">
-      <p class="text-sm uppercase tracking-[0.3em] text-brand-primary/70">Étape 3 — Vivre le lieu</p>
-      <h2 class="text-3xl font-semibold text-gray-900">Repères quotidiens & soutien au projet</h2>
-      <p class="max-w-3xl mx-auto text-gray-600">Tu veux revenir régulièrement, inviter des proches ou soutenir financièrement ? Ces repères t’aideront à orienter ton entourage et à faire rayonner le lieu.</p>
+    <header class="space-y-2 text-center bg-white border border-white/70 rounded-[24px] px-6 py-5 shadow-lg">
+      <p class="text-sm uppercase tracking-[0.3em] text-brand-primary/70">Vie du lieu</p>
+      <h2 class="text-2xl sm:text-3xl font-semibold text-gray-900">Horaires, lieu, soutien</h2>
+      <p class="max-w-2xl mx-auto text-gray-600 text-sm sm:text-base">Pour revenir souvent, faire découvrir le lieu ou soutenir l’asso.</p>
     </header>
 
     <%= render "shared/faq_section",
