@@ -47,15 +47,15 @@ module People
       success(
         contribution: result[:contribution],
         payment: result[:payment],
-        message: "Contribution created successfully"
+        message: I18n.t("services.success.contribution_created")
       )
     rescue ActiveRecord::RecordNotFound => e
       ActiveSupport::Notifications.instrument("contribution.failed", error: e.message, reason: "record_not_found")
-      failure("Record not found: #{e.message}")
+      failure(I18n.t("services.errors.record_not_found", message: e.message))
     rescue StandardError => e
       Rails.logger.error("[People::ContributionCreator] #{e.class}: #{e.message}\n#{e.backtrace.take(5).join("\n")}")
       ActiveSupport::Notifications.instrument("contribution.failed", error: e.message, reason: "exception")
-      failure("Error creating contribution: #{e.message}")
+      failure(I18n.t("services.errors.unexpected_error", action: "contribution creation", message: e.message))
     end
 
     private

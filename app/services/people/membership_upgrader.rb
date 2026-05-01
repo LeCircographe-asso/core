@@ -51,15 +51,15 @@ module People
         old_member_number: result[:old_member_number],
         new_member_number: result[:new_member_number],
         errors: [],
-        message: "Membership upgraded successfully"
+        message: I18n.t("services.success.membership_upgraded")
       )
     rescue ActiveRecord::RecordNotFound => e
       ActiveSupport::Notifications.instrument("membership.upgrade_failed", error: e.message, reason: "record_not_found")
-      failure("Record not found: #{e.message}")
+      failure(I18n.t("services.errors.record_not_found", message: e.message))
     rescue StandardError => e
       Rails.logger.error("[People::MembershipUpgrader] #{e.class}: #{e.message}\n#{e.backtrace.take(5).join("\n")}")
       ActiveSupport::Notifications.instrument("membership.upgrade_failed", error: e.message, reason: "exception")
-      failure("Error upgrading membership: #{e.message}")
+      failure(I18n.t("services.errors.unexpected_error", action: "membership upgrade", message: e.message))
     end
 
     private

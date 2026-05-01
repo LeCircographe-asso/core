@@ -29,7 +29,7 @@ module People
           "membership.skipped",
           person_id: person.id, reason: "already_active", membership_type_id: membership_type_id
         )
-        return Result.new(success?: true, membership: person.memberships.active.current.first, payment: nil, errors: [], message: "Person already has an active membership", already_existed: true)
+        return Result.new(success?: true, membership: person.memberships.active.current.first, payment: nil, errors: [], message: I18n.t("services.success.membership_already_active"), already_existed: true)
       end
 
       membership_type = MembershipType.find(membership_type_id)
@@ -55,20 +55,20 @@ module People
         membership: membership_data[:membership],
         payment: membership_data[:payment],
         errors: [],
-        message: "Membership created successfully",
+        message: I18n.t("services.success.membership_created"),
         already_existed: false
       )
     rescue ActiveRecord::RecordNotFound => e
       ActiveSupport::Notifications.instrument("membership.failed", error: e.message, reason: "record_not_found")
-      failure("Record not found: #{e.message}")
+      failure(I18n.t("services.errors.record_not_found", message: e.message))
     rescue ActiveRecord::RecordInvalid => e
       ActiveSupport::Notifications.instrument("membership.failed", error: e.message, reason: "validation")
-      failure("Validation error: #{e.message}")
+      failure(I18n.t("services.errors.validation_error", message: e.message))
     rescue StandardError => e
       db_path = ActiveRecord::Base.connection_db_config&.database
       Rails.logger.error("[People::MembershipCreator] db=#{db_path} #{e.class}: #{e.message}\n#{e.backtrace.take(5).join("\n")}")
       ActiveSupport::Notifications.instrument("membership.failed", error: e.message, reason: "exception")
-      failure("Error creating membership: #{e.message}")
+      failure(I18n.t("services.errors.unexpected_error", action: "membership creation", message: e.message))
     end
 
     private

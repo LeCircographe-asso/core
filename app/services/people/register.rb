@@ -35,7 +35,7 @@ module People
 
         person = person_result.person
 
-        return failure("Cette personne a déjà un compte web.") if create_user_account && person.user.present?
+        return failure(I18n.t("services.errors.register_existing_web_account")) if create_user_account && person.user.present?
 
         user = nil
         if create_user_account
@@ -72,7 +72,7 @@ module People
       end
     rescue StandardError => e
       Rails.logger.error("[People::Register] #{e.class}: #{e.message}\n#{e.backtrace.take(5).join("\n")}")
-      failure("Registration failed: #{e.message}")
+      failure(I18n.t("services.errors.unexpected_error", action: "registration", message: e.message))
     end
 
     private
@@ -103,10 +103,10 @@ module People
 
     def build_success_message(person_created, user_created, membership_created)
       parts = []
-      parts << (person_created ? "Person created" : "Person updated")
-      parts << "user account" if user_created
-      parts << "membership" if membership_created
-      "Successfully processed #{parts.join(' and ')}".strip
+      parts << I18n.t(person_created ? "services.success.register_person_created" : "services.success.register_person_updated")
+      parts << I18n.t("services.success.register_user_account") if user_created
+      parts << I18n.t("services.success.register_membership") if membership_created
+      I18n.t("services.success.register_processed", parts: parts.join(I18n.t("services.success.register_parts_joiner")))
     end
 
     def failure(message, errors = [])

@@ -309,7 +309,22 @@ fr:
       nav_contact: Coordonnées
       nav_account: Compte & sécurité
       nav_faq: FAQ
-      membership_card_settings_link: Compte et préférences (section ci-dessous)
+      newsletter_row_label: Newsletter
+      newsletter_subscribed_yes: Inscrit
+      newsletter_subscribed_no: Non inscrit
+      membership_card_settings_link: Compte et préférences
+      membership_card:
+        member_number_label: "N° adhérent"
+        section_membership: Adhésion
+        section_contribution: Cotisation
+        cotisation_no_membership: Les cotisations cirque s’affichent lorsque vous avez une adhésion Basic ou Cirque active.
+        cotisation_wrong_category: Votre adhésion actuelle n’ouvre pas la cotisation cirque.
+        valid_until_label: "Adhésion valable jusqu'au :"
+        membership_type_label: "Type d'adhésion :"
+        last_membership_ended_label: "Fin de la dernière adhésion :"
+        renew_prompt: Renouvelez votre adhésion pour participer aux activités du Circographe.
+        status_label: "Statut :"
+        not_yet_member: Pas encore membre
       contact_heading: Coordonnées postales et téléphone
       contact_intro: "Utilisées pour les envois et la facturation."
       account_heading: Compte, préférences et sécurité
@@ -356,6 +371,9 @@ fr:
       contribution_formula: "%{name} (%{duration})"
       membership_type: Adhésion %{name}
   services:
+    base:
+      success_default: "Opération terminée avec succès"
+      failure_default: "Échec de l'opération"
     web:
       user_registration:
         accept_cgu: Vous devez accepter les CGU pour continuer.
@@ -368,6 +386,33 @@ fr:
     validation:
       invalid_data: Données invalides
       invalid_data_with_details: 'Données invalides : %{details}'
+    success:
+      user_updated: "Utilisateur mis à jour avec succès"
+      newsletter_update_skipped_no_email: "Mise à jour newsletter ignorée (email absent)"
+      membership_already_active: "Cette personne possède déjà une adhésion active"
+      membership_created: "Adhésion créée avec succès"
+      membership_upgraded: "Adhésion upgradée avec succès"
+      membership_updated: "Adhésion mise à jour avec succès"
+      membership_deactivated: "Adhésion désactivée avec succès"
+      contribution_created: "Cotisation créée avec succès"
+      contribution_upgraded: "Cotisation upgradée avec succès"
+      register_person_created: "Personne créée"
+      register_person_updated: "Personne mise à jour"
+      register_user_account: "compte web"
+      register_membership: "adhésion"
+      register_parts_joiner: " et "
+      register_processed: "Traitement réussi : %{parts}"
+    errors:
+      record_not_found: "Ressource introuvable : %{message}"
+      validation_error: "Erreur de validation : %{message}"
+      unexpected_error: "Erreur pendant %{action} : %{message}"
+      insufficient_permissions:
+        user_update: "Permissions insuffisantes pour mettre à jour cet utilisateur"
+        membership_update: "Permissions insuffisantes pour mettre à jour cette adhésion"
+        membership_deactivate: "Permissions insuffisantes pour désactiver cette adhésion"
+      newsletter_update_failed: "Erreur lors de la mise à jour newsletter : %{message}"
+      user_not_found: "Utilisateur introuvable : %{message}"
+      register_existing_web_account: "Cette personne a déjà un compte web."
   mailers:
     account_claim_mailer:
       confirmation_email:

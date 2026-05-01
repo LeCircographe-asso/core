@@ -310,9 +310,39 @@ en:
         mission_text_1: Provide a space for practice, creation and transmission that is accessible to everyone.
         mission_text_2: 'Self-managed governance: members volunteer, share responsibilities, and co-program the life of the venue.'
   services:
+    base:
+      success_default: "Operation completed successfully"
+      failure_default: "Operation failed"
     validation:
       invalid_data: Invalid data
       invalid_data_with_details: 'Invalid data: %{details}'
+    success:
+      user_updated: "User updated successfully"
+      newsletter_update_skipped_no_email: "Newsletter update skipped (no email)"
+      membership_already_active: "Person already has an active membership"
+      membership_created: "Membership created successfully"
+      membership_upgraded: "Membership upgraded successfully"
+      membership_updated: "Membership updated successfully"
+      membership_deactivated: "Membership deactivated successfully"
+      contribution_created: "Contribution created successfully"
+      contribution_upgraded: "Contribution upgraded successfully"
+      register_person_created: "Person created"
+      register_person_updated: "Person updated"
+      register_user_account: "user account"
+      register_membership: "membership"
+      register_parts_joiner: " and "
+      register_processed: "Successfully processed %{parts}"
+    errors:
+      record_not_found: "Record not found: %{message}"
+      validation_error: "Validation error: %{message}"
+      unexpected_error: "Error during %{action}: %{message}"
+      insufficient_permissions:
+        user_update: "Insufficient permissions to update this user"
+        membership_update: "Insufficient permissions to update this membership"
+        membership_deactivate: "Insufficient permissions to deactivate this membership"
+      newsletter_update_failed: "Error updating newsletter: %{message}"
+      user_not_found: "User not found: %{message}"
+      register_existing_web_account: "This person already has a web account."
     web:
       user_registration:
         accept_cgu: Vous devez accepter les CGU pour continuer.
@@ -446,7 +476,22 @@ en:
       nav_contact: Contact details
       nav_account: Account & security
       nav_faq: FAQ
-      membership_card_settings_link: Account & preferences (section below)
+      newsletter_row_label: Newsletter
+      newsletter_subscribed_yes: Subscribed
+      newsletter_subscribed_no: Not subscribed
+      membership_card_settings_link: Account & preferences
+      membership_card:
+        member_number_label: Member no.
+        section_membership: Membership
+        section_contribution: Contribution
+        cotisation_no_membership: Circus contributions are shown when you have an active Basic or Circus membership.
+        cotisation_wrong_category: Your current membership does not include circus contributions.
+        valid_until_label: "Membership valid until:"
+        membership_type_label: "Membership type:"
+        last_membership_ended_label: "Last membership ended:"
+        renew_prompt: Renew your membership to take part in Circographe activities.
+        status_label: "Status:"
+        not_yet_member: Not a member yet
       contact_heading: Postal address & phone
       contact_intro: "Used for mailings and billing."
       account_heading: Account, preferences & security
