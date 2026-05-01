@@ -2,14 +2,14 @@
 <% compact = local_assigns.fetch(:compact, false) %>
 <% wrapper_classes = bare ? "" : "bg-white rounded-lg shadow-md p-4" %>
 <% schedule = local_assigns[:horaires] || @horaires %>
-<% badge_margin = compact ? "mb-2" : "mb-4" %>
-<% cell_py = compact ? "py-2" : "py-3" %>
-<% head_py = compact ? "py-1.5" : "py-2" %>
+<% badge_margin = compact ? "mb-1.5 sm:mb-2" : "mb-2 sm:mb-4" %>
+<% cell_py = compact ? "py-1 sm:py-2" : "py-1.5 sm:py-3" %>
+<% head_py = compact ? "py-1 sm:py-1.5" : "py-1 sm:py-2" %>
 
 <% inner = capture do %>
   <div class="text-center <%= badge_margin %>">
-    <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-brand-primary/10 text-brand-primary">
-      <i class="fas fa-calendar-week mr-2"></i>
+    <span class="inline-flex items-center px-2 py-0.5 sm:px-3 sm:py-1 rounded-full text-xs sm:text-sm font-medium bg-brand-primary/10 text-brand-primary">
+      <i class="fas fa-calendar-week mr-1.5 sm:mr-2 text-[0.85em] sm:text-base"></i>
       Semaine du <%= Date.current.beginning_of_week.strftime("%d/%m") %> au <%= Date.current.end_of_week.strftime("%d/%m/%Y") %>
     </span>
   </div>
@@ -74,7 +74,7 @@
 <% end %>
 
 <% if bare %>
-  <div class="<%= compact ? 'space-y-2' : 'space-y-4' %>">
+  <div class="<%= compact ? 'space-y-1.5 sm:space-y-2' : 'space-y-2 sm:space-y-4' %>">
     <%= inner %>
   </div>
 <% else %>
