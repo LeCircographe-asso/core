@@ -3,39 +3,6 @@
   <p class="mt-2 text-gray-600">Une question, une envie de résidence ou un partenariat ? On te répond sous quelques jours ouvrés.</p>
 
   <%= turbo_frame_tag "contact_form" do %>
-    <%= form_with url: submit_contact_path, method: :post, data: { turbo_stream: true }, class: "space-y-4 mt-6" do |form| %>
-      <div>
-        <%= form.label :name, "Nom complet", class: "block mb-2 text-sm text-gray-600" %>
-        <%= form.text_field :name, value: contact[:name], placeholder: "Nom Prénom", class: "block w-full px-5 py-3 text-gray-700 bg-white border border-gray-200 rounded-md focus:border-[#5836A5] focus:ring-[#5836A5] focus:ring-1 focus:outline-none" %>
-      </div>
-
-      <div>
-        <%= form.label :email, "Adresse email", class: "block mb-2 text-sm text-gray-600" %>
-        <%= form.email_field :email, value: contact[:email], placeholder: "adresse@example.com", class: "block w-full px-5 py-3 text-gray-700 bg-white border border-gray-200 rounded-md focus:border-[#5836A5] focus:ring-[#5836A5] focus:ring-1 focus:outline-none" %>
-      </div>
-
-      <div>
-        <%= form.label :category, "Catégorie", class: "block mb-2 text-sm text-gray-600" %>
-        <%= form.select :category,
-            options_for_select([
-              ["Question générale", "general"],
-              ["Technique / accès", "technical"],
-              ["Résidence", "residence"],
-              ["Partenariat", "partnership"]
-            ], contact[:category]),
-            { include_blank: "Sélectionne une catégorie" },
-            class: "block w-full px-5 py-3 text-gray-700 bg-white border border-gray-200 rounded-md focus:border-[#5836A5] focus:ring-[#5836A5] focus:ring-1 focus:outline-none" %>
-      </div>
-
-      <div>
-        <%= form.label :message, "Message", class: "block mb-2 text-sm text-gray-600" %>
-        <%= form.text_area :message, value: contact[:message], rows: 6, placeholder: "Parle-nous de ton projet, de ta question ou de ton besoin…", class: "block w-full px-5 py-3 text-gray-700 bg-white border border-gray-200 rounded-md focus:border-[#5836A5] focus:ring-[#5836A5] focus:ring-1 focus:outline-none" %>
-      </div>
-
-      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-        <%= form.submit "Envoyer le message", class: "inline-flex items-center justify-center px-6 py-3 tracking-wide text-white font-bold bg-[#1F5C55] border-2 border-[#1F5C55] rounded-full shadow-lg hover:bg-gray-100 hover:text-[#1F5C55] hover:border-[#1F5C55] transition-colors duration-300 cursor-pointer" %>
-        <p data-form-feedback-target="message" class="hidden text-sm text-[#1F5C55]"></p>
-      </div>
-    <% end %>
+    <%= render "pages/contact/form_inner", contact: contact, status: local_assigns[:status] %>
   <% end %>
 </div>

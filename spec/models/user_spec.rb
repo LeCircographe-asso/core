@@ -11,24 +11,16 @@ RSpec.describe User, type: :model do
   end
 
   describe 'date scopes (using created_at via Dateable)' do
-    let!(:today_user) { create(:user, created_at: Date.current.beginning_of_day + 12.hours) }
-    let!(:this_week_user) do
-      week_date = if Date.current.beginning_of_week == Date.current
-                    [ Date.current.end_of_week, Date.current.end_of_month ].min.beginning_of_day + 12.hours
-      else
-                    Date.current.beginning_of_week.beginning_of_day + 12.hours
-      end
-      create(:user, created_at: week_date)
+    include ActiveSupport::Testing::TimeHelpers
+
+    around do |example|
+      travel_to(Time.zone.local(2026, 4, 29, 12, 0, 0)) { example.run }
     end
+
+    let!(:today_user) { create(:user, created_at: Date.current.beginning_of_day + 12.hours) }
+    let!(:this_week_user) { create(:user, created_at: Date.current.beginning_of_week.beginning_of_day + 12.hours) }
     let!(:last_week_user) do
-      last_week_date = Date.current - 1.week
-      # If last week is in a different month, use a date from earlier this month (but not this week)
-      user_date = if last_week_date.month == Date.current.month
-                    last_week_date.beginning_of_day + 12.hours
-      else
-                    [ Date.current.beginning_of_month, Date.current.beginning_of_week - 1.day ].max.beginning_of_day + 12.hours
-      end
-      create(:user, created_at: user_date)
+      create(:user, created_at: (Date.current.beginning_of_week - 1.day).beginning_of_day + 12.hours)
     end
 
     describe '.today' do

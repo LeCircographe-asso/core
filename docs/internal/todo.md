@@ -31,6 +31,7 @@ Ordered from quick wins to long-term work. Each item can be handled incrementall
 - Remove “sessions remaining” for unlimited plans in UI (annual/trimester). (partial: admin user views + membership card)
 - Ensure summary totals in admin payments match donation lines. (done)
 - Update to-do list + docs as changes land. (ongoing)
+- **Feature flags (produit) + rôles** — Introduire un mécanisme unique pour activer/désactiver des capacités (ex. inscriptions publiques, **récupération de compte / reset mot de passe**), **en plus** des permissions par rôle (admin, bénévole, etc.) : flags = *est-ce que la fonctionnalité existe pour l’app ?*, rôles = *qui peut l’utiliser quand elle est ouverte ?*. Centraliser la lecture (ex. helper ou `FeatureFlags.*`), garde-fous **serveur** + masquage UI, pas seulement des variables d’env éparpillées. Premier pas déjà aligné avec `PUBLIC_REGISTRATION_ENABLED` ; étendre le même schéma aux autres actions. **Usage futur** : dashboard admin pour basculer certaines vues/actions (ex. bénévole) sans redéploiement — possible évolution vers table + cache plus tard.
 
 ## 2) Medium (flow consistency + integrity)
 - Ensure admin registration uses `People::Register` only.

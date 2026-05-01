@@ -206,4 +206,38 @@ RSpec.describe 'Registrations', type: :request do
       end
     end
   end
+
+  describe "with public registration disabled" do
+    around do |example|
+      prev = Rails.application.config.x.public_registration_enabled
+      Rails.application.config.x.public_registration_enabled = false
+      example.run
+    ensure
+      Rails.application.config.x.public_registration_enabled = prev
+    end
+
+    it "redirects GET /registration/new to root with flash" do
+      get new_registration_path
+      expect(response).to redirect_to(root_path)
+      expect(flash[:alert]).to eq(I18n.t("registrations.disabled_notice"))
+    end
+
+    it "redirects POST /registration without creating a user" do
+      expect do
+        post registration_path, params: {
+          user: {
+            email_address: "closedsignup@example.com",
+            password: "password123",
+            password_confirmation: "password123",
+            first_name: "Jane",
+            last_name: "Doe",
+            cgu: "1",
+            privacy_policy: "1"
+          }
+        }
+      end.not_to(change { User.count })
+
+      expect(response).to redirect_to(root_path)
+    end
+  end
 end
