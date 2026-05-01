@@ -9,6 +9,7 @@ module Admin
   # The public UsersController in contrast only handles self-service actions
   # for individual users managing their own profiles.
   class UsersController < BaseController
+    include NewsletterParamParser
     before_action :set_user, only: %i[edit update destroy]
     before_action :set_breadcrumbs, except: %i[index new]
     before_action :check_deletion_permissions, only: [ :destroy ]
@@ -247,7 +248,10 @@ module Admin
         # Séparer les paramètres User des paramètres Person
         user_only_params = user_params.slice(:email_address, :system_role, :created_by_admin, :create_web_account)
         person_params_flat = user_params.except(:email_address, :system_role, :created_by_admin, :create_web_account, :person)
-        newsletter_flag = person_params_flat.delete(:newsletter_subscribed)
+        newsletter_subscribed_value = extract_newsletter_subscribed!(
+          source_params: user_params,
+          person_params: person_params_flat
+        )
 
         # Utiliser le service UserManagement::UserUpdater
         updater = UserManagement::UserUpdater.new(
@@ -255,7 +259,7 @@ module Admin
           email_address: user_only_params[:email_address],
           system_role: user_only_params[:system_role],
           person_attributes: person_params_flat,
-          newsletter_subscribed: [ "1", true, 1 ].include?(newsletter_flag),
+          newsletter_subscribed: newsletter_subscribed_value,
           updated_by_id: Current.user.id
         )
 

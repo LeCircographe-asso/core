@@ -263,36 +263,9 @@ class Person < ApplicationRecord
 
       raise "Cette personne doit avoir une adhésion Cirque active pour acheter une cotisation" unless can_buy_contribution_formulas?
 
-      sessions_remaining = case contribution_formula.duration
-      when "pack10"
-                             contribution_formula.sessions_count || 10
-      when "day"
-                             1
-      when "trimester", "annual"
-                             nil
-      else
-                             contribution_formula.sessions_count || 1
-      end
-
-      expires_at = case contribution_formula.duration
-      when "pack10"
-                     nil
-      when "day"
-                     Date.current.end_of_day
-      when "trimester"
-                     Date.current + 90.days
-      when "annual"
-                     Date.current + 1.year
-      else
-                     contribution_formula.validity_days ? Date.current + contribution_formula.validity_days.days : nil
-      end
-
       contribution = contributions.create!(
-        contribution_formula: contribution_formula,
-        sessions_remaining: sessions_remaining,
-        status: :active,
-        purchased_at: Time.current,
-        expires_at: expires_at
+        contribution_payload_for(contribution_formula)
+          .merge(contribution_formula: contribution_formula, status: :active, purchased_at: Time.current)
       )
 
       amount_cents = calculate_amount_cents(payment_method, contribution_formula.price_cents, custom_amount_cents)
@@ -346,9 +319,12 @@ class Person < ApplicationRecord
 
       from_contribution.suspend!(reason: "Upgrade vers #{to_formula.name}")
 
-      new_result = create_contribution!(to_formula, payment_method: payment_method, recorded_by: recorded_by)
-
       amount_to_pay = [ to_formula.price_cents - credit_cents, 0 ].max
+
+      new_contribution = contributions.create!(
+        contribution_payload_for(to_formula)
+          .merge(contribution_formula: to_formula, status: :active, purchased_at: Time.current)
+      )
 
       payment = payments.create!(
         total_cents: amount_to_pay,
@@ -360,14 +336,14 @@ class Person < ApplicationRecord
 
       payment.payment_lines.create!(
         item_type: "Contribution",
-        item_id: new_result[:contribution].id,
+        item_id: new_contribution.id,
         amount_cents: amount_to_pay,
         description: "Upgrade avec crédit prorata"
       )
 
       {
         old_contribution: from_contribution,
-        new_contribution: new_result[:contribution],
+        new_contribution: new_contribution,
         payment: payment,
         credit_applied: credit_cents
       }
@@ -533,6 +509,34 @@ class Person < ApplicationRecord
     end
   end
 
+  def contribution_payload_for(contribution_formula)
+    sessions_remaining = case contribution_formula.duration
+    when "pack10"
+                           contribution_formula.sessions_count || 10
+    when "day"
+                           1
+    when "trimester", "annual"
+                           nil
+    else
+                           contribution_formula.sessions_count || 1
+    end
+
+    expires_at = case contribution_formula.duration
+    when "pack10"
+                   nil
+    when "day"
+                   Date.current.end_of_day
+    when "trimester"
+                   Date.current + 90.days
+    when "annual"
+                   Date.current + 1.year
+    else
+                   contribution_formula.validity_days ? Date.current + contribution_formula.validity_days.days : nil
+    end
+
+    { sessions_remaining: sessions_remaining, expires_at: expires_at }
+  end
+
   def generate_payment_description(payment_method, item_name, item_type)
     case payment_method.to_s
     when "offered"
@@ -545,7 +549,7 @@ class Person < ApplicationRecord
     else
       case item_type
       when "Membership" then "Adhésion #{item_name}"
-      when "Contribution" then "Plan d'abonnement #{item_name}"
+      when "Contribution" then "Cotisation #{item_name}"
       when "MembershipUpgrade" then "Upgrade d'adhésion vers #{item_name}"
       else "#{item_type} #{item_name}"
       end

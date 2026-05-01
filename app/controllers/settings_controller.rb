@@ -2,6 +2,7 @@
 
 class SettingsController < ApplicationController
   include ProfileSectionTurboStreams
+  include NewsletterParamParser
 
   before_action :require_authentication
 
@@ -19,9 +20,10 @@ class SettingsController < ApplicationController
 
     user_only_params = user_params.slice(:email_address)
     person_params = user_params.except(:email_address)
-    newsletter_explicit = user_params.key?(:newsletter_subscribed)
-    newsletter_flag = person_params.delete(:newsletter_subscribed)
-    newsletter_subscribed_value = newsletter_explicit ? [ "1", true, 1 ].include?(newsletter_flag) : nil
+    newsletter_subscribed_value = extract_newsletter_subscribed!(
+      source_params: user_params,
+      person_params: person_params
+    )
 
     updater = UserManagement::UserUpdater.new(
       user_id: @user.id,
@@ -33,34 +35,9 @@ class SettingsController < ApplicationController
 
     result = updater.call
 
-    if result.success?
-      respond_to do |format|
-        format.turbo_stream do
-          flash.now[:notice] = t(".saved_notice")
-          render turbo_stream: profile_account_section_update_streams(
-            @user,
-            embedded: profile_context,
-            compact: profile_context
-          )
-        end
-        format.html { redirect_to settings_path, notice: t(".saved_notice"), status: :see_other }
-      end
-    else
-      respond_to do |format|
-        format.turbo_stream do
-          flash.now[:alert] = result.message
-          render turbo_stream: profile_account_section_update_streams(
-            @user,
-            embedded: profile_context,
-            compact: profile_context
-          ), status: :unprocessable_content
-        end
-        format.html do
-          flash.now[:alert] = result.message
-          render :show, status: :unprocessable_content
-        end
-      end
-    end
+    return render_profile_section_success(t(".saved_notice"), profile_context) if result.success?
+
+    render_profile_section_error(result.message, profile_context)
   end
 
   private
@@ -127,20 +104,43 @@ class SettingsController < ApplicationController
   end
 
   def render_email_change_success(message, profile_context)
-    flash.now[:notice] = message
-    render turbo_stream: profile_account_section_update_streams(
-      @user.reload,
-      embedded: profile_context,
-      compact: profile_context
-    )
+    render_profile_section_success(message, profile_context, reload_user: true)
   end
 
   def render_email_change_error(message, profile_context)
-    flash.now[:alert] = message
-    render turbo_stream: profile_account_section_update_streams(
-      @user,
-      embedded: profile_context,
-      compact: profile_context
-    ), status: :unprocessable_content
+    render_profile_section_error(message, profile_context)
+  end
+
+  def render_profile_section_success(message, profile_context, reload_user: false)
+    account_user = reload_user ? @user.reload : @user
+
+    respond_to do |format|
+      format.turbo_stream do
+        flash.now[:notice] = message
+        render turbo_stream: profile_account_section_update_streams(
+          account_user,
+          embedded: profile_context,
+          compact: profile_context
+        )
+      end
+      format.html { redirect_to settings_path, notice: message, status: :see_other }
+    end
+  end
+
+  def render_profile_section_error(message, profile_context)
+    respond_to do |format|
+      format.turbo_stream do
+        flash.now[:alert] = message
+        render turbo_stream: profile_account_section_update_streams(
+          @user,
+          embedded: profile_context,
+          compact: profile_context
+        ), status: :unprocessable_content
+      end
+      format.html do
+        flash.now[:alert] = message
+        render :show, status: :unprocessable_content
+      end
+    end
   end
 end

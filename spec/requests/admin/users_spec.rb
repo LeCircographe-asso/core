@@ -219,6 +219,27 @@ RSpec.describe 'Admin::Users', type: :request do
         expect(target_person.reload.first_name).to eq('Lucie')
       end
     end
+
+    context "when targeting a user entity without newsletter param" do
+      let(:target_person) { create(:person, first_name: "Mila", last_name: "Durand", email: "mila@example.com") }
+      let(:target_user) { create(:user, person: target_person, email_address: "mila@example.com") }
+
+      it "preserves newsletter subscription state" do
+        subscriber = create(:newsletter_subscriber, person: target_person, email: target_person.email, subscribed: true)
+
+        patch admin_user_path(target_user), params: {
+          user: {
+            first_name: "Mila-Updated",
+            email_address: target_user.email_address,
+            system_role: target_user.system_role
+          }
+        }
+
+        expect(response).to redirect_to(admin_user_path(target_user))
+        expect(target_person.reload.first_name).to eq("Mila-Updated")
+        expect(subscriber.reload.subscribed?).to be(true)
+      end
+    end
   end
 
   describe 'POST /admin/users/:id/restore' do
