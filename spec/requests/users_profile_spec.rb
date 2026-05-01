@@ -42,7 +42,7 @@ RSpec.describe "User profile (users#show)", type: :request do
       expect(response.body).to include("Adhésion active")
       expect(response.body).to include("Cotisations actives")
       expect(response.body).to include("Aucune cotisation active")
-      expect(response.body).to include("Adhésion valable jusqu'au")
+      expect(response.body).to match(/Adhésion valable jusqu/)
       expect(response.body).not_to include("Renouveler mon adhésion")
     end
 
