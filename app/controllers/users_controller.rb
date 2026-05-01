@@ -16,25 +16,26 @@ class UsersController < ApplicationController
   # User profile view
   def show; end
 
-  # User profile edit form
-  def edit; end
+  # User profile edit form — unified on users#show (#contact)
+  def edit
+    redirect_to user_path(@user, anchor: "contact"), status: :see_other
+  end
 
-  # User profile update
+  # User profile update (postal / phone coordinates only; account email & prefs → Settings)
   def update
-    # Utiliser le service UserManagement::UserUpdater
     updater = UserManagement::UserUpdater.new(
       user_id: @user.id,
-      person_attributes: person_params,
+      person_attributes: coordinate_params,
       updated_by_id: @user.id
     )
 
     result = updater.call
 
     if result.success?
-      redirect_to @user, notice: t(".profile_updated")
+      redirect_to user_path(@user, anchor: "contact"), notice: t(".coordinates_updated")
     else
       flash.now[:alert] = result.message
-      render :edit, status: :unprocessable_content
+      render :show, status: :unprocessable_content
     end
   end
 
@@ -46,13 +47,13 @@ class UsersController < ApplicationController
       reset_session
       redirect_to root_path, notice: t(".deleted_notice")
     else
-      redirect_to edit_user_path(@user), alert: t(".destroy_failed_alert")
+      redirect_to user_path(@user, anchor: "account"), alert: t(".destroy_failed_alert")
     end
   end
 
   # Newsletter subscription management (legacy, redirect to settings)
   def change_newsletter_status
-    redirect_to settings_path, alert: t(".redirect_manage_in_settings_alert")
+      redirect_to user_path(Current.user, anchor: "account"), alert: t(".redirect_manage_in_settings_alert")
   end
 
   # Handle newsletter signup from footer
@@ -75,7 +76,7 @@ class UsersController < ApplicationController
 
     # If authenticated, redirect to settings (no form for connected users)
     if authenticated? && Current.user.present?
-      redirect_to settings_path, notice: t(".manage_newsletter_notice")
+      redirect_to user_path(Current.user, anchor: "account"), notice: t(".manage_newsletter_notice")
       return
     end
 
@@ -110,18 +111,10 @@ class UsersController < ApplicationController
     @user = Current.user
   end
 
-  # Permitted parameters for person data (migrated from user)
-  def person_params
+  # Postal / phone fields only (email & preference toggles use SettingsController)
+  def coordinate_params
     params.expect(
-      user: %i[phone
-               address
-               zip_code
-               town
-               country
-               image_rights
-               get_involved
-               newsletter_subscribed
-               dyslexic_font]
+      user: %i[phone address zip_code town country]
     )
   end
 end

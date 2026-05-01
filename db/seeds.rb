@@ -21,10 +21,10 @@ puts %(
 )
 puts "\nLe Circographe — initialisation des données de référence\n\n"
 
-# Nettoyage des données existantes (dans l'ordre des dépendances)
-puts "Nettoyage des données existantes..."
+# Nettoyage complet des données existantes (comportement volontaire de db:seed).
+puts "Nettoyage complet des données existantes..."
 [ PaymentLine, Payment, Attendance, Contribution, Membership,
-  Event, ContributionFormula, MembershipType, User, Person ].each do |model|
+  Event, ContributionFormula, MembershipType, Session, User, Person ].each do |model|
   count = model.count
   model.delete_all if count > 0
   puts "  - #{count} #{model.name.pluralize.downcase} supprimé(s)"

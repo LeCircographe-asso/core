@@ -33,7 +33,10 @@ module Authentication
   end
 
   def find_session_by_cookie
-    Session.find_by(id: cookies.signed[:session_id])
+    session_id = cookies.signed[:session_id]
+    return nil if session_id.blank?
+
+    Session.find_by(id: session_id)
   end
 
   def request_authentication
@@ -77,17 +80,19 @@ module Authentication
     path == "/session" || path == "/registration"
   end
 
+  # Même jeu d’options à la pose et à la suppression du cookie (évite un cookie « mort »).
+  SESSION_COOKIE_OPTS = { httponly: true, same_site: :lax, path: "/" }.freeze
+
   def start_new_session_for(user)
     user.sessions.create!(user_agent: request.user_agent, ip_address: request.remote_ip).tap do |session|
       Current.session = session
-      cookies.signed.permanent[:session_id] = { value: session.id, httponly: true, same_site: :lax }
+      cookies.signed.permanent[:session_id] = { value: session.id, **SESSION_COOKIE_OPTS }
     end
   end
 
   def terminate_session
-    Current.session.destroy
-    cookies.delete(:session_id)
-    # Révoque la délégation dev « connexion rapide » (voir Dev::QuickLoginController).
-    session.delete(Dev::QuickLoginController::GRANTER_SESSION_KEY)
+    Current.session&.destroy
+    Current.session = nil
+    cookies.delete(:session_id, **SESSION_COOKIE_OPTS)
   end
 end

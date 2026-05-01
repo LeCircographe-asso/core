@@ -1,10 +1,5 @@
 ---
 en:
-  dev:
-    quick_login:
-      forbidden: This page is restricted to super administrators (development only).
-      nav_link: Quick login (dev)
-      delegate_notice: You are browsing under a delegated dev session. You can open this page again to switch users until you sign out (which clears the delegation).
   flash:
     generic:
       error_detail: 'Error: %{message}'
@@ -17,6 +12,10 @@ en:
       rescue_alert: 'Error while claiming account: %{message}'
       success: "✅ Compte revendiqué ! Votre historique est maintenant disponible."
   admin:
+    base:
+      unauthorized_alert: You do not have access to this page.
+      sign_in_required_alert: Sign in with an authorized account to access the administration area.
+      staff_only_alert: Your account does not have administration access. Use an admin or super-admin account, or ask the team for access.
     memberships:
       create:
         upgrade_failed_alert: 'Error during upgrade: %{message}'
@@ -357,6 +356,7 @@ en:
     create:
       success_notice: Inscription réussie !
   sessions:
+    already_signed_in_notice: You are already signed in. Sign out first to switch accounts.
     new:
       sign_up_prompt: No account yet? Sign up
       registration_closed_hint: Online sign-up is unavailable for now. Sign in if you already have an account.
@@ -370,15 +370,62 @@ en:
     destroy:
       signed_out_notice: Déconnecté avec succès !
   settings:
+    nav:
+      breadcrumb_label: Breadcrumb
+      home: Home
+      profile: Profile
+      settings_current: Settings
+      back_to_profile: Back to profile
     update:
-      saved_notice: Vos modifications ont été enregistrées avec succès
-  users:
+      saved_notice: Your changes have been saved successfully.
     show:
-      shortcuts_title: Quick links
-      shortcut_home: Home
-      shortcut_edit_profile: Edit my profile
+      page_title: Account settings
+      lead: Sign-in email, preferences, and security.
+      membership_hint_html: Membership, contributions, and recent payments are summarized on your %{link}.
+      view_profile_link: profile page
+      section_account: Account
+      section_communication: Communication & involvement
+      section_display: Display
+      section_security: Security
+      section_danger: Sensitive actions
+      email_hint: Used to sign in and for venue emails (including password reset).
+      field_email: Email address
+      field_image_rights: Image rights consent
+      field_newsletter: Subscribe to the newsletter
+      field_get_involved: Get involved with the project
+      field_dyslexic_font: Use dyslexia-friendly font
+      submit: Save changes
+      password_reset_cta: Change password
+      password_reset_confirm: A reset email will be sent to %{email}. Continue?
+      destroy_account_cta: Delete my account
+      destroy_confirm: Are you sure you want to delete your account? This cannot be undone.
+      validation_errors_intro:
+        one: "%{count} error to fix:"
+        other: "%{count} errors to fix:"
+  users:
+    space:
+      page_title: My space
+      quick_hint: Update then save.
+      intro_title: Profile, membership & account
+      intro_lead: "Manage your profile, contact details, and account here."
+      nav_aria: Account sections
+      nav_overview: Summary
+      nav_contact: Contact details
+      nav_account: Account & security
+      nav_faq: FAQ
+      membership_card_settings_link: Account & preferences (section below)
+      contact_heading: Postal address & phone
+      contact_intro: "Used for mailings and billing."
+      account_heading: Account, preferences & security
+      field_phone: Phone
+      field_address: Address
+      field_zip: Postal code
+      field_town: City / town
+      field_country: Country
+      contact_submit: Save contact details
     update:
-      profile_updated: Votre profil a été mis à jour avec succès.
+      profile_updated: Your profile has been updated successfully.
+      coordinates_updated: Contact details saved.
     destroy:
       deleted_notice: Votre compte a été supprimé avec succès.
       destroy_failed_alert: Impossible de supprimer votre compte. Veuillez contacter l'assistance.

@@ -2,19 +2,18 @@
 
 class SettingsController < ApplicationController
   before_action :require_authentication
+
   def show
-    @user = current_user
+    redirect_to user_path(current_user, anchor: "account"), status: :see_other
   end
 
   def update
     @user = current_user
 
-    # Séparer les paramètres User des paramètres Person
     user_only_params = user_params.slice(:email_address)
     person_params = user_params.except(:email_address)
     newsletter_flag = person_params.delete(:newsletter_subscribed)
 
-    # Utiliser le service UserManagement::UserUpdater
     updater = UserManagement::UserUpdater.new(
       user_id: @user.id,
       email_address: user_only_params[:email_address],
@@ -27,7 +26,7 @@ class SettingsController < ApplicationController
 
     if result.success?
       flash[:notice] = t(".saved_notice")
-      redirect_to user_path(@user), status: :see_other
+      redirect_to user_path(@user, anchor: "account"), status: :see_other
     else
       flash.now[:alert] = result.message
       render :show, status: :unprocessable_content

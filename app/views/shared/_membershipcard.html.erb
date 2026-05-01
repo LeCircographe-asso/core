@@ -1,10 +1,12 @@
+<% show_account_settings_link = local_assigns.fetch(:show_account_settings_link, true) %>
+<% wrapper_classes = local_assigns.fetch(:wrapper_classes, "max-w-2xl mx-auto mb-12") %>
 <% person = @user.person %>
 <% current_membership = person&.current_membership %>
 <% recent_membership = person&.most_recent_membership %>
 <% membership_lapsed = person.present? && current_membership.blank? && recent_membership.present? %>
 <% show_contributions_block = current_membership.present? && (current_membership.basic? || current_membership.circus?) %>
 
-<div class="bg-white rounded-xl shadow-lg overflow-hidden max-w-2xl mx-auto mb-12 w-full px-0">
+<div class="bg-white rounded-xl shadow-lg overflow-hidden <%= wrapper_classes %> w-full px-0">
     <!-- Header with gradient -->
     <div class="relative w-full">
         <div class="h-24 w-full bg-gradient-to-r from-[#1F5C55] to-[#194A45] rounded-t-xl">
@@ -138,7 +140,10 @@
               <%= link_to "Espace administration", admin_root_path,
                   class: "block w-full text-center py-2 sm:py-2.5 px-3 sm:px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-800 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1F5C55]" %>
             <% end %>
-            <%= link_to "Paramètres du compte et notifications", settings_path, class: "block w-full text-center py-2 sm:py-2.5 px-3 sm:px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500" %>
+            <% if show_account_settings_link %>
+              <%= link_to t("users.space.membership_card_settings_link"), "#{user_path(@user)}#account",
+                  class: "block w-full text-center py-2 sm:py-2.5 px-3 sm:px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1F5C55]" %>
+            <% end %>
             <% end %>
         </div>
     </div>

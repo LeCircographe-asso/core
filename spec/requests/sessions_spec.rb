@@ -26,6 +26,21 @@ RSpec.describe 'Sessions', type: :request do
   describe 'POST /sessions' do
     let(:user) { create(:user, password: 'password123') }
 
+    context 'when already authenticated' do
+      before { login_as(user) }
+
+      it 'redirects to root without treating as failed login' do
+        post session_path, params: {
+          email_address: 'other@example.com',
+          password: 'wrongpassword'
+        }
+
+        expect(response).to redirect_to(root_path)
+        follow_redirect!
+        expect(response.body).to include(I18n.t('sessions.already_signed_in_notice'))
+      end
+    end
+
     context 'with valid credentials' do
       it 'creates a session' do
         expect do
