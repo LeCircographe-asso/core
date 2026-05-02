@@ -31,7 +31,7 @@
         
         <div>
           <span class="text-sm font-medium text-gray-500">Type de plan</span>
-          <p class="mt-1">
+          <p class="mt-1 flex items-center gap-2">
             <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
               <%= case @contribution_formula.duration
                   when 'day' then 'bg-blue-100 text-blue-800'
@@ -41,6 +41,9 @@
                   else 'bg-gray-100 text-gray-800'
                   end %>">
               <%= @contribution_formula.duration.humanize %>
+            </span>
+            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium <%= @contribution_formula.rate_kind_badge_class %>">
+              <%= @contribution_formula.rate_kind_humanized %>
             </span>
           </p>
         </div>

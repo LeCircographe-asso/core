@@ -125,4 +125,51 @@ RSpec.describe "Admin::ContributionFormulas", type: :request do
       expect(payment.payment_lines.sole.amount_cents).to eq(0)
     end
   end
+
+  describe "GET /admin/contribution_formulas/:id/edit" do
+    let(:super_admin) { create(:user, :super_admin) }
+
+    before { login_as(super_admin) }
+
+    it "renders the rate_kind choices in the admin form" do
+      get edit_admin_contribution_formula_path(formula)
+
+      expect(response).to have_http_status(:success)
+      expect(response.body).to include("Tarif standard")
+      expect(response.body).to include("Tarif réduit")
+    end
+  end
+
+  describe "GET /admin/contribution_formulas/:id" do
+    it "shows the rate_kind badge in the catalog details" do
+      get admin_contribution_formula_path(formula)
+
+      expect(response).to have_http_status(:success)
+      expect(response.body).to include("Tarif standard")
+    end
+  end
+
+  describe "PATCH /admin/contribution_formulas/:id" do
+    let(:super_admin) { create(:user, :super_admin) }
+
+    before { login_as(super_admin) }
+
+    it "persists the selected rate_kind" do
+      patch admin_contribution_formula_path(formula), params: {
+        contribution_formula: {
+          name: formula.name,
+          duration: formula.duration,
+          rate_kind: "reduced",
+          price_cents: formula.price_cents,
+          description: formula.description,
+          membership_type_id: formula.membership_type_id,
+          sessions_count: formula.sessions_count,
+          validity_days: formula.validity_days
+        }
+      }
+
+      expect(response).to redirect_to(admin_contribution_formulas_path)
+      expect(formula.reload.rate_kind).to eq("reduced")
+    end
+  end
 end

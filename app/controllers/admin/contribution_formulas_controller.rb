@@ -106,7 +106,7 @@ module Admin
     end
 
     def contribution_formula_params
-      params.expect(contribution_formula: %i[name duration price_cents description membership_type_id sessions_count validity_days])
+      params.expect(contribution_formula: %i[name duration rate_kind price_cents description membership_type_id sessions_count validity_days])
     end
 
     def contribution_purchase_params

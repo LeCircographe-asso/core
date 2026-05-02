@@ -73,6 +73,15 @@
           </div>
 
           <div>
+            <%= form.label :rate_kind, "Type tarifaire", class: "block text-sm font-medium text-gray-700" %>
+            <%= form.select :rate_kind,
+                options_for_select(ContributionFormula.rate_kind_options, @contribution_formula.rate_kind),
+                {},
+                { class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#1F5C55] focus:ring-[#1F5C55] sm:text-sm" } %>
+            <p class="mt-1 text-sm text-gray-500">Doit rester cohérent avec le type d'adhésion requis pour éviter les écarts de catalogue.</p>
+          </div>
+
+          <div>
             <%= form.label :price_cents, "Prix (en centimes)", class: "block text-sm font-medium text-gray-700" %>
             <%= form.number_field :price_cents, 
                 class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#1F5C55] focus:ring-[#1F5C55] sm:text-sm" %>
