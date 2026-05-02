@@ -22,7 +22,7 @@ module Admin
 
       unless @person&.can_buy_contribution_formulas?
         flash[:alert] = t(".needs_circus_membership_alert")
-        redirect_to admin_users_path
+        redirect_to admin_person_path(@person)
         return
       end
 
@@ -98,7 +98,11 @@ module Admin
 
     def set_breadcrumbs
       add_breadcrumb I18n.t("breadcrumbs.admin.common.administration"), admin_dashboard_index_path
-      add_breadcrumb I18n.t("breadcrumbs.admin.contribution_formulas.plans"), admin_contribution_formulas_path
+      if @person.present?
+        add_person_context_breadcrumbs(@person, I18n.t("breadcrumbs.admin.contribution_formulas.new_contribution"))
+      else
+        add_breadcrumb I18n.t("breadcrumbs.admin.contribution_formulas.plans"), admin_contribution_formulas_path
+      end
     end
 
     def contribution_formula_params

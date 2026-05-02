@@ -1,13 +1,81 @@
 # frozen_string_literal: true
 
 require "rails_helper"
+require "cgi"
 
 RSpec.describe "Admin::ContributionFormulas", type: :request do
   let(:admin) { create(:user, :admin) }
   let(:person) { create(:person, :with_circus_membership) }
-  let(:formula) { create(:contribution_formula, :pack10, price_cents: 2_500) }
+  let(:formula) { create(:contribution_formula, :pack10, membership_type: person.current_membership.membership_type, price_cents: 2_500) }
 
   before { login_as(admin) }
+
+  describe "GET /admin/contribution_formulas/new" do
+    before { formula }
+
+    it "keeps the person context in breadcrumbs and return link" do
+      get new_admin_contribution_formula_path(person_id: person.id)
+
+      expect(response).to have_http_status(:success)
+      expect(response.body).to include(person.full_name)
+      expect(response.body).to include(admin_user_path("person_#{person.id}"))
+    end
+
+    it "renders a single purchase form for all available formulas" do
+      create(:contribution_formula, :annual, membership_type: person.current_membership.membership_type)
+
+      get new_admin_contribution_formula_path(person_id: person.id)
+
+      document = Nokogiri::HTML.parse(response.body)
+      forms = document.css("form[action='#{admin_contribution_formulas_path}']")
+      formula_inputs = document.css("input[type='radio'][name='contribution_formula[contribution_formula_id]']")
+
+      expect(forms.count).to eq(1)
+      expect(formula_inputs.count).to eq(2)
+    end
+
+    it "renders a compact checkout block with business constraint" do
+      get new_admin_contribution_formula_path(person_id: person.id)
+
+      expect(response.body).to include("Paiement")
+      expect(response.body).not_to include("Résumé")
+      expect(response.body).to include("10 séances à utiliser sous 365 jours")
+    end
+
+    it "shows the person's current membership and active contributions" do
+      create(
+        :contribution,
+        person: person,
+        contribution_formula: formula,
+        sessions_remaining: 4,
+        status: :active
+      )
+
+      get new_admin_contribution_formula_path(person_id: person.id)
+
+      expect(response.body).to include("Adhésion")
+      expect(response.body).to include(person.current_membership.membership_type.name)
+      expect(response.body).to include("Cotisations en cours")
+      expect(response.body).to include("Carnet 10 disponible : 4 séances restantes")
+    end
+
+    it "warns when a day pass is already active today" do
+      day_formula = create(:contribution_formula, :day, membership_type: person.current_membership.membership_type)
+      create(
+        :contribution,
+        person: person,
+        contribution_formula: day_formula,
+        purchased_at: Time.current,
+        expires_at: Time.current.end_of_day,
+        sessions_remaining: 1,
+        status: :active
+      )
+
+      get new_admin_contribution_formula_path(person_id: person.id)
+
+      expect(CGI.unescapeHTML(response.body)).to include("Déjà une journée active aujourd'hui")
+    end
+  end
 
   describe "POST /admin/contribution_formulas" do
     it "creates a contribution payment with contribution and donation lines" do
