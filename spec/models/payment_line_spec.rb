@@ -5,22 +5,22 @@ require 'rails_helper'
 RSpec.describe PaymentLine, type: :model do
   describe 'validations' do
     it 'can be created' do
-      payment = create(:payment)
-      membership = create(:membership)
-      payment_line = PaymentLine.new(payment: payment, item: membership, amount_cents: 1500)
+      payment = build_stubbed(:payment)
+      membership_type = build_stubbed(:membership_type)
+      payment_line = PaymentLine.new(payment: payment, item: membership_type, amount_cents: 1500)
       expect(payment_line).to be_present
     end
 
     it 'requires a payment' do
-      membership = create(:membership)
-      payment_line = PaymentLine.new(item: membership, amount_cents: 1500)
+      membership_type = build_stubbed(:membership_type)
+      payment_line = PaymentLine.new(item: membership_type, amount_cents: 1500)
       expect(payment_line).not_to be_valid
       expect(payment_line.errors[:payment]).to include(I18n.t('errors.messages.required'))
     end
 
     it 'does not require a backing item record (polymorphic optional)' do
       # Donation lines reference their parent payment id without a Donation model.
-      payment = create(:payment)
+      payment = build_stubbed(:payment)
       payment_line = PaymentLine.new(
         payment: payment,
         item_type: 'Donation',
@@ -32,33 +32,33 @@ RSpec.describe PaymentLine, type: :model do
     end
 
     it 'requires amount_cents' do
-      payment = create(:payment)
-      membership = create(:membership)
-      payment_line = PaymentLine.new(payment: payment, item: membership)
+      payment = build_stubbed(:payment)
+      membership_type = build_stubbed(:membership_type)
+      payment_line = PaymentLine.new(payment: payment, item: membership_type)
       expect(payment_line).not_to be_valid
       expect(payment_line.errors[:amount_cents]).to include(I18n.t('errors.messages.blank'))
     end
 
     it 'allows amount_cents to be 0 (for free/offered items)' do
-      payment = create(:payment)
-      membership = create(:membership)
-      payment_line = PaymentLine.new(payment: payment, item: membership, amount_cents: 0)
+      payment = build_stubbed(:payment)
+      membership_type = build_stubbed(:membership_type)
+      payment_line = PaymentLine.new(payment: payment, item: membership_type, amount_cents: 0)
       expect(payment_line).to be_valid
     end
 
     it 'requires item_type' do
-      payment = create(:payment)
-      membership = create(:membership)
-      payment_line = PaymentLine.new(payment: payment, item: membership, amount_cents: 1500)
+      payment = build_stubbed(:payment)
+      membership_type = build_stubbed(:membership_type)
+      payment_line = PaymentLine.new(payment: payment, item: membership_type, amount_cents: 1500)
       payment_line.item_type = nil
       expect(payment_line).not_to be_valid
       expect(payment_line.errors[:item_type]).to include(I18n.t('errors.messages.blank'))
     end
 
     it 'requires item_id' do
-      payment = create(:payment)
-      membership = create(:membership)
-      payment_line = PaymentLine.new(payment: payment, item: membership, amount_cents: 1500)
+      payment = build_stubbed(:payment)
+      membership_type = build_stubbed(:membership_type)
+      payment_line = PaymentLine.new(payment: payment, item: membership_type, amount_cents: 1500)
       payment_line.item_id = nil
       expect(payment_line).not_to be_valid
       expect(payment_line.errors[:item_id]).to include(I18n.t('errors.messages.blank'))
@@ -66,16 +66,16 @@ RSpec.describe PaymentLine, type: :model do
 
     it 'validates uniqueness of payment_id scoped to item_type and item_id' do
       payment = create(:payment)
-      membership = create(:membership)
-      create(:payment_line, payment: payment, item: membership, amount_cents: 1500)
+      membership_type = create(:membership_type)
+      create(:payment_line, payment: payment, item: membership_type, amount_cents: 1500)
 
-      duplicate_line = PaymentLine.new(payment: payment, item: membership, amount_cents: 2000)
+      duplicate_line = PaymentLine.new(payment: payment, item: membership_type, amount_cents: 2000)
       expect(duplicate_line).not_to be_valid
       expect(duplicate_line.errors[:payment_id]).to include(I18n.t('errors.messages.taken'))
     end
 
     it "rejects legacy item_type 'Payment' for donations" do
-      payment = create(:payment)
+      payment = build_stubbed(:payment)
       payment_line = PaymentLine.new(
         payment: payment,
         item_type: 'Payment',
@@ -89,7 +89,7 @@ RSpec.describe PaymentLine, type: :model do
     end
 
     it 'accepts the canonical Donation item_type' do
-      payment = create(:payment)
+      payment = build_stubbed(:payment)
       payment_line = PaymentLine.new(
         payment: payment,
         item_type: 'Donation',
@@ -102,37 +102,38 @@ RSpec.describe PaymentLine, type: :model do
 
   describe 'associations' do
     it 'belongs to a payment' do
-      payment = create(:payment)
-      payment_line = create(:payment_line, payment: payment)
+      payment = build_stubbed(:payment)
+      payment_line = described_class.new(payment: payment, item: build_stubbed(:membership_type), amount_cents: 2500)
       expect(payment_line.payment).to eq(payment)
     end
 
     it 'belongs to a polymorphic item (membership)' do
-      membership = create(:membership)
-      payment_line = create(:payment_line, item: membership)
+      membership = build_stubbed(:membership)
+      payment_line = described_class.new(payment: build_stubbed(:payment), item: membership, amount_cents: 2500)
       expect(payment_line.item).to eq(membership)
       expect(payment_line.item_type).to eq('Membership')
     end
 
     it 'belongs to a polymorphic item (contribution_formula)' do
-      contribution_formula = create(:contribution_formula)
-      payment_line = create(:payment_line, item: contribution_formula)
+      contribution_formula = build_stubbed(:contribution_formula)
+      payment_line = described_class.new(payment: build_stubbed(:payment), item: contribution_formula, amount_cents: 2500)
       expect(payment_line.item).to eq(contribution_formula)
       expect(payment_line.item_type).to eq('ContributionFormula')
     end
 
     it 'belongs to a polymorphic item (membership_type)' do
-      membership_type = create(:membership_type)
-      payment_line = create(:payment_line, item: membership_type)
+      membership_type = build_stubbed(:membership_type)
+      payment_line = described_class.new(payment: build_stubbed(:payment), item: membership_type, amount_cents: 2500)
       expect(payment_line.item).to eq(membership_type)
       expect(payment_line.item_type).to eq('MembershipType')
     end
   end
 
   describe 'scopes' do
-    let!(:membership_line) { create(:payment_line, item: create(:membership), item_type: 'Membership') }
-    let!(:contribution_formula_line) { create(:payment_line, item: create(:contribution_formula), item_type: 'ContributionFormula') }
-    let!(:membership_type_line) { create(:payment_line, item: create(:membership_type), item_type: 'MembershipType') }
+    let!(:payment) { create(:payment) }
+    let!(:membership_line) { create(:payment_line, payment: payment, item: create(:membership, person: payment.person), item_type: 'Membership') }
+    let!(:contribution_formula_line) { create(:payment_line, payment: payment, item: create(:contribution_formula), item_type: 'ContributionFormula') }
+    let!(:membership_type_line) { create(:payment_line, payment: payment, item: create(:membership_type), item_type: 'MembershipType') }
 
     it 'finds membership lines' do
       expect(PaymentLine.memberships).to include(membership_line)
@@ -159,29 +160,28 @@ RSpec.describe PaymentLine, type: :model do
   describe '#item_description' do
     it 'returns description for membership' do
       membership_type = create(:membership_type, name: 'Adhésion Basique')
-      membership = create(:membership, membership_type: membership_type)
-      payment_line = create(:payment_line, item: membership)
+      membership = build_stubbed(:membership, membership_type: membership_type)
+      payment_line = described_class.new(item: membership, item_type: 'Membership', description: nil)
 
       expect(payment_line.item_description).to eq('Adhésion Basique')
     end
 
     it 'returns description for contribution_formula' do
-      contribution_formula = create(:contribution_formula, name: 'Plan Trimestriel', duration: 'trimester')
-      payment_line = create(:payment_line, item: contribution_formula)
+      contribution_formula = build_stubbed(:contribution_formula, name: 'Plan Trimestriel', duration: 'trimester')
+      payment_line = described_class.new(item: contribution_formula, item_type: 'ContributionFormula')
 
       expect(payment_line.item_description).to eq('Trimestriel') # duration_humanized
     end
 
     it 'returns description for membership_type' do
-      membership_type = create(:membership_type, name: 'Adhésion Cirque')
-      payment_line = create(:payment_line, item: membership_type)
+      membership_type = build_stubbed(:membership_type, name: 'Adhésion Cirque')
+      payment_line = described_class.new(item: membership_type, item_type: 'MembershipType')
 
       expect(payment_line.item_description).to eq('Adhésion Cirque')
     end
 
     it 'returns humanized item_type for unknown types' do
-      payment_line = create(:payment_line)
-      payment_line.item_type = 'UnknownType'
+      payment_line = described_class.new(item_type: 'UnknownType')
 
       expect(payment_line.item_description).to eq('Unknowntype')
     end
