@@ -3,6 +3,7 @@
 FactoryBot.define do
   factory :contribution_formula do
     association :membership_type
+    rate_kind { "standard" }
     sequence(:name) { |n| "Test Plan #{n}" }
     duration { :day }
     price_cents { 800 }

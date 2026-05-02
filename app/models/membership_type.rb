@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 class MembershipType < ApplicationRecord
+  include RateKindable
   include Priceable
   include Humanizable
   include Versionable
@@ -77,11 +78,16 @@ class MembershipType < ApplicationRecord
   scope :effective_on, ->(date) { where("effective_from <= ? AND (effective_until IS NULL OR effective_until >= ?)", date, date) }
   scope :price_history, -> { order(:effective_from, :version) }
 
+  def self.available_for(person)
+    current_versions.for_rate_kinds(person.allowed_rate_kinds)
+  end
+
   # Méthodes de classe pour créer les types par défaut
   def self.create_default_types!
     find_or_create_by(name: "Adhésion Basique", version: 1) do |mt|
       mt.category = :basic
       mt.price_cents = 1500 # 15€
+      mt.rate_kind = "standard"
       mt.description = "Adhésion de base à l'association"
       mt.effective_from = Date.current
     end
@@ -89,6 +95,7 @@ class MembershipType < ApplicationRecord
     find_or_create_by(name: "Adhésion Cirque Complète", version: 1) do |mt|
       mt.category = :circus
       mt.price_cents = 2500 # 25€
+      mt.rate_kind = "standard"
       mt.description = "Adhésion complète avec accès aux cours de cirque"
       mt.effective_from = Date.current
     end
@@ -96,6 +103,7 @@ class MembershipType < ApplicationRecord
     find_or_create_by(name: "Adhésion Cirque Réduite", version: 1) do |mt|
       mt.category = :circus
       mt.price_cents = 2000 # 20€
+      mt.rate_kind = "reduced"
       mt.description = "Adhésion cirque à tarif réduit (étudiants, chômeurs, etc.)"
       mt.effective_from = Date.current
     end

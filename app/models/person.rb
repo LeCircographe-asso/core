@@ -122,6 +122,16 @@ class Person < ApplicationRecord
     !is_minor
   end
 
+  def allows_rate_kind?(rate_kind)
+    allowed_rate_kinds.include?(rate_kind.to_s.presence || "standard")
+  end
+
+  def allowed_rate_kinds
+    kinds = [ "standard" ]
+    kinds << "reduced" if reduced_rate_eligible?
+    kinds
+  end
+
   scope :with_user_account, -> { joins(:user) }
   scope :without_user_account, -> { where.missing(:user) }
   scope :by_name, lambda { |query|

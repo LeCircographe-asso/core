@@ -55,6 +55,13 @@ RSpec.describe MembershipType, type: :model do
       expect(membership_type.errors[:effective_from]).to include(I18n.t('errors.messages.blank'))
     end
 
+    it 'requires a valid rate_kind' do
+      membership_type = build(:membership_type, rate_kind: "vip")
+
+      expect(membership_type).not_to be_valid
+      expect(membership_type.errors[:rate_kind]).to include(I18n.t('errors.messages.inclusion'))
+    end
+
     it 'validates name uniqueness scoped to version' do
       create(:membership_type, name: 'Test Type', version: 1)
 
@@ -198,6 +205,46 @@ RSpec.describe MembershipType, type: :model do
     it 'returns false for event category' do
       membership_type = create(:membership_type, category: :event)
       expect(membership_type.basic?).to be false
+    end
+  end
+
+  describe '#available_for?' do
+    let(:standard_type) { build(:membership_type, :circus, rate_kind: "standard") }
+    let(:reduced_type) { build(:membership_type, :circus, rate_kind: "reduced") }
+    let(:person) { build(:person, reduced_rate_eligible: false) }
+
+    it 'allows standard rates for everyone' do
+      expect(standard_type.available_for?(person)).to be(true)
+    end
+
+    it 'hides reduced rates when the person is not eligible' do
+      expect(reduced_type.available_for?(person)).to be(false)
+    end
+
+    it 'allows reduced rates when the person is eligible' do
+      person.reduced_rate_eligible = true
+      person.reduced_rate_reason = "Étudiant"
+
+      expect(reduced_type.available_for?(person)).to be(true)
+    end
+  end
+
+  describe '.available_for' do
+    let(:person) { create(:person) }
+    let!(:standard_type) { create(:membership_type, :circus, rate_kind: "standard", effective_until: nil) }
+    let!(:reduced_type) { create(:membership_type, :circus_reduced, rate_kind: "reduced", effective_until: nil) }
+    let!(:expired_reduced_type) { create(:membership_type, :circus_reduced, rate_kind: "reduced", effective_until: Date.current - 1.day) }
+
+    it 'returns current standard rates for everyone' do
+      expect(described_class.available_for(person)).to include(standard_type)
+      expect(described_class.available_for(person)).not_to include(reduced_type, expired_reduced_type)
+    end
+
+    it 'returns current reduced rates only for eligible people' do
+      person.update!(reduced_rate_eligible: true, reduced_rate_reason: "Étudiant")
+
+      expect(described_class.available_for(person)).to include(standard_type, reduced_type)
+      expect(described_class.available_for(person)).not_to include(expired_reduced_type)
     end
   end
 

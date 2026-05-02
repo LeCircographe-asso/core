@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 class ContributionFormula < ApplicationRecord
+  include RateKindable
   include Priceable
   include Humanizable
   include Versionable
@@ -110,7 +111,10 @@ class ContributionFormula < ApplicationRecord
   def self.available_for(person)
     return none unless person&.current_membership&.membership_type&.circus?
 
-    for_circus_members.current_versions.order(:duration, :price_cents)
+    for_circus_members
+      .current_versions
+      .for_rate_kinds(person.allowed_rate_kinds)
+      .order(:duration, :price_cents)
   end
 
   def self.create_default_plans!
@@ -120,6 +124,7 @@ class ContributionFormula < ApplicationRecord
       find_or_create_by(name: "Journée - #{membership_type.name}", version: 1) do |sp|
         sp.membership_type = membership_type
         sp.duration = :day
+        sp.rate_kind = membership_type.rate_kind
         sp.price_cents = 800
         sp.description = "Accès aux cours pour une journée"
         sp.version = 1
@@ -129,6 +134,7 @@ class ContributionFormula < ApplicationRecord
       find_or_create_by(name: "Trimestre - #{membership_type.name}", version: 1) do |sp|
         sp.membership_type = membership_type
         sp.duration = :trimester
+        sp.rate_kind = membership_type.rate_kind
         sp.price_cents = 6000
         sp.description = "Accès aux cours pendant 3 mois"
         sp.version = 1
@@ -138,6 +144,7 @@ class ContributionFormula < ApplicationRecord
       find_or_create_by(name: "Annuel - #{membership_type.name}", version: 1) do |sp|
         sp.membership_type = membership_type
         sp.duration = :annual
+        sp.rate_kind = membership_type.rate_kind
         sp.price_cents = 20_000
         sp.description = "Accès aux cours pendant 1 an"
         sp.version = 1
@@ -147,6 +154,7 @@ class ContributionFormula < ApplicationRecord
       find_or_create_by(name: "Pack 10 séances - #{membership_type.name}", version: 1) do |sp|
         sp.membership_type = membership_type
         sp.duration = :pack10
+        sp.rate_kind = membership_type.rate_kind
         sp.price_cents = 7000
         sp.sessions_count = 10
         sp.validity_days = 365
