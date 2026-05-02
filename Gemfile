@@ -57,6 +57,7 @@ group :development, :test do
 
   # RSpec testing framework - ESSENTIELS
   gem "factory_bot_rails"
+  gem "guard-rspec", require: false
   gem "rspec-rails", "~> 8.0.2"
   gem "shoulda-matchers" # Pour tester les validations Rails
   # gem "database_cleaner-active_record"  # Nettoyage de DB entre tests
