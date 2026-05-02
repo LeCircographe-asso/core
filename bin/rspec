@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+APP_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+cd "$APP_ROOT"
+
+LOCK_DIR="$APP_ROOT/tmp/locks"
+LOCK_FILE="$LOCK_DIR/rspec.sqlite.lock"
+
+mkdir -p "$LOCK_DIR"
+
+if ! command -v flock > /dev/null 2>&1; then
+  exec bundle exec rspec "$@"
+fi
+
+if ! flock -n "$LOCK_FILE" true; then
+  echo "⏳ SQLite test DB busy: waiting for the current RSpec process to finish..."
+  echo "   Inspect running test processes with: ps -ef | rg 'bin/test|bin/rspec|guard|rspec'"
+fi
+
+exec flock "$LOCK_FILE" bundle exec rspec "$@"

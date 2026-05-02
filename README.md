@@ -41,12 +41,16 @@ Le projet utilise **RSpec uniquement**. Le legacy Minitest (`test/`) a ete retir
 La stack d'authentification reste **native Rails 8** (pas Devise).
 
 ```bash
+bin/rspec spec/services     # RSpec sérialisé pour SQLite
 bin/test                # suite complète + couverture
 bin/test_fast           # models + services (rapide)
 bin/test --no-coverage  # sans SimpleCov
-bundle exec rspec       # commande RSpec canonique
+bin/test_watch          # watch mode via Guard
 bundle exec rubocop --force-exclusion
 ```
+
+Avec SQLite, n'exécutez pas plusieurs processus RSpec en parallèle sur la même base `tmp/test.sqlite3`.
+Utilisez `bin/rspec`, `bin/test`, `bin/test_fast` et `bin/test_watch` : ils sérialisent l'accès via un lockfile.
 
 ---
 
