@@ -1,4 +1,4 @@
-<% content_for :title, "Détails de la liste de présence" %>
+<% content_for :title, "Registre de présence" %>
 
 <div class="min-h-screen py-6">
   <div class="max-w-7xl mx-auto px-4 sm:px-6">
@@ -11,14 +11,14 @@
         <h1 class="text-2xl font-bold text-gray-900"><%= @attendance_list.name %></h1>
         <div class="flex space-x-2">
           <%= link_to edit_admin_attendance_list_path(@attendance_list), class: "px-4 py-2 bg-[#1F5C55] hover:bg-[#194A45] text-white text-sm font-medium rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1F5C55] flex items-center" do %>
-            <i class="fas fa-edit mr-2"></i> Modifier la liste
+            <i class="fas fa-edit mr-2"></i> Modifier le registre
           <% end %>
           <%= link_to new_admin_attendance_list_attendance_path(@attendance_list), class: "px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 flex items-center" do %>
             <i class="fas fa-user-plus mr-2"></i> Ajouter un participant
           <% end %>
         </div>
       </div>
-      <p class="mt-2 text-sm text-gray-500">Consultez les détails et les participants de cette liste de présence</p>
+      <p class="mt-2 text-sm text-gray-500">Consultez les détails et les présences enregistrées pour ce jour</p>
     </div>
     
     <!-- List details card -->
@@ -181,4 +181,4 @@
       </div>
     </div>
   </div>
-</div> 
+</div>

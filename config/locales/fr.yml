@@ -476,8 +476,8 @@ fr:
         new_type: Nouveau type d'adhésion
         edit_named: 'Modifier : %{name}'
       attendance_lists:
-        lists: Listes de présence
-        new_list: Nouvelle liste
+        lists: Registre de présence
+        new_list: Nouveau registre
       health_reports:
         integrity_report: Rapport d'intégrité
   helpers:
