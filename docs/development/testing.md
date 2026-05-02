@@ -76,6 +76,7 @@ end
 
 - `spec/spec_helper.rb` — config RSpec + activation SimpleCov, groupes (Models, Controllers, Services, Helpers, Jobs, Mailers).
 - `spec/rails_helper.rb` — config Rails + Shoulda Matchers.
+- `bin/rspec` — wrapper RSpec sérialisé pour SQLite via `flock`.
 
 ### Seuil de couverture
 
@@ -205,6 +206,28 @@ Les contrôleurs admin simplifiés se testent comme des flows intégrés :
 2. Fixer (Green).
 3. Refactor.
 4. Commit.
+
+### SQLite et concurrence
+
+Avec SQLite, un seul writer peut modifier `tmp/test.sqlite3` à la fois. Deux processus RSpec parallèles provoquent des erreurs de type `SQLite3::BusyException: database is locked`.
+
+Bon usage :
+
+```bash
+bin/rspec spec/models/payment_line_spec.rb
+bin/test
+bin/test_fast
+bin/test_watch
+```
+
+Éviter :
+
+```bash
+bundle exec rspec ...
+bundle exec guard
+```
+
+en parallèle d'une autre suite de tests, car cela contourne le lockfile projet.
 
 ### Nouvelle règle métier
 
