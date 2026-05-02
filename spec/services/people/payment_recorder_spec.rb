@@ -64,6 +64,41 @@ RSpec.describe People::PaymentRecorder do
       expect(line.item_id).to eq(result.payment.id)
     end
 
+    it "falls back to Current.user when recorded_by is omitted" do
+      Current.session = admin_user.sessions.create!(user_agent: "RSpec", ip_address: "127.0.0.1")
+
+      result = described_class.new(
+        person: person,
+        payment_method: "cash",
+        total_cents: 700,
+        payment_lines: [
+          { item_type: "Donation", amount_cents: 700, description: "Donation" }
+        ]
+      ).call
+
+      expect(result.success?).to be(true)
+      expect(result.payment.recorded_by).to eq(admin_user)
+    ensure
+      Current.session&.destroy
+      Current.session = nil
+    end
+
+    it "strips the offer reason before persisting an offered payment" do
+      result = described_class.new(
+        person: person,
+        recorded_by: admin_user,
+        payment_method: "offered",
+        total_cents: 0,
+        offer_reason: "  Solidarity for volunteer work  ",
+        payment_lines: [
+          { item_type: "Donation", amount_cents: 0, description: "Offert" }
+        ]
+      ).call
+
+      expect(result.success?).to be(true)
+      expect(result.payment.offer_reason).to eq("Solidarity for volunteer work")
+    end
+
     it "rejects an offered payment without an offer reason" do
       result = described_class.new(
         person: person,
