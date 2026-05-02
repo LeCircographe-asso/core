@@ -24,4 +24,4 @@ jobs:
           ruby-version: "4.0.1"
           bundler-cache: true
       - name: Run RuboCop
-        run: bundle exec rubocop --format github --force-exclusion
+        run: bin/rubocop --format github --force-exclusion
