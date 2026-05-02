@@ -35,6 +35,9 @@
                         end %>">
                     <%= membership_type.category_humanized %>
                   </span>
+                  <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium <%= membership_type.rate_kind_badge_class %>">
+                    <%= membership_type.rate_kind_humanized %>
+                  </span>
                   <span class="text-sm text-gray-500">
                     <%= membership_type.memberships.count %> membres
                   </span>
@@ -119,6 +122,9 @@
                         else 'bg-gray-100 text-gray-800'
                         end %>">
                     <%= membership_type.category_humanized %>
+                  </span>
+                  <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium <%= membership_type.rate_kind_badge_class %>">
+                    <%= membership_type.rate_kind_humanized %>
                   </span>
                   <span class="text-sm text-gray-500">
                     <%= membership_type.memberships.count %> membres

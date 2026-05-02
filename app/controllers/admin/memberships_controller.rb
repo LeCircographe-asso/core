@@ -23,7 +23,7 @@ module Admin
       @person = Person.find(params[:person_id]) if params[:person_id]
 
       if params[:upgrade] == "true" && @person&.current_membership&.basic?
-        @membership_types = available_upgrade_membership_types(@person)
+        @membership_types = MembershipType.circus_types.available_for(@person).order(:price_cents)
         @is_upgrade = true
         @current_membership = @person.current_membership
         add_person_context_breadcrumbs(@person, I18n.t("breadcrumbs.admin.memberships.upgrade_to_circus"))
@@ -196,18 +196,6 @@ module Admin
       end
 
       message
-    end
-
-    def available_upgrade_membership_types(person)
-      scope = MembershipType.circus_types.current_versions.order(:price_cents)
-      return scope if person.reduced_rate_eligible?
-
-      scope.reject { |membership_type| reduced_membership_type?(membership_type) }
-    end
-
-    def reduced_membership_type?(membership_type)
-      normalized_name = I18n.transliterate(membership_type.name.to_s).downcase
-      normalized_name.include?("reduit") || normalized_name.include?("tarif reduit")
     end
   end
 end

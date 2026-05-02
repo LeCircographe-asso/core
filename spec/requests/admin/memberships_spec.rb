@@ -63,8 +63,9 @@ RSpec.describe 'Admin::Memberships', type: :request do
 
       context 'for upgrade' do
         let(:basic_type) { create(:membership_type, category: :basic) }
-        let(:circus_type) { create(:membership_type, :circus, name: 'Adhésion Cirque Complète') }
-        let(:circus_reduced_type) { create(:membership_type, :circus_reduced, name: 'Adhésion Cirque Réduite') }
+        let(:circus_type) { create(:membership_type, :circus, name: 'Adhésion Cirque Complète', rate_kind: "standard") }
+        let(:circus_reduced_type) { create(:membership_type, :circus_reduced, name: 'Adhésion Cirque Solidaire', rate_kind: "reduced") }
+        let(:misleading_standard_type) { create(:membership_type, :circus, name: 'Adhésion Cirque Réduite de Test', rate_kind: "standard") }
         let!(:basic_membership) { create(:membership, person: person, membership_type: basic_type, status: :active) }
 
         it 'shows only circus types for upgrade' do
@@ -82,23 +83,27 @@ RSpec.describe 'Admin::Memberships', type: :request do
         it 'hides reduced circus memberships when the person is not reduced-rate eligible' do
           circus_type
           circus_reduced_type
+          misleading_standard_type
 
           get new_admin_membership_path(person_id: person.id, upgrade: 'true')
 
           expect(response.body).to include("Adhésion Cirque Complète")
-          expect(response.body).not_to include("Adhésion Cirque Réduite")
+          expect(response.body).to include("Adhésion Cirque Réduite de Test")
+          expect(response.body).not_to include("Adhésion Cirque Solidaire")
         end
 
         it 'shows reduced circus memberships when the person is reduced-rate eligible' do
           person.update!(reduced_rate_eligible: true, reduced_rate_reason: "Étudiant")
           circus_type
           circus_reduced_type
+          misleading_standard_type
 
           get new_admin_membership_path(person_id: person.id, upgrade: 'true')
 
           expect(response.body).to include("Tarif réduit éligible")
           expect(response.body).to include("Étudiant")
-          expect(response.body).to include("Adhésion Cirque Réduite")
+          expect(response.body).to include("Adhésion Cirque Solidaire")
+          expect(response.body).to include("Adhésion Cirque Réduite de Test")
         end
       end
     end
