@@ -74,6 +74,7 @@ db/schema_clean.rb
 
 # CI / linter outputs (never commit these)
 rspec.xml
+spec/examples.txt
 rubocop.json
 identifier.sqlite
 
