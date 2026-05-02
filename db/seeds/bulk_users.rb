@@ -1,5 +1,12 @@
-# Seed pour créer 75 utilisateurs supplémentaires pour les tests
-puts "\n🎭 Creating 75 additional users for testing..."
+# Seed volume opt-in — non inclus dans le run par défaut (SEED_STEPS).
+# Utilisation : SEED_BULK_USERS_COUNT=N rails db:seed  ou  load Rails.root.join("db/seeds/bulk_users.rb")
+BULK_USERS_COUNT = ENV.fetch("SEED_BULK_USERS_COUNT", "0").to_i.clamp(0, 10_000)
+
+if BULK_USERS_COUNT.positive?
+  puts "\n🎭 Creating #{BULK_USERS_COUNT} additional users for testing..."
+else
+  puts "\n  [bulk] Aucun utilisateur volumique (#{fast_seed ? 'SEED_FAST_TEST' : 'SEED_BULK_USERS_COUNT=0'})."
+end
 
 # S'assurer que les helpers sont disponibles (si ce fichier est exécuté isolément)
 SEED_DEFAULT_PASSWORD ||= "password123"
@@ -118,8 +125,8 @@ def build_email(first_name, last_name, index)
   "#{base_first}.#{base_last}.#{index}@example.com"
 end
 
-# Créer 75 utilisateurs supplémentaires
-75.times do |i|
+# Créer les utilisateurs supplémentaires
+BULK_USERS_COUNT.times do |i|
   first_name = first_names[i % first_names.length]
   last_name = last_names[i % last_names.length]
   city = cities[i % cities.length]
@@ -157,7 +164,7 @@ end
     "volunteer" # Quelques volontaires supplémentaires
   end
 
-  puts "\n  👤 Creating #{first_name} #{last_name} (#{i+1}/75) - #{creation_type} - #{membership_type&.category || 'no membership'}..."
+  puts "\n  👤 Creating #{first_name} #{last_name} (#{i + 1}/#{BULK_USERS_COUNT}) - #{creation_type} - #{membership_type&.category || 'no membership'}..."
 
   person = seed_register_person(
     {
@@ -205,7 +212,11 @@ end
   end
 end
 
-puts "\n🎉 75 additional users created successfully!"
+if BULK_USERS_COUNT.positive?
+  puts "\n🎉 #{BULK_USERS_COUNT} additional users created successfully!"
+else
+  puts "\n  Bulk : rien à créer (0)."
+end
 puts "📊 Updated Summary:"
 puts "  - #{Person.count} personnes total"
 puts "  - #{User.count} utilisateurs total"
