@@ -24,6 +24,9 @@ RSpec.describe People::MembershipUpgrader do
       expect(result.success?).to be(true)
       expect(result.membership.membership_type).to eq(circus_type)
       expect(result.payment).to be_present
+      expect(result.payment.payment_lines.sole.description).to eq(
+        "Passage d'adhésion : #{basic_type.name} -> #{circus_type.name}"
+      )
     end
 
     it "adds an optional donation line to the payment" do

@@ -120,7 +120,7 @@ module People
     end
 
     def payment_description(name)
-      payment_method == "offered" ? "Adhésion offerte #{name}" : "Adhésion #{name}"
+      PaymentLine.normalize_membership_name(name)
     end
 
     def record_payment!(item_type:, item_id:, amount_cents:, description:, notes:)
