@@ -372,13 +372,15 @@ RSpec.describe Payment, type: :model do
   describe '#anonymize!' do
     include ActiveSupport::Testing::TimeHelpers
 
-    it 'marks the payment as anonymized while keeping the person link' do
+    it 'marks the payment as anonymized while keeping the person link required by the DB' do
       payment = create(:payment)
+      original_person_id = payment.person_id
 
       expect do
         payment.anonymize!
       end.to change { payment.reload.anonymized_at.present? }.from(false).to(true)
 
+      expect(payment.person_id).to eq(original_person_id)
       expect(payment.original_person_identifier).to be_present
       expect(payment.person_id).to be_present
     end
@@ -398,6 +400,22 @@ RSpec.describe Payment, type: :model do
 
       expect(payment.anonymized_at).to eq(first_timestamp)
       expect(payment.original_person_identifier).to eq(first_identifier)
+    end
+
+    it 'does not alter financial ownership fields beyond the anonymization marker' do
+      payment = create(:payment, notes: "Conserver", status: :success)
+      original_person_id = payment.person_id
+      original_recorded_by_id = payment.recorded_by_id
+      original_total_cents = payment.total_cents
+
+      payment.anonymize!
+      payment.reload
+
+      expect(payment.person_id).to eq(original_person_id)
+      expect(payment.recorded_by_id).to eq(original_recorded_by_id)
+      expect(payment.total_cents).to eq(original_total_cents)
+      expect(payment.notes).to eq("Conserver")
+      expect(payment.status).to eq("success")
     end
   end
 

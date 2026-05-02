@@ -189,18 +189,28 @@ module Admin
 
     def build_payment_create_result
       person = Person.find(payment_create_params[:person_id])
+      total_cents = normalized_total_cents(payment_create_params[:total_cents])
 
-      People::PaymentCreator.new(
+      People::PaymentRecorder.new(
         person: person,
-        amount_cents: normalized_total_cents(payment_create_params[:total_cents]),
         payment_method: payment_create_params[:payment_method] || "cash",
-        recorded_by_id: Current.user&.id,
-        item_type: "Donation",
-        item_id: person.id,
-        description: "Paiement direct",
+        recorded_by: Current.user,
+        status: "success",
         notes: payment_create_params[:notes],
-        offer_reason: payment_create_params[:offer_reason]
+        offer_reason: payment_create_params[:offer_reason],
+        total_cents: total_cents,
+        payment_lines: direct_payment_lines(total_cents)
       ).call
+    end
+
+    def direct_payment_lines(total_cents)
+      [
+        {
+          item_type: "Donation",
+          amount_cents: total_cents,
+          description: "Paiement direct"
+        }
+      ]
     end
 
     def respond_to_created_payment(result)

@@ -8,12 +8,28 @@ RSpec.describe 'Admin::Users::Payments', type: :request do
 
   before { login_as(admin_user) }
 
+  describe 'GET /admin/users/:id/payments' do
+    it 'redirects to the filtered payments history for the person' do
+      get admin_user_payments_path("person_#{person.id}")
+
+      expect(response).to redirect_to(admin_payments_path(person_id: person.id))
+    end
+  end
+
+  describe 'GET /admin/users/:id/payments/new' do
+    it 'redirects to the filtered payments history for the person' do
+      get new_admin_user_payment_path("person_#{person.id}")
+
+      expect(response).to redirect_to(admin_payments_path(person_id: person.id))
+    end
+  end
+
   describe 'POST /admin/users/:id/payments' do
     let(:membership_type) { create(:membership_type, :circus) }
     let(:membership) { create(:membership, person: person, membership_type: membership_type) }
     let(:contribution_formula) { create(:contribution_formula, :pack10) }
 
-    it 'creates a multi-line payment and redirects back to the person dashboard' do
+    it 'creates a multi-line payment and redirects to the filtered payments history' do
       membership
       contribution_formula
 
@@ -31,7 +47,7 @@ RSpec.describe 'Admin::Users::Payments', type: :request do
       end.to change(Payment, :count).by(1)
                                     .and change(PaymentLine, :count).by(2)
 
-      expect(response).to redirect_to(admin_user_path("person_#{person.id}"))
+      expect(response).to redirect_to(admin_payments_path(person_id: person.id))
 
       follow_redirect!
       expect(response.body).to include('Paiement créé avec succès')
@@ -51,7 +67,7 @@ RSpec.describe 'Admin::Users::Payments', type: :request do
         delete admin_user_payment_path("person_#{person.id}", payment)
       end.not_to change(Payment, :count)
 
-      expect(response).to redirect_to(admin_user_path("person_#{person.id}"))
+      expect(response).to redirect_to(admin_payments_path(person_id: person.id))
 
       payment.reload
       expect(payment.status).to eq('cancel')
