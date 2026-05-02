@@ -233,6 +233,20 @@ RSpec.describe PaymentLine, type: :model do
     end
   end
 
+  describe '.normalize_membership_name' do
+    it 'adds the canonical prefix when the raw name has none' do
+      expect(described_class.normalize_membership_name('Cirque Tarif Plein')).to eq('Adhésion Cirque Tarif Plein')
+    end
+
+    it 'collapses duplicated legacy prefixes while preserving the canonical spelling' do
+      expect(described_class.normalize_membership_name('adhesion adhesion Cirque')).to eq('Adhésion Cirque')
+    end
+
+    it 'falls back to a generic label when the raw name is blank' do
+      expect(described_class.normalize_membership_name('   ')).to eq('Adhésion')
+    end
+  end
+
   describe '#price_euros (from Priceable)' do
     it 'converts cents to euros' do
       payment_line = PaymentLine.new(amount_cents: 1500)
