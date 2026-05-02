@@ -16,33 +16,29 @@ module Admin
       @membership_types = MembershipType.all
       @contribution_formulas = ContributionFormula.all
 
-      add_breadcrumb I18n.t("breadcrumbs.admin.users.members_list"), admin_users_path
-      add_breadcrumb @person.full_name, admin_person_path(@person)
-      add_breadcrumb I18n.t("breadcrumbs.admin.memberships.membership"), nil
+      add_person_context_breadcrumbs(@person, I18n.t("breadcrumbs.admin.memberships.membership"))
     end
 
     def new
       @person = Person.find(params[:person_id]) if params[:person_id]
 
-      # Gérer l'upgrade d'adhésion
       if params[:upgrade] == "true" && @person&.current_membership&.basic?
-        # Pour l'upgrade, on ne propose que les types Circus
-        @membership_types = MembershipType.circus_types.current_versions.order(:price_cents)
+        @membership_types = available_upgrade_membership_types(@person)
         @is_upgrade = true
         @current_membership = @person.current_membership
-        add_breadcrumb I18n.t("breadcrumbs.admin.memberships.upgrade_to_circus"), nil
+        add_person_context_breadcrumbs(@person, I18n.t("breadcrumbs.admin.memberships.upgrade_to_circus"))
       else
-        # Pour une nouvelle adhésion, on propose tous les types
         @membership_types = MembershipType.current_versions.order(:price_cents)
         @is_upgrade = false
-        add_breadcrumb I18n.t("breadcrumbs.admin.memberships.new_membership"), nil
+        add_person_context_breadcrumbs(@person, I18n.t("breadcrumbs.admin.memberships.new_membership")) if @person.present?
+        add_breadcrumb I18n.t("breadcrumbs.admin.memberships.new_membership"), nil unless @person.present?
       end
     end
 
     def edit
       @membership = @person.current_membership
       @membership_types = MembershipType.all
-      add_breadcrumb I18n.t("breadcrumbs.admin.memberships.edit_membership"), nil
+      add_person_context_breadcrumbs(@person, I18n.t("breadcrumbs.admin.memberships.edit_membership"))
     end
 
     def create
@@ -99,10 +95,6 @@ module Admin
 
     def set_person_for_create
       @person = Person.find(membership_purchase_params[:person_id])
-    end
-
-    def admin_person_path(person)
-      admin_user_path(Admin::Users::PersonRouteKey.call(person))
     end
 
     def set_breadcrumbs
@@ -204,6 +196,18 @@ module Admin
       end
 
       message
+    end
+
+    def available_upgrade_membership_types(person)
+      scope = MembershipType.circus_types.current_versions.order(:price_cents)
+      return scope if person.reduced_rate_eligible?
+
+      scope.reject { |membership_type| reduced_membership_type?(membership_type) }
+    end
+
+    def reduced_membership_type?(membership_type)
+      normalized_name = I18n.transliterate(membership_type.name.to_s).downcase
+      normalized_name.include?("reduit") || normalized_name.include?("tarif reduit")
     end
   end
 end

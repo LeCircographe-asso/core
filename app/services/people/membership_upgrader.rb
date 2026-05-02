@@ -49,7 +49,7 @@ module People
           item_type: "Membership",
           item_id: new_membership.id,
           amount_cents: amount_cents,
-          description: "Upgrade d'adhésion de #{old_membership_type.name} vers #{new_membership_type.name} (plein tarif)"
+          description: upgrade_payment_description(old_membership_type, new_membership_type)
         )
 
         result = {
@@ -144,6 +144,10 @@ module People
     def normalized_donation_cents
       cents = donation_cents.to_i
       cents.positive? ? cents : nil
+    end
+
+    def upgrade_payment_description(old_membership_type, new_membership_type)
+      "Passage d'adhésion : #{old_membership_type.name} -> #{new_membership_type.name}"
     end
 
     def handle_member_number_change!(old_membership_type, new_membership_type, recorded_by)
