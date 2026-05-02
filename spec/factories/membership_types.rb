@@ -4,6 +4,7 @@ FactoryBot.define do
   factory :membership_type do
     sequence(:name) { |n| "Membership Type #{n}" }
     category { :basic }
+    rate_kind { "standard" }
     price_cents { 1500 }
     description { "Adhésion de test" }
     version { 1 }
@@ -24,6 +25,7 @@ FactoryBot.define do
 
     trait :circus_reduced do
       category { :circus }
+      rate_kind { "reduced" }
       sequence(:name) { |n| "Adhésion Cirque Réduite #{n}" }
       price_cents { 2000 }
     end
