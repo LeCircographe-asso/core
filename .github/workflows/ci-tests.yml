@@ -27,8 +27,10 @@ jobs:
           node-version: "22"
       - name: Build Tailwind CSS
         run: bundle exec rails tailwindcss:build
+      - name: Prepare test databases
+        run: RAILS_ENV=test bin/rails db:prepare
       - name: Run full test suite with coverage
-        run: bundle exec rspec --format json --out tmp/rspec.json
+        run: bin/rspec --format json --out tmp/rspec.json
       - name: Verify coverage threshold
         run: |
           COVERAGE=$(ruby -rjson -e 'f="coverage/.last_run.json"; puts(File.exist?(f) ? JSON.parse(File.read(f)).dig("result","line").to_f : 0)')
