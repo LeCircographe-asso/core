@@ -5,37 +5,33 @@ require 'rails_helper'
 RSpec.describe Payment, type: :model do
   describe 'validations' do
     it 'can be created' do
-      person = create(:person)
-      user = create(:user)
+      person = build_stubbed(:person)
+      user = build_stubbed(:user)
       payment = Payment.new(person: person, recorded_by: user, total_cents: 1500, status: :pending)
       expect(payment).to be_present
     end
 
     it 'requires a person' do
-      user = create(:user)
+      user = build_stubbed(:user)
       payment = Payment.new(recorded_by: user, total_cents: 1500, status: :pending)
       expect(payment).not_to be_valid
       expect(payment.errors[:person]).to include(I18n.t('errors.messages.required'))
     end
 
     it 'requires a recorded_by user' do
-      person = create(:person)
+      person = build_stubbed(:person)
       payment = Payment.new(person: person, total_cents: 1500, status: :pending)
       expect(payment).not_to be_valid
       expect(payment.errors[:recorded_by]).to include(I18n.t('errors.messages.required'))
     end
 
     it 'has valid status values' do
-      person = create(:person)
-      user = create(:user)
-      payment = Payment.new(person: person, recorded_by: user, total_cents: 1500, status: :success)
+      payment = Payment.new(status: :success)
       expect(payment.status).to eq('success')
     end
 
     it 'has valid payment_method values' do
-      person = create(:person)
-      user = create(:user)
-      payment = Payment.new(person: person, recorded_by: user, total_cents: 1500, payment_method: :card)
+      payment = Payment.new(payment_method: :card)
       expect(payment.payment_method).to eq('card')
     end
 
@@ -49,14 +45,14 @@ RSpec.describe Payment, type: :model do
 
   describe 'associations' do
     it 'belongs to a person' do
-      person = create(:person)
-      payment = create(:payment, person: person)
+      person = build_stubbed(:person)
+      payment = described_class.new(person: person)
       expect(payment.person).to eq(person)
     end
 
     it 'belongs to a recorded_by user' do
-      user = create(:user)
-      payment = create(:payment, recorded_by: user)
+      user = build_stubbed(:user)
+      payment = described_class.new(recorded_by: user)
       expect(payment.recorded_by).to eq(user)
     end
 
@@ -70,7 +66,7 @@ RSpec.describe Payment, type: :model do
 
     it 'has many payment_audit_logs' do
       payment = create(:payment)
-      audit_log = create(:payment_audit_log, payment: payment)
+      audit_log = payment.payment_audit_logs.last
 
       expect(payment.payment_audit_logs).to include(audit_log)
     end
@@ -168,12 +164,10 @@ RSpec.describe Payment, type: :model do
   end
 
   describe '#payment_type' do
-    let(:person) { create(:person) }
-    let(:user) { create(:user) }
-    let(:payment) { create(:payment, person: person, recorded_by: user) }
+    let(:payment) { create(:payment) }
 
     it "returns 'Adhésion' when payment has membership lines" do
-      membership = create(:membership)
+      membership = create(:membership, person: payment.person)
       create(:payment_line, payment: payment, item: membership, item_type: 'Membership')
 
       expect(payment.payment_type).to eq('Adhésion')
@@ -266,28 +260,26 @@ RSpec.describe Payment, type: :model do
 
   describe '#can_be_cancelled?' do
     it 'returns true for recent pending payment' do
-      payment = create(:payment, status: :pending, created_at: 1.hour.ago)
+      payment = build_stubbed(:payment, status: :pending, created_at: 1.hour.ago)
       expect(payment.can_be_cancelled?).to be true
     end
 
     it 'returns false for old payment' do
-      payment = create(:payment, status: :pending, created_at: 25.hours.ago)
+      payment = build_stubbed(:payment, status: :pending, created_at: 25.hours.ago)
       expect(payment.can_be_cancelled?).to be false
     end
 
     it 'returns false for cancelled payment' do
-      payment = create(:payment, status: :cancel, created_at: 1.hour.ago)
+      payment = build_stubbed(:payment, status: :cancel, created_at: 1.hour.ago)
       expect(payment.can_be_cancelled?).to be false
     end
   end
 
   describe '#membership_related?' do
-    let(:person) { create(:person) }
-    let(:user) { create(:user) }
-    let(:payment) { create(:payment, person: person, recorded_by: user) }
+    let(:payment) { create(:payment) }
 
     it 'returns true when payment has membership lines' do
-      membership = create(:membership)
+      membership = create(:membership, person: payment.person)
       create(:payment_line, payment: payment, item: membership, item_type: 'Membership')
 
       expect(payment.membership_related?).to be true
@@ -302,9 +294,7 @@ RSpec.describe Payment, type: :model do
   end
 
   describe '#carnet_related?' do
-    let(:person) { create(:person) }
-    let(:user) { create(:user) }
-    let(:payment) { create(:payment, person: person, recorded_by: user) }
+    let(:payment) { create(:payment) }
 
     it 'returns true when payment has pack contribution formula lines' do
       contribution_formula = create(:contribution_formula, :pack10)
@@ -351,12 +341,12 @@ RSpec.describe Payment, type: :model do
 
   describe '#can_cancel?' do
     it 'returns true for non-cancelled payment' do
-      payment = create(:payment, status: :success)
+      payment = build_stubbed(:payment, status: :success)
       expect(payment.can_cancel?).to be true
     end
 
     it 'returns false for cancelled payment' do
-      payment = create(:payment, status: :cancel)
+      payment = build_stubbed(:payment, status: :cancel)
       expect(payment.can_cancel?).to be false
     end
   end
@@ -418,17 +408,10 @@ RSpec.describe Payment, type: :model do
       travel_to(Time.zone.local(2026, 4, 29, 12, 0, 0)) { example.run }
     end
 
-    let(:person1) { create(:person) }
-    let(:person2) { create(:person) }
-    let(:person3) { create(:person) }
-    let(:user1) { create(:user) }
-    let(:user2) { create(:user) }
-    let(:user3) { create(:user) }
-
-    let!(:today_payment) { create(:payment, person: person1, recorded_by: user1, created_at: Date.current.beginning_of_day + 12.hours) }
-    let!(:this_week_payment) { create(:payment, person: person2, recorded_by: user2, created_at: Date.current.beginning_of_week.beginning_of_day + 12.hours) }
+    let!(:today_payment) { create(:payment, created_at: Date.current.beginning_of_day + 12.hours) }
+    let!(:this_week_payment) { create(:payment, created_at: Date.current.beginning_of_week.beginning_of_day + 12.hours) }
     let!(:last_week_payment) do
-      create(:payment, person: person3, recorded_by: user3, created_at: (Date.current.beginning_of_week - 1.day).beginning_of_day + 12.hours)
+      create(:payment, created_at: (Date.current.beginning_of_week - 1.day).beginning_of_day + 12.hours)
     end
 
     describe '.today' do
@@ -461,7 +444,7 @@ RSpec.describe Payment, type: :model do
   end
 
   describe 'Dateable instance methods' do
-    let(:payment) { create(:payment, created_at: Date.current.beginning_of_day + 14.hours) }
+    let(:payment) { build_stubbed(:payment, created_at: Date.current.beginning_of_day + 14.hours) }
 
     describe '#today?' do
       it 'returns true for payment created today' do
@@ -469,7 +452,7 @@ RSpec.describe Payment, type: :model do
       end
 
       it 'returns false for payment created yesterday' do
-        old_payment = create(:payment, created_at: Date.yesterday.beginning_of_day + 14.hours)
+        old_payment = build_stubbed(:payment, created_at: Date.yesterday.beginning_of_day + 14.hours)
         expect(old_payment.today?(:created_at)).to be false
       end
     end
