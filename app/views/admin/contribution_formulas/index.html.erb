@@ -36,6 +36,9 @@
                         end %>">
                     <%= plan.duration.humanize %>
                   </span>
+                  <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium <%= plan.rate_kind_badge_class %>">
+                    <%= plan.rate_kind_humanized %>
+                  </span>
                   <span class="text-sm text-gray-500">
                     <%= pluralize(plan.contributions.count, 'carnet') %>
                   </span>
@@ -156,6 +159,9 @@
                         else 'bg-gray-100 text-gray-800'
                         end %>">
                     <%= plan.duration.humanize %>
+                  </span>
+                  <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium <%= plan.rate_kind_badge_class %>">
+                    <%= plan.rate_kind_humanized %>
                   </span>
                   <span class="text-sm text-gray-500">
                     <%= pluralize(plan.contributions.count, 'carnet') %>
