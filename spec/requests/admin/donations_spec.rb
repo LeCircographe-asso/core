@@ -14,6 +14,7 @@ RSpec.describe 'Admin::Donations', type: :request do
       get new_admin_donation_path(person_id: person.id)
       expect(response).to have_http_status(:success)
       expect(response.body).to include('Ada')
+      expect(response.body).to include(admin_user_path("person_#{person.id}"))
     end
 
     it 'redirects when person context is missing' do
@@ -50,6 +51,7 @@ RSpec.describe 'Admin::Donations', type: :request do
       expect(line.item_id).to eq(payment.id)
       expect(line.amount_cents).to eq(1250)
       expect(line.description).to eq('Donation')
+      expect(response).to redirect_to(admin_payments_path(person_id: person.id))
     end
 
     it 'creates a donation payment with legacy user_id' do
@@ -73,6 +75,7 @@ RSpec.describe 'Admin::Donations', type: :request do
       expect(line.item_type).to eq('Donation')
       expect(line.item_id).to eq(payment.id)
       expect(line.amount_cents).to eq(500)
+      expect(response).to redirect_to(admin_payments_path(person_id: person.id))
     end
   end
 end

@@ -176,11 +176,16 @@ class Payment < ApplicationRecord
 
   # Anonymization for GDPR compliance
   def anonymize!
-    return if anonymized_at.present?
+    with_lock do
+      return if anonymized_at.present?
 
-    self.original_person_identifier = "ANON_#{Digest::SHA256.hexdigest("#{person_id}_#{id}_#{created_at}")}"
-    self.anonymized_at = Time.current
-    save!
+      # payments.person_id is NOT NULL: anonymization is a traceability mark,
+      # not a destructive unlink from the owning Person.
+      update!(
+        original_person_identifier: "ANON_#{Digest::SHA256.hexdigest("#{person_id}_#{id}_#{created_at}")}",
+        anonymized_at: Time.current
+      )
+    end
   end
 
   scope :anonymized, -> { where.not(anonymized_at: nil) }

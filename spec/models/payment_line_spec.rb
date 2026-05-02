@@ -166,6 +166,18 @@ RSpec.describe PaymentLine, type: :model do
       expect(payment_line.item_description).to eq('Adhésion Basique')
     end
 
+    it 'prefers an explicit description for membership lines' do
+      membership_type = create(:membership_type, name: 'Adhésion Cirque Tarif Réduit')
+      membership = build_stubbed(:membership, membership_type: membership_type)
+      payment_line = described_class.new(
+        item: membership,
+        item_type: 'Membership',
+        description: "Passage d'adhésion : Adhésion Basique -> Adhésion Cirque Tarif Réduit"
+      )
+
+      expect(payment_line.item_description).to eq("Passage d'adhésion : Adhésion Basique -> Adhésion Cirque Tarif Réduit")
+    end
+
     it 'returns description for contribution_formula' do
       contribution_formula = build_stubbed(:contribution_formula, name: 'Plan Trimestriel', duration: 'trimester')
       payment_line = described_class.new(item: contribution_formula, item_type: 'ContributionFormula')
@@ -184,6 +196,40 @@ RSpec.describe PaymentLine, type: :model do
       payment_line = described_class.new(item_type: 'UnknownType')
 
       expect(payment_line.item_description).to eq('Unknowntype')
+    end
+  end
+
+  describe '#history_description' do
+    it 'normalizes a legacy membership upgrade description' do
+      membership_type = create(:membership_type, name: 'Adhésion Cirque Tarif Plein')
+      membership = build_stubbed(:membership, membership_type: membership_type)
+      payment_line = described_class.new(
+        item: membership,
+        item_type: 'Membership',
+        description: "Upgrade d'adhésion de Adhésion Basique vers Adhésion Cirque Tarif Plein (plein tarif)"
+      )
+
+      expect(payment_line.history_description).to eq("Passage d'adhésion : Adhésion Basique -> Adhésion Cirque Tarif Plein")
+    end
+
+    it 'normalizes duplicated membership prefixes' do
+      membership_type = create(:membership_type, name: 'Adhésion Cirque')
+      membership = build_stubbed(:membership, membership_type: membership_type)
+      payment_line = described_class.new(
+        item: membership,
+        item_type: 'Membership',
+        description: 'Adhésion Adhésion Cirque'
+      )
+
+      expect(payment_line.history_description).to eq('Adhésion Cirque')
+    end
+
+    it 'renders contribution lines with a cotisation prefix' do
+      contribution_formula = build_stubbed(:contribution_formula, duration: 'day')
+      contribution = build_stubbed(:contribution, contribution_formula: contribution_formula)
+      payment_line = described_class.new(item: contribution, item_type: 'Contribution', description: nil)
+
+      expect(payment_line.history_description).to eq('Cotisation Journée')
     end
   end
 
@@ -216,7 +262,7 @@ RSpec.describe PaymentLine, type: :model do
         expect(payment_line.item).to eq(membership)
         expect(payment_line.item_type).to eq('Membership')
         expect(payment_line.amount_cents).to eq(1500)
-        expect(payment_line.description).to eq("Adhésion #{membership.membership_type.name}")
+        expect(payment_line.description).to eq(PaymentLine.normalize_membership_name(membership.membership_type.name))
       end
     end
 
@@ -246,7 +292,7 @@ RSpec.describe PaymentLine, type: :model do
         expect(payment_line.item).to eq(membership_type)
         expect(payment_line.item_type).to eq('MembershipType')
         expect(payment_line.amount_cents).to eq(2500)
-        expect(payment_line.description).to eq('Adhésion Adhésion Cirque')
+        expect(payment_line.description).to eq('Adhésion Cirque')
       end
     end
   end

@@ -9,71 +9,45 @@ module Admin
     # - Managing payment-related operations
     class PaymentsController < BaseController
       before_action :set_person
-      before_action :set_breadcrumbs
 
       # GET /admin/users/person_1/payments
       def index
-        @payments = @person.payments.includes(:payment_lines, :recorded_by)
-                           .order(created_at: :desc)
-                           .page(params[:page])
+        redirect_to filtered_payments_path
       end
 
       # GET /admin/users/person_1/payments/1
       def show
-        @payment = @person.payments.find(params[:id])
+        redirect_to filtered_payments_path
       end
 
       # GET /admin/users/person_1/payments/new
       def new
-        @payment = @person.payments.build
-        @payment.recorded_by = Current.user
-        @membership_types = MembershipType.all
-        @contribution_formulas = ContributionFormula.all
+        redirect_to filtered_payments_path
       end
 
       # POST /admin/users/person_1/payments
       def create
         normalized_lines = normalize_payment_lines(params[:payment_lines])
+        lines = normalized_lines.presence || direct_payment_lines
+        total_cents = lines.sum { |line| line[:amount_cents].to_i }
 
-        total_cents = if normalized_lines.any?
-                        normalized_lines.sum { |line| line[:amount_cents].to_i }
-        else
-                        payment_params[:total_cents].to_i
-        end
-
-        service_params = {
+        result = People::PaymentRecorder.new(
           person: @person,
           payment_method: payment_params[:payment_method] || "cash",
-          recorded_by_id: Current.user&.id,
-          notes: payment_params[:notes]
-        }
-
-        if normalized_lines.any?
-          service_params[:payment_lines] = normalized_lines
-          service_params[:total_cents] = total_cents
-        else
-          first_line = normalized_lines.first
-          service_params[:amount_cents] = total_cents
-          service_params[:item_type] = first_line ? first_line[:item_type] : "Donation"
-          service_params[:item_id] = first_line ? first_line[:item_id] : @person.id
-          service_params[:description] = first_line ? first_line[:description] : "Paiement"
-        end
-
-        result = People::PaymentCreator.new(service_params).call
+          recorded_by: Current.user,
+          status: "success",
+          notes: payment_params[:notes],
+          total_cents: total_cents,
+          payment_lines: lines
+        ).call
 
         if result.success?
-          redirect_to admin_person_path(@person), notice: t(".success")
+          redirect_to filtered_payments_path, notice: t(".success")
         else
-          @membership_types = MembershipType.all
-          @contribution_formulas = ContributionFormula.all
-          flash.now[:alert] = t(".failure_alert", message: result.message)
-          render :new, status: :unprocessable_content
+          redirect_to filtered_payments_path, alert: t(".failure_alert", message: result.message)
         end
       rescue StandardError => e
-        @membership_types = MembershipType.all
-        @contribution_formulas = ContributionFormula.all
-        flash.now[:alert] = t(".failure_alert", message: e.message)
-        render :new, status: :unprocessable_content
+        redirect_to filtered_payments_path, alert: t(".failure_alert", message: e.message)
       end
 
       # PATCH /admin/users/person_1/payments/1
@@ -93,9 +67,9 @@ module Admin
         ).call
 
         if result.success?
-          redirect_to admin_person_path(@person), notice: t(".success")
+          redirect_to filtered_payments_path, notice: t(".success")
         else
-          redirect_to admin_person_path(@person), alert: t(".failure_alert", message: result.message)
+          redirect_to filtered_payments_path, alert: t(".failure_alert", message: result.message)
         end
       end
 
@@ -110,9 +84,9 @@ module Admin
         ).call
 
         if result.success?
-          redirect_to admin_person_path(@person), notice: t(".destroyed")
+          redirect_to filtered_payments_path, notice: t(".destroyed")
         else
-          redirect_to admin_person_path(@person), alert: t(".failure_alert", message: result.message)
+          redirect_to filtered_payments_path, alert: t(".failure_alert", message: result.message)
         end
       end
 
@@ -129,15 +103,15 @@ module Admin
             ).call
 
             if result.success?
-              redirect_to admin_person_path(@person), notice: t(".processed")
+              redirect_to filtered_payments_path, notice: t(".processed")
             else
-              redirect_to admin_person_path(@person), alert: t(".failure_alert", message: result.message)
+              redirect_to filtered_payments_path, alert: t(".failure_alert", message: result.message)
             end
           else
-            redirect_to admin_person_path(@person), notice: t(".already_processed")
+            redirect_to filtered_payments_path, notice: t(".already_processed")
           end
         rescue StandardError => e
-          redirect_to admin_person_path(@person), alert: t(".failure_alert", message: e.message)
+          redirect_to filtered_payments_path, alert: t(".failure_alert", message: e.message)
         end
       end
 
@@ -156,16 +130,6 @@ module Admin
         end
       end
 
-      def set_breadcrumbs
-        add_breadcrumb I18n.t("breadcrumbs.admin.users.members_list"), admin_users_path
-        add_breadcrumb @person.full_name, admin_person_path(@person)
-        add_breadcrumb I18n.t("breadcrumbs.admin.payments.management"), nil
-      end
-
-      def admin_person_path(person)
-        admin_user_path(Admin::Users::PersonRouteKey.call(person))
-      end
-
       def payment_params
         params.expect(
           payment: %i[total_cents
@@ -181,6 +145,20 @@ module Admin
           line = line.to_unsafe_h if line.respond_to?(:to_unsafe_h)
           line.symbolize_keys
         end
+      end
+
+      def direct_payment_lines
+        [
+          {
+            item_type: "Donation",
+            amount_cents: payment_params[:total_cents].to_i,
+            description: "Paiement direct"
+          }
+        ]
+      end
+
+      def filtered_payments_path
+        admin_payments_path(person_id: @person.id)
       end
     end
   end
