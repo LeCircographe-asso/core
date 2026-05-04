@@ -54,6 +54,9 @@ RSpec.configure do |config|
 
   config.before do
     Faker::UniqueGenerator.clear
+    # Action Controller rate_limit uses Rails.cache; clear so randomized order
+    # cannot trip limits set by another example (Sessions, Admin::Sessions, etc.).
+    Rails.cache.clear
   end
 
   config.append_after do

@@ -24,10 +24,6 @@ RSpec.describe 'Sessions', type: :request do
   end
 
   describe 'POST /sessions' do
-    # Rate limiting uses Rails.cache; clear after each example so order-randomized
-    # request specs are isolated (see ci-tests / seed 63988).
-    after { Rails.cache.clear }
-
     let(:user) { create(:user, password: 'password123') }
 
     context 'when already authenticated' do
