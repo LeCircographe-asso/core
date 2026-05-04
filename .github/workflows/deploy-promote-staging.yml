@@ -87,7 +87,7 @@ jobs:
           fi
           echo "Watching deploy-staging run $RUN_ID"
           if ! gh run watch "$RUN_ID" --repo "$REPO" --exit-status; then
-            RUN_URL=$(gh run view "$RUN_ID" --repo "$REPO" --json url --jq -r '.url')
+            RUN_URL=$(gh run view "$RUN_ID" --repo "$REPO" --json url --jq '.url')
             echo "::error::deploy-staging failed or was cancelled. Logs: ${RUN_URL}"
             exit 1
           fi
