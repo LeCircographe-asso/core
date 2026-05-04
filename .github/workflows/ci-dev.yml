@@ -16,7 +16,41 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  changes:
+    runs-on: ubuntu-latest
+    outputs:
+      code: ${{ steps.filter.outputs.code }}
+    steps:
+      - uses: actions/checkout@v6
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            code:
+              - 'app/**'
+              - 'bin/**'
+              - 'config/**'
+              - 'db/**'
+              - 'lib/**'
+              - 'public/**'
+              - 'spec/**'
+              - 'Gemfile'
+              - 'Gemfile.lock'
+              - 'package.json'
+              - 'yarn.lock'
+              - 'Procfile*'
+              - 'tailwind.config.js'
+              - 'Dockerfile*'
+              - '.rubocop.yml'
+              - '.ruby-version'
+              - '.node-version'
+              - 'config.ru'
+              - 'Rakefile'
+              - '.github/workflows/**'
+
   lint:
+    needs: changes
+    if: needs.changes.outputs.code == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
@@ -31,6 +65,8 @@ jobs:
         run: bin/rubocop --format github --force-exclusion
 
   security:
+    needs: changes
+    if: needs.changes.outputs.code == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
@@ -44,6 +80,8 @@ jobs:
         run: bundle exec bundle-audit check --update
 
   test:
+    needs: changes
+    if: needs.changes.outputs.code == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
