@@ -1,7 +1,7 @@
 <% content_for :title, "Ajouter des participants" %>
 
 <div class="min-h-screen py-6">
-  <div class="max-w-5xl mx-auto px-4 sm:px-6">
+  <div class="page-container max-w-5xl">
     <!-- Breadcrumbs -->
     <%= render 'shared/breadcrumbs' %>
     
@@ -31,7 +31,7 @@
     </div>
 
     <!-- List of available users -->
-    <div class="bg-white shadow overflow-hidden rounded-lg">
+    <div class="surface-card shadow">
       <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
         <h2 class="text-lg font-medium text-gray-900">Utilisateurs disponibles</h2>
         <p class="text-sm text-gray-500"><%= pluralize(@users_not_in_list.count, "utilisateur", "utilisateurs") %> disponible(s)</p>
