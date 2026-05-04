@@ -18,6 +18,10 @@ module Priceable
     cents / 100.0
   end
 
+  def total_euros
+    price_euros
+  end
+
   def price_euros=(value)
     # Support pour différents noms de colonnes
     if respond_to?(:price_cents=)

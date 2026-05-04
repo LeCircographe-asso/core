@@ -79,10 +79,7 @@ module Admin
     end
 
     def attendance_params
-      params.expect(attendance: %i[person_id event_id date contribution_id attendance_list_id notes]).tap do |permitted|
-        legacy = params[:attendance][:book_of_entry_id]
-        permitted[:contribution_id] ||= legacy if legacy.present?
-      end
+      params.expect(attendance: %i[person_id event_id date contribution_id attendance_list_id notes])
     end
   end
 end

@@ -1,23 +1,23 @@
 <%= turbo_frame_tag "navigation", target: "_top" do %>
-<nav class="bg-white border-gray-200 sticky top-0 z-50" data-controller="nav-active">
-    <div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto">
+<nav class="bg-white border-gray-200 sticky top-0 z-50 py-2 sm:py-2.5" data-controller="nav-active">
+    <div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto px-4 sm:px-6 lg:px-8 xl:px-10 2xl:px-12 min-[844px]:flex-nowrap min-[844px]:gap-x-3">
         <!-- Logo and profile combined for mobile -->
-        <div class="flex items-center justify-between w-full md:w-auto">
+        <div class="flex shrink-0 items-center justify-between w-full min-[844px]:w-auto min-[844px]:justify-start">
             <!-- Logo -->
             <%= link_to root_path, class: "flex items-center space-x-3 rtl:space-x-reverse", data: { 'nav-active-target': 'link', 'nav-active-path': root_path, 'nav-active-active-classes': 'nav-active-link', 'nav-active-starts-with': 'true' } do %>
-            <%= image_tag("logo.webp", alt: "le-circographe Logo", class: "w-40 h-auto") %>
+            <%= image_tag("logo.webp", alt: "le-circographe Logo", class: "w-40 h-auto min-[844px]:w-36 xl:w-40") %>
             <% end %>
 
             <!-- Elements grouped on the right for mobile -->
-            <div class="flex items-center md:hidden">
+            <div class="flex items-center min-[844px]:hidden">
                 <% if authenticated? && Current.user %>
-                <%= link_to user_path(Current.user), class: "flex mr-3" do %>
+                <%= link_to user_path(Current.user), class: "flex mr-3", data: { turbo_preload: "false" } do %>
                 <%= image_tag("users.png", alt: "photo de profil", class: "w-8 h-8 rounded-full hover:ring-2 hover:ring-indigo-300") %>
                 <% end %>
                 <% end %>
 
                 <!-- Hamburger button (mobile and tablet) -->
-                <button data-collapse-toggle="navbar-mobile" type="button" class="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200" aria-controls="navbar-mobile" aria-expanded="false">
+                <button data-collapse-toggle="navbar-mobile" type="button" class="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-gray-500 rounded-lg min-[844px]:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200" aria-controls="navbar-mobile" aria-expanded="false">
                     <span class="sr-only"><%= t("views.shared.navbar.open_menu") %></span>
                     <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 17 14">
                         <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 1h15M1 7h15M1 13h15" />
@@ -27,8 +27,8 @@
         </div>
 
         <!-- Main menu (desktop) -->
-        <div class="hidden md:flex flex-grow justify-center items-center mx-4">
-            <ul class="flex flex-row space-x-8 font-medium">
+        <div class="hidden min-[844px]:flex min-w-0 flex-1 justify-center items-center mx-2 xl:mx-5 2xl:mx-6">
+            <ul class="flex flex-row gap-x-4 xl:gap-x-8 2xl:gap-x-10 font-medium text-base 2xl:text-lg whitespace-nowrap">
                 <!-- The association -->
                 <li class="group relative">
                     <%= link_to page_path('association'),
@@ -81,7 +81,7 @@
         </div>
 
         <!-- User buttons (desktop only) -->
-        <div class="hidden md:flex items-center md:space-x-3">
+        <div class="hidden min-[844px]:flex shrink-0 items-center min-[844px]:space-x-3 min-[844px]:pl-1 xl:pr-3 2xl:pr-5">
             <% if authenticated? && Current.user %>
             <!-- Clickable profile picture -->
             <%= link_to user_path(Current.user), class: "flex mr-3" do %>
@@ -114,7 +114,7 @@
                     </div>
                     <ul class="py-2 text-sm text-gray-700">
                         <li>
-                            <%= link_to t("views.shared.navbar.profile"), user_path(Current.user), class: "block px-4 py-2 hover:bg-gray-100" %>
+                            <%= link_to t("views.shared.navbar.profile"), user_path(Current.user), class: "block px-4 py-2 hover:bg-gray-100", data: { turbo_preload: "false" } %>
                         </li>
                         <% if Current.user.has_privileges? %>
                         <li>
@@ -150,7 +150,7 @@
     </div>
 
     <!-- Mobile menu -->
-    <div class="hidden w-full md:hidden" id="navbar-mobile" data-controller="accordion">
+    <div class="hidden w-full min-[844px]:hidden" id="navbar-mobile" data-controller="accordion">
         <div class="flex flex-col items-start w-full p-4 bg-white">
             <!-- Accordions for mobile -->
             <div id="accordion-menu" class="w-full">
@@ -270,7 +270,7 @@
                 <% if Current.user.has_privileges? %>
                 <!-- For privileged users: display 4 buttons in a 2x2 grid -->
                 <div class="grid grid-cols-2 gap-3">
-                    <%= link_to t("views.shared.navbar.profile"), user_path(Current.user), class: "text-center py-2 px-4 bg-gray-100 rounded-lg hover:bg-gray-200" %>
+                    <%= link_to t("views.shared.navbar.profile"), user_path(Current.user), class: "text-center py-2 px-4 bg-gray-100 rounded-lg hover:bg-gray-200", data: { turbo_preload: "false" } %>
                     <%= link_to t("views.shared.navbar.dashboard"), admin_dashboard_index_path, class: "text-center py-2 px-4 bg-gray-100 rounded-lg hover:bg-gray-200" %>
                     <%= link_to t("views.shared.navbar.settings"), settings_path, class: "text-center py-2 px-4 bg-gray-100 rounded-lg hover:bg-gray-200" %>
                     <%= button_to t("views.shared.navbar.logout"), session_path, method: :delete, class: "text-center py-2 px-4 bg-red-100 text-red-700 rounded-lg hover:bg-red-200 cursor-pointer" %>
@@ -278,7 +278,7 @@
                 <% else %>
                 <!-- For unprivileged users: show 3 buttons -->
                 <div class="grid grid-cols-2 gap-3">
-                    <%= link_to t("views.shared.navbar.profile"), user_path(Current.user), class: "text-center py-2 px-4 bg-gray-100 rounded-lg hover:bg-gray-200" %>
+                    <%= link_to t("views.shared.navbar.profile"), user_path(Current.user), class: "text-center py-2 px-4 bg-gray-100 rounded-lg hover:bg-gray-200", data: { turbo_preload: "false" } %>
                     <%= link_to t("views.shared.navbar.settings"), settings_path, class: "text-center py-2 px-4 bg-gray-100 rounded-lg hover:bg-gray-200" %>
                     <%= button_to t("views.shared.navbar.logout"), session_path, method: :delete, class: "text-center py-2 px-4 bg-red-100 text-red-700 rounded-lg hover:bg-red-200 col-span-2 cursor-pointer" %>
                 </div>
@@ -298,7 +298,7 @@
                           ) %>
                     <% end %>
                     <% unless public_registration_enabled? %>
-                      <p id="navbar-mobile-signup-disabled-note" class="col-span-2 md:hidden text-xs font-normal text-gray-600 leading-snug text-center px-1">
+                      <p id="navbar-mobile-signup-disabled-note" class="col-span-2 min-[844px]:hidden text-xs font-normal text-gray-600 leading-snug text-center px-1">
                         <%= t("views.shared.navbar.sign_up_disabled_reason") %>
                       </p>
                     <% end %>

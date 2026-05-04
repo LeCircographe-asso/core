@@ -32,6 +32,8 @@ fr:
   admin:
     base:
       unauthorized_alert: Vous n'avez pas accès à cette page.
+      sign_in_required_alert: Connecte-toi avec un compte autorisé pour accéder à l’administration.
+      staff_only_alert: Ton compte n’a pas les droits d’accès à l’administration. Utilise un compte admin ou super-admin, ou demande l’accès à l’équipe.
     attendances:
       create:
         success: Présence enregistrée avec succès
@@ -118,19 +120,19 @@ fr:
         invalid_credentials: Email ou mot de passe invalide
       destroy:
         signed_out: Déconnecté avec succès !
-    subscription_plans:
+    contribution_formulas:
       new:
-        needs_circus_membership_alert: Cette personne doit avoir une adhésion Cirque pour acheter des plans de cotisation
+        needs_circus_membership_alert: Cette personne doit avoir une adhésion Cirque pour acheter une cotisation (formule).
       create:
-        purchased: Plan de cotisation acheté avec succès !
-        purchase_failed_alert: 'Erreur lors de l''achat du plan: %{message}'
+        purchased: Cotisation enregistrée avec succès !
+        purchase_failed_alert: 'Erreur lors de l''achat : %{message}'
       update:
-        updated: Plan de cotisation mis à jour avec succès !
+        updated: Formule de cotisation mise à jour avec succès !
       destroy:
-        destroyed: Plan de cotisation supprimé avec succès !
+        destroyed: Formule de cotisation supprimée avec succès !
       require_super_admin:
-        forbidden: Seul le super-admin peut modifier ou supprimer des cotisations.
-    subscriptions:
+        forbidden: Seul le super-admin peut modifier ou supprimer des formules de cotisation.
+    contributions:
       upgrade:
         success_notice: Cotisation upgradée avec succès.
         credit_applied_suffix: " Crédit appliqué: %{amount}€"
@@ -217,6 +219,7 @@ fr:
     create:
       success_notice: Inscription réussie !
   sessions:
+    already_signed_in_notice: Tu es déjà connecté·e. Déconnecte-toi pour te connecter avec un autre compte.
     new:
       sign_up_prompt: Pas encore de compte ? S'inscrire
       registration_closed_hint: Les inscriptions en ligne sont indisponibles pour le moment. Connectez-vous si vous avez déjà un compte.
@@ -230,11 +233,122 @@ fr:
     destroy:
       signed_out_notice: Déconnecté avec succès !
   settings:
+    nav:
+      breadcrumb_label: Fil d'Ariane
+      home: Accueil
+      profile: Profil
+      settings_current: Paramètres
+      back_to_profile: Retour au profil
+    show:
+      page_title: Paramètres du compte
+      lead: Adresse de connexion, préférences du compte et sécurité.
+      membership_hint_html: Adhésion, cotisations et paiements récents sont récapitulés sur votre %{link}.
+      view_profile_link: fiche profil
+      section_account: Compte
+      section_preferences: Préférences
+      section_preferences_edit_hint: Cochez ou décochez pour mettre à jour, puis validez avec Accepter.
+      section_communication: Communication et engagement
+      section_display: Affichage
+      section_security: Sécurité
+      section_danger: Zone sensible
+      email_shared_badge: Commun
+      email_hint: Utilisée pour vous connecter et pour les emails du lieu (y compris la réinitialisation du mot de passe).
+      email_change_cta: Changer l’adresse email
+      email_change_modal_title: Nouvelle adresse email
+      email_change_modal_intro: "Renseignez la nouvelle adresse, confirmez-la, puis saisissez le code recu par email pour valider le changement."
+      email_change_confirm_field: Confirmer la nouvelle adresse
+      email_change_placeholder: nouvelle.adresse@exemple.com
+      email_change_submit: Enregistrer cette adresse
+      email_change_send_code: Envoyer le code
+      email_change_confirm_code: Valider le code
+      email_change_close: Fermer
+      email_change_code_label: Code de vérification
+      email_change_code_hint: "Laissez vide pour recevoir un code, puis soumettez de nouveau avec ce code pour finaliser."
+      email_change_pending_notice: "Une verification est deja en attente pour %{email}."
+      email_change_preview_title: Confirmer le changement d’adresse
+      email_change_preview_intro: "La nouvelle adresse de connexion sera :"
+      email_change_error_blank: Renseignez et confirmez la nouvelle adresse.
+      email_change_error_mismatch: Les deux adresses ne correspondent pas.
+      email_change_error_unchanged: L’adresse est identique à celle déjà enregistrée.
+      email_change_error_invalid_code_format: Le code doit contenir 6 chiffres.
+      field_email: Adresse email
+      field_image_rights: Droit à l’image
+      field_newsletter: S’inscrire à la newsletter
+      field_get_involved: S’investir dans le projet
+      field_dyslexic_font: Utiliser la police pour dyslexiques
+      submit: Enregistrer les modifications
+      password_reset_cta: Modifier le mot de passe
+      password_reset_confirm: Un email de réinitialisation sera envoyé à %{email}. Continuer ?
+      destroy_account_cta: Supprimer mon compte
+      destroy_confirm: Êtes-vous sûr de vouloir supprimer votre compte ? Cette action est irréversible.
+      validation_errors_intro:
+        one: "%{count} erreur à corriger :"
+        other: "%{count} erreurs à corriger :"
     update:
       saved_notice: Vos modifications ont été enregistrées avec succès
+      email_change_code_sent_notice: "Un code de verification a ete envoye a %{email}."
+      email_change_success_notice: "Adresse email mise a jour avec succes."
+      email_change_error_blank: Renseignez et confirmez la nouvelle adresse.
+      email_change_error_mismatch: Les deux adresses ne correspondent pas.
+      email_change_error_unchanged: L’adresse est identique a celle deja enregistree.
+      email_change_error_taken: "Cette adresse est deja utilisee."
+      email_change_error_send_failed: "Impossible d'envoyer le code de verification pour le moment."
+      email_change_error_no_request: "Aucune demande de changement d'email en attente."
+      email_change_error_expired: "Le code de verification a expire. Demandez-en un nouveau."
+      email_change_error_pending_mismatch: "Cette adresse ne correspond pas a la demande en attente."
+      email_change_error_invalid_code: "Code de verification invalide."
+      email_change_error_confirm_failed: "Impossible de confirmer le changement d'email."
   users:
+    space:
+      page_title: Mon espace
+      quick_hint: Mets à jour puis enregistre.
+      intro_title: Profil, adhésion et compte
+      intro_lead: "Gère ici ton profil, tes coordonnées et ton compte."
+      nav_aria: Sections de mon espace
+      nav_overview: Résumé
+      nav_contact: Coordonnées
+      nav_account: Compte & sécurité
+      nav_faq: FAQ
+      newsletter_row_label: Newsletter
+      newsletter_subscribed_yes: Inscrit
+      newsletter_subscribed_no: Non inscrit
+      membership_card_settings_link: Compte et préférences
+      membership_card:
+        member_number_label: "N° adhérent"
+        section_membership: Adhésion
+        section_contribution: Cotisation
+        cotisation_no_membership: Les cotisations cirque s’affichent lorsque vous avez une adhésion Basic ou Cirque active.
+        cotisation_wrong_category: Votre adhésion actuelle n’ouvre pas la cotisation cirque.
+        valid_until_label: "Adhésion valable jusqu'au :"
+        membership_type_label: "Type d'adhésion :"
+        last_membership_ended_label: "Fin de la dernière adhésion :"
+        renew_prompt: Renouvelez votre adhésion pour participer aux activités du Circographe.
+        status_label: "Statut :"
+        not_yet_member: Pas encore membre
+      contact_heading: Coordonnées postales et téléphone
+      contact_intro: "Utilisées pour les envois et la facturation."
+      account_heading: Compte, préférences et sécurité
+      field_phone: Téléphone
+      field_address: Adresse
+      field_zip: Code postal
+      field_town: Ville
+      field_country: Pays
+      edit: Modifier
+      accept: Accepter
+      preview_submit_title: Vérification avant enregistrement
+      preview_contact_intro: "Vérifie le récapitulatif ci-dessous : ainsi tes coordonnées seront enregistrées."
+      preview_account_intro: "Vérifie le récapitulatif ci-dessous : ainsi ton compte et tes préférences seront enregistrés."
+      preview_confirm: Confirmer l’enregistrement
+      preview_back: Retour aux modifications
+      cancel: Annuler
+      'yes': Oui
+      'no': Non
+      saving: Enregistrement...
+      unsaved_changes_warning: Vous avez des modifications non enregistrées.
+      contact_submit: Enregistrer mes coordonnées
     update:
       profile_updated: Votre profil a été mis à jour avec succès.
+      coordinates_updated: Coordonnées enregistrées.
     destroy:
       deleted_notice: Votre compte a été supprimé avec succès.
       destroy_failed_alert: Impossible de supprimer votre compte. Veuillez contacter l'assistance.
@@ -257,6 +371,9 @@ fr:
       contribution_formula: "%{name} (%{duration})"
       membership_type: Adhésion %{name}
   services:
+    base:
+      success_default: "Opération terminée avec succès"
+      failure_default: "Échec de l'opération"
     web:
       user_registration:
         accept_cgu: Vous devez accepter les CGU pour continuer.
@@ -269,6 +386,33 @@ fr:
     validation:
       invalid_data: Données invalides
       invalid_data_with_details: 'Données invalides : %{details}'
+    success:
+      user_updated: "Utilisateur mis à jour avec succès"
+      newsletter_update_skipped_no_email: "Mise à jour newsletter ignorée (email absent)"
+      membership_already_active: "Cette personne possède déjà une adhésion active"
+      membership_created: "Adhésion créée avec succès"
+      membership_upgraded: "Adhésion upgradée avec succès"
+      membership_updated: "Adhésion mise à jour avec succès"
+      membership_deactivated: "Adhésion désactivée avec succès"
+      contribution_created: "Cotisation créée avec succès"
+      contribution_upgraded: "Cotisation upgradée avec succès"
+      register_person_created: "Personne créée"
+      register_person_updated: "Personne mise à jour"
+      register_user_account: "compte web"
+      register_membership: "adhésion"
+      register_parts_joiner: " et "
+      register_processed: "Traitement réussi : %{parts}"
+    errors:
+      record_not_found: "Ressource introuvable : %{message}"
+      validation_error: "Erreur de validation : %{message}"
+      unexpected_error: "Erreur pendant %{action} : %{message}"
+      insufficient_permissions:
+        user_update: "Permissions insuffisantes pour mettre à jour cet utilisateur"
+        membership_update: "Permissions insuffisantes pour mettre à jour cette adhésion"
+        membership_deactivate: "Permissions insuffisantes pour désactiver cette adhésion"
+      newsletter_update_failed: "Erreur lors de la mise à jour newsletter : %{message}"
+      user_not_found: "Utilisateur introuvable : %{message}"
+      register_existing_web_account: "Cette personne a déjà un compte web."
   mailers:
     account_claim_mailer:
       confirmation_email:
@@ -281,8 +425,18 @@ fr:
         subject: 'Bienvenue au Circographe ! '
       welcome_email:
         subject: 'Bienvenue au Circographe ! '
+      email_change_verification:
+        subject: "Code de verification d'adresse email"
       membership_expiration_reminder:
         subject: Votre adhésion arrive à expiration !
+      contact_email:
+        subject: "Nouveau message : %{category_label}"
+        category_labels:
+          general: Question générale
+          technical: Technique / accès
+          creative_hosting: Temps d’accueil en création
+          partnership: Partenariat
+          residence: Temps d’accueil en création
   breadcrumbs:
     admin:
       common:
@@ -302,9 +456,11 @@ fr:
       payments:
         history: Historique des paiements
         management: Gestion des paiements
-      subscription_plans:
-        plans: Plans de cotisation
-        plan_named: 'Plan : %{name}'
+      contribution_formulas:
+        catalog: Formules de cotisation
+        formula_named: 'Formule : %{name}'
+        plans: Formules de cotisation
+        plan_named: 'Formule : %{name}'
         new_contribution: Nouvelle cotisation
         edit_named: 'Modifier : %{name}'
       opening_hours:
@@ -322,8 +478,8 @@ fr:
         new_type: Nouveau type d'adhésion
         edit_named: 'Modifier : %{name}'
       attendance_lists:
-        lists: Listes de présence
-        new_list: Nouvelle liste
+        lists: Registre de présence
+        new_list: Nouveau registre
       health_reports:
         integrity_report: Rapport d'intégrité
   helpers:
@@ -366,6 +522,8 @@ fr:
         blog_newsletters: Blog & Newsletters
         photo_gallery: Galerie Photos
         events: Nos Événements
+      scroll_hint:
+        down_to_main: Descendre au contenu principal
       footer:
         newsletter_cta: Restez informé en souscrivant à notre newsletter
         email_placeholder: Votre Adresse Email

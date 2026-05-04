@@ -60,6 +60,32 @@ RSpec.describe Contribution, type: :model do
           expect(contribution).not_to be_valid
           expect(contribution.errors[:sessions_remaining]).to be_present
         end
+
+        it 'limits sessions_remaining to a single use' do
+          contribution = build(
+            :contribution,
+            contribution_formula: day_plan,
+            sessions_remaining: 2,
+            purchased_at: Time.current,
+            expires_at: Time.current.end_of_day
+          )
+
+          expect(contribution).not_to be_valid
+          expect(contribution.errors[:sessions_remaining]).to include("doit être 1 avant utilisation puis 0 après utilisation pour une cotisation journée")
+        end
+
+        it 'requires end of purchase day as expiration' do
+          contribution = build(
+            :contribution,
+            contribution_formula: day_plan,
+            sessions_remaining: 1,
+            purchased_at: Time.current,
+            expires_at: 1.day.from_now.end_of_day
+          )
+
+          expect(contribution).not_to be_valid
+          expect(contribution.errors[:expires_at]).to include("doit être la fin du jour d'achat pour une cotisation journée")
+        end
       end
 
       context 'for trimester/annual plans (unlimited)' do
@@ -177,7 +203,7 @@ RSpec.describe Contribution, type: :model do
       let(:circus_person) { create(:person, :with_active_membership) }
       let(:expired_book) do
         create(:contribution, person: circus_person, contribution_formula: day_plan,
-                              sessions_remaining: 5, expires_at: 1.week.ago)
+                              sessions_remaining: 1, purchased_at: 1.week.ago, expires_at: 1.week.ago.end_of_day)
       end
 
       before do
@@ -217,7 +243,7 @@ RSpec.describe Contribution, type: :model do
     end
 
     context 'with non-pack10 plan' do
-      let(:contribution) { create(:contribution, person: person, contribution_formula: day_plan, expires_at: 1.day.ago) }
+      let(:contribution) { create(:contribution, person: person, contribution_formula: day_plan, purchased_at: 1.day.ago, expires_at: 1.day.ago.end_of_day) }
 
       it 'expires when expires_at is in the past' do
         expect(contribution.expired?).to be true
@@ -225,7 +251,7 @@ RSpec.describe Contribution, type: :model do
     end
 
     context 'with non-pack10 plan not expired' do
-      let(:contribution) { create(:contribution, person: person, contribution_formula: day_plan, expires_at: 1.day.from_now) }
+      let(:contribution) { create(:contribution, person: person, contribution_formula: day_plan, expires_at: Time.current.end_of_day) }
 
       it 'does not expire when expires_at is in the future' do
         expect(contribution.expired?).to be false
@@ -243,7 +269,7 @@ RSpec.describe Contribution, type: :model do
     end
 
     context 'with non-pack10 plan' do
-      let(:contribution) { create(:contribution, person: person, contribution_formula: day_plan, expires_at: 1.day.from_now) }
+      let(:contribution) { create(:contribution, person: person, contribution_formula: day_plan) }
 
       it 'returns false' do
         expect(contribution.is_pack10?).to be false
@@ -355,12 +381,13 @@ RSpec.describe Contribution, type: :model do
     it 'considers Time.current vs end_of_day for day plans' do
       # Day plan expired 2 days ago should be expired
       expired_book = create(:contribution, person: person, contribution_formula: day_plan,
+                                           purchased_at: 2.days.ago,
                                            expires_at: 2.days.ago.end_of_day)
       expect(expired_book.expired?).to be true
 
-      # Day plan expiring tomorrow should not be expired
+      # Day plan bought today should remain valid until end of day
       future_book = create(:contribution, person: person, contribution_formula: day_plan,
-                                          expires_at: 1.day.from_now.end_of_day)
+                                          expires_at: Time.current.end_of_day)
       expect(future_book.expired?).to be false
     end
   end
@@ -368,7 +395,10 @@ RSpec.describe Contribution, type: :model do
   describe 'scopes' do
     let!(:active_book) { create(:contribution, :active, person: person, contribution_formula: pack10_plan, sessions_remaining: 5, expires_at: nil) }
     let!(:consumed_book) { create(:contribution, :consumed, person: person, contribution_formula: pack10_plan, sessions_remaining: 0, expires_at: nil) }
-    let!(:expired_book) { create(:contribution, :expired, person: person, contribution_formula: day_plan, expires_at: 1.week.ago) }
+    let!(:expired_book) do
+      create(:contribution, :expired, person: person, contribution_formula: day_plan,
+                            purchased_at: 1.week.ago, expires_at: 1.week.ago.end_of_day)
+    end
 
     describe '.active' do
       it 'returns only active books' do
@@ -510,10 +540,10 @@ RSpec.describe Contribution, type: :model do
     describe '#expired? (custom method - checks date, not status)' do
       it 'overrides Statusable expired? method' do
         # Contribution's expired? checks expires_at date, not status
-        future_book = create(:contribution, contribution_formula: day_plan, expires_at: Date.current + 1.day, status: :active)
+        future_book = create(:contribution, contribution_formula: day_plan, expires_at: Time.current.end_of_day, status: :active)
         expect(future_book.expired?).to be false
 
-        past_book = create(:contribution, contribution_formula: day_plan, expires_at: Date.current - 1.day, status: :active)
+        past_book = create(:contribution, contribution_formula: day_plan, purchased_at: 1.day.ago, expires_at: 1.day.ago.end_of_day, status: :active)
         expect(past_book.expired?).to be true
       end
     end
@@ -530,7 +560,10 @@ RSpec.describe Contribution, type: :model do
     describe '.usable' do
       let!(:usable_book) { create(:contribution, :active, person: person, contribution_formula: pack10_plan, sessions_remaining: 5, expires_at: nil) }
       let!(:consumed_book) { create(:contribution, :consumed, person: person, contribution_formula: pack10_plan, sessions_remaining: 0, expires_at: nil) }
-      let!(:expired_book) { create(:contribution, :expired, person: person, contribution_formula: day_plan, expires_at: 1.week.ago) }
+      let!(:expired_book) do
+        create(:contribution, :expired, person: person, contribution_formula: day_plan,
+                              purchased_at: 1.week.ago, expires_at: 1.week.ago.end_of_day)
+      end
 
       it 'returns books that can be used' do
         usable = Contribution.usable

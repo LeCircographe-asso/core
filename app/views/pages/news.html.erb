@@ -1,17 +1,17 @@
 <% content_for :title, "Le Circographe - Nos activités" %>
 
-<section class="relative overflow-hidden rounded-[32px] shadow-2xl mb-14">
+<section class="public-hero-shell mb-14">
   <%= image_tag hero_image(:news_hero), class: "absolute inset-0 w-full h-full object-cover hero-img-filter", alt: "" %>
   <div class="hero-overlay"></div>
   <div class="relative hero-panel text-center space-y-4">
     <p class="text-sm uppercase tracking-[0.35em] text-white/70">Programmation</p>
     <h1 class="font-circographe text-3xl sm:text-4xl lg:text-5xl font-bold">Nos activités</h1>
-    <p class="max-w-3xl mx-auto text-lg text-white/85 leading-relaxed">Découvrez tout ce qui fait vibrer Le Circographe — un lieu vivant dédié aux pratiques artistiques, à la création partagée et à la rencontre entre disciplines.</p>
+    <p class="max-w-3xl mx-auto text-lg text-white/85 leading-relaxed">Cours, accueils de compagnies, expos, événements : la programmation du lieu.</p>
   </div>
 </section>
 
-<section id="cirque" class="py-12 sm:py-14 lg:py-16 bg-white/95 rounded-[28px] shadow-lg px-4 sm:px-8 fade-in">
-  <header id="pratiques-regulieres" class="max-w-4xl mx-auto text-center space-y-4">
+<section id="pratiques-regulieres" class="public-surface scroll-mt-16 md:scroll-mt-20 py-12 sm:py-14 lg:py-16 px-4 sm:px-8 fade-in">
+  <header class="max-w-4xl mx-auto text-center space-y-4">
     <p class="text-sm uppercase tracking-[0.3em] text-brand-primary/70">Pratiques régulières</p>
     <h2 class="text-2xl sm:text-3xl font-bold text-gray-900">Le Cirque</h2>
     <p class="text-base sm:text-lg text-gray-700 leading-relaxed">Les entraînements libres sont ouverts sur adhésion et accompagnent les pratiquant·es confirmé·es dans le développement de leur discipline : aérien, jonglage, équilibre, acrobatie, roue cyr, contorsion et bien plus encore.</p>
@@ -29,7 +29,7 @@
 </section>
 
 <section id="arts-graphiques" class="py-12 sm:py-14 lg:py-16 px-4 sm:px-8 fade-in">
-  <div class="max-w-5xl mx-auto bg-white/95 rounded-[28px] shadow-lg overflow-hidden">
+  <div class="public-surface max-w-5xl mx-auto overflow-hidden">
     <div class="flex flex-col lg:flex-row">
       <div class="lg:w-2/5 h-60 lg:h-auto">
         <%= image_tag hero_image(:association_graphics_card), class: "w-full h-full object-cover", alt: "Pratique graphique au Circographe" %>
@@ -44,16 +44,12 @@
   </div>
 </section>
 
-<section id="evenements" class="py-12 sm:py-14 lg:py-16 bg-white/95 rounded-[28px] shadow-lg px-4 sm:px-8 fade-in space-y-10">
+<section id="evenements" class="public-surface py-12 sm:py-14 lg:py-16 px-4 sm:px-8 fade-in space-y-10">
   <header class="max-w-4xl mx-auto text-center space-y-4">
     <p class="text-sm uppercase tracking-[0.3em] text-brand-primary/70">Moments partagés</p>
     <h2 class="text-2xl sm:text-3xl font-bold text-gray-900">Événements et actualités</h2>
     <p class="text-base sm:text-lg text-gray-700 leading-relaxed">Tout au long de l’année, le Circographe propose des expositions, des plateaux partagés, des soirées d’ouverture de piste et des rendez-vous associatifs ouverts au quartier. Filtre les actualités pour préparer ta prochaine venue.</p>
   </header>
-
-  <div class="max-w-4xl mx-auto">
-    
-  </div>
 
   <section class="bg-white/95 rounded-[24px] shadow-md p-6 sm:p-8 space-y-8"
            data-controller="tabs"
@@ -80,11 +76,6 @@
                 data-action="tabs#select">
           Actualités
         </button>
-        <button type="button" role="tab" data-tabs-target="trigger" data-tabs-name-value="horaires"
-                class="activities-tab tab-filter"
-                data-action="tabs#select">
-          Horaires
-        </button>
       </div>
     </header>
 
@@ -106,19 +97,12 @@
           <%= render "pages/news/blog_grid", blogs: @latest_posts %>
         </turbo-frame>
       </div>
-
-      <div data-tabs-target="panel" data-tabs-name-value="horaires" class="space-y-6 hidden" role="tabpanel" aria-hidden="true">
-        <div class="bg-white rounded-2xl border border-brand-primary/20 shadow-sm p-6">
-          <p class="text-sm uppercase tracking-[0.3em] text-brand-primary/70 mb-4">Horaires d'ouverture</p>
-          <%= render "shared/opening_hours", bare: true, horaires: @opening_hours %>
-        </div>
-      </div>
     </div>
   </section>
 </section>
 
 <section id="autres-projets" class="py-12 sm:py-14 lg:py-16 px-4 sm:px-8 fade-in space-y-10">
-  <div class="max-w-5xl mx-auto bg-white/95 rounded-[28px] shadow-lg p-8 sm:p-10 text-center space-y-4">
+  <div class="public-surface max-w-5xl mx-auto p-8 sm:p-10 text-center space-y-4">
     <p class="text-sm uppercase tracking-[0.3em] text-brand-primary/70">Autres projets</p>
     <h2 class="text-2xl sm:text-3xl font-bold text-gray-900">Ateliers, médiation et projets hybrides</h2>
     <p class="text-base sm:text-lg text-gray-700 leading-relaxed">En plus des créneaux réguliers, on imagine des formats qui croisent disciplines et publics : ateliers de transmission, médiations scolaires, projections, scènes ouvertes graphiques et rencontres avec les artistes de passage.</p>
@@ -140,58 +124,44 @@
   </div>
 </section>
 
-<section class="py-16 bg-white/95 rounded-[28px] shadow-lg mt-12 fade-in">
-  <div class="max-w-xl mx-auto px-4 md:px-8 text-center space-y-6">
-    <svg xmlns="http://www.w3.org/2000/svg" class="h-14 w-14 mx-auto text-brand-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 19v-8.93a2 2 0 01.89-1.664l7-4.666a2 2 0 012.22 0l7 4.666A2 2 0 0121 10.07V19M3 19a2 2 0 002 2h14a2 2 0 002-2M3 19l6.75-4.5M21 19l-6.75-4.5M3 10l6.75 4.5M21 10l-6.75 4.5m0 0l-1.14.76a2 2 0 01-2.22 0l-1.14-.76"></path>
-    </svg>
-    <div class="space-y-3">
-      <p class="text-sm uppercase tracking-[0.3em] text-brand-primary/70">Lettre d'information</p>
-      <h3 class="text-3xl text-gray-800 font-bold">Abonne-toi à la newsletter</h3>
-      <p class="text-black leading-relaxed">Stages, accueils de compagnies, événements : reçois les actualités chaudes du Circographe directement dans ta boîte mail.</p>
-    </div>
-    <div>
-      <%= form_with scope: :user, url: newsletter_signup_path, method: :post, data: { controller: "form-feedback" }, class: "items-center justify-center sm:flex gap-4" do |form| %>
-        <%= form.email_field :email_address, placeholder: "Entrez votre email", required: true, class: "text-gray-500 w-full p-3 rounded-full border outline-none focus:border-[#5836A5] focus:ring-[#5836A5] focus:ring-1" %>
-        <%= form.hidden_field :website, value: "" %>
-        <%= form.submit "S'abonner", class: "w-full sm:w-auto mt-3 sm:mt-0 btn-primary cursor-pointer" %>
-        <p data-form-feedback-target="message" class="hidden mt-3 text-sm text-brand-primary"></p>
-      <% end %>
-      <p class="mt-3 mx-auto text-center max-w-lg text-sm text-black">
-        Pas de spam, juste les infos importantes. Consulte notre <%= link_to "Politique de confidentialité", page_path('privacy_policy'), class: "text-brand-primary underline" %>.
-      </p>
-    </div>
-  </div>
-</section>
-
-<section class="py-16 fade-in">
+<section class="py-10 sm:py-16 fade-in">
   <div class="w-full relative">
-    <div class="swiper multiple-slide-carousel swiper-container relative" data-controller="slider" data-slider-options-value='{"breakpoints":{"768":{"slidesPerView":2},"1280":{"slidesPerView":3}}}'>
-      <div class="swiper-wrapper mb-12">
-        <div class="swiper-slide">
-          <div class="rounded-2xl h-96 flex justify-center items-center overflow-hidden">
-            <%= image_tag hero_image(:news_carousel_one), alt: "Carousel Image 1", class: "object-cover w-full h-full" %>
+    <div class="swiper news-photos-carousel swiper-container relative overflow-hidden rounded-2xl"
+         data-controller="slider"
+         data-slider-options-value='<%= {
+           slidesPerView: 1,
+           spaceBetween: 16,
+           grabCursor: true,
+           watchOverflow: false,
+           breakpoints: {
+             "768" => { slidesPerView: 2, spaceBetween: 20 },
+             "1280" => { slidesPerView: 3, spaceBetween: 24 }
+           },
+           pagination: { el: ".news-photos-pagination", clickable: true }
+         }.to_json %>'>
+      <div class="swiper-wrapper mb-4 sm:mb-8">
+        <% news_carousel_image_sources(limit: 12).each_with_index do |filename, index| %>
+          <div class="swiper-slide">
+            <div class="rounded-2xl h-64 sm:h-80 md:h-96 flex justify-center items-center overflow-hidden bg-gray-100 select-none">
+              <%= image_tag filename,
+                            alt: "Photo du Circographe #{index + 1}",
+                            draggable: false,
+                            class: "object-cover w-full h-full",
+                            loading: (index.zero? ? "eager" : "lazy"),
+                            decoding: "async" %>
+            </div>
           </div>
-        </div>
-        <div class="swiper-slide">
-          <div class="rounded-2xl h-96 flex justify-center items-center overflow-hidden">
-            <%= image_tag hero_image(:news_carousel_two), alt: "Carousel Image 2", class: "object-cover w-full h-full" %>
-          </div>
-        </div>
-        <div class="swiper-slide">
-          <div class="rounded-2xl h-96 flex justify-center items-center overflow-hidden">
-            <%= image_tag hero_image(:news_carousel_three), alt: "Carousel Image 3", class: "object-cover w-full h-full" %>
-          </div>
-        </div>
+        <% end %>
       </div>
-      <div class="absolute flex justify-between items-center w-full -translate-x-1/2 left-1/2 top-1/2 -translate-y-1/2 z-50">
-        <button id="slider-button-left" class="swiper-button-prev swiper-arrow">
-          <svg class="h-5 w-5 !text-black hover:!text-gray-800" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
+      <div class="news-photos-pagination swiper-pagination !static !relative flex justify-center gap-1.5 py-3 min-h-[2rem]"></div>
+      <div class="absolute inset-y-0 left-0 right-0 flex justify-between items-center pointer-events-none z-20 px-1 sm:px-2">
+        <button type="button" class="swiper-button-prev swiper-arrow pointer-events-auto touch-manipulation" aria-label="Photo précédente">
+          <svg class="h-5 w-5 !text-black hover:!text-gray-800" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
             <path d="M10 12L6 8L10 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
           </svg>
         </button>
-        <button id="slider-button-right" class="swiper-button-next swiper-arrow">
-          <svg class="h-5 w-5 !text-black hover:!text-gray-800" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
+        <button type="button" class="swiper-button-next swiper-arrow pointer-events-auto touch-manipulation" aria-label="Photo suivante">
+          <svg class="h-5 w-5 !text-black hover:!text-gray-800" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
             <path d="M6 12L10 8L6 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
           </svg>
         </button>
@@ -210,8 +180,8 @@
 </section>
 
 <section class="text-center mt-12 mb-20 space-y-4 fade-in">
-  <div class="max-w-3xl mx-auto bg-white/95 rounded-[24px] shadow-lg px-6 sm:px-10 py-8 space-y-4">
+  <div class="public-surface max-w-3xl mx-auto px-6 sm:px-10 py-8 space-y-4">
     <p class="text-lg text-gray-700 font-medium">Envie de tester un créneau ou de venir en spectateur·rice ?</p>
-    <%= link_to "Consulter les prochains créneaux", page_path("news", anchor: "evenements"), class: "inline-block px-8 py-4 tracking-wide text-white font-bold bg-[#1F5C55] border-2 border-[#1F5C55] rounded-lg shadow-lg hover:bg-gray-100 hover:text-[#1F5C55] hover:border-[#1F5C55] hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1 text-lg" %>
+    <%= link_to "Consulter les prochains créneaux", page_path("news", anchor: "evenements"), class: "public-cta" %>
   </div>
 </section>

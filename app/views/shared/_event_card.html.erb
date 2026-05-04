@@ -6,7 +6,9 @@
                 <%= image_tag(
                       event.picture_url.presence || hero_image("event_card_#{event.id || event.object_id}".to_sym),
                       alt: event.title,
-                      class: "w-full h-[250px] object-cover rounded-xl"
+                      class: "w-full h-[250px] object-cover rounded-xl",
+                      loading: "lazy",
+                      decoding: "async"
                     ) %>
                 <div class="absolute inset-0 w-full h-full bg-gradient-to-tr from-transparent via-transparent to-black/60"></div>
             </div>

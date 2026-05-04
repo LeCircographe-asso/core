@@ -2,10 +2,10 @@
 
 > **Statut** : stable
 > **Public cible** : contributeur
-> **Dernière vérification** : 2026-04-30
+> **Dernière vérification** : 2026-05-01
 > **Sources de vérité** : `spec/`, `bin/test`, `bin/test_fast`, `spec/rails_helper.rb`, `.rspec`.
 
-> Vocabulaire : voir [`../glossary.md`](../glossary.md). Les exemples de code peuvent encore utiliser des noms legacy (`SubscriptionPlan`, `BookOfEntry`) pendant la migration progressive vers `ContributionFormula` / `Contribution` (cf. [`../migrations/vocabulary_migration.md`](../migrations/vocabulary_migration.md)).
+> Vocabulaire : voir [`../glossary.md`](../glossary.md). Les exemples de code utilisent le vocabulaire canonique `ContributionFormula` / `Contribution`.
 
 Ce document remplace l'ancien trio `docs/TDD_GUIDE.md` + `docs/TESTING_GUIDE.md` + `docs/CHANGELOG_TDD_SETUP.md` qui s'étaient mis à diverger. Pour la priorisation par zones (Zone 1 / 2 / 3), se référer à [`../architecture/models.md`](../architecture/models.md#3-classification-par-zones).
 
@@ -76,6 +76,7 @@ end
 
 - `spec/spec_helper.rb` — config RSpec + activation SimpleCov, groupes (Models, Controllers, Services, Helpers, Jobs, Mailers).
 - `spec/rails_helper.rb` — config Rails + Shoulda Matchers.
+- `bin/rspec` — wrapper RSpec sérialisé pour SQLite via `flock`.
 
 ### Seuil de couverture
 
@@ -100,8 +101,8 @@ it "prevents overlapping active memberships" do
 end
 
 it "requires price_cents to be greater than 0" do
-  plan = build(:subscription_plan, price_cents: 0)
-  expect(plan).not_to be_valid
+  formula = build(:contribution_formula, price_cents: 0)
+  expect(formula).not_to be_valid
 end
 ```
 
@@ -138,8 +139,8 @@ Documentent le comportement actuel, pas l'idéal.
 ```ruby
 # Comportement ACTUEL : Pack 10 n'expire jamais
 it "never expires for pack10 contributions" do
-  book = create(:book_of_entry, :pack10, expires_at: 1.year.ago)
-  expect(book.expired?).to be false
+  contribution = create(:contribution, :pack10, expires_at: 1.year.ago)
+  expect(contribution.expired?).to be false
 end
 ```
 
@@ -166,7 +167,7 @@ expect(result).to respond_to(:membership)
 
 #### Instrumentation (`ActiveSupport::Notifications`)
 
-Les services émettent des événements (`payment.created`, `membership.created`, `membership.upgraded`, `subscription.created` *(cible : `contribution.created`)*, etc.) :
+Les services émettent des événements (`payment.created`, `membership.created`, `membership.upgraded`, `contribution.created`, etc.) :
 
 ```ruby
 captured = []
@@ -195,7 +196,7 @@ Les contrôleurs admin simplifiés se testent comme des flows intégrés :
 
 - `Admin::EventsController` — création avec `title`, mise à jour partielle (via `compact_blank`), redirections et notices.
 - `Admin::MembershipTypesController` — `create` / `update` / `destroy` et validations modèle.
-- `Admin::SubscriptionPlansController` *(cible : `Admin::ContributionFormulasController`)* — `update` / `destroy` inline ; `create` délègue à `People::SubscriptionCreator` *(cible : `People::ContributionCreator`)*.
+- `Admin::ContributionFormulasController` — `update` / `destroy` inline ; `create` délègue à `People::ContributionCreator`.
 
 ## 4. Workflow TDD au quotidien
 
@@ -205,6 +206,28 @@ Les contrôleurs admin simplifiés se testent comme des flows intégrés :
 2. Fixer (Green).
 3. Refactor.
 4. Commit.
+
+### SQLite et concurrence
+
+Avec SQLite, un seul writer peut modifier `tmp/test.sqlite3` à la fois. Deux processus RSpec parallèles provoquent des erreurs de type `SQLite3::BusyException: database is locked`.
+
+Bon usage :
+
+```bash
+bin/rspec spec/models/payment_line_spec.rb
+bin/test
+bin/test_fast
+bin/test_watch
+```
+
+Éviter :
+
+```bash
+bundle exec rspec ...
+bundle exec guard
+```
+
+en parallèle d'une autre suite de tests, car cela contourne le lockfile projet.
 
 ### Nouvelle règle métier
 
@@ -280,7 +303,7 @@ bundle exec rubocop --format simple --force-exclusion
 bundle exec rspec
 ```
 
-- CI : le job `lint` dans [`.github/workflows/ci-lint-audit.yml`](../../.github/workflows/ci-lint-audit.yml) exécute `bundle exec rubocop --format github --force-exclusion` (mêmes règles, format pour les annotations GitHub).
+- CI : le job `lint` dans [`.github/workflows/ci-dev.yml`](../../.github/workflows/ci-dev.yml) exécute `bin/rubocop --format github --force-exclusion` (mêmes règles, format pour les annotations GitHub).
 - Ciblage : `bundle exec rubocop --only NomDuCop chemins… --force-exclusion`
 
 ### Voir les offenses dans ton terminal
@@ -375,7 +398,7 @@ Bonnes questions :
 ```bash
 bin/test
 # ou ciblé :
-bundle exec rspec spec/models/subscription_plan_spec.rb
+bundle exec rspec spec/models/contribution_formula_spec.rb
 ```
 
 Rapport : `coverage/index.html`.
@@ -383,7 +406,7 @@ Rapport : `coverage/index.html`.
 ### Lire le rapport
 
 1. Ouvrir `coverage/index.html`.
-2. Cliquer sur un fichier (ex. `app/models/subscription_plan.rb`).
+2. Cliquer sur un fichier (ex. `app/models/contribution_formula.rb`).
 3. Couleurs :
    - **Vert** : ligne couverte.
    - **Rouge** : ligne jamais exécutée.
@@ -391,7 +414,7 @@ Rapport : `coverage/index.html`.
 
 ### Seuils recommandés
 
-- Minimum CI : 12 % (actuel).
+- Minimum CI : 52 % (actuel, suite complète).
 - Acceptable : 30–40 %.
 - Bon : 50–60 %.
 - Excellent : 70 %+ avec qualité.
@@ -409,11 +432,11 @@ Ces listes sont un instantané et doivent être recroisées avec [`../internal/t
 
 ### Models testés
 
-`User`, `Person`, `Membership`, `Payment`, `PaymentLine`, `MembershipType`, `BookOfEntry` (couverture business complète), `Event` (basique).
+`User`, `Person`, `Membership`, `Payment`, `PaymentLine`, `MembershipType`, `Contribution` (couverture business complète), `Event` (basique).
 
 ### Models non testés
 
-`SubscriptionPlan`, `AccountClaim`, `Attendance`, `AttendanceList`, `Blog`, `Tag`, `TagBlog`, `PriceCatalog`, `PriceEntry`, `PaymentAuditLog`, `MemberNumberHistory`, `EventAttendee`, `Session`, `UserService`.
+`ContributionFormula`, `AccountClaim`, `Attendance`, `AttendanceList`, `Blog`, `Tag`, `TagBlog`, `PriceCatalog`, `PriceEntry`, `PaymentAuditLog`, `MemberNumberHistory`, `EventAttendee`, `Session`, `UserService`.
 
 ### Contrôleurs testés (Zone 1)
 
@@ -429,7 +452,7 @@ L'ensemble des services `People::*`, `AccountClaimManagement::*`, `AttendanceMan
 2. Newsletter (flow authentifié) via `NewsletterManagement::NewsletterUpdater`.
 3. `UserDeleter` (suppression / archivage sécurisé).
 4. Observabilité : tests d'événements (`ActiveSupport::Notifications`) sur `People::*`.
-5. Request specs CRUD inline : `Events`, `MembershipTypes`, `SubscriptionPlans` *(cible : `ContributionFormulas`)*.
+5. Request specs CRUD inline : `Events`, `MembershipTypes`, `ContributionFormulas`.
 6. Edge cases modèles (dates, enums, scopes).
 
 ## 9. CI/CD
@@ -444,7 +467,7 @@ L'ensemble des services `People::*`, `AccountClaimManagement::*`, `AttendanceMan
 - **Auth** : la stack d'authentification reste le systeme natif Rails 8 ; ne pas introduire Devise.
 - **Fallback transitoire** : `config.i18n.fallbacks = { en: %i[fr] }` est volontairement temporaire pendant la complétion de `config/locales/en.yml`. Objectif long terme : parité `fr/en` sans fallback implicite pour l’UX anglaise.
 - **Parité des clés locales** : utiliser `bundle exec rake i18n:check_keys` pour lister les clés manquantes entre `fr.yml` et `en.yml` et prioriser les traductions manquantes.
-- **Jobs** : [`.github/workflows/ci-lint-audit.yml`](../../.github/workflows/ci-lint-audit.yml) (`lint`) et [`.github/workflows/ci-auto-lint.yml`](../../.github/workflows/ci-auto-lint.yml) — RuboCop est **bloquant** lorsque la baseline est verte (`bundle exec rubocop --format github --force-exclusion`).
+- **Jobs** : [`.github/workflows/ci-dev.yml`](../../.github/workflows/ci-dev.yml) (`lint`, `security`, `test`) et [`.github/workflows/ci-auto-lint.yml`](../../.github/workflows/ci-auto-lint.yml) — RuboCop est **bloquant** lorsque la baseline est verte (`bin/rubocop --format github --force-exclusion`).
 - **Élargissement** : activer les cops **par petits lots**, une PR par lot ; pas de refactors métier ni renommage de vocabulaire domaine sans accord ([glossaire](../glossary.md)).
 - **Lots suivants suggérés** : après vérif des offenses — LOW (`Style/TrailingCommaInArrayLiteral` / `HashLiteral` si pertinent), puis MEDIUM (`Performance/*`, `Rails/*` au cas par cas), puis HIGH (`Lint/*` sur flux, `Metrics/*`, fichiers `app/models` / `app/services` sensibles) en revue manuelle uniquement.
 - **Commandes locales** : même séquence recommandée qu’avant CI — RuboCop puis RSpec (section 6, *Workflow lint local*) ; ciblage : `bundle exec rubocop --only NomDuCop chemins… --force-exclusion`.
@@ -475,7 +498,8 @@ L'ensemble des services `People::*`, `AccountClaimManagement::*`, `AttendanceMan
 ### CI bloquée par la couverture
 
 - Vérifier en local : `open coverage/index.html`.
-- Ajouter les tests manquants ou ajuster temporairement le seuil dans `spec/spec_helper.rb` (avec discussion équipe).
+- Ajouter les tests manquants si la suite complète passe sous le seuil.
+- Les runs ciblés (`bundle exec rspec spec/models/payment_spec.rb`) génèrent un rapport mais n'appliquent pas le seuil global.
 
 ### Tests lents
 

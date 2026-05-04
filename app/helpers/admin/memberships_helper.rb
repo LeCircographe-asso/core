@@ -2,33 +2,12 @@
 
 module Admin
   module MembershipsHelper
-    # Calculer et formater la différence de prix pour l'upgrade
-    def upgrade_price_difference(new_membership_type, current_membership:)
-      return "0€" unless current_membership&.membership_type
-
-      old_price = current_membership.membership_type.price_cents
-      new_price = new_membership_type.price_cents
-      difference = new_price - old_price
-
-      if difference.positive?
-        "+#{difference / 100.0}€"
-      elsif difference.negative?
-        "#{difference / 100.0}€"
-      else
-        "0€"
-      end
+    def upgrade_membership_options_for(membership_types)
+      membership_types.map { |membership_type| [ membership_type.name_with_price, membership_type.id ] }
     end
 
-    # Formater le nom avec la différence de prix pour l'upgrade
-    def upgrade_name_with_price(membership_type, current_membership:)
-      base_name = membership_type.name
-      price_diff = upgrade_price_difference(membership_type, current_membership: current_membership)
-
-      if price_diff == "0€"
-        "#{base_name} - Gratuit"
-      else
-        "#{base_name} - #{price_diff}"
-      end
+    def upgrade_membership_rule_hint
+      "Le montant facture correspond a l'adhesion Cirque choisie. Aucun prorata de l'adhesion actuelle n'est deduit."
     end
   end
 end

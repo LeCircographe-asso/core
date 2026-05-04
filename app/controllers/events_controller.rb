@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class EventsController < ApplicationController
-  skip_before_action :require_authentication, only: %i[index show upcoming]
+  skip_before_action :require_authentication, only: %i[index show upcoming past]
 
   def index
     redirect_to page_path("news", anchor: "evenements")

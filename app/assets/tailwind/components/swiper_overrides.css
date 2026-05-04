@@ -23,10 +23,6 @@
     display: block;
   }
 
-  .swiper-horizontal {
-    touch-action: pan-y;
-  }
-
   .swiper-button-next,
   .swiper-button-prev {
     position: absolute;

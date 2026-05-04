@@ -23,8 +23,8 @@ module Admin
         # Membership action
         actions << membership_action
 
-        # Subscription action
-        actions << subscription_action
+        # Contribution action
+        actions << contribution_action
 
         # Create web account action - moved to header
         # if is_person_without_user
@@ -52,27 +52,27 @@ module Admin
                   new_admin_membership_path(person_id: person.id),
                   class: "inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#1F5C55] hover:bg-[#194A45] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1F5C55]"
         elsif current_membership.membership_type.basic?
-          link_to "Upgrader vers Cirque",
+          link_to "Passer en adhésion Cirque",
                   new_admin_membership_path(person_id: person.id, upgrade: true),
                   class: "inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#1F5C55] hover:bg-[#194A45] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1F5C55]"
         elsif current_membership.membership_type.circus?
           if current_membership.ended_at < 30.days.from_now
-            link_to "Renouveler adhésion",
+            link_to "Renouveler l'adhésion",
                     new_admin_membership_path(person_id: person.id, renew: true),
                     class: "inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#1F5C55] hover:bg-[#194A45] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1F5C55]"
           else
             link_to "Voir adhésion",
-                    "#{admin_user_path(user ? user.id : "person_#{person.id}")}#membership",
+                    "#{admin_user_path(user || person_route_key)}#membership",
                     class: "inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#1F5C55] hover:bg-[#194A45] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1F5C55]"
           end
         else
-          link_to "Renouveler adhésion",
+          link_to "Renouveler l'adhésion",
                   new_admin_membership_path(person_id: person.id, renew: true),
                   class: "inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#1F5C55] hover:bg-[#194A45] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1F5C55]"
         end
       end
 
-      def subscription_action
+      def contribution_action
         current_membership = person.current_membership
 
         if current_membership.nil?
@@ -83,7 +83,6 @@ module Admin
                       class: "inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-500 bg-gray-100"
         elsif current_membership.membership_type.circus?
           active_contribution = person.contributions.active.first
-
           links = []
           if active_contribution
             label = "Voir cotisation"
@@ -93,18 +92,16 @@ module Admin
             end
             links << link_to(
               label,
-              "#{admin_user_path(user ? user.id : "person_#{person.id}")}#payments",
+              "#{admin_user_path(person_route_key)}#payments",
               class: "inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#1F5C55] hover:bg-[#194A45] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1F5C55] mr-2"
             )
           end
-
           links << link_to(
-            "Ajouter une cotisation",
-            new_admin_subscription_plan_path(person_id: person.id),
+            contribution_action_label,
+            new_admin_contribution_formula_path(person_id: person.id),
             class: "inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#1F5C55] hover:bg-[#194A45] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1F5C55]"
           )
-
-          safe_join(links)
+          helpers.safe_join(links)
         else
           content_tag :span, "Non applicable",
                       class: "inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-500 bg-gray-100"
@@ -119,18 +116,18 @@ module Admin
 
       def edit_information_action
         link_to "Modifier les informations",
-                edit_person_admin_user_path("person_#{person.id}"),
+                edit_person_admin_user_path(person_route_key),
                 class: "text-[#1F5C55] hover:text-[#194A45] hover:underline"
       end
 
       def payment_history_action
-        link_to "Historique des paiements",
+        link_to "Voir les paiements",
                 admin_payments_path(person_id: person.id),
                 class: "text-[#1F5C55] hover:text-[#194A45] hover:underline"
       end
 
       def make_donation_action
-        link_to "Faire un don",
+        link_to "Enregistrer un don",
                 new_admin_donation_path(person_id: person.id),
                 class: "text-[#1F5C55] hover:text-[#194A45] hover:underline"
       end
@@ -161,10 +158,26 @@ module Admin
         end
 
         button_to "Supprimer",
-                  admin_user_path(user || "person_#{person.id}"),
+                  admin_user_path(user || person_route_key),
                   method: :delete,
                   form: { data: { turbo_confirm: "Êtes-vous sûr de vouloir supprimer cet utilisateur/cette personne ?" } },
                   class: "text-red-600 hover:text-red-800 hover:underline bg-transparent border-none cursor-pointer"
+      end
+
+      def person_route_key
+        Admin::Users::PersonRouteKey.call(person)
+      end
+
+      def contribution_action_label
+        active_contribution = person.contributions.active.first
+        return "Acheter une cotisation" unless active_contribution
+
+        return "Gérer les cotisations" unless active_contribution.contribution_formula.duration == "pack10"
+
+        remaining_entries = active_contribution.remaining_entries.to_i
+        return "Gérer les cotisations" unless remaining_entries.positive?
+
+        "Gérer les cotisations (#{remaining_entries} restantes)"
       end
     end
   end

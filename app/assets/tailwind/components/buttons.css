@@ -116,5 +116,71 @@
     color: var(--brand-primary);
     border-color: var(--brand-primary);
   }
-}
 
+  .admin-btn-primary {
+    @apply inline-flex items-center rounded-md border border-transparent px-4 py-2 text-sm font-medium text-white shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2;
+    background-color: var(--brand-primary);
+  }
+
+  .admin-btn-primary:hover {
+    background-color: #194A45;
+  }
+
+  .admin-btn-primary:focus-visible {
+    --tw-ring-color: var(--brand-primary);
+  }
+
+  .admin-btn-accent {
+    @apply inline-flex items-center rounded-md border border-transparent px-4 py-2 text-sm font-medium text-white shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2;
+    background-color: var(--brand-accent);
+  }
+
+  .admin-btn-accent:hover {
+    background-color: #4c2d8a;
+  }
+
+  .admin-btn-accent:focus-visible {
+    --tw-ring-color: var(--brand-accent);
+  }
+
+  .public-cta {
+    @apply inline-flex items-center justify-center rounded-lg border-2 px-8 py-4 text-lg font-bold tracking-wide shadow-lg transition-all duration-300;
+    background-color: var(--brand-primary);
+    border-color: var(--brand-primary);
+    color: #fff;
+  }
+
+  .public-cta:hover {
+    background-color: #f3f4f6;
+    color: var(--brand-primary);
+    border-color: var(--brand-primary);
+  }
+
+  .public-cta:hover,
+  .public-cta:focus-visible {
+    transform: translateY(-0.25rem);
+  }
+
+  .public-cta-pill {
+    @apply inline-flex items-center justify-center rounded-full border px-6 py-3 text-sm font-semibold shadow-md transition-colors duration-300;
+    background-color: var(--brand-primary);
+    border-color: var(--brand-primary);
+    color: #fff;
+  }
+
+  .public-cta-pill:hover {
+    background-color: #fff;
+    color: var(--brand-primary);
+  }
+
+  .public-cta-ghost {
+    @apply inline-flex items-center justify-center rounded-full border px-5 py-2.5 text-sm font-semibold transition-colors duration-300;
+    border-color: rgba(31, 92, 85, 0.4);
+    color: var(--brand-primary);
+    background-color: #fff;
+  }
+
+  .public-cta-ghost:hover {
+    background-color: rgba(31, 92, 85, 0.1);
+  }
+}

@@ -5,7 +5,7 @@ FactoryBot.define do
     association :payment
     association :item, factory: :membership_type
     amount_cents { 2500 }
-    description { Faker::Lorem.sentence }
+    description { "Ligne de paiement" }
 
     trait :for_membership_type do
       association :item, factory: :membership_type

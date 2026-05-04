@@ -1,6 +1,7 @@
-<div class="w-full px-6 sm:px-8 py-8 bg-white/95 shadow-2xl rounded-[28px]" data-controller="form-feedback">
-  <h2 class="text-2xl font-semibold text-gray-800">Écris-nous</h2>
-  <p class="mt-2 text-gray-600">Une question, une envie de résidence ou un partenariat ? On te répond sous quelques jours ouvrés.</p>
+<% embedded = local_assigns.fetch(:embedded, false) %>
+<div class="<%= embedded ? 'w-full rounded-2xl border border-[#5836A5]/25 bg-white px-4 py-6 sm:px-6 sm:py-7 shadow-sm' : 'w-full px-6 sm:px-8 py-8 bg-white/95 shadow-2xl rounded-[28px]' %>" data-controller="form-feedback">
+  <h2 class="text-xl sm:text-2xl font-semibold text-gray-800 leading-snug">Écris-nous</h2>
+  <p class="mt-2 text-sm sm:text-base text-gray-600 leading-relaxed">Une question, un projet de temps d’accueil en création ou un partenariat ? On te répond sous quelques jours ouvrés.</p>
 
   <%= turbo_frame_tag "contact_form" do %>
     <%= render "pages/contact/form_inner", contact: contact, status: local_assigns[:status] %>

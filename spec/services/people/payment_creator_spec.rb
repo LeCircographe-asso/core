@@ -55,6 +55,23 @@ RSpec.describe People::PaymentCreator do
       end
     end
 
+    context 'with offered payment' do
+      it 'persists offer_reason for audit' do
+        result = described_class.new(
+          person: person,
+          amount_cents: 0,
+          payment_method: 'offered',
+          recorded_by_id: admin_user.id,
+          item_type: 'Donation',
+          description: 'Offre test',
+          offer_reason: 'Solidarity'
+        ).call
+
+        expect(result.success?).to be(true)
+        expect(result.payment.offer_reason).to eq('Solidarity')
+      end
+    end
+
     context 'with multiple payment lines' do
       let(:payment_lines) do
         [

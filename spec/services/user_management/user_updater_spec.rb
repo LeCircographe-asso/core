@@ -54,6 +54,20 @@ RSpec.describe UserManagement::UserUpdater do
       expect(NewsletterSubscriber.find_by(email: person.email).subscribed?).to be(true)
     end
 
+    it 'does not mutate newsletter when newsletter_subscribed is absent' do
+      subscriber = create(:newsletter_subscriber, person: person, email: person.email, subscribed: true)
+
+      updater = described_class.new(
+        user_id: user.id,
+        person_attributes: { phone: "0733333333" },
+        updated_by_id: admin.id
+      )
+
+      result = updater.call
+      expect(result.success?).to be(true)
+      expect(subscriber.reload.subscribed?).to be(true)
+    end
+
     it 'returns validation errors when update fails' do
       updater = described_class.new(
         user_id: user.id,
@@ -64,7 +78,7 @@ RSpec.describe UserManagement::UserUpdater do
       result = updater.call
 
       expect(result.success?).to be(false)
-      expect(result.message).to include('Validation errors')
+      expect(result.message).to include(I18n.t("services.validation.invalid_data"))
     end
 
     it 'fails when permissions are insufficient' do
@@ -79,7 +93,7 @@ RSpec.describe UserManagement::UserUpdater do
       result = updater.call
 
       expect(result.success?).to be(false)
-      expect(result.message).to include('Insufficient permissions')
+      expect(result.message).to include(I18n.t("services.errors.insufficient_permissions.user_update"))
       expect(user.reload.email_address).not_to eq('unauthorized@example.com')
     end
   end

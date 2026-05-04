@@ -18,6 +18,7 @@ module Admin
     def new
       @membership_type = MembershipType.new(
         effective_from: Date.current,
+        rate_kind: "standard",
         version: 1,
         created_by_user: Current.user
       )
@@ -74,7 +75,7 @@ module Admin
     end
 
     def membership_type_params
-      params.expect(membership_type: %i[name category price_cents description effective_from version created_by_user_id])
+      params.expect(membership_type: %i[name category rate_kind price_cents description effective_from version created_by_user_id])
     end
   end
 end

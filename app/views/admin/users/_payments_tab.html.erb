@@ -7,7 +7,7 @@
         <div class="bg-gray-50 rounded-lg p-4">
           <div class="flex justify-between items-start mb-2">
             <div class="flex-1">
-              <div class="flex items-center gap-2 mb-1">
+              <div class="flex flex-wrap items-center gap-2 mb-1">
                 <div class="text-sm font-medium text-gray-900">
                   <% if payment.is_offered? %>
                     <span class="text-purple-600 font-semibold">Offert</span>
@@ -15,15 +15,23 @@
                     <%= number_to_currency(payment.total_cents / 100.0, unit: "€", format: "%n %u") %>
                   <% end %>
                 </div>
-                <% if payment.payment_lines.any? %>
+                <% payment.payment_lines.each do |line| %>
                   <span class="text-xs text-gray-500 bg-gray-200 px-2 py-1 rounded">
-                    <%= payment.payment_lines.first.item_description %>
+                    <%= line.history_description %>
+                    <% if line.item_type == "Donation" %>
+                      (<%= number_to_currency(line.amount_cents / 100.0, unit: "€", format: "%n %u") %>)
+                    <% end %>
                   </span>
                 <% end %>
               </div>
               <div class="text-xs text-gray-500">
                 <%= payment.created_at.strftime("%d/%m/%Y") %>
               </div>
+              <% if payment.offer_reason.present? %>
+                <div class="text-xs text-purple-700 mt-1">
+                  Raison : <%= payment.offer_reason %>
+                </div>
+              <% end %>
             </div>
             <div class="text-right">
               <% status_class = case payment.status
@@ -37,18 +45,13 @@
               </span>
             </div>
           </div>
-          <div class="flex justify-end items-center">
-            <%= link_to admin_payment_path(payment), class: "text-[#1F5C55] hover:text-[#194A45] text-xs" do %>
-              Voir détails →
-            <% end %>
-          </div>
         </div>
       <% end %>
     </div>
 
     <% if person.present? %>
       <div class="mt-4 text-center">
-        <%= link_to "Voir tout l'historique", admin_payments_path(person_id: person.id),
+        <%= link_to "Voir les paiements", admin_payments_path(person_id: person.id),
             class: "text-[#1F5C55] hover:underline text-sm font-medium" %>
       </div>
     <% end %>

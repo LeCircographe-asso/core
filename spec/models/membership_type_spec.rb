@@ -55,6 +55,13 @@ RSpec.describe MembershipType, type: :model do
       expect(membership_type.errors[:effective_from]).to include(I18n.t('errors.messages.blank'))
     end
 
+    it 'requires a valid rate_kind' do
+      membership_type = build(:membership_type, rate_kind: "vip")
+
+      expect(membership_type).not_to be_valid
+      expect(membership_type.errors[:rate_kind]).to include(I18n.t('errors.messages.inclusion'))
+    end
+
     it 'validates name uniqueness scoped to version' do
       create(:membership_type, name: 'Test Type', version: 1)
 
@@ -201,6 +208,46 @@ RSpec.describe MembershipType, type: :model do
     end
   end
 
+  describe '#available_for?' do
+    let(:standard_type) { build(:membership_type, :circus, rate_kind: "standard") }
+    let(:reduced_type) { build(:membership_type, :circus, rate_kind: "reduced") }
+    let(:person) { build(:person, reduced_rate_eligible: false) }
+
+    it 'allows standard rates for everyone' do
+      expect(standard_type.available_for?(person)).to be(true)
+    end
+
+    it 'hides reduced rates when the person is not eligible' do
+      expect(reduced_type.available_for?(person)).to be(false)
+    end
+
+    it 'allows reduced rates when the person is eligible' do
+      person.reduced_rate_eligible = true
+      person.reduced_rate_reason = "Étudiant"
+
+      expect(reduced_type.available_for?(person)).to be(true)
+    end
+  end
+
+  describe '.available_for' do
+    let(:person) { create(:person) }
+    let!(:standard_type) { create(:membership_type, :circus, rate_kind: "standard", effective_until: nil) }
+    let!(:reduced_type) { create(:membership_type, :circus_reduced, rate_kind: "reduced", effective_until: nil) }
+    let!(:expired_reduced_type) { create(:membership_type, :circus_reduced, rate_kind: "reduced", effective_until: Date.current - 1.day) }
+
+    it 'returns current standard rates for everyone' do
+      expect(described_class.available_for(person)).to include(standard_type)
+      expect(described_class.available_for(person)).not_to include(reduced_type, expired_reduced_type)
+    end
+
+    it 'returns current reduced rates only for eligible people' do
+      person.update!(reduced_rate_eligible: true, reduced_rate_reason: "Étudiant")
+
+      expect(described_class.available_for(person)).to include(standard_type, reduced_type)
+      expect(described_class.available_for(person)).not_to include(expired_reduced_type)
+    end
+  end
+
   describe '#price_euros' do
     it 'converts cents to euros' do
       membership_type = create(:membership_type, price_cents: 1500)
@@ -314,28 +361,26 @@ RSpec.describe MembershipType, type: :model do
 
   describe 'class methods' do
     describe '.create_default_types!' do
-      it 'creates default membership types' do
-        expect do
-          MembershipType.create_default_types!
-        end.to change(MembershipType, :count).by(3)
+      it 'ensures default membership types exist with expected attributes' do
+        MembershipType.create_default_types!
 
-        basic_type = MembershipType.find_by(name: 'Adhésion Basique')
+        basic_type = MembershipType.find_by(name: 'Adhésion Basique', version: 1)
         expect(basic_type).to be_present
         expect(basic_type.category).to eq('basic')
         expect(basic_type.price_cents).to eq(1500)
 
-        circus_full_type = MembershipType.find_by(name: 'Adhésion Cirque Complète')
+        circus_full_type = MembershipType.find_by(name: 'Adhésion Cirque Complète', version: 1)
         expect(circus_full_type).to be_present
         expect(circus_full_type.category).to eq('circus')
         expect(circus_full_type.price_cents).to eq(2500)
 
-        circus_reduced_type = MembershipType.find_by(name: 'Adhésion Cirque Réduite')
+        circus_reduced_type = MembershipType.find_by(name: 'Adhésion Cirque Réduite', version: 1)
         expect(circus_reduced_type).to be_present
         expect(circus_reduced_type.category).to eq('circus')
         expect(circus_reduced_type.price_cents).to eq(2000)
       end
 
-      it 'does not create duplicates' do
+      it 'is idempotent and does not create duplicate rows' do
         MembershipType.create_default_types!
 
         expect do

@@ -1,21 +1,26 @@
+let fadeInObserver = null
+
 document.addEventListener("turbo:load", function () {
-    initFadeInAnimations();
-});
+  if (fadeInObserver) {
+    fadeInObserver.disconnect()
+    fadeInObserver = null
+  }
+  initFadeInAnimations()
+})
 
-function initFadeInAnimations() {
-    const fadeElements = document.querySelectorAll(".fade-in");
+function initFadeInAnimations () {
+  const fadeElements = document.querySelectorAll(".fade-in")
 
-    if (fadeElements.length === 0) return; // Évite d'exécuter le script s'il n'y a aucun élément à animer
+  if (fadeElements.length === 0) return
 
-    const observer = new IntersectionObserver((entries, observer) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.classList.add("visible");
-                observer.unobserve(entry.target); // Arrête d'observer une fois l'animation déclenchée
-            }
-        });
-    }, { threshold: 0.1 });
+  fadeInObserver = new IntersectionObserver((entries, observer) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add("visible")
+        observer.unobserve(entry.target)
+      }
+    })
+  }, { threshold: 0.1 })
 
-    fadeElements.forEach(el => observer.observe(el));
+  fadeElements.forEach(el => fadeInObserver.observe(el))
 }
-

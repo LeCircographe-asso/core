@@ -9,6 +9,9 @@ module Admin
   # The public UsersController in contrast only handles self-service actions
   # for individual users managing their own profiles.
   class UsersController < BaseController
+    include NewsletterParamParser
+    include Admin::Users::ParameterHandling
+    include Admin::Users::UpdateHandling
     before_action :set_user, only: %i[edit update destroy]
     before_action :set_breadcrumbs, except: %i[index new]
     before_action :check_deletion_permissions, only: [ :destroy ]
@@ -16,28 +19,14 @@ module Admin
 
     # GET /admin/users or /admin/users.json
     def index
-      # Base query avec eager loading optimisé - ne montrer que les Person principales
-      @people = PersonQuery.active.main_people.includes(
-        :user,
-        memberships: :membership_type,
-        contributions: :contribution_formula
-      )
-
-      # Filtres
-      apply_person_filters
-
-      # Recherche
-      apply_person_search
-
-      # Tri
-      @people = @people.order(:last_name, :first_name)
+      people_scope = Admin::Users::IndexQuery.new(params).call
 
       # Pagination - Réduire à 15 éléments pour une meilleure lisibilité (ou paramètre items)
       items_per_page = params[:items]&.to_i || 15
-      @pagy, @people = pagy(@people, items: items_per_page)
+      @pagy, @people = pagy(people_scope, items: items_per_page)
 
       # Statistiques pour le dashboard (basées sur les Person principales)
-      statistics_service = Admin::DashboardStatisticsService.new(base_people: @people)
+      statistics_service = Admin::DashboardStatisticsService.new(base_people: people_scope)
       statistics = statistics_service.call
       @total_people = statistics[:total_people]
       @people_with_user = statistics[:people_with_user]
@@ -53,65 +42,10 @@ module Admin
 
     # GET /admin/users/1 or /admin/users/1.json
     def show
-      # Adapter pour accepter les ID de Person ET de User
-      if params[:id].to_s.start_with?("person_")
-        # ID de Person (format: person_123)
-        person_id = params[:id].gsub("person_", "")
-
-        # Chercher d'abord dans les Person actives
-        @person = PersonQuery.active.includes(:user, memberships: :membership_type, contributions: :contribution_formula, payments: %i[payment_lines recorded_by])
-                             .find_by(id: person_id)
-
-        # Si Person archivée (fusion), rediriger vers la liste
-        if @person.nil?
-          archived_person = Person.find_by(id: person_id)
-          raise ActiveRecord::RecordNotFound if archived_person&.deleted_at.blank?
-
-          redirect_to admin_users_path, notice: t(".merged_person_notice")
-          return
-
-        end
-        @user = @person.user # Peut être nil
-
-        # Si pas de User, créer un User temporaire pour la vue
-        if @user.nil?
-          @user = User.new(
-            id: "temp_#{@person.id}",
-            email_address: @person.email,
-            system_role: nil # Pas de rôle pour une Person sans User
-          )
-          # Établir la relation person manuellement
-          @user.association(:person).target = @person
-          @user.association(:person).loaded!
-          @is_person_without_user = true
-        else
-          @is_person_without_user = false
-        end
-
-        # Données pour les formulaires
-        @membership_types = MembershipType.all
-        @contribution_formulas = ContributionFormula.all
-        @users = User.where(person: nil) # Users non liés
-        @recent_payments = @person.payments.includes(:payment_lines, :recorded_by).order(created_at: :desc).limit(10)
-
-        add_breadcrumb I18n.t("breadcrumbs.admin.users.members_list"), admin_users_path
-        add_breadcrumb @person.full_name, nil
-
+      if person_identifier?(params[:id])
+        return unless load_show_context_for_person
       else
-        # ID de User (format classique)
-        @user = User.unscoped.includes(
-          :person,
-          :memberships,
-          payments: { payment_lines: :item }
-        ).find_by(id: params[:id])
-
-        @person = @user.person
-        @array_right = available_roles_for_user(@user)
-        @is_person_without_user = false
-        @recent_payments = @person&.payments&.includes(:payment_lines, :recorded_by)&.order(created_at: :desc)&.limit(10) || []
-
-        add_breadcrumb I18n.t("breadcrumbs.admin.users.members_list"), admin_users_path
-        add_breadcrumb @user&.person&.full_name.present? ? @user.person.full_name : "Utilisateur ##{@user.id}", nil
+        return unless load_show_context_for_user
       end
 
       respond_to do |format|
@@ -132,7 +66,7 @@ module Admin
         @user.email_address = @person.email
         @user.system_role = "web_visitor" # Rôle par défaut
         add_breadcrumb I18n.t("breadcrumbs.admin.users.members_list"), admin_users_path
-        add_breadcrumb @person.full_name, admin_user_path("person_#{@person.id}")
+        add_breadcrumb @person.full_name, admin_user_path(person_route_key(@person))
         add_breadcrumb I18n.t("breadcrumbs.admin.users.create_web_account"), nil
       else
         add_breadcrumb I18n.t("breadcrumbs.admin.users.members_list"), admin_users_path
@@ -142,17 +76,17 @@ module Admin
 
     # GET /admin/users/person_1/edit_person
     def edit_person
-      person_id = params[:id].to_s.gsub("person_", "")
+      person_id = extracted_person_id(params[:id])
       @person = PersonQuery.active.find(person_id)
       add_breadcrumb I18n.t("breadcrumbs.admin.users.members_list"), admin_users_path
-      add_breadcrumb @person.full_name, admin_user_path("person_#{@person.id}")
+      add_breadcrumb @person.full_name, admin_user_path(person_route_key(@person))
       add_breadcrumb I18n.t("breadcrumbs.admin.common.edit"), nil
     end
 
     # GET /admin/users/1/edit
     def edit
       # Adapter pour gérer les Person
-      if params[:id].to_s.start_with?("person_")
+      if person_identifier?(params[:id])
         # Rediriger vers l'édition Person
         redirect_to edit_person_admin_user_path(params[:id])
         return
@@ -191,7 +125,7 @@ module Admin
       result = form.call
 
       if result.success?
-        redirect_to admin_user_path("person_#{result.person.id}"), notice: result.message
+        redirect_to admin_user_path(person_route_key(result.person)), notice: result.message
       else
         @user = User.new
         @user.person = result.person if result.person
@@ -202,116 +136,16 @@ module Admin
 
     # PATCH/PUT /admin/users/1 or /admin/users/1.json
     def update
-      # Adapter pour gérer les Person
-      if params[:id].to_s.start_with?("person_")
-        person_id = params[:id].to_s.gsub("person_", "")
-        @person = PersonQuery.active.find(person_id)
+      return handle_person_update if person_identifier?(params[:id])
 
-        person_attributes = person_params.to_h.deep_symbolize_keys
-        newsletter_flag = ActiveModel::Type::Boolean.new.cast(person_attributes.delete(:newsletter_subscribed))
-
-        result = People::Register.new(
-          person_params: person_attributes.merge(allow_blank_attributes: true),
-          existing_person: @person,
-          newsletter_subscribed: newsletter_flag,
-          newsletter_source: "admin",
-          create_user_account: false,
-          create_membership: false
-        ).call
-
-        if result.success?
-          updated_person = result.person || @person
-          # Handle AJAX requests for inline editing
-          if request.xhr?
-            render json: {
-              success: true,
-              member_number: updated_person.reload.member_number,
-              message: t(".ajax_success_json_message")
-            }
-          else
-            redirect_to admin_user_path("person_#{updated_person.id}"), notice: t(".person_saved_notice")
-          end
-        elsif request.xhr?
-          render json: {
-            success: false,
-            errors: result.errors
-          }, status: :unprocessable_content
-        else
-          flash.now[:alert] = result.message
-          render :edit_person, status: :unprocessable_content
-        end
-        return
-      end
-
-      respond_to do |format|
-        # Séparer les paramètres User des paramètres Person
-        user_only_params = user_params.slice(:email_address, :system_role, :created_by_admin, :create_web_account)
-        person_params_flat = user_params.except(:email_address, :system_role, :created_by_admin, :create_web_account, :person)
-        newsletter_flag = person_params_flat.delete(:newsletter_subscribed)
-
-        # Utiliser le service UserManagement::UserUpdater
-        updater = UserManagement::UserUpdater.new(
-          user_id: @user.id,
-          email_address: user_only_params[:email_address],
-          system_role: user_only_params[:system_role],
-          person_attributes: person_params_flat,
-          newsletter_subscribed: [ "1", true, 1 ].include?(newsletter_flag),
-          updated_by_id: Current.user.id
-        )
-
-        result = updater.call
-
-        if result.success?
-          format.html { redirect_to admin_user_path(@user), notice: t(".html_updated") }
-          format.json { render json: @user }
-          format.turbo_stream do
-            flash.now[:notice] = t(".turbo_notice")
-            render turbo_stream: [
-              turbo_stream.replace(@user),
-              turbo_stream.replace("flash", partial: "shared/flash")
-            ]
-          end
-        else
-          format.html { render :show, status: :unprocessable_content, alert: result.message }
-          format.json { render json: { errors: result.errors }, status: :unprocessable_content }
-          format.turbo_stream do
-            render turbo_stream: turbo_stream.replace(
-              "error_explanation",
-              partial: "shared/error_messages",
-              locals: { resource: @user, errors: result.errors }
-            )
-          end
-        end
-      end
+      handle_user_update
     end
 
     # DELETE /admin/users/1 or /admin/users/1.json
     def destroy
       # Adapter pour gérer les Person
-      if params[:id].to_s.start_with?("person_")
-        # Supprimer la Person (déjà chargée dans set_user)
-        person = @person
-
-        # Debug: vérifier si @person est défini
-        if person.nil?
-          Rails.logger.error "DEBUG: @person is nil for params[:id] = #{params[:id]}"
-          redirect_to admin_users_path, alert: t(".person_not_found_alert") and return
-        end
-
-        # Utiliser le service UserManagement::UserDeleter
-        deleter = UserManagement::UserDeleter.new(
-          person_id: person.id,
-          deleted_by_id: current_user.id,
-          reason: "Suppression via interface admin"
-        )
-
-        result = deleter.call
-
-        if result.success?
-          redirect_to admin_users_path, status: :see_other, notice: t(".person_deleted_notice")
-        else
-          redirect_to admin_users_path, alert: t(".destruction_failed_alert_html", message: result.message)
-        end
+      if person_identifier?(params[:id])
+        destroy_person_entity
         return
       end
 
@@ -342,9 +176,9 @@ module Admin
     # Use callbacks to share common setup or constraints between actions.
     def set_user
       # Adapter pour gérer les IDs de Person (format: person_123)
-      if params[:id].to_s.start_with?("person_")
+      if person_identifier?(params[:id])
         # Pour les Person, charger la Person
-        person_id = params[:id].gsub("person_", "")
+        person_id = extracted_person_id(params[:id])
         @person = Person.find_by(id: person_id)
 
         # If person not found, redirect to index with alert
@@ -374,147 +208,6 @@ module Admin
       redirect_to admin_users_path, alert: I18n.t("admin.users.check_deletion_permissions.higher_privileges")
     end
 
-    # Méthodes privées pour les filtres et la recherche
-    def apply_person_filters
-      case params[:filter]
-      when "with_active_membership"
-        @people = @people.with_active_membership
-      when "with_expiring_membership"
-        @people = @people.with_expiring_membership
-      when "with_expired_membership"
-        @people = @people.with_expired_membership
-      when "without_membership"
-        @people = @people.without_membership
-      when "with_user_account"
-        @people = @people.with_user_account
-      when "without_user_account"
-        @people = @people.without_user_account
-      end
-    end
-
-    def apply_person_search
-      @people = @people.search_by_contact(params[:search]) if params[:search].present?
-    end
-
-    # Only allow a list of trusted parameters through.
-    def user_params
-      params.expect(
-        user: [ :email_address,
-               :system_role,
-               :created_by_admin,
-               :create_web_account,
-               # Attributs délégués à Person (paramètres plats)
-               :first_name,
-               :last_name,
-               :email,
-               :phone,
-               :birth_date,
-               :address,
-               :emergency_contact_name,
-               :emergency_contact_phone,
-               :notes,
-               :specialty,
-               :is_minor,
-               :image_rights,
-               :get_involved,
-               :newsletter_subscribed,
-               :dyslexic_font,
-               :zip_code,
-               :town,
-               :country,
-               :reduced_rate_eligible,
-               :reduced_rate_reason,
-               :reduced_rate_proof,
-               # Paramètres imbriqués (pour compatibilité)
-               {
-                 person: %i[
-                   id
-                   first_name
-                   last_name
-                   email
-                   phone
-                   birth_date
-                   address
-                   emergency_contact_name
-                   emergency_contact_phone
-                   notes
-                   specialty
-                   is_minor
-                   image_rights
-                   get_involved
-                   newsletter_subscribed
-                   dyslexic_font
-                   zip_code
-                   town
-                   country
-                   reduced_rate_eligible
-                   reduced_rate_reason
-                   reduced_rate_proof
-                 ]
-               } ]
-      )
-    end
-
-    def user_creation_params
-      # Extraire les paramètres de person et les aplatir pour le formulaire
-      person_params = params.dig(:user, :person) || {}
-
-      {
-        first_name: person_params[:first_name],
-        last_name: person_params[:last_name],
-        email: person_params[:email],
-        phone: person_params[:phone],
-        address: person_params[:address],
-        zip_code: person_params[:zip_code],
-        town: person_params[:town],
-        country: person_params[:country],
-        birth_date: person_params[:birth_date],
-        emergency_contact_name: person_params[:emergency_contact_name],
-        emergency_contact_phone: person_params[:emergency_contact_phone],
-        notes: person_params[:notes],
-        specialty: person_params[:specialty],
-        is_minor: person_params[:is_minor],
-        image_rights: person_params[:image_rights],
-        get_involved: person_params[:get_involved],
-        newsletter_subscribed: person_params[:newsletter_subscribed],
-        dyslexic_font: person_params[:dyslexic_font],
-        reduced_rate_eligible: person_params[:reduced_rate_eligible],
-        reduced_rate_reason: person_params[:reduced_rate_reason],
-        reduced_rate_proof: person_params[:reduced_rate_proof],
-        create_web_account: params.dig(:user, :create_web_account),
-        email_address: params.dig(:user, :email_address) || person_params[:email],
-        system_role: params.dig(:user, :system_role),
-        create_membership: params.dig(:user, :create_membership),
-        membership_type_id: params.dig(:user, :membership_type_id),
-        payment_method: params.dig(:user, :payment_method),
-        person_id: params.dig(:user, :person_id)
-      }.compact
-    end
-
-    def person_params
-      params.expect(
-        person: %i[first_name
-                   last_name
-                   email
-                   phone
-                   address
-                   zip_code
-                   town
-                   country
-                   birth_date
-                   emergency_contact_name
-                   emergency_contact_phone
-                   notes
-                   newsletter_subscribed
-                   get_involved
-                   image_rights
-                   is_minor
-                   reduced_rate_eligible
-                   reduced_rate_reason
-                   reduced_rate_proof]
-      )
-    end
-
     def available_roles_for_user(user)
       return [] if user.nil?
 
@@ -533,6 +226,107 @@ module Admin
       return if Current.user&.super_admin?
 
       redirect_to admin_users_path, alert: I18n.t("admin.users.require_super_admin.restore_denied_alert")
+    end
+
+    def person_identifier?(raw_id)
+      Admin::Users::PersonRouteKey.person_identifier?(raw_id)
+    end
+
+    def extracted_person_id(raw_id)
+      Admin::Users::PersonRouteKey.extract(raw_id)
+    end
+
+    def person_route_key(person_or_id)
+      Admin::Users::PersonRouteKey.call(person_or_id)
+    end
+
+    def load_recent_payments(person)
+      return [] unless person
+
+      PaymentQuery.with_person_and_recorded_by
+                  .where(person_id: person.id)
+                  .order(created_at: :desc)
+                  .limit(10)
+    end
+
+    def add_admin_user_breadcrumbs(label)
+      add_breadcrumb I18n.t("breadcrumbs.admin.users.members_list"), admin_users_path
+      add_breadcrumb label, nil
+    end
+
+    def user_label(user)
+      user&.person&.full_name.presence || "Utilisateur ##{user.id}"
+    end
+
+    def load_show_context_for_person
+      person_id = extracted_person_id(params[:id])
+      @person = PersonQuery.active.includes(:user, memberships: :membership_type, contributions: :contribution_formula, payments: %i[payment_lines recorded_by])
+                         .find_by(id: person_id)
+
+      return handle_missing_person_in_show(person_id) if @person.nil?
+
+      @user = @person.user
+      @is_person_without_user = @user.nil?
+      @user = Admin::Users::ViewUserAdapter.from_person(@person) if @is_person_without_user
+      @membership_types = MembershipType.all
+      @contribution_formulas = ContributionFormula.all
+      @users = User.where(person: nil)
+      @recent_payments = load_recent_payments(@person)
+      add_admin_user_breadcrumbs(@person.full_name)
+      true
+    end
+
+    def handle_missing_person_in_show(person_id)
+      archived_person = Person.find_by(id: person_id)
+      raise ActiveRecord::RecordNotFound if archived_person&.deleted_at.blank?
+
+      redirect_to admin_users_path, notice: t(".merged_person_notice")
+      false
+    end
+
+    def load_show_context_for_user
+      @user = User.unscoped.includes(
+        :person,
+        :memberships,
+        payments: { payment_lines: :item }
+      ).find_by(id: params[:id])
+
+      if @user.nil?
+        respond_to do |format|
+          format.html do
+            redirect_to admin_users_path, alert: I18n.t("admin.users.set_user.person_or_user_missing_alert")
+          end
+          format.json { head :not_found }
+        end
+        return false
+      end
+
+      @person = @user.person
+      @array_right = available_roles_for_user(@user)
+      @is_person_without_user = false
+      @recent_payments = load_recent_payments(@person)
+      add_admin_user_breadcrumbs(user_label(@user))
+      true
+    end
+
+    def destroy_person_entity
+      person = @person
+      if person.nil?
+        redirect_to admin_users_path, alert: t(".person_not_found_alert")
+        return
+      end
+
+      deleter = UserManagement::UserDeleter.new(
+        person_id: person.id,
+        deleted_by_id: current_user.id,
+        reason: "Suppression via interface admin"
+      )
+      result = deleter.call
+      if result.success?
+        redirect_to admin_users_path, status: :see_other, notice: t(".person_deleted_notice")
+      else
+        redirect_to admin_users_path, alert: t(".destruction_failed_alert_html", message: result.message)
+      end
     end
   end
 end

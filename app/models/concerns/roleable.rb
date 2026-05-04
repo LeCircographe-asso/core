@@ -6,10 +6,10 @@ module Roleable
   # Humanization des rôles
   def role_humanized
     case system_role
-    when "super_admin" then "Super Admin"
-    when "admin" then "Admin"
+    when "super_admin" then "Super administrateur"
+    when "admin" then "Administrateur"
     when "volunteer" then "Bénévole"
-    when "web_visitor" then "Visiteur Web"
+    when "web_visitor" then "Visiteur web"
     else system_role.humanize
     end
   end
@@ -75,10 +75,10 @@ module Roleable
   class_methods do
     def humanize_role(role)
       case role.to_s
-      when "super_admin" then "Super Admin"
-      when "admin" then "Admin"
+      when "super_admin" then "Super administrateur"
+      when "admin" then "Administrateur"
       when "volunteer" then "Bénévole"
-      when "web_visitor" then "Visiteur Web"
+      when "web_visitor" then "Visiteur web"
       else role.to_s.humanize
       end
     end

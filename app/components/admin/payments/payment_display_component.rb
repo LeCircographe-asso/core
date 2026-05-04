@@ -46,7 +46,7 @@ module Admin
         if payment.payment_lines.any?
           payment.payment_lines.map do |line|
             content_tag :div, class: "text-xs" do
-              "#{line.description || line.item_type}: #{number_to_currency(line.amount_cents / 100.0, unit: '€', separator: ',', delimiter: ' ')}"
+              "#{line.history_description}: #{number_to_currency(line.amount_cents / 100.0, unit: '€', separator: ',', delimiter: ' ')}"
             end
           end.join.html_safe
         else

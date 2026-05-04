@@ -40,4 +40,24 @@ export PORT="${PORT:-3000}"
 export RUBY_DEBUG_OPEN="true"
 export RUBY_DEBUG_LAZY="true"
 
+# Dev DB guard: warn early when DB looks empty.
+DB_USERS_COUNT="$(bundle exec rails runner "print User.count" 2>/dev/null || true)"
+if [[ "$DB_USERS_COUNT" == "0" ]]; then
+  echo "[dev.db.guard] WARNING: users_count=0 in development DB."
+  echo "[dev.db.guard] Run: bin/rails circographe:fix_local_db (or bin/rails db:seed)"
+fi
+
+# Dev DB guard: warn if expected system accounts are missing.
+DB_SYSTEM_ACCOUNTS_STATUS="$(bundle exec rails runner "emails=%w[super-admin@rails.com admin@rails.com volunteer@rails.com]; missing=emails.reject { |e| User.exists?(email_address: e) }; print missing.join(',')" 2>/dev/null || true)"
+if [[ -n "$DB_SYSTEM_ACCOUNTS_STATUS" ]]; then
+  echo "[dev.db.guard] WARNING: missing system account(s): $DB_SYSTEM_ACCOUNTS_STATUS"
+  echo "[dev.db.guard] Run: bin/rails circographe:seed_system_accounts (or bin/rails circographe:fix_local_db)"
+fi
+
+echo "Precompiling assets..."
+if ! bundle exec rails assets:precompile; then
+  echo "Error: assets:precompile failed."
+  exit 1
+fi
+
 exec "${FOREMAN_CMD[@]}" start -f Procfile.dev "$@"

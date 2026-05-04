@@ -2,6 +2,7 @@
 
 require 'rails_helper'
 require 'nokogiri'
+require 'cgi'
 
 RSpec.describe 'Admin::Payments', type: :request do
   describe 'GET /admin/payments' do
@@ -36,12 +37,39 @@ RSpec.describe 'Admin::Payments', type: :request do
         expect(response).to have_http_status(:success)
       end
 
+      it 'does not render the disabled creation modal anymore' do
+        get admin_payments_path
+
+        expect(response.body).to include('Création de paiement temporairement désactivée')
+        expect(response.body).not_to include('id="modal-title"')
+        expect(response.body).not_to include('data-controller="payment-form offer-fields"')
+      end
+
       it 'displays list of payments' do
         create(:payment, person: person, recorded_by: admin, total_cents: 5000, payment_method: 'cash')
 
         get admin_payments_path
         expect(response.body).to include(person.full_name)
         expect(response.body).to include('50') # Check for amount in localized format
+      end
+
+      it 'renders normalized legacy payment line descriptions' do
+        membership_type = create(:membership_type, name: 'Adhésion Cirque Tarif Plein')
+        membership = create(:membership, person: person, membership_type: membership_type)
+        payment = create(:payment, person: person, recorded_by: admin, total_cents: 700, payment_method: 'card')
+        create(
+          :payment_line,
+          payment: payment,
+          item: membership,
+          item_type: 'Membership',
+          amount_cents: 700,
+          description: "Upgrade d'adhésion de Adhésion Basique vers Adhésion Cirque Tarif Plein (plein tarif)"
+        )
+
+        get admin_payments_path
+
+        expect(CGI.unescapeHTML(response.body)).to include("Passage d'adhésion : Adhésion Basique -> Adhésion Cirque Tarif Plein")
+        expect(response.body).not_to include("Upgrade d&#39;adhésion de Adhésion Basique vers Adhésion Cirque Tarif Plein (plein tarif)")
       end
 
       it 'filters by person_id' do
@@ -145,7 +173,7 @@ RSpec.describe 'Admin::Payments', type: :request do
         expect(response.body).to include('succès')
       end
 
-      it 'creates a donation payment line via PaymentCreator' do
+      it 'creates a direct donation payment line' do
         post admin_payments_path, params: {
           payment: {
             person_id: person.id,
@@ -163,6 +191,54 @@ RSpec.describe 'Admin::Payments', type: :request do
         expect(line.item_id).to eq(payment.id)
         expect(line.amount_cents).to eq(1500)
         expect(line.description).to eq('Paiement direct')
+      end
+
+      it 'creates the direct payment through the canonical payment recorder flow' do
+        post admin_payments_path, params: {
+          payment: {
+            person_id: person.id,
+            total_cents: 25.00,
+            payment_method: 'cash',
+            notes: 'Direct payment'
+          }
+        }
+
+        payment = Payment.order(:created_at).last
+        line = payment.payment_lines.sole
+
+        expect(payment.status).to eq('success')
+        expect(payment.recorded_by).to eq(admin)
+        expect(line.item_type).to eq('Donation')
+        expect(line.item_id).to eq(payment.id)
+      end
+
+      it 'persists offer_reason on an offered payment' do
+        post admin_payments_path, params: {
+          payment: {
+            person_id: person.id,
+            total_cents: 0,
+            payment_method: 'offered',
+            offer_reason: 'Solidarity'
+          }
+        }
+
+        payment = Payment.order(:created_at).last
+        expect(payment.offer_reason).to eq('Solidarity')
+      end
+
+      it 'rejects an offered payment without offer_reason' do
+        expect do
+          post admin_payments_path, params: {
+            payment: {
+              person_id: person.id,
+              total_cents: 0,
+              payment_method: 'offered',
+              offer_reason: ''
+            }
+          }
+        end.not_to change(Payment, :count)
+
+        expect(response).to redirect_to(admin_payments_path)
       end
     end
 
@@ -189,6 +265,20 @@ RSpec.describe 'Admin::Payments', type: :request do
         expect(response).to redirect_to(admin_payments_path)
         follow_redirect!
         expect(response.body).to include('Erreur')
+      end
+
+      it 'does not create a cash payment with a zero amount' do
+        expect do
+          post admin_payments_path, params: {
+            payment: {
+              person_id: person.id,
+              total_cents: 0,
+              payment_method: 'cash'
+            }
+          }
+        end.not_to change(Payment, :count)
+
+        expect(response).to redirect_to(admin_payments_path)
       end
     end
   end
@@ -238,6 +328,20 @@ RSpec.describe 'Admin::Payments', type: :request do
         }
 
         expect(response).to redirect_to(admin_payments_path)
+      end
+
+      it 'updates offer_reason' do
+        patch admin_payment_path(payment), params: {
+          payment: {
+            payment_method: 'offered',
+            offer_reason: 'Solidarity',
+            status: 'success'
+          }
+        }
+
+        payment.reload
+        expect(payment.payment_method).to eq('offered')
+        expect(payment.offer_reason).to eq('Solidarity')
       end
     end
 

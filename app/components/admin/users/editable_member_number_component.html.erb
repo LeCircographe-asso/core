@@ -3,8 +3,8 @@
     <!-- Editable mode -->
     <div class="flex items-center space-x-2">
       <span class="text-white/80 text-xs">#</span>
-      <%= form_with model: person, url: admin_user_path("person_#{person.id}"), method: :patch, 
-          local: false, id: form_id, class: "inline-flex items-center", 
+      <%= form_with model: person, url: admin_user_path(Admin::Users::PersonRouteKey.call(person)), method: :patch,
+          local: false, id: form_id, class: "inline-flex items-center",
           data: { "editable-member-number-target": "form" } do |form| %>
         <%= form.text_field :member_number, 
             value: member_number,

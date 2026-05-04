@@ -1,8 +1,8 @@
-<div class="max-w-4xl mx-auto py-6">
+<div class="page-container max-w-4xl py-6">
   <!-- Breadcrumbs -->
   <%= render 'shared/breadcrumbs' %>
   
-  <div class="form-container bg-white shadow-lg rounded-lg overflow-hidden p-6">
+  <div class="form-container surface-card p-6">
     <h1 class="text-2xl font-bold text-[#1F5C55] mb-4">Modifier l'événement</h1>
 
     <%= form_with model: @event, url: admin_event_path(@event), method: "put" do |form| %>

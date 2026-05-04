@@ -51,7 +51,7 @@
 <body>
     <div class="container">
         <h1>Nouveau message de contact</h1>
-        <p><strong>Catégorie :</strong> <span class="category"><%= @category.capitalize %></span></p>
+        <p><strong>Catégorie :</strong> <span class="category"><%= @category_label %></span></p>
         <p><strong>De :</strong> <%= @name %> (<%= @email %>)</p>
         <p><strong>Envoyé le :</strong> <%= @submitted_at.strftime("%d/%m/%Y à %H:%M") %></p>
 

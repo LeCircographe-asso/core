@@ -1,25 +1,25 @@
-<% content_for :title, "Créer une nouvelle liste de présence" %>
+<% content_for :title, "Créer un registre de présence" %>
 
 <div class="min-h-screen py-6">
-  <div class="w-full max-w-3xl mx-auto px-2 sm:px-6">
+  <div class="page-container max-w-3xl px-2 sm:px-6">
     <!-- Breadcrumbs -->
     <%= render 'shared/breadcrumbs' %>
     
     <!-- Header -->
     <div class="mb-5">
-      <h1 class="text-xl md:text-2xl font-bold text-gray-900">Nouvelle liste</h1>
-      <p class="mt-1 text-sm text-gray-500">Créez une liste pour gérer les présences</p>
+      <h1 class="text-xl md:text-2xl font-bold text-gray-900">Nouveau registre de présence</h1>
+      <p class="mt-1 text-sm text-gray-500">Créez le registre de présence du jour</p>
     </div>
 
     <!-- Form -->
-    <div class="bg-white shadow overflow-hidden rounded-lg">
+    <div class="surface-card">
       <div class="px-3 sm:px-6 py-4 border-b border-gray-200">
         <h2 class="text-base sm:text-lg font-medium text-gray-900">Informations</h2>
       </div>
       <div class="px-3 sm:px-6 py-4">
         <%= form_with model: AttendanceList.new, url: admin_attendance_lists_path, method: :post, class: "space-y-4" do |form| %>
           <div>
-            <%= form.label :name, "Nom de la liste", class: "block text-sm font-medium text-gray-700" %>
+            <%= form.label :name, "Nom du registre", class: "block text-sm font-medium text-gray-700" %>
             <div class="mt-1 relative rounded-md shadow-sm">
               <div class="absolute inset-y-0 left-0 pl-2 flex items-center pointer-events-none">
                 <i class="fas fa-tag text-gray-400 text-xs sm:text-sm"></i>

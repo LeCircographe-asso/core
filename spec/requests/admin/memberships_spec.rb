@@ -63,13 +63,47 @@ RSpec.describe 'Admin::Memberships', type: :request do
 
       context 'for upgrade' do
         let(:basic_type) { create(:membership_type, category: :basic) }
-        let(:circus_type) { create(:membership_type, category: :circus) }
+        let(:circus_type) { create(:membership_type, :circus, name: 'Adhésion Cirque Complète', rate_kind: "standard") }
+        let(:circus_reduced_type) { create(:membership_type, :circus_reduced, name: 'Adhésion Cirque Solidaire', rate_kind: "reduced") }
+        let(:misleading_standard_type) { create(:membership_type, :circus, name: 'Adhésion Cirque Réduite de Test', rate_kind: "standard") }
         let!(:basic_membership) { create(:membership, person: person, membership_type: basic_type, status: :active) }
 
         it 'shows only circus types for upgrade' do
+          circus_type
+          circus_reduced_type
+
           get new_admin_membership_path(person_id: person.id, upgrade: 'true')
           expect(response).to have_http_status(:success)
-          # Can't easily test filtered types without parsing HTML
+          expect(response.body).to include("Upgrade d&#39;adhésion")
+          expect(response.body).to include("Règle d'upgrade")
+          expect(response.body).not_to include("Tarif réduit éligible")
+          expect(response.body).not_to include("Sélectionnez ci-dessus pour voir le tarif")
+        end
+
+        it 'hides reduced circus memberships when the person is not reduced-rate eligible' do
+          circus_type
+          circus_reduced_type
+          misleading_standard_type
+
+          get new_admin_membership_path(person_id: person.id, upgrade: 'true')
+
+          expect(response.body).to include("Adhésion Cirque Complète")
+          expect(response.body).to include("Adhésion Cirque Réduite de Test")
+          expect(response.body).not_to include("Adhésion Cirque Solidaire")
+        end
+
+        it 'shows reduced circus memberships when the person is reduced-rate eligible' do
+          person.update!(reduced_rate_eligible: true, reduced_rate_reason: "Étudiant")
+          circus_type
+          circus_reduced_type
+          misleading_standard_type
+
+          get new_admin_membership_path(person_id: person.id, upgrade: 'true')
+
+          expect(response.body).to include("Tarif réduit éligible")
+          expect(response.body).to include("Étudiant")
+          expect(response.body).to include("Adhésion Cirque Solidaire")
+          expect(response.body).to include("Adhésion Cirque Réduite de Test")
         end
       end
     end
@@ -119,6 +153,59 @@ RSpec.describe 'Admin::Memberships', type: :request do
 
           expect(response).to redirect_to(admin_user_path("person_#{person.id}"))
         end
+
+        it 'persists offer_reason for an offered membership' do
+          post admin_memberships_path, params: {
+            membership: {
+              person_id: person.id,
+              membership_type_id: membership_type.id,
+              payment_method: 'offered',
+              offer_reason: 'Solidarity'
+            }
+          }
+
+          payment = Payment.order(:created_at).last
+
+          expect(payment.payment_method).to eq('offered')
+          expect(payment.offer_reason).to eq('Solidarity')
+          expect(payment.total_cents).to eq(0)
+        end
+
+        it 'adds a donation line when donation amount is provided' do
+          post admin_memberships_path, params: {
+            membership: {
+              person_id: person.id,
+              membership_type_id: membership_type.id,
+              payment_method: 'cash',
+              donation_amount: '5.50'
+            }
+          }
+
+          payment = Payment.order(:created_at).last
+
+          expect(payment.total_cents).to eq(membership_type.price_cents + 550)
+          expect(payment.payment_lines.count).to eq(2)
+          expect(payment.payment_lines.find_by(item_type: 'Donation')&.amount_cents).to eq(550)
+        end
+      end
+
+      context 'with invalid offered params' do
+        it 'rejects an offered membership without offer_reason' do
+          expect do
+            post admin_memberships_path, params: {
+              membership: {
+                person_id: person.id,
+                membership_type_id: membership_type.id,
+                payment_method: 'offered',
+                offer_reason: ''
+              }
+            }
+          end.not_to change(Payment, :count)
+
+          expect(response).to redirect_to(new_admin_membership_path(person_id: person.id))
+          follow_redirect!
+          expect(response.body).to include('Une raison doit être fournie')
+        end
       end
 
       context 'for upgrade' do
@@ -150,6 +237,47 @@ RSpec.describe 'Admin::Memberships', type: :request do
               }
             }
           end.to change { Payment.count }.by(1)
+        end
+
+        it 'records a full-price membership payment line for the upgraded membership' do
+          post admin_memberships_path, params: {
+            membership: {
+              person_id: person.id,
+              membership_type_id: circus_type.id,
+              payment_method: 'cash',
+              upgrade: 'true'
+            }
+          }
+
+          payment = Payment.order(:created_at).last
+          line = payment.payment_lines.sole
+
+          expect(payment.total_cents).to eq(circus_type.price_cents)
+          expect(line.item_type).to eq('Membership')
+          expect(line.amount_cents).to eq(circus_type.price_cents)
+          expect(line.item_id).to eq(person.reload.current_membership.id)
+          expect(line.description).to eq("Passage d'adhésion : #{basic_type.name} -> #{circus_type.name}")
+        end
+
+        it 'persists offer_reason and donation for an offered upgrade' do
+          post admin_memberships_path, params: {
+            membership: {
+              person_id: person.id,
+              membership_type_id: circus_type.id,
+              payment_method: 'offered',
+              offer_reason: 'Solidarity',
+              donation_amount: '4.00',
+              upgrade: 'true'
+            }
+          }
+
+          payment = Payment.order(:created_at).last
+
+          expect(payment.payment_method).to eq('offered')
+          expect(payment.offer_reason).to eq('Solidarity')
+          expect(payment.total_cents).to eq(400)
+          expect(payment.payment_lines.find_by(item_type: 'Membership')&.amount_cents).to eq(0)
+          expect(payment.payment_lines.find_by(item_type: 'Donation')&.amount_cents).to eq(400)
         end
       end
     end

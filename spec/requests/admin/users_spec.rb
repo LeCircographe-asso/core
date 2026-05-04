@@ -174,11 +174,29 @@ RSpec.describe 'Admin::Users', type: :request do
         get admin_user_path("person_#{person.id}")
         expect(response).to have_http_status(:success)
         expect(response.body).to include('John')
+        expect(response.body).to include("Créer un espace utilisateur")
+      end
+
+      it "shows recent payments without dead-end 'Voir détails' link" do
+        create(:payment, person: person, recorded_by: admin, total_cents: 5000, payment_method: 'cash')
+
+        get admin_user_path("person_#{person.id}")
+
+        expect(response).to have_http_status(:success)
+        expect(response.body).to include("/admin/payments?person_id=#{person.id}")
+        expect(response.body).not_to include("Voir détails")
       end
 
       it 'returns 404 for non-existent person' do
         get admin_user_path('person_99999')
         expect(response).to have_http_status(:not_found)
+      end
+
+      it 'redirects when numeric user id does not exist' do
+        get admin_user_path(0)
+        expect(response).to redirect_to(admin_users_path)
+        follow_redirect!
+        expect(flash[:alert]).to eq(I18n.t("admin.users.set_user.person_or_user_missing_alert"))
       end
     end
   end
@@ -217,6 +235,27 @@ RSpec.describe 'Admin::Users', type: :request do
         expect(response).to have_http_status(:unprocessable_content)
         expect(response.body).to include('Validation error')
         expect(target_person.reload.first_name).to eq('Lucie')
+      end
+    end
+
+    context "when targeting a user entity without newsletter param" do
+      let(:target_person) { create(:person, first_name: "Mila", last_name: "Durand", email: "mila@example.com") }
+      let(:target_user) { create(:user, person: target_person, email_address: "mila@example.com") }
+
+      it "preserves newsletter subscription state" do
+        subscriber = create(:newsletter_subscriber, person: target_person, email: target_person.email, subscribed: true)
+
+        patch admin_user_path(target_user), params: {
+          user: {
+            first_name: "Mila-Updated",
+            email_address: target_user.email_address,
+            system_role: target_user.system_role
+          }
+        }
+
+        expect(response).to redirect_to(admin_user_path(target_user))
+        expect(target_person.reload.first_name).to eq("Mila-Updated")
+        expect(subscriber.reload.subscribed?).to be(true)
       end
     end
   end

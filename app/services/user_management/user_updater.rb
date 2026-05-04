@@ -20,7 +20,7 @@ module UserManagement
         updated_by = User.find(updated_by_id)
 
         # Vérifier les permissions
-        return failure("Insufficient permissions to update this user") unless can_update_user?(user, updated_by)
+        return failure(I18n.t("services.errors.insufficient_permissions.user_update")) unless can_update_user?(user, updated_by)
 
         ActiveRecord::Base.transaction do
           # Mettre à jour User (seulement si des attributs sont fournis)
@@ -30,17 +30,17 @@ module UserManagement
 
           user_updated = user_attrs.empty? || user.update(user_attrs)
 
-          # Mettre à jour Person si présente
+          # Mettre à jour Person si présente (tester person_attributes en premier pour éviter un load Person inutile)
           person_updated = true
-          if user.person.present? && person_attributes.present?
+          if person_attributes.present? && user.person.present?
             user.person.skip_membership_validation = true
             person_updated = user.person.update(person_attributes.except(:newsletter_subscribed))
           end
 
-          # Gérer newsletter si nécessaire
-          if person_updated && user.person.present? && !newsletter_subscribed.nil?
+          # Gérer newsletter si nécessaire (nil d'abord pour ne pas charger Person quand la clé était absente de la requête)
+          if person_updated && !newsletter_subscribed.nil? && user.person.present?
             newsletter_result = update_newsletter(user.person)
-            return failure("Error updating newsletter: #{newsletter_result.message}") unless newsletter_result.success?
+            return failure(I18n.t("services.errors.newsletter_update_failed", message: newsletter_result.message)) unless newsletter_result.success?
           end
 
           if user_updated && person_updated
@@ -53,19 +53,19 @@ module UserManagement
               changes: user.previous_changes.merge(user.person&.previous_changes || {})
             )
 
-            success(user: user, person: user.person, message: "User updated successfully")
+            success(user: user, person: user.person, message: I18n.t("services.success.user_updated"))
           else
             errors_array = []
             errors_array.concat(user.errors.full_messages) if user.errors.any?
             errors_array.concat(user.person.errors.full_messages) if user.person&.errors&.any?
-            failure("Validation errors: #{errors_array.join(', ')}")
+            failure(I18n.t("services.validation.invalid_data_with_details", details: errors_array.join(", ")))
           end
         end
       rescue ActiveRecord::RecordNotFound => e
-        failure("User not found: #{e.message}")
+        failure(I18n.t("services.errors.user_not_found", message: e.message))
       rescue StandardError => e
         Rails.logger.error "[UserUpdater] Error: #{e.message}"
-        failure("Error updating user: #{e.message}")
+        failure(I18n.t("services.errors.unexpected_error", action: "user update", message: e.message))
       end
     end
 
@@ -80,7 +80,7 @@ module UserManagement
     end
 
     def update_newsletter(person)
-      return success(message: "Newsletter update skipped (no email)") if person.email.blank?
+      return success(message: I18n.t("services.success.newsletter_update_skipped_no_email")) if person.email.blank?
 
       updater = NewsletterManagement::NewsletterUpdater.new(
         person_id: person.id,

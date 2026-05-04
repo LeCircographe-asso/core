@@ -52,11 +52,11 @@
         <% end %>
       </div>
     </div>
-  <% elsif can_purchase_subscriptions? %>
+  <% elsif can_purchase_contributions? %>
     <div class="bg-white rounded-lg border border-gray-200 p-4">
       <div class="text-center">
         <p class="text-gray-500 mb-3">Aucune cotisation active</p>
-        <%= link_to "Ajouter une cotisation", new_admin_subscription_plan_path(person_id: person.id), 
+        <%= link_to "Ajouter une cotisation", new_admin_contribution_formula_path(person_id: person.id), 
             class: "inline-flex items-center px-3 py-1 text-sm font-medium text-white bg-[#1F5C55] hover:bg-[#194A45] rounded-md" %>
       </div>
     </div>

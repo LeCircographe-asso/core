@@ -1,0 +1,30 @@
+<%
+  caption = local_assigns.fetch(:caption, "Bus 15 (Tiss\u00e9o) \u2014 dessert le boulevard de Suisse sur toute sa longueur (arr\u00eats selon ton sens de marche). Infos : tisseo.fr")
+  # Default lat/lng: OSM POI "Circographe" (node 11726901184) — matches the green label on the map.
+  lat = local_assigns.fetch(:lat, 43.6195896)
+  lng = local_assigns.fetch(:lng, 1.4223463)
+  zoom = local_assigns.fetch(:zoom, 17)
+  fixed_height_px = local_assigns[:height]
+  shell_classes = %w[
+    leaflet-map-shell rounded-2xl overflow-hidden border border-gray-200 shadow-inner w-full bg-gray-100
+  ]
+  shell_style = nil
+  if fixed_height_px.present?
+    shell_style = "height: #{fixed_height_px.to_i}px;"
+  else
+    shell_classes += %w[min-h-[280px] h-[clamp(280px,48vw,520px)]]
+  end
+%>
+<div class="<%= shell_classes.join(" ") %>"<%= " style=\"#{shell_style}\"".html_safe if shell_style %>>
+  <div
+    class="leaflet-map-shell-inner leaflet-map-target absolute inset-0 z-0 min-h-0 min-w-0"
+    data-controller="map"
+    data-map-lat-value="<%= lat %>"
+    data-map-lng-value="<%= lng %>"
+    data-map-zoom-value="<%= zoom %>"
+    role="img"
+    aria-label="Carte interactive — 97 bis Boulevard de Suisse, Toulouse"></div>
+</div>
+<% if caption.present? %>
+  <p class="text-sm text-gray-500 mt-3"><%= caption %></p>
+<% end %>

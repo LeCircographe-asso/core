@@ -1,7 +1,7 @@
 <% content_for :title, "Détails de l'adhésion" %>
 
 <div class="min-h-screen py-6">
-  <div class="max-w-7xl mx-auto px-4 sm:px-6">
+  <div class="page-container-wide">
     <!-- Breadcrumbs -->
     <%= render 'shared/breadcrumbs' %>
     
@@ -22,7 +22,7 @@
     <%= turbo_frame_tag "membership_container" %>
     
     <% if @person.has_active_membership? %>
-      <%= render "subscription_options" %>
+      <%= render "contribution_options" %>
     <% end %>
   </div>
 </div>

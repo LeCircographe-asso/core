@@ -14,3 +14,4 @@ pin "global_animations", to: "global_animations.js"
 pin "swiper" # @12.0.3
 pin "swiper/bundle", to: "swiper--bundle.js" # @12.0.3
 pin "confirm_modal", to: "confirm_modal.js"
+pin "leaflet" # @1.9.4

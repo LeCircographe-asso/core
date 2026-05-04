@@ -9,8 +9,8 @@
 >
 > Les noms de classes Ruby utilisés ci-dessous sont systématiquement annotés `(cible : …)` quand ils correspondent à du code legacy en cours de migration :
 >
-> - `SubscriptionPlan` → `ContributionFormula`
-> - `BookOfEntry` → `Contribution`
+> - `ContributionFormula` → `ContributionFormula`
+> - `Contribution` → `Contribution`
 >
 > Plan de renommage : [`../migrations/vocabulary_migration.md`](../migrations/vocabulary_migration.md), `phase3-model-rename`.
 
@@ -23,12 +23,12 @@ Person (CRM, données personnelles)
   ├─> User (authentification — au plus un ; tout User a une Person)
   ├─> Membership (adhésion annuelle)
   ├─> Payment (transactions)
-  ├─> BookOfEntry (cible : Contribution — cotisation cirque)
+  ├─> Contribution (cible : Contribution — cotisation cirque)
   ├─> Attendance (présence quotidienne)
   └─> MemberNumberHistory (historique numéro membre)
 ```
 
-Les formules de cotisation sont stockées dans `SubscriptionPlan` *(cible : `ContributionFormula`)*.
+Les formules de cotisation sont stockées dans `ContributionFormula` *(cible : `ContributionFormula`)*.
 
 ### Points forts confirmés
 
@@ -39,13 +39,13 @@ Les formules de cotisation sont stockées dans `SubscriptionPlan` *(cible : `Con
 - Côté `Person`, `has_one :user, dependent: :restrict_with_error` : pas de suppression incompatible tant qu’un compte web existe (archive / RGPD).
 - `Payment` → `PaymentLine` polymorphique = un paiement peut regrouper adhésion + cotisation + don.
 - Audit trail complet via `PaymentAuditLog` + UUID externe.
-- Versioning sur `MembershipType` et `SubscriptionPlan` *(cible : `ContributionFormula`)* (`version`, `effective_from/until`, `change_reason`, `created_by_user_id`).
+- Versioning sur `MembershipType` et `ContributionFormula` *(cible : `ContributionFormula`)* (`version`, `effective_from/until`, `change_reason`, `created_by_user_id`).
 
 ### Verdict d'audit (snapshot 2025-01-31)
 
 | Dimension | Score | Commentaire |
 | --- | --- | --- |
-| Robustesse métier | 8 / 10 | Validations solides, quelques contradictions sur `BookOfEntry` *(cible : `Contribution`)* |
+| Robustesse métier | 8 / 10 | Validations solides, quelques contradictions sur `Contribution` *(cible : `Contribution`)* |
 | Performance | 6 / 10 | Indexes composites manquants (cf. §4) |
 | Maintenabilité | 7 / 10 | Concerns bien organisés, dualité `expired?` à clarifier |
 | Testabilité | 6 / 10 | Polymorphisme `PaymentLine` + `skip_overlap_validation` augmentent le coût des tests |
@@ -60,18 +60,18 @@ Dix concerns en place :
 - `Categorizable` — humanization des catégories.
 - `Humanizable` — humanization d'enums divers.
 - `Roleable` — gestion des rôles utilisateur.
-- `Versionable` — versioning (`MembershipType`, `SubscriptionPlan` *(cible : `ContributionFormula`)*).
+- `Versionable` — versioning (`MembershipType`, `ContributionFormula` *(cible : `ContributionFormula`)*).
 - `Validatable` — validations communes.
 - `Duplicatable` — détection / fusion de doublons.
 - `SoftDeletable` — soft delete avec `deleted_at`.
 
 ### Tableau d'inclusion
 
-> Dans le tableau ci-dessous, `BookOfEntry` cible `Contribution` et `SubscriptionPlan` cible `ContributionFormula` (cf. encadré en tête).
+> Dans le tableau ci-dessous, `Contribution` cible `Contribution` et `ContributionFormula` cible `ContributionFormula` (cf. encadré en tête).
 
 | Modèle | Statusable | Dateable | Priceable | Categorizable | Humanizable | Roleable | Versionable | SoftDeletable | EmailNormalizable |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| BookOfEntry | oui | oui | - | - | - | - | - | - | - |
+| Contribution | oui | oui | - | - | - | - | - | - | - |
 | AttendanceList | oui | oui | - | - | - | - | - | - | - |
 | AccountClaim | oui | oui | - | - | - | - | - | - | - |
 | Person | - | oui | - | - | oui | - | - | oui | oui |
@@ -81,7 +81,7 @@ Dix concerns en place :
 | PaymentLine | - | - | oui | - | - | - | - | - | - |
 | Event | - | oui | - | oui | - | - | - | - | - |
 | Attendance | - | oui | - | - | - | - | - | - | - |
-| SubscriptionPlan | - | - | oui | - | oui | - | oui | - | - |
+| ContributionFormula | - | - | oui | - | oui | - | oui | - | - |
 | MembershipType | - | - | oui | oui | oui | - | oui | - | - |
 | Membership | oui | oui | - | - | - | - | - | - | - |
 
@@ -103,11 +103,11 @@ Cadre de **stabilité / risque** pour prioriser les tests. Pour les priorités a
 
 #### Zone 1 — core business
 
-`User`, `Person`, `Membership`, `Payment`, `PaymentLine`, `MembershipType`, `BookOfEntry` *(cible : `Contribution`)* — tous testés, à compléter selon les gaps.
+`User`, `Person`, `Membership`, `Payment`, `PaymentLine`, `MembershipType`, `Contribution` *(cible : `Contribution`)* — tous testés, à compléter selon les gaps.
 
 #### Zone 1 — business logic prioritaire
 
-- `SubscriptionPlan` *(cible : `ContributionFormula`)* — pas de spec dédiée, **critique pour le pricing**, priorité haute.
+- `ContributionFormula` *(cible : `ContributionFormula`)* — pas de spec dédiée, **critique pour le pricing**, priorité haute.
 - `Event` — partiel, ajouter edge cases.
 - `AccountClaim` — workflow à couvrir.
 - `Attendance` — logique quotidienne à couvrir.
@@ -150,7 +150,7 @@ Cadre de **stabilité / risque** pour prioriser les tests. Pour les priorités a
 Voir [`controllers.md`](controllers.md) pour le détail. Résumé :
 
 - **Zone 1** — admin CRUD critiques (`Admin::Users`, `Admin::Memberships`, `Admin::Payments`, `Admin::Events`, `Admin::Dashboard`) et auth/checkout publics (`Sessions`, `Registrations`, `Checkout`).
-- **Zone 2** — `AccountClaims`, `Passwords`, `Admin::SubscriptionPlans` *(cible : `Admin::ContributionFormulas`)*, `Admin::MemberNumbers`, autres admin CRUD standards.
+- **Zone 2** — `AccountClaims`, `Passwords`, `Admin::ContributionFormulas`, `Admin::MemberNumbers`, autres admin CRUD standards.
 - **Zone 3** — `Home`, `Pages`, `Events` public, `Blogs`, `Contacts`, `Admin::Blogs`, `Admin::Attendances`, `Admin::AttendanceLists`.
 
 ## 4. Dettes techniques identifiées
@@ -159,7 +159,7 @@ Liste héritée de `MODEL_EVALUATION.md` (snapshot 2025-01-31). À recroiser ave
 
 ### 4.1 Dualité `expired?` (statut vs date)
 
-`Membership#expired?` regarde `status`, `BookOfEntry#expired?` regarde `expires_at`. Les scopes suivent la même asymétrie. Risque : tests déroutants, confusion développeurs.
+`Membership#expired?` regarde `status`, `Contribution#expired?` regarde `expires_at`. Les scopes suivent la même asymétrie. Risque : tests déroutants, confusion développeurs.
 
 Action ciblée :
 
@@ -172,10 +172,10 @@ end
 def expired_status?
   status == "expired"
 end
-# BookOfEntry : OK tel quel
+# Contribution : OK tel quel
 ```
 
-### 4.2 `BookOfEntry` *(cible : `Contribution`)* — validations contradictoires
+### 4.2 `Contribution` *(cible : `Contribution`)* — validations contradictoires
 
 `sessions_remaining` est forcé à `0` par défaut, validé `presence: true` si `has_session_limit?`, `presence: false` si Pack 10, et la validation custom contredit le default. Tests fragiles.
 
@@ -212,7 +212,7 @@ add_index :subscription_plans, [:membership_type_id, :duration], name: "idx_sub_
 
 Impact attendu : dashboards admin plus rapides, scalabilité accrue.
 
-### 4.5 `BookOfEntry.expires_at` *(cible : `Contribution.expires_at`)* nullable mais NOT NULL en migration
+### 4.5 `Contribution.expires_at` *(cible : `Contribution.expires_at`)* nullable mais NOT NULL en migration
 
 Pack 10 force `expires_at` à `Time.current + 100.years` faute d'accepter `NULL`. Conséquence : queries `WHERE expires_at < ?` partout, factories complexes.
 

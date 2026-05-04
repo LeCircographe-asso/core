@@ -15,6 +15,11 @@
     <link rel="icon" href="/icon.png" type="image/png">
     <link rel="icon" href="/icon.svg" type="image/svg+xml">
     <link rel="apple-touch-icon" href="/icon.png">
+    <%# Leaflet : hors bundle Tailwind (@import après @layer = CSS invalide / carte miniature). %>
+    <%= tag.link rel: "stylesheet",
+                 href: "https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css",
+                 crossorigin: "anonymous",
+                 "data-turbo-track": "reload" %>
     <%= stylesheet_link_tag "tailwind", "data-turbo-track": "reload" %>
     <%= stylesheet_link_tag "flowbite", "data-turbo-track": "reload" %>
     <%= stylesheet_link_tag "application", media: "all", "data-turbo-track": "reload" %>
@@ -35,7 +40,7 @@
     <div class="admin-layout">
         <%= render 'admin/dashboard/admin_lateral_navbar' %>
         <div class="admin-content" data-sidebar-target="content">
-            <%= turbo_frame_tag "flash" do %>
+            <%= turbo_frame_tag ProfileSectionDomIds::FLASH_FRAME do %>
             <%= render 'shared/flash' %>
             <% end %>
             <main class="admin-main">
@@ -46,14 +51,16 @@
 
     <% elsif controller_name == 'sessions' && action_name == 'new' || controller_name == 'registrations' && action_name == 'new' || controller_name == 'pages' && action_name == 'terms' || controller_name == 'pages' && action_name == 'privacy_policy' %>
     
-    <div class="flex flex-col min-h-screen w-full overflow-x-hidden">
+    <div class="flex min-h-[100dvh] flex-col w-full overflow-x-hidden">
         <header>
             <%= render 'shared/navbar' %>
         </header>
-        <%= turbo_frame_tag "flash" do %>
+        <%= turbo_frame_tag ProfileSectionDomIds::FLASH_FRAME do %>
         <%= render 'shared/flash' %>
         <% end %>
-        <%= yield %>
+        <main class="flex-1 min-h-0">
+            <%= yield %>
+        </main>
     </div>
     
     <% else %>
@@ -62,11 +69,11 @@
         <%= render 'shared/navbar' %>
     </header>
     <div class="flex-grow bg-no-repeat bg-cover bg-center <%= 'parallax-bg' if controller_name == 'home' && action_name == 'index' %>" style="background-image: url('<%= asset_path(content_for(:background_image) || 'background.webp') %>'); background-attachment: fixed; background-position: center; background-repeat: no-repeat; background-size: cover;">
-        <%= turbo_frame_tag "flash" do %>
+        <%= turbo_frame_tag ProfileSectionDomIds::FLASH_FRAME do %>
         <%= render 'shared/flash' %>
         <% end %>
-        <main class="w-full mx-auto space-y-6 px-4 sm:px-6 lg:px-8 <%= controller_name == 'home' && action_name == 'index' ? 'pt-0' : 'pt-8' %>">
-        <div class="max-w-6xl mx-auto">
+        <main class="page-container space-y-6 <%= controller_name == 'home' && action_name == 'index' ? 'pt-0' : 'pt-8' %>">
+        <div class="w-full">
             <%= yield %>
         </div>
         </main>

@@ -1,24 +1,24 @@
-<% content_for :title, "Gestion des listes de présence" %>
+<% content_for :title, "Registre de présence" %>
 
 <div class="min-h-screen py-6">
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+  <div class="page-container-wide">
     <!-- Breadcrumbs -->
     <%= render 'shared/breadcrumbs' %>
     
     <!-- Header -->
     <div class="mb-6">
       <div class="flex justify-between items-center">
-        <h1 class="text-2xl font-bold text-gray-900">Listes de présence</h1>
+        <h1 class="text-2xl font-bold text-gray-900">Registre de présence</h1>
         <%= link_to new_admin_attendance_list_path, class: "px-4 py-2 bg-[#1F5C55] hover:bg-[#194A45] text-white text-sm font-medium rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1F5C55] flex items-center" do %>
-          <i class="fas fa-plus mr-0 md:mr-2"></i> <span class="hidden md:inline">Créer une nouvelle liste</span>
+          <i class="fas fa-plus mr-0 md:mr-2"></i> <span class="hidden md:inline">Créer un registre</span>
         <% end %>
       </div>
-      <p class="mt-2 text-sm text-gray-500">Gérez les listes de présence pour les formations, événements et réunions</p>
+      <p class="mt-2 text-sm text-gray-500">Gérez les registres de présence du jour pour les formations, événements et réunions</p>
     </div>
 
     <!-- Desktop Table View (hidden on mobile) -->
     <div class="hidden md:block">
-      <div class="bg-white shadow overflow-hidden rounded-lg">
+      <div class="surface-card">
         <div class="overflow-x-auto">
           <table class="min-w-full divide-y divide-gray-200">
             <thead class="bg-gray-50">
@@ -117,7 +117,7 @@
     <div class="md:hidden space-y-4">
       <% if @attendance_list.present? %>
         <% @attendance_list.each do |attendance_list| %>
-          <div class="bg-white shadow rounded-lg overflow-hidden">
+          <div class="surface-card">
             <div class="p-4 border-b border-gray-200">
               <div class="flex justify-between items-center">
                 <h3 class="font-semibold text-lg text-gray-900">
@@ -188,7 +188,7 @@
           </div>
         <% end %>
       <% else %>
-        <div class="bg-white shadow rounded-lg p-6 text-center">
+        <div class="surface-card p-6 text-center">
           <i class="fas fa-list text-gray-400 text-3xl mb-3"></i>
           <p class="text-gray-500">Aucune liste de présence disponible</p>
           <p class="mt-1 text-xs text-gray-500">Créez une nouvelle liste pour commencer</p>

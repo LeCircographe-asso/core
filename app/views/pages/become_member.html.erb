@@ -1,133 +1,107 @@
 <% content_for :title, "Le Circographe - Adhérer" %>
 
-<style>
-  .timeline-step {
-    opacity: 0;
-    transform: translateY(24px);
-    transition: opacity 0.6s ease, transform 0.6s ease;
-  }
-  .timeline-step--visible {
-    opacity: 1;
-    transform: translateY(0);
-  }
-</style>
-
-<section class="relative overflow-hidden rounded-[32px] shadow-2xl mb-14">
+<section class="public-hero-shell mb-8">
   <%= image_tag hero_image(:become_member_hero), class: "absolute inset-0 w-full h-full object-cover hero-img-filter", alt: "" %>
   <div class="hero-overlay"></div>
-  <div class="relative hero-panel text-center space-y-4">
+  <div class="relative hero-panel text-center space-y-3 sm:space-y-4">
     <p class="text-sm uppercase tracking-[0.35em] text-white/70">Rejoindre la communauté</p>
     <h1 class="font-circographe text-3xl sm:text-4xl lg:text-5xl font-bold">Adhérer au Circographe</h1>
-    <p class="max-w-3xl mx-auto text-lg text-white/85 leading-relaxed">Tout commence par une rencontre sur place. Rejoins la communauté du Circographe, découvre le lieu et participe à la vie associative.</p>
+    <p class="max-w-2xl mx-auto text-base sm:text-lg text-white/85 leading-snug">Une rencontre sur place pour rejoindre la communauté, découvrir le lieu et la vie associative.</p>
   </div>
 </section>
 
-<section class="grid grid-cols-1 xl:grid-cols-4 gap-6 fade-in">
-  <article class="bg-white/95 rounded-[24px] shadow-lg p-6 xl:col-span-3 space-y-4">
-    <p class="text-sm uppercase tracking-[0.3em] text-[#1F5C55]/70">Pourquoi adhérer ?</p>
-    <h2 class="text-2xl font-semibold text-gray-800">Un lieu pour pratiquer, créer et s'entraider</h2>
-    <p class="text-gray-700">L'adhésion te donne accès aux entraînements libres de cirque, aux temps de création graphique, aux résidences d'artistes et à une programmation collective tout au long de l'année.</p>
-    <p class="text-gray-600">Sur place, on t'accueille pour t'expliquer le fonctionnement autogéré du lieu, te présenter l'équipe bénévole et t'aider à trouver les bons créneaux selon ta pratique.</p>
-  </article>
-
-  <aside class="bg-gradient-to-br from-[#1F5C55]/75 to-[#2a7d73]/75 rounded-[24px] shadow-xl p-6 space-y-4 backdrop-blur-sm">
-    <h3 class="text-xl font-bold text-white">Les avantages adhérent·e</h3>
-    <ul class="space-y-3 text-sm text-white">
-      <li class="flex items-center gap-3">
-        <span class="w-7 h-7 flex-shrink-0 inline-flex items-center justify-center rounded-full bg-white text-[#1F5C55] font-bold shadow-md" style="font-size: 1.125rem; line-height: 1;">✓</span>
-        <span class="font-medium">Accès aux entraînements libres de cirque</span>
-      </li>
-      <li class="flex items-center gap-3">
-        <span class="w-7 h-7 flex-shrink-0 inline-flex items-center justify-center rounded-full bg-white text-[#1F5C55] font-bold shadow-md" style="font-size: 1.125rem; line-height: 1;">✓</span>
-        <span class="font-medium">Participation aux ateliers & résidences graphiques</span>
-      </li>
-      <li class="flex items-center gap-3">
-        <span class="w-7 h-7 flex-shrink-0 inline-flex items-center justify-center rounded-full bg-white text-[#1F5C55] font-bold shadow-md" style="font-size: 1.125rem; line-height: 1;">✓</span>
-        <span class="font-medium">Vie associative & bénévolat (événements, accueil, technique)</span>
-      </li>
-      <li class="flex items-center gap-3">
-        <span class="w-7 h-7 flex-shrink-0 inline-flex items-center justify-center rounded-full bg-white text-[#1F5C55] font-bold shadow-md" style="font-size: 1.125rem; line-height: 1;">✓</span>
-        <span class="font-medium">Communauté active pour partager astuces, matériel et projets</span>
-      </li>
-    </ul>
-  </aside>
-</section>
-
-
-<section class="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-10 fade-in" id="tarifs">
-  <article class="bg-white/95 rounded-[28px] shadow-lg p-6 sm:p-8 space-y-4">
-    <p class="text-sm uppercase tracking-[0.3em] text-[#1F5C55]/70">Tarifs & types d'adhésion</p>
-    <h2 class="text-2xl font-semibold text-gray-800">Adhésion annuelle</h2>
-    <ul class="space-y-3 text-gray-600">
-      <li><strong class="text-gray-800">Adhésion visiteur :</strong> prix libre à partir de 1 € / an – pour soutenir l'association et profiter des temps ouverts en simple découverte (sans pratique).</li>
-      <li>
-        <strong class="text-gray-800">Adhésion cirque :</strong>
-        <span class="block text-gray-600">Plein tarif : 10 € / an.</span>
-        <span class="block text-gray-600">Tarif réduit : 7 € / an (sur justificatif).</span>
-        <span class="block text-gray-600">Chaque adhésion est valable de date à date.</span>
-      </li>
-      <li><strong class="text-gray-800">Adhésion soutien :</strong> 20 € / an – pour contribuer davantage à l'autogestion et accompagner nos projets.</li>
-    </ul>
-    <p class="text-sm text-gray-500 bg-[#1F5C55]/10 border border-[#1F5C55]/20 rounded-2xl px-4 py-3">Le paiement se fait sur place (CB ou espèces). Un reçu fiscal peut être remis sur demande.</p>
-  </article>
-
-  <article class="bg-white/95 rounded-[28px] shadow-lg p-6 sm:p-8 space-y-4">
-    <p class="text-sm uppercase tracking-[0.3em] text-[#1F5C55]/70">Cotisations</p>
-    <h2 class="text-2xl font-semibold text-gray-800">Participer à l'autogestion</h2>
-    <p class="text-gray-600">La cotisation finance l’entretien du lieu et le renouvellement du matériel. Merci de choisir la formule qui correspond à ta pratique, tout en participant au fonctionnement collectif.</p>
-    <ul class="space-y-2 text-gray-600">
-      <li><strong class="text-gray-800">Séance libre :</strong> 4 € la journée pour profiter d’un créneau d’entraînement.</li>
-      <li><strong class="text-gray-800">Carnet 10 séances :</strong> 30 € pour venir quand tu veux et partager l’espace en toute autonomie.</li>
-      <li><strong class="text-gray-800">Trimestre (3 mois) :</strong> 65 € pour t’installer durablement dans la dynamique de la salle.</li>
-      <li><strong class="text-gray-800">Cotisation annuelle « super soutiens » :</strong> 120 € pour accompagner l’autogestion sur la durée.</li>
-    </ul>
-    <p class="text-gray-600">Tu peux t’impliquer selon tes disponibilités : accueil, maintenance, communication… l’équipe bénévole t’aide à trouver ta place et à rester branché·e sur la communauté.</p>
-  </article>
-</section>
-
-<section class="bg-white/95 rounded-[28px] shadow-lg p-6 sm:p-8 mt-10 fade-in">
-  <header class="text-center space-y-3 mb-6">
-    <p class="text-sm uppercase tracking-[0.3em] text-[#1F5C55]/70">S'impliquer au quotidien</p>
-    <h2 class="text-2xl font-semibold text-gray-800">Bénévolat et vie associative</h2>
-    <p class="text-gray-600 max-w-3xl mx-auto">Au Circographe, chaque adhésion se prolonge par une participation active : l’autogestion repose sur les bénévoles qui accueillent, maintiennent et imaginent les projets du lieu.</p>
-  </header>
-  <div class="grid gap-6 md:grid-cols-3">
-    <article class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 transition-transform duration-300 hover:-translate-y-1">
-      <h3 class="text-lg font-semibold text-gray-800 mb-2">Accueil & convivialité</h3>
-      <p class="text-gray-600">Tenir un créneau, présenter les règles du lieu et s’assurer que tout le monde se sente bienvenu·e.</p>
-    </article>
-    <article class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 transition-transform duration-300 hover:-translate-y-1">
-      <h3 class="text-lg font-semibold text-gray-800 mb-2">Technique & maintenance</h3>
-      <p class="text-gray-600">Installer ou régler un agrès, bricoler un équipement, maintenir l’espace propre et sécurisé.</p>
-    </article>
-    <article class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 transition-transform duration-300 hover:-translate-y-1">
-      <h3 class="text-lg font-semibold text-gray-800 mb-2">Communication & projets</h3>
-      <p class="text-gray-600">Partager les actualités, documenter la vie du lieu, impulser des événements qui relient cirque et arts graphiques.</p>
-    </article>
-  </div>
-  <p class="mt-6 text-center text-sm text-gray-500">Pour te proposer, passe sur un créneau d’ouverture ou contacte-nous via le <%= link_to "formulaire de contact", page_path('contact_us'), class: "text-[#1F5C55] underline" %>.</p>
-</section>
-<section class="mt-10 fade-in">
-  <%= render "shared/faq_section", id: "adhesion-faq", label: "Questions fréquentes", title: "Avant de te déplacer", subtitle: "Quelques repères supplémentaires pour préparer ton adhésion.", faqs: @adhesion_faqs, footer: "Besoin d'un coup de main ? Contacte-nous en amont ou passe pendant un créneau d'ouverture." %>
-</section>
-
-<section class="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-10 fade-in">
-  <article class="bg-white/95 rounded-[28px] shadow-lg p-6 sm:p-8 space-y-4">
-    <p class="text-sm uppercase tracking-[0.3em] text-[#1F5C55]/70">Horaires d'accueil</p>
-    <h2 class="text-2xl font-semibold text-gray-800">Passe nous voir sur un créneau d'ouverture</h2>
-    <%= render "shared/opening_hours", horaires: @opening_hours %>
-  </article>
-
-  <article class="bg-white/95 rounded-[28px] shadow-lg p-6 sm:p-8 space-y-4">
-    <p class="text-sm uppercase tracking-[0.3em] text-[#1F5C55]/70">Nous trouver</p>
-    <h2 class="text-2xl font-semibold text-gray-800">Le Circographe sur la carte</h2>
-    <div class="rounded-2xl overflow-hidden border border-gray-200 shadow-inner">
-      <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d858.7320762106817!2d1.422364267936696!3d43.618639564522674!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x12aebb1b7b5096ef%3A0x710f3096ea206f0!2sLe%20Circographe!5e0!3m2!1sfr!2sfr!4v1745437455061!5m2!1sfr!2sfr" width="100%" height="300" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+<%# Une carte : pourquoi + résumé + adhésion + cotisations (séparateurs internes) %>
+<section class="fade-in" id="tarifs">
+  <article class="public-surface p-5 sm:p-6 lg:p-8 space-y-6 lg:space-y-8">
+    <div class="grid gap-6 xl:grid-cols-12 xl:gap-8 xl:items-start pb-6 lg:pb-8 border-b border-gray-100">
+      <div class="xl:col-span-7 space-y-3 min-w-0">
+        <p class="text-sm uppercase tracking-[0.3em] text-[#1F5C55]/70">Pourquoi adhérer ?</p>
+        <h2 class="text-xl sm:text-2xl font-semibold text-gray-800">Pratiquer, créer, s'entraider</h2>
+        <p class="text-gray-700 text-sm sm:text-base leading-relaxed max-w-prose">Accès aux entraînements libres cirque, création graphique, temps d’accueil en création et programmation collective. Les bénévoles t’expliquent l’autogestion et t’aident à choisir tes créneaux.</p>
+      </div>
+      <aside class="xl:col-span-5 bg-gradient-to-br from-[#1F5C55]/90 to-[#2a7d73]/90 rounded-2xl p-5 sm:p-6 space-y-3 backdrop-blur-sm shrink-0">
+        <h3 class="text-lg font-bold text-white">En résumé</h3>
+        <ul class="space-y-2.5 text-sm text-white">
+          <li class="flex gap-2"><span class="text-white font-bold shrink-0">✓</span><span>Entraînements libres cirque</span></li>
+          <li class="flex gap-2"><span class="text-white font-bold shrink-0">✓</span><span>Ateliers & temps d’accueil en création (arts graphiques)</span></li>
+          <li class="flex gap-2"><span class="text-white font-bold shrink-0">✓</span><span>Vie associative & bénévolat</span></li>
+          <li class="flex gap-2"><span class="text-white font-bold shrink-0">✓</span><span>Communauté & partage de matériel</span></li>
+        </ul>
+      </aside>
     </div>
-    <p class="text-sm text-gray-500">27 bis allée Maurice Sarraut – 31300 Toulouse • Tram T1/T2 – Arrêt Cartoucherie.</p>
+
+    <div class="grid lg:grid-cols-2 gap-8 lg:gap-10">
+      <div class="space-y-3 min-w-0 lg:pr-4 lg:border-r lg:border-gray-100">
+        <p class="text-sm uppercase tracking-[0.3em] text-[#1F5C55]/70">Adhésion annuelle</p>
+        <h2 class="text-xl font-semibold text-gray-800">Types & tarifs</h2>
+        <ul class="space-y-2.5 text-sm text-gray-600">
+          <li><strong class="text-gray-800">Adhésion visiteur :</strong> prix libre à partir de 1 € / an – pour soutenir l'association et profiter des temps ouverts en simple découverte (sans pratique).</li>
+          <li>
+            <strong class="text-gray-800">Adhésion cirque :</strong>
+            <span class="block text-gray-600">Plein tarif : 10 € / an.</span>
+            <span class="block text-gray-600">Tarif réduit : 7 € / an (sur justificatif).</span>
+            <span class="block text-gray-600">Chaque adhésion est valable de date à date.</span>
+          </li>
+        </ul>
+        <p class="text-xs text-gray-500 bg-[#1F5C55]/10 border border-[#1F5C55]/20 rounded-xl px-3 py-2">Paiement sur place (CB ou espèces). Reçu fiscal sur demande.</p>
+      </div>
+      <div class="space-y-3 min-w-0 pt-6 lg:pt-0 border-t border-gray-100 lg:border-t-0">
+        <p class="text-sm uppercase tracking-[0.3em] text-[#1F5C55]/70">Cotisations</p>
+        <h2 class="text-xl font-semibold text-gray-800">Autogestion du lieu</h2>
+        <p class="text-sm text-gray-600">Choisis la formule qui colle à ta pratique.</p>
+        <ul class="space-y-2 text-sm text-gray-600">
+          <li><strong class="text-gray-800">Séance libre :</strong> 4 € la journée pour profiter d’un créneau d’entraînement.</li>
+          <li><strong class="text-gray-800">Carnet 10 séances :</strong> 30 € pour venir quand tu veux et partager l’espace en toute autonomie.</li>
+          <li><strong class="text-gray-800">Trimestre (3 mois) :</strong> 60 € — accès cirque sur la période.</li>
+          <li><strong class="text-gray-800">Cotisation annuelle :</strong> 120 € — accès cirque sur un an.</li>
+        </ul>
+      </div>
+
+      <p class="lg:col-span-2 text-xs text-gray-600 bg-gray-50 border border-gray-100 rounded-xl px-3 py-2.5 leading-relaxed">
+        <strong class="text-gray-800">À retenir :</strong> l’adhésion (cotisation associative annuelle) et la cotisation cirque sont deux paiements distincts. Les formules ci-contre supposent une <strong>adhésion cirque</strong> active.
+      </p>
+    </div>
+
+    <p class="pt-2 border-t border-gray-100 text-sm text-gray-600">
+      Bénévolat & fonctionnement :
+      <%= link_to "Association — autogestion", page_path("association", anchor: "fonctionnement"), class: "font-semibold text-[#1F5C55] hover:text-[#15403c] underline-offset-2 hover:underline" %>.
+    </p>
   </article>
 </section>
 
-<section class="text-center mt-12 mb-12 fade-in">
-  <%= link_to "Passer nous voir", page_path('contact_us'), class: "inline-flex items-center gap-2 px-8 py-4 tracking-wide text-white font-bold bg-[#1F5C55] border-2 border-[#1F5C55] rounded-full shadow-lg hover:bg-gray-100 hover:text-[#1F5C55] hover:border-[#1F5C55] transition-all duration-300" %>
+<section class="mt-6 fade-in">
+  <%= render "shared/faq_section",
+             id: "adhesion-faq",
+             label: "Questions fréquentes",
+             title: "Avant de te déplacer",
+             subtitle: "Quelques repères pour préparer ton adhésion.",
+             faqs: @adhesion_faqs,
+             footer: "Besoin d'un coup de main ? Écris-nous ou passe pendant un créneau d'ouverture." %>
+</section>
+
+<%# Horaires centrés (lisibilité), bande accès en dessous %>
+<section class="mt-4 mb-8 fade-in" id="horaires">
+  <article class="public-surface p-4 sm:p-5 lg:p-6 space-y-4">
+    <div class="text-center space-y-1 max-w-xl mx-auto">
+      <p class="text-sm uppercase tracking-[0.3em] text-[#1F5C55]/70">Horaires</p>
+      <h2 class="text-xl font-semibold text-gray-800">Créneaux d’accueil</h2>
+    </div>
+    <div class="max-w-lg mx-auto w-full">
+      <%= render "shared/opening_hours", horaires: @opening_hours, bare: true, compact: true %>
+    </div>
+
+    <div class="flex flex-col gap-3 pt-4 border-t border-gray-200 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
+      <div class="space-y-1 min-w-0">
+        <p class="text-sm uppercase tracking-[0.3em] text-[#1F5C55]/70">Accès</p>
+        <p class="text-base font-semibold text-gray-900">97 bis bd de Suisse, 31200 Toulouse</p>
+        <p class="text-sm text-gray-600">Bus 15 (Tisséo), le long du boulevard de Suisse.</p>
+      </div>
+      <div class="flex flex-wrap gap-3 shrink-0">
+        <%= link_to "Carte & contact", page_path("contact_us", anchor: "map"),
+                    class: "inline-flex items-center justify-center px-5 py-2.5 text-sm font-semibold text-white bg-[#1F5C55] border border-[#1F5C55] rounded-full hover:bg-white hover:text-[#1F5C55] transition-colors" %>
+        <%= link_to "Écrire à l’équipe", page_path("contact_us", anchor: "contact-form"),
+                    class: "inline-flex items-center justify-center px-5 py-2.5 text-sm font-semibold text-[#1F5C55] border border-[#1F5C55]/40 rounded-full hover:bg-[#1F5C55]/10 transition-colors" %>
+      </div>
+    </div>
+  </article>
 </section>
