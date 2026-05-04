@@ -37,6 +37,11 @@
 # Note: /public/assets should be included in Docker image for production
 # /public/assets
 
+# Dev / docs (hors image runtime)
+/docs
+/spec
+/coverage
+
 # Ignore CI service files.
 /.github
 
