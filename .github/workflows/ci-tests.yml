@@ -33,7 +33,7 @@ jobs:
         run: |
           COVERAGE=$(ruby -rjson -e 'f="coverage/.last_run.json"; puts(File.exist?(f) ? JSON.parse(File.read(f)).dig("result","line").to_f : 0)')
           echo "Coverage: ${COVERAGE}%"
-          awk "BEGIN {exit !(${COVERAGE} >= 52)}"
+          awk "BEGIN {exit !(${COVERAGE} >= 58)}"
       - name: Upload test results
         if: always()
         uses: actions/upload-artifact@v4

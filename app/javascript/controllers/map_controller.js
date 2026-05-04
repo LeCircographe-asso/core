@@ -1,5 +1,4 @@
 import { Controller } from "@hotwired/stimulus"
-import * as L from "leaflet"
 
 export default class extends Controller {
   static values = {
@@ -8,10 +7,13 @@ export default class extends Controller {
     zoom: { type: Number, default: 17 }
   }
 
-  connect () {
+  async connect () {
     this._disconnected = false
     this._lastSize = { w: 0, h: 0 }
     this._resizeFrame = null
+    this.L = await this._loadLeaflet()
+
+    if (this._disconnected || !this.element.isConnected) return
 
     // Attendre 2 frames : la grille / le turbo-frame ont souvent une hauteur encore à 0 au premier paint.
     requestAnimationFrame(() => {
@@ -50,10 +52,10 @@ export default class extends Controller {
     this.boundWindowResize = () => scheduleInvalidate(true)
     window.addEventListener("resize", this.boundWindowResize)
 
-    this.map = L.map(this.element).setView([this.latValue, this.lngValue], this.zoomValue)
+    this.map = this.L.map(this.element).setView([this.latValue, this.lngValue], this.zoomValue)
 
     // Tuiles raster via CARTO (cartocdn.com) ; rendu 100 % Leaflet côté navigateur (pas d’iframe ni SDK tiers).
-    L.tileLayer("https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png", {
+    this.L.tileLayer("https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png", {
       attribution:
         '&copy; <a href="https://wiki.osmfoundation.org/wiki/Licence" rel="nofollow noopener">Sources des données</a> · <a href="https://carto.com/attributions" rel="nofollow noopener">CARTO</a>',
       subdomains: "abcd",
@@ -61,7 +63,7 @@ export default class extends Controller {
     }).addTo(this.map)
 
     // Pas d’images CDN (évite icône cassée si cdnjs / tracking bloqués) — cercle aux couleurs du site.
-    L.circleMarker([this.latValue, this.lngValue], {
+    this.L.circleMarker([this.latValue, this.lngValue], {
       radius: 10,
       color: "#1F5C55",
       fillColor: "#5836A5",
@@ -99,5 +101,13 @@ export default class extends Controller {
     this.resizeObserver = null
     this.map?.remove()
     this.map = null
+  }
+
+  async _loadLeaflet () {
+    if (this.constructor.leafletModule) return this.constructor.leafletModule
+
+    const module = await import("leaflet")
+    this.constructor.leafletModule = module
+    return module
   }
 }
