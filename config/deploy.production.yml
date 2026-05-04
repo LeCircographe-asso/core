@@ -6,7 +6,7 @@ image: lecircographe-asso/circographe
 servers:
   web:
     hosts:
-      - <%= ENV['PRODUCTION_SERVER_IP'] %>
+      - <%= ENV.fetch("PRODUCTION_SERVER_IP") %>
 
 # Configuration SSH pour Kamal
 ssh:

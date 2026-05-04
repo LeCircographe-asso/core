@@ -1,12 +1,14 @@
 # Configuration Kamal pour Staging - VPS Ionos Linux M
 service: circographe-staging
-image: ghcr.io/lecircographe-asso/circographe-staging
+# org/repo only — registry.server (ghcr.io) prefixes this; avoid ghcr.io/ghcr.io/... in image refs.
+image: lecircographe-asso/circographe-staging
 
 # Serveur VPS Ionos
 servers:
   web:
     hosts:
-      - <%= ENV['STAGING_SERVER_IP'] %>
+      # Requires STAGING_SERVER_IP (GitHub Actions: vars.STAGING_SERVER_IP; locally: export before kamal)
+      - <%= ENV.fetch("STAGING_SERVER_IP") %>
 
 # Configuration SSH pour Kamal
 ssh:
