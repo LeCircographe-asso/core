@@ -2,10 +2,11 @@
 
 # This file is copied to spec/ when you run 'rails generate rspec:install'
 require 'spec_helper'
-ENV['RAILS_ENV'] ||= 'test'
+ENV['RAILS_ENV'] = 'test'
 require_relative '../config/environment'
 # Prevent database truncation if the environment is production
 abort('The Rails environment is running in production mode!') if Rails.env.production?
+abort("RSpec must run in test environment, got #{Rails.env}.") unless Rails.env.test?
 require 'rspec/rails'
 require 'view_component/test_helpers'
 # Add additional requires below this line. Rails is not loaded until this point!
@@ -43,18 +44,23 @@ RSpec.configure do |config|
     Rails.root.join('spec/fixtures')
   ]
 
-  # If you're not using ActiveRecord, or you'd prefer not to run each of your
-  # examples within a transaction, remove the following line or assign false
-  # instead of true.
-  config.use_transactional_fixtures = false # Disable transactional fixtures for SQLite stability
+  # Default to transactions for speed and isolation. Specs that need committed
+  # rows across connections can opt into `:truncate`.
+  config.use_transactional_fixtures = true
 
   config.before(:suite) do
-    ActiveRecord::Base.connection.disable_referential_integrity do
-      tables = ActiveRecord::Base.connection.tables - %w[schema_migrations ar_internal_metadata sqlite_sequence]
-      tables.each { |table| ActiveRecord::Base.connection.execute("DELETE FROM #{table}") }
-    end
-
     Faker::UniqueGenerator.clear
+  end
+
+  config.before do
+    Faker::UniqueGenerator.clear
+    # Action Controller rate_limit uses Rails.cache; clear so randomized order
+    # cannot trip limits set by another example (Sessions, Admin::Sessions, etc.).
+    Rails.cache.clear
+  end
+
+  config.append_after do
+    ActiveRecord::Base.connection_handler.clear_active_connections!
   end
 
   # Setup factory_bot

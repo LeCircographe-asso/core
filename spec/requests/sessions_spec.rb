@@ -26,6 +26,21 @@ RSpec.describe 'Sessions', type: :request do
   describe 'POST /sessions' do
     let(:user) { create(:user, password: 'password123') }
 
+    context 'when already authenticated' do
+      before { login_as(user) }
+
+      it 'redirects to root without treating as failed login' do
+        post session_path, params: {
+          email_address: 'other@example.com',
+          password: 'wrongpassword'
+        }
+
+        expect(response).to redirect_to(root_path)
+        follow_redirect!
+        expect(response.body).to include(I18n.t('sessions.already_signed_in_notice'))
+      end
+    end
+
     context 'with valid credentials' do
       it 'creates a session' do
         expect do
@@ -44,7 +59,8 @@ RSpec.describe 'Sessions', type: :request do
 
         cookie_header = response.headers['Set-Cookie']
         expect(cookie_header).to be_present
-        expect(cookie_header.is_a?(Array) ? cookie_header.first : cookie_header).to include('session_id')
+        raw_cookies = cookie_header.is_a?(Array) ? cookie_header.join("\n") : cookie_header.to_s
+        expect(raw_cookies).to include("session_id=")
       end
 
       it 'redirects to root with success notice' do

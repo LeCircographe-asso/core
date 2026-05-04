@@ -4,10 +4,10 @@ FactoryBot.define do
   factory :contribution do
     association :person
     association :contribution_formula, factory: %i[contribution_formula pack10]
-    sessions_remaining { contribution_formula.sessions_count || 10 }
-    status { :active }
     purchased_at { Time.current }
-    expires_at { nil }
+    sessions_remaining { People::ContributionPayloadBuilder.call(contribution_formula, reference_date: purchased_at&.to_date || Date.current)[:sessions_remaining] }
+    status { :active }
+    expires_at { People::ContributionPayloadBuilder.call(contribution_formula, reference_date: purchased_at&.to_date || Date.current)[:expires_at] }
 
     trait :active do
       status { :active }
@@ -19,7 +19,10 @@ FactoryBot.define do
 
     trait :expired do
       status { :expired }
-      expires_at { 1.day.ago }
+      purchased_at { 1.day.ago }
+      expires_at do
+        contribution_formula.duration == "day" ? purchased_at.end_of_day : 1.day.ago
+      end
     end
 
     trait :consumed do

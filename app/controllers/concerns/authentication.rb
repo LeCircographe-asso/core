@@ -33,27 +33,90 @@ module Authentication
   end
 
   def find_session_by_cookie
-    Session.find_by(id: cookies.signed[:session_id])
+    session_id = cookies.signed[:session_id]
+    return nil if session_id.blank?
+
+    found = Session.find_by(id: session_id)
+    if found.nil?
+      cookies.delete(:session_id, **SESSION_COOKIE_OPTS)
+      Rails.logger.warn(
+        "[auth.audit] stale_session_cookie cookie_session_id=#{session_id} path=#{request.path} method=#{request.request_method}"
+      )
+      return nil
+    end
+
+    user = User.find_by(id: found.user_id)
+    if user.nil? || user.deleted?
+      reason = user.nil? ? "missing_user" : "user_deleted"
+      db_session_id = found.id
+      db_user_id = found.user_id
+      found.destroy
+      cookies.delete(:session_id, **SESSION_COOKIE_OPTS)
+      Rails.logger.warn(
+        "[auth.audit] invalid_session_cookie reason=#{reason} cookie_session_id=#{session_id} " \
+        "db_session_id=#{db_session_id} user_id=#{db_user_id} path=#{request.path} method=#{request.request_method}"
+      )
+      return nil
+    end
+
+    found
   end
 
   def request_authentication
-    session[:return_to_after_authenticating] = request.url
+    begin
+      uri = URI.parse(request.url)
+      path = uri.path.to_s.presence || "/"
+      session[:return_to_after_authenticating] = request.url unless non_gettable_redirect_path?(path)
+    rescue URI::InvalidURIError
+      session[:return_to_after_authenticating] = request.url
+    end
+
     redirect_to new_session_path
   end
 
+  # Cible après login : ne jamais rediriger vers une URL en GET qui n'existe pas
+  # (ex. /session et /registration sont POST-only → 303 après POST créait GET /session → RoutingError).
   def after_authentication_url
-    session.delete(:return_to_after_authenticating) || root_url
+    stored = session.delete(:return_to_after_authenticating)
+    safe_url_after_authentication(stored)
   end
+
+  def safe_url_after_authentication(stored)
+    return root_path if stored.blank?
+
+    uri = URI.parse(stored.to_s.strip)
+
+    if uri.host.present?
+      return root_path unless uri.host == request.host && uri.port == request.port
+    end
+
+    path = uri.path.to_s
+    path = "/" if path.blank?
+    return root_path if non_gettable_redirect_path?(path)
+
+    stored.to_s
+  rescue URI::InvalidURIError
+    root_path
+  end
+
+  def non_gettable_redirect_path?(path)
+    path == "/session" || path == "/registration"
+  end
+
+  # Même jeu d’options à la pose et à la suppression du cookie (évite un cookie « mort »).
+  SESSION_COOKIE_OPTS = { httponly: true, same_site: :lax, path: "/" }.freeze
 
   def start_new_session_for(user)
     user.sessions.create!(user_agent: request.user_agent, ip_address: request.remote_ip).tap do |session|
       Current.session = session
-      cookies.signed.permanent[:session_id] = { value: session.id, httponly: true, same_site: :lax }
+      cookies.signed.permanent[:session_id] = { value: session.id, **SESSION_COOKIE_OPTS }
     end
   end
 
   def terminate_session
-    Current.session.destroy
-    cookies.delete(:session_id)
+    Current.session&.destroy
+  ensure
+    Current.session = nil
+    cookies.delete(:session_id, **SESSION_COOKIE_OPTS)
   end
 end

@@ -1,5 +1,16 @@
 # frozen_string_literal: true
 
+# Dotenv may set DATABASE_URL from `.env` / `.env.local` for development.
+# If tests inherited it, RSpec would use `storage/development.sqlite3` instead of
+# `tmp/test.sqlite3`. Then `spec/rails_helper.rb` `before(:suite)` wipes that DB
+# and FactoryBot leaves addresses like `user14@example.com` — developers think
+# "seed/users UI broke the database".
+ENV.delete("DATABASE_URL")
+
+require "bcrypt"
+
+BCrypt::Engine.cost = BCrypt::Engine::MIN_COST
+
 # The test environment is used exclusively to run your application's
 # test suite. You never need to work with it otherwise. Remember that
 # your test database is "scratch space" for the test suite and is wiped

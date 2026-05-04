@@ -1,8 +1,8 @@
-<div class="max-w-4xl mx-auto">
+<div class="page-container max-w-4xl">
   <!-- Breadcrumbs -->
   <%= render 'shared/breadcrumbs' %>
   
-  <div class="bg-white shadow-lg rounded-lg overflow-hidden" id="<%= dom_id(@user) %>">
+  <div class="surface-card" id="<%= dom_id(@user) %>">
     <!-- Header with gradient -->
     <div class="relative">
       <div class="h-24 w-full bg-gradient-to-r from-[#1F5C55] to-[#194A45] rounded-t-lg">
@@ -66,20 +66,32 @@
           </div>
         <% end %>
         
-        <!-- Tabs Navigation -->
-        <div class="border-b border-gray-200 mb-6">
-          <nav class="flex -mb-px" aria-label="Tabs">
-            <button type="button" class="tab-button active w-1/2 py-4 px-1 text-center border-b-2 font-medium text-sm" data-tab="personal">
+        <div data-controller="tabs"
+             data-tabs-initial-value="personal"
+             data-tabs-active-class="border-[#1F5C55] text-[#1F5C55]"
+             data-tabs-inactive-class="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300">
+          <!-- Tabs Navigation -->
+          <div class="border-b border-gray-200 mb-6">
+            <nav class="flex -mb-px" aria-label="Tabs">
+              <button type="button"
+                      class="w-1/2 py-4 px-1 text-center border-b-2 font-medium text-sm"
+                      data-tabs-target="trigger"
+                      data-tabs-name-value="personal"
+                      data-action="tabs#select">
               Informations personnelles
-            </button>
-            <button type="button" class="tab-button w-1/2 py-4 px-1 text-center border-b-2 font-medium text-sm" data-tab="additional">
+              </button>
+              <button type="button"
+                      class="w-1/2 py-4 px-1 text-center border-b-2 font-medium text-sm"
+                      data-tabs-target="trigger"
+                      data-tabs-name-value="additional"
+                      data-action="tabs#select">
               Informations additionnelles
-            </button>
-          </nav>
-        </div>
+              </button>
+            </nav>
+          </div>
         
-        <!-- Tab Content -->
-        <div class="tab-content" id="personal-tab">
+          <!-- Tab Content -->
+          <div class="tab-content" id="personal-tab" data-tabs-target="panel" data-tabs-name-value="personal">
           <div class="space-y-4">
             <!-- Email -->
             <div class="form-group">
@@ -123,7 +135,7 @@
           </div>
         </div>
         
-        <div class="tab-content hidden" id="additional-tab">
+          <div class="tab-content hidden" id="additional-tab" data-tabs-target="panel" data-tabs-name-value="additional">
           <div class="space-y-4">
             <!-- Birth Date -->
             <div class="form-group">
@@ -200,6 +212,7 @@
             </div>
           </div>
         </div>
+        </div>
         
         <!-- Action Buttons -->
         <div class="mt-6 flex items-center justify-end gap-3 border-t pt-6">
@@ -210,38 +223,3 @@
     </div>
   </div>
 </div>
-
-<script>
-  document.addEventListener('turbo:load', function() {
-    // Tab functionality
-    const tabButtons = document.querySelectorAll('.tab-button');
-    const tabContents = document.querySelectorAll('.tab-content');
-    
-    tabButtons.forEach(button => {
-      button.addEventListener('click', () => {
-        // Remove active class from all buttons
-        tabButtons.forEach(btn => {
-          btn.classList.remove('border-[#1F5C55]', 'text-[#1F5C55]');
-          btn.classList.add('border-transparent', 'text-gray-500', 'hover:text-gray-700', 'hover:border-gray-300');
-        });
-        
-        // Add active class to clicked button
-        button.classList.remove('border-transparent', 'text-gray-500', 'hover:text-gray-700', 'hover:border-gray-300');
-        button.classList.add('border-[#1F5C55]', 'text-[#1F5C55]');
-        
-        // Hide all tab contents
-        tabContents.forEach(content => {
-          content.classList.add('hidden');
-        });
-        
-        // Show the selected tab content
-        const tabId = button.getAttribute('data-tab') + '-tab';
-        document.getElementById(tabId).classList.remove('hidden');
-      });
-    });
-    
-    // Set the first tab as active by default
-    tabButtons[0].classList.add('border-[#1F5C55]', 'text-[#1F5C55]');
-    tabButtons[0].classList.remove('border-transparent', 'text-gray-500', 'hover:text-gray-700', 'hover:border-gray-300');
-  });
-</script> 

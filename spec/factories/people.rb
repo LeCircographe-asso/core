@@ -2,25 +2,27 @@
 
 FactoryBot.define do
   factory :person do
-    first_name { Faker::Name.first_name }
-    last_name { Faker::Name.last_name }
-    email { Faker::Internet.unique.email }
-    phone { Faker::PhoneNumber.phone_number }
-    address { Faker::Address.full_address }
-    birth_date { Faker::Date.birthday(min_age: 18, max_age: 80) }
-    emergency_contact_name { Faker::Name.name }
-    emergency_contact_phone { Faker::PhoneNumber.phone_number }
-    notes { Faker::Lorem.paragraph }
-    occupation { Faker::Job.title }
-    specialty { Faker::Job.seniority }
-    image_rights { [ true, false ].sample }
-    get_involved { [ true, false ].sample }
-    newsletter_subscribed { [ true, false ].sample }
-    dyslexic_font { [ true, false ].sample }
+    sequence(:first_name) { |n| "Prenom#{n}" }
+    sequence(:last_name) { |n| "Nom#{n}" }
+    sequence(:email) { |n| "person#{n}@example.test" }
+    sequence(:phone) { |n| "060000#{format('%04d', n)}" }
+    address { '1 rue de Test' }
+    birth_date { Date.new(1990, 1, 1) }
+    emergency_contact_name { 'Contact Test' }
+    emergency_contact_phone { '0600000000' }
+    notes { 'Note de test' }
+    occupation { 'Artiste' }
+    specialty { 'Generaliste' }
+    image_rights { false }
+    get_involved { false }
+    newsletter_subscribed { false }
+    dyslexic_font { false }
     is_minor { false }
 
     trait :with_user do
-      association :user
+      after(:create) do |person|
+        create(:user, person: person, email_address: person.email)
+      end
     end
 
     trait :with_member_number do
@@ -72,25 +74,25 @@ FactoryBot.define do
 
     trait :minor do
       is_minor { true }
-      birth_date { Faker::Date.birthday(min_age: 8, max_age: 17) }
+      birth_date { 12.years.ago.to_date }
     end
 
     trait :adult do
       is_minor { false }
-      birth_date { Faker::Date.birthday(min_age: 18, max_age: 80) }
+      birth_date { Date.new(1990, 1, 1) }
     end
 
     trait :with_email do
-      email { Faker::Internet.unique.email }
+      sequence(:email) { |n| "person-with-email#{n}@example.test" }
     end
 
     trait :with_phone do
-      phone { Faker::PhoneNumber.phone_number }
+      sequence(:phone) { |n| "070000#{format('%04d', n)}" }
     end
 
     trait :newsletter_subscribed do
       newsletter_subscribed { true }
-      email { Faker::Internet.unique.email } # Email required when newsletter subscribed
+      sequence(:email) { |n| "newsletter#{n}@example.test" } # Email required when newsletter subscribed
     end
 
     trait :skip_membership_validation do

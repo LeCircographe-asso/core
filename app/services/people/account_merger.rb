@@ -34,6 +34,8 @@ module People
         merge_contributions(source, target)
         merge_attendances(source, target)
         merge_newsletter(source, target)
+        merge_account_claims(source, target)
+        merge_member_number_histories(source, target)
         merge_attributes(source, target)
 
         if destroy_source
@@ -90,6 +92,14 @@ module People
 
       subscriber = source.newsletter_subscriber
       subscriber.update!(person: target)
+    end
+
+    def merge_account_claims(source, target)
+      transfer_relation(source.account_claims, target.id)
+    end
+
+    def merge_member_number_histories(source, target)
+      transfer_relation(source.member_number_histories, target.id)
     end
 
     def merge_attributes(source, target)

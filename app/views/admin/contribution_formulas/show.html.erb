@@ -1,0 +1,156 @@
+<div class="min-h-screen bg-gray-50 py-6">
+  <div class="page-container max-w-4xl">
+    <!-- Breadcrumbs -->
+    <%= render 'shared/breadcrumbs' %>
+    
+    <!-- Header -->
+    <div class="admin-page-header">
+      <div class="px-6 py-4 flex justify-between items-center">
+        <div>
+          <h1 class="text-2xl font-bold text-white">Détails de la formule de cotisation</h1>
+          <p class="text-green-100 mt-1"><%= @contribution_formula.name %></p>
+        </div>
+        <div class="flex space-x-3">
+          <% if Current.user&.system_role == 'super_admin' %>
+            <%= link_to "Modifier", edit_admin_contribution_formula_path(@contribution_formula),
+                class: "inline-flex items-center px-4 py-2 border border-white rounded-md shadow-sm text-sm font-medium text-[#1F5C55] bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-white" %>
+          <% end %>
+        </div>
+      </div>
+    </div>
+
+    <!-- Détails -->
+    <div class="surface-card p-6 mb-6">
+      <h2 class="text-xl font-semibold text-gray-900 mb-4">Informations de la formule</h2>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div>
+          <span class="text-sm font-medium text-gray-500">Nom</span>
+          <p class="mt-1 text-sm text-gray-900"><%= @contribution_formula.name %></p>
+        </div>
+        
+        <div>
+          <span class="text-sm font-medium text-gray-500">Durée / type</span>
+          <p class="mt-1 flex items-center gap-2">
+            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
+              <%= case @contribution_formula.duration
+                  when 'day' then 'bg-blue-100 text-blue-800'
+                  when 'trimester' then 'bg-green-100 text-green-800'
+                  when 'annual' then 'bg-purple-100 text-purple-800'
+                  when 'pack10' then 'bg-orange-100 text-orange-800'
+                  else 'bg-gray-100 text-gray-800'
+                  end %>">
+              <%= @contribution_formula.duration.humanize %>
+            </span>
+            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium <%= @contribution_formula.rate_kind_badge_class %>">
+              <%= @contribution_formula.rate_kind_humanized %>
+            </span>
+          </p>
+        </div>
+        
+        <div>
+          <span class="text-sm font-medium text-gray-500">Prix</span>
+          <p class="mt-1 text-2xl font-bold text-[#1F5C55]"><%= @contribution_formula.price_euros %>€</p>
+        </div>
+        
+        <div>
+          <span class="text-sm font-medium text-gray-500">Type d'adhésion requis</span>
+          <p class="mt-1 text-sm text-gray-900"><%= @contribution_formula.membership_type.name %></p>
+        </div>
+        
+        <div>
+          <span class="text-sm font-medium text-gray-500">Nombre de séances</span>
+          <p class="mt-1 text-sm text-gray-900">
+            <% if @contribution_formula.sessions_count %>
+              <%= @contribution_formula.sessions_count %> séances
+            <% else %>
+              <span class="text-gray-400">Illimité</span>
+            <% end %>
+          </p>
+        </div>
+        
+        <div>
+          <span class="text-sm font-medium text-gray-500">Validité</span>
+          <p class="mt-1 text-sm text-gray-900">
+            <% if @contribution_formula.duration == 'pack10' %>
+              <span class="text-green-600">Sans expiration</span>
+            <% elsif @contribution_formula.validity_days %>
+              <%= @contribution_formula.validity_days %> jours
+            <% else %>
+              <span class="text-gray-400">-</span>
+            <% end %>
+          </p>
+        </div>
+      </div>
+      
+      <% if @contribution_formula.description.present? %>
+        <div class="mt-6 pt-6 border-t border-gray-200">
+          <span class="text-sm font-medium text-gray-500">Description</span>
+          <p class="mt-1 text-sm text-gray-900"><%= @contribution_formula.description %></p>
+        </div>
+      <% end %>
+    </div>
+
+    <!-- Liste des carnets d'entrées -->
+    <div class="surface-card p-6">
+      <div class="flex justify-between items-center mb-4">
+        <h2 class="text-xl font-semibold text-gray-900">Carnets d'entrées associés</h2>
+        <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-[#1F5C55] text-white">
+          <%= pluralize(@contributions.count, 'carnet') %>
+        </span>
+      </div>
+      
+      <% if @contributions.any? %>
+        <div class="overflow-x-auto">
+          <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">
+              <tr>
+                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Personne</th>
+                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Séances restantes</th>
+                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Statut</th>
+              </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200">
+              <% @contributions.each do |book| %>
+                <tr>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                    <%= link_to book.person.full_name, admin_user_path(Admin::Users::PersonRouteKey.call(book.person)),
+                        class: "text-[#1F5C55] hover:underline" %>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <%= book.sessions_remaining || 'N/A' %>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
+                      <%= case book.status
+                          when 'active' then 'bg-green-100 text-green-800'
+                          when 'consumed' then 'bg-red-100 text-red-800'
+                          else 'bg-gray-100 text-gray-800'
+                          end %>">
+                      <%= book.status.humanize %>
+                    </span>
+                  </td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+      <% else %>
+        <p class="text-sm text-gray-500">Aucune cotisation n'a été créée avec cette formule.</p>
+      <% end %>
+    </div>
+
+    <!-- Actions -->
+    <div class="mt-6 flex justify-end space-x-3">
+      <%= link_to "Retour à la liste", admin_contribution_formulas_path,
+          class: "inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1F5C55]" %>
+      
+      <% if Current.user&.system_role == 'super_admin' && @contribution_formula.contributions.empty? %>
+        <%= button_to "Supprimer cette formule", admin_contribution_formula_path(@contribution_formula),
+            method: :delete,
+            form: { data: { turbo_confirm: "Êtes-vous sûr de vouloir supprimer cette formule de cotisation ?" } },
+            class: "inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500" %>
+      <% end %>
+    </div>
+  </div>
+</div>

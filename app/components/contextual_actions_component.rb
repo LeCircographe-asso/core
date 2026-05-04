@@ -17,7 +17,7 @@ class ContextualActionsComponent < ViewComponent::Base
     actions = []
 
     # Action "Voir" (toujours disponible)
-    actions << { type: :view, icon: :view_icon, url: "person_#{person.id}",
+    actions << { type: :view, icon: :view_icon, url: Admin::Users::PersonRouteKey.call(person),
                  class: "action-icon text-gray-600 hover:text-[#1F5C55] mr-2",
                  title: "Voir la fiche", data: { turbo: false } }
 
@@ -33,7 +33,7 @@ class ContextualActionsComponent < ViewComponent::Base
 
     # Actions de cotisation (si adhésion Cirque)
     if person.has_active_membership? && person.current_membership.membership_type.name.downcase.include?("cirque")
-      actions << { type: :subscription, icon: :subscription_icon, url: "#",
+      actions << { type: :contribution, icon: :contribution_icon, url: "#",
                    class: "action-icon text-indigo-600 hover:text-indigo-800 mr-2",
                    title: "Ajouter une cotisation" }
     end
@@ -138,7 +138,7 @@ class ContextualActionsComponent < ViewComponent::Base
                 viewBox: "0 0 24 24")
   end
 
-  def subscription_icon
+  def contribution_icon
     content_tag(:svg,
                 content_tag(:path, "",
                             stroke_linecap: "round",

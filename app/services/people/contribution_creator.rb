@@ -32,30 +32,52 @@ module People
       contribution_formula = ContributionFormula.find(contribution_formula_id)
       recorded_by = resolve_recorded_by
 
-      result = target_person.create_contribution!(
-        contribution_formula,
-        payment_method: payment_method.to_sym,
-        recorded_by: recorded_by,
-        record_attendance: record_attendance,
-        custom_amount_cents: custom_amount_cents,
-        offer_reason: offer_reason,
-        donation_cents: donation_cents
-      )
+      result = nil
+      ActiveRecord::Base.transaction do
+        People::OfferPolicy.validate!(
+          recorded_by: recorded_by,
+          person: target_person,
+          offer_type: "contribution",
+          offer_reason: offer_reason,
+          contribution_formula: contribution_formula
+        ) if payment_method == "offered"
+
+        raise "Cette personne doit avoir une adhésion Cirque active pour acheter une cotisation" unless target_person.can_buy_contribution_formulas?
+
+        contribution = target_person.contributions.create!(
+          People::ContributionPayloadBuilder.call(contribution_formula)
+            .merge(contribution_formula: contribution_formula, status: :active, purchased_at: Time.current)
+        )
+
+        amount_cents = amount_for(contribution_formula.price_cents)
+        description = payment_description(contribution_formula.name)
+        payment = record_payment!(
+          person: target_person,
+          recorded_by: recorded_by,
+          item_type: "Contribution",
+          item_id: contribution.id,
+          amount_cents: amount_cents,
+          description: description,
+          notes: "Paiement pour #{description}"
+        )
+
+        result = { contribution: contribution, payment: payment }
+      end
 
       instrument_contribution_created(target_person, contribution_formula, recorded_by, result[:contribution], result[:payment])
 
       success(
         contribution: result[:contribution],
         payment: result[:payment],
-        message: "Contribution created successfully"
+        message: I18n.t("services.success.contribution_created")
       )
     rescue ActiveRecord::RecordNotFound => e
       ActiveSupport::Notifications.instrument("contribution.failed", error: e.message, reason: "record_not_found")
-      failure("Record not found: #{e.message}")
+      failure(I18n.t("services.errors.record_not_found", message: e.message))
     rescue StandardError => e
       Rails.logger.error("[People::ContributionCreator] #{e.class}: #{e.message}\n#{e.backtrace.take(5).join("\n")}")
       ActiveSupport::Notifications.instrument("contribution.failed", error: e.message, reason: "exception")
-      failure("Error creating contribution: #{e.message}")
+      failure(I18n.t("services.errors.unexpected_error", action: "contribution creation", message: e.message))
     end
 
     private
@@ -73,6 +95,55 @@ module People
       raise ActiveRecord::RecordNotFound, "Recorded_by user not provided" unless Current.respond_to?(:user) && Current.user.present?
 
       Current.user
+    end
+
+    def amount_for(base_price_cents)
+      return custom_amount_cents || 0 if payment_method == "offered"
+
+      base_price_cents
+    end
+
+    def payment_description(name)
+      payment_method == "offered" ? "Cotisation offerte #{name}" : "Cotisation #{name}"
+    end
+
+    def record_payment!(person:, recorded_by:, item_type:, item_id:, amount_cents:, description:, notes:)
+      lines = [
+        {
+          item_type: item_type,
+          item_id: item_id,
+          amount_cents: amount_cents,
+          description: description
+        }
+      ]
+
+      if normalized_donation_cents.present?
+        lines << {
+          item_type: "Donation",
+          amount_cents: normalized_donation_cents,
+          description: "Donation"
+        }
+      end
+
+      payment_result = People::PaymentRecorder.new(
+        person: person,
+        recorded_by: recorded_by,
+        payment_method: payment_method,
+        status: "success",
+        notes: notes,
+        offer_reason: offer_reason,
+        total_cents: lines.sum { |line| line[:amount_cents].to_i },
+        payment_lines: lines
+      ).call
+
+      raise payment_result.message unless payment_result.success?
+
+      payment_result.payment
+    end
+
+    def normalized_donation_cents
+      cents = donation_cents.to_i
+      cents.positive? ? cents : nil
     end
 
     def instrument_contribution_created(person, contribution_formula, recorded_by, contribution, payment)

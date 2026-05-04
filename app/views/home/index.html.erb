@@ -2,17 +2,17 @@
 <% content_for :background_image, "background.webp" %>
 
 <div class="relative w-full">
-  <section class="relative w-full min-h-[calc(100dvh-3.6rem)] sm:min-h-[calc(100dvh-4.2rem)] flex flex-col items-center justify-center px-4 sm:px-6 md:px-10 lg:px-12 pt-20 sm:pt-24 pb-12 text-center">
-    <div class="flex w-full max-w-full min-w-0 flex-col items-center gap-6 sm:gap-8 md:gap-9 -translate-y-6 sm:-translate-y-10">
-      <h1 id="title" class="font-circographe w-full max-w-[min(100%,42rem)] min-w-0 whitespace-normal break-words text-[clamp(1.875rem,2.75vw+1.1rem,4.5rem)] font-bold text-white max-sm:tracking-[0.04em] tracking-[0.06em] md:tracking-[0.08em] leading-[1.12] sm:leading-tight opacity-0 transition-opacity duration-500 [overflow-wrap:anywhere]">Le Circographe</h1>
+  <section class="relative w-full min-h-[calc(100dvh-3.6rem)] sm:min-h-[calc(100dvh-4.2rem)] flex flex-col items-center justify-start px-4 sm:px-6 md:px-10 lg:px-12 pt-24 sm:pt-28 md:pt-[min(7.5rem,13vh)] pb-16 sm:pb-20 text-center">
+    <div class="flex w-full max-w-full min-w-0 flex-col items-center gap-5 sm:gap-7 md:gap-8 -translate-y-5 sm:-translate-y-8">
+      <h1 id="title" class="font-circographe w-full max-w-[min(100%,44rem)] min-w-0 whitespace-normal break-words text-[clamp(2.75rem,7vw+0.85rem,4.5rem)] font-bold text-white max-sm:tracking-[0.03em] tracking-[0.06em] md:tracking-[0.08em] leading-[1.08] max-sm:leading-[1.06] sm:leading-tight opacity-0 transition-opacity duration-500 [overflow-wrap:anywhere]">Le Circographe</h1>
 
       <div class="main-button opacity-0 transition-opacity duration-500">
       <%= link_to "Découvrir l'association", page_path('association'),
-                  class: "inline-flex items-center justify-center px-5 py-3 text-base font-semibold text-gray-800 bg-white/95 border border-white/80 rounded-full hover:bg-white shadow-md transition sm:px-8 sm:py-4 sm:text-lg md:text-xl" %>
+                  class: "inline-flex items-center justify-center px-5 py-3 text-base font-semibold rounded-full border-2 border-white/85 bg-white/95 text-gray-900 shadow-md transition-colors duration-300 hover:bg-[#1F5C55] hover:text-white hover:border-[#1F5C55] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1F5C55] sm:px-8 sm:py-4 sm:text-lg md:text-xl" %>
       </div>
     </div>
 
-    <%= render "shared/scroll_hint_arrow", section_id: "main-content", position_class: "absolute bottom-10 sm:bottom-12 left-1/2 -translate-x-1/2" %>
+    <%= render "shared/scroll_hint_arrow", section_id: "main-content", position_class: "absolute bottom-24 sm:bottom-28 md:bottom-32 left-1/2 -translate-x-1/2" %>
   </section>
 
   <section class="w-full px-4 sm:px-6 lg:px-8 flex justify-center">
@@ -21,17 +21,17 @@
         <h2 id="community-highlights" class="sr-only">Informations clés</h2>
 
         <div class="grid gap-8 lg:gap-10 lg:grid-cols-[minmax(0,1.7fr)_minmax(0,1fr)] items-start">
-          <article class="relative overflow-hidden rounded-[32px] bg-gradient-to-br from-[#0C2F2B] via-[#194A45] to-brand-primary text-white shadow-2xl p-6 sm:p-8 lg:p-10">
-            <header class="space-y-3 text-center lg:text-left">
+          <article class="relative overflow-hidden rounded-[32px] bg-gradient-to-br from-[#0C2F2B] via-[#194A45] to-brand-primary text-white shadow-2xl p-5 sm:p-8 lg:p-10">
+            <header class="space-y-2 sm:space-y-3 text-center lg:text-left">
               <p class="text-sm uppercase tracking-[0.35em] text-white/75">Horaires</p>
-              <h2 id="opening-hours" class="text-2xl sm:text-3xl font-semibold">Quand passer nous voir ?</h2>
-              <p class="text-white/80 max-w-2xl mx-auto lg:mx-0">
-                Retrouve les créneaux d'accueil de la semaine et prépare ta prochaine visite sous le chapiteau du Circographe.
+              <h2 id="opening-hours" class="text-xl sm:text-3xl font-semibold leading-snug">Quand passer nous voir ?</h2>
+              <p class="text-sm sm:text-base text-white/80 max-w-2xl mx-auto lg:mx-0 leading-snug">
+                Retrouve les créneaux d'accueil de la semaine et prépare ta prochaine visite au Circographe.
               </p>
             </header>
 
-            <div class="mt-6 sm:mt-7 bg-white/95 text-gray-900 rounded-[20px] shadow-xl p-5 sm:p-6">
-              <%= render "shared/opening_hours", horaires: @opening_hours, bare: true %>
+            <div class="mt-4 sm:mt-7 bg-white/95 text-gray-900 rounded-[20px] shadow-xl p-4 sm:p-6">
+              <%= render "shared/opening_hours", horaires: @opening_hours, bare: true, compact: true %>
             </div>
           </article>
 
@@ -39,28 +39,22 @@
             <turbo-frame id="events_upcoming" loading="lazy" src="<%= upcoming_events_path %>" class="block">
           <%= render "home/upcoming_events", events: @upcoming_events %>
         </turbo-frame>
-            <p class="text-xs text-gray-500 text-center lg:text-left">
-              Découvre plus d'activités dans l'onglet « Nos activités » si tu veux planifier ta venue à l'avance.
-            </p>
           </div>
         </div>
       </section>
 
         <div class="text-center">
           <%= link_to page_path("association", anchor: "fonctionnement"),
-                      class: "inline-flex items-center justify-center px-6 py-3 text-sm font-semibold text-white bg-[#1F5C55] border border-[#1F5C55] rounded-full shadow-md hover:bg-white hover:text-[#1F5C55] transition-colors duration-300" do %>
+                      class: "public-cta-pill" do %>
             Découvrir l'autogestion & le bénévolat
           <% end %>
         </div>
-      <section class="bg-white/95 rounded-[28px] shadow-lg p-6 sm:p-8 space-y-4" aria-labelledby="find-us">
-        <header class="text-center space-y-2">
-          <p class="text-sm uppercase tracking-[0.3em] text-brand-primary/70">Nous trouver</p>
-          <h2 id="find-us" class="text-2xl font-semibold text-gray-800">Le Circographe sur la carte</h2>
-          <p class="text-gray-600 max-w-2xl mx-auto">Chapiteau, ateliers graphiques et convivialité : pousse la porte au 27 bis Allée Maurice Sarraut, Toulouse.</p>
-        </header>
-        <div class="rounded-2xl overflow-hidden border border-gray-200 shadow-inner">
-          <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d858.7320762106817!2d1.422364267936696!3d43.618639564522674!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x12aebb1b7b5096ef%3A0x710f3096ea206f0!2sLe%20Circographe!5e0!3m2!1sfr!2sfr!4v1745437455061!5m2!1sfr!2sfr" width="100%" height="340" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
-        </div>
+      <section class="public-surface p-6 sm:p-8 space-y-4 text-center" aria-labelledby="find-us">
+        <p class="text-sm uppercase tracking-[0.3em] text-brand-primary/70">Nous trouver</p>
+        <h2 id="find-us" class="text-2xl font-semibold text-gray-800">97 bis Boulevard de Suisse, 31200 Toulouse</h2>
+        <p class="text-gray-600 max-w-2xl mx-auto">Entraînements libres, murs illustrés par les artistes du lieu et une ambiance chaleureuse : passe quand tu veux, on t’accueille avec plaisir.</p>
+        <%= link_to "Voir la carte et l'accès", page_path("contact_us", anchor: "map"),
+                    class: "public-cta-pill" %>
       </section>
     </div>
   </section>
@@ -73,6 +67,5 @@
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
   }
 </style>
-
 
 

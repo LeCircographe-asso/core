@@ -27,7 +27,7 @@ module People
       membership_type = MembershipType.find(membership_type_id)
       user = resolve_user
 
-      return failure("Insufficient permissions to update this membership") unless can_update?(user)
+      return failure(I18n.t("services.errors.insufficient_permissions.membership_update")) unless can_update?(user)
 
       ActiveRecord::Base.transaction do
         target_membership.update!(
@@ -40,16 +40,16 @@ module People
           success?: true,
           membership: target_membership,
           errors: [],
-          message: "Membership updated successfully"
+          message: I18n.t("services.success.membership_updated")
         )
       end
     rescue ActiveRecord::RecordNotFound => e
-      failure("Record not found: #{e.message}")
+      failure(I18n.t("services.errors.record_not_found", message: e.message))
     rescue ActiveRecord::RecordInvalid => e
-      failure("Validation error: #{e.message}")
+      failure(I18n.t("services.errors.validation_error", message: e.message))
     rescue StandardError => e
       Rails.logger.error("[People::MembershipUpdater] #{e.class}: #{e.message}\n#{e.backtrace.take(5).join("\n")}")
-      failure("Error updating membership: #{e.message}")
+      failure(I18n.t("services.errors.unexpected_error", action: "membership update", message: e.message))
     end
 
     private

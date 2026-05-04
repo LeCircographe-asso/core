@@ -2,11 +2,14 @@ import { Turbo } from "@hotwired/turbo-rails"
 
 const HIDDEN_CLASS = "hidden"
 const DEFAULT_CONFIRM_MESSAGE = "Es-tu sûr·e de vouloir continuer ?"
+const DEFAULT_CONFIRM_BODY_FALLBACK = "Êtes-vous sûr de vouloir poursuivre cette action ?"
+const DEFAULT_CONFIRM_TITLE = "Confirmation"
 
 let modalElement
 let backdropElement
 let dialogElement
 let messageElement
+let titleElement
 let confirmButton
 let cancelButton
 let activeResolve
@@ -22,10 +25,26 @@ function cacheElements() {
   backdropElement = document.getElementById("confirm-modal-backdrop")
   dialogElement = modalElement.querySelector("[data-confirm-dialog='true']") || modalElement
   messageElement = document.getElementById("confirm-modal-message")
+  titleElement = document.getElementById("confirm-modal-title")
   confirmButton = document.getElementById("confirm-modal-confirm")
   cancelButton = document.getElementById("confirm-modal-cancel")
 
   return Boolean(messageElement && confirmButton && cancelButton)
+}
+
+function resetConfirmModalChrome() {
+  if (titleElement) {
+    titleElement.textContent = DEFAULT_CONFIRM_TITLE
+  }
+  if (messageElement) {
+    messageElement.replaceChildren()
+    const p = document.createElement("p")
+    p.className = "text-base leading-relaxed"
+    p.textContent = DEFAULT_CONFIRM_BODY_FALLBACK
+    messageElement.appendChild(p)
+  }
+  if (confirmButton) confirmButton.textContent = "Confirmer"
+  if (cancelButton) cancelButton.textContent = "Annuler"
 }
 
 function closeModal(result) {
@@ -36,6 +55,8 @@ function closeModal(result) {
 
   document.removeEventListener("keydown", keydownHandler)
   keydownHandler = null
+
+  resetConfirmModalChrome()
 
   if (previousFocus && typeof previousFocus.focus === "function") {
     previousFocus.focus()
@@ -54,7 +75,97 @@ function showModal(message, element) {
     return Promise.resolve(window.confirm(message))
   }
 
-  messageElement.textContent = message || DEFAULT_CONFIRM_MESSAGE
+  resetConfirmModalChrome()
+  messageElement.replaceChildren()
+  const p = document.createElement("p")
+  p.className = "text-base leading-relaxed"
+  p.textContent = message || DEFAULT_CONFIRM_MESSAGE
+  messageElement.appendChild(p)
+
+  return new Promise((resolve) => {
+    activeResolve = resolve
+    previousFocus = document.activeElement
+
+    modalElement.classList.remove(HIDDEN_CLASS)
+    modalElement.removeAttribute("aria-hidden")
+
+    requestAnimationFrame(() => {
+      if (dialogElement) {
+        dialogElement.focus()
+      } else {
+        confirmButton.focus()
+      }
+    })
+
+    const finish = (result) => {
+      confirmButton.removeEventListener("click", confirmHandler)
+      cancelButton.removeEventListener("click", cancelHandler)
+      if (backdropElement) {
+        backdropElement.removeEventListener("click", backdropHandler)
+      }
+      closeModal(result)
+    }
+
+    const confirmHandler = () => finish(true)
+    const cancelHandler = () => finish(false)
+
+    const backdropHandler = (event) => {
+      if (event.target === backdropElement) {
+        finish(false)
+      }
+    }
+
+    confirmButton.addEventListener("click", confirmHandler)
+    cancelButton.addEventListener("click", cancelHandler)
+    if (backdropElement) {
+      backdropElement.addEventListener("click", backdropHandler)
+    }
+
+    keydownHandler = (event) => {
+      if (event.key === "Escape") {
+        event.preventDefault()
+        finish(false)
+      } else if (event.key === "Enter" && document.activeElement === confirmButton) {
+        event.preventDefault()
+        finish(true)
+      }
+    }
+
+    document.addEventListener("keydown", keydownHandler)
+  })
+}
+
+export function openRichConfirmModal(options = {}) {
+  const {
+    title = DEFAULT_CONFIRM_TITLE,
+    introText = "",
+    htmlBody = "",
+    confirmText = "Confirmer",
+    cancelText = "Annuler"
+  } = options
+
+  if (!modalElement && !cacheElements()) {
+    return Promise.resolve(window.confirm(introText || DEFAULT_CONFIRM_MESSAGE))
+  }
+
+  if (titleElement) titleElement.textContent = title
+  confirmButton.textContent = confirmText
+  cancelButton.textContent = cancelText
+
+  messageElement.replaceChildren()
+  if (introText) {
+    const intro = document.createElement("p")
+    intro.className = "text-base leading-relaxed text-gray-700"
+    intro.textContent = introText
+    messageElement.appendChild(intro)
+  }
+  if (htmlBody) {
+    const wrap = document.createElement("div")
+    wrap.className =
+      "mt-2 max-h-52 overflow-y-auto rounded-lg bg-gray-50 px-3 py-2 text-sm text-gray-900 border border-gray-100"
+    wrap.innerHTML = htmlBody
+    messageElement.appendChild(wrap)
+  }
 
   return new Promise((resolve) => {
     activeResolve = resolve

@@ -4,11 +4,12 @@ class User < ApplicationRecord
   include Roleable
   include Dateable
 
+  EMAIL_CHANGE_CODE_TTL = 15.minutes
+
   attr_accessor :cgu, :privacy_policy
 
   before_validation :ensure_person_for_new_record, on: :create
   after_create :generate_password_reset_token
-  after_create :welcome_send
 
   # Configuration du token de réinitialisation de mot de passe
   generates_token_for :password_reset, expires_in: 15.minutes do
@@ -54,7 +55,7 @@ class User < ApplicationRecord
 
   validates :email_address, presence: true
   validates :person, presence: true
-  validate :email_uniqueness_unless_person_email
+  validate :email_uniqueness_and_identity_consistency
   validates :cgu, acceptance: { message: :must_accept }, unless: :created_by_admin?
   validates :privacy_policy, acceptance: { message: :must_accept }, unless: :created_by_admin?
 
@@ -209,6 +210,7 @@ class User < ApplicationRecord
   def archive!
     return false if deleted?
 
+    sessions.destroy_all
     update!(deleted: true, deleted_at: Time.current)
     anonymize_personal_data
     true
@@ -224,16 +226,12 @@ class User < ApplicationRecord
 
   # Standard destroy method - no soft deletion
 
-  def email_uniqueness_unless_person_email
+  def email_uniqueness_and_identity_consistency
     return if email_address.blank?
+    errors.add(:email_address, "est deja utilise") if User.where(email_address: email_address).where.not(id: id).exists?
+    return unless Identity::EmailPolicy.user_email_conflicts_with_other_person?(email: email_address, current_person_id: person_id)
 
-    # Si on a une Person associée avec le même email, c'est OK
-    return if person&.email == email_address
-
-    # Sinon, vérifier l'unicité normale
-    return unless User.where(email_address: email_address).where.not(id: id).exists?
-
-    errors.add(:email_address, "est déjà utilisé")
+    errors.add(:email_address, "entre en conflit avec l'email d'une autre personne")
   end
 
   # Check if user is interested in an event (Person-Based Architecture)
@@ -241,6 +239,36 @@ class User < ApplicationRecord
     return false unless person
 
     person.attendances.exists?(event_id: event_id)
+  end
+
+  def store_email_change_request!(new_email:, code:)
+    update!(
+      pending_email_address: new_email,
+      email_change_code_digest: BCrypt::Password.create(code),
+      email_change_code_sent_at: Time.current
+    )
+  end
+
+  def email_change_code_valid?(candidate_code)
+    return false if email_change_code_digest.blank?
+
+    BCrypt::Password.new(email_change_code_digest).is_password?(candidate_code.to_s)
+  rescue BCrypt::Errors::InvalidHash
+    false
+  end
+
+  def email_change_code_expired?
+    return true if email_change_code_sent_at.blank?
+
+    email_change_code_sent_at < EMAIL_CHANGE_CODE_TTL.ago
+  end
+
+  def clear_email_change_request!
+    update!(
+      pending_email_address: nil,
+      email_change_code_digest: nil,
+      email_change_code_sent_at: nil
+    )
   end
 
   private

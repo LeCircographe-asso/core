@@ -16,43 +16,39 @@ module Admin
       @membership_types = MembershipType.all
       @contribution_formulas = ContributionFormula.all
 
-      add_breadcrumb I18n.t("breadcrumbs.admin.users.members_list"), admin_users_path
-      add_breadcrumb @person.full_name, admin_user_path("person_#{@person.id}")
-      add_breadcrumb I18n.t("breadcrumbs.admin.memberships.membership"), nil
+      add_person_context_breadcrumbs(@person, I18n.t("breadcrumbs.admin.memberships.membership"))
     end
 
     def new
       @person = Person.find(params[:person_id]) if params[:person_id]
 
-      # Gérer l'upgrade d'adhésion
       if params[:upgrade] == "true" && @person&.current_membership&.basic?
-        # Pour l'upgrade, on ne propose que les types Circus
-        @membership_types = MembershipType.circus_types.current_versions.order(:price_cents)
+        @membership_types = MembershipType.circus_types.available_for(@person).order(:price_cents)
         @is_upgrade = true
         @current_membership = @person.current_membership
-        add_breadcrumb I18n.t("breadcrumbs.admin.memberships.upgrade_to_circus"), nil
+        add_person_context_breadcrumbs(@person, I18n.t("breadcrumbs.admin.memberships.upgrade_to_circus"))
       else
-        # Pour une nouvelle adhésion, on propose tous les types
         @membership_types = MembershipType.current_versions.order(:price_cents)
         @is_upgrade = false
-        add_breadcrumb I18n.t("breadcrumbs.admin.memberships.new_membership"), nil
+        add_person_context_breadcrumbs(@person, I18n.t("breadcrumbs.admin.memberships.new_membership")) if @person.present?
+        add_breadcrumb I18n.t("breadcrumbs.admin.memberships.new_membership"), nil unless @person.present?
       end
     end
 
     def edit
       @membership = @person.current_membership
       @membership_types = MembershipType.all
-      add_breadcrumb I18n.t("breadcrumbs.admin.memberships.edit_membership"), nil
+      add_person_context_breadcrumbs(@person, I18n.t("breadcrumbs.admin.memberships.edit_membership"))
     end
 
     def create
-      @person = Person.find(membership_purchase_params[:person_id])
-      membership_type = MembershipType.find(membership_purchase_params[:membership_type_id])
+      params_hash = membership_purchase_params
+      membership_type = MembershipType.find(params_hash[:membership_type_id])
 
-      if membership_purchase_params[:upgrade] == "true" && @person.current_membership&.basic?
-        handle_upgrade_flow(@person, membership_type)
+      if upgrade_request_for?(@person, params_hash)
+        handle_upgrade_flow(@person, membership_type, params_hash)
       else
-        handle_creation_flow(@person, membership_type)
+        handle_creation_flow(@person, membership_type, params_hash)
       end
     end
 
@@ -68,7 +64,7 @@ module Admin
       ).call
 
       if result.success?
-        redirect_to admin_user_path("person_#{@person.id}"), notice: t(".success")
+        redirect_to admin_person_path(@person), notice: t(".success")
       else
         flash[:alert] = result.message
         redirect_to edit_admin_membership_path(@membership)
@@ -130,8 +126,7 @@ module Admin
       cents.positive? ? cents : nil
     end
 
-    def handle_upgrade_flow(person, membership_type)
-      params_hash = membership_purchase_params
+    def handle_upgrade_flow(person, membership_type, params_hash)
       result = People::MembershipUpgrader.new(
         person: person,
         new_membership_type_id: membership_type.id,
@@ -143,15 +138,14 @@ module Admin
       ).call
 
       if result.success?
-        redirect_to admin_user_path("person_#{person.id}"), notice: build_upgrade_notice(membership_type, result, payment_method_from(params_hash))
+        redirect_to admin_person_path(person), notice: build_upgrade_notice(membership_type, result, payment_method_from(params_hash))
       else
         redirect_to new_admin_membership_path(person_id: person.id, upgrade: params_hash[:upgrade]),
                     alert: t("admin.memberships.create.upgrade_failed_alert", message: result.message)
       end
     end
 
-    def handle_creation_flow(person, membership_type)
-      params_hash = membership_purchase_params
+    def handle_creation_flow(person, membership_type, params_hash)
       result = People::MembershipCreator.new(
         person: person,
         membership_type_id: membership_type.id,
@@ -167,13 +161,17 @@ module Admin
           redirect_to new_admin_membership_path(person_id: person.id),
                       alert: t(".duplicate_active")
         else
-          redirect_to admin_user_path("person_#{person.id}"),
+          redirect_to admin_person_path(person),
                       notice: t(".success_with_contribution_hint")
         end
       else
         redirect_to new_admin_membership_path(person_id: person.id),
                     alert: t("admin.memberships.create.membership_creation_failed_alert", message: result.message)
       end
+    end
+
+    def upgrade_request_for?(person, params_hash)
+      params_hash[:upgrade] == "true" && person.current_membership&.basic?
     end
 
     def build_upgrade_notice(membership_type, result, payment_method)

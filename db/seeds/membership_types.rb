@@ -9,6 +9,7 @@ membership_types = [
   {
     name: "Adhésion Basique",
     category: "basic",
+    rate_kind: "standard",
     price_cents: 100, # 1€
     description: "Accès de base à l'association - participation aux événements et activités générales",
     version: 1,
@@ -20,6 +21,7 @@ membership_types = [
   {
     name: "Adhésion Cirque Tarif Plein",
     category: "circus",
+    rate_kind: "standard",
     price_cents: 1000, # 10€
     description: "Accès complet aux cours de cirque - tarif normal pour adultes",
     version: 1,
@@ -31,6 +33,7 @@ membership_types = [
   {
     name: "Adhésion Cirque Tarif Réduit",
     category: "circus",
+    rate_kind: "reduced",
     price_cents: 700, # 7€
     description: "Accès complet aux cours de cirque - tarif réduit (Porteur de Handicap, RSA, Mineur, Etudiant)",
     version: 1,

@@ -1,0 +1,81 @@
+# CI unique pour la branche dev : lint + sécurité + tests en parallèle (un seul run GitHub Actions).
+# Permissions minimales (contents: read) — pas d’écriture dépôt ; artefact tests seulement.
+name: ci-dev
+
+on:
+  push:
+    branches: [dev]
+  pull_request:
+    branches: [dev]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-dev-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "4.0.1"
+          bundler-cache: true
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "22"
+      - name: RuboCop
+        run: bin/rubocop --format github --force-exclusion
+
+  security:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "4.0.1"
+          bundler-cache: true
+      - name: Brakeman
+        run: bin/brakeman --no-pager
+      - name: Bundler Audit
+        run: bundle exec bundle-audit check --update
+
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "4.0.1"
+          bundler-cache: true
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "22"
+      - name: Build Tailwind CSS
+        run: bundle exec rails tailwindcss:build
+      - name: Prepare test databases
+        run: RAILS_ENV=test bin/rails db:prepare
+      - name: Run full test suite with coverage
+        env:
+          CI: true
+        run: |
+          mkdir -p tmp
+          bin/rspec --format progress --format json --out tmp/rspec.json
+      - name: Verify coverage threshold
+        run: |
+          COVERAGE=$(ruby -rjson -e 'f="coverage/.last_run.json"; puts(File.exist?(f) ? JSON.parse(File.read(f)).dig("result","line").to_f : 0)')
+          echo "Coverage: ${COVERAGE}%"
+          awk "BEGIN {exit !(${COVERAGE} >= 58)}"
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: test-results
+          path: |
+            tmp/rspec.json
+            coverage
+          if-no-files-found: warn
+          retention-days: 7

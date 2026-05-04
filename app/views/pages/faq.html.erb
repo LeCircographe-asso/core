@@ -1,147 +1,67 @@
 <% content_for :title, "Le Circographe - FAQ" %>
 
-<section class="relative overflow-hidden rounded-[32px] shadow-2xl mb-16">
+<section class="public-hero-shell mb-10 sm:mb-12">
   <%= image_tag hero_image(:faq_hero), class: "absolute inset-0 w-full h-full object-cover hero-img-filter", alt: "" %>
   <div class="hero-overlay"></div>
-  <div class="relative hero-panel space-y-6">
-    <p class="text-sm uppercase tracking-[0.45em] text-white/70">Besoin d'un guide ?</p>
+  <div class="relative hero-panel text-center space-y-4">
     <h1 class="font-circographe text-3xl sm:text-4xl lg:text-5xl font-bold">Questions fréquentes</h1>
-    <p class="max-w-3xl text-lg text-white/85 leading-relaxed">Avant de passer nous voir, d'adhérer ou de proposer un projet, voici tout ce que l'on nous demande le plus souvent. Cette FAQ t'accompagne pas à pas : comprendre notre fonctionnement, rejoindre la communauté, et savoir comment nous écrire.</p>
-    <div class="flex flex-wrap gap-4">
-      <%= link_to "Je découvre l'esprit du lieu", page_path("association"), class: "btn-primary shadow-lg" %>
-      <%= link_to "Je prépare mon adhésion", page_path("become_member"), class: "btn-secondary shadow-lg" %>
+    <p class="max-w-xl mx-auto text-base sm:text-lg text-white/85 leading-snug">Peu de blabla — les infos utiles, avec le ton du lieu.</p>
+    <div class="flex flex-wrap gap-3 justify-center">
+      <%= link_to "L'association", page_path("association"), class: "btn-primary shadow-lg" %>
+      <%= link_to "Adhérer", page_path("become_member"), class: "btn-secondary shadow-lg" %>
     </div>
   </div>
 </section>
 
-<section class="max-w-6xl mx-auto space-y-16 px-6 sm:px-8 lg:px-12 py-12 rounded-[36px] shadow-2xl border border-white/70 bg-gradient-to-br from-white/95 via-white/90 to-white/80 backdrop-blur fade-in">
-  <article class="grid gap-10 lg:grid-cols-[320px,minmax(0,1fr)] items-start">
-    <aside class="bg-white rounded-[28px] shadow-lg p-8 space-y-6 border border-white/60">
-      <div class="space-y-3">
-        <p class="text-sm uppercase tracking-[0.3em] text-brand-primary/70">Prépare ta visite</p>
-        <h2 class="text-2xl font-semibold text-gray-900">Trois portes d’entrée</h2>
-        <p class="text-gray-600 leading-relaxed">Tu viens pour découvrir, adhérer ou proposer un projet ? Ce guide te montre les étapes clés, avec des liens vers les pages détaillées.</p>
-      </div>
-      <ul class="space-y-4 text-gray-600">
-        <li class="flex gap-3">
-          <span class="w-8 h-8 rounded-full bg-brand-primary/10 text-brand-primary flex items-center justify-center font-semibold">1</span>
-          <div>
-            <p class="font-semibold text-gray-900">Découvrir le lieu</p>
-            <p class="text-sm">Comprendre l’autogestion, les créneaux publics et l’ambiance du hangar.</p>
-          </div>
-        </li>
-        <li class="flex gap-3">
-          <span class="w-8 h-8 rounded-full bg-brand-primary/10 text-brand-primary flex items-center justify-center font-semibold">2</span>
-          <div>
-            <p class="font-semibold text-gray-900">Adhérer & participer</p>
-            <p class="text-sm">Suivre les étapes d’inscription, préparer les documents et rejoindre les bénévoles.</p>
-          </div>
-        </li>
-        <li class="flex gap-3">
-          <span class="w-8 h-8 rounded-full bg-brand-primary/10 text-brand-primary flex items-center justify-center font-semibold">3</span>
-          <div>
-            <p class="font-semibold text-gray-900">Proposer un projet</p>
-            <p class="text-sm">Résidences, ateliers, partenariats : comment formuler ta demande.</p>
-          </div>
-        </li>
-      </ul>
-      <div class="flex flex-wrap gap-3 pt-2">
-        <a href="#faq-adhesion" class="btn-tertiary">Adhésion</a>
-        <a href="#faq-contact" class="btn-tertiary">Contact</a>
-        <a href="#faq-general" class="btn-tertiary">Vie du lieu</a>
-      </div>
-    </aside>
+<section class="page-container max-w-6xl space-y-10 px-6 sm:px-8 lg:px-10 pt-10 pb-12 sm:py-10 rounded-[28px] shadow-xl border border-white/70 bg-white/90 backdrop-blur fade-in mb-10 sm:mb-14">
+  <nav class="flex flex-wrap justify-center gap-2" aria-label="Sommaire FAQ">
+    <a href="#faq-adhesion" class="inline-flex items-center px-4 py-2 text-sm font-semibold rounded-full border border-brand-primary/35 text-brand-primary hover:bg-brand-primary/10 transition-colors">Adhérer & pratiquer</a>
+    <a href="#faq-contact" class="inline-flex items-center px-4 py-2 text-sm font-semibold rounded-full border border-brand-primary/35 text-brand-primary hover:bg-brand-primary/10 transition-colors">Écrire & proposer</a>
+    <a href="#faq-general" class="inline-flex items-center px-4 py-2 text-sm font-semibold rounded-full border border-brand-primary/35 text-brand-primary hover:bg-brand-primary/10 transition-colors">Lieu & horaires</a>
+  </nav>
 
-    <div class="space-y-5 text-gray-700 leading-relaxed bg-white border border-brand-primary/15 rounded-[24px] p-6 sm:p-8 shadow-lg">
-      <p class="text-base sm:text-lg"><strong class="text-gray-900">Le Circographe vit grâce à ses membres</strong> : une structure autogérée, des bénévoles qui se relaient, des artistes en résidence. Cette FAQ regroupe l’essentiel pour faciliter la transmission d’information.</p>
-      <p class="text-base sm:text-lg">Lis-la comme une petite histoire : <em>tu viens nous rencontrer</em>, <em>tu adhères</em>, <em>tu participes</em>. Chaque section renvoie vers une page si tu veux creuser les détails (horaires, tarifs, formulaires…)</p>
-      <div class="bg-brand-primary/5 border border-brand-primary/20 rounded-2xl px-6 py-5 text-sm sm:text-base text-gray-600">
-        <p><strong class="text-gray-900">Astuce :</strong> cette page sert aussi de support aux bénévoles. Envoie-la à une personne intéressée, elle y retrouvera l’ensemble des repères clés.</p>
-      </div>
-    </div>
-  </article>
-
-  <article id="faq-adhesion" class="space-y-6">
-    <header class="space-y-3 text-center bg-white border border-white/70 rounded-[24px] px-6 py-6 shadow-lg">
-      <p class="text-sm uppercase tracking-[0.3em] text-brand-primary/70">Étape 1 — Rejoindre la communauté</p>
-      <h2 class="text-3xl font-semibold text-gray-900">Adhérer, comprendre, participer</h2>
-      <p class="max-w-3xl mx-auto text-gray-600">On adhère sur place, parce que la rencontre humaine est au cœur du projet. Voici les réponses aux questions les plus courantes avant de franchir le pas.</p>
-    </header>
-
+  <article id="faq-adhesion" class="scroll-mt-24 space-y-4">
     <%= render "shared/faq_section",
       id: "faq-adhesion-list",
       label: nil,
-      title: "Adhésion en pratique",
+      title: "Adhérer & pratiquer",
       subtitle: nil,
       faqs: @adhesion_faqs,
-      footer: "Tu viens d'adhérer ? Retrouve toutes les infos sur la page Adhérer : calendrier, checklist documents et infos bénévolat." %>
+      footer: "Tarifs et créneaux : page Adhérer." %>
 
     <div class="flex flex-wrap justify-center gap-3">
-      <%= link_to "Préparer ma visite", page_path("become_member"), class: "btn-primary shadow-lg" %>
-      <%= link_to "Découvrir les créneaux", page_path("association", anchor: "fonctionnement"), class: "btn-tertiary shadow" %>
+      <%= link_to "Page Adhérer", page_path("become_member"), class: "btn-primary shadow-lg" %>
+      <%= link_to "Créneaux & fonctionnement", page_path("association", anchor: "fonctionnement"), class: "btn-tertiary shadow" %>
     </div>
   </article>
 
-  <article id="faq-contact" class="space-y-6">
-    <header class="space-y-3 text-center bg-white border border-white/70 rounded-[24px] px-6 py-6 shadow-lg">
-      <p class="text-sm uppercase tracking-[0.3em] text-brand-primary/70">Étape 2 — Entrer en contact</p>
-      <h2 class="text-3xl font-semibold text-gray-900">Nous écrire, proposer un projet, demander une résidence</h2>
-      <p class="max-w-3xl mx-auto text-gray-600">Le Circographe reçoit des demandes variées : résidences, ateliers, partenariats culturels, questions logistiques. Ce bloc te permet de préparer ton message et de gagner du temps.</p>
-    </header>
-
+  <article id="faq-contact" class="scroll-mt-24 space-y-4">
     <%= render "shared/faq_section",
       id: "faq-contact-list",
       label: nil,
-      title: "Avant d'envoyer ton mail",
-      subtitle: "Les infos clés à partager pour que l'équipe bénévole puisse te répondre rapidement.",
+      title: "Écrire & proposer",
+      subtitle: nil,
       faqs: @contact_faqs,
-      footer: "Quand tu es prêt·e, direction la page Contact pour nous écrire via le formulaire Turbo." %>
+      footer: "Formulaire sur la page Contact (bas de page)." %>
 
     <div class="flex flex-wrap justify-center gap-3">
-      <%= link_to "Écrire à l'équipe", page_path("contact_us"), class: "btn-primary shadow-lg" %>
-      <%= link_to "Consulter les horaires", page_path("contact_us", anchor: "horaires"), class: "btn-tertiary shadow" %>
+      <%= link_to "Page Contact", page_path("contact_us"), class: "btn-primary shadow-lg" %>
+      <%= link_to "Horaires", page_path("contact_us", anchor: "horaires"), class: "btn-tertiary shadow" %>
     </div>
   </article>
 
-  <article id="faq-general" class="space-y-6">
-    <header class="space-y-3 text-center bg-white border border-white/70 rounded-[24px] px-6 py-6 shadow-lg">
-      <p class="text-sm uppercase tracking-[0.3em] text-brand-primary/70">Étape 3 — Vivre le lieu</p>
-      <h2 class="text-3xl font-semibold text-gray-900">Repères quotidiens & soutien au projet</h2>
-      <p class="max-w-3xl mx-auto text-gray-600">Tu veux revenir régulièrement, inviter des proches ou soutenir financièrement ? Ces repères t’aideront à orienter ton entourage et à faire rayonner le lieu.</p>
-    </header>
-
+  <article id="faq-general" class="scroll-mt-24 space-y-4">
     <%= render "shared/faq_section",
       id: "faq-general-list",
       label: nil,
-      title: "Vie du Circographe",
+      title: "Lieu & horaires",
       subtitle: nil,
       faqs: @general_faqs,
-      footer: "Pour suivre l'actualité, pense à la page Nos Activités et à la newsletter." %>
+      footer: "Programmation : Nos activités · newsletter en bas de site." %>
 
     <div class="flex flex-wrap justify-center gap-3">
-      <%= link_to "Découvrir la programmation", page_path("news"), class: "btn-primary shadow-lg" %>
-      <%= link_to "Soutenir l'association", page_path("become_member", anchor: "tarifs"), class: "btn-tertiary shadow" %>
-    </div>
-  </article>
-
-  <article class="bg-white rounded-[28px] shadow-lg p-8 lg:p-12 space-y-8 border border-white/70">
-    <header class="space-y-3 text-center">
-      <p class="text-sm uppercase tracking-[0.3em] text-brand-primary/70">Une histoire collective</p>
-      <h2 class="text-3xl font-semibold text-gray-900">Pourquoi on prend le temps de répondre</h2>
-    </header>
-    <div class="grid gap-8 lg:grid-cols-3">
-      <div class="space-y-3">
-        <h3 class="text-xl font-semibold text-gray-900">Autogestion au cœur</h3>
-        <p class="text-gray-600 leading-relaxed">Chaque adhérent·e peut rejoindre l'équipe bénévole et transmettre l'information. Cette FAQ est un socle commun pour accueillir et guider les nouveaux membres.</p>
-      </div>
-      <div class="space-y-3">
-        <h3 class="text-xl font-semibold text-gray-900">Transmission vivante</h3>
-        <p class="text-gray-600 leading-relaxed">Les questions évoluent avec les saisons, les projets en résidence, les sorties publiques. On actualise ce guide régulièrement pour qu'il reste fidèle à la réalité du terrain.</p>
-      </div>
-      <div class="space-y-3">
-        <h3 class="text-xl font-semibold text-gray-900">Invitation à la rencontre</h3>
-        <p class="text-gray-600 leading-relaxed">Après la lecture, viens ressentir l'énergie sur place : un entraînement libre, un vernissage, une soirée portes ouvertes… Le Circographe se vit autant qu'il se lit.</p>
-      </div>
+      <%= link_to "Nos activités", page_path("news"), class: "btn-primary shadow-lg" %>
+      <%= link_to "Tarifs / adhérer", page_path("become_member", anchor: "tarifs"), class: "btn-tertiary shadow" %>
     </div>
   </article>
 </section>

@@ -25,6 +25,21 @@ RSpec.describe People::AccountMerger do
         expect(book.reload.person).to eq(target_person)
       end
 
+      it 'transfers account claims and member number histories before destroying source' do
+        claim = create(:account_claim, person: source_person)
+        history = create(:member_number_history, person: source_person, member_number: "26U001")
+
+        result = described_class.new(
+          source_person: source_person,
+          target_person: target_person
+        ).call
+
+        expect(result.success?).to be(true)
+        expect(claim.reload.person_id).to eq(target_person.id)
+        expect(history.reload.person_id).to eq(target_person.id)
+        expect(Person.exists?(source_person.id)).to be false
+      end
+
       it 'destroys the source person by default' do
         result = described_class.new(
           source_person: source_person,

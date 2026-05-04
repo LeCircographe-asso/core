@@ -23,7 +23,7 @@
         <%= form_with model: [:admin, Payment.new],
                       url: admin_payments_path,
                       data: {
-                        controller: "payment-form",
+                        controller: "payment-form offer-fields",
                         action: "turbo:submit-end->payment-modal#handleSubmit",
                         turbo_frame: "_top"
                       },
@@ -68,7 +68,19 @@
                   ['Offert', 'offered']
                 ]),
                 {},
-                { class: "w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-[#1F5C55] focus:border-[#1F5C55]" } %>
+                {
+                  class: "w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-[#1F5C55] focus:border-[#1F5C55]",
+                  data: { offer_fields_target: "paymentMethod", action: "change->offer-fields#refresh" }
+                } %>
+          </div>
+
+          <div class="hidden" data-offer-fields-target="offerReason">
+            <%= f.label :offer_reason, "Raison de l'offre", class: "block text-sm font-medium text-gray-700 mb-1" %>
+            <%= f.text_area :offer_reason,
+                rows: 2,
+                placeholder: "Ex: Bénévolat, geste commercial, partenariat...",
+                class: "w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-[#1F5C55] focus:border-[#1F5C55]",
+                data: { offer_fields_target: "offerReasonInput" } %>
           </div>
 
           <!-- Notes -->

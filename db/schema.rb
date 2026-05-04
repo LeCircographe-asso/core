@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_04_30_204500) do
+ActiveRecord::Schema[8.1].define(version: 2026_05_02_190100) do
   create_table "account_claims", force: :cascade do |t|
     t.string "confirmation_token", null: false
     t.datetime "created_at", null: false
@@ -105,6 +105,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_30_204500) do
     t.bigint "membership_type_id", null: false
     t.string "name", null: false
     t.integer "price_cents", null: false
+    t.string "rate_kind", default: "standard", null: false
     t.integer "sessions_count"
     t.datetime "updated_at", null: false
     t.integer "validity_days"
@@ -115,6 +116,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_30_204500) do
     t.index ["membership_type_id", "duration"], name: "idx_contribution_formulas_type_duration"
     t.index ["membership_type_id"], name: "index_contribution_formulas_on_membership_type_id"
     t.index ["name", "version"], name: "idx_contribution_formulas_name_version", unique: true
+    t.index ["rate_kind"], name: "index_contribution_formulas_on_rate_kind"
   end
 
   create_table "contributions", force: :cascade do |t|
@@ -192,12 +194,14 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_30_204500) do
     t.date "effective_until"
     t.string "name", null: false
     t.integer "price_cents", null: false
+    t.string "rate_kind", default: "standard", null: false
     t.datetime "updated_at", null: false
     t.integer "version", default: 1, null: false
     t.index ["category"], name: "index_membership_types_on_category"
     t.index ["created_by_user_id"], name: "index_membership_types_on_created_by_user_id"
     t.index ["effective_from", "effective_until"], name: "idx_membership_types_effective_period"
     t.index ["name", "version"], name: "idx_membership_types_name_version", unique: true
+    t.index ["rate_kind"], name: "index_membership_types_on_rate_kind"
   end
 
   create_table "memberships", force: :cascade do |t|
@@ -273,6 +277,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_30_204500) do
     t.datetime "anonymized_at"
     t.datetime "created_at", null: false
     t.text "notes"
+    t.text "offer_reason"
     t.string "original_person_identifier"
     t.integer "payment_method", default: 0, null: false
     t.bigint "person_id", null: false
@@ -306,7 +311,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_30_204500) do
     t.boolean "is_minor", default: false, null: false
     t.string "last_name", null: false
     t.string "member_number"
-    t.boolean "newsletter_subscribed", default: false
     t.string "newsletter_unsubscribe_token"
     t.text "notes"
     t.string "occupation"
@@ -356,10 +360,13 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_30_204500) do
     t.boolean "deleted", default: false
     t.datetime "deleted_at"
     t.string "email_address"
+    t.string "email_change_code_digest"
+    t.datetime "email_change_code_sent_at"
     t.string "password_digest", null: false
     t.datetime "password_reset_sent_at"
     t.string "password_reset_token"
     t.string "password_salt"
+    t.string "pending_email_address"
     t.bigint "person_id", null: false
     t.integer "system_role", default: 3, null: false
     t.datetime "updated_at", null: false

@@ -25,9 +25,36 @@ class UserMailer < ApplicationMailer
 
   def contact_email(name, email, message, category, recipient_email)
     @name = name
+    @email = email
     @message = message
     @category = category
+    @category_label = contact_category_label(category)
     @submitted_at = Time.zone.now
-    mail(to: recipient_email, subject: "Nouveau message : #{category.capitalize}", reply_to: email)
+    mail(
+      to: recipient_email,
+      subject: I18n.t("mailers.user_mailer.contact_email.subject", category_label: @category_label),
+      reply_to: email
+    )
+  end
+
+  def email_change_verification(user, new_email, code)
+    @user = user
+    @new_email = new_email
+    @code = code
+    @ttl_minutes = (User::EMAIL_CHANGE_CODE_TTL / 60).to_i
+
+    mail(
+      to: @new_email,
+      subject: I18n.t("mailers.user_mailer.email_change_verification.subject")
+    )
+  end
+
+  private
+
+  def contact_category_label(category)
+    I18n.t(
+      "mailers.user_mailer.contact_email.category_labels.#{category}",
+      default: category.to_s.tr("_", " ").capitalize
+    )
   end
 end

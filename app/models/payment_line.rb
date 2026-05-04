@@ -24,7 +24,7 @@ class PaymentLine < ApplicationRecord
   def item_description
     case item_type
     when "Membership"
-      item&.membership_type&.name || I18n.t("payment_line.item_description.membership_fallback")
+      description.presence || item&.membership_type&.name || I18n.t("payment_line.item_description.membership_fallback")
     when "MembershipType"
       item&.name || I18n.t("payment_line.item_description.membership_type_fallback")
     when "Contribution"
@@ -42,10 +42,26 @@ class PaymentLine < ApplicationRecord
     end
   end
 
+  def history_description
+    case item_type
+    when "Membership"
+      membership_history_description
+    when "Contribution"
+      "Cotisation #{item_description}"
+    when "ContributionFormula"
+      "Cotisation #{item_description}"
+    when "Donation"
+      description.presence || I18n.t("payment_line.item_description.donation_fallback")
+    else
+      item_description
+    end
+  end
+
   # (amount_euros maintenant dans le module Priceable)
 
   # Scopes
   scope :memberships, -> { where(item_type: "Membership") }
+  scope :contributions, -> { where(item_type: "Contribution") }
   scope :contribution_formulas, -> { where(item_type: "ContributionFormula") }
   scope :membership_types, -> { where(item_type: "MembershipType") }
   scope :donations, -> { where(item_type: "Donation") }
@@ -57,7 +73,7 @@ class PaymentLine < ApplicationRecord
       payment: payment,
       item: membership,
       amount_cents: amount_cents,
-      description: I18n.t("payment_line.descriptions.membership", name: membership.membership_type.name)
+      description: normalize_membership_name(membership.membership_type.name)
     )
   end
 
@@ -77,7 +93,44 @@ class PaymentLine < ApplicationRecord
       payment: payment,
       item: membership_type,
       amount_cents: amount_cents,
-      description: I18n.t("payment_line.descriptions.membership_type", name: membership_type.name)
+      description: normalize_membership_name(membership_type.name)
     )
+  end
+
+  def self.normalize_membership_name(raw_name)
+    name = raw_name.to_s.strip
+    return "Adhésion" if name.blank?
+
+    if name.match?(/\A(?:adhesion|adhésion)\b/i)
+      normalized = name.gsub(/\A(?:adhesion|adhésion)(?:\s+(?:adhesion|adhésion))+\s+/i, "Adhésion ")
+      normalized.gsub(/^adhesion\s+/i, "Adhésion ").gsub(/^adhésion\s+/i, "Adhésion ")
+    else
+      "Adhésion #{name}"
+    end
+  end
+
+  private
+
+  def membership_history_description
+    return normalized_upgrade_description if upgrade_description?
+
+    self.class.normalize_membership_name(description.presence || item&.membership_type&.name)
+  end
+
+  def upgrade_description?
+    description.to_s.start_with?("Upgrade d'adhésion", "Passage d'adhésion")
+  end
+
+  def normalized_upgrade_description
+    text = description.to_s.strip
+
+    if text.start_with?("Passage d'adhésion")
+      text
+    elsif text.match(/\AUpgrade d'adhésion de (?<from>.+) vers (?<to>.+?)(?:\s+\(plein tarif\))?\z/)
+      match = Regexp.last_match
+      "Passage d'adhésion : #{match[:from]} -> #{match[:to]}"
+    else
+      text
+    end
   end
 end

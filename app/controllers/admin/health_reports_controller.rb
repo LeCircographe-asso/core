@@ -13,6 +13,14 @@ module Admin
       @people_without_user_count = report.people_without_user_count
       @payments_without_person = report.payments_without_person
       @payments_without_person_count = report.payments_without_person_count
+      @payments_without_lines = report.payments_without_lines
+      @payments_without_lines_count = report.payments_without_lines_count
+      @payments_with_mismatched_totals = report.payments_with_mismatched_totals
+      @payments_with_mismatched_totals_count = report.payments_with_mismatched_totals_count
+      @legacy_donation_lines = report.legacy_donation_lines
+      @legacy_donation_lines_count = report.legacy_donation_lines_count
+      @contribution_invariant_issues = report.contribution_invariant_issues
+      @contribution_invariant_issues_count = report.contribution_invariant_issues_count
       @duplicate_people_by_email_count = report.duplicate_people_by_email_count
       @duplicate_people_by_phone_count = report.duplicate_people_by_phone_count
       @duplicate_people_by_email_groups = report.duplicate_people_by_email.group_by { |person| person.email.to_s.downcase }

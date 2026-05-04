@@ -1,8 +1,8 @@
-<section class="text-center mb-12 bg-white/95 py-6 rounded-lg shadow-md fade-in">
+<section class="public-surface text-center mb-12 py-6 fade-in">
     <h1 class="font-circographe text-4xl font-bold text-black">Galerie Photos</h1>
-    </section>
+</section>
 
-    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-12 fade-in">
+<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-12 fade-in">
     <% base_images = %w[
          lelieu1.webp
          lelieu2.webp
@@ -31,9 +31,13 @@
     <% dynamic_hero_images = hero_pool.sample([needed, hero_pool.size].min) %>
     <% image_files = (base_images + dynamic_hero_images).uniq.first(12) %>
 
-        <% image_files.each do |image| %>
-        <div class="relative fade-in">
-            <%= image_tag asset_path(image), alt: "Image du Circographe", class: "w-full h-64 object-cover rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300" %>
-        </div>
-        <% end %>
+  <% image_files.each_with_index do |image, index| %>
+    <div class="relative fade-in">
+      <%= image_tag asset_path(image),
+                    alt: "Image du Circographe",
+                    class: "w-full h-64 object-cover rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300",
+                    loading: (index.zero? ? "eager" : "lazy"),
+                    decoding: "async" %>
     </div>
+  <% end %>
+</div>

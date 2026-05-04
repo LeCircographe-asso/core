@@ -15,6 +15,8 @@ class Payment < ApplicationRecord
   enum :status, { success: 0, pending: 1, cancel: 2 }, default: :pending
   enum :payment_method, { cash: 0, card: 1, cheque: 2, transfer: 3, offered: 4 }, default: :cash
 
+  validates :offer_reason, presence: true, if: :is_offered?
+
   before_create :generate_uuid
   after_create :create_audit_log
   # Callbacks legacy supprimés : la création/mise à jour cascade passe désormais par les services People::*.
@@ -51,7 +53,7 @@ class Payment < ApplicationRecord
     # Déterminer le type de paiement basé sur les payment_lines
     if payment_lines.memberships.any?
       "Adhésion"
-    elsif payment_lines.contribution_formulas.any?
+    elsif payment_lines.contributions.any? || payment_lines.contribution_formulas.any?
       "Cotisation"
     elsif payment_lines.any?
       # Utiliser la description de la première ligne
@@ -82,8 +84,22 @@ class Payment < ApplicationRecord
   end
 
   def carnet_related?
-    payment_lines.joins("JOIN contribution_formulas ON payment_lines.item_type = 'ContributionFormula' AND payment_lines.item_id = contribution_formulas.id")
-                 .exists?(contribution_formulas: { duration: ContributionFormula.durations[:pack10] })
+    payment_lines.joins(<<~SQL.squish)
+      LEFT JOIN contribution_formulas direct_formulas
+        ON payment_lines.item_type = 'ContributionFormula'
+       AND payment_lines.item_id = direct_formulas.id
+      LEFT JOIN contributions
+        ON payment_lines.item_type = 'Contribution'
+       AND payment_lines.item_id = contributions.id
+      LEFT JOIN contribution_formulas contribution_formulas
+        ON contributions.contribution_formula_id = contribution_formulas.id
+    SQL
+                 .where(
+                   "direct_formulas.duration = ? OR contribution_formulas.duration = ?",
+                   ContributionFormula.durations[:pack10],
+                   ContributionFormula.durations[:pack10]
+                 )
+                 .exists?
   end
 
   # Generate a UUID for the payment
@@ -160,12 +176,16 @@ class Payment < ApplicationRecord
 
   # Anonymization for GDPR compliance
   def anonymize!
-    return if anonymized_at.present?
+    with_lock do
+      return if anonymized_at.present?
 
-    self.original_person_identifier = "ANON_#{Digest::SHA256.hexdigest("#{person_id}_#{id}_#{created_at}")}"
-    self.person_id = nil
-    self.anonymized_at = Time.current
-    save!
+      # payments.person_id is NOT NULL: anonymization is a traceability mark,
+      # not a destructive unlink from the owning Person.
+      update!(
+        original_person_identifier: "ANON_#{Digest::SHA256.hexdigest("#{person_id}_#{id}_#{created_at}")}",
+        anonymized_at: Time.current
+      )
+    end
   end
 
   scope :anonymized, -> { where.not(anonymized_at: nil) }

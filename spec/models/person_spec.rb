@@ -40,6 +40,23 @@ RSpec.describe Person, type: :model do
       expect(person.errors[:email]).to include(I18n.t('errors.messages.taken'))
     end
 
+    it "blocks an email already used by another user's account" do
+      other_person = create(:person, email: "other.person@example.com")
+      create(:user, person: other_person, email_address: "claimed@example.com")
+
+      person = build(:person, email: "claimed@example.com")
+
+      expect(person).not_to be_valid
+      expect(person.errors[:email]).to include("est deja utilisee par un autre compte utilisateur")
+    end
+
+    it "allows a person email when it matches their own user account email" do
+      person = create(:person, email: "same.identity@example.com")
+      create(:user, person: person, email_address: "same.identity@example.com")
+
+      expect(person).to be_valid
+    end
+
     it 'validates phone uniqueness' do
       create(:person, phone: '0123456789')
       person = Person.new(first_name: 'John', last_name: 'Doe', phone: '0123456789')
@@ -68,6 +85,26 @@ RSpec.describe Person, type: :model do
       person = create(:person)
       person.skip_membership_validation = true
       person.memberships.destroy_all
+
+      expect(person).to be_valid
+    end
+
+    it 'requires a reduced rate reason when reduced rate is enabled' do
+      person = build(:person, reduced_rate_eligible: true, reduced_rate_reason: nil)
+
+      expect(person).not_to be_valid
+      expect(person.errors[:reduced_rate_reason]).to include("doit être renseigné pour un tarif réduit")
+    end
+
+    it 'requires a text proof when reduced rate reason is Autre' do
+      person = build(:person, reduced_rate_eligible: true, reduced_rate_reason: "Autre", reduced_rate_proof: nil)
+
+      expect(person).not_to be_valid
+      expect(person.errors[:reduced_rate_proof]).to include("doit être renseigné quand la raison de tarif réduit est Autre")
+    end
+
+    it 'accepts Autre when a text proof is provided' do
+      person = build(:person, reduced_rate_eligible: true, reduced_rate_reason: "Autre", reduced_rate_proof: "Situation sociale exceptionnelle")
 
       expect(person).to be_valid
     end
@@ -237,6 +274,23 @@ RSpec.describe Person, type: :model do
     end
   end
 
+  describe '#most_recent_membership' do
+    it 'returns nil when person has no memberships' do
+      person = create(:person, :without_membership)
+      expect(person.most_recent_membership).to be_nil
+    end
+
+    it 'returns the membership with the latest ended_at' do
+      person = create(:person)
+      create(:membership, person: person, membership_type: create(:membership_type, :basic),
+                          started_at: 3.years.ago, ended_at: 2.years.ago, status: :inactive)
+      newer = create(:membership, person: person, membership_type: create(:membership_type, :circus),
+                                  started_at: 2.years.ago, ended_at: 1.week.ago, status: :expired)
+
+      expect(person.most_recent_membership).to eq(newer)
+    end
+  end
+
   describe '#has_active_membership?' do
     it 'returns true when person has active membership' do
       person = create(:person, :with_active_membership)
@@ -305,71 +359,6 @@ RSpec.describe Person, type: :model do
       person.valid?
 
       expect(person.email).to be_nil
-    end
-  end
-
-  describe '#upgrade_contribution!' do
-    let(:person) { create(:person, :with_circus_membership) }
-    let(:pack10_plan) { create(:contribution_formula, :pack10) }
-    let(:trimester_plan) { create(:contribution_formula, :trimester) }
-    let(:annual_plan) { create(:contribution_formula, :annual) }
-    let(:admin_user) { create(:user, system_role: :admin) }
-    let!(:book) { create(:contribution, person: person, contribution_formula: pack10_plan, status: :active) }
-
-    it 'upgrades pack10 to trimester with suspension' do
-      result = person.upgrade_contribution!(
-        from_contribution_id: book.id,
-        to_formula_id: trimester_plan.id,
-        payment_method: :cash,
-        recorded_by: admin_user
-      )
-
-      expect(result[:old_contribution].reload.status).to eq('suspended')
-      expect(result[:new_contribution]).to be_persisted
-      expect(result[:payment]).to be_persisted
-      expect(result[:credit_applied]).to eq(0) # Pack10 no credit
-    end
-
-    it 'upgrades trimester to annual with prorata' do
-      trimester_book = create(:contribution, person: person, contribution_formula: trimester_plan,
-                                             status: :active, expires_at: Date.current + 30.days, sessions_remaining: nil)
-
-      result = person.upgrade_contribution!(
-        from_contribution_id: trimester_book.id,
-        to_formula_id: annual_plan.id,
-        payment_method: :cash,
-        recorded_by: admin_user
-      )
-
-      expect(result[:old_contribution].reload.status).to eq('suspended')
-      expect(result[:new_contribution]).to be_persisted
-      expect(result[:payment]).to be_persisted
-      expect(result[:credit_applied]).to be > 0 # Prorata credit
-    end
-
-    it 'raises error if no circus membership' do
-      basic_person = create(:person, :with_basic_membership)
-      basic_book = create(:contribution, person: basic_person, contribution_formula: pack10_plan)
-
-      expect do
-        basic_person.upgrade_contribution!(
-          from_contribution_id: basic_book.id,
-          to_formula_id: trimester_plan.id,
-          payment_method: :cash,
-          recorded_by: admin_user
-        )
-      end.to raise_error('Adhésion Cirque active requise')
-    end
-
-    it 'raises error for invalid upgrade path' do
-      expect do
-        person.upgrade_contribution!(
-          from_contribution_id: book.id,
-          to_formula_id: pack10_plan.id, # Can't upgrade to same type
-          payment_method: :cash,
-          recorded_by: admin_user
-        )
-      end.to raise_error(/non autorisé/)
     end
   end
 

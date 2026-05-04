@@ -1,5 +1,21 @@
-<% content_for :title, "Mon Profil" %>
+<% content_for :title, t("users.space.page_title") %>
+<div class="page-container max-w-6xl pb-12 sm:px-0">
+  <header class="mb-5 flex items-center justify-between gap-3">
+    <h1 class="text-xl sm:text-2xl font-semibold text-gray-900">
+      <%= t("users.space.page_title") %>
+    </h1>
+    <p class="text-xs sm:text-sm text-gray-500 text-right">
+      <%= t("users.space.quick_hint") %>
+    </p>
+  </header>
 
-<div class="additional-info">
-    <%= render "shared/membershipcard" %>
+  <section id="overview" class="scroll-mt-28 mb-6">
+    <%= render "shared/membershipcard",
+        show_account_settings_link: false,
+        wrapper_classes: "max-w-none mb-0" %>
+  </section>
+
+  <div class="grid grid-cols-1 gap-6">
+    <%= render "users/contact_section", user: @user, frame_id: ProfileSectionDomIds::CONTACT_SECTION %>
+  </div>
 </div>

@@ -1,0 +1,205 @@
+<% user = local_assigns.fetch(:user) %>
+<% embedded = local_assigns.fetch(:embedded, false) %>
+<% compact = local_assigns.fetch(:compact, false) %>
+<% frame_id = local_assigns.fetch(:frame_id, ProfileSectionDomIds::ACCOUNT_SECTION) %>
+<% pref_error_fields = %i[image_rights newsletter_subscribed get_involved dyslexic_font] %>
+<% account_errors = user.errors.attribute_names.any? { |name| pref_error_fields.include?(name) } %>
+
+<div class="bg-white rounded-xl shadow-md overflow-hidden border border-gray-100 relative"
+     data-controller="section-edit email-change-modal"
+     data-section-edit-editing-value="<%= account_errors %>"
+     data-section-edit-warning-message-value="<%= t("users.space.unsaved_changes_warning") %>"
+     data-section-edit-modify-label-value="<%= t("users.space.edit") %>"
+     data-section-edit-accept-label-value="<%= t("users.space.accept") %>"
+     data-section-edit-preview-title-value="<%= t("users.space.preview_submit_title") %>"
+     data-section-edit-preview-intro-value="<%= t("users.space.preview_account_intro") %>"
+     data-section-edit-preview-confirm-label-value="<%= t("users.space.preview_confirm") %>"
+     data-section-edit-preview-back-label-value="<%= t("users.space.preview_back") %>"
+     data-section-edit-yes-label-value="<%= t("users.space.yes") %>"
+     data-section-edit-no-label-value="<%= t("users.space.no") %>"
+     data-email-change-modal-current-email-value="<%= user.email_address %>"
+     data-email-change-modal-blank-message-value="<%= t("settings.show.email_change_error_blank") %>"
+     data-email-change-modal-mismatch-message-value="<%= t("settings.show.email_change_error_mismatch") %>"
+     data-email-change-modal-unchanged-message-value="<%= t("settings.show.email_change_error_unchanged") %>"
+     data-email-change-modal-preview-title-value="<%= t("settings.show.email_change_preview_title") %>"
+     data-email-change-modal-preview-intro-value="<%= t("settings.show.email_change_preview_intro") %>"
+     data-email-change-modal-preview-confirm-label-value="<%= t("users.space.preview_confirm") %>"
+     data-email-change-modal-preview-back-label-value="<%= t("users.space.preview_back") %>"
+     data-email-change-modal-invalid-code-message-value="<%= t("settings.show.email_change_error_invalid_code_format") %>">
+  <header class="<%= compact ? 'px-4 sm:px-5 py-3 border-b border-gray-200 bg-gray-50' : 'h-14 sm:h-16 w-full bg-gradient-to-r from-[#1F5C55] to-[#194A45] flex flex-col justify-center px-4 py-2 sm:py-0' %>">
+    <div class="flex items-start justify-between gap-3">
+      <div class="min-w-0 flex-1">
+        <h2 class="<%= compact ? 'text-base font-semibold text-gray-900' : 'text-lg sm:text-xl font-bold text-white text-center tracking-tight leading-tight' %>">
+          <%= embedded ? t("users.space.account_heading") : t("settings.show.page_title") %>
+        </h2>
+        <% unless embedded || compact %>
+          <p class="text-[11px] sm:text-xs text-white/85 mt-0.5 leading-snug hidden sm:block">
+            <%= t("settings.show.lead") %>
+          </p>
+        <% end %>
+      </div>
+      <div class="flex flex-shrink-0 items-center gap-2">
+        <div data-section-edit-target="modifyWrap">
+          <button type="button"
+                  data-section-edit-target="modifyButton"
+                  data-action="section-edit#handleModifyClick"
+                  class="inline-flex items-center rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-white">
+            <%= t("users.space.edit") %>
+          </button>
+        </div>
+        <div data-section-edit-target="cancelWrap" class="hidden">
+          <button type="button"
+                  data-section-edit-target="cancelButton"
+                  data-action="section-edit#cancelEdit"
+                  class="inline-flex items-center rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-50">
+            <%= t("users.space.cancel") %>
+          </button>
+        </div>
+        <div data-section-edit-target="acceptWrap" class="hidden">
+          <button type="button"
+                  data-section-edit-target="acceptButton"
+                  data-action="section-edit#handleAcceptClick"
+                  data-loading-text="<%= t("users.space.saving") %>"
+                  class="inline-flex items-center rounded-md border border-transparent px-3 py-1.5 text-sm font-medium text-white bg-[#1F5C55] hover:bg-[#1F5C55]/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1F5C55] shadow-sm">
+            <%= t("users.space.accept") %>
+          </button>
+        </div>
+      </div>
+    </div>
+    <% unless embedded %>
+      <p class="sm:hidden text-xs text-gray-500 mt-3 leading-snug"><%= t("settings.show.lead") %></p>
+    <% end %>
+  </header>
+
+  <div class="<%= compact ? 'px-4 sm:px-5 py-4 sm:py-5' : 'px-4 sm:px-6 py-5 sm:py-6' %>">
+    <% if user.errors.any? %>
+      <div class="rounded-lg border border-red-200 bg-red-50 p-4 mb-5" role="alert">
+        <div class="flex gap-3">
+          <div class="flex-shrink-0 pt-0.5">
+            <svg class="h-5 w-5 text-red-500" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+            </svg>
+          </div>
+          <div>
+            <h3 class="text-sm font-semibold text-red-900">
+              <%= t("settings.show.validation_errors_intro", count: user.errors.count) %>
+            </h3>
+            <ul class="mt-2 list-disc pl-5 text-sm text-red-800 space-y-1">
+              <% user.errors.full_messages.each do |message| %>
+                <li><%= message %></li>
+              <% end %>
+            </ul>
+          </div>
+        </div>
+      </div>
+    <% end %>
+
+    <section class="mb-6 pb-6 border-b border-gray-100" aria-labelledby="settings-static-account-heading">
+      <div class="flex flex-wrap items-start justify-between gap-2 mb-3">
+        <h3 id="settings-static-account-heading" class="text-base font-semibold text-gray-900">
+          <%= t("settings.show.section_account") %>
+        </h3>
+        <span class="inline-flex items-center rounded-full bg-teal-50 px-2.5 py-0.5 text-xs font-medium text-[#1F5C55] ring-1 ring-inset ring-[#1F5C55]/20">
+          <%= t("settings.show.email_shared_badge") %>
+        </span>
+      </div>
+      <p class="text-xs font-medium tracking-wide text-gray-500 uppercase mb-1"><%= t("settings.show.field_email") %></p>
+      <p class="text-sm font-semibold text-gray-900 break-all"><%= user.email_address %></p>
+      <p class="mt-2 text-xs text-gray-500 leading-relaxed max-w-prose"><%= t("settings.show.email_hint") %></p>
+      <button type="button"
+              data-action="click->email-change-modal#open"
+              class="mt-4 inline-flex items-center rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-800 hover:bg-gray-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1F5C55] focus-visible:ring-offset-2">
+        <%= t("settings.show.email_change_cta") %>
+      </button>
+    </section>
+
+    <div data-section-edit-target="read" class="space-y-4 text-sm">
+      <h3 class="text-base font-semibold text-gray-900">
+        <%= t("settings.show.section_preferences") %>
+      </h3>
+      <div class="grid gap-3 sm:grid-cols-2">
+        <div class="rounded-xl border border-gray-100 bg-gray-50/60 px-4 py-3 flex flex-col gap-2 min-h-[5.5rem]">
+          <span class="text-sm font-medium text-gray-900 leading-snug"><%= t("settings.show.field_image_rights") %></span>
+          <span class="inline-flex self-start items-center rounded-full px-2.5 py-0.5 text-xs font-semibold <%= user.image_rights ? "bg-emerald-100 text-emerald-800" : "bg-gray-200/80 text-gray-700" %>">
+            <%= user.image_rights ? t("users.space.yes") : t("users.space.no") %>
+          </span>
+        </div>
+        <div class="rounded-xl border border-gray-100 bg-gray-50/60 px-4 py-3 flex flex-col gap-2 min-h-[5.5rem]">
+          <span class="text-sm font-medium text-gray-900 leading-snug"><%= t("settings.show.field_newsletter") %></span>
+          <span class="inline-flex self-start items-center rounded-full px-2.5 py-0.5 text-xs font-semibold <%= user.newsletter_subscribed ? "bg-emerald-100 text-emerald-800" : "bg-gray-200/80 text-gray-700" %>">
+            <%= user.newsletter_subscribed ? t("users.space.yes") : t("users.space.no") %>
+          </span>
+        </div>
+        <div class="rounded-xl border border-gray-100 bg-gray-50/60 px-4 py-3 flex flex-col gap-2 min-h-[5.5rem]">
+          <span class="text-sm font-medium text-gray-900 leading-snug"><%= t("settings.show.field_get_involved") %></span>
+          <span class="inline-flex self-start items-center rounded-full px-2.5 py-0.5 text-xs font-semibold <%= user.get_involved ? "bg-emerald-100 text-emerald-800" : "bg-gray-200/80 text-gray-700" %>">
+            <%= user.get_involved ? t("users.space.yes") : t("users.space.no") %>
+          </span>
+        </div>
+        <div class="rounded-xl border border-gray-100 bg-gray-50/60 px-4 py-3 flex flex-col gap-2 min-h-[5.5rem]">
+          <span class="text-sm font-medium text-gray-900 leading-snug"><%= t("settings.show.field_dyslexic_font") %></span>
+          <span class="inline-flex self-start items-center rounded-full px-2.5 py-0.5 text-xs font-semibold <%= user.dyslexic_font ? "bg-emerald-100 text-emerald-800" : "bg-gray-200/80 text-gray-700" %>">
+            <%= user.dyslexic_font ? t("users.space.yes") : t("users.space.no") %>
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <%= form_with(model: user, url: settings_path, method: :patch, class: compact ? "hidden space-y-5" : "hidden space-y-6", data: { section_edit_target: "edit form", action: "submit->section-edit#handleFormSubmit input->section-edit#handleInput change->section-edit#handleInput" }) do |f| %>
+      <%= hidden_field_tag :ui_context, embedded ? "profile" : "settings" %>
+
+      <section class="space-y-3" aria-labelledby="settings-heading-prefs-edit">
+        <h3 id="settings-heading-prefs-edit" class="text-base font-semibold text-gray-900">
+          <%= t("settings.show.section_preferences") %>
+        </h3>
+        <p class="text-xs text-gray-500 leading-snug">
+          <%= t("settings.show.section_preferences_edit_hint") %>
+        </p>
+        <div class="grid gap-3 sm:grid-cols-2">
+          <label class="flex items-start gap-3 rounded-xl border border-gray-200 bg-white p-4 cursor-pointer hover:border-[#1F5C55]/35 hover:bg-teal-50/20 transition-colors shadow-sm">
+            <%= f.check_box :image_rights, data: { section_edit_target: "field" }, class: "mt-0.5 h-4 w-4 shrink-0 rounded border-gray-300 text-[#1F5C55] focus:ring-[#1F5C55]" %>
+            <span class="text-sm font-medium text-gray-800 leading-snug"><%= t("settings.show.field_image_rights") %></span>
+          </label>
+          <label class="flex items-start gap-3 rounded-xl border border-gray-200 bg-white p-4 cursor-pointer hover:border-[#1F5C55]/35 hover:bg-teal-50/20 transition-colors shadow-sm">
+            <%= f.check_box :newsletter_subscribed, data: { section_edit_target: "field" }, class: "mt-0.5 h-4 w-4 shrink-0 rounded border-gray-300 text-[#1F5C55] focus:ring-[#1F5C55]" %>
+            <span class="text-sm font-medium text-gray-800 leading-snug"><%= t("settings.show.field_newsletter") %></span>
+          </label>
+          <label class="flex items-start gap-3 rounded-xl border border-gray-200 bg-white p-4 cursor-pointer hover:border-[#1F5C55]/35 hover:bg-teal-50/20 transition-colors shadow-sm">
+            <%= f.check_box :get_involved, data: { section_edit_target: "field" }, class: "mt-0.5 h-4 w-4 shrink-0 rounded border-gray-300 text-[#1F5C55] focus:ring-[#1F5C55]" %>
+            <span class="text-sm font-medium text-gray-800 leading-snug"><%= t("settings.show.field_get_involved") %></span>
+          </label>
+          <label class="flex items-start gap-3 rounded-xl border border-gray-200 bg-white p-4 cursor-pointer hover:border-[#1F5C55]/35 hover:bg-teal-50/20 transition-colors shadow-sm">
+            <%= f.check_box :dyslexic_font, data: { section_edit_target: "field" }, class: "mt-0.5 h-4 w-4 shrink-0 rounded border-gray-300 text-[#1F5C55] focus:ring-[#1F5C55]" %>
+            <span class="text-sm font-medium text-gray-800 leading-snug"><%= t("settings.show.field_dyslexic_font") %></span>
+          </label>
+        </div>
+      </section>
+
+      <div class="hidden" aria-hidden="true">
+        <%= f.submit "submit", data: { section_edit_target: "save", loading_text: t("users.space.saving") } %>
+      </div>
+    <% end %>
+
+    <div class="<%= compact ? 'mt-6 pt-6 border-t border-gray-200 space-y-2.5' : 'mt-8 pt-8 border-t border-gray-200 space-y-3' %>">
+      <h3 class="text-sm font-semibold text-gray-800">
+        <%= t("settings.show.section_security") %>
+      </h3>
+      <%= button_to t("settings.show.password_reset_cta"), request_reset_password_path,
+          method: :get,
+          form: { data: { turbo_confirm: t("settings.show.password_reset_confirm", email: user.email_address), section_edit_target: "protectedAction" } },
+          class: "w-full flex justify-center py-2.5 px-4 border border-gray-300 rounded-lg shadow-sm text-sm font-medium text-gray-800 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1F5C55] transition-colors" %>
+    </div>
+
+    <div class="<%= compact ? 'mt-6 pt-6 border-t border-gray-200 space-y-2.5' : 'mt-8 pt-8 border-t border-gray-200 space-y-3' %>">
+      <h3 class="text-sm font-semibold text-red-800">
+        <%= t("settings.show.section_danger") %>
+      </h3>
+      <%= button_to t("settings.show.destroy_account_cta"), user,
+          method: :delete,
+          form: { data: { turbo_confirm: t("settings.show.destroy_confirm"), section_edit_target: "protectedAction" } },
+          class: "w-full flex justify-center py-2.5 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors" %>
+    </div>
+  </div>
+
+  <%= render "settings/email_change_modal", embedded: embedded, frame_id: frame_id %>
+</div>

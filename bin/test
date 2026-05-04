@@ -15,7 +15,7 @@ cd "$APP_ROOT"
 COVERAGE="${COVERAGE:-true}"
 
 # Parse arguments
-SPECS=""
+SPEC_ARGS=()
 NO_COVERAGE=false
 
 while [[ $# -gt 0 ]]; do
@@ -25,14 +25,16 @@ while [[ $# -gt 0 ]]; do
       shift
       ;;
     *)
-      SPECS="$SPECS $1"
+      SPEC_ARGS+=("$1")
       shift
       ;;
   esac
 done
 
 # Default to all specs if none provided
-SPECS="${SPECS:-spec/}"
+if [ ${#SPEC_ARGS[@]} -eq 0 ]; then
+  SPEC_ARGS=("spec/")
+fi
 
 # Set coverage environment variable
 if [ "$NO_COVERAGE" = true ]; then
@@ -44,5 +46,4 @@ else
 fi
 
 # Run the tests
-exec bundle exec rspec $SPECS --exclude-pattern="spec/disabled/**/*_spec.rb" --format documentation
-
+exec bin/rspec "${SPEC_ARGS[@]}" --exclude-pattern="spec/disabled/**/*_spec.rb" --format documentation

@@ -31,6 +31,9 @@ development_cable:
 test:
   <<: *default
   pool: 1
+  # Rails 8.1+: db:prepare calls load_seed when the DB is first created (primary DB defaults to seeds?: true).
+  # Tests expect an empty DB + transactional fixtures; running db/seeds.rb here breaks isolation and CI.
+  seeds: false
   database: <%= Rails.root.join("tmp", "test.sqlite3") %>
 
 test_cache:

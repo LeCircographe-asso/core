@@ -1,0 +1,42 @@
+<%# locals: person (required), current_membership, recent_membership, membership_lapsed %>
+<div class="space-y-3 min-h-0">
+  <h3 class="text-xs font-semibold uppercase tracking-wide text-gray-500">
+    <%= t("users.space.membership_card.section_membership") %>
+  </h3>
+  <% if current_membership.present? %>
+    <div class="flex justify-between items-center gap-2">
+      <span class="text-sm text-gray-500 shrink-0"><%= t("users.space.membership_card.valid_until_label") %></span>
+      <span class="text-sm font-medium text-right <%= Date.current > current_membership.ended_at ? 'text-red-600' : 'text-gray-800' %>">
+        <%= current_membership.ended_at.strftime("%d/%m/%Y") %>
+      </span>
+    </div>
+
+    <div class="flex justify-between items-center gap-2">
+      <span class="text-sm text-gray-500 shrink-0"><%= t("users.space.membership_card.membership_type_label") %></span>
+      <span class="text-sm font-medium text-gray-800 text-right">
+        <%= current_membership.membership_type.name %>
+      </span>
+    </div>
+  <% elsif membership_lapsed %>
+    <div class="flex justify-between items-center gap-2">
+      <span class="text-sm text-gray-500 shrink-0"><%= t("users.space.membership_card.last_membership_ended_label") %></span>
+      <span class="text-sm font-medium text-gray-800 text-right">
+        <%= recent_membership.ended_at.strftime("%d/%m/%Y") %>
+      </span>
+    </div>
+    <div class="flex justify-between items-center gap-2">
+      <span class="text-sm text-gray-500 shrink-0"><%= t("users.space.membership_card.membership_type_label") %></span>
+      <span class="text-sm font-medium text-gray-800 text-right">
+        <%= recent_membership.membership_type.name %>
+      </span>
+    </div>
+    <p class="text-sm text-gray-600 pt-1">
+      <%= t("users.space.membership_card.renew_prompt") %>
+    </p>
+  <% else %>
+    <div class="flex justify-between items-center gap-2">
+      <span class="text-sm text-gray-500 shrink-0"><%= t("users.space.membership_card.status_label") %></span>
+      <span class="text-sm font-medium text-gray-800 text-right"><%= t("users.space.membership_card.not_yet_member") %></span>
+    </div>
+  <% end %>
+</div>

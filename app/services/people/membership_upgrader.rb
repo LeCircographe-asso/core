@@ -27,14 +27,39 @@ module People
       new_membership_type = MembershipType.find(new_membership_type_id)
       recorded_by = resolve_recorded_by
 
-      result = person.upgrade_membership!(
-        new_membership_type,
-        payment_method: payment_method.to_sym,
-        recorded_by: recorded_by,
-        custom_amount_cents: custom_amount_cents,
-        offer_reason: offer_reason,
-        donation_cents: donation_cents
-      )
+      result = nil
+      ActiveRecord::Base.transaction do
+        current_membership = person.current_membership
+        raise "Aucune adhésion active à upgrader" unless current_membership
+
+        People::OfferPolicy.validate!(
+          recorded_by: recorded_by,
+          person: person,
+          offer_type: "membership_upgrade",
+          offer_reason: offer_reason
+        ) if payment_method == "offered"
+
+        old_membership_type = current_membership.membership_type
+        new_membership = current_membership.upgrade_to!(new_membership_type)
+        old_member_number = person.member_number
+        new_member_number = handle_member_number_change!(old_membership_type, new_membership_type, recorded_by)
+        amount_cents = amount_for(new_membership_type.price_cents)
+
+        payment = record_payment!(
+          item_type: "Membership",
+          item_id: new_membership.id,
+          amount_cents: amount_cents,
+          description: upgrade_payment_description(old_membership_type, new_membership_type)
+        )
+
+        result = {
+          membership: new_membership,
+          payment: payment,
+          member_number_changed: old_member_number != new_member_number,
+          old_member_number: old_member_number,
+          new_member_number: new_member_number
+        }
+      end
 
       ActiveSupport::Notifications.instrument(
         "membership.upgraded",
@@ -51,15 +76,15 @@ module People
         old_member_number: result[:old_member_number],
         new_member_number: result[:new_member_number],
         errors: [],
-        message: "Membership upgraded successfully"
+        message: I18n.t("services.success.membership_upgraded")
       )
     rescue ActiveRecord::RecordNotFound => e
       ActiveSupport::Notifications.instrument("membership.upgrade_failed", error: e.message, reason: "record_not_found")
-      failure("Record not found: #{e.message}")
+      failure(I18n.t("services.errors.record_not_found", message: e.message))
     rescue StandardError => e
       Rails.logger.error("[People::MembershipUpgrader] #{e.class}: #{e.message}\n#{e.backtrace.take(5).join("\n")}")
       ActiveSupport::Notifications.instrument("membership.upgrade_failed", error: e.message, reason: "exception")
-      failure("Error upgrading membership: #{e.message}")
+      failure(I18n.t("services.errors.unexpected_error", action: "membership upgrade", message: e.message))
     end
 
     private
@@ -74,6 +99,94 @@ module People
       else
         raise "A recorded_by user is required to upgrade a membership"
       end
+    end
+
+    def amount_for(base_price_cents)
+      return custom_amount_cents || 0 if payment_method == "offered"
+
+      base_price_cents
+    end
+
+    def record_payment!(item_type:, item_id:, amount_cents:, description:)
+      lines = [
+        {
+          item_type: item_type,
+          item_id: item_id,
+          amount_cents: amount_cents,
+          description: description
+        }
+      ]
+
+      if normalized_donation_cents.present?
+        lines << {
+          item_type: "Donation",
+          amount_cents: normalized_donation_cents,
+          description: "Donation"
+        }
+      end
+
+      payment_result = People::PaymentRecorder.new(
+        person: person,
+        recorded_by: resolve_recorded_by,
+        payment_method: payment_method,
+        status: "success",
+        notes: description,
+        offer_reason: offer_reason,
+        total_cents: lines.sum { |line| line[:amount_cents].to_i },
+        payment_lines: lines
+      ).call
+
+      raise payment_result.message unless payment_result.success?
+
+      payment_result.payment
+    end
+
+    def normalized_donation_cents
+      cents = donation_cents.to_i
+      cents.positive? ? cents : nil
+    end
+
+    def upgrade_payment_description(old_membership_type, new_membership_type)
+      "Passage d'adhésion : #{old_membership_type.name} -> #{new_membership_type.name}"
+    end
+
+    def handle_member_number_change!(old_membership_type, new_membership_type, recorded_by)
+      old_type_code = membership_type_code(old_membership_type)
+      new_type_code = membership_type_code(new_membership_type)
+      return person.member_number if old_type_code == new_type_code
+
+      new_member_number = MemberManagementService.generate_member_number(new_type_code)
+      create_member_number_change_history!(
+        old_member_number: person.member_number,
+        new_member_number: new_member_number,
+        old_type: old_type_code,
+        new_type: new_type_code,
+        recorded_by: recorded_by
+      )
+      person.update!(member_number: new_member_number)
+      new_member_number
+    end
+
+    def membership_type_code(membership_type)
+      membership_type.circus? ? "CIRQUE" : "BASIQUE"
+    end
+
+    def create_member_number_change_history!(old_member_number:, new_member_number:, old_type:, new_type:, recorded_by:)
+      if old_member_number.present?
+        old_history = person.member_number_histories.where(member_number: old_member_number, replaced_at: nil).first
+        old_history&.mark_as_replaced!
+      end
+
+      old_type_name = old_type == "CIRQUE" ? "Cirque" : "Basique"
+      new_type_name = new_type == "CIRQUE" ? "Cirque" : "Basique"
+
+      person.member_number_histories.create!(
+        member_number: new_member_number,
+        membership_type: new_type_name,
+        year: Date.current.year,
+        notes: "Changement automatique lors de l'upgrade d'adhésion (#{old_type_name} → #{new_type_name}) - Enregistré par #{recorded_by.email}",
+        assigned_at: Time.current
+      )
     end
 
     def failure(message, error_list = nil)

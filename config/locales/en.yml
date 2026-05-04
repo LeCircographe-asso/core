@@ -12,6 +12,10 @@ en:
       rescue_alert: 'Error while claiming account: %{message}'
       success: "✅ Compte revendiqué ! Votre historique est maintenant disponible."
   admin:
+    base:
+      unauthorized_alert: You do not have access to this page.
+      sign_in_required_alert: Sign in with an authorized account to access the administration area.
+      staff_only_alert: Your account does not have administration access. Use an admin or super-admin account, or ask the team for access.
     memberships:
       create:
         upgrade_failed_alert: 'Error during upgrade: %{message}'
@@ -42,19 +46,19 @@ en:
         use_inline_notice: Utilisez l'édition inline pour modifier les paiements
       new:
         creation_disabled_notice: Création de paiement temporairement désactivée
-    subscription_plans:
+    contribution_formulas:
       create:
-        purchase_failed_alert: 'Error purchasing plan: %{message}'
-        purchased: Plan de cotisation acheté avec succès !
+        purchase_failed_alert: 'Error purchasing contribution formula: %{message}'
+        purchased: Contribution recorded successfully!
       new:
-        needs_circus_membership_alert: Cette personne doit avoir une adhésion Cirque pour acheter des plans de cotisation
+        needs_circus_membership_alert: This person needs an active Circus membership to buy a contribution formula.
       update:
-        updated: Plan de cotisation mis à jour avec succès !
+        updated: Contribution formula updated successfully!
       destroy:
-        destroyed: Plan de cotisation supprimé avec succès !
+        destroyed: Contribution formula deleted successfully!
       require_super_admin:
-        forbidden: Seul le super-admin peut modifier ou supprimer des cotisations.
-    subscriptions:
+        forbidden: Only super-admin can edit or delete contribution formulas.
+    contributions:
       upgrade:
         success_notice: Contribution upgraded successfully.
         credit_applied_suffix: " Credit applied: %{amount}€"
@@ -184,9 +188,11 @@ en:
       payments:
         history: Payment history
         management: Payments management
-      subscription_plans:
-        plans: Contribution plans
-        plan_named: 'Plan: %{name}'
+      contribution_formulas:
+        catalog: Contribution formulas
+        formula_named: 'Formula: %{name}'
+        plans: Contribution formulas
+        plan_named: 'Formula: %{name}'
         new_contribution: New contribution
         edit_named: 'Edit: %{name}'
       opening_hours:
@@ -248,6 +254,8 @@ en:
         blog_newsletters: Blog & Newsletters
         photo_gallery: Photo gallery
         events: Our Events
+      scroll_hint:
+        down_to_main: Scroll to main content
       footer:
         newsletter_cta: Stay informed by subscribing to our newsletter
         email_placeholder: Your email address
@@ -304,9 +312,39 @@ en:
         mission_text_1: Provide a space for practice, creation and transmission that is accessible to everyone.
         mission_text_2: 'Self-managed governance: members volunteer, share responsibilities, and co-program the life of the venue.'
   services:
+    base:
+      success_default: "Operation completed successfully"
+      failure_default: "Operation failed"
     validation:
       invalid_data: Invalid data
       invalid_data_with_details: 'Invalid data: %{details}'
+    success:
+      user_updated: "User updated successfully"
+      newsletter_update_skipped_no_email: "Newsletter update skipped (no email)"
+      membership_already_active: "Person already has an active membership"
+      membership_created: "Membership created successfully"
+      membership_upgraded: "Membership upgraded successfully"
+      membership_updated: "Membership updated successfully"
+      membership_deactivated: "Membership deactivated successfully"
+      contribution_created: "Contribution created successfully"
+      contribution_upgraded: "Contribution upgraded successfully"
+      register_person_created: "Person created"
+      register_person_updated: "Person updated"
+      register_user_account: "user account"
+      register_membership: "membership"
+      register_parts_joiner: " and "
+      register_processed: "Successfully processed %{parts}"
+    errors:
+      record_not_found: "Record not found: %{message}"
+      validation_error: "Validation error: %{message}"
+      unexpected_error: "Error during %{action}: %{message}"
+      insufficient_permissions:
+        user_update: "Insufficient permissions to update this user"
+        membership_update: "Insufficient permissions to update this membership"
+        membership_deactivate: "Insufficient permissions to deactivate this membership"
+      newsletter_update_failed: "Error updating newsletter: %{message}"
+      user_not_found: "User not found: %{message}"
+      register_existing_web_account: "This person already has a web account."
     web:
       user_registration:
         accept_cgu: Vous devez accepter les CGU pour continuer.
@@ -350,6 +388,7 @@ en:
     create:
       success_notice: Inscription réussie !
   sessions:
+    already_signed_in_notice: You are already signed in. Sign out first to switch accounts.
     new:
       sign_up_prompt: No account yet? Sign up
       registration_closed_hint: Online sign-up is unavailable for now. Sign in if you already have an account.
@@ -363,11 +402,122 @@ en:
     destroy:
       signed_out_notice: Déconnecté avec succès !
   settings:
+    nav:
+      breadcrumb_label: Breadcrumb
+      home: Home
+      profile: Profile
+      settings_current: Settings
+      back_to_profile: Back to profile
+    show:
+      page_title: Account settings
+      lead: Sign-in email, preferences, and security.
+      membership_hint_html: Membership, contributions, and recent payments are summarized on your %{link}.
+      view_profile_link: profile page
+      section_account: Account
+      section_preferences: Preferences
+      section_preferences_edit_hint: Toggle the options below, then confirm with Accept.
+      section_communication: Communication & involvement
+      section_display: Display
+      section_security: Security
+      section_danger: Sensitive actions
+      email_shared_badge: Shared
+      email_hint: Used to sign in and for venue emails (including password reset).
+      email_change_cta: Change email address
+      email_change_modal_title: New email address
+      email_change_modal_intro: "Enter the new address, confirm it, then submit the verification code sent to that address."
+      email_change_confirm_field: Confirm new address
+      email_change_placeholder: new.address@example.com
+      email_change_submit: Save this address
+      email_change_send_code: Send code
+      email_change_confirm_code: Confirm code
+      email_change_close: Close
+      email_change_code_label: Verification code
+      email_change_code_hint: "Leave empty to receive a code, then submit again with that code to finalize."
+      email_change_pending_notice: "A verification request is already pending for %{email}."
+      email_change_preview_title: Confirm email change
+      email_change_preview_intro: "Your sign-in address will become:"
+      email_change_error_blank: Enter and confirm the new address.
+      email_change_error_mismatch: The two addresses do not match.
+      email_change_error_unchanged: This is the same as your current address.
+      email_change_error_invalid_code_format: The code must contain 6 digits.
+      field_email: Email address
+      field_image_rights: Image rights consent
+      field_newsletter: Subscribe to the newsletter
+      field_get_involved: Get involved with the project
+      field_dyslexic_font: Use dyslexia-friendly font
+      submit: Save changes
+      password_reset_cta: Change password
+      password_reset_confirm: A reset email will be sent to %{email}. Continue?
+      destroy_account_cta: Delete my account
+      destroy_confirm: Are you sure you want to delete your account? This cannot be undone.
+      validation_errors_intro:
+        one: "%{count} error to fix:"
+        other: "%{count} errors to fix:"
     update:
-      saved_notice: Vos modifications ont été enregistrées avec succès
+      saved_notice: Your changes have been saved successfully.
+      email_change_code_sent_notice: "A verification code has been sent to %{email}."
+      email_change_success_notice: "Email address updated successfully."
+      email_change_error_blank: Enter and confirm the new address.
+      email_change_error_mismatch: The two addresses do not match.
+      email_change_error_unchanged: This is the same as your current address.
+      email_change_error_taken: "This email address is already in use."
+      email_change_error_send_failed: "Could not send verification code right now."
+      email_change_error_no_request: "No pending email change request was found."
+      email_change_error_expired: "This verification code has expired. Request a new one."
+      email_change_error_pending_mismatch: "This email does not match the pending request."
+      email_change_error_invalid_code: "Invalid verification code."
+      email_change_error_confirm_failed: "Could not confirm email change."
   users:
+    space:
+      page_title: My space
+      quick_hint: Update then save.
+      intro_title: Profile, membership & account
+      intro_lead: "Manage your profile, contact details, and account here."
+      nav_aria: Account sections
+      nav_overview: Summary
+      nav_contact: Contact details
+      nav_account: Account & security
+      nav_faq: FAQ
+      newsletter_row_label: Newsletter
+      newsletter_subscribed_yes: Subscribed
+      newsletter_subscribed_no: Not subscribed
+      membership_card_settings_link: Account & preferences
+      membership_card:
+        member_number_label: Member no.
+        section_membership: Membership
+        section_contribution: Contribution
+        cotisation_no_membership: Circus contributions are shown when you have an active Basic or Circus membership.
+        cotisation_wrong_category: Your current membership does not include circus contributions.
+        valid_until_label: "Membership valid until:"
+        membership_type_label: "Membership type:"
+        last_membership_ended_label: "Last membership ended:"
+        renew_prompt: Renew your membership to take part in Circographe activities.
+        status_label: "Status:"
+        not_yet_member: Not a member yet
+      contact_heading: Postal address & phone
+      contact_intro: "Used for mailings and billing."
+      account_heading: Account, preferences & security
+      field_phone: Phone
+      field_address: Address
+      field_zip: Postal code
+      field_town: City / town
+      field_country: Country
+      edit: Edit
+      accept: Accept
+      preview_submit_title: Check before saving
+      preview_contact_intro: "Review the summary below — your contact details will be saved when you confirm."
+      preview_account_intro: "Review the summary below — your account and preferences will be saved when you confirm."
+      preview_confirm: Confirm and save
+      preview_back: Back to editing
+      cancel: Cancel
+      'yes': 'Yes'
+      'no': 'No'
+      saving: Saving...
+      unsaved_changes_warning: You have unsaved changes.
+      contact_submit: Save contact details
     update:
-      profile_updated: Votre profil a été mis à jour avec succès.
+      profile_updated: Your profile has been updated successfully.
+      coordinates_updated: Contact details saved.
     destroy:
       deleted_notice: Votre compte a été supprimé avec succès.
       destroy_failed_alert: Impossible de supprimer votre compte. Veuillez contacter l'assistance.
@@ -391,8 +541,18 @@ en:
         subject: 'Bienvenue au Circographe ! '
       welcome_email:
         subject: 'Bienvenue au Circographe ! '
+      email_change_verification:
+        subject: "Email change verification code"
       membership_expiration_reminder:
         subject: Votre adhésion arrive à expiration !
+      contact_email:
+        subject: "New message: %{category_label}"
+        category_labels:
+          general: General question
+          technical: Technical / access
+          creative_hosting: Creative hosting (creation time)
+          partnership: Partnership
+          residence: Creative hosting (creation time)
   activerecord:
     errors:
       models:

@@ -529,6 +529,69 @@ RSpec.describe ContributionFormula, type: :model do
     end
   end
 
+  describe '.available_for' do
+    let(:circus_type) { create(:membership_type, :circus, rate_kind: "standard") }
+    let(:basic_type) { create(:membership_type, :basic, rate_kind: "standard") }
+    let(:person) { create(:person) }
+
+    let!(:standard_formula) do
+      create(:contribution_formula, :day, membership_type: circus_type, rate_kind: "standard", name: "Journée Standard")
+    end
+
+    let!(:reduced_formula) do
+      create(:contribution_formula, :day, membership_type: circus_type, rate_kind: "reduced", name: "Journée Solidaire")
+    end
+
+    let!(:basic_formula) do
+      create(:contribution_formula, :day, membership_type: basic_type, rate_kind: "standard", name: "Journée Basique")
+    end
+
+    it 'requires an active circus membership' do
+      expect(described_class.available_for(person)).to be_empty
+    end
+
+    it 'includes standard formulas for circus members' do
+      create(:membership, person: person, membership_type: circus_type, status: :active)
+
+      expect(described_class.available_for(person)).to include(standard_formula)
+    end
+
+    it 'hides reduced formulas when the person is not eligible' do
+      create(:membership, person: person, membership_type: circus_type, status: :active)
+
+      expect(described_class.available_for(person)).not_to include(reduced_formula)
+    end
+
+    it 'shows reduced formulas when the person is eligible' do
+      person.update!(reduced_rate_eligible: true, reduced_rate_reason: "Étudiant")
+      create(:membership, person: person, membership_type: circus_type, status: :active)
+
+      expect(described_class.available_for(person)).to include(standard_formula, reduced_formula)
+      expect(described_class.available_for(person)).not_to include(basic_formula)
+    end
+  end
+
+  describe '#available_for?' do
+    let(:standard_formula) { build(:contribution_formula, rate_kind: "standard") }
+    let(:reduced_formula) { build(:contribution_formula, rate_kind: "reduced") }
+    let(:person) { build(:person, reduced_rate_eligible: false) }
+
+    it 'allows standard rates for everyone' do
+      expect(standard_formula.available_for?(person)).to be(true)
+    end
+
+    it 'hides reduced rates when the person is not eligible' do
+      expect(reduced_formula.available_for?(person)).to be(false)
+    end
+
+    it 'allows reduced rates when the person is eligible' do
+      person.reduced_rate_eligible = true
+      person.reduced_rate_reason = "Étudiant"
+
+      expect(reduced_formula.available_for?(person)).to be(true)
+    end
+  end
+
   describe 'Priceable concern' do
     let(:circus_membership_type) { create(:membership_type, category: :circus) }
 

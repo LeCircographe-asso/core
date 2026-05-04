@@ -58,7 +58,7 @@
 
 ### 1.3 Cotisation (accès cirque)
 
-#### Formule de cotisation — `ContributionFormula` (cible) / `SubscriptionPlan` (legacy)
+#### Formule de cotisation — `ContributionFormula`
 - **Définition** : catalogue versionné des formules d'accès cirque. Quatre durées : `:day` (journée), `:trimester` (≈90 j), `:annual` (1 an), `:pack10` (10 séances). Versionnage identique à `MembershipType`.
 - **Disponibilité** : `ContributionFormula.available_for(person)` ne retourne que les formules autorisées (actuellement : exige une adhésion Cirque active).
 - **Usage correct** :
@@ -66,23 +66,24 @@
   - « Trois formules sont actives : Journée (4 €), Trimestre (60 €), Annuel (120 €) ».
 - **À éviter** :
   - « Plan d'abonnement » → utiliser « formule de cotisation ».
-  - `SubscriptionPlan` dans la nouvelle documentation (rester à `ContributionFormula` + alias legacy uniquement quand on parle du code actuel).
+  - `SubscriptionPlan` dans la nouvelle documentation, sauf historique de migration.
   - « Article de cotisation » (concept seed non canonique).
 
-#### Cotisation — `Contribution` (cible) / `BookOfEntry` (legacy)
+#### Cotisation — `Contribution`
 - **Définition** : instance achetée par une `Person`, dérivée d'une `ContributionFormula`. Matérialise le droit d'accès cirque effectivement payé.
   - Pack 10 : `sessions_remaining` initialisé à `sessions_count` (10 par défaut), pas d'expiration (`expires_at = nil`).
-  - Trimestre / Annuel / Day : `sessions_remaining = nil`, expiration via `expires_at`.
-- **Cycle de vie** : créée via `People::ContributionCreator` (legacy : `People::SubscriptionCreator`). Suspension automatique si l'adhésion Cirque expire ; réactivation à la souscription d'une nouvelle adhésion active.
+  - Trimestre / Annuel : `sessions_remaining = nil`, expiration via `expires_at`.
+  - Day : usage unique, `sessions_remaining` vaut `1` puis `0`, expiration à la fin du jour d'achat.
+- **Cycle de vie** : créée via `People::ContributionCreator`. Suspension automatique si l'adhésion Cirque expire ; réactivation à la souscription d'une nouvelle adhésion active.
 - **Règles d'upgrade** :
   - Pack 10 → Trimestre / Annuel : Pack 10 suspendu (sessions conservées), nouvelle cotisation au plein tarif, **pas de prorata**.
-  - Trimestre → Annuel : prorata temporel (montant Annuel − valeur du temps restant sur Trimestre).
+  - Trimestre → Annuel : prorata temporel actuel, à confirmer métier.
   - Day non upgradable.
 - **Usage correct** :
   - « La cotisation Pack 10 d'Alice a 7 séances restantes ».
   - « Bob a une cotisation Annuelle qui expire le 15/06/2027 ».
 - **À éviter** :
-  - `BookOfEntry` dans la nouvelle documentation. Le code utilise encore ce nom : indiquer « code actuel : `BookOfEntry` » uniquement quand nécessaire.
+  - `BookOfEntry` dans la nouvelle documentation, sauf historique de migration.
   - « Carnet » sauf pour spécifier le sous-type Pack 10. « Cotisation Pack 10 » est préféré.
   - « Subscription » (anglicisme commercial — cf. § 1.7).
   - « Abonnement » (terme commercial inadapté à une asso loi 1901).
@@ -102,23 +103,23 @@
 - **Valeurs canoniques de `item_type`** :
   - `"Membership"` → adhésion créée par ce paiement.
   - `"MembershipType"` → renouvellement / achat sur le catalogue.
-  - `"ContributionFormula"` (cible) / `"SubscriptionPlan"` (legacy) → achat d'une cotisation.
-  - `"Contribution"` (cible) / `"BookOfEntry"` (legacy, rare) → cotisation existante.
-  - `"Donation"` → don. **Création** : `People::PaymentCreator` conserve `"Donation"` sur les lignes de don. Des lignes **historiques** peuvent encore avoir `item_type: "Payment"` jusqu’au backfill complet — voir [payments.md](payments.md).
+  - `"ContributionFormula"` → achat d'une cotisation.
+  - `"Contribution"` → cotisation existante.
+  - `"Donation"` → don. Les nouvelles lignes utilisent `"Donation"` ; vérifier les données historiques `item_type: "Payment"` avant suppression de compatibilité.
 - **Invariant** : la somme des lignes = `payment.total_cents`.
 - **À éviter** :
   - `item_type: "Payment"` pour un don dans toute nouvelle documentation ou code (utiliser `"Donation"`).
 
 #### Don — `Donation`
 - **Définition** : paiement volontaire sans contrepartie, conservé pour reçu fiscal éventuel.
-- **Représentation actuelle (code)** : `PaymentLine` avec `item_type: "Donation"` (création via `People::PaymentCreator`). Données anciennes : encore `item_type: "Payment"` sur certaines lignes jusqu’à migration — voir `phase1-donation-fix` et [payments.md](payments.md).
-- **Représentation cible** : même schéma polymorphique ; nettoyage DB (`Payment` legacy, champ `payments.donation`, validations strictes sur `item_type`).
+- **Représentation actuelle** : `PaymentLine` avec `item_type: "Donation"` (création via `People::PaymentRecorder`).
+- **À vérifier** : présence éventuelle de lignes historiques `item_type: "Payment"` en production — voir [payments.md](payments.md).
 - **Usage correct** :
   - « Don de 5 € lors d'une adhésion ».
   - « Le paiement contient deux lignes : adhésion + don ».
 - **À éviter** :
   - Confondre un don avec une cotisation ou une adhésion.
-  - Stocker un don directement sur `Payment#donation` (champ historique à éliminer).
+  - Représenter un nouveau don avec `item_type: "Payment"`.
 
 ---
 
@@ -135,6 +136,12 @@
 
 #### Événement — `Event`
 - **Définition** : événement organisé (cours, stage, performance), avec date, catégorie. Inscriptions via `EventAttendee` (`Person ↔ Event`).
+
+#### Temps d’accueil en création
+- **Définition** : accueil d’un projet créatif au sein du lieu (cirque, arts graphiques, etc.), à distinguer de l’adhésion ou de la cotisation cirque.
+- **Usage correct** : tout libellé public (pages Contact, FAQ, Adhérer, partenaires) utilise cette formulation.
+- **Code / formulaire de contact** : valeur de catégorie **`creative_hosting`** ; le slug legacy **`residence`** est encore accepté et normalisé vers `creative_hosting`. Boîte mail : `CONTACT_EMAIL_CREATIVE_HOSTING`, avec repli sur **`CONTACT_EMAIL_RESIDENCE`** si la nouvelle variable n’est pas définie.
+- **À éviter** : « résidence » pour désigner ce dispositif (terme legacy en communication).
 
 ---
 
@@ -174,14 +181,15 @@
 | Compte web | `User` | canonique | optionnel **pour une Person** (pas toujours de compte) ; **obligatoire pour un User** (toujours une Person liée) |
 | Adhésion | `Membership` | canonique | annuel |
 | Type d'adhésion | `MembershipType` | canonique | catalogue versionné |
-| Cotisation | `Contribution` | **cible** (legacy : `BookOfEntry`) | instance achetée |
-| Formule de cotisation | `ContributionFormula` | **cible** (legacy : `SubscriptionPlan`) | catalogue versionné |
+| Cotisation | `Contribution` | canonique | instance achetée |
+| Formule de cotisation | `ContributionFormula` | canonique | catalogue versionné |
 | Paiement | `Payment` | canonique | transaction multi-lignes |
 | Ligne de paiement | `PaymentLine` | canonique | polymorphique |
 | Don | `Donation` | **cible** (legacy : `item_type: "Payment"`) | reçu fiscal |
 | Présence | `Attendance` | canonique | entraînement / événement |
 | Liste de présence | `AttendanceList` | canonique | quotidienne ou événement |
 | Événement | `Event` | canonique | inscriptions via `EventAttendee` |
+| Temps d’accueil en création | formulaire contact : `creative_hosting` (`residence` legacy) | canonique (UI FR) | env : `CONTACT_EMAIL_CREATIVE_HOSTING` (+ fallback `CONTACT_EMAIL_RESIDENCE`) |
 | Inscription événement | `EventAttendee` | canonique | jointure `Person × Event` |
 | Numéro d'adhérent | `member_number` | canonique | format `25U001` / `25C001` |
 | Newsletter | `NewsletterSubscriber` | canonique | table indépendante |
@@ -195,8 +203,7 @@
 3. **Un don n'est ni une adhésion, ni une cotisation.** C'est une `PaymentLine` à part entière.
 4. **`Person` et `User` ne fusionnent jamais implicitement.** Toute liaison passe par `People::AccountLinker`.
 5. **Newsletter ≠ cotisation.** Le mot anglais « subscription » dans ce contexte est autorisé.
-6. **Quand le code n'est pas encore aligné** sur le vocabulaire cible, la documentation utilise la forme :
-   > « **Vocabulaire cible : `Contribution`** (code actuel : `BookOfEntry`) ».
+6. **Les anciens noms `SubscriptionPlan` et `BookOfEntry` ne restent utiles que pour lire l'historique de migration.**
 
 ---
 

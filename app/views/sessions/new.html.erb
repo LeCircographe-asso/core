@@ -1,4 +1,4 @@
-<div class="bg-white w-full max-w-full flex flex-col lg:flex-row overflow-hidden" style="height: calc(100vh - 4rem);">
+<div class="bg-white w-full max-w-full h-full flex flex-col lg:flex-row overflow-hidden">
     <!-- Background image in mobile version -->
     <div class="lg:hidden absolute inset-0 z-0 opacity-20">
         <%= image_tag("about.jpg", alt: "", class: "w-full h-full object-cover") %>
@@ -18,11 +18,11 @@
                 <h1 class="text-2xl font-bold text-gray-700">Se connecter</h1>
             </div>
 
-            <%= form_with url: session_url, class: "signup-form space-y-4" do |form| %>
+            <%= form_with url: session_url, class: "signup-form space-y-4", data: { turbo: false } do |form| %>
             <!-- Email field -->
             <div>
                 <label for="email_address" class="block mb-2 text-sm text-gray-800">Adresse Email</label>
-                <%= form.email_field :email_address, required: true, autofocus: true, autocomplete: "username", placeholder: "jean@example.com", value: params[:email_address], id: "email_address", class: "block w-full px-4 py-2 text-black placeholder-gray-400 bg-white border border-gray-200 rounded-lg focus:border-[#5836A5] focus:ring-[#5836A5] focus:ring-1 focus:outline-none", style: "background-color: white;" %>
+                <%= form.email_field :email_address, required: true, autofocus: true, autocomplete: "username", placeholder: "jean@example.com", value: params[:email_address], id: "email_address", class: "auth-field" %>
             </div>
 
             <!-- Password Field -->
@@ -31,7 +31,7 @@
                     <label for="password" class="text-sm text-gray-800">Mot de passe</label>
                     <%= link_to "Mot de passe oublié ?", new_password_path, class: "text-sm text-gray-400 hover:text-brand-accent hover:underline focus:outline-brand-accent outline-offset-1" %>
                 </div>
-                <%= form.password_field :password, required: true, placeholder: "Mot de passe", maxlength: 72, id: "password", class: "block w-full px-4 py-2 text-black placeholder-gray-400 bg-white border border-gray-200 rounded-lg focus:border-[#5836A5] focus:ring-[#5836A5] focus:ring-1 focus:outline-none password-field", style: "background-color: white;" %>
+                <%= form.password_field :password, required: true, placeholder: "Mot de passe", maxlength: 72, id: "password", class: "auth-field password-field" %>
                 <span class="toggle-password absolute inset-y-0 right-0 flex items-center pr-3 mt-7" data-action="click->password#toggle">
                     <i class="fa fa-eye text-gray-500" id="password-icon"></i>
                 </span>
@@ -65,4 +65,3 @@
         </div>
     </div>
 </div>
-

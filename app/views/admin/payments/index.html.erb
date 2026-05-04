@@ -1,12 +1,12 @@
 <% content_for :title, "Historique des paiements" %>
 
 <div class="min-h-screen py-6" data-controller="admin-payments payment-modal">
-  <div class="max-w-7xl mx-auto">
+  <div class="page-container-wide">
     <!-- Breadcrumbs -->
     <%= render 'shared/breadcrumbs' %>
     
     <!-- Header avec gradient -->
-    <div class="bg-white shadow-lg rounded-lg overflow-hidden mb-6">
+    <div class="surface-card mb-6">
       <div class="bg-gradient-to-r from-[#1F5C55] to-[#194A45] px-6 py-4">
         <h1 class="text-2xl font-bold text-white">Historique des paiements</h1>
         <p class="text-white/80 mt-1">
@@ -24,20 +24,11 @@
             ) %>
           
           <%= link_to "Export CSV", admin_payments_path(format: :csv), 
-              class: "inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#5836a5] hover:bg-[#4c2d8a] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#5836a5]" %>
+              class: "admin-btn-accent" %>
         </div>
         
-        <!-- Modal pour création -->
-        <div data-payment-modal-target="container"
-             class="hidden fixed inset-0 z-50 overflow-y-auto"
-             aria-labelledby="modal-title"
-             role="dialog"
-             aria-modal="true">
-          <%= render "modal" %>
-        </div>
-
         <!-- Barre de recherche et filtres -->
-        <div class="filter-section bg-gray-50 rounded-lg p-4 mb-6">
+        <div class="admin-filter-panel">
           <%= form_with url: admin_payments_path, method: :get, local: true, class: "flex flex-col md:flex-row gap-4" do |form| %>
             <!-- Recherche -->
             <div class="flex-1">
@@ -98,7 +89,7 @@
             
             <!-- Bouton de recherche -->
             <div class="flex items-end">
-              <%= form.submit "Filtrer", class: "px-4 py-2 bg-[#1F5C55] text-white rounded-md hover:bg-[#194A45] focus:outline-none focus:ring-2 focus:ring-[#1F5C55]" %>
+              <%= form.submit "Filtrer", class: "admin-btn-primary" %>
             </div>
           <% end %>
         </div>
@@ -110,7 +101,7 @@
                    total_donation: @total_donation %>
 
         <!-- Tableau des paiements -->
-        <div class="bg-white shadow overflow-hidden rounded-lg">
+        <div class="surface-card">
           <div class="overflow-x-auto">
             <table class="min-w-full divide-y divide-gray-200">
               <thead class="bg-gray-50">
