@@ -3,6 +3,8 @@ name: deploy-staging
 on:
   push:
     branches: [staging]
+  # Allows chaining after deploy-promote-to-staging: pushes made with GITHUB_TOKEN do not trigger push workflows.
+  workflow_dispatch:
 
 permissions:
   contents: read
