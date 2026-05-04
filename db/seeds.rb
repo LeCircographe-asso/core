@@ -1,9 +1,9 @@
-# Seeds - architecture Person-Based.
-# Objectif: fournir un jeu de donnees court, centre use cases et tests.
+# Seeds — données de référence + population aléatoire volumique.
 # Voir docs/glossary.md pour le vocabulaire canonique.
 
 SEED_VERBOSE = ActiveModel::Type::Boolean.new.cast(ENV["SEED_VERBOSE"])
 SEED_FAST_TEST = ActiveModel::Type::Boolean.new.cast(ENV["SEED_FAST_TEST"])
+SEED_LEAN = ActiveModel::Type::Boolean.new.cast(ENV["SEED_LEAN"])
 SEED_TICK_SECONDS = ENV.fetch("SEED_TICK_SECONDS", "1.6").to_f.clamp(0.25, 5.0)
 
 SYSTEM_ACCOUNTS = [
@@ -17,9 +17,7 @@ SEED_STEPS = [
   ["catalogue des types d'adhesion", "membership_types.rb"],
   ["catalogue des formules de cotisation", "contribution_formulas.rb"],
   ["creation des evenements", "events.rb"],
-  ["creation des parcours de test", "sample_people.rb"],
-  ["creation des adhesions et paiements", "add_memberships_and_payments.rb"],
-  ["palette etats UI (showcase)", "ui_showcase.rb"]
+  ["population aleatoire (users, adhesions, cotisations)", "populate.rb"]
 ].freeze
 
 SEED_LOGO_BRAILLE_FULL = [
@@ -36,7 +34,6 @@ SEED_LOGO_BRAILLE_FULL = [
   "⠀⠀⠀⠉⠙⠛⠿⠶⣶⣶⣶⣶⣶⠶⠿⠟⠛⠉⠀⠀⠀⠀⠀⠀"
 ].freeze
 
-# Réduction proportionnelle en conservant les 11 lignes : une colonne sur +horizontal_step+ (2 ≈ moitié largeur).
 def seed_logo_braille_scaled(horizontal_step: ENV.fetch("SEED_LOGO_HORIZONTAL_STEP", "2").to_i.clamp(1..4))
   SEED_LOGO_BRAILLE_FULL.map do |row|
     row.chars.each_slice(horizontal_step).map(&:first).join
@@ -112,19 +109,17 @@ deleted_records = reset_application_data!
 puts "Reset: #{deleted_records} enregistrement(s) supprime(s) en #{format('%.1fs', Process.clock_gettime(Process::CLOCK_MONOTONIC) - reset_started_at)}"
 
 if SEED_FAST_TEST
+  ENV["SEED_POPULATION_COUNT"] ||= "8"
+
   puts "\n--- Mode SEED_FAST_TEST (~1 message / #{SEED_TICK_SECONDS}s) ---\n"
 
   %w[admin.rb membership_types.rb contribution_formulas.rb events.rb].each { |f| load_seed_file(f) }
-  seed_fast_tick("[1/4] OK — Comptes système (User/Person) + catalogue adhésions, formules cotisation, événements.")
+  seed_fast_tick("[1/3] OK — Comptes système + catalogue + événements.")
 
-  load_seed_file("sample_people.rb")
-  seed_fast_tick("[2/4] OK — Personnes CRM & comptes web (création admin / bénévole / inscription web).")
+  load_seed_file("populate.rb")
+  seed_fast_tick("[2/3] OK — Population aléatoire (réduite).")
 
-  load_seed_file("add_memberships_and_payments.rb")
-  load_seed_file("ui_showcase.rb")
-  seed_fast_tick("[3/4] OK — Paiements & métier : adhésions, lignes de paiement, cotisations, dons, upgrades, scénarios doc + showcase UI.")
-
-  seed_fast_tick("[4/4] OK — Seed terminée, récapitulatif ci-dessous.")
+  seed_fast_tick("[3/3] OK — Seed terminée, récapitulatif ci-dessous.")
 else
   SEED_STEPS.each_with_index do |(label, filename), index|
     step_started_at = Process.clock_gettime(Process::CLOCK_MONOTONIC)
@@ -142,6 +137,7 @@ current_year = Date.current.year.to_s.last(2)
 puts "\nPret pour dev/test:"
 puts "  Catalogue: #{MembershipType.count} types, #{ContributionFormula.count} formules, #{Event.count} evenements"
 puts "  Donnees: #{Person.count} personnes, #{User.count} comptes, #{Membership.count} adhesions, #{Payment.count} paiements"
+puts "  Cotisations: #{Contribution.count}, Presences: #{Attendance.count}, Revendications: #{AccountClaim.count}"
 puts "  Numeros: #{Person.where("member_number LIKE ?", "#{current_year}U%").count} basic, #{Person.where("member_number LIKE ?", "#{current_year}C%").count} cirque"
 puts "  Duree totale: #{format('%.1fs', total_duration)}"
 
@@ -149,6 +145,6 @@ puts "\nComptes de test:"
 SYSTEM_ACCOUNTS.each do |label, email, password|
   puts "  - #{label}: #{email} / #{password}"
 end
-puts "  - Utilisateurs web seed: *@example.com / password123"
-puts "  - Palette états UI: scenario.ui.*@example.com (voir db/seeds/ui_showcase.rb)"
-puts "\nOption: SEED_VERBOSE=true | SEED_FAST_TEST=true | SEED_TICK_SECONDS=1 | SEED_BULK_USERS_COUNT=N (opt-in, rb: bulk_users.rb)"
+puts "  - Comptes web population seed: *@seed.example.com / password123"
+puts "\nOption: SEED_VERBOSE=true | SEED_FAST_TEST=true | SEED_LEAN=true (defaut moins de lignes)"
+puts "        SEED_POPULATION_COUNT=N | SEED_RANDOM_SEED=chaîne (fixe le tirage)"
