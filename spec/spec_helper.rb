@@ -29,7 +29,7 @@ if coverage_enabled?
     add_group "Jobs", "app/jobs"
     add_group "Mailers", "app/mailers"
 
-    minimum_coverage 52 if full_suite_run?
+    minimum_coverage 58 if full_suite_run?
   end
 end
 
