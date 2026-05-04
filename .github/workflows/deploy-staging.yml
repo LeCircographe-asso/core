@@ -58,7 +58,7 @@ jobs:
         with:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
       - name: Update kamal-proxy on host
-        run: bundle exec kamal proxy reboot -c config/deploy.staging.yml
+        run: bundle exec kamal proxy reboot --confirmed -c config/deploy.staging.yml
       - name: Deploy staging with Kamal
         run: bundle exec kamal deploy -c config/deploy.staging.yml --version="$GITHUB_SHA"
 
