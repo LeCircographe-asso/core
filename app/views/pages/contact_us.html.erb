@@ -1,7 +1,7 @@
 
 <% content_for :title, "Le Circographe - Contact" %>
 
-<section class="relative overflow-hidden rounded-[32px] shadow-2xl mb-8 sm:mb-12 lg:mb-14">
+<section class="public-hero-shell mb-8 sm:mb-12 lg:mb-14">
   <%= image_tag hero_image(:contact_hero), class: "absolute inset-0 w-full h-full object-cover hero-img-filter", alt: "" %>
   <div class="hero-overlay"></div>
   <div class="relative hero-panel text-center space-y-4">
@@ -14,7 +14,7 @@
 <section id="contact-details" class="space-y-12 pb-12 sm:pb-16">
   <%# Ne pas mettre .fade-in sur un ancêtre de Leaflet : translateY + will-change cassent la carte et peuvent provoquer des boucles ResizeObserver. %>
   <div class="fade-in">
-  <div class="bg-white/95 border border-white/70 shadow-lg rounded-[28px] overflow-hidden">
+  <div class="public-surface overflow-hidden border border-white/70">
     <header class="px-5 sm:px-10 py-6 sm:py-8 text-center sm:text-left bg-white">
       <p class="text-xs uppercase tracking-[0.35em] text-[#5836A5]">Infos pratiques</p>
       <h2 class="mt-2 text-3xl font-semibold text-[#1F5C55]">Horaires, accès et formulaire</h2>
@@ -68,7 +68,7 @@
     </p>
 
     <%= turbo_frame_tag "map" do %>
-      <article id="map" class="bg-white/95 rounded-[28px] shadow-lg p-6 sm:p-8 space-y-4">
+      <article id="map" class="public-surface p-6 sm:p-8 space-y-4">
         <p class="text-sm uppercase tracking-[0.3em] text-[#1F5C55]/70">Nous trouver</p>
         <h2 class="text-2xl font-semibold text-gray-800">Le Circographe sur la carte</h2>
         <%# Carte responsive (hauteur clamp) — passer height: N uniquement si besoin d’un px fixe %>

@@ -1,6 +1,6 @@
 <% content_for :title, "Le Circographe - Nos activités" %>
 
-<section class="relative overflow-hidden rounded-[32px] shadow-2xl mb-14">
+<section class="public-hero-shell mb-14">
   <%= image_tag hero_image(:news_hero), class: "absolute inset-0 w-full h-full object-cover hero-img-filter", alt: "" %>
   <div class="hero-overlay"></div>
   <div class="relative hero-panel text-center space-y-4">
@@ -10,7 +10,7 @@
   </div>
 </section>
 
-<section id="pratiques-regulieres" class="scroll-mt-16 md:scroll-mt-20 py-12 sm:py-14 lg:py-16 bg-white/95 rounded-[28px] shadow-lg px-4 sm:px-8 fade-in">
+<section id="pratiques-regulieres" class="public-surface scroll-mt-16 md:scroll-mt-20 py-12 sm:py-14 lg:py-16 px-4 sm:px-8 fade-in">
   <header class="max-w-4xl mx-auto text-center space-y-4">
     <p class="text-sm uppercase tracking-[0.3em] text-brand-primary/70">Pratiques régulières</p>
     <h2 class="text-2xl sm:text-3xl font-bold text-gray-900">Le Cirque</h2>
@@ -29,7 +29,7 @@
 </section>
 
 <section id="arts-graphiques" class="py-12 sm:py-14 lg:py-16 px-4 sm:px-8 fade-in">
-  <div class="max-w-5xl mx-auto bg-white/95 rounded-[28px] shadow-lg overflow-hidden">
+  <div class="public-surface max-w-5xl mx-auto overflow-hidden">
     <div class="flex flex-col lg:flex-row">
       <div class="lg:w-2/5 h-60 lg:h-auto">
         <%= image_tag hero_image(:association_graphics_card), class: "w-full h-full object-cover", alt: "Pratique graphique au Circographe" %>
@@ -44,7 +44,7 @@
   </div>
 </section>
 
-<section id="evenements" class="py-12 sm:py-14 lg:py-16 bg-white/95 rounded-[28px] shadow-lg px-4 sm:px-8 fade-in space-y-10">
+<section id="evenements" class="public-surface py-12 sm:py-14 lg:py-16 px-4 sm:px-8 fade-in space-y-10">
   <header class="max-w-4xl mx-auto text-center space-y-4">
     <p class="text-sm uppercase tracking-[0.3em] text-brand-primary/70">Moments partagés</p>
     <h2 class="text-2xl sm:text-3xl font-bold text-gray-900">Événements et actualités</h2>
@@ -102,7 +102,7 @@
 </section>
 
 <section id="autres-projets" class="py-12 sm:py-14 lg:py-16 px-4 sm:px-8 fade-in space-y-10">
-  <div class="max-w-5xl mx-auto bg-white/95 rounded-[28px] shadow-lg p-8 sm:p-10 text-center space-y-4">
+  <div class="public-surface max-w-5xl mx-auto p-8 sm:p-10 text-center space-y-4">
     <p class="text-sm uppercase tracking-[0.3em] text-brand-primary/70">Autres projets</p>
     <h2 class="text-2xl sm:text-3xl font-bold text-gray-900">Ateliers, médiation et projets hybrides</h2>
     <p class="text-base sm:text-lg text-gray-700 leading-relaxed">En plus des créneaux réguliers, on imagine des formats qui croisent disciplines et publics : ateliers de transmission, médiations scolaires, projections, scènes ouvertes graphiques et rencontres avec les artistes de passage.</p>
@@ -180,8 +180,8 @@
 </section>
 
 <section class="text-center mt-12 mb-20 space-y-4 fade-in">
-  <div class="max-w-3xl mx-auto bg-white/95 rounded-[24px] shadow-lg px-6 sm:px-10 py-8 space-y-4">
+  <div class="public-surface max-w-3xl mx-auto px-6 sm:px-10 py-8 space-y-4">
     <p class="text-lg text-gray-700 font-medium">Envie de tester un créneau ou de venir en spectateur·rice ?</p>
-    <%= link_to "Consulter les prochains créneaux", page_path("news", anchor: "evenements"), class: "inline-block px-8 py-4 tracking-wide text-white font-bold bg-[#1F5C55] border-2 border-[#1F5C55] rounded-lg shadow-lg hover:bg-gray-100 hover:text-[#1F5C55] hover:border-[#1F5C55] hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1 text-lg" %>
+    <%= link_to "Consulter les prochains créneaux", page_path("news", anchor: "evenements"), class: "public-cta" %>
   </div>
 </section>
