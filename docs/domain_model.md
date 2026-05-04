@@ -5,7 +5,7 @@
 > **Dernière vérification** : 2026-05-01
 > **Sources de vérité** : `db/schema.rb`, `app/models/person.rb`, `app/models/membership.rb`, `app/models/payment.rb`, `app/models/payment_line.rb`.
 
-> Vocabulaire utilisé : voir [glossary.md](glossary.md). Quand le code n'est pas encore aligné sur le vocabulaire cible, l'alias legacy est indiqué entre parenthèses.
+> Vocabulaire utilisé : voir [glossary.md](glossary.md). Cette doc emploie le vocabulaire canonique.
 > **Pattern** : Person-Based / DDD-light.
 
 ---
@@ -38,9 +38,8 @@ erDiagram
 ```
 
 > **Légende** :
-> - `Contribution` : code actuel `BookOfEntry` (rename planifié `phase3-model-rename`).
-> - `ContributionFormula` : code actuel `SubscriptionPlan` (rename planifié `phase3-model-rename`).
-> - `Donation` : pas encore un modèle ActiveRecord dédié ; lignes `PaymentLine` en `"Donation"` à la création ; legacy DB `item_type: "Payment"` à éliminer (voir [payments.md](payments.md)).
+> - `Contribution` et `ContributionFormula` sont les noms canoniques.
+> - `Donation` : pas encore un modèle ActiveRecord dédié ; lignes `PaymentLine` en `"Donation"` à la création ; lignes historiques `item_type: "Payment"` encore possibles (voir [payments.md](payments.md)).
 
 ---
 
@@ -57,8 +56,8 @@ erDiagram
   - `Person#create_membership!(type, ...)` — adhésion + paiement + numéro d'adhérent.
   - `Person#upgrade_membership!(new_type, ...)` — plein tarif du nouveau type.
   - `Person#renew_membership!(...)` — nouvelle adhésion + nouveau numéro annuel.
-  - `Person#create_contribution!(...)` (cible) / `Person#create_subscription!(...)` (legacy).
-  - `Person#upgrade_contribution!(...)` (cible) / `Person#upgrade_subscription!(...)` (legacy).
+  - `Person#create_contribution!(...)`.
+  - `Person#upgrade_contribution!(...)`.
   - `Person#archive!` / `Person#restore!`.
 - **Garde-fou** : `has_financial_data?` empêche la suppression dure si l'historique financier est non vide.
 
@@ -89,8 +88,8 @@ erDiagram
 
 ### 2.3 Cotisation (accès cirque)
 
-#### `Contribution` (cible) / `BookOfEntry` (legacy) — Instance achetée
-- **Lien** : `belongs_to :person`, `belongs_to :contribution_formula` (alias legacy : `subscription_plan`).
+#### `Contribution` — Instance achetée
+- **Lien** : `belongs_to :person`, `belongs_to :contribution_formula`.
 - **Champs** : `sessions_remaining` (Pack 10 uniquement), `purchased_at`, `expires_at`, `status`.
 - **Statuts** : `:inactive | :active | :expired | :consumed | :suspended`.
 - **Méthodes** :
@@ -100,7 +99,7 @@ erDiagram
   - `#suspend!(reason:)` / `#reactivate!`.
 - **Note** : aujourd'hui ce modèle n'est exploité que pour les Pack 10 ; les durées Trimestre/Annuel/Day sont hors périmètre malgré la présence des champs. La phase 3 du plan de migration unifiera explicitement.
 
-#### `ContributionFormula` (cible) / `SubscriptionPlan` (legacy) — Catalogue versionné
+#### `ContributionFormula` — Catalogue versionné
 - **Champs** : `name`, `duration` enum (`:day | :trimester | :annual | :pack10`), `price_cents`, `sessions_count`, `validity_days`, `version`, `effective_from`, `effective_until`.
 - **Méthode** : `.available_for(person)` — exige une adhésion Cirque active.
 
@@ -116,7 +115,7 @@ erDiagram
 
 #### `PaymentLine` — Ligne polymorphique
 - **Champs** : `payment_id`, `item_type`, `item_id`, `amount_cents`, `description`.
-- **Items canoniques** : `Membership`, `MembershipType`, `ContributionFormula` (legacy `SubscriptionPlan`), `Contribution` (legacy `BookOfEntry`), `Donation` (cible).
+- **Items canoniques** : `Membership`, `MembershipType`, `ContributionFormula`, `Contribution`, `Donation`.
 - **Invariant** : `payment.payment_lines.sum(:amount_cents) == payment.total_cents`.
 
 #### `Donation` (cible)
@@ -127,7 +126,7 @@ erDiagram
 ### 2.5 Présences et événements
 
 #### `Attendance`
-- **Lien** : `belongs_to :person`, `belongs_to :attendance_list` (optionnel), `belongs_to :event` (optionnel), `belongs_to :contribution` (alias legacy `book_of_entry`).
+- **Lien** : `belongs_to :person`, `belongs_to :attendance_list` (optionnel), `belongs_to :event` (optionnel), `belongs_to :contribution`.
 - **Règles d'unicité** : `person_id + date` (entraînement libre) ou `person_id + event_id` (événement).
 - **Effet de bord** : décrémente la cotisation utilisée si applicable.
 

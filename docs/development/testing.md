@@ -5,7 +5,7 @@
 > **Dernière vérification** : 2026-04-30
 > **Sources de vérité** : `spec/`, `bin/test`, `bin/test_fast`, `spec/rails_helper.rb`, `.rspec`.
 
-> Vocabulaire : voir [`../glossary.md`](../glossary.md). Les exemples de code peuvent encore utiliser des noms legacy (`SubscriptionPlan`, `BookOfEntry`) pendant la migration progressive vers `ContributionFormula` / `Contribution` (cf. [`../migrations/vocabulary_migration.md`](../migrations/vocabulary_migration.md)).
+> Vocabulaire : voir [`../glossary.md`](../glossary.md). Les exemples de code utilisent le vocabulaire canonique `ContributionFormula` / `Contribution`.
 
 Ce document remplace l'ancien trio `docs/TDD_GUIDE.md` + `docs/TESTING_GUIDE.md` + `docs/CHANGELOG_TDD_SETUP.md` qui s'étaient mis à diverger. Pour la priorisation par zones (Zone 1 / 2 / 3), se référer à [`../architecture/models.md`](../architecture/models.md#3-classification-par-zones).
 
@@ -100,8 +100,8 @@ it "prevents overlapping active memberships" do
 end
 
 it "requires price_cents to be greater than 0" do
-  plan = build(:subscription_plan, price_cents: 0)
-  expect(plan).not_to be_valid
+  formula = build(:contribution_formula, price_cents: 0)
+  expect(formula).not_to be_valid
 end
 ```
 
@@ -138,8 +138,8 @@ Documentent le comportement actuel, pas l'idéal.
 ```ruby
 # Comportement ACTUEL : Pack 10 n'expire jamais
 it "never expires for pack10 contributions" do
-  book = create(:book_of_entry, :pack10, expires_at: 1.year.ago)
-  expect(book.expired?).to be false
+  contribution = create(:contribution, :pack10, expires_at: 1.year.ago)
+  expect(contribution.expired?).to be false
 end
 ```
 
@@ -166,7 +166,7 @@ expect(result).to respond_to(:membership)
 
 #### Instrumentation (`ActiveSupport::Notifications`)
 
-Les services émettent des événements (`payment.created`, `membership.created`, `membership.upgraded`, `subscription.created` *(cible : `contribution.created`)*, etc.) :
+Les services émettent des événements (`payment.created`, `membership.created`, `membership.upgraded`, `contribution.created`, etc.) :
 
 ```ruby
 captured = []
@@ -195,7 +195,7 @@ Les contrôleurs admin simplifiés se testent comme des flows intégrés :
 
 - `Admin::EventsController` — création avec `title`, mise à jour partielle (via `compact_blank`), redirections et notices.
 - `Admin::MembershipTypesController` — `create` / `update` / `destroy` et validations modèle.
-- `Admin::SubscriptionPlansController` *(cible : `Admin::ContributionFormulasController`)* — `update` / `destroy` inline ; `create` délègue à `People::SubscriptionCreator` *(cible : `People::ContributionCreator`)*.
+- `Admin::ContributionFormulasController` — `update` / `destroy` inline ; `create` délègue à `People::ContributionCreator`.
 
 ## 4. Workflow TDD au quotidien
 
@@ -375,7 +375,7 @@ Bonnes questions :
 ```bash
 bin/test
 # ou ciblé :
-bundle exec rspec spec/models/subscription_plan_spec.rb
+bundle exec rspec spec/models/contribution_formula_spec.rb
 ```
 
 Rapport : `coverage/index.html`.
@@ -383,7 +383,7 @@ Rapport : `coverage/index.html`.
 ### Lire le rapport
 
 1. Ouvrir `coverage/index.html`.
-2. Cliquer sur un fichier (ex. `app/models/subscription_plan.rb`).
+2. Cliquer sur un fichier (ex. `app/models/contribution_formula.rb`).
 3. Couleurs :
    - **Vert** : ligne couverte.
    - **Rouge** : ligne jamais exécutée.
@@ -409,11 +409,11 @@ Ces listes sont un instantané et doivent être recroisées avec [`../internal/t
 
 ### Models testés
 
-`User`, `Person`, `Membership`, `Payment`, `PaymentLine`, `MembershipType`, `BookOfEntry` (couverture business complète), `Event` (basique).
+`User`, `Person`, `Membership`, `Payment`, `PaymentLine`, `MembershipType`, `Contribution` (couverture business complète), `Event` (basique).
 
 ### Models non testés
 
-`SubscriptionPlan`, `AccountClaim`, `Attendance`, `AttendanceList`, `Blog`, `Tag`, `TagBlog`, `PriceCatalog`, `PriceEntry`, `PaymentAuditLog`, `MemberNumberHistory`, `EventAttendee`, `Session`, `UserService`.
+`ContributionFormula`, `AccountClaim`, `Attendance`, `AttendanceList`, `Blog`, `Tag`, `TagBlog`, `PriceCatalog`, `PriceEntry`, `PaymentAuditLog`, `MemberNumberHistory`, `EventAttendee`, `Session`, `UserService`.
 
 ### Contrôleurs testés (Zone 1)
 
@@ -429,7 +429,7 @@ L'ensemble des services `People::*`, `AccountClaimManagement::*`, `AttendanceMan
 2. Newsletter (flow authentifié) via `NewsletterManagement::NewsletterUpdater`.
 3. `UserDeleter` (suppression / archivage sécurisé).
 4. Observabilité : tests d'événements (`ActiveSupport::Notifications`) sur `People::*`.
-5. Request specs CRUD inline : `Events`, `MembershipTypes`, `SubscriptionPlans` *(cible : `ContributionFormulas`)*.
+5. Request specs CRUD inline : `Events`, `MembershipTypes`, `ContributionFormulas`.
 6. Edge cases modèles (dates, enums, scopes).
 
 ## 9. CI/CD
