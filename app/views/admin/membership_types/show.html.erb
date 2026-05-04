@@ -1,0 +1,129 @@
+<% content_for :title, @membership_type.name %>
+
+<div class="min-h-screen bg-gray-50 py-6">
+  <div class="page-container max-w-4xl">
+    <%= render "shared/breadcrumbs" %>
+
+    <div class="admin-page-header">
+      <div class="px-6 py-4 flex flex-wrap justify-between items-center gap-4">
+        <div>
+          <h1 class="text-2xl font-bold text-white">Type d'adhésion</h1>
+          <p class="text-green-100 mt-1"><%= @membership_type.name %></p>
+        </div>
+        <div class="flex flex-wrap gap-3">
+          <%= link_to "Modifier", edit_admin_membership_type_path(@membership_type),
+              class: "inline-flex items-center px-4 py-2 border border-white rounded-md shadow-sm text-sm font-medium text-[#1F5C55] bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-white" %>
+          <%= link_to "Retour à la liste", admin_membership_types_path,
+              class: "inline-flex items-center px-4 py-2 border border-white border-opacity-40 rounded-md text-sm font-medium text-white hover:bg-white hover:bg-opacity-10" %>
+        </div>
+      </div>
+    </div>
+
+    <div class="surface-card p-6 mb-6">
+      <h2 class="text-xl font-semibold text-gray-900 mb-4">Informations</h2>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div>
+          <span class="text-sm font-medium text-gray-500">Nom</span>
+          <p class="mt-1 text-sm text-gray-900"><%= @membership_type.name %></p>
+        </div>
+
+        <div>
+          <span class="text-sm font-medium text-gray-500">Catégorie</span>
+          <p class="mt-1">
+            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
+              <%= case @membership_type.category
+                  when "basic" then "bg-blue-100 text-blue-800"
+                  when "circus" then "bg-green-100 text-green-800"
+                  when "event" then "bg-yellow-100 text-yellow-800"
+                  else "bg-gray-100 text-gray-800"
+                  end %>">
+              <%= @membership_type.category_humanized %>
+            </span>
+          </p>
+        </div>
+
+        <div>
+          <span class="text-sm font-medium text-gray-500">Tarif</span>
+          <p class="mt-1">
+            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium <%= @membership_type.rate_kind_badge_class %>">
+              <%= @membership_type.rate_kind_humanized %>
+            </span>
+          </p>
+        </div>
+
+        <div>
+          <span class="text-sm font-medium text-gray-500">Prix</span>
+          <p class="mt-1 text-2xl font-bold text-[#1F5C55]"><%= @membership_type.price_euros %>€</p>
+        </div>
+
+        <div>
+          <span class="text-sm font-medium text-gray-500">Version</span>
+          <p class="mt-1 text-sm text-gray-900"><%= @membership_type.version %></p>
+        </div>
+
+        <div>
+          <span class="text-sm font-medium text-gray-500">En vigueur depuis</span>
+          <p class="mt-1 text-sm text-gray-900"><%= l(@membership_type.effective_from, format: :long) %></p>
+        </div>
+
+        <div class="md:col-span-2">
+          <span class="text-sm font-medium text-gray-500">Nombre d'adhésions</span>
+          <p class="mt-1 text-sm text-gray-900"><%= @membership_type.memberships.count %></p>
+        </div>
+      </div>
+
+      <% if @membership_type.description.present? %>
+        <div class="mt-6 pt-6 border-t border-gray-200">
+          <span class="text-sm font-medium text-gray-500">Description</span>
+          <p class="mt-1 text-sm text-gray-900 whitespace-pre-wrap"><%= @membership_type.description %></p>
+        </div>
+      <% end %>
+    </div>
+
+    <div class="surface-card p-6">
+      <div class="flex justify-between items-center mb-4">
+        <h2 class="text-xl font-semibold text-gray-900">Adhésions récentes</h2>
+        <span class="text-sm text-gray-500">10 dernières</span>
+      </div>
+
+      <% if @memberships.any? %>
+        <div class="overflow-x-auto">
+          <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">
+              <tr>
+                <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Personne</th>
+                <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Statut</th>
+                <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Période</th>
+                <th scope="col" class="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider"></th>
+              </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200">
+              <% @memberships.each do |membership| %>
+                <tr>
+                  <td class="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-900">
+                    <%= link_to membership.person.full_name,
+                        admin_user_path(Admin::Users::PersonRouteKey.call(membership.person)),
+                        class: "text-[#1F5C55] hover:underline" %>
+                  </td>
+                  <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-600">
+                    <%= membership.status&.humanize %>
+                  </td>
+                  <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-500">
+                    <%= l(membership.started_at.to_date, format: :short) %> → <%= l(membership.ended_at.to_date, format: :short) %>
+                  </td>
+                  <td class="px-4 py-3 whitespace-nowrap text-sm text-right">
+                    <%= link_to "Voir l'adhésion", admin_membership_path(membership),
+                        class: "text-[#1F5C55] hover:underline font-medium" %>
+                  </td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+      <% else %>
+        <p class="text-sm text-gray-500">Aucune adhésion pour ce type pour le moment.</p>
+      <% end %>
+    </div>
+  </div>
+</div>
