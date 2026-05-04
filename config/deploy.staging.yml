@@ -46,8 +46,8 @@ env:
     JOB_CONCURRENCY: 1
     RAILS_LOG_LEVEL: info
 
-# Configuration pour reset complet de la BDD en staging
-# Le reset sera géré par le hook pre-deploy dans .kamal/hooks/
+# Reset BDD staging : au démarrage du conteneur web, `bin/docker-entrypoint`
+# exécute `db:migrate:reset` puis `db:seed` (SQLite sous volume `circographe_staging_storage`).
 
 # Volumes pour les logs et données (staging)
 volumes:
