@@ -1,14 +1,14 @@
 # frozen_string_literal: true
 
 module Admin
-  class SubscriptionsController < BaseController
+  class ContributionUpgradesController < BaseController
     before_action :set_person
 
     def upgrade
       result = People::ContributionUpgrader.new(
         person: @person,
-        from_contribution_id: params[:from_contribution_id] || params[:from_book_id],
-        to_formula_id: params[:to_formula_id] || params[:to_plan_id],
+        from_contribution_id: params[:from_contribution_id],
+        to_formula_id: params[:to_formula_id],
         payment_method: params[:payment_method] || "cash",
         recorded_by_id: Current.user.id
       ).call

@@ -13,7 +13,7 @@
           <% if @person %>
             Pour <%= @person.full_name %>
           <% else %>
-            Sélectionnez un plan de cotisation
+            Sélectionnez une formule de cotisation
           <% end %>
         </p>
       </div>
@@ -23,26 +23,26 @@
     <div class="bg-white shadow-lg rounded-lg overflow-hidden">
       <div class="p-6">
         <% if @person&.can_buy_contribution_formulas? %>
-          <!-- Plans disponibles -->
+          <!-- Formules disponibles -->
           <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
-            <% @contribution_formulas.each do |subscription_plan| %>
+            <% @contribution_formulas.each do |formula| %>
               <div class="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
-                <h3 class="text-lg font-medium text-gray-900"><%= subscription_plan.name %></h3>
-                <p class="text-sm text-gray-600 mt-1"><%= subscription_plan.description %></p>
+                <h3 class="text-lg font-medium text-gray-900"><%= formula.name %></h3>
+                <p class="text-sm text-gray-600 mt-1"><%= formula.description %></p>
                 
                 <div class="mt-3">
-                  <p class="text-2xl font-bold text-[#1F5C55]"><%= subscription_plan.price_euros %> €</p>
-                  <% if subscription_plan.sessions_count %>
-                    <p class="text-sm text-gray-500"><%= subscription_plan.sessions_count %> séances</p>
+                  <p class="text-2xl font-bold text-[#1F5C55]"><%= formula.price_euros %> €</p>
+                  <% if formula.sessions_count %>
+                    <p class="text-sm text-gray-500"><%= formula.sessions_count %> séances</p>
                   <% end %>
-                  <% if subscription_plan.validity_days %>
-                    <p class="text-sm text-gray-500">Valide <%= subscription_plan.validity_days %> jours</p>
+                  <% if formula.validity_days %>
+                    <p class="text-sm text-gray-500">Valide <%= formula.validity_days %> jours</p>
                   <% end %>
                 </div>
                 
                 <div class="mt-4">
-                  <%= form_with url: admin_subscription_plans_path, method: :post, local: true, scope: :subscription_plan, class: "space-y-3" do |form| %>
-                    <%= form.hidden_field :subscription_plan_id, value: subscription_plan.id %>
+                  <%= form_with url: admin_contribution_formulas_path, method: :post, local: true, scope: :contribution_formula, class: "space-y-3" do |form| %>
+                    <%= form.hidden_field :contribution_formula_id, value: formula.id %>
                     <%= form.hidden_field :person_id, value: @person.id %>
                     
                     <div>
@@ -53,7 +53,7 @@
                           { class: "w-full text-sm border-gray-300 rounded-md focus:border-[#1F5C55] focus:ring-[#1F5C55]" } %>
                     </div>
                     
-                    <div id="custom-amount-<%= subscription_plan.id %>" class="hidden">
+                    <div id="custom-amount-<%= formula.id %>" class="hidden">
                       <%= form.label :custom_amount_cents, "Montant personnalisé (€)", class: "block text-sm font-medium text-gray-700 mb-1" %>
                       <%= form.number_field :custom_amount_cents, 
                           step: 0.01, 
@@ -62,7 +62,7 @@
                           class: "w-full text-sm border-gray-300 rounded-md focus:border-[#1F5C55] focus:ring-[#1F5C55]" %>
                     </div>
 
-                    <div id="offer-reason-<%= subscription_plan.id %>" class="hidden">
+                    <div id="offer-reason-<%= formula.id %>" class="hidden">
                       <%= form.label :offer_reason, "Raison de l'offre", class: "block text-sm font-medium text-gray-700 mb-1" %>
                       <%= form.text_area :offer_reason,
                           rows: 2,
@@ -88,7 +88,7 @@
           </div>
         <% else %>
           <div class="bg-yellow-50 border border-yellow-200 rounded-md p-4">
-            <p class="text-yellow-800 text-sm">Cette personne doit avoir une adhésion Cirque pour acheter des plans de cotisation.</p>
+            <p class="text-yellow-800 text-sm">Cette personne doit avoir une adhésion Cirque pour acheter une cotisation.</p>
           </div>
         <% end %>
       </div>
@@ -98,22 +98,25 @@
 
 <script>
   document.addEventListener('DOMContentLoaded', function() {
-    // Gérer l'affichage du champ montant personnalisé pour chaque plan
-    document.querySelectorAll('select[name="payment_method"]').forEach(function(select) {
+    document.querySelectorAll('form[action*="/admin/contribution_formulas"]').forEach(function(form) {
+      const select = form.querySelector('select[name="contribution_formula[payment_method]"]');
+      if (!select) return;
       select.addEventListener('change', function() {
-        const planId = this.closest('form').querySelector('input[name="subscription_plan_id"]').value;
+        const idInput = form.elements.namedItem('contribution_formula[contribution_formula_id]');
+        const planId = idInput ? idInput.value : null;
+        if (!planId) return;
         const customAmountDiv = document.getElementById('custom-amount-' + planId);
         const offerReasonDiv = document.getElementById('offer-reason-' + planId);
         const offerReasonField = offerReasonDiv ? offerReasonDiv.querySelector('textarea') : null;
         
         if (this.value === 'offered') {
-          customAmountDiv.classList.remove('hidden');
+          if (customAmountDiv) customAmountDiv.classList.remove('hidden');
           if (offerReasonDiv) {
             offerReasonDiv.classList.remove('hidden');
             if (offerReasonField) offerReasonField.required = true;
           }
         } else {
-          customAmountDiv.classList.add('hidden');
+          if (customAmountDiv) customAmountDiv.classList.add('hidden');
           if (offerReasonDiv) {
             offerReasonDiv.classList.add('hidden');
             if (offerReasonField) offerReasonField.required = false;

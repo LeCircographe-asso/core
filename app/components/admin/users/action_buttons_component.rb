@@ -44,7 +44,7 @@ module Admin
         end
       end
 
-      def subscription_action_button
+      def contribution_action_button
         current_membership = person.current_membership
 
         if current_membership.nil?
@@ -75,7 +75,7 @@ module Admin
 
           buttons << link_to(
             "Ajouter une cotisation",
-            new_admin_subscription_plan_path(person_id: person.id),
+            new_admin_contribution_formula_path(person_id: person.id),
             class: "inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#1F5C55] hover:bg-[#194A45] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1F5C55]"
           )
 
