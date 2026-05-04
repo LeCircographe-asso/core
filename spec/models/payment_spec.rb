@@ -152,8 +152,11 @@ RSpec.describe Payment, type: :model do
     end
 
     describe '.total_donations' do
-      it 'returns total donations' do
-        expect(Payment.total_donations).to eq(0) # No donations in test data
+      before { Rails.cache.clear }
+
+      it 'returns 0 when there are no donation payment lines' do
+        expect(PaymentLine.where(item_type: 'Donation')).to be_empty
+        expect(Payment.total_donations).to eq(0)
       end
 
       it 'caches the result' do

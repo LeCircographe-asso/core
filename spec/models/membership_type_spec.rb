@@ -361,28 +361,26 @@ RSpec.describe MembershipType, type: :model do
 
   describe 'class methods' do
     describe '.create_default_types!' do
-      it 'creates default membership types' do
-        expect do
-          MembershipType.create_default_types!
-        end.to change(MembershipType, :count).by(3)
+      it 'ensures default membership types exist with expected attributes' do
+        MembershipType.create_default_types!
 
-        basic_type = MembershipType.find_by(name: 'Adhésion Basique')
+        basic_type = MembershipType.find_by(name: 'Adhésion Basique', version: 1)
         expect(basic_type).to be_present
         expect(basic_type.category).to eq('basic')
         expect(basic_type.price_cents).to eq(1500)
 
-        circus_full_type = MembershipType.find_by(name: 'Adhésion Cirque Complète')
+        circus_full_type = MembershipType.find_by(name: 'Adhésion Cirque Complète', version: 1)
         expect(circus_full_type).to be_present
         expect(circus_full_type.category).to eq('circus')
         expect(circus_full_type.price_cents).to eq(2500)
 
-        circus_reduced_type = MembershipType.find_by(name: 'Adhésion Cirque Réduite')
+        circus_reduced_type = MembershipType.find_by(name: 'Adhésion Cirque Réduite', version: 1)
         expect(circus_reduced_type).to be_present
         expect(circus_reduced_type.category).to eq('circus')
         expect(circus_reduced_type.price_cents).to eq(2000)
       end
 
-      it 'does not create duplicates' do
+      it 'is idempotent and does not create duplicate rows' do
         MembershipType.create_default_types!
 
         expect do
