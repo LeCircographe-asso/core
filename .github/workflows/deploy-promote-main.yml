@@ -9,7 +9,7 @@ on:
         type: string
 
 permissions:
-  actions: read
+  actions: write
   contents: write
 
 concurrency:
@@ -28,13 +28,14 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          result=$(gh run list \
+          result=$(gh run list --repo "${{ github.repository }}" \
             --workflow=deploy-staging.yml \
             --branch=staging \
+            --status=completed \
             --limit=1 \
             --json conclusion \
-            --jq '.[0].conclusion')
-          echo "Last deploy-staging conclusion: ${result}"
+            --jq '(.[0].conclusion) // "missing"')
+          echo "Last completed deploy-staging conclusion: ${result}"
           if [ "$result" != "success" ]; then
             echo "Last staging deployment did not succeed (got: ${result:-none}). Aborting."
             exit 1
@@ -46,3 +47,8 @@ jobs:
           git -c user.name="github-actions[bot]" -c user.email="41898282+github-actions[bot]@users.noreply.github.com" \
             merge --no-ff origin/staging -m "chore: promote staging to main"
           git push origin main
+      - name: Trigger production deploy (push via GITHUB_TOKEN does not start workflows)
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh workflow run deploy-production.yml --repo "${{ github.repository }}" --ref main

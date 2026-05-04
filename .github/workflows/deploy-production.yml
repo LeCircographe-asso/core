@@ -3,6 +3,8 @@ name: deploy-production
 on:
   push:
     branches: [main]
+  # Same as staging: promote workflows push with GITHUB_TOKEN; dispatch explicitly to run this pipeline.
+  workflow_dispatch:
 
 permissions:
   contents: read
