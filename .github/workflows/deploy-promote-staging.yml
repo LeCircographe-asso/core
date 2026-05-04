@@ -45,5 +45,6 @@ jobs:
         run: |
           git checkout staging
           git pull --ff-only origin staging
-          git merge --no-ff origin/dev -m "chore: promote dev to staging"
+          git -c user.name="github-actions[bot]" -c user.email="41898282+github-actions[bot]@users.noreply.github.com" \
+            merge --no-ff origin/dev -m "chore: promote dev to staging"
           git push origin staging
