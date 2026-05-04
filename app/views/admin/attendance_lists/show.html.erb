@@ -1,7 +1,7 @@
 <% content_for :title, "Détails de la liste de présence" %>
 
 <div class="min-h-screen py-6">
-  <div class="max-w-7xl mx-auto px-4 sm:px-6">
+  <div class="page-container-wide">
     <!-- Breadcrumbs -->
     <%= render 'shared/breadcrumbs' %>
     
@@ -22,7 +22,7 @@
     </div>
     
     <!-- List details card -->
-    <div class="bg-white shadow overflow-hidden rounded-lg mb-6">
+    <div class="surface-card shadow mb-6">
       <div class="border-b border-gray-200 px-6 py-4">
         <h2 class="text-lg font-medium text-gray-900">Informations</h2>
       </div>
@@ -105,7 +105,7 @@
     </div>
     
     <!-- Participant list -->
-    <div class="bg-white shadow overflow-hidden rounded-lg">
+    <div class="surface-card shadow">
       <div class="border-b border-gray-200 px-6 py-4 flex justify-between items-center">
         <h2 class="text-lg font-medium text-gray-900">Participants</h2>
         <%= link_to new_admin_attendance_list_attendance_path(@attendance_list), class: "text-[#1F5C55] hover:text-[#194A45] flex items-center text-sm" do %>

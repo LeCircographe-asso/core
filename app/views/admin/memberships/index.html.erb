@@ -1,50 +1,80 @@
-<h1>Gestion des Adhésions</h1>
+<% content_for :title, "Gestion des adhésions" %>
 
-<div class="table-container">
-  <table class="admin-table">
-    <thead>
-      <tr>
-        <th>Personne</th>
-        <th>Email</th>
-        <th>Adhésion Actuelle</th>
-        <th>Statut</th>
-        <th>Actions</th>
-      </tr>
-    </thead>
-    <tbody>
-      <% @people.each do |person| %>
-        <tr>
-          <td><%= person.full_name %></td>
-          <td><%= person.email %></td>
-          <td>
-            <% if person.current_membership %>
-              <%= person.current_membership.membership_type.name %>
-              (<%= person.current_membership.membership_type.price_euros %>€)
-            <% else %>
-              <span class="text-danger">Aucune adhésion</span>
-            <% end %>
-          </td>
-          <td>
-            <% if person.current_membership %>
-              <span class="badge badge-success">Active</span>
-            <% else %>
-              <span class="badge badge-danger">Inactive</span>
-            <% end %>
-          </td>
-          <td>
-            <% if person.current_membership %>
-              <%= link_to "Voir", admin_membership_path(person), class: "btn btn-sm btn-primary" %>
-              <%= link_to "Modifier", edit_admin_membership_path(person), class: "btn btn-sm btn-secondary" %>
-            <% else %>
-              <%= link_to "Créer", new_admin_membership_path(person_id: person.id), class: "btn btn-sm btn-success" %>
-            <% end %>
-          </td>
-        </tr>
-      <% end %>
-    </tbody>
-  </table>
-</div>
+<div class="min-h-screen py-6">
+  <div class="page-container-wide">
+    <%= render "shared/breadcrumbs" %>
 
-<div class="mt-4">
-  <%= link_to "Retour à l'administration", admin_root_path, class: "btn btn-secondary" %>
+    <div class="surface-card mb-6">
+      <div class="bg-gradient-to-r from-[#1F5C55] to-[#194A45] px-6 py-4">
+        <h1 class="text-2xl font-bold text-white">Gestion des adhésions</h1>
+        <p class="mt-1 text-white/80">Vue d’ensemble des adhésions actives et à créer</p>
+      </div>
+    </div>
+
+    <div class="surface-card shadow">
+      <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200">
+          <thead class="bg-gray-50">
+            <tr>
+              <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">Personne</th>
+              <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">Email</th>
+              <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">Adhésion actuelle</th>
+              <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">Statut</th>
+              <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">Actions</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-gray-200 bg-white">
+            <% @people.each do |person| %>
+              <% membership = person.current_membership %>
+              <tr class="hover:bg-gray-50">
+                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                  <%= person.full_name %>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  <%= person.email.presence || "Non renseigné" %>
+                </td>
+                <td class="px-6 py-4 text-sm text-gray-700">
+                  <% if membership %>
+                    <span class="font-medium text-gray-900"><%= membership.membership_type.name %></span>
+                    <span class="text-gray-500">(<%= membership.membership_type.price_euros %>€)</span>
+                  <% else %>
+                    <span class="text-red-600">Aucune adhésion</span>
+                  <% end %>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <% if membership %>
+                    <span class="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800">
+                      Active
+                    </span>
+                  <% else %>
+                    <span class="inline-flex items-center rounded-full bg-red-100 px-2.5 py-0.5 text-xs font-medium text-red-800">
+                      Inactive
+                    </span>
+                  <% end %>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                  <div class="flex flex-wrap gap-2">
+                    <% if membership %>
+                      <%= link_to "Voir", admin_membership_path(person),
+                          class: "inline-flex items-center rounded-md bg-[#1F5C55] px-3 py-1.5 text-xs font-medium text-white hover:bg-[#194A45]" %>
+                      <%= link_to "Modifier", edit_admin_membership_path(person),
+                          class: "inline-flex items-center rounded-md border border-gray-300 bg-white px-3 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-50" %>
+                    <% else %>
+                      <%= link_to "Créer", new_admin_membership_path(person_id: person.id),
+                          class: "inline-flex items-center rounded-md bg-[#1F5C55] px-3 py-1.5 text-xs font-medium text-white hover:bg-[#194A45]" %>
+                    <% end %>
+                  </div>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="mt-6">
+      <%= link_to "Retour à l’administration", admin_root_path,
+          class: "inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-[#1F5C55] focus:ring-offset-2" %>
+    </div>
+  </div>
 </div>

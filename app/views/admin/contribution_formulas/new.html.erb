@@ -1,12 +1,12 @@
 <% content_for :title, "Nouvelle cotisation" %>
 
 <div class="min-h-screen py-6">
-  <div class="max-w-4xl mx-auto">
+  <div class="page-container max-w-4xl">
     <!-- Breadcrumbs -->
     <%= render 'shared/breadcrumbs' %>
     
     <!-- Header -->
-    <div class="bg-white shadow-lg rounded-lg overflow-hidden mb-6">
+    <div class="surface-card mb-6">
       <div class="bg-gradient-to-r from-[#1F5C55] to-[#194A45] px-6 py-4">
         <h1 class="text-2xl font-bold text-white">Nouvelle cotisation</h1>
         <p class="text-white/80 mt-1">
@@ -20,7 +20,7 @@
     </div>
 
     <!-- Content -->
-    <div class="bg-white shadow-lg rounded-lg overflow-hidden">
+    <div class="surface-card">
       <div class="p-6">
         <% if @person&.can_buy_contribution_formulas? %>
           <!-- Formules disponibles -->
@@ -97,7 +97,7 @@
 </div>
 
 <script>
-  document.addEventListener('DOMContentLoaded', function() {
+  document.addEventListener('DOMContentLoaded', function() 
     document.querySelectorAll('form[action*="/admin/contribution_formulas"]').forEach(function(form) {
       const select = form.querySelector('select[name="contribution_formula[payment_method]"]');
       if (!select) return;

@@ -1,22 +1,23 @@
 <%= form_with(model: user) do |form| %>
-<% if user.errors.any? %>
-<div style="color: red">
-    <h2><%= pluralize(user.errors.count, "error") %> Interdit à cet utilisateur d'être enregistré :</h2>
-
-    <ul>
+  <% if user.errors.any? %>
+    <div class="mb-6 rounded-md border border-red-200 bg-red-50 p-4 text-red-800">
+      <h2 class="text-sm font-medium"><%= pluralize(user.errors.count, "error") %> interdit à cet utilisateur d'être enregistré :</h2>
+      <ul class="mt-2 list-disc space-y-1 pl-5 text-sm">
         <% user.errors.each do |error| %>
-        <li><%= error.full_message %></li>
+          <li><%= error.full_message %></li>
         <% end %>
-    </ul>
-</div>
-<% end %>
+      </ul>
+    </div>
+  <% end %>
 
-<div class="field">
-    <%= form.label :email_address %>
-    <%= form.text_field :email_address %>
-</div>
+  <div class="space-y-5">
+    <div>
+      <%= form.label :email_address, class: "block text-sm font-medium text-gray-700" %>
+      <%= form.text_field :email_address, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#1F5C55] focus:ring-[#1F5C55] sm:text-sm" %>
+    </div>
 
-<div class="actions">
-    <%= form.submit "Envoyer", class: "white-button" %>
-</div>
+    <div>
+      <%= form.submit "Envoyer", class: "btn-primary" %>
+    </div>
+  </div>
 <% end %>
