@@ -28,16 +28,20 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          for required in "ci-dev.yml" "ci-docker-build.yml"; do
-            status=$(gh run list \
-              --workflow="$required" \
-              --branch=dev \
-              --limit=1 \
-              --json conclusion \
-              --jq '.[0].conclusion')
-            echo "Latest ${required} on dev: ${status:-none}"
-            if [ "$status" != "success" ]; then
-              echo "Required workflow '$required' not successful on dev (got: ${status:-none})"
+          set -euo pipefail
+          REPO="${{ github.repository }}"
+          for required in ci-dev.yml ci-docker-build.yml; do
+            echo "::group::Last completed runs: $required (branch dev)"
+            gh run list --repo "$REPO" --workflow="$required" --branch=dev \
+              --status=completed --limit=5 \
+              --json databaseId,conclusion,event,headBranch,displayTitle,updatedAt
+            echo "::endgroup::"
+            conclusion=$(gh run list --repo "$REPO" --workflow="$required" --branch=dev \
+              --status=completed --limit=1 \
+              --json conclusion --jq '(.[0].conclusion) // "missing"')
+            echo "Latest completed conclusion for $required on dev: $conclusion"
+            if [ "$conclusion" != "success" ]; then
+              echo "::error::Required workflow '$required' on dev is not green (got: $conclusion). Merge or push to dev only after CI passes, or fix the failing run on branch dev."
               exit 1
             fi
           done
