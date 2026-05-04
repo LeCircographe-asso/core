@@ -1,8 +1,7 @@
 # SQLite. Versions 3.8.0 and up are supported.
-#   gem install sqlite3
 #
-#   Ensure the SQLite 3 gem is defined in your Gemfile
-#   gem "sqlite3"
+# Multi-database layout required by Solid Cache, Solid Queue, and Solid Cable
+# (`connects_to` keys :cache, :queue, :cable). See config/cache.yml, production.rb, cable.yml.
 #
 default: &default
   adapter: sqlite3
@@ -10,77 +9,80 @@ default: &default
   timeout: 5000
 
 development:
-  <<: *default
-  database: storage/development.sqlite3
-
-development_cache:
-  <<: *default
-  database: storage/development_cache.sqlite3
-
-development_queue:
-  <<: *default
-  database: storage/development_queue.sqlite3
-
-development_cable:
-  <<: *default
-  database: storage/development_cable.sqlite3
+  primary:
+    <<: *default
+    database: storage/development.sqlite3
+  cache:
+    <<: *default
+    database: storage/development_cache.sqlite3
+    migrations_paths: db/cache_migrate
+  queue:
+    <<: *default
+    database: storage/development_queue.sqlite3
+    migrations_paths: db/queue_migrate
+  cable:
+    <<: *default
+    database: storage/development_cable.sqlite3
+    migrations_paths: db/cable_migrate
 
 # Warning: The database defined as "test" will be erased and
 # re-generated from your development database when you run "rake".
 # Do not set this db to the same as development or production.
 test:
-  <<: *default
-  pool: 1
-  # Rails 8.1+: db:prepare calls load_seed when the DB is first created (primary DB defaults to seeds?: true).
-  # Tests expect an empty DB + transactional fixtures; running db/seeds.rb here breaks isolation and CI.
-  seeds: false
-  database: <%= Rails.root.join("tmp", "test.sqlite3") %>
+  primary:
+    <<: *default
+    pool: 1
+    # Rails 8.1+: db:prepare calls load_seed when the DB is first created (primary DB defaults to seeds?: true).
+    # Tests expect an empty DB + transactional fixtures; running db/seeds.rb here breaks isolation and CI.
+    seeds: false
+    database: <%= Rails.root.join("tmp", "test.sqlite3") %>
+  cache:
+    <<: *default
+    pool: 1
+    database: <%= Rails.root.join("tmp", "test_cache.sqlite3") %>
+    migrations_paths: db/cache_migrate
+  queue:
+    <<: *default
+    pool: 1
+    database: <%= Rails.root.join("tmp", "test_queue.sqlite3") %>
+    migrations_paths: db/queue_migrate
+  cable:
+    <<: *default
+    pool: 1
+    database: <%= Rails.root.join("tmp", "test_cable.sqlite3") %>
+    migrations_paths: db/cable_migrate
 
-test_cache:
-  <<: *default
-  pool: 1
-  database: <%= Rails.root.join("tmp", "test_cache.sqlite3") %>
-
-test_queue:
-  <<: *default
-  pool: 1
-  database: <%= Rails.root.join("tmp", "test_queue.sqlite3") %>
-
-test_cable:
-  <<: *default
-  pool: 1
-  database: <%= Rails.root.join("tmp", "test_cable.sqlite3") %>
-
-# Store production database in the storage/ directory, which by default
-# is mounted as a persistent Docker volume in config/deploy.yml.
+# Store databases in storage/ — Docker mounts a persistent volume there (Kamal).
 production:
-  <<: *default
-  database: storage/production.sqlite3
-
-production_cache:
-  <<: *default
-  database: storage/production_cache.sqlite3
-
-production_queue:
-  <<: *default
-  database: storage/production_queue.sqlite3
-
-production_cable:
-  <<: *default
-  database: storage/production_cable.sqlite3
+  primary:
+    <<: *default
+    database: storage/production.sqlite3
+  cache:
+    <<: *default
+    database: storage/production_cache.sqlite3
+    migrations_paths: db/cache_migrate
+  queue:
+    <<: *default
+    database: storage/production_queue.sqlite3
+    migrations_paths: db/queue_migrate
+  cable:
+    <<: *default
+    database: storage/production_cable.sqlite3
+    migrations_paths: db/cable_migrate
 
 staging:
-  <<: *default
-  database: storage/staging.sqlite3
-
-staging_cache:
-  <<: *default
-  database: storage/staging_cache.sqlite3
-
-staging_queue:
-  <<: *default
-  database: storage/staging_queue.sqlite3
-
-staging_cable:
-  <<: *default
-  database: storage/staging_cable.sqlite3
+  primary:
+    <<: *default
+    database: storage/staging.sqlite3
+  cache:
+    <<: *default
+    database: storage/staging_cache.sqlite3
+    migrations_paths: db/cache_migrate
+  queue:
+    <<: *default
+    database: storage/staging_queue.sqlite3
+    migrations_paths: db/queue_migrate
+  cable:
+    <<: *default
+    database: storage/staging_cable.sqlite3
+    migrations_paths: db/cable_migrate

@@ -53,6 +53,11 @@ RSpec.describe StagingAuth do
       status, = call_with("/service-worker.js")
       expect(status).to eq(200)
     end
+
+    it "allows /cable without HTTP Basic (WS handshake; auth via session in ApplicationCable)" do
+      status, = call_with("/cable")
+      expect(status).not_to eq(401)
+    end
   end
 
   context "when host is not staging" do

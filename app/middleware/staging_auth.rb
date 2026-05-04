@@ -36,8 +36,11 @@ class StagingAuth
   private
 
   # Aligné sur MaintenanceModeMiddleware#pwa_request? — évite 401 sur /manifest.json etc.
+  # Action Cable (/cable) : le handshake WebSocket ne porte en général pas le Basic Auth ;
+  # l’accès est contrôlé dans ApplicationCable::Connection (cookie session).
   def allowlisted_without_basic_auth?(request)
     return true if request.path == "/up"
+    return true if request.path == "/cable"
 
     return false unless %w[GET HEAD].include?(request.request_method)
 

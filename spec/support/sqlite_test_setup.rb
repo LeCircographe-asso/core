@@ -15,14 +15,12 @@ RSpec.configure do |config|
 
     configure_sqlite_busy_timeout!(connection)
 
-    %w[test test_cache test_queue test_cable].each do |env_name|
-      ActiveRecord::Base.configurations.configs_for(env_name: env_name).each do |db_config|
-        db_path = db_config.database
-        next if db_path.blank? || db_path == ":memory:" || db_path.start_with?("file:")
+    ActiveRecord::Base.configurations.configs_for(env_name: "test").each do |db_config|
+      db_path = db_config.database
+      next if db_path.blank? || db_path == ":memory:" || db_path.start_with?("file:")
 
-        FileUtils.mkdir_p(File.dirname(db_path))
-        FileUtils.touch(db_path)
-      end
+      FileUtils.mkdir_p(File.dirname(db_path))
+      FileUtils.touch(db_path)
     end
   end
 

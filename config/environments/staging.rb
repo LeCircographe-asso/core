@@ -19,8 +19,11 @@ Rails.application.configure do
   config.log_level = :info
   config.log_tags = [ :request_id ]
 
-  # Cache
-  config.cache_store = :memory_store
+  # Same durable cache/queue stack as production (validates ops + SQLite multi-DB on Kamal).
+  config.cache_store = :solid_cache_store
+  config.active_job.queue_adapter = :solid_queue
+  config.solid_queue.connects_to = { database: { writing: :queue } }
+
   config.public_file_server.headers = {
     "Cache-Control" => "public, max-age=#{1.hour.to_i}"
   }
@@ -29,9 +32,11 @@ Rails.application.configure do
   # kamal-proxy uses Docker container IDs as hostnames (e.g., f4753d38178e)
   config.hosts.clear # Allow all hosts in staging for Docker container communication
 
-  # SSL configuration
+  # SSL / reverse proxy (kamal-proxy)
+  config.assume_ssl = true
   config.force_ssl = true
   config.ssl_options = { redirect: { exclude: ->(request) { request.path == "/up" } } }
+  config.silence_healthcheck_path = "/up"
 
   # Mailer
   config.action_mailer.perform_caching = false
