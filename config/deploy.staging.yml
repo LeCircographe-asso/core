@@ -38,6 +38,7 @@ env:
     STAGING_MODE: true
     STAGING_AUTH: true
     STAGING_PASSWORD: <%= ENV.fetch("STAGING_PASSWORD", "") %>
+    PUBLIC_REGISTRATION_ENABLED: false
     RAILS_SERVE_STATIC_FILES: true
     SOLID_QUEUE_IN_PUMA: true
     # Optimisations pour VPS M
