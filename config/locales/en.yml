@@ -48,16 +48,16 @@ en:
         creation_disabled_notice: Création de paiement temporairement désactivée
     contribution_formulas:
       create:
-        purchase_failed_alert: 'Error purchasing plan: %{message}'
-        purchased: Plan de cotisation acheté avec succès !
+        purchase_failed_alert: 'Error purchasing contribution formula: %{message}'
+        purchased: Contribution recorded successfully!
       new:
-        needs_circus_membership_alert: Cette personne doit avoir une adhésion Cirque pour acheter des plans de cotisation
+        needs_circus_membership_alert: This person needs an active Circus membership to buy a contribution formula.
       update:
-        updated: Plan de cotisation mis à jour avec succès !
+        updated: Contribution formula updated successfully!
       destroy:
-        destroyed: Plan de cotisation supprimé avec succès !
+        destroyed: Contribution formula deleted successfully!
       require_super_admin:
-        forbidden: Seul le super-admin peut modifier ou supprimer des cotisations.
+        forbidden: Only super-admin can edit or delete contribution formulas.
     contributions:
       upgrade:
         success_notice: Contribution upgraded successfully.
@@ -189,8 +189,10 @@ en:
         history: Payment history
         management: Payments management
       contribution_formulas:
-        plans: Contribution plans
-        plan_named: 'Plan: %{name}'
+        catalog: Contribution formulas
+        formula_named: 'Formula: %{name}'
+        plans: Contribution formulas
+        plan_named: 'Formula: %{name}'
         new_contribution: New contribution
         edit_named: 'Edit: %{name}'
       opening_hours:

@@ -39,7 +39,7 @@ module Admin
         current_membership&.membership_type&.circus?
       end
 
-      def can_purchase_subscriptions?
+      def can_purchase_contributions?
         is_circus_member?
       end
 

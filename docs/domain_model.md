@@ -5,7 +5,7 @@
 > **Dernière vérification** : 2026-05-01
 > **Sources de vérité** : `db/schema.rb`, `app/models/person.rb`, `app/models/membership.rb`, `app/models/payment.rb`, `app/models/payment_line.rb`.
 
-> Vocabulaire utilisé : voir [glossary.md](glossary.md).
+> Vocabulaire utilisé : voir [glossary.md](glossary.md). Cette doc emploie le vocabulaire canonique.
 > **Pattern** : Person-Based / DDD-light.
 
 ---
@@ -38,8 +38,8 @@ erDiagram
 ```
 
 > **Légende** :
-> - `Contribution` et `ContributionFormula` sont les noms canoniques actuels.
-> - `Donation` n'a pas de table dédiée ; elle est représentée par `PaymentLine.item_type = "Donation"`.
+> - `Contribution` et `ContributionFormula` sont les noms canoniques.
+> - `Donation` : pas encore un modèle ActiveRecord dédié ; lignes `PaymentLine` en `"Donation"` à la création ; lignes historiques `item_type: "Payment"` encore possibles (voir [payments.md](payments.md)).
 
 ---
 
@@ -127,7 +127,7 @@ erDiagram
 ### 2.5 Présences et événements
 
 #### `Attendance`
-- **Lien** : `belongs_to :person`, `belongs_to :attendance_list` (optionnel), `belongs_to :event` (optionnel), `belongs_to :contribution` (alias legacy `book_of_entry`).
+- **Lien** : `belongs_to :person`, `belongs_to :attendance_list` (optionnel), `belongs_to :event` (optionnel), `belongs_to :contribution`.
 - **Règles d'unicité** : `person_id + date` (entraînement libre) ou `person_id + event_id` (événement).
 - **Effet de bord** : décrémente la cotisation utilisée si applicable.
 

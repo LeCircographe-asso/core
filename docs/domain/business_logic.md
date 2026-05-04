@@ -10,6 +10,11 @@
 **Classification:** Zone 1 (Stable) | Zone 2 (En cours) | Zone 3 (Future)  
 **État:** ✅ Logique métier complètement réécrite selon vraies règles business (2025-11-03)
 
+> **Vocabulaire DDD-light** (voir [`../glossary.md`](../glossary.md))
+>
+> Ce document utilise les noms de classes Ruby **canoniques** (`ContributionFormula`, `Contribution`, `People::Contribution*`, `Person#create_contribution!`).
+> Le terme « subscription » n'est légitime que pour la **newsletter**.
+
 ---
 
 ## Classification des Zones
@@ -235,9 +240,13 @@ enum duration: {
 
 ## 5. Contribution (Cotisations)
 
+> **Vocabulaire** : « cotisation » = `Contribution`.
+>
 > Le terme « carnet d'entrées » reste légitime quand on désigne explicitement le sous-type Pack 10. Pour parler du concept général, utiliser « cotisation ».
 
 ### Zone 1: Comportement Défini
+
+> **Note métier** : dans l'usage actuel de l'association, la cotisation Pack 10 matérialise les séances restantes. Les attributs liés aux durées Trimestre / Annuel / Day restent portés par `Contribution`.
 
 #### Création
 - **Déclencheur** : paiement d'une `ContributionFormula` de type `pack10`.
@@ -326,8 +335,8 @@ Contribution.reactivate_suspended_packs_for_person(person)  # auto après expira
 - **Event:** Unicité person_id + event_id
 - **Daily:** Unicité person_id + date (si pas event_id)
 
-#### Book of Entry Integration
-- **Auto-decrement:** Décrémente sessions_remaining si book_of_entry lié
+#### Contribution Integration
+- **Auto-decrement:** Décrémente sessions_remaining si contribution liée
 - **Can_use check:** Vérifie logique can_use? avant
 - **Daily free training list:** `AttendanceListManagement::DailyListGenerator` crée chaque jour (hors lundi) la liste d'émargement « training » pour l'entraînement libre.
 
@@ -335,10 +344,10 @@ Contribution.reactivate_suspended_packs_for_person(person)  # auto après expira
 - **Service principal:** `AttendanceManagement::CheckInService`
   - Résout la personne (`person_id` ou `Current.user.person`).
   - Garantit l’existence d’une liste d’entraînement libre via `DailyListGenerator` (skip lundi).
-  - Choisit automatiquement le carnet utilisable (`pack10` prioritaire, sinon day pass, puis illimité) si `book_of_entry_id` absent.
+  - Choisit automatiquement la cotisation utilisable (`pack10` prioritaire, sinon day pass, puis illimité) si `contribution_id` absent.
   - Délègue la création d’une présence à `AttendanceCreator`.
 - **Instrumentation:** déclenche les événements `attendance.created`, `attendance.deleted`, `attendance_list.daily_created`.
-- **Rôle du carnet:**
+- **Rôle de la cotisation:**
   - `use_session!` lors du check-in (décrément).
   - `refund_session!` via `AttendanceManagement::AttendanceRemover` en cas de suppression.
 - **Présentations quotidiennes:** `AttendanceManagement::DailyFreeTrainingPresenter` assemble les métriques (total, pack10, day pass) pour le dashboard.
@@ -535,7 +544,7 @@ NewsletterSubscriber#link_to_person!(person)
 ✅ `Person#create_membership!` - Création adhésion + paiement + numéro  
 ✅ `Person#renew_membership!` - Renouvellement avec nouveau numéro  
 ✅ `Person#create_contribution!` - Création cotisation + paiement  
-✅ `People::MembershipUpgrader` - Upgrade plein tarif
+✅ `People::MembershipUpgrader` - Upgrade membership plein tarif
 ✅ `People::ContributionUpgrader` - Upgrade cotisation avec prorata
 ✅ `Contribution#suspend!` / `reactivate!` - Suspension cotisations  
 ✅ `Payment#anonymize!` - Marquage RGPD compatible DB
@@ -701,7 +710,7 @@ Admin::UserCreationForm
 ### Consolidation People + DRY (2025-11-09)
 
 - Admin: CRUD inline pour `MembershipTypes`, `ContributionFormulas`, `Events` (abandon des services *Management* sur ces flux).
-- Plans: `ContributionFormula.available_for(person)` unifie la sélection des plans autorisés.
+- Formules: `ContributionFormula.available_for(person)` unifie la sélection des formules autorisées.
 - UI: Options de méthode de paiement centralisées via helper.
 - Instrumentation: événements ajoutés pour adhésions, cotisations, newsletter.
 - Seeds/Tasks: migration des Person sans adhésion via `Person#create_membership!`.

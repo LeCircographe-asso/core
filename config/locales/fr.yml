@@ -122,16 +122,16 @@ fr:
         signed_out: Déconnecté avec succès !
     contribution_formulas:
       new:
-        needs_circus_membership_alert: Cette personne doit avoir une adhésion Cirque pour acheter des plans de cotisation
+        needs_circus_membership_alert: Cette personne doit avoir une adhésion Cirque pour acheter une cotisation (formule).
       create:
-        purchased: Plan de cotisation acheté avec succès !
-        purchase_failed_alert: 'Erreur lors de l''achat du plan: %{message}'
+        purchased: Cotisation enregistrée avec succès !
+        purchase_failed_alert: 'Erreur lors de l''achat : %{message}'
       update:
-        updated: Plan de cotisation mis à jour avec succès !
+        updated: Formule de cotisation mise à jour avec succès !
       destroy:
-        destroyed: Plan de cotisation supprimé avec succès !
+        destroyed: Formule de cotisation supprimée avec succès !
       require_super_admin:
-        forbidden: Seul le super-admin peut modifier ou supprimer des cotisations.
+        forbidden: Seul le super-admin peut modifier ou supprimer des formules de cotisation.
     contributions:
       upgrade:
         success_notice: Cotisation upgradée avec succès.
@@ -457,8 +457,10 @@ fr:
         history: Historique des paiements
         management: Gestion des paiements
       contribution_formulas:
-        plans: Plans de cotisation
-        plan_named: 'Plan : %{name}'
+        catalog: Formules de cotisation
+        formula_named: 'Formule : %{name}'
+        plans: Formules de cotisation
+        plan_named: 'Formule : %{name}'
         new_contribution: Nouvelle cotisation
         edit_named: 'Modifier : %{name}'
       opening_hours:

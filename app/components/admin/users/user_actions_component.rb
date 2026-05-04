@@ -23,8 +23,8 @@ module Admin
         # Membership action
         actions << membership_action
 
-        # Subscription action
-        actions << subscription_action
+        # Contribution action
+        actions << contribution_action
 
         # Create web account action - moved to header
         # if is_person_without_user
@@ -72,7 +72,7 @@ module Admin
         end
       end
 
-      def subscription_action
+      def contribution_action
         current_membership = person.current_membership
 
         if current_membership.nil?
@@ -82,11 +82,26 @@ module Admin
           content_tag :span, "Adhésion Basique",
                       class: "inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-500 bg-gray-100"
         elsif current_membership.membership_type.circus?
-          link_to(
+          active_contribution = person.contributions.active.first
+          links = []
+          if active_contribution
+            label = "Voir cotisation"
+            if active_contribution.contribution_formula.duration == "pack10"
+              remaining_entries = active_contribution.remaining_entries.to_i
+              label = "Voir cotisation (#{remaining_entries} restantes)" if remaining_entries.positive?
+            end
+            links << link_to(
+              label,
+              "#{admin_user_path(person_route_key)}#payments",
+              class: "inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#1F5C55] hover:bg-[#194A45] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1F5C55] mr-2"
+            )
+          end
+          links << link_to(
             contribution_action_label,
             new_admin_contribution_formula_path(person_id: person.id),
             class: "inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#1F5C55] hover:bg-[#194A45] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1F5C55]"
           )
+          helpers.safe_join(links)
         else
           content_tag :span, "Non applicable",
                       class: "inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-500 bg-gray-100"
