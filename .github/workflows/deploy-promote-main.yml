@@ -56,22 +56,33 @@ jobs:
           set -euo pipefail
           REPO="${{ github.repository }}"
           WANT_SHA="${{ steps.merge_main.outputs.main_sha }}"
+          if [ -z "$WANT_SHA" ]; then
+            echo "::error::main_sha output missing after merge."
+            exit 1
+          fi
           gh workflow run deploy-production.yml --repo "$REPO" --ref main
           echo "Waiting for deploy-production run for commit ${WANT_SHA}..."
           RUN_ID=""
           for _ in $(seq 1 90); do
             RUN_ID=$(gh run list --repo "$REPO" --workflow=deploy-production.yml \
-              --branch=main --limit=20 \
-              --json databaseId,headSha,event \
-              --jq --arg sha "$WANT_SHA" '[.[] | select(.headSha == $sha and .event == "workflow_dispatch")] | if length > 0 then .[0].databaseId else empty end')
+              --branch=main --limit=30 \
+              --json databaseId,headSha,event,status,createdAt \
+              --jq --arg sha "$WANT_SHA" '[.[] | select(.headSha == $sha)] | sort_by(.createdAt) | reverse | if length > 0 then .[0].databaseId else empty end')
             if [ -n "$RUN_ID" ]; then
+              echo "Found deploy-production run id=${RUN_ID}"
               break
             fi
             sleep 2
           done
           if [ -z "$RUN_ID" ]; then
-            echo "::error::Could not find a deploy-production workflow_dispatch run for headSha=${WANT_SHA}. Check Actions manually."
+            echo "::error::No deploy-production run matched headSha=${WANT_SHA}. Recent runs:"
+            gh run list --repo "$REPO" --workflow=deploy-production.yml --branch=main --limit=8 \
+              --json databaseId,headSha,event,status,conclusion,url || true
             exit 1
           fi
           echo "Watching deploy-production run $RUN_ID"
-          gh run watch "$RUN_ID" --repo "$REPO" --exit-status
+          if ! gh run watch "$RUN_ID" --repo "$REPO" --exit-status; then
+            RUN_URL=$(gh run view "$RUN_ID" --repo "$REPO" --json url --jq -r '.url')
+            echo "::error::deploy-production failed or was cancelled. Logs: ${RUN_URL}"
+            exit 1
+          fi

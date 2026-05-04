@@ -61,22 +61,33 @@ jobs:
           set -euo pipefail
           REPO="${{ github.repository }}"
           WANT_SHA="${{ steps.merge_staging.outputs.staging_sha }}"
+          if [ -z "$WANT_SHA" ]; then
+            echo "::error::staging_sha output missing after merge (merge step failed to set GITHUB_OUTPUT?)."
+            exit 1
+          fi
           gh workflow run deploy-staging.yml --repo "$REPO" --ref staging
           echo "Waiting for deploy-staging run for commit ${WANT_SHA}..."
           RUN_ID=""
           for _ in $(seq 1 90); do
             RUN_ID=$(gh run list --repo "$REPO" --workflow=deploy-staging.yml \
-              --branch=staging --limit=20 \
-              --json databaseId,headSha,event \
-              --jq --arg sha "$WANT_SHA" '[.[] | select(.headSha == $sha and .event == "workflow_dispatch")] | if length > 0 then .[0].databaseId else empty end')
+              --branch=staging --limit=30 \
+              --json databaseId,headSha,event,status,createdAt \
+              --jq --arg sha "$WANT_SHA" '[.[] | select(.headSha == $sha)] | sort_by(.createdAt) | reverse | if length > 0 then .[0].databaseId else empty end')
             if [ -n "$RUN_ID" ]; then
+              echo "Found deploy-staging run id=${RUN_ID}"
               break
             fi
             sleep 2
           done
           if [ -z "$RUN_ID" ]; then
-            echo "::error::Could not find a deploy-staging workflow_dispatch run for headSha=${WANT_SHA}. Check Actions manually."
+            echo "::error::No deploy-staging run matched headSha=${WANT_SHA}. Recent runs:"
+            gh run list --repo "$REPO" --workflow=deploy-staging.yml --branch=staging --limit=8 \
+              --json databaseId,headSha,event,status,conclusion,url || true
             exit 1
           fi
           echo "Watching deploy-staging run $RUN_ID"
-          gh run watch "$RUN_ID" --repo "$REPO" --exit-status
+          if ! gh run watch "$RUN_ID" --repo "$REPO" --exit-status; then
+            RUN_URL=$(gh run view "$RUN_ID" --repo "$REPO" --json url --jq -r '.url')
+            echo "::error::deploy-staging failed or was cancelled. Logs: ${RUN_URL}"
+            exit 1
+          fi
