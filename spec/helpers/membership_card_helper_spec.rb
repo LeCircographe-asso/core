@@ -13,7 +13,7 @@ RSpec.describe MembershipCardHelper, type: :helper do
     end
   end
 
-  describe "#membership_card_avatar_source_and_alt" do  
+  describe "#membership_card_avatar_source_and_alt" do
     it "returns configured avatar for web_visitor" do
       user = build(:user, system_role: :web_visitor)
       expect(helper.membership_card_avatar_source_and_alt(user)).to eq([ "users.png", "Avatar Visiteur web" ])
