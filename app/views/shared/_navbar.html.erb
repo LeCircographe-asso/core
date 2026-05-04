@@ -4,16 +4,12 @@
         <!-- Logo and profile combined for mobile -->
         <div class="flex shrink-0 items-center justify-between w-full min-[844px]:w-auto min-[844px]:justify-start">
             <!-- Logo -->
-            <%= link_to root_path, class: "flex items-center space-x-3 rtl:space-x-reverse", data: { 'nav-active-target': 'link', 'nav-active-path': root_path, 'nav-active-active-classes': 'nav-active-link', 'nav-active-starts-with': 'true' } do %>
-            <%= image_tag("logo.webp", alt: "le-circographe Logo", class: "w-40 h-auto min-[844px]:w-36 xl:w-40") %>
-            <% end %>
+            <%= link_to root_path, class: "flex shrink-0 select-none items-center", data: { 'nav-active-target': 'link', 'nav-active-path': root_path, 'nav-active-active-classes': 'nav-active-link', 'nav-active-starts-with': 'true' } do %><%= image_tag("logo.webp", alt: "le-circographe Logo", class: "w-40 h-auto min-[844px]:w-36 xl:w-40") %><% end %>
 
             <!-- Elements grouped on the right for mobile -->
             <div class="flex items-center min-[844px]:hidden">
                 <% if authenticated? && Current.user %>
-                <%= link_to user_path(Current.user), class: "flex mr-3", data: { turbo_preload: "false" } do %>
-                <%= image_tag("users.png", alt: "photo de profil", class: "w-8 h-8 rounded-full hover:ring-2 hover:ring-indigo-300") %>
-                <% end %>
+                <%= link_to user_path(Current.user), class: "flex mr-3 select-none", data: { turbo_preload: "false" } do %><%= image_tag("users.png", alt: "photo de profil", class: "w-8 h-8 rounded-full hover:ring-2 hover:ring-indigo-300") %><% end %>
                 <% end %>
 
                 <!-- Hamburger button (mobile and tablet) -->
@@ -84,9 +80,7 @@
         <div class="hidden min-[844px]:flex shrink-0 items-center min-[844px]:space-x-3 min-[844px]:pl-1 xl:pr-3 2xl:pr-5">
             <% if authenticated? && Current.user %>
             <!-- Clickable profile picture -->
-            <%= link_to user_path(Current.user), class: "flex mr-3" do %>
-            <%= image_tag("users.png", alt: "photo de profil", class: "w-8 h-8 rounded-full hover:ring-2 hover:ring-indigo-300") %>
-            <% end %>
+            <%= link_to user_path(Current.user), class: "flex mr-3 select-none" do %><%= image_tag("users.png", alt: "photo de profil", class: "w-8 h-8 rounded-full hover:ring-2 hover:ring-indigo-300") %><% end %>
 
             <!-- My Space button with dropdown -->
             <div class="relative">

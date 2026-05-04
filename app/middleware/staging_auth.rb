@@ -9,8 +9,8 @@ class StagingAuth
   def call(env)
     request = Rack::Request.new(env)
 
-    # Skip auth for health check endpoint (Kamal needs this)
-    return @app.call(env) if request.path == "/up"
+    # Kamal healthcheck + PWA assets (navigateurs / Chrome demandent sans credentials Basic)
+    return @app.call(env) if allowlisted_without_basic_auth?(request)
 
     # Vérifier si c'est l'environnement staging
     if staging_environment?(request)
@@ -34,6 +34,21 @@ class StagingAuth
   end
 
   private
+
+  # Aligné sur MaintenanceModeMiddleware#pwa_request? — évite 401 sur /manifest.json etc.
+  def allowlisted_without_basic_auth?(request)
+    return true if request.path == "/up"
+
+    return false unless %w[GET HEAD].include?(request.request_method)
+
+    %w[
+      /manifest
+      /manifest.json
+      /manifest.webmanifest
+      /service-worker
+      /service-worker.js
+    ].include?(request.path)
+  end
 
   def staging_environment?(request)
     # Vérifier le sous-domaine ou la variable d'environnement
