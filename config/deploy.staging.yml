@@ -3,6 +3,9 @@ service: circographe-staging
 # org/repo only — registry.server (ghcr.io) prefixes this; avoid ghcr.io/ghcr.io/... in image refs.
 image: lecircographe-asso/circographe-staging
 
+# Kamal attend que le healthcheck réponde après boot ; staging fait migrate:reset + seed au démarrage.
+deploy_timeout: 260
+
 # Serveur VPS Ionos
 servers:
   web:
@@ -39,6 +42,9 @@ env:
     STAGING_AUTH: true
     STAGING_PASSWORD: <%= ENV.fetch("STAGING_PASSWORD", "") %>
     PUBLIC_REGISTRATION_ENABLED: false
+    # Seed : défaut SEED_LEAN + SEED_POPULATION_COUNT dans populate.rb (staging rapide)
+    SEED_LEAN: true
+    SEED_POPULATION_COUNT: "38"
     RAILS_SERVE_STATIC_FILES: true
     SOLID_QUEUE_IN_PUMA: true
     # Optimisations pour VPS M
