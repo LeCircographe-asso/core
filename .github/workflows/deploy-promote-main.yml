@@ -41,14 +41,37 @@ jobs:
             exit 1
           fi
       - name: Promote staging into main
+        id: merge_main
         run: |
           git checkout main
           git pull --ff-only origin main
           git -c user.name="github-actions[bot]" -c user.email="41898282+github-actions[bot]@users.noreply.github.com" \
             merge --no-ff origin/staging -m "chore: promote staging to main"
           git push origin main
-      - name: Trigger production deploy (push via GITHUB_TOKEN does not start workflows)
+          echo "main_sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+      - name: Trigger production deploy and wait for success
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh workflow run deploy-production.yml --repo "${{ github.repository }}" --ref main
+          set -euo pipefail
+          REPO="${{ github.repository }}"
+          WANT_SHA="${{ steps.merge_main.outputs.main_sha }}"
+          gh workflow run deploy-production.yml --repo "$REPO" --ref main
+          echo "Waiting for deploy-production run for commit ${WANT_SHA}..."
+          RUN_ID=""
+          for _ in $(seq 1 90); do
+            RUN_ID=$(gh run list --repo "$REPO" --workflow=deploy-production.yml \
+              --branch=main --limit=20 \
+              --json databaseId,headSha,event \
+              --jq --arg sha "$WANT_SHA" '[.[] | select(.headSha == $sha and .event == "workflow_dispatch")] | if length > 0 then .[0].databaseId else empty end')
+            if [ -n "$RUN_ID" ]; then
+              break
+            fi
+            sleep 2
+          done
+          if [ -z "$RUN_ID" ]; then
+            echo "::error::Could not find a deploy-production workflow_dispatch run for headSha=${WANT_SHA}. Check Actions manually."
+            exit 1
+          fi
+          echo "Watching deploy-production run $RUN_ID"
+          gh run watch "$RUN_ID" --repo "$REPO" --exit-status
