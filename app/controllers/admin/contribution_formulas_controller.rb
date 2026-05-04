@@ -1,7 +1,19 @@
 # frozen_string_literal: true
 
 module Admin
-  class SubscriptionPlansController < BaseController
+  class ContributionFormulasController < BaseController
+    FORMULA_ATTRS = %i[name duration price_cents description membership_type_id sessions_count validity_days].freeze
+    PURCHASE_ATTRS = %i[
+      person_id
+      contribution_formula_id
+      payment_method
+      record_attendance
+      attendance_date
+      custom_amount_cents
+      offer_reason
+      donation_amount
+    ].freeze
+
     before_action :set_contribution_formula, only: %i[show edit update destroy]
     before_action :set_person, only: %i[new create]
     before_action :set_breadcrumbs
@@ -9,12 +21,12 @@ module Admin
 
     def index
       @contribution_formulas = ContributionFormula.includes(:membership_type).order(:duration, :price_cents)
-      add_breadcrumb I18n.t("breadcrumbs.admin.subscription_plans.plans"), nil
+      add_breadcrumb I18n.t("breadcrumbs.admin.contribution_formulas.catalog"), nil
     end
 
     def show
       @contributions = @contribution_formula.contributions.includes(:person)
-      add_breadcrumb I18n.t("breadcrumbs.admin.subscription_plans.plan_named", name: @contribution_formula.name), nil
+      add_breadcrumb I18n.t("breadcrumbs.admin.contribution_formulas.formula_named", name: @contribution_formula.name), nil
     end
 
     def new
@@ -28,11 +40,11 @@ module Admin
 
       @contribution_formulas = ContributionFormula.available_for(@person)
 
-      add_breadcrumb I18n.t("breadcrumbs.admin.subscription_plans.new_contribution"), nil
+      add_breadcrumb I18n.t("breadcrumbs.admin.contribution_formulas.new_contribution"), nil
     end
 
     def edit
-      add_breadcrumb I18n.t("breadcrumbs.admin.subscription_plans.edit_named", name: @contribution_formula.name), nil
+      add_breadcrumb I18n.t("breadcrumbs.admin.contribution_formulas.edit_named", name: @contribution_formula.name), nil
     end
 
     def create
@@ -43,7 +55,7 @@ module Admin
 
       result = People::ContributionCreator.new(
         person: @person,
-        contribution_formula_id: contribution_purchase_params[:contribution_formula_id] || contribution_purchase_params[:subscription_plan_id],
+        contribution_formula_id: contribution_formula_id_from_purchase_params,
         payment_method: contribution_purchase_params[:payment_method].presence || "cash",
         recorded_by_id: Current.user&.id,
         record_attendance: false,
@@ -55,17 +67,17 @@ module Admin
       if result.success?
         redirect_to admin_user_path("person_#{@person.id}"), notice: t(".purchased")
       else
-        redirect_to new_admin_subscription_plan_path(person_id: @person.id),
+        redirect_to new_admin_contribution_formula_path(person_id: @person.id),
                     alert: t(".purchase_failed_alert", message: result.message)
       end
     rescue StandardError => e
       flash[:alert] = t(".purchase_failed_alert", message: e.message)
-      redirect_to new_admin_subscription_plan_path(person_id: @person.id)
+      redirect_to new_admin_contribution_formula_path(person_id: @person.id)
     end
 
     def update
       if @contribution_formula.update(contribution_formula_params)
-        redirect_to admin_subscription_plans_path, notice: t(".updated")
+        redirect_to admin_contribution_formulas_path, notice: t(".updated")
       else
         flash.now[:alert] = @contribution_formula.errors.full_messages.to_sentence
         render :edit, status: :unprocessable_content
@@ -74,18 +86,22 @@ module Admin
 
     def destroy
       if @contribution_formula.destroy
-        redirect_to admin_subscription_plans_path, notice: t(".destroyed")
+        redirect_to admin_contribution_formulas_path, notice: t(".destroyed")
       else
-        redirect_to admin_subscription_plans_path, alert: @contribution_formula.errors.full_messages.to_sentence
+        redirect_to admin_contribution_formulas_path, alert: @contribution_formula.errors.full_messages.to_sentence
       end
     end
 
     private
 
+    def contribution_formula_id_from_purchase_params
+      contribution_purchase_params[:contribution_formula_id]
+    end
+
     def require_super_admin
       return if Current.user&.super_admin?
 
-      redirect_to admin_subscription_plans_path, alert: I18n.t("admin.subscription_plans.require_super_admin.forbidden")
+      redirect_to admin_contribution_formulas_path, alert: I18n.t("admin.contribution_formulas.require_super_admin.forbidden")
     end
 
     def set_contribution_formula
@@ -98,23 +114,15 @@ module Admin
 
     def set_breadcrumbs
       add_breadcrumb I18n.t("breadcrumbs.admin.common.administration"), admin_dashboard_index_path
-      add_breadcrumb I18n.t("breadcrumbs.admin.subscription_plans.plans"), admin_subscription_plans_path
+      add_breadcrumb I18n.t("breadcrumbs.admin.contribution_formulas.catalog"), admin_contribution_formulas_path
     end
 
     def contribution_formula_params
-      params.expect(contribution_formula: %i[name duration price_cents description membership_type_id sessions_count validity_days]).tap do |permitted|
-        legacy = params[:subscription_plan]
-        permitted.merge!(legacy.permit(:name, :duration, :price_cents, :description, :membership_type_id, :sessions_count, :validity_days)) if legacy.respond_to?(:permit)
-      end
-    rescue ActionController::ParameterMissing
-      params.expect(subscription_plan: %i[name duration price_cents description membership_type_id sessions_count validity_days])
+      params.expect(contribution_formula: FORMULA_ATTRS)
     end
 
     def contribution_purchase_params
-      key = params.key?(:contribution_formula) ? :contribution_formula : :subscription_plan
-      params.expect(key => %i[person_id contribution_formula_id subscription_plan_id payment_method record_attendance attendance_date custom_amount_cents offer_reason donation_amount]).merge(
-        recorded_by_id: Current.user.id
-      )
+      params.expect(contribution_formula: PURCHASE_ATTRS).merge(recorded_by_id: Current.user.id)
     end
 
     def donation_cents_from(params_hash)
