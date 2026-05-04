@@ -48,6 +48,16 @@ zta() {
   bundle exec rspec
 }
 
+# --- Reset complet de la base locale ---
+# Usage: circodb
+circodb() {
+  bin/rails db:drop &&
+    sleep 1 &&
+    bin/rails db:create &&
+    bin/rails db:migrate &&
+    bin/rails db:seed
+}
+
 # --- Statut du workflow (dernier run CI sur la branche courante) ---
 # Usage: zci
 zci() {
@@ -101,4 +111,4 @@ zclean() {
   echo "✅ Branches locales mergées supprimées"
 }
 
-echo "✅ Aliases Le Circographe chargés (zf, zp, zt, zta, zci, zpr, zready, zpromote, zlog, zclean)"
+echo "✅ Aliases Le Circographe chargés (zf, zp, zt, zta, circodb, zci, zpr, zready, zpromote, zlog, zclean)"
