@@ -1,12 +1,12 @@
 <% content_for :title, "Modification des horaires d'ouverture" %>
 
 <div class="min-h-screen py-3" data-controller="opening-hours-editor">
-  <div class="max-w-6xl mx-auto px-4">
+  <div class="page-container">
     <!-- Breadcrumbs -->
     <%= render 'shared/breadcrumbs' %>
     
     <!-- Header -->
-    <div class="bg-white shadow-lg rounded-lg overflow-hidden mb-4 ">
+    <div class="surface-card mb-4">
       <div class="bg-gradient-to-r from-[#1F5C55] to-teal-600 px-6 py-2.5">
         <div class="flex flex-col sm:flex-row justify-between items-center gap-4">
           <div>
@@ -32,7 +32,7 @@
     <!-- Main content in two columns -->
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
       <!-- Left column - Form -->
-      <div class="bg-white shadow-lg rounded-lg overflow-hidden">
+      <div class="surface-card">
         <div class="px-4 py-2 border-b border-gray-200 flex items-center justify-between">
           <h2 class="text-base font-medium text-gray-900">Formulaire de modification</h2>
           <div class="flex gap-2">
@@ -160,7 +160,7 @@
       </div>
       
       <!-- Right Column - Preview -->
-      <div class="bg-white shadow-lg rounded-lg overflow-hidden">
+      <div class="surface-card">
         <div class="px-4 py-2 border-b border-gray-200">
           <h2 class="text-base font-medium text-gray-900">Aperçu des horaires</h2>
         </div>
@@ -173,3 +173,26 @@
     </div>
   </div>
 </div>
+
+<style>
+/* Masquer les flèches natives et ajouter une icône moderne */
+.hour-select, .minute-select {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+  background-position: right 8px center;
+  background-repeat: no-repeat;
+  background-size: 16px;
+  padding-right: 32px;
+}
+
+.hour-select:focus, .minute-select:focus {
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%231F5C55' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+}
+
+.hour-select:hover, .minute-select:hover {
+  border-color: #1F5C55;
+  box-shadow: 0 0 0 1px rgba(31, 92, 85, 0.1);
+}
+</style>

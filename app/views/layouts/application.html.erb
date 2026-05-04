@@ -51,14 +51,16 @@
 
     <% elsif controller_name == 'sessions' && action_name == 'new' || controller_name == 'registrations' && action_name == 'new' || controller_name == 'pages' && action_name == 'terms' || controller_name == 'pages' && action_name == 'privacy_policy' %>
     
-    <div class="flex flex-col min-h-screen w-full overflow-x-hidden">
+    <div class="flex min-h-[100dvh] flex-col w-full overflow-x-hidden">
         <header>
             <%= render 'shared/navbar' %>
         </header>
         <%= turbo_frame_tag ProfileSectionDomIds::FLASH_FRAME do %>
         <%= render 'shared/flash' %>
         <% end %>
-        <%= yield %>
+        <main class="flex-1 min-h-0">
+            <%= yield %>
+        </main>
     </div>
     
     <% else %>
@@ -70,8 +72,8 @@
         <%= turbo_frame_tag ProfileSectionDomIds::FLASH_FRAME do %>
         <%= render 'shared/flash' %>
         <% end %>
-        <main class="w-full mx-auto space-y-6 px-4 sm:px-6 lg:px-8 <%= controller_name == 'home' && action_name == 'index' ? 'pt-0' : 'pt-8' %>">
-        <div class="max-w-6xl mx-auto">
+        <main class="page-container space-y-6 <%= controller_name == 'home' && action_name == 'index' ? 'pt-0' : 'pt-8' %>">
+        <div class="w-full">
             <%= yield %>
         </div>
         </main>

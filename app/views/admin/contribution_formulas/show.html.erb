@@ -1,10 +1,10 @@
 <div class="min-h-screen bg-gray-50 py-6">
-  <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+  <div class="page-container max-w-4xl">
     <!-- Breadcrumbs -->
     <%= render 'shared/breadcrumbs' %>
     
     <!-- Header -->
-    <div class="bg-gradient-to-r from-[#1F5C55] to-[#194A45] rounded-lg shadow-lg mb-6">
+    <div class="admin-page-header">
       <div class="px-6 py-4 flex justify-between items-center">
         <div>
           <h1 class="text-2xl font-bold text-white">Détails de la formule de cotisation</h1>
@@ -20,7 +20,7 @@
     </div>
 
     <!-- Détails -->
-    <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
+    <div class="surface-card p-6 mb-6">
       <h2 class="text-xl font-semibold text-gray-900 mb-4">Informations de la formule</h2>
       
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -92,7 +92,7 @@
     </div>
 
     <!-- Liste des carnets d'entrées -->
-    <div class="bg-white rounded-lg shadow-lg p-6">
+    <div class="surface-card p-6">
       <div class="flex justify-between items-center mb-4">
         <h2 class="text-xl font-semibold text-gray-900">Carnets d'entrées associés</h2>
         <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-[#1F5C55] text-white">
