@@ -46,14 +46,37 @@ jobs:
             fi
           done
       - name: Promote dev into staging
+        id: merge_staging
         run: |
           git checkout staging
           git pull --ff-only origin staging
           git -c user.name="github-actions[bot]" -c user.email="41898282+github-actions[bot]@users.noreply.github.com" \
             merge --no-ff origin/dev -m "chore: promote dev to staging"
           git push origin staging
-      - name: Trigger staging deploy (push via GITHUB_TOKEN does not start workflows)
+          echo "staging_sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+      - name: Trigger staging deploy and wait for success
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh workflow run deploy-staging.yml --repo "${{ github.repository }}" --ref staging
+          set -euo pipefail
+          REPO="${{ github.repository }}"
+          WANT_SHA="${{ steps.merge_staging.outputs.staging_sha }}"
+          gh workflow run deploy-staging.yml --repo "$REPO" --ref staging
+          echo "Waiting for deploy-staging run for commit ${WANT_SHA}..."
+          RUN_ID=""
+          for _ in $(seq 1 90); do
+            RUN_ID=$(gh run list --repo "$REPO" --workflow=deploy-staging.yml \
+              --branch=staging --limit=20 \
+              --json databaseId,headSha,event \
+              --jq --arg sha "$WANT_SHA" '[.[] | select(.headSha == $sha and .event == "workflow_dispatch")] | if length > 0 then .[0].databaseId else empty end')
+            if [ -n "$RUN_ID" ]; then
+              break
+            fi
+            sleep 2
+          done
+          if [ -z "$RUN_ID" ]; then
+            echo "::error::Could not find a deploy-staging workflow_dispatch run for headSha=${WANT_SHA}. Check Actions manually."
+            exit 1
+          fi
+          echo "Watching deploy-staging run $RUN_ID"
+          gh run watch "$RUN_ID" --repo "$REPO" --exit-status

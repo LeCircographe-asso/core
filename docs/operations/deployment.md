@@ -12,6 +12,21 @@
 > **Branches actives** (cf. `.github/workflows/deploy-*.yml`) :
 > `dev` (intégration) → `staging` (déploie staging) → `main` (déploie production).
 
+### Comprendre « staging a le code mais rien ne part sur le VPS »
+
+Ce sont **deux étapes distinctes** :
+
+1. **Git** : la branche `staging` pointe sur un commit (merge depuis `dev`, promote, ou push manuel). Les « fichiers » sont à jour sur GitHub.
+2. **CI/CD** : le workflow **`deploy-staging`** construit l’image Docker, la pousse vers **GHCR**, puis **Kamal** déploie sur le VPS. Si cette étape échoue ou ne tourne pas, le serveur garde l’**ancienne** image.
+
+Cas fréquents :
+
+| Situation | Effet |
+|-----------|--------|
+| Push fait par **GitHub Actions** avec `GITHUB_TOKEN` (promote) | Le push **ne déclenche pas** un second workflow `on: push`. Il faut le **`workflow_dispatch`** explicite (`gh workflow run deploy-staging`) — c’est ce que fait **`deploy-promote-to-staging`**, qui **attend maintenant la fin** du déploiement (succès ou échec visible dans le même job promote). |
+| Variables **`vars.STAGING_SERVER_IP`** ou secrets manquants | Le job **deploy** ou **build** échoue ; le merge Git peut quand même être vert. |
+| Erreur Kamal / proxy / registry | Même constat : corriger les logs du workflow **`deploy-staging`**. |
+
 ## 1. Workflow Git standard
 
 ```bash
@@ -166,6 +181,12 @@ Propshaft     → cherche "application" → veut "application.css"
 - `font-display: swap` pour éviter le flash de texte invisible.
 
 ## 7. Architecture déploiement
+
+### 7.0 Kamal : image, hôte, proxy (CI)
+
+- **`config/deploy.staging.yml` — clé `image`** : `lecircographe-asso/circographe-staging` (sans `ghcr.io/`) ; le registry dans le YAML complète l’URL.
+- **Hôtes** : `STAGING_SERVER_IP` / `PRODUCTION_SERVER_IP` sont lus via `ENV.fetch` : en local, exporter l’IP avant `kamal` (sinon erreur *hosts/0*). Sur GitHub Actions : `vars.*`.
+- **`kamal proxy reboot` en non-interactif (CI)** : `bundle exec kamal proxy reboot --confirmed -c config/deploy.staging.yml` (évite la question *Are you sure?*).
 
 ### 7.1 Une image, deux environnements
 
