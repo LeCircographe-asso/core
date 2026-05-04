@@ -35,7 +35,8 @@ gem "solid_cache"  # Database-backed cache
 gem "solid_queue"  # Database-backed job queue
 
 # Pagination
-gem "pagy", "~> 43.5" # Lightweight pagination
+# Pagy 43+ supprime extras/bootstrap et Pagy::Backend — migration non triviale ; rester en 6.x jusqu’à refonte.
+gem "pagy", "~> 6.5"
 
 # API and External Services
 gem "jbuilder" # JSON API builder
