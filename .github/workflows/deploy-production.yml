@@ -47,7 +47,7 @@ jobs:
           bundler-cache: true
       - uses: webfactory/ssh-agent@v0.10.0
         with:
-          ssh-private-key: ${{ secrets.PRODUCTION_SSH_PRIVATE_KEY }}
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
       - name: Deploy production with Kamal
         env:
           KAMAL_REGISTRY_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
@@ -65,7 +65,7 @@ jobs:
           bundler-cache: true
       - uses: webfactory/ssh-agent@v0.10.0
         with:
-          ssh-private-key: ${{ secrets.PRODUCTION_SSH_PRIVATE_KEY }}
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
       - name: Check production health
         run: |
           for _ in 1 2 3 4 5; do
