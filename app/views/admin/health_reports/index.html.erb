@@ -1,10 +1,10 @@
 <% content_for :title, "Rapport d'integrite" %>
 
 <div class="min-h-screen py-6">
-  <div class="max-w-6xl mx-auto">
+  <div class="page-container">
     <%= render 'shared/breadcrumbs' %>
 
-    <div class="bg-white shadow-lg rounded-lg overflow-hidden mb-6">
+    <div class="surface-card mb-6">
       <div class="bg-gradient-to-r from-[#1F5C55] to-[#194A45] px-6 py-4">
         <h1 class="text-2xl font-bold text-white">Rapport d'integrite</h1>
         <p class="text-white/80 mt-1">Verifications rapides pour detecter les donnees orphelines ou incoherentes</p>
@@ -12,25 +12,25 @@
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-      <div class="bg-white rounded-lg shadow p-4 border border-gray-200">
+      <div class="admin-metric-card shadow">
         <p class="text-sm text-gray-600">Utilisateurs sans Person</p>
         <p class="text-2xl font-bold text-gray-900"><%= @users_without_person_count %></p>
       </div>
-      <div class="bg-white rounded-lg shadow p-4 border border-gray-200">
+      <div class="admin-metric-card shadow">
         <p class="text-sm text-gray-600">Person sans User</p>
         <p class="text-2xl font-bold text-gray-900"><%= @people_without_user_count %></p>
       </div>
-      <div class="bg-white rounded-lg shadow p-4 border border-gray-200">
+      <div class="admin-metric-card shadow">
         <p class="text-sm text-gray-600">Doublons email</p>
         <p class="text-2xl font-bold text-gray-900"><%= @duplicate_people_by_email_count %></p>
       </div>
-      <div class="bg-white rounded-lg shadow p-4 border border-gray-200">
+      <div class="admin-metric-card shadow">
         <p class="text-sm text-gray-600">Doublons telephone</p>
         <p class="text-2xl font-bold text-gray-900"><%= @duplicate_people_by_phone_count %></p>
       </div>
     </div>
 
-    <div class="bg-white rounded-lg shadow p-6 border border-gray-200 mb-6">
+    <div class="admin-metric-card shadow mb-6 p-6">
       <h2 class="text-lg font-semibold text-gray-900 mb-3">Utilisateurs sans Person</h2>
       <% if @users_without_person.any? %>
         <div class="overflow-x-auto">
@@ -63,7 +63,7 @@
       <% end %>
     </div>
 
-    <div class="bg-white rounded-lg shadow p-6 border border-gray-200 mb-6">
+    <div class="admin-metric-card shadow mb-6 p-6">
       <h2 class="text-lg font-semibold text-gray-900 mb-3">Person sans User</h2>
       <% if @people_without_user.any? %>
         <div class="overflow-x-auto">
@@ -96,7 +96,7 @@
       <% end %>
     </div>
 
-    <div class="bg-white rounded-lg shadow p-6 border border-gray-200 mb-6">
+    <div class="admin-metric-card shadow mb-6 p-6">
       <h2 class="text-lg font-semibold text-gray-900 mb-3">Doublons par email</h2>
       <% if @duplicate_people_by_email_groups.any? %>
         <div class="space-y-3">
@@ -120,7 +120,7 @@
       <% end %>
     </div>
 
-    <div class="bg-white rounded-lg shadow p-6 border border-gray-200 mb-6">
+    <div class="admin-metric-card shadow mb-6 p-6">
       <h2 class="text-lg font-semibold text-gray-900 mb-3">Doublons par telephone</h2>
       <% if @duplicate_people_by_phone_groups.any? %>
         <div class="space-y-3">
@@ -144,7 +144,7 @@
       <% end %>
     </div>
 
-    <div class="bg-white rounded-lg shadow p-6 border border-gray-200">
+    <div class="admin-metric-card shadow p-6">
       <h2 class="text-lg font-semibold text-gray-900 mb-3">Paiements sans Person</h2>
       <% if @payments_without_person.any? %>
         <div class="overflow-x-auto">
