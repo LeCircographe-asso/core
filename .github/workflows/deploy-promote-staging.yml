@@ -28,7 +28,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          for required in "ci-lint-audit.yml" "ci-tests.yml" "ci-docker-build.yml"; do
+          for required in "ci-dev.yml" "ci-docker-build.yml"; do
             status=$(gh run list \
               --workflow="$required" \
               --branch=dev \
