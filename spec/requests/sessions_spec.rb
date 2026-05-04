@@ -24,6 +24,10 @@ RSpec.describe 'Sessions', type: :request do
   end
 
   describe 'POST /sessions' do
+    # Rate limiting uses Rails.cache; clear after each example so order-randomized
+    # request specs are isolated (see ci-tests / seed 63988).
+    after { Rails.cache.clear }
+
     let(:user) { create(:user, password: 'password123') }
 
     context 'when already authenticated' do
@@ -59,7 +63,8 @@ RSpec.describe 'Sessions', type: :request do
 
         cookie_header = response.headers['Set-Cookie']
         expect(cookie_header).to be_present
-        expect(cookie_header.is_a?(Array) ? cookie_header.first : cookie_header).to include('session_id')
+        raw_cookies = cookie_header.is_a?(Array) ? cookie_header.join("\n") : cookie_header.to_s
+        expect(raw_cookies).to include("session_id=")
       end
 
       it 'redirects to root with success notice' do
