@@ -303,7 +303,7 @@ bundle exec rubocop --format simple --force-exclusion
 bundle exec rspec
 ```
 
-- CI : le job `lint` dans [`.github/workflows/ci-lint-audit.yml`](../../.github/workflows/ci-lint-audit.yml) exécute `bundle exec rubocop --format github --force-exclusion` (mêmes règles, format pour les annotations GitHub).
+- CI : le job `lint` dans [`.github/workflows/ci-dev.yml`](../../.github/workflows/ci-dev.yml) exécute `bin/rubocop --format github --force-exclusion` (mêmes règles, format pour les annotations GitHub).
 - Ciblage : `bundle exec rubocop --only NomDuCop chemins… --force-exclusion`
 
 ### Voir les offenses dans ton terminal
@@ -467,7 +467,7 @@ L'ensemble des services `People::*`, `AccountClaimManagement::*`, `AttendanceMan
 - **Auth** : la stack d'authentification reste le systeme natif Rails 8 ; ne pas introduire Devise.
 - **Fallback transitoire** : `config.i18n.fallbacks = { en: %i[fr] }` est volontairement temporaire pendant la complétion de `config/locales/en.yml`. Objectif long terme : parité `fr/en` sans fallback implicite pour l’UX anglaise.
 - **Parité des clés locales** : utiliser `bundle exec rake i18n:check_keys` pour lister les clés manquantes entre `fr.yml` et `en.yml` et prioriser les traductions manquantes.
-- **Jobs** : [`.github/workflows/ci-lint-audit.yml`](../../.github/workflows/ci-lint-audit.yml) (`lint`) et [`.github/workflows/ci-auto-lint.yml`](../../.github/workflows/ci-auto-lint.yml) — RuboCop est **bloquant** lorsque la baseline est verte (`bundle exec rubocop --format github --force-exclusion`).
+- **Jobs** : [`.github/workflows/ci-dev.yml`](../../.github/workflows/ci-dev.yml) (`lint`, `security`, `test`) et [`.github/workflows/ci-auto-lint.yml`](../../.github/workflows/ci-auto-lint.yml) — RuboCop est **bloquant** lorsque la baseline est verte (`bin/rubocop --format github --force-exclusion`).
 - **Élargissement** : activer les cops **par petits lots**, une PR par lot ; pas de refactors métier ni renommage de vocabulaire domaine sans accord ([glossaire](../glossary.md)).
 - **Lots suivants suggérés** : après vérif des offenses — LOW (`Style/TrailingCommaInArrayLiteral` / `HashLiteral` si pertinent), puis MEDIUM (`Performance/*`, `Rails/*` au cas par cas), puis HIGH (`Lint/*` sur flux, `Metrics/*`, fichiers `app/models` / `app/services` sensibles) en revue manuelle uniquement.
 - **Commandes locales** : même séquence recommandée qu’avant CI — RuboCop puis RSpec (section 6, *Workflow lint local*) ; ciblage : `bundle exec rubocop --only NomDuCop chemins… --force-exclusion`.
