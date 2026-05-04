@@ -139,12 +139,41 @@ def seed_ensure_circus_only!(person, circus_type, recorded_by_id:)
   person.reload.current_membership
 end
 
+def seed_upgrade_membership!(person, new_membership_type, recorded_by:, payment_method: "cash")
+  res = People::MembershipUpgrader.new(
+    person: person,
+    new_membership_type_id: new_membership_type.id,
+    payment_method: payment_method.to_s,
+    recorded_by_id: recorded_by.id
+  ).call
+  raise "seed membership upgrade: #{res.message}" unless res.success?
+
+  res
+end
+
+def seed_record_donation!(person, total_cents:, recorded_by:, notes: "Donation")
+  res = People::PaymentRecorder.new(
+    person: person,
+    recorded_by: recorded_by,
+    payment_method: "cash",
+    status: "success",
+    notes: notes,
+    total_cents: total_cents,
+    payment_lines: [
+      {
+        item_type: "Donation",
+        amount_cents: total_cents,
+        description: "Donation"
+      }
+    ]
+  ).call
+  raise "seed donation: #{res.message}" unless res.success?
+
+  res
+end
+
 alice_story = Person.find_by!(email: "alice.cirque@example.com")
-alice_story.upgrade_membership!(
-  circus_reduced_membership,
-  recorded_by: admin_user,
-  payment_method: :cash
-)
+seed_upgrade_membership!(alice_story, circus_reduced_membership, recorded_by: admin_user, payment_method: :cash)
 
 bob_story = Person.find_by!(email: "bob.basique@example.com")
 ann_res = People::ContributionCreator.new(
@@ -167,14 +196,15 @@ raise "seed charlie pack: #{pack_ch.message}" unless pack_ch.success?
 3.times { pack_ch.contribution.reload.use_session! }
 
 diana_story = Person.find_by!(email: "diana.prospect@example.com")
-diana_story.create_donation!(500, recorded_by: admin_user, payment_method: :cash, notes: "Don prospect (sans adhésion)")
+seed_record_donation!(
+  diana_story,
+  total_cents: 500,
+  recorded_by: admin_user,
+  notes: "Don prospect (sans adhésion)"
+)
 
 emma_story = Person.find_by!(email: "emma.complexe@example.com")
-emma_story.upgrade_membership!(
-  circus_full_membership,
-  recorded_by: admin_user,
-  payment_method: :cash
-)
+seed_upgrade_membership!(emma_story, circus_full_membership, recorded_by: admin_user, payment_method: :cash)
 
 frank_story = Person.find_by!(email: "frank.newcomer@example.com")
 fr_pack = People::ContributionCreator.new(
@@ -268,7 +298,7 @@ julien = seed_register_person(
   },
   create_user: false
 )
-julien.create_donation!(500, recorded_by: admin_user, payment_method: :cash, notes: "Don seul seed")
+seed_record_donation!(julien, total_cents: 500, recorded_by: admin_user, notes: "Don seul seed")
 
 karine = seed_register_person(
   {
@@ -325,7 +355,14 @@ laura = seed_register_person(
   create_user: true
 )
 laura.memberships.destroy_all
-laura.create_membership!(basic_membership, recorded_by: admin_user, payment_method: :cash, donation_cents: 500)
+laura_res = People::MembershipCreator.new(
+  person: laura,
+  membership_type_id: basic_membership.id,
+  payment_method: "cash",
+  recorded_by_id: admin_user.id,
+  donation_cents: 500
+).call
+raise "seed laura membership+don: #{laura_res.message}" unless laura_res.success?
 
 michel = seed_register_person(
   {
@@ -346,11 +383,7 @@ michel = seed_register_person(
   create_user: false
 )
 seed_ensure_circus_only!(michel, circus_full_membership, recorded_by_id: admin_user.id)
-michel.upgrade_membership!(
-  circus_reduced_membership,
-  recorded_by: admin_user,
-  payment_method: :cash
-)
+seed_upgrade_membership!(michel, circus_reduced_membership, recorded_by: admin_user, payment_method: :cash)
 
 sophie = seed_register_person(
   {

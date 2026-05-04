@@ -191,6 +191,13 @@ RSpec.describe 'Admin::Users', type: :request do
         get admin_user_path('person_99999')
         expect(response).to have_http_status(:not_found)
       end
+
+      it 'redirects when numeric user id does not exist' do
+        get admin_user_path(0)
+        expect(response).to redirect_to(admin_users_path)
+        follow_redirect!
+        expect(flash[:alert]).to eq(I18n.t("admin.users.set_user.person_or_user_missing_alert"))
+      end
     end
   end
 

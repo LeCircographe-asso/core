@@ -45,7 +45,7 @@ module Admin
       if person_identifier?(params[:id])
         return unless load_show_context_for_person
       else
-        load_show_context_for_user
+        return unless load_show_context_for_user
       end
 
       respond_to do |format|
@@ -291,11 +291,22 @@ module Admin
         payments: { payment_lines: :item }
       ).find_by(id: params[:id])
 
+      if @user.nil?
+        respond_to do |format|
+          format.html do
+            redirect_to admin_users_path, alert: I18n.t("admin.users.set_user.person_or_user_missing_alert")
+          end
+          format.json { head :not_found }
+        end
+        return false
+      end
+
       @person = @user.person
       @array_right = available_roles_for_user(@user)
       @is_person_without_user = false
       @recent_payments = load_recent_payments(@person)
       add_admin_user_breadcrumbs(user_label(@user))
+      true
     end
 
     def destroy_person_entity
