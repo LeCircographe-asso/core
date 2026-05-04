@@ -69,10 +69,11 @@ jobs:
           echo "Waiting for deploy-staging run for commit ${WANT_SHA}..."
           RUN_ID=""
           for _ in $(seq 1 90); do
+            # Match the run we just triggered via gh workflow run (push events may exist on staging from manual pushes).
             RUN_ID=$(gh run list --repo "$REPO" --workflow=deploy-staging.yml \
               --branch=staging --limit=30 \
               --json databaseId,headSha,event,status,createdAt \
-              --jq "[.[] | select(.headSha == \"$WANT_SHA\")] | sort_by(.createdAt) | reverse | if length > 0 then .[0].databaseId else empty end")
+              --jq "[.[] | select(.headSha == \"$WANT_SHA\" and .event == \"workflow_dispatch\")] | sort_by(.createdAt) | reverse | if length > 0 then .[0].databaseId else empty end")
             if [ -n "$RUN_ID" ]; then
               echo "Found deploy-staging run id=${RUN_ID}"
               break
