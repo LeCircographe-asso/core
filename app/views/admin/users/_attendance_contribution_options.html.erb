@@ -4,19 +4,20 @@
     Acheter une cotisation pour enregistrer la présence
   </h4>
   
+  <% contribution_formulas = local_assigns[:available_formulas] || [] %>
   <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-    <% available_plans.each do |plan| %>
+    <% contribution_formulas.each do |formula| %>
       <div class="bg-white rounded-lg p-3 border border-gray-200">
-        <h5 class="font-medium text-gray-900 text-sm"><%= plan.name %></h5>
-        <p class="text-xs text-gray-500 mb-2"><%= plan.duration_humanized %></p>
-        <div class="text-lg font-bold text-[#1F5C55] mb-2"><%= plan.price_euros %>€</div>
+        <h5 class="font-medium text-gray-900 text-sm"><%= formula.name %></h5>
+        <p class="text-xs text-gray-500 mb-2"><%= formula.duration_humanized %></p>
+        <div class="text-lg font-bold text-[#1F5C55] mb-2"><%= formula.price_euros %>€</div>
         
         <%= form_with url: admin_contribution_formulas_path, 
                       method: :post, 
                       scope: :contribution_formula,
                       data: { turbo_stream: true },
                       class: "space-y-2" do |form| %>
-          <%= form.hidden_field :contribution_formula_id, value: plan.id %>
+          <%= form.hidden_field :contribution_formula_id, value: formula.id %>
           <%= form.hidden_field :person_id, value: person.id %>
           <%= form.hidden_field :record_attendance, value: true %>
           <%= form.hidden_field :attendance_date, value: date %>

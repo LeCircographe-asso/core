@@ -4,11 +4,11 @@
     <div class="bg-gradient-to-r from-[#1F5C55] to-[#194A45] rounded-lg shadow-lg mb-6">
       <div class="px-6 py-4 flex justify-between items-center">
         <div>
-          <h1 class="text-2xl font-bold text-white">Liste des cotisations disponibles</h1>
-          <p class="text-green-100 mt-1">Gérer les cotisations et leurs prix</p>
+          <h1 class="text-2xl font-bold text-white">Formules de cotisation</h1>
+          <p class="text-green-100 mt-1">Catalogue des formules et tarifs (accès cirque)</p>
         </div>
         <div>
-          <%= link_to "Nouveau plan", new_admin_contribution_formula_path, 
+          <%= link_to "Nouvelle formule", new_admin_contribution_formula_path,
               class: "inline-flex items-center px-4 py-2 border border-white rounded-md shadow-sm text-sm font-medium text-[#1F5C55] bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-white" %>
         </div>
       </div>
@@ -40,7 +40,7 @@
                     <%= plan.rate_kind_humanized %>
                   </span>
                   <span class="text-sm text-gray-500">
-                    <%= pluralize(plan.contributions.count, 'carnet') %>
+                    <%= pluralize(plan.contributions.count, 'cotisation') %>
                   </span>
                 </div>
               </div>
@@ -104,7 +104,7 @@
                 <% if Current.user&.system_role == 'super_admin' %>
                   <%= button_to admin_contribution_formula_path(plan), 
                       method: :delete,
-                      form: { data: { turbo_confirm: "Êtes-vous sûr de vouloir supprimer ce plan de cotisation ?" } },
+                      form: { data: { turbo_confirm: "Êtes-vous sûr de vouloir supprimer cette formule de cotisation ?" } },
                       class: "inline-flex items-center px-3 py-2 text-sm font-medium text-red-600 bg-red-50 hover:bg-red-100 rounded-lg transition-colors duration-200",
                       title: "Supprimer" do %>
                     <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -164,7 +164,7 @@
                     <%= plan.rate_kind_humanized %>
                   </span>
                   <span class="text-sm text-gray-500">
-                    <%= pluralize(plan.contributions.count, 'carnet') %>
+                    <%= pluralize(plan.contributions.count, 'cotisation') %>
                   </span>
                 </div>
               </div>
@@ -228,7 +228,7 @@
                 <% if Current.user&.system_role == 'super_admin' %>
                   <%= button_to admin_contribution_formula_path(plan), 
                       method: :delete,
-                      form: { data: { turbo_confirm: "Êtes-vous sûr de vouloir supprimer ce plan de cotisation ?" } },
+                      form: { data: { turbo_confirm: "Êtes-vous sûr de vouloir supprimer cette formule de cotisation ?" } },
                       class: "inline-flex items-center px-3 py-2 text-sm font-medium text-red-600 bg-red-50 hover:bg-red-100 rounded-lg transition-colors duration-200",
                       title: "Supprimer" do %>
                     <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">

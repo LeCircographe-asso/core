@@ -5,7 +5,7 @@
 > **Dernière vérification** : 2026-05-01
 > **Sources de vérité** : `spec/`, `bin/test`, `bin/test_fast`, `spec/rails_helper.rb`, `.rspec`.
 
-> Vocabulaire : voir [`../glossary.md`](../glossary.md). Les noms de classes courants sont `ContributionFormula` et `Contribution`.
+> Vocabulaire : voir [`../glossary.md`](../glossary.md). Les exemples de code utilisent le vocabulaire canonique `ContributionFormula` / `Contribution`.
 
 Ce document remplace l'ancien trio `docs/TDD_GUIDE.md` + `docs/TESTING_GUIDE.md` + `docs/CHANGELOG_TDD_SETUP.md` qui s'étaient mis à diverger. Pour la priorisation par zones (Zone 1 / 2 / 3), se référer à [`../architecture/models.md`](../architecture/models.md#3-classification-par-zones).
 
@@ -101,8 +101,8 @@ it "prevents overlapping active memberships" do
 end
 
 it "requires price_cents to be greater than 0" do
-  plan = build(:contribution_formula, price_cents: 0)
-  expect(plan).not_to be_valid
+  formula = build(:contribution_formula, price_cents: 0)
+  expect(formula).not_to be_valid
 end
 ```
 
@@ -139,8 +139,8 @@ Documentent le comportement actuel, pas l'idéal.
 ```ruby
 # Comportement ACTUEL : Pack 10 n'expire jamais
 it "never expires for pack10 contributions" do
-  book = create(:book_of_entry, :pack10, expires_at: 1.year.ago)
-  expect(book.expired?).to be false
+  contribution = create(:contribution, :pack10, expires_at: 1.year.ago)
+  expect(contribution.expired?).to be false
 end
 ```
 

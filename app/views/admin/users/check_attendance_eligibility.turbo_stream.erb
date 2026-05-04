@@ -12,10 +12,10 @@
                  membership_type: @result.membership_type, 
                  date: @date %>
                    
-    <% elsif @result.needs_subscription? %>
+    <% elsif @result.needs_contribution_purchase? %>
       <%= render "admin/users/attendance_contribution_options",
                  person: @person,
-                 available_plans: @result.available_plans,
+                 available_formulas: @result.available_formulas,
                  date: @date %>
                    
     <% elsif @result.already_present? %>

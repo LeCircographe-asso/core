@@ -18,7 +18,8 @@ SEED_STEPS = [
   ["catalogue des formules de cotisation", "contribution_formulas.rb"],
   ["creation des evenements", "events.rb"],
   ["creation des parcours de test", "sample_people.rb"],
-  ["creation des adhesions et paiements", "add_memberships_and_payments.rb"]
+  ["creation des adhesions et paiements", "add_memberships_and_payments.rb"],
+  ["palette etats UI (showcase)", "ui_showcase.rb"]
 ].freeze
 
 SEED_LOGO_BRAILLE_FULL = [
@@ -120,7 +121,8 @@ if SEED_FAST_TEST
   seed_fast_tick("[2/4] OK — Personnes CRM & comptes web (création admin / bénévole / inscription web).")
 
   load_seed_file("add_memberships_and_payments.rb")
-  seed_fast_tick("[3/4] OK — Paiements & métier : adhésions, lignes de paiement, cotisations, dons, upgrades, scénarios doc.")
+  load_seed_file("ui_showcase.rb")
+  seed_fast_tick("[3/4] OK — Paiements & métier : adhésions, lignes de paiement, cotisations, dons, upgrades, scénarios doc + showcase UI.")
 
   seed_fast_tick("[4/4] OK — Seed terminée, récapitulatif ci-dessous.")
 else
@@ -148,4 +150,5 @@ SYSTEM_ACCOUNTS.each do |label, email, password|
   puts "  - #{label}: #{email} / #{password}"
 end
 puts "  - Utilisateurs web seed: *@example.com / password123"
+puts "  - Palette états UI: scenario.ui.*@example.com (voir db/seeds/ui_showcase.rb)"
 puts "\nOption: SEED_VERBOSE=true | SEED_FAST_TEST=true | SEED_TICK_SECONDS=1 | SEED_BULK_USERS_COUNT=N (opt-in, rb: bulk_users.rb)"
