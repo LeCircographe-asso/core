@@ -67,7 +67,7 @@ jobs:
             RUN_ID=$(gh run list --repo "$REPO" --workflow=deploy-production.yml \
               --branch=main --limit=30 \
               --json databaseId,headSha,event,status,createdAt \
-              --jq --arg sha "$WANT_SHA" '[.[] | select(.headSha == $sha)] | sort_by(.createdAt) | reverse | if length > 0 then .[0].databaseId else empty end')
+              --jq "[.[] | select(.headSha == \"$WANT_SHA\")] | sort_by(.createdAt) | reverse | if length > 0 then .[0].databaseId else empty end")
             if [ -n "$RUN_ID" ]; then
               echo "Found deploy-production run id=${RUN_ID}"
               break

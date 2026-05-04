@@ -9,8 +9,11 @@ fi
 # If running the rails server then create or migrate existing database
 if [ "${@: -2:1}" == "./bin/rails" ] && [ "${@: -1:1}" == "server" ]; then
   if [ "$RAILS_ENV" = "staging" ]; then
-    echo "[STAGING] Resetting database..."
-    ./bin/rails db:reset
+    # Staging: full reset on each web boot (drop → create → migrate → seed).
+    # db:reset uses schema:load; we want a clean migration pass + seeds (SQLite on volume).
+    echo "[STAGING] Full database reset (db:migrate:reset + db:seed)..."
+    ./bin/rails db:migrate:reset
+    ./bin/rails db:seed
   else
     ./bin/rails db:prepare
   fi
