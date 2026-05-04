@@ -5,7 +5,7 @@
 > **Dernière vérification** : 2026-05-01
 > **Sources de vérité** : `app/models/person.rb`, `app/models/user.rb`, `app/components/`, `app/services/people/`.
 
-> **Vocabulaire** : le composant a été renommé `contribution_status_badge_component` (cible). Les services `People::Subscription*` restent à renommer en `People::Contribution*` lors de la migration DB. Voir [`../glossary.md`](../glossary.md).
+> **Vocabulaire** : le composant `contribution_status_badge_component` et les services `People::Contribution*` sont la référence canonique. Voir [`../glossary.md`](../glossary.md).
 
 ## 📋 Vue d'Ensemble
 
@@ -39,7 +39,7 @@ Ce document consolide les bonnes pratiques et l'architecture mise en place lors 
 - **Création Person / User / Membership** : `People::Register`
 - **Rattachement User ↔ Person** : `People::AttachUserToPerson` ; **orchestration** : `People::AccountLinker`
 - **Achat adhésion** : `People::MembershipCreator`
-- **Achat cotisation** : `People::SubscriptionCreator` *(cible : `People::ContributionCreator`)*
+- **Achat cotisation** : `People::ContributionCreator`
 - **Mise à jour User + Person** : `UserManagement::UserUpdater`
 - **Paiement** : `People::PaymentCreator`, `People::PaymentUpdater`, `People::PaymentCanceller`
 

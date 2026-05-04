@@ -269,7 +269,7 @@
 |------------|-----------|---------------|--------------|
 | `AccountClaimsController` | ⭐⭐ | Workflow à finaliser | Après validation business |
 | `PasswordsController` | ⭐⭐ | Feature à stabiliser | Après validation business |
-| `Admin::SubscriptionPlansController` *(cible : `Admin::ContributionFormulasController`)* | ⭐⭐⭐ | Flux achat/upgrade via `People::Subscription*` *(cible : `People::Contribution*`)* | Après stabilisation |
+| `Admin::ContributionFormulasController` | ⭐⭐⭐ | Flux achat/upgrade via `People::Contribution*` | Après stabilisation |
 | `Admin::MemberNumbersController` | ⭐⭐ | Admin access | Après stabilisation |
 | `Admin::MembershipTypesController` | ⭐⭐⭐ | CRUD standard | Après stabilisation |
 | `Admin::DonationsController` | ⭐⭐ | CRUD simple | Après stabilisation |
