@@ -12,6 +12,7 @@ class Person < ApplicationRecord
   ].freeze
 
   has_one :user, dependent: :restrict_with_error
+  has_many :account_claims, dependent: :restrict_with_error
   has_many :memberships, dependent: :restrict_with_error
   has_many :payments, dependent: :restrict_with_error
   has_many :attendances, dependent: :destroy
