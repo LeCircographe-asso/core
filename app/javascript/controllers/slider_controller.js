@@ -19,7 +19,7 @@ export default class extends Controller {
     if (this.slider) return
 
     const defaultOptions = {
-      loop: true,
+      loop: false,
       slidesPerView: 1,
       spaceBetween: 16,
       navigation: {
@@ -42,15 +42,21 @@ export default class extends Controller {
     }
 
     const slideCount = this.element.querySelectorAll(".swiper-slide").length
-    const breakpointValues = Object.values(options.breakpoints || {}).map(cfg => cfg.slidesPerView || options.slidesPerView)
-    const maxSlidesPerView = Math.max(options.slidesPerView || 1, ...breakpointValues, 1)
+    const resolvedSlidesPerView = this.resolveSlidesPerView(options.slidesPerView)
+    const breakpointValues = Object.values(options.breakpoints || {}).map(cfg => this.resolveSlidesPerView(cfg.slidesPerView))
+    const maxSlidesPerView = Math.max(resolvedSlidesPerView, ...breakpointValues, 1)
 
-    if (slideCount <= maxSlidesPerView) {
+    if (options.loop && this.shouldDisableLoop(options, slideCount, maxSlidesPerView)) {
       options.loop = false
+    }
+
+    if (typeof options.slidesPerView === "number" && slideCount <= maxSlidesPerView) {
       options.slidesPerView = Math.min(options.slidesPerView || 1, slideCount || 1)
       if (options.breakpoints) {
         Object.keys(options.breakpoints).forEach(breakpoint => {
-          options.breakpoints[breakpoint].slidesPerView = Math.min(options.breakpoints[breakpoint].slidesPerView || 1, slideCount || 1)
+          if (typeof options.breakpoints[breakpoint].slidesPerView === "number") {
+            options.breakpoints[breakpoint].slidesPerView = Math.min(options.breakpoints[breakpoint].slidesPerView || 1, slideCount || 1)
+          }
         })
       }
     }
@@ -65,5 +71,17 @@ export default class extends Controller {
       this.slider.destroy(true, true)
       this.slider = null
     }
+  }
+
+  resolveSlidesPerView(value) {
+    return typeof value === "number" ? value : 1
+  }
+
+  shouldDisableLoop(options, slideCount, maxSlidesPerView) {
+    if (slideCount <= 1) return true
+    if (options.slidesPerView === "auto") {
+      return slideCount < 4
+    }
+    return slideCount <= maxSlidesPerView
   }
 }

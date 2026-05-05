@@ -4,24 +4,9 @@
  */
 import gsap from "../../../../vendor/javascript/gsap/index.js"
 import ScrollTrigger from "../../../../vendor/javascript/gsap/ScrollTrigger.js"
-import ScrollSmoother from "../../../../vendor/javascript/gsap/ScrollSmoother.js"
-import Flip from "../../../../vendor/javascript/gsap/Flip.js"
-import Observer from "../../../../vendor/javascript/gsap/Observer.js"
-import Draggable from "../../../../vendor/javascript/gsap/Draggable.js"
-import MotionPathPlugin from "../../../../vendor/javascript/gsap/MotionPathPlugin.js"
-import CustomEase from "../../../../vendor/javascript/gsap/CustomEase.js"
-import TextPlugin from "../../../../vendor/javascript/gsap/TextPlugin.js"
 
-gsap.registerPlugin(
-  ScrollTrigger,
-  ScrollSmoother,
-  Flip,
-  Observer,
-  Draggable,
-  MotionPathPlugin,
-  CustomEase,
-  TextPlugin
-)
+// Basique et lisible : on n'enregistre que les plugins réellement utilisés.
+gsap.registerPlugin(ScrollTrigger)
 
 const trackedContexts = []
 
@@ -45,9 +30,6 @@ function revertTrackedContexts () {
 function cleanupBeforeTurboCache () {
   revertTrackedContexts()
 
-  const smoother = ScrollSmoother.get()
-  if (smoother) smoother.kill()
-
   ScrollTrigger.getAll().forEach((st) => st.kill())
   ScrollTrigger.clearScrollMemory()
 
@@ -66,12 +48,5 @@ installGsapTurboLifecycle()
 
 export {
   gsap,
-  ScrollTrigger,
-  ScrollSmoother,
-  Flip,
-  Observer,
-  Draggable,
-  MotionPathPlugin,
-  CustomEase,
-  TextPlugin
+  ScrollTrigger
 }

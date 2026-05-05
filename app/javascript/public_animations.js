@@ -1,6 +1,6 @@
 /**
- * Animations GSAP « publiques » : stagger au scroll (ScrollTrigger), avec opt-out a11y.
- * Marqueurs : data-gsap-reveal sur un ancêtre, data-gsap-reveal-item sur chaque bloc à enchaîner
+ * Animations GSAP « publiques » : reveal simple au scroll (ScrollTrigger), avec opt-out a11y.
+ * Marqueurs : data-gsap-reveal sur un ancêtre, data-gsap-reveal-item sur chaque bloc à animer
  * (sinon : enfants directs :scope > *).
  */
 import { prefersReducedMotion } from "lib/gsap/animation_prefs"
@@ -28,7 +28,7 @@ function initPublicReveals () {
       const targets = resolveTargets(root)
       if (targets.length === 0) return
 
-      gsap.set(targets, { opacity: 0, y: 36 })
+      gsap.set(targets, { autoAlpha: 0, y: 24 })
 
       const st = ScrollTrigger.create({
         trigger: root,
@@ -36,11 +36,11 @@ function initPublicReveals () {
         once: true,
         onEnter: () => {
           gsap.to(targets, {
-            opacity: 1,
+            autoAlpha: 1,
             y: 0,
-            duration: 0.7,
-            stagger: { each: 0.11, from: "start" },
-            ease: "back.out(1.2)"
+            duration: 0.48,
+            ease: "power2.out",
+            overwrite: "auto"
           })
         }
       })

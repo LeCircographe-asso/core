@@ -103,8 +103,14 @@ export default class extends Controller {
     const headerHeight = this._headerOffset()
     const styles = window.getComputedStyle(section)
     const scrollMarginTop = parseFloat(styles.scrollMarginTop || "0") || 0
+    const sectionTop = section.getBoundingClientRect().top + window.scrollY - Math.max(headerHeight, scrollMarginTop)
 
-    return section.getBoundingClientRect().top + window.scrollY - Math.max(headerHeight, scrollMarginTop)
+    if (!this._heroSection) return sectionTop
+
+    const heroBottom = this._heroSection.getBoundingClientRect().bottom + window.scrollY
+    const heroExitTop = heroBottom - headerHeight + 24
+
+    return Math.max(sectionTop, heroExitTop)
   }
 
   _headerOffset () {

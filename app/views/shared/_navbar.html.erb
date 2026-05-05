@@ -1,5 +1,10 @@
+<% nav_ready = !(controller_name == "home" && action_name == "index") %>
 <%= turbo_frame_tag "navigation", target: "_top" do %>
-<nav class="bg-white border-gray-200 sticky top-0 z-50 py-2 sm:py-2.5" data-controller="nav-active">
+<nav class="site-navbar sticky top-0 z-50 py-2 sm:py-2.5"
+     data-controller="nav-active navbar-visibility"
+     data-nav-ready="<%= nav_ready %>"
+     data-navbar-visibility-threshold-value="18"
+     data-navbar-visibility-top-offset-value="12">
     <div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto px-4 sm:px-6 lg:px-8 xl:px-10 2xl:px-12 min-[844px]:flex-nowrap min-[844px]:gap-x-3">
         <!-- Logo and profile combined for mobile -->
         <div class="flex shrink-0 items-center justify-between w-full min-[844px]:w-auto min-[844px]:justify-start">

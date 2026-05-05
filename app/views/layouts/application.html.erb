@@ -31,13 +31,14 @@
     <%= javascript_importmap_tags %>
 
     <!-- External services -->
-    <script src="https://js.stripe.com/v3/"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <%= javascript_include_tag "flowbite.turbo.min", "data-turbo-track": "reload" %>
 </head>
 
 <body class="<%= 'dyslexic-font-enabled' if current_user&.dyslexic_font %> <%= controller_name %>-<%= action_name %> flex flex-col min-h-screen">
+    <% public_background_image = asset_path(content_for(:background_image) || 'background.webp') %>
+    <% public_background_style = "background-image: url('#{public_background_image}'); background-position: center; background-repeat: no-repeat; background-size: cover;" %>
 
 
     <% if controller_path.start_with?('admin/') %>
@@ -55,14 +56,14 @@
 
     <% elsif controller_name == 'sessions' && action_name == 'new' || controller_name == 'registrations' && action_name == 'new' || controller_name == 'pages' && action_name == 'terms' || controller_name == 'pages' && action_name == 'privacy_policy' %>
     
-    <div class="flex min-h-[100dvh] flex-col w-full overflow-x-hidden">
+    <div class="public-app-shell flex min-h-[100dvh] flex-col w-full overflow-x-hidden bg-no-repeat bg-cover bg-center parallax-bg" style="<%= public_background_style %>">
         <header>
             <%= render 'shared/navbar' %>
         </header>
         <%= turbo_frame_tag ProfileSectionDomIds::FLASH_FRAME do %>
         <%= render 'shared/flash' %>
         <% end %>
-        <main class="flex-1 min-h-0">
+        <main class="flex-1 min-h-0 pt-20 sm:pt-24">
             <div class="w-full" data-turbo-page-shell>
             <%= yield %>
             </div>
@@ -74,11 +75,11 @@
     <header>
         <%= render 'shared/navbar' %>
     </header>
-    <div class="flex-grow bg-no-repeat bg-cover bg-center <%= 'parallax-bg' if controller_name == 'home' && action_name == 'index' %>" style="background-image: url('<%= asset_path(content_for(:background_image) || 'background.webp') %>'); background-position: center; background-repeat: no-repeat; background-size: cover;">
+    <div class="public-app-shell flex-grow bg-no-repeat bg-cover bg-center parallax-bg" style="<%= public_background_style %>">
         <%= turbo_frame_tag ProfileSectionDomIds::FLASH_FRAME do %>
         <%= render 'shared/flash' %>
         <% end %>
-        <main class="page-container space-y-6 <%= controller_name == 'home' && action_name == 'index' ? 'pt-0' : 'pt-8' %>">
+        <main class="page-container space-y-6 <%= controller_name == 'home' && action_name == 'index' ? 'pt-0' : 'pt-20 sm:pt-24' %>">
         <%# data-turbo-page-shell : transition GSAP au changement de page (turbo_page_reveal.js) %>
         <div class="w-full" data-turbo-page-shell>
             <%= yield %>

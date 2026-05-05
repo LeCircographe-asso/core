@@ -2,34 +2,33 @@
 <% content_for :background_image, "background.webp" %>
 
 <div class="relative w-full" data-home-animations-scope>
-  <section class="relative w-full min-h-[calc(100dvh-3.6rem)] sm:min-h-[calc(100dvh-4.2rem)] flex flex-col items-center justify-start px-4 sm:px-6 md:px-10 lg:px-12 pt-[4.5rem] sm:pt-28 md:pt-[min(7.5rem,13vh)] pb-16 sm:pb-20 text-center">
-    <div class="flex w-full max-w-full min-w-0 flex-col items-center gap-5 sm:gap-7 md:gap-8 -translate-y-5 sm:-translate-y-8">
+  <section class="relative w-full min-h-[100svh] sm:min-h-[100dvh] flex flex-col items-center justify-center px-4 sm:px-6 md:px-10 lg:px-12 pt-16 sm:pt-20 pb-16 sm:pb-20 text-center">
+    <div class="home-hero-stack flex w-full max-w-full min-w-0 flex-col items-center gap-5 sm:gap-7 md:gap-8">
       <p class="hero-kicker opacity-0 text-xs font-semibold uppercase tracking-[0.38em] text-white/75 sm:text-sm">
         Toulouse · Cirque · Atelier · Vie associative
       </p>
       <h1 id="title" class="text-shadow-hero font-circographe w-full max-w-[min(100%,44rem)] min-w-0 whitespace-normal break-words text-[clamp(2.75rem,7vw+0.85rem,4.5rem)] font-bold text-white max-sm:tracking-[0.03em] tracking-[0.06em] md:tracking-[0.08em] leading-[1.08] max-sm:leading-[1.06] sm:leading-tight opacity-0 transition-opacity duration-500 [overflow-wrap:anywhere]">Le Circographe</h1>
-      <p class="hero-intro max-w-[min(100%,30rem)] text-pretty px-2 text-sm leading-6 text-white/90 opacity-0 sm:px-0 sm:text-base md:text-lg">
-        Un lieu vivant pour s'entraîner et se rencontrer.
-      </p>
 
       <div class="main-button home-hero-actions">
-      <%= link_to "Découvrir l'association", page_path('association'),
-                  class: "home-hero-action home-hero-action--primary" %>
-      <%= link_to "Nous trouver", page_path("contact_us", anchor: "map"),
-                  class: "home-hero-action home-hero-action--secondary" %>
+        <%= link_to "Découvrir l'association", page_path('association'),
+                    class: "home-hero-action home-hero-action--primary" %>
+        <%= link_to "Nous trouver", page_path("contact_us", anchor: "map"),
+                    class: "home-hero-action home-hero-action--secondary" %>
+      </div>
+
+      <div class="home-hero-placeholder opacity-0" aria-hidden="true">
+        <span class="home-hero-placeholder__label">Animation visuelle à venir</span>
       </div>
     </div>
-
-    <%= render "shared/scroll_hint_arrow", section_id: "main-content", position_class: "absolute bottom-24 sm:bottom-28 md:bottom-32 left-1/2 -translate-x-1/2" %>
   </section>
 
   <section class="w-full px-4 sm:px-6 lg:px-8 flex justify-center">
-    <div id="main-content" class="w-full max-w-5xl space-y-12 mt-12 sm:mt-16 transition-opacity duration-500">
+    <div id="main-content" class="w-full max-w-5xl space-y-12 mt-12 sm:mt-16 scroll-mt-24 sm:scroll-mt-28 transition-opacity duration-500">
       <section class="relative bg-transparent" aria-labelledby="community-highlights">
         <h2 id="community-highlights" class="sr-only">Informations clés</h2>
 
-        <div class="grid gap-8 lg:gap-10 lg:grid-cols-[minmax(0,1.7fr)_minmax(0,1fr)] items-start" data-gsap-reveal>
-          <article class="home-hours-card" data-gsap-reveal-item>
+        <div class="grid gap-8 lg:gap-10 lg:grid-cols-[minmax(0,1.7fr)_minmax(0,1fr)] items-start">
+          <article class="home-hours-card">
             <header class="space-y-2 sm:space-y-3 text-center lg:text-left">
               <p class="text-sm uppercase tracking-[0.35em] text-white/75">Horaires</p>
               <h2 id="opening-hours" class="scroll-mt-24 sm:scroll-mt-28 text-xl sm:text-3xl font-semibold leading-snug">Quand passer nous voir ?</h2>
@@ -70,7 +69,7 @@
             </section>
           </article>
 
-          <div class="flex flex-col gap-5" data-gsap-reveal-item>
+          <div class="flex flex-col gap-5">
             <turbo-frame id="events_upcoming" loading="lazy" src="<%= upcoming_events_path %>" class="block">
           <%= render "home/upcoming_events", events: @upcoming_events %>
         </turbo-frame>
