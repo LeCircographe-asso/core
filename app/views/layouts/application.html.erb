@@ -55,14 +55,14 @@
 
     <% elsif controller_name == 'sessions' && action_name == 'new' || controller_name == 'registrations' && action_name == 'new' || controller_name == 'pages' && action_name == 'terms' || controller_name == 'pages' && action_name == 'privacy_policy' %>
     
-    <div class="flex min-h-[100dvh] flex-col w-full overflow-x-hidden">
+    <div class="flex h-[100dvh] flex-col w-full overflow-hidden">
         <header>
             <%= render 'shared/navbar' %>
         </header>
         <%= turbo_frame_tag ProfileSectionDomIds::FLASH_FRAME do %>
         <%= render 'shared/flash' %>
         <% end %>
-        <main class="flex-1 min-h-0">
+        <main class="flex-1 min-h-0 overflow-y-auto">
             <div class="w-full" data-turbo-page-shell>
             <%= yield %>
             </div>
