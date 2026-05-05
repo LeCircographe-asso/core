@@ -33,7 +33,7 @@
     </h2>
     <% if is_deleted %>
       <p class="text-red-500 text-xs mt-1">
-        Compte supprimé le <%= user.deleted_at.strftime("%d/%m/%Y à %H:%M") %>
+        Compte supprimé le <%= user&.deleted_at&.strftime("%d/%m/%Y à %H:%M") %>
       </p>
     <% end %>
   </div>
