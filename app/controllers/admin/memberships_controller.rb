@@ -21,7 +21,7 @@ module Admin
 
     def new
       unless params[:person_id].present?
-        redirect_to admin_users_path, alert: "Sélectionnez une personne avant de créer une adhésion." and return
+        redirect_to admin_members_path, alert: "Sélectionnez une personne avant de créer une adhésion." and return
       end
 
       @person = Person.find(params[:person_id])

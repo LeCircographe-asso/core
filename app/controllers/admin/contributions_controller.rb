@@ -23,7 +23,7 @@ module Admin
     end
 
     def admin_person_path(person)
-      admin_user_path(Admin::Users::PersonRouteKey.call(person))
+      admin_member_path(person)
     end
 
     def build_contribution_upgrader

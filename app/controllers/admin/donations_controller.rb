@@ -39,7 +39,7 @@ module Admin
         @person = @user.person
         true
       else
-        redirect_to admin_users_path, alert: I18n.t("admin.donations.new.missing_person")
+        redirect_to admin_members_path, alert: I18n.t("admin.donations.new.missing_person")
         false
       end
     end

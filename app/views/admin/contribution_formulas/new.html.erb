@@ -238,7 +238,7 @@
         <% if @person.present? %>
           <div class="mt-6 border-t border-gray-200 pt-6">
             <%= link_to "← Retour à la fiche",
-                admin_user_path(Admin::Users::PersonRouteKey.call(@person)),
+                admin_member_path(@person),
                 class: "inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50" %>
           </div>
         <% end %>

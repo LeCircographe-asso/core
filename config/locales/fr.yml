@@ -189,6 +189,53 @@ fr:
           processed: Paiement traité avec succès
           already_processed: Paiement déjà traité
           failure_alert: 'Erreur lors du traitement: %{message}'
+    members:
+      create:
+        invalid_data_alert: 'Données invalides : %{details}'
+        success_person_user_membership: Personne, compte web et adhésion créés avec succès !
+        success_person_user: Personne et compte web créés avec succès !
+        success_person_membership: Personne et adhésion créées avec succès !
+        success_person_only: Personne créée avec succès !
+        error_existing_web_account: Cette personne a déjà un compte web.
+        error_email_required: Un email est obligatoire pour créer un compte web.
+      show:
+        merged_person_notice: Cette fiche a été fusionnée avec une autre. Retour à la liste.
+      edit:
+        person_not_found: Personne non trouvée.
+      update:
+        person_saved_notice: Informations mises à jour avec succès.
+        ajax_success_json_message: Informations mises à jour avec succès.
+        html_updated: Membre mis à jour avec succès.
+        turbo_notice: Membre mis à jour avec succès.
+      destroy:
+        person_not_found_alert: Personne non trouvée.
+        person_deleted_notice: Personne supprimée avec succès.
+        destruction_failed_alert_html: "❌ %{message}"
+      restore:
+        restored_notice: Compte web restauré avec succès.
+        restore_failed_alert: Impossible de restaurer ce compte.
+      create_web_account:
+        web_account_created: Compte web dormant créé. La personne pourra se connecter en utilisant son email.
+        web_account_already_exists: Cette personne a déjà un compte web.
+        email_required_for_web_account: Un email est obligatoire pour créer un compte web. Renseignez-le d'abord dans le profil.
+      check_deletion_permissions:
+        higher_privileges: Impossible de supprimer un membre avec des privilèges égaux ou supérieurs.
+      require_super_admin:
+        restore_denied_alert: Seul le super-admin peut restaurer des comptes.
+      payments:
+        create:
+          success: Paiement créé avec succès
+          failure_alert: 'Erreur lors de la création du paiement: %{message}'
+        update:
+          success: Paiement mis à jour avec succès
+          failure_alert: 'Erreur lors de la mise à jour: %{message}'
+        destroy:
+          destroyed: Paiement supprimé avec succès
+          failure_alert: 'Erreur lors de la suppression: %{message}'
+        process_payment:
+          processed: Paiement traité avec succès
+          already_processed: Paiement déjà traité
+          failure_alert: 'Erreur lors du traitement: %{message}'
   checkout:
     success:
       payment_ok: Paiement réussi et commande mise à jour.
@@ -451,6 +498,10 @@ fr:
         members_list: Liste d'adhérents
         create_web_account: Créer un compte web
         new_member: Nouvel adhérent
+      members:
+        members_list: Liste d'adhérents
+        create_web_account: Créer un compte web
+        new_member: Nouvel adhérent
       memberships:
         management: Gestion des Adhésions
         membership: Adhésion
@@ -552,6 +603,30 @@ fr:
           page_title: Créer un nouvel utilisateur
           page_subtitle: Ajoutez un nouvel utilisateur au système
           user_information: Informations de l'utilisateur
+          create_web_account: Créer un compte web
+          create_web_account_help: Permettre à cette personne de se connecter et gérer son profil en ligne
+          system_role: Rôle système
+          roles:
+            web_visitor: Visiteur web
+            volunteer: Bénévole
+            admin: Administrateur
+          temporary_password_notice: Un mot de passe temporaire sera généré et envoyé par email
+        index:
+          page_title: Gestion des Adhérents
+          page_subtitle: Interface unifiée pour gérer les personnes, adhésions et cotisations
+          statistics: Statistiques
+          total_people: Total personnes
+          new_yesterday: Nouveaux (hier)
+          basic_memberships: Adhésions Basic
+          circus_memberships: Adhésions Circus
+          active_memberships: Adhésions actives
+          without_account: Sans compte
+          create_member: Créer un Adhérent
+      members:
+        new:
+          page_title: Nouvel adhérent
+          page_subtitle: Ajoutez un nouvel adhérent au système
+          user_information: Informations de l'adhérent
           create_web_account: Créer un compte web
           create_web_account_help: Permettre à cette personne de se connecter et gérer son profil en ligne
           system_role: Rôle système

@@ -12,12 +12,11 @@ Rails.application.routes.draw do
       query.present? ? "/admin/donations/new?#{query}" : "/admin/donations/new"
     }
     resources :donations, only: %i[new create]
-    resources :users do
+    resources :members, controller: "members" do
       post :restore, on: :member
       post :create_web_account, on: :member
-      # Actions pour gérer Person
       get :edit_person, on: :member
-      resources :payments, module: :users, only: %i[index new create show update destroy] do
+      resources :payments, module: :members, only: %i[index new create show update destroy] do
         post :process_payment, on: :member
       end
     end

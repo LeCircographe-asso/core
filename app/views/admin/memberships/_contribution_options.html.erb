@@ -19,7 +19,7 @@
           </div>
           
           <div class="mt-4">
-            <%= form_with url: admin_user_path(Admin::Users::PersonRouteKey.call(@person)), method: :post, local: true do |form| %>
+            <%= form_with url: admin_member_path(@person), method: :post, local: true do |form| %>
               <%= form.hidden_field :contribution_formula_id, value: contribution_formula.id %>
               <%= form.hidden_field :payment_method, value: 'cash' %>
               <%= form.submit "Acheter", 
