@@ -38,9 +38,9 @@ Keep these rules to avoid breaking the asset pipeline.
 
 7) CDN policy
 - No CDN for Flowbite. External CDNs allowed: Stripe, Font Awesome, Swiper.
-- **GSAP 3** : servi en local via `config/importmap.rb` + répertoire `vendor/javascript/gsap` (paquet npm complet, **pas** de fichiers aplatis JSPM uniques — les imports relatifs du package le requièrent). Point d’entrée applicatif : `app/javascript/lib/gsap/register.js` (`gsap.registerPlugin` unique, `turbo:before-cache` pour `context` / ScrollTrigger / ScrollSmoother). **Pas de CDN GSAP.**
+- **GSAP 3** : **un seul module ESM** servi via importmap (`vendor/javascript/gsap-bootstrap.js`), regénéré avec `bundle exec rake gsap:bootstrap` (*esbuild*) à partir des sources réduites sous `vendor/javascript/gsap/` (≈15 fichiers — uniquement le graphe d’imports du bootstrap ; pas tout le tarball npm). **Pourquoi bundle** : avec Propshaft, les imports relatifs multi-fichiers GSAP **404** sans fichier unique. Entrée du bundle : `app/javascript/lib/gsap/register.esbuild-entry.js`. **Pas de CDN GSAP.**
 - Préférence d’accessibilité partagée : `app/javascript/lib/gsap/animation_prefs.js` (`prefersReducedMotion`), aligné sur `home_animations.js`.
-- **Migration progressive** : ne pas remplacer d’un coup `home_animations.js` / `global_animations.js` ; utiliser `gsapScoped` / `trackGsapContext` pour les nouveaux blocs ou les Stimulus ciblés lorsque le bootstrap est utilisé.
+- **Migration progressive** : accueil — titre lettre à lettre + apparitions bouton / flèche via GSAP dans `gsapScoped` (scope `data-home-animations-scope` sur le shell home). **`public_animations.js`** : blocs `data-gsap-reveal` + enfants `data-gsap-reveal-item` pour stagger au scroll (ScrollTrigger, `prefers-reduced-motion` respecté). **`turbo_page_reveal.js`** : à chaque `turbo:load`, entrée du contenu `[data-turbo-page-shell]` (flou + translation, plus fort sur mobile ; désactivé sur `home#index` et admin). Garder `global_animations.js` pour les `.fade-in` restants ; prolonger avec `trackGsapContext` pour les blocs ou Stimulus ciblés.
 
 8) Troubleshooting
 - If styles vanish: ensure `bin/dev` is running; check app/assets/builds/tailwind.css.

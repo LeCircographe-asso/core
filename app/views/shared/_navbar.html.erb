@@ -4,7 +4,7 @@
         <!-- Logo and profile combined for mobile -->
         <div class="flex shrink-0 items-center justify-between w-full min-[844px]:w-auto min-[844px]:justify-start">
             <!-- Logo -->
-            <%= link_to root_path, class: "flex shrink-0 select-none items-center", data: { 'nav-active-target': 'link', 'nav-active-path': root_path, 'nav-active-active-classes': 'nav-active-link', 'nav-active-starts-with': 'true' } do %><%= image_tag("logo.webp", alt: "le-circographe Logo", class: "w-40 h-auto min-[844px]:w-36 xl:w-40") %><% end %>
+            <%= link_to root_path, class: "flex shrink-0 select-none items-center caret-transparent overflow-hidden rounded-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1F5C55]", data: { 'nav-active-target': 'link', 'nav-active-path': root_path, 'nav-active-active-classes': 'nav-active-link', 'nav-active-starts-with': 'true' } do %><%= image_tag("logo.webp", alt: "le-circographe Logo", class: "block h-auto w-40 min-[844px]:w-36 xl:w-40") %><% end %>
 
             <!-- Elements grouped on the right for mobile -->
             <div class="flex items-center min-[844px]:hidden">

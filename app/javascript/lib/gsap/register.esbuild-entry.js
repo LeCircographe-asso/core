@@ -1,16 +1,16 @@
 /**
- * GSAP 3 (vendor/javascript/gsap, npm 3.15.0) — enregistrement unique des plugins + cycle de vie Turbo.
- * Pas de CDN : voir docs/development/assets.md.
+ * Entrée esbuild uniquement — regénérer : bundle exec rake gsap:bootstrap
+ * Ne pas importer ce fichier depuis l’app ; utiliser importmap → gsap-bootstrap.js
  */
-import gsap from "gsap"
-import ScrollTrigger from "gsap/ScrollTrigger"
-import ScrollSmoother from "gsap/ScrollSmoother"
-import Flip from "gsap/Flip"
-import Observer from "gsap/Observer"
-import Draggable from "gsap/Draggable"
-import MotionPathPlugin from "gsap/MotionPathPlugin"
-import CustomEase from "gsap/CustomEase"
-import TextPlugin from "gsap/TextPlugin"
+import gsap from "../../../../vendor/javascript/gsap/index.js"
+import ScrollTrigger from "../../../../vendor/javascript/gsap/ScrollTrigger.js"
+import ScrollSmoother from "../../../../vendor/javascript/gsap/ScrollSmoother.js"
+import Flip from "../../../../vendor/javascript/gsap/Flip.js"
+import Observer from "../../../../vendor/javascript/gsap/Observer.js"
+import Draggable from "../../../../vendor/javascript/gsap/Draggable.js"
+import MotionPathPlugin from "../../../../vendor/javascript/gsap/MotionPathPlugin.js"
+import CustomEase from "../../../../vendor/javascript/gsap/CustomEase.js"
+import TextPlugin from "../../../../vendor/javascript/gsap/TextPlugin.js"
 
 gsap.registerPlugin(
   ScrollTrigger,
@@ -23,7 +23,6 @@ gsap.registerPlugin(
   TextPlugin
 )
 
-/** Contextes créés via gsapScoped / trackGsapContext — revert avant mise en cache Turbo */
 const trackedContexts = []
 
 export function trackGsapContext (ctx) {
@@ -31,7 +30,6 @@ export function trackGsapContext (ctx) {
   return ctx
 }
 
-/** Wrapper recommandé autour des animations par page ou bloc (revert groupé sur before-cache). */
 export function gsapScoped (setup, scope) {
   const ctx = gsap.context(setup, scope)
   trackedContexts.push(ctx)
