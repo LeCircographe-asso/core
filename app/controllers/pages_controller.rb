@@ -10,7 +10,7 @@ class PagesController < ApplicationController
   # Matches app/views/pages/*.html.erb (slug must not be user-controlled for render path)
   ALLOWED_PAGE_IDS = %w[
     about association become_member blog_newsletter circus_details contact_us faq gallery
-    graphic_arts_details news newsletter_unsubscribe_success privacy_policy terms
+    graphic_arts_details news newsletter_unsubscribe_success privacy_policy terms white_page
   ].freeze
 
   def show

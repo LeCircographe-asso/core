@@ -32,4 +32,4 @@
 - [ ] Garder une seule autorité de scroll par shell pour éviter les scrollbar parasites et les layouts imbriqués qui se battent entre eux.
 - [ ] Éviter de remettre de la logique de hauteur / overflow globale dans les sous-vues une fois qu’un layout ou shell la porte déjà.
 - [ ] Viser un niveau de HTML / CSS / Tailwind suffisamment propre pour faire varier les layouts selon les contextes d’appareil sans empiler les exceptions.
-- [ ] Garder des primitives assez stables pour accueillir plus tard GSAP 3 comme couche d’animation, sans devoir refaire la structure des pages.
+- [x] Garder des primitives assez stables pour accueillir plus tard GSAP 3 comme couche d’animation, sans devoir refaire la structure des pages. *(Infra + hero accueil : `home_animations.js` → GSAP / `gsapScoped`, scope `data-home-animations-scope` ; détail `docs/development/assets.md`.)*
