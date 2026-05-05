@@ -76,6 +76,8 @@ fr:
       destroy:
         destroyed: Type d'adhésion supprimé avec succès !
     memberships:
+      new:
+        person_required_alert: Sélectionnez une personne avant de créer une adhésion.
       update:
         success: Adhésion mise à jour avec succès.
       destroy:
