@@ -1,4 +1,7 @@
-name: ci-docker-build
+name: ci-docker-cache-warm
+
+# Build Docker complet sans push pour vérifier le container et alimenter le cache GHA.
+# Ce workflow ne produit pas d'artefact promu vers staging.
 
 on:
   push:
@@ -10,7 +13,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: ci-docker-build-${{ github.workflow }}-${{ github.ref }}
+  group: ci-docker-cache-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
@@ -46,14 +49,15 @@ jobs:
               - 'Rakefile'
               - '.github/workflows/**'
 
-  docker-build-check:
+  docker-cache-warm:
     needs: changes
     if: needs.changes.outputs.code == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
       - uses: docker/setup-buildx-action@v4
-      - uses: docker/build-push-action@v7
+      - name: Warm Docker cache with a full build check
+        uses: docker/build-push-action@v7
         with:
           context: .
           push: false

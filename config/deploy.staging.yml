@@ -3,8 +3,8 @@ service: circographe-staging
 # org/repo only — registry.server (ghcr.io) prefixes this; avoid ghcr.io/ghcr.io/... in image refs.
 image: lecircographe-asso/circographe-staging
 
-# Kamal attend que le healthcheck réponde après boot ; staging fait migrate:reset + seed au démarrage.
-deploy_timeout: 260
+# Le conteneur web doit boot vite ; les migrations passent via db:prepare au démarrage.
+deploy_timeout: 180
 
 # Serveur VPS Ionos
 servers:
@@ -52,8 +52,15 @@ env:
     JOB_CONCURRENCY: 1
     RAILS_LOG_LEVEL: info
 
-# Reset BDD staging : au démarrage du conteneur web, `bin/docker-entrypoint`
-# exécute `db:migrate:reset` puis `db:seed` (SQLite sous volume `circographe_staging_storage`).
+# Alias utiles pour staging volatile : reset manuel quand vous voulez reconstruire les données.
+aliases:
+  console: app exec --interactive --reuse "bin/rails console"
+  shell: app exec --interactive --reuse "bash"
+  logs: app logs -f
+  prepare_db: app exec --reuse "bin/rails db:prepare"
+  reset_db: app exec --reuse "sh -lc 'bin/rails db:migrate:reset && bin/rails db:seed'"
+
+# La BDD staging reste volatile, mais le reset/seed ne doit plus bloquer le boot du web.
 
 # Volumes pour les logs et données (staging)
 volumes:
