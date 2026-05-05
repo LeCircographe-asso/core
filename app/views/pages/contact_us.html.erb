@@ -68,11 +68,60 @@
     </p>
 
     <%= turbo_frame_tag "map" do %>
-      <article id="map" class="public-surface p-6 sm:p-8 space-y-4">
-        <p class="text-sm uppercase tracking-[0.3em] text-[#1F5C55]/70">Nous trouver</p>
-        <h2 class="text-2xl font-semibold text-gray-800">Le Circographe sur la carte</h2>
-        <%# Carte responsive (hauteur clamp) — passer height: N uniquement si besoin d’un px fixe %>
-        <%= render "shared/map_embed" %>
+      <article id="map" class="contact-location-panel">
+        <header class="contact-location-panel__header">
+          <p class="contact-location-panel__eyebrow">Nous trouver</p>
+          <h2 class="contact-location-panel__title">Accès rapide, adresse et repère sur la carte</h2>
+          <p class="contact-location-panel__copy">
+            Un seul bloc pour comprendre où se situe le lieu, préparer ton trajet et ouvrir directement ton application GPS.
+          </p>
+        </header>
+
+        <div class="contact-location-panel__body">
+          <div class="contact-location-panel__info">
+            <section class="contact-location-panel__card contact-location-panel__card--primary">
+              <p class="contact-location-panel__card-label contact-location-panel__card-label--primary">Adresse</p>
+              <p class="contact-location-panel__address">97 bis boulevard de Suisse, 31200 Toulouse</p>
+              <p class="contact-location-panel__details">
+                Entrée côté boulevard, à proximité immédiate du périphérique intérieur et du secteur Ernest-Wallon.
+              </p>
+
+              <div class="contact-location-panel__actions">
+                <%= link_to "Ouvrir l'itinéraire", "https://www.google.com/maps/dir/?api=1&destination=#{ERB::Util.url_encode('97 bis boulevard de Suisse, 31200 Toulouse')}",
+                            target: "_blank",
+                            rel: "noopener",
+                            class: "contact-location-panel__cta contact-location-panel__cta--primary" %>
+                <%= link_to "Voir la page contact complète", page_path("contact_us", anchor: "contact-form"),
+                            class: "contact-location-panel__cta contact-location-panel__cta--secondary" %>
+              </div>
+            </section>
+
+            <section class="contact-location-panel__card contact-location-panel__card--secondary">
+              <p class="contact-location-panel__card-label contact-location-panel__card-label--accent">Accès</p>
+              <ul class="contact-location-panel__meta-list">
+                <li class="contact-location-panel__meta-item">
+                  <span aria-hidden="true">•</span>
+                  <span>Bus 15 (Tisséo) : dessert le boulevard de Suisse sur toute sa longueur.</span>
+                </li>
+                <li class="contact-location-panel__meta-item">
+                  <span aria-hidden="true">•</span>
+                  <span>Choisis l’arrêt selon ton sens de marche, puis remonte le boulevard jusqu’au numéro 97 bis.</span>
+                </li>
+                <li class="contact-location-panel__meta-item">
+                  <span aria-hidden="true">•</span>
+                  <span>Sur mobile, le bouton itinéraire ouvre directement ton navigateur GPS.</span>
+                </li>
+              </ul>
+            </section>
+          </div>
+
+          <div class="contact-location-panel__map-wrap">
+            <%= render "shared/map_embed",
+                       caption: "Repère visuel du Circographe sur le secteur nord de Toulouse, pour situer rapidement le boulevard de Suisse et son environnement immédiat.",
+                       caption_class: "contact-location-panel__map-caption",
+                       shell_classes: "h-[clamp(320px,54vw,560px)] min-h-[320px] lg:h-[min(62vh,560px)]" %>
+          </div>
+        </div>
       </article>
     <% end %>
   </div>

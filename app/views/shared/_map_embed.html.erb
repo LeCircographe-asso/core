@@ -5,9 +5,11 @@
   lng = local_assigns.fetch(:lng, 1.4223463)
   zoom = local_assigns.fetch(:zoom, 17)
   fixed_height_px = local_assigns[:height]
+  custom_shell_classes = local_assigns[:shell_classes]
   shell_classes = %w[
     leaflet-map-shell rounded-2xl overflow-hidden border border-gray-200 shadow-inner w-full bg-gray-100
   ]
+  shell_classes.concat(custom_shell_classes.split(/\s+/)) if custom_shell_classes.present?
   shell_style = nil
   if fixed_height_px.present?
     shell_style = "height: #{fixed_height_px.to_i}px;"
@@ -26,5 +28,5 @@
     aria-label="Carte interactive — 97 bis Boulevard de Suisse, Toulouse"></div>
 </div>
 <% if caption.present? %>
-  <p class="text-sm text-gray-500 mt-3"><%= caption %></p>
+  <p class="<%= local_assigns[:caption_class].presence || 'text-sm text-gray-500 mt-3' %>"><%= caption %></p>
 <% end %>

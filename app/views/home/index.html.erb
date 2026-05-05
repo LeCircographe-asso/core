@@ -7,16 +7,16 @@
       <p class="hero-kicker opacity-0 text-xs font-semibold uppercase tracking-[0.38em] text-white/75 sm:text-sm">
         Toulouse · Cirque · Atelier · Vie associative
       </p>
-      <h1 id="title" class="font-circographe w-full max-w-[min(100%,44rem)] min-w-0 whitespace-normal break-words text-[clamp(2.75rem,7vw+0.85rem,4.5rem)] font-bold text-white max-sm:tracking-[0.03em] tracking-[0.06em] md:tracking-[0.08em] leading-[1.08] max-sm:leading-[1.06] sm:leading-tight opacity-0 transition-opacity duration-500 [overflow-wrap:anywhere]">Le Circographe</h1>
+      <h1 id="title" class="text-shadow-hero font-circographe w-full max-w-[min(100%,44rem)] min-w-0 whitespace-normal break-words text-[clamp(2.75rem,7vw+0.85rem,4.5rem)] font-bold text-white max-sm:tracking-[0.03em] tracking-[0.06em] md:tracking-[0.08em] leading-[1.08] max-sm:leading-[1.06] sm:leading-tight opacity-0 transition-opacity duration-500 [overflow-wrap:anywhere]">Le Circographe</h1>
       <p class="hero-intro max-w-[min(100%,30rem)] text-pretty px-2 text-sm leading-6 text-white/90 opacity-0 sm:px-0 sm:text-base md:text-lg">
         Un lieu vivant pour s'entraîner et se rencontrer.
       </p>
 
-      <div class="main-button flex flex-col items-center gap-3 opacity-0 transition-opacity duration-500 sm:flex-row">
+      <div class="main-button home-hero-actions">
       <%= link_to "Découvrir l'association", page_path('association'),
-                  class: "inline-flex min-w-[15rem] items-center justify-center px-5 py-3 text-base font-semibold rounded-full border-2 border-white/85 bg-white/95 text-gray-900 shadow-md transition-colors duration-300 hover:bg-[#1F5C55] hover:text-white hover:border-[#1F5C55] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1F5C55] sm:px-8 sm:py-4 sm:text-lg" %>
-      <%= link_to "Voir les horaires", "#opening-hours",
-                  class: "inline-flex min-w-[15rem] items-center justify-center rounded-full border border-white/55 bg-white/10 px-5 py-3 text-base font-medium text-white backdrop-blur-sm transition-colors duration-300 hover:bg-white/20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white sm:px-8 sm:py-4 sm:text-lg" %>
+                  class: "home-hero-action home-hero-action--primary" %>
+      <%= link_to "Nous trouver", page_path("contact_us", anchor: "map"),
+                  class: "home-hero-action home-hero-action--secondary" %>
       </div>
     </div>
 
@@ -29,40 +29,40 @@
         <h2 id="community-highlights" class="sr-only">Informations clés</h2>
 
         <div class="grid gap-8 lg:gap-10 lg:grid-cols-[minmax(0,1.7fr)_minmax(0,1fr)] items-start" data-gsap-reveal>
-          <article class="relative overflow-hidden rounded-[32px] bg-gradient-to-br from-[#0C2F2B] via-[#194A45] to-brand-primary text-white shadow-2xl p-5 sm:p-8 lg:p-10" data-gsap-reveal-item>
+          <article class="home-hours-card" data-gsap-reveal-item>
             <header class="space-y-2 sm:space-y-3 text-center lg:text-left">
               <p class="text-sm uppercase tracking-[0.35em] text-white/75">Horaires</p>
-              <h2 id="opening-hours" class="text-xl sm:text-3xl font-semibold leading-snug">Quand passer nous voir ?</h2>
+              <h2 id="opening-hours" class="scroll-mt-24 sm:scroll-mt-28 text-xl sm:text-3xl font-semibold leading-snug">Quand passer nous voir ?</h2>
               <p class="text-sm sm:text-base text-white/80 max-w-2xl mx-auto lg:mx-0 leading-snug">
                 Retrouve les créneaux d'accueil de la semaine et prépare ta prochaine visite au Circographe.
               </p>
             </header>
 
-            <div class="mt-4 sm:mt-7 bg-white/95 text-gray-900 rounded-[20px] shadow-xl p-4 sm:p-6">
+            <div class="home-hours-card__panel">
               <%= render "shared/opening_hours", horaires: @opening_hours, bare: true, compact: true %>
             </div>
 
-            <section class="mt-4 rounded-[20px] border border-white/20 bg-white/10 p-4 text-left shadow-lg backdrop-blur-sm"
+            <section class="home-pwa-panel"
                      data-controller="pwa-install"
                      data-pwa-install-target="container"
                      hidden>
-              <p class="text-xs uppercase tracking-[0.32em] text-white/70">Accès rapide</p>
-              <h3 class="mt-2 text-lg font-semibold text-white">Ajoute Le Circographe à ton écran d'accueil</h3>
-              <p class="mt-2 text-sm leading-6 text-white/85">
+              <p class="home-pwa-panel__eyebrow">Accès rapide</p>
+              <h3 class="home-pwa-panel__title">Ajoute Le Circographe à ton écran d'accueil</h3>
+              <p class="home-pwa-panel__copy">
                 Pratique pour retrouver les horaires, l'accès et les infos utiles en un tap.
               </p>
-              <div class="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center">
+              <div class="home-pwa-panel__actions">
                 <button type="button"
-                        class="inline-flex items-center justify-center rounded-full bg-white px-5 py-3 text-sm font-semibold text-[#194A45] transition-colors duration-300 hover:bg-[#F7F4EE]"
+                        class="home-pwa-panel__button"
                         data-action="pwa-install#install"
                         data-pwa-install-target="button">
                   Installer l'application
                 </button>
-                <p class="text-xs leading-5 text-white/70" data-pwa-install-target="status">
+                <p class="home-pwa-panel__status" data-pwa-install-target="status">
                   Disponible quand ton navigateur autorise l'installation.
                 </p>
               </div>
-              <div class="mt-4 rounded-2xl bg-white/12 p-3 text-sm leading-6 text-white/90"
+              <div class="home-pwa-panel__ios-help"
                    data-pwa-install-target="iosHelp"
                    hidden>
                 Sur iPhone : ouvre le menu Partager puis choisis <strong>Sur l'écran d'accueil</strong>.
@@ -96,9 +96,3 @@
 
   <div class="h-16 sm:h-24"></div>
 </div>
-
-<style>
-  #title {
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
-  }
-</style>

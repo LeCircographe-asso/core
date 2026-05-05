@@ -1,16 +1,28 @@
-<div class="signin-page">
-    <div class="form-group">
-        <h1 class="font-bold text-4xl">Réinitialiser votre mot de passe</h1>
+<div class="auth-shell">
+    <div class="auth-shell__mobile-media">
+        <%= image_tag("about.jpg", alt: "", class: "w-full h-full object-cover") %>
+    </div>
 
-        <%= form_with url: passwords_path, method: :post, local: true do |form| %>
-        <div class="my-5">
-            <%= form.label :email_address, "Adresse email", class: "font-medium" %>
-            <%= form.email_field :email_address, required: true, autofocus: true, autocomplete: "username", placeholder: "Entrez votre adresse email", value: params[:email_address], class: "auth-field mt-2" %>
+    <div class="auth-shell__grid">
+        <div class="auth-shell__media">
+            <%= image_tag("about.jpg", alt: "Circographe Image", class: "auth-shell__image") %>
         </div>
 
-        <div class="inline">
-            <%= form.submit "Envoyer les instructions", class: "submit-button" %>
+        <div class="auth-shell__form-wrap">
+            <div class="auth-shell__card">
+                <h1 class="auth-shell__title">Réinitialiser votre mot de passe</h1>
+
+                <%= form_with url: passwords_path, method: :post, local: true, class: "mt-6 space-y-5" do |form| %>
+                <div>
+                    <%= form.label :email_address, "Adresse email", class: "block text-sm font-medium text-gray-700" %>
+                    <%= form.email_field :email_address, required: true, autofocus: true, autocomplete: "username", placeholder: "Entrez votre adresse email", value: params[:email_address], class: "auth-field mt-2" %>
+                </div>
+
+                <div>
+                    <%= form.submit "Envoyer les instructions", class: "w-full btn-primary justify-center rounded-lg shadow-lg" %>
+                </div>
+                <% end %>
+            </div>
         </div>
-        <% end %>
     </div>
 </div>

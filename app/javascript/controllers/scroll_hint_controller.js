@@ -8,17 +8,13 @@ export default class extends Controller {
   static values  = { sectionId: String }
 
   connect () {
-    if (this.sectionIdValue) {
-      const section = document.getElementById(this.sectionIdValue)
-      if (section) {
-        this.observer = new IntersectionObserver(entries => {
-          entries.forEach(entry => entry.isIntersecting ? this.hide() : this.show())
-        }, { threshold: 0.3 })
-        this.observer.observe(section)
-      }
-    }
-
     this._arrowEl = this.element.querySelector(".scroll-arrow")
+    this._heroSection = this.element.closest("section")
+    this._visibilityRaf = null
+    this._onScroll = () => this._queueVisibilitySync()
+    window.addEventListener("scroll", this._onScroll, { passive: true })
+    window.addEventListener("resize", this._onScroll, { passive: true })
+
     if (this._arrowEl) {
       this._startIdleBounce()
       this._onEnter = () => this._hoverIn()
@@ -26,15 +22,37 @@ export default class extends Controller {
       this._arrowEl.addEventListener("mouseenter", this._onEnter)
       this._arrowEl.addEventListener("mouseleave", this._onLeave)
     }
+
+    this._syncVisibility()
   }
 
   disconnect () {
-    if (this.observer) this.observer.disconnect()
+    window.removeEventListener("scroll", this._onScroll)
+    window.removeEventListener("resize", this._onScroll)
+    if (this._visibilityRaf) {
+      cancelAnimationFrame(this._visibilityRaf)
+      this._visibilityRaf = null
+    }
     this._stopIdleBounce()
     if (this._arrowEl) {
       this._arrowEl.removeEventListener("mouseenter", this._onEnter)
       this._arrowEl.removeEventListener("mouseleave", this._onLeave)
     }
+  }
+
+  scrollToSection (event) {
+    const section = this._targetSection()
+    if (!section) return
+
+    if (event) event.preventDefault()
+
+    const targetTop = this._targetTop(section)
+    this.hide()
+
+    window.scrollTo({
+      top: Math.max(targetTop, 0),
+      behavior: prefersReducedMotion() ? "auto" : "smooth"
+    })
   }
 
   hide () {
@@ -45,6 +63,55 @@ export default class extends Controller {
   show () {
     if (!this.hasArrowTarget) return
     this.arrowTarget.classList.remove("opacity-0", "pointer-events-none")
+  }
+
+  _syncVisibility () {
+    if (!this.hasArrowTarget) return
+
+    if (!this._heroSection) {
+      this.show()
+      return
+    }
+
+    const heroBottom = this._heroSection.getBoundingClientRect().bottom
+    const header = document.querySelector("header nav")
+    const headerHeight = header ? header.getBoundingClientRect().height : 0
+    const cutoff = headerHeight + 120
+
+    if (heroBottom <= cutoff) {
+      this.hide()
+    } else {
+      this.show()
+    }
+  }
+
+  _queueVisibilitySync () {
+    if (this._visibilityRaf) return
+
+    this._visibilityRaf = requestAnimationFrame(() => {
+      this._visibilityRaf = null
+      this._syncVisibility()
+    })
+  }
+
+  _targetSection () {
+    if (!this.sectionIdValue) return null
+    return document.getElementById(this.sectionIdValue)
+  }
+
+  _targetTop (section) {
+    const headerHeight = this._headerOffset()
+    const styles = window.getComputedStyle(section)
+    const scrollMarginTop = parseFloat(styles.scrollMarginTop || "0") || 0
+
+    return section.getBoundingClientRect().top + window.scrollY - Math.max(headerHeight, scrollMarginTop)
+  }
+
+  _headerOffset () {
+    const fixedHeader = document.querySelector("header")
+    if (!fixedHeader) return 16
+
+    return fixedHeader.getBoundingClientRect().height + 16
   }
 
   // ── Idle bounce (remplace le CSS animation-bounce) ────────────────────

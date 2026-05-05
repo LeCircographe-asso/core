@@ -29,7 +29,10 @@
 
 @import "./components/buttons.css";
 @import "./components/forms.css";
+@import "./components/auth.css";
+@import "./components/contact.css";
 @import "./components/hero.css";
+@import "./components/home.css";
 @import "./components/badges.css";
 @import "./components/layout.css";
 @import "./components/dashboard.css";

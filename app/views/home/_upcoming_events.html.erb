@@ -1,13 +1,13 @@
 <% events ||= [] %>
 <% upcoming_event = events.first %>
 
-<div class="bg-white rounded-[24px] shadow-xl border border-gray-100 p-6 sm:p-7 space-y-5">
+<div class="home-upcoming-card space-y-5">
   <% if upcoming_event.present? %>
     <% event_time = upcoming_event.date&.in_time_zone(Time.zone) %>
 
   <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div class="flex items-start gap-4">
-          <div class="flex flex-col items-center justify-center w-16 h-16 rounded-2xl bg-brand-primary/10 text-brand-primary font-semibold uppercase tracking-wider">
+          <div class="home-upcoming-card__date-badge">
           <% if event_time.present? %>
             <span class="text-lg leading-none"><%= event_time.strftime("%d") %></span>
             <span class="text-xs"><%= event_time.strftime("%b") %></span>
@@ -27,7 +27,7 @@
             </span>
           </div>
           <h3 class="text-xl font-semibold text-gray-900 leading-snug"><%= upcoming_event.title %></h3>
-          <p class="text-xs font-medium uppercase tracking-[0.2em] text-amber-700">
+          <p class="home-upcoming-card__demo-note">
             Contenu fictif présenté pour la démonstration de l'interface.
           </p>
           <% description = upcoming_event.middle_description.presence || upcoming_event.upper_description.presence || upcoming_event.description.presence %>
@@ -67,13 +67,13 @@
       <% end %>
     </div>
 
-    <div class="flex flex-wrap items-center justify-between gap-3">
-      <div class="flex items-center gap-2 text-sm text-gray-500">
+    <div class="home-upcoming-card__footer">
+      <div class="home-upcoming-card__meta">
         <i class="fas fa-users text-brand-primary"></i>
         <span><%= upcoming_event.people.count %> intéressé<%= upcoming_event.people.count > 1 ? "s" : "" %></span>
       </div>
       <%= link_to "Découvrir l'événement", event_path(upcoming_event),
-                  class: "btn-primary shadow-sm",
+                  class: "btn-primary home-upcoming-card__cta shadow-sm",
                   data: { turbo_frame: "_top" } %>
     </div>
   <% else %>

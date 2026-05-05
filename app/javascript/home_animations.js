@@ -4,21 +4,24 @@ import { gsap, gsapScoped } from "lib/gsap/register"
 document.addEventListener("turbo:load", initAnimations)
 
 function initAnimations () {
-  const titleElement = document.getElementById("title")
-  const heroKicker = document.querySelector(".hero-kicker")
-  const heroIntro = document.querySelector(".hero-intro")
-  const mainButton = document.querySelector(".main-button")
-  const mainContent = document.getElementById("main-content")
-  const scrollArrow = document.querySelector(".scroll-arrow-container")
-  const map = document.querySelector(".map")
+  const scopeEl = document.querySelector("[data-home-animations-scope]")
+  if (!scopeEl) return
+
+  const titleElement = scopeEl.querySelector("#title")
+  const heroKicker = scopeEl.querySelector(".hero-kicker")
+  const heroIntro = scopeEl.querySelector(".hero-intro")
+  const mainButton = scopeEl.querySelector(".main-button")
+  const mainContent = scopeEl.querySelector("#main-content")
+  const scrollArrow = scopeEl.querySelector(".scroll-arrow-container")
+  const map = scopeEl.querySelector(".map")
 
   if (!titleElement || !mainButton || !mainContent) {
     return
   }
 
-  const scopeEl = document.querySelector("[data-home-animations-scope]") || mainContent
-
   const savedTitleText = titleElement.textContent
+  const shouldSplitLetters = !window.matchMedia("(max-width: 639px)").matches
+  let opacityCleanupTimer = null
 
   gsapScoped(() => {
     if (prefersReducedMotion()) {
@@ -32,7 +35,7 @@ function initAnimations () {
       return () => {}
     }
 
-    const letters = buildLetterSpans(titleElement)
+    const letters = shouldSplitLetters ? buildLetterSpans(titleElement) : []
     if (heroKicker) {
       gsap.fromTo(
         heroKicker,
@@ -51,7 +54,12 @@ function initAnimations () {
         ease: "none"
       })
     } else {
-      titleElement.classList.remove("opacity-0")
+      gsap.fromTo(
+        titleElement,
+        { opacity: 0, y: 10 },
+        { opacity: 1, y: 0, duration: 0.45, delay: 0.08, ease: "power2.out",
+          onComplete: () => titleElement.classList.remove("opacity-0") }
+      )
     }
 
     if (heroIntro) {
@@ -82,13 +90,17 @@ function initAnimations () {
     mainContent.classList.remove("opacity-0")
     if (map) map.classList.remove("opacity-0")
 
-    window.setTimeout(() => {
-      document.querySelectorAll(".opacity-0").forEach((el) => el.classList.remove("opacity-0"))
+    opacityCleanupTimer = window.setTimeout(() => {
+      scopeEl.querySelectorAll(".opacity-0").forEach((el) => el.classList.remove("opacity-0"))
     }, 4000)
 
     return () => {
+      if (opacityCleanupTimer) {
+        window.clearTimeout(opacityCleanupTimer)
+        opacityCleanupTimer = null
+      }
       if (heroKicker) heroKicker.classList.add("opacity-0")
-      const t = document.getElementById("title")
+      const t = scopeEl.querySelector("#title")
       if (t && savedTitleText != null) {
         t.textContent = savedTitleText
         t.classList.add("opacity-0")
@@ -97,7 +109,7 @@ function initAnimations () {
     }
   }, scopeEl)
 
-  initSmoothScroll()
+  initSmoothScroll(scopeEl)
 }
 
 function buildLetterSpans (element) {
@@ -120,12 +132,17 @@ function buildLetterSpans (element) {
   return letters
 }
 
-function initSmoothScroll () {
-  document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
+function initSmoothScroll (scopeEl) {
+  scopeEl.querySelectorAll('a[href^="#"]').forEach((anchor) => {
+    if ((anchor.dataset.action || "").includes("scroll-hint#scrollToSection")) return
+    if (anchor.dataset.homeSmoothScrollBound === "true") return
+    anchor.dataset.homeSmoothScrollBound = "true"
+
     anchor.addEventListener("click", function (e) {
       e.preventDefault()
 
       const targetId = this.getAttribute("href")
+      if (!targetId || targetId === "#") return
       const targetElement = document.querySelector(targetId)
 
       if (targetElement) {

@@ -1,0 +1,51 @@
+@layer components {
+  .auth-shell {
+    @apply relative w-full overflow-hidden bg-white;
+  }
+
+  .auth-shell__mobile-media {
+    @apply absolute inset-0 z-0 opacity-20 lg:hidden;
+  }
+
+  .auth-shell__grid {
+    @apply relative z-10 w-full lg:flex lg:items-start;
+  }
+
+  .auth-shell__media {
+    @apply relative hidden overflow-hidden lg:block lg:w-1/2 lg:shrink-0;
+    height: calc(100dvh - 4.75rem);
+    min-height: 32rem;
+  }
+
+  .auth-shell__image {
+    @apply h-full w-full object-cover;
+  }
+
+  .auth-shell__form-wrap {
+    @apply relative flex items-start justify-center px-4 py-8 sm:px-6 lg:w-1/2 lg:items-center lg:px-8 lg:py-0;
+    min-height: 0;
+    height: auto;
+  }
+
+  .auth-shell__card {
+    @apply w-full max-w-md rounded-[28px] bg-white/95 p-5 shadow-sm backdrop-blur-sm sm:p-6;
+  }
+
+  .auth-shell__title {
+    @apply text-center text-2xl font-bold text-gray-700;
+  }
+
+  @media (min-width: 1024px) {
+    .auth-shell {
+      min-height: calc(100dvh - 4.75rem);
+    }
+
+    .auth-shell__grid {
+      min-height: calc(100dvh - 4.75rem);
+    }
+
+    .auth-shell__form-wrap {
+      height: calc(100dvh - 4.75rem);
+    }
+  }
+}

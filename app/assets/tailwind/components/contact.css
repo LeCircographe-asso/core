@@ -1,0 +1,97 @@
+@layer components {
+  .contact-location-panel {
+    @apply overflow-hidden rounded-[28px] border border-white/80 bg-white/95 shadow-lg;
+  }
+
+  .contact-location-panel__header {
+    @apply px-6 py-6 sm:px-8 sm:py-7;
+  }
+
+  .contact-location-panel__eyebrow {
+    @apply text-xs uppercase tracking-[0.35em];
+    color: rgba(31, 92, 85, 0.7);
+  }
+
+  .contact-location-panel__title {
+    @apply mt-2 text-2xl font-semibold leading-tight text-gray-900 sm:text-3xl;
+  }
+
+  .contact-location-panel__copy {
+    @apply mt-3 max-w-2xl text-sm leading-relaxed text-gray-600 sm:text-base;
+  }
+
+  .contact-location-panel__body {
+    @apply grid gap-6 px-4 pb-5 sm:px-6 sm:pb-6 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.45fr)] lg:gap-8 lg:px-8 lg:pb-8;
+  }
+
+  .contact-location-panel__info {
+    @apply flex min-w-0 flex-col gap-4;
+  }
+
+  .contact-location-panel__card {
+    @apply rounded-[24px] border bg-white p-5 shadow-sm;
+  }
+
+  .contact-location-panel__card--primary {
+    border-color: rgba(31, 92, 85, 0.18);
+    background: linear-gradient(180deg, rgba(31, 92, 85, 0.06), rgba(31, 92, 85, 0.02));
+  }
+
+  .contact-location-panel__card--secondary {
+    border-color: rgba(88, 54, 165, 0.16);
+  }
+
+  .contact-location-panel__card-label {
+    @apply text-[11px] font-semibold uppercase tracking-[0.26em];
+  }
+
+  .contact-location-panel__card-label--primary {
+    color: rgba(31, 92, 85, 0.82);
+  }
+
+  .contact-location-panel__card-label--accent {
+    color: rgba(88, 54, 165, 0.82);
+  }
+
+  .contact-location-panel__address {
+    @apply mt-2 text-lg font-semibold leading-snug text-gray-900 sm:text-xl;
+  }
+
+  .contact-location-panel__details {
+    @apply mt-2 text-sm leading-relaxed text-gray-600 sm:text-base;
+  }
+
+  .contact-location-panel__actions {
+    @apply mt-4 flex flex-col gap-3 sm:flex-row;
+  }
+
+  .contact-location-panel__cta {
+    @apply inline-flex min-h-[2.9rem] items-center justify-center rounded-full px-5 py-3 text-sm font-semibold transition-colors duration-200;
+  }
+
+  .contact-location-panel__cta--primary {
+    @apply text-white shadow-md hover:bg-[#154640];
+    background-color: #1F5C55;
+  }
+
+  .contact-location-panel__cta--secondary {
+    @apply border text-gray-800 hover:bg-gray-50;
+    border-color: rgba(209, 213, 219, 0.9);
+  }
+
+  .contact-location-panel__meta-list {
+    @apply mt-3 space-y-2 text-sm leading-relaxed text-gray-700;
+  }
+
+  .contact-location-panel__meta-item {
+    @apply flex items-start gap-2;
+  }
+
+  .contact-location-panel__map-wrap {
+    @apply min-w-0;
+  }
+
+  .contact-location-panel__map-caption {
+    @apply mt-3 text-sm leading-relaxed text-gray-500;
+  }
+}
