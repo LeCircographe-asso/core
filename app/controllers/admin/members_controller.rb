@@ -143,7 +143,8 @@ module Admin
     end
 
     def restore
-      @user = User.unscoped.find(params[:id])
+      @person = Person.find(params[:id])
+      @user = User.unscoped.find_by!(person_id: @person.id)
 
       if @user.update(deleted: false, deleted_at: nil)
         redirect_to admin_members_path, notice: t(".restored_notice")
