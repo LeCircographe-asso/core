@@ -59,7 +59,9 @@
         <%= render 'shared/flash' %>
         <% end %>
         <main class="flex-1 min-h-0">
+            <div class="w-full" data-turbo-page-shell>
             <%= yield %>
+            </div>
         </main>
     </div>
     
@@ -73,7 +75,8 @@
         <%= render 'shared/flash' %>
         <% end %>
         <main class="page-container space-y-6 <%= controller_name == 'home' && action_name == 'index' ? 'pt-0' : 'pt-8' %>">
-        <div class="w-full">
+        <%# data-turbo-page-shell : transition GSAP au changement de page (turbo_page_reveal.js) %>
+        <div class="w-full" data-turbo-page-shell>
             <%= yield %>
         </div>
         </main>
