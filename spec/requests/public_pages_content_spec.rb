@@ -13,7 +13,7 @@ require 'rails_helper'
 # (mettre à jour le test + docs), soit une régression de vocabulaire est arrivée.
 RSpec.describe 'Public pages content', type: :request do
   describe 'GET /pages/become_member' do
-    before { get page_path('become_member') }
+    before { get adhesion_path }
 
     it 'renders successfully' do
       expect(response).to have_http_status(:success)
@@ -46,7 +46,7 @@ RSpec.describe 'Public pages content', type: :request do
   end
 
   describe 'GET /pages/faq' do
-    before { get page_path('faq') }
+    before { get faq_path }
 
     it 'renders successfully' do
       expect(response).to have_http_status(:success)
@@ -64,7 +64,7 @@ RSpec.describe 'Public pages content', type: :request do
   end
 
   describe 'GET /pages/news' do
-    before { get page_path('news') }
+    before { get actualites_path }
 
     it 'renders successfully' do
       expect(response).to have_http_status(:success)
@@ -80,7 +80,7 @@ RSpec.describe 'Public pages content', type: :request do
   end
 
   describe 'GET /pages/contact_us' do
-    before { get page_path('contact_us') }
+    before { get contact_path }
 
     it 'renders successfully' do
       expect(response).to have_http_status(:success)
@@ -114,7 +114,7 @@ RSpec.describe 'Public pages content', type: :request do
   end
 
   describe 'GET /pages/privacy_policy' do
-    before { get page_path('privacy_policy') }
+    before { get confidentialite_path }
 
     it 'renders successfully' do
       expect(response).to have_http_status(:success)
@@ -139,7 +139,7 @@ RSpec.describe 'Public pages content', type: :request do
   end
 
   describe 'GET /pages/association' do
-    before { get page_path('association') }
+    before { get association_path }
 
     it 'renders successfully' do
       expect(response).to have_http_status(:success)
@@ -152,7 +152,7 @@ RSpec.describe 'Public pages content', type: :request do
 
   describe 'controller-driven FAQ entries' do
     it 'no longer mentions a non-existent "adhésion soutien" payment option' do
-      get page_path('become_member')
+      get adhesion_path
       expect(response.body).not_to include('adhésion de soutien')
       expect(response.body).not_to include("souscrivant à l'adhésion soutien")
     end
