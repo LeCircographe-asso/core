@@ -1,0 +1,59 @@
+<%#
+  Partial réutilisable : timeline verticale GSAP + Stimulus.
+  Locals :
+    entries     — Array<{ year:, title:, body:, status: :past|:present|:future }>
+    show_future — Boolean (default: true) — masquer les étapes :future si false
+%>
+<% entries     ||= [] %>
+<% show_future = local_assigns.fetch(:show_future, true) %>
+<% visible     = show_future ? entries : entries.reject { |e| e[:status] == :future } %>
+
+<div
+  class="relative"
+  data-controller="timeline"
+  aria-label="Chronologie de l'association"
+>
+  <%# Ligne verticale — GSAP anime scaleY 0→1 en scroll %>
+  <div
+    class="tl-line"
+    data-timeline-target="line"
+    aria-hidden="true"
+  ></div>
+
+  <ol class="relative space-y-7 sm:space-y-10 list-none" role="list">
+    <% visible.each do |entry| %>
+      <%
+        status    = (entry[:status] || :past).to_sym
+        is_past   = status == :past
+        is_now    = status == :present
+        is_future = status == :future
+      %>
+      <li
+        class="relative pl-14"
+        data-timeline-target="step"
+        data-status="<%= status %>"
+        <%= "aria-current='step'" if is_now %>
+      >
+        <%# Pastille ——————————————————————————————————————————————— %>
+        <div class="tl-dot tl-dot--<%= status %>" aria-hidden="true">
+          <% if is_now %><span class="tl-dot__ring"></span><% end %>
+          <span class="tl-dot__label"><%= entry[:year] %></span>
+        </div>
+
+        <%# Carte ————————————————————————————————————————————————— %>
+        <div class="tl-card tl-card--<%= status %>">
+          <% if is_now %>
+            <span class="tl-badge tl-badge--present">En cours</span>
+          <% elsif is_future %>
+            <span class="tl-badge tl-badge--future">À venir</span>
+          <% end %>
+
+          <h3 class="text-base sm:text-lg font-semibold text-gray-800 leading-snug mb-1.5">
+            <%= entry[:title] %>
+          </h3>
+          <p class="text-sm text-gray-600 leading-relaxed"><%= entry[:body] %></p>
+        </div>
+      </li>
+    <% end %>
+  </ol>
+</div>

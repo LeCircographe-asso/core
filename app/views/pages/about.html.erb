@@ -94,28 +94,53 @@
   </div>
 </section>
 
-<section class="public-surface-bordered p-6 sm:p-10 mt-12 fade-in"
-         data-controller="timeline">
-  <header class="text-center mb-6 space-y-2">
+<section class="public-surface-bordered p-6 sm:p-10 mt-12">
+  <header class="text-center mb-8 space-y-2">
     <p class="text-sm uppercase tracking-[0.3em] text-brand-primary/70">Notre histoire</p>
     <h2 class="text-3xl font-semibold text-gray-800">Points de repère</h2>
   </header>
-  <div class="space-y-6 relative timeline-line">
-    <% [
-      { year: "2022", title: "Ouverture du hangar", body: "Lancement des créneaux d'entraînement et installation des ateliers graphiques." },
-      { year: "2023", title: "Premiers événements publics", body: "Plateaux partagés, expositions et ateliers ouverts au quartier." },
-      { year: "2024", title: "Autogestion consolidée", body: "Conseil d'administration élargi et équipes bénévoles structurées." },
-      { year: "2025", title: "Nouveaux partenariats & hors les murs", body: "Actions extérieures, collaborations et projets itinérants." }
-    ].each do |entry| %>
-      <div class="timeline-step relative pl-12 md:pl-16" data-timeline-target="step">
-        <div class="absolute left-0 top-1 w-10 h-10 rounded-full bg-brand-primary text-white flex items-center justify-center font-semibold shadow"><%= entry[:year] %></div>
-        <div class="public-soft-card bg-white/95 p-5 md:p-6">
-          <h3 class="text-xl font-semibold text-gray-800 mb-2"><%= entry[:title] %></h3>
-          <p class="text-gray-600"><%= entry[:body] %></p>
-        </div>
-      </div>
-    <% end %>
-  </div>
+  <%#
+    Éditer les entrées ici — status: :past | :present | :future
+    Passer show_future: false pour masquer les étapes à venir.
+  %>
+  <%= render "shared/timeline", entries: [
+    {
+      year:   "2022",
+      title:  "Ouverture du hangar",
+      body:   "Lancement des créneaux d'entraînement et installation des ateliers graphiques.",
+      status: :past
+    },
+    {
+      year:   "2023",
+      title:  "Premiers événements publics",
+      body:   "Plateaux partagés, expositions et ateliers ouverts au quartier.",
+      status: :past
+    },
+    {
+      year:   "2024",
+      title:  "Autogestion consolidée",
+      body:   "Conseil d'administration élargi et équipes bénévoles structurées.",
+      status: :past
+    },
+    {
+      year:   "2025",
+      title:  "Nouveaux partenariats & hors les murs",
+      body:   "Actions extérieures, collaborations et projets itinérants.",
+      status: :past
+    },
+    {
+      year:   "2026",
+      title:  "En cours",
+      body:   "Saison active : nouvelles collaborations, accueil de compagnies et projets en cours.",
+      status: :present
+    },
+    {
+      year:   "2027",
+      title:  "À venir",
+      body:   "Projets à définir avec la communauté — à mettre à jour ici.",
+      status: :future
+    }
+  ] %>
 </section>
 
 <section class="public-surface-bordered p-4 sm:p-10 mt-8 sm:mt-12 fade-in">
