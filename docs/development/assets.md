@@ -38,6 +38,9 @@ Keep these rules to avoid breaking the asset pipeline.
 
 7) CDN policy
 - No CDN for Flowbite. External CDNs allowed: Stripe, Font Awesome, Swiper.
+- **GSAP 3** : servi en local via `config/importmap.rb` + répertoire `vendor/javascript/gsap` (paquet npm complet, **pas** de fichiers aplatis JSPM uniques — les imports relatifs du package le requièrent). Point d’entrée applicatif : `app/javascript/lib/gsap/register.js` (`gsap.registerPlugin` unique, `turbo:before-cache` pour `context` / ScrollTrigger / ScrollSmoother). **Pas de CDN GSAP.**
+- Préférence d’accessibilité partagée : `app/javascript/lib/gsap/animation_prefs.js` (`prefersReducedMotion`), aligné sur `home_animations.js`.
+- **Migration progressive** : ne pas remplacer d’un coup `home_animations.js` / `global_animations.js` ; utiliser `gsapScoped` / `trackGsapContext` pour les nouveaux blocs ou les Stimulus ciblés lorsque le bootstrap est utilisé.
 
 8) Troubleshooting
 - If styles vanish: ensure `bin/dev` is running; check app/assets/builds/tailwind.css.
