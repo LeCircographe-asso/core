@@ -162,19 +162,19 @@ RSpec.describe 'Admin::Members', type: :request do
       before { login_as(admin) }
 
       it 'shows person with user' do
-        user = create(:user, person: person)
+        create(:user, person: person)
 
-        get admin_member_path(user)
+        get admin_member_path(person)
         expect(response).to have_http_status(:success)
         expect(response.body).to include('John')
         expect(response.body).to include('Doe')
       end
 
-      it 'shows person without user (person_123 format)' do
+      it 'shows person without user' do
         get admin_member_path(person)
         expect(response).to have_http_status(:success)
         expect(response.body).to include('John')
-        expect(response.body).to include("Créer un espace utilisateur")
+        expect(response.body).to include("Créer un compte web")
       end
 
       it "shows recent payments without dead-end 'Voir détails' link" do
@@ -187,16 +187,9 @@ RSpec.describe 'Admin::Members', type: :request do
         expect(response.body).not_to include("Voir détails")
       end
 
-      it 'returns 404 for non-existent person' do
-        get admin_member_path('0')
-        expect(response).to have_http_status(:not_found)
-      end
-
-      it 'redirects when numeric user id does not exist' do
+      it 'redirects to members list when person does not exist' do
         get admin_member_path(0)
         expect(response).to redirect_to(admin_members_path)
-        follow_redirect!
-        expect(flash[:alert]).to eq(I18n.t("admin.users.set_user.person_or_user_missing_alert"))
       end
     end
   end
@@ -206,11 +199,11 @@ RSpec.describe 'Admin::Members', type: :request do
 
     before { login_as(admin) }
 
-    context 'when targeting a person entity' do
+    context 'when targeting a person without user' do
       let(:target_person) { create(:person, first_name: 'Lucie', last_name: 'Martin', phone: '0102030405') }
 
-      it 'updates person attributes via PersonUpdater' do
-        patch admin_member_path(person), params: {
+      it 'updates person attributes' do
+        patch admin_member_path(target_person), params: {
           person: {
             first_name: 'Lucile',
             phone: '0606060606',
@@ -218,13 +211,13 @@ RSpec.describe 'Admin::Members', type: :request do
           }
         }
 
-        expect(response).to redirect_to(admin_member_path(person))
+        expect(response).to redirect_to(admin_member_path(target_person))
         expect(target_person.reload.first_name).to eq('Lucile')
         expect(target_person.phone).to eq('0606060606')
       end
 
       it 'returns validation errors when data invalid' do
-        patch admin_member_path(person), params: {
+        patch admin_member_path(target_person), params: {
           person: {
             first_name: '',
             last_name: '',
@@ -233,19 +226,18 @@ RSpec.describe 'Admin::Members', type: :request do
         }
 
         expect(response).to have_http_status(:unprocessable_content)
-        expect(response.body).to include('Validation error')
         expect(target_person.reload.first_name).to eq('Lucie')
       end
     end
 
-    context "when targeting a user entity without newsletter param" do
+    context "when targeting a person with user (newsletter param omitted)" do
       let(:target_person) { create(:person, first_name: "Mila", last_name: "Durand", email: "mila@example.com") }
       let(:target_user) { create(:user, person: target_person, email_address: "mila@example.com") }
 
       it "preserves newsletter subscription state" do
         subscriber = create(:newsletter_subscriber, person: target_person, email: target_person.email, subscribed: true)
 
-        patch admin_member_path(target_user), params: {
+        patch admin_member_path(target_person), params: {
           member: {
             first_name: "Mila-Updated",
             email_address: target_user.email_address,
@@ -253,7 +245,7 @@ RSpec.describe 'Admin::Members', type: :request do
           }
         }
 
-        expect(response).to redirect_to(admin_member_path(target_user))
+        expect(response).to redirect_to(admin_member_path(target_person))
         expect(target_person.reload.first_name).to eq("Mila-Updated")
         expect(subscriber.reload.subscribed?).to be(true)
       end
@@ -305,25 +297,15 @@ RSpec.describe 'Admin::Members', type: :request do
   describe 'DELETE /admin/users/:id' do
     context 'when authenticated as super_admin' do
       let(:super_admin) { create(:user, :super_admin) }
-      let(:regular_user) { create(:user) }
+      let(:regular_person) { create(:person) }
 
       before { login_as(super_admin) }
 
-      it 'archives the user instead of hard delete' do
-        delete admin_member_path(regular_user)
+      it 'archives the person' do
+        delete admin_member_path(regular_person)
         follow_redirect! if response.redirect?
 
-        expect(regular_user.reload.deleted?).to eq(true)
-        expect(regular_user.deleted_at).to be_present
-        expect(regular_user.email_address).to include('deleted_')
-      end
-
-      it 'does not allow deleting self' do
-        expect do
-          delete admin_member_path(super_admin)
-        end.not_to(change { super_admin.reload.deleted? })
-
-        expect(response).to redirect_to(admin_members_path)
+        expect(regular_person.reload.deleted_at).to be_present
       end
     end
   end

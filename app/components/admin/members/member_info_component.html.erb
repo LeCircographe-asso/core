@@ -11,20 +11,20 @@
     <div class="space-y-2">
       <div class="flex justify-between items-center py-0.5">
         <span class="text-sm font-medium text-gray-600">Prénom</span>
-        <span class="text-sm font-semibold text-gray-900"><%= display_value(user.first_name) %></span>
+        <span class="text-sm font-semibold text-gray-900"><%= display_value(person.first_name) %></span>
       </div>
       <div class="flex justify-between items-center py-0.5">
         <span class="text-sm font-medium text-gray-600">Nom</span>
-        <span class="text-sm font-semibold text-gray-900"><%= display_value(user.last_name) %></span>
+        <span class="text-sm font-semibold text-gray-900"><%= display_value(person.last_name) %></span>
       </div>
       <div class="flex justify-between items-center py-0.5">
         <span class="text-sm font-medium text-gray-600">Date de naissance</span>
-        <span class="text-sm font-semibold text-gray-900"><%= display_date(user.birth_date) %></span>
+        <span class="text-sm font-semibold text-gray-900"><%= display_date(person.birth_date) %></span>
       </div>
       <div class="flex justify-between items-center py-0.5">
         <span class="text-sm font-medium text-gray-600">Rôle</span>
         <span class="text-sm font-semibold text-gray-900">
-          <% if user.system_role.present? %>
+          <% if user&.system_role.present? %>
             <%= display_role %>
           <% else %>
             <span class="text-orange-600 font-medium">Aucun compte</span>
@@ -45,11 +45,11 @@
     <div class="space-y-2">
       <div class="flex justify-between items-center py-0.5">
         <span class="text-sm font-medium text-gray-600">Profession</span>
-        <span class="text-sm font-semibold text-gray-900"><%= display_value(user.occupation) %></span>
+        <span class="text-sm font-semibold text-gray-900"><%= display_value(person.occupation) %></span>
       </div>
       <div class="flex justify-between items-center py-0.5">
         <span class="text-sm font-medium text-gray-600">Spécialité</span>
-        <span class="text-sm font-semibold text-gray-900"><%= display_value(user.specialty) %></span>
+        <span class="text-sm font-semibold text-gray-900"><%= display_value(person.specialty) %></span>
       </div>
     </div>
   </div>
@@ -65,13 +65,13 @@
     <div class="space-y-2">
       <div class="flex justify-between items-center py-0.5">
         <span class="text-sm font-medium text-gray-600">Email</span>
-        <span class="text-sm font-semibold text-gray-900"><%= display_value(user.email_address) %></span>
+        <span class="text-sm font-semibold text-gray-900"><%= display_value(user&.email_address || person.email) %></span>
       </div>
       <div class="flex justify-between items-center py-0.5">
         <span class="text-sm font-medium text-gray-600">Téléphone</span>
-        <span class="text-sm font-semibold text-gray-900"><%= display_value(user.phone) %></span>
+        <span class="text-sm font-semibold text-gray-900"><%= display_value(person.phone) %></span>
       </div>
-      <% if user.address.present? %>
+      <% if person.address.present? %>
         <div class="py-0.5">
           <span class="text-sm font-medium text-gray-600 block mb-1">Adresse</span>
           <span class="text-sm font-semibold text-gray-900"><%= display_address %></span>
@@ -91,19 +91,19 @@
     </h3>
     <div class="grid grid-cols-2 gap-4">
       <div class="flex items-center py-0.5">
-        <div class="h-4 w-4 rounded-full <%= preference_status(user.newsletter_subscribed) %> mr-3 flex-shrink-0"></div>
+        <div class="h-4 w-4 rounded-full <%= preference_status(person.newsletter_subscribed) %> mr-3 flex-shrink-0"></div>
         <span class="text-sm font-medium text-gray-700">Newsletter</span>
       </div>
       <div class="flex items-center py-0.5">
-        <div class="h-4 w-4 rounded-full <%= preference_status(user.image_rights) %> mr-3 flex-shrink-0"></div>
+        <div class="h-4 w-4 rounded-full <%= preference_status(person.image_rights) %> mr-3 flex-shrink-0"></div>
         <span class="text-sm font-medium text-gray-700">Droits image</span>
       </div>
       <div class="flex items-center py-0.5">
-        <div class="h-4 w-4 rounded-full <%= preference_status(user.get_involved) %> mr-3 flex-shrink-0"></div>
+        <div class="h-4 w-4 rounded-full <%= preference_status(person.get_involved) %> mr-3 flex-shrink-0"></div>
         <span class="text-sm font-medium text-gray-700">S'impliquer</span>
       </div>
       <div class="flex items-center py-0.5">
-        <div class="h-4 w-4 rounded-full <%= preference_status(user.dyslexic_font) %> mr-3 flex-shrink-0"></div>
+        <div class="h-4 w-4 rounded-full <%= preference_status(person.dyslexic_font) %> mr-3 flex-shrink-0"></div>
         <span class="text-sm font-medium text-gray-700">Police dyslexique</span>
       </div>
     </div>

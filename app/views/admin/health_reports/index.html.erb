@@ -62,7 +62,7 @@
             <tbody class="divide-y divide-gray-200">
               <% @users_without_person.each do |user| %>
                 <tr>
-                  <td class="py-2"><%= link_to user.id, admin_user_path(user), class: "text-[#1F5C55] hover:underline" %></td>
+                  <td class="py-2"><%= link_to user.id, admin_member_path(user.person), class: "text-[#1F5C55] hover:underline" %></td>
                   <td class="py-2"><%= user.email_address %></td>
                   <td class="py-2"><%= user.system_role.presence || "-" %></td>
                   <td class="py-2"><%= l(user.created_at.to_date) %></td>

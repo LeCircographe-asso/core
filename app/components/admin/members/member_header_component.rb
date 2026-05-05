@@ -16,41 +16,36 @@ module Admin
       attr_reader :user, :person, :is_person_without_user, :is_deleted, :current_user
 
       def user_name
-        user.full_name.presence || "Utilisateur ##{user.id}"
+        person.full_name.presence || "Adhérent ##{person.id}"
       end
 
       def user_email
-        user.email_address
+        user&.email_address || person.email
       end
 
       def role_text
-        if is_person_without_user
-          "Créer un espace utilisateur"
-        elsif user.system_role.present?
-          case user.system_role
-          when "volunteer" then "Bénévole"
-          when "super_admin" then "Super Admin"
-          when "admin" then "Admin"
-          when "web_visitor" then "Visiteur Web"
-          else user.system_role.humanize
-          end
-        else
-          "Créer un espace utilisateur"
+        return "Sans compte web" if user.nil?
+
+        case user.system_role
+        when "volunteer" then "Bénévole"
+        when "super_admin" then "Super Admin"
+        when "admin" then "Admin"
+        when "web_visitor" then "Visiteur Web"
+        else user.system_role.humanize
         end
       end
 
       def avatar_image
-        case user.system_role
+        case user&.system_role
         when "super_admin" then "super_admin.webp"
         when "admin" then "admin.webp"
         when "volunteer" then "volunteer.webp"
-        when "web_visitor" then "users.png"
         else "users.png"
         end
       end
 
       def avatar_alt
-        case user.system_role
+        case user&.system_role
         when "super_admin" then "Avatar Super Admin"
         when "admin" then "Avatar Admin"
         when "volunteer" then "Avatar Bénévole"
@@ -59,9 +54,8 @@ module Admin
         end
       end
 
-      # Show crown overlay for super admins
       def crown?
-        user.system_role == "super_admin"
+        user&.system_role == "super_admin"
       end
     end
   end

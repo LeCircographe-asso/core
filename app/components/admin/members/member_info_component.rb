@@ -30,9 +30,9 @@ module Admin
       end
 
       def display_address
-        return display_value(nil) if user.address.blank?
+        return display_value(nil) if person.address.blank?
 
-        address_parts = [ user.address, user.zip_code, user.town, user.country ].compact.compact_blank
+        address_parts = [ person.address, person.zip_code, person.town, person.country ].compact.compact_blank
 
         # Format sur 3 lignes : Adresse, Code Postal + Ville, Pays
         if address_parts.length >= 3
@@ -54,7 +54,7 @@ module Admin
       end
 
       def display_role
-        if user.system_role.present?
+        if user&.system_role.present?
           user.role_humanized
         else
           "Aucun compte"
