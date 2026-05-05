@@ -38,10 +38,17 @@ Keep these rules to avoid breaking the asset pipeline.
 
 7) CDN policy
 - No CDN for Flowbite. External CDNs allowed: Stripe, Font Awesome, Swiper.
-- **GSAP 3** : **un seul module ESM** servi via importmap (`vendor/javascript/gsap-bootstrap.js`), regénéré avec `bundle exec rake gsap:bootstrap` (*esbuild*) à partir des sources réduites sous `vendor/javascript/gsap/` (≈15 fichiers — uniquement le graphe d’imports du bootstrap ; pas tout le tarball npm). **Pourquoi bundle** : avec Propshaft, les imports relatifs multi-fichiers GSAP **404** sans fichier unique. Entrée du bundle : `app/javascript/lib/gsap/register.esbuild-entry.js`. **Pas de CDN GSAP.**
+- **GSAP 3** : **un seul module ESM** servi via importmap (`vendor/javascript/gsap-bootstrap.js`), regénéré avec `bundle exec rake gsap:bootstrap` (*esbuild*) à partir des sources réduites sous `vendor/javascript/gsap/`. **Pourquoi bundle** : avec Propshaft, les imports relatifs multi-fichiers GSAP **404** sans fichier unique. Entrée du bundle : `app/javascript/lib/gsap/register.esbuild-entry.js`. **Pas de CDN GSAP.**
 - Préférence d’accessibilité partagée : `app/javascript/lib/gsap/animation_prefs.js` (`prefersReducedMotion`), aligné sur `home_animations.js`.
-- **Migration progressive** : accueil — titre lettre à lettre + apparitions bouton / flèche via GSAP dans `gsapScoped` (scope `data-home-animations-scope` sur le shell home). **`public_animations.js`** : blocs `data-gsap-reveal` + enfants `data-gsap-reveal-item` pour stagger au scroll (ScrollTrigger, `prefers-reduced-motion` respecté). **`turbo_page_reveal.js`** : à chaque `turbo:load`, entrée du contenu `[data-turbo-page-shell]` (flou + translation, plus fort sur mobile ; désactivé sur `home#index` et admin). Garder `global_animations.js` pour les `.fade-in` restants ; prolonger avec `trackGsapContext` pour les blocs ou Stimulus ciblés.
+- **Migration progressive** : accueil — séquence hero GSAP dédiée dans `home_animations.js` (scope `data-home-animations-scope`). **`public_animations.js`** : reveals sobres au scroll pour les blocs `data-gsap-reveal` (sans stagger global). **`turbo_page_reveal.js`** : à chaque `turbo:load`, entrée du contenu `[data-turbo-page-shell]` (désactivé sur `home#index` et admin). Garder `global_animations.js` uniquement pour les `.fade-in` historiques.
 
-8) Troubleshooting
+8) Refresh rapide des empreintes
+- Après modif CSS uniquement : `bin/rails tailwindcss:build`
+- Après modif GSAP bootstrap (`app/javascript/lib/gsap/register.esbuild-entry.js`) : `bundle exec rake gsap:bootstrap`
+- Vérification pipeline : `bin/rails assets:doctor`
+- Rebuild complet des empreintes de prod : `RAILS_ENV=production bin/rails assets:precompile`
+
+9) Troubleshooting
 - If styles vanish: ensure `bin/dev` is running; check app/assets/builds/tailwind.css.
+- If GSAP changes do nothing: rebuild `vendor/javascript/gsap-bootstrap.js` then hard refresh.
 - If admin content offset is wrong: ensure .admin-content toggles `expanded` and .admin-main padding rules are intact.
