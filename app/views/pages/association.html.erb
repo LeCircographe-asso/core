@@ -13,15 +13,15 @@
   </div>
 </section>
 
-<section class="public-surface py-10 sm:py-14 lg:py-16 px-4 sm:px-8 fade-in space-y-8">
-  <header id="le-cirque" class="max-w-3xl mx-auto text-center space-y-3 scroll-mt-[5.25rem] md:scroll-mt-28 lg:scroll-mt-32">
+<section class="public-surface py-10 sm:py-14 lg:py-16 px-4 sm:px-8 space-y-8" data-gsap-reveal>
+  <header id="le-cirque" class="max-w-3xl mx-auto text-center space-y-3 scroll-mt-[5.25rem] md:scroll-mt-28 lg:scroll-mt-32" data-gsap-reveal-item>
     <p class="text-sm uppercase tracking-[0.3em] text-[#1F5C55]/70">Deux pôles, un même lieu</p>
     <h2 class="text-2xl sm:text-3xl font-bold text-gray-900">Cirque & arts graphiques</h2>
     <p class="text-sm sm:text-base text-gray-700 leading-relaxed">Un même hangar pour entraînements, ateliers et créations — espace partagé, savoirs qui circulent.</p>
   </header>
 
   <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-    <article class="overflow-hidden rounded-2xl bg-gradient-to-br from-[#1F5C55]/10 via-white to-white border border-[#1F5C55]/20 shadow-md">
+    <article class="overflow-hidden rounded-2xl bg-gradient-to-br from-[#1F5C55]/10 via-white to-white border border-[#1F5C55]/20 shadow-md" data-gsap-reveal-item>
       <div class="relative h-64 sm:h-72">
         <%= image_tag hero_image(:association_circus_card), class: "w-full h-full object-cover", alt: "Entraînement de cirque au Circographe" %>
       </div>
@@ -40,7 +40,7 @@
       </div>
     </article>
 
-    <article id="les-arts-graphiques" class="overflow-hidden rounded-3xl bg-slate-50 border border-slate-200 shadow-sm md:translate-y-2 scroll-mt-[5.25rem] md:scroll-mt-28 lg:scroll-mt-32">
+    <article id="les-arts-graphiques" class="overflow-hidden rounded-3xl bg-slate-50 border border-slate-200 shadow-sm md:translate-y-2 scroll-mt-[5.25rem] md:scroll-mt-28 lg:scroll-mt-32" data-gsap-reveal-item>
       <div class="relative h-64 sm:h-72">
         <%= image_tag hero_image(:association_graphics_card), class: "w-full h-full object-cover", alt: "Atelier graphique au Circographe" %>
       </div>
@@ -60,34 +60,34 @@
     </article>
   </div>
 
-  <footer class="bg-[#1F5C55]/5 border border-[#1F5C55]/10 rounded-2xl px-6 sm:px-8 py-5 text-center text-sm text-gray-700">
+  <footer class="bg-[#1F5C55]/5 border border-[#1F5C55]/10 rounded-2xl px-6 sm:px-8 py-5 text-center text-sm text-gray-700" data-gsap-reveal-item>
     <%= link_to "Nos activités", page_path("news"), class: "font-semibold text-[#1F5C55] hover:text-[#15403c] underline-offset-2 hover:underline" %>
     <span class="text-gray-400 mx-2">·</span>
     <%= link_to "Adhérer (sur place)", page_path("become_member"), class: "font-semibold text-[#1F5C55] hover:text-[#15403c] underline-offset-2 hover:underline" %>
   </footer>
 </section>
 
-<section id="fonctionnement" class="public-surface p-8 mt-12 mb-12 md:mb-16 fade-in scroll-mt-[5.25rem] md:scroll-mt-28 lg:scroll-mt-32">
-  <header class="text-center mb-8 space-y-2">
+<section id="fonctionnement" class="public-surface p-8 mt-12 mb-12 md:mb-16 scroll-mt-[5.25rem] md:scroll-mt-28 lg:scroll-mt-32" data-gsap-reveal>
+  <header class="text-center mb-8 space-y-2" data-gsap-reveal-item>
     <p class="text-sm uppercase tracking-[0.3em] text-[#1F5C55]/70">Autogestion & bénévolat</p>
     <h2 class="text-2xl sm:text-3xl font-bold text-black">Le lieu tient par l’engagement</h2>
     <p class="max-w-2xl mx-auto text-gray-700 text-sm sm:text-base">Créneaux, technique, expo, accueil : chaque adhérent·e peut contribuer à sa manière.</p>
   </header>
   <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-    <article class="p-6 rounded-lg bg-white shadow-sm border border-gray-100 hover:shadow-lg transition-all duration-300">
+    <article class="p-6 rounded-lg bg-white shadow-sm border border-gray-100 hover:shadow-lg transition-all duration-300" data-gsap-reveal-item>
       <h3 class="text-xl font-semibold text-gray-800 mb-3">Décider ensemble</h3>
       <p class="text-gray-600 text-sm leading-relaxed">AG annuelle et réunions : usages de la salle, programmation, décisions collectives.</p>
     </article>
-    <article class="p-6 rounded-lg bg-white shadow-sm border border-gray-100 hover:shadow-lg transition-all duration-300">
+    <article class="p-6 rounded-lg bg-white shadow-sm border border-gray-100 hover:shadow-lg transition-all duration-300" data-gsap-reveal-item>
       <h3 class="text-xl font-semibold text-gray-800 mb-3">Bénévolat en action</h3>
       <p class="text-gray-600 text-sm leading-relaxed">Accueil, maintenance, ateliers, communication… des missions variées selon les envies et les compétences.</p>
     </article>
-    <article class="p-6 rounded-lg bg-white shadow-sm border border-gray-100 hover:shadow-lg transition-all duration-300">
+    <article class="p-6 rounded-lg bg-white shadow-sm border border-gray-100 hover:shadow-lg transition-all duration-300" data-gsap-reveal-item>
       <h3 class="text-xl font-semibold text-gray-800 mb-3">Adhérer sur place</h3>
       <p class="text-gray-600 text-sm leading-relaxed">Adhésion lors d’une venue : visite du lieu, sécurité, questions — mise en lien avec la communauté.</p>
     </article>
   </div>
-  <div class="mt-8 bg-[#1F5C55]/5 border border-[#1F5C55]/10 rounded-2xl px-6 py-4 text-center text-sm text-gray-600">
+  <div class="mt-8 bg-[#1F5C55]/5 border border-[#1F5C55]/10 rounded-2xl px-6 py-4 text-center text-sm text-gray-600" data-gsap-reveal-item>
     Projet dans la salle ou bénévolat : <%= link_to "passe en créneau d’ouverture", page_path("contact_us", anchor: "horaires"), class: "font-semibold text-[#1F5C55] hover:text-[#15403c] underline-offset-2 hover:underline" %> — on construit ça avec toi.
   </div>
 </section>

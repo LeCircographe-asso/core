@@ -1,0 +1,166 @@
+@layer components {
+  .white-page-shell {
+    @apply min-h-screen bg-white px-4 py-6 sm:px-6 lg:px-8;
+  }
+
+  .white-page-toolbar {
+    @apply mx-auto mb-4 flex max-w-7xl flex-col justify-between gap-4 rounded-[28px] border px-5 py-4 shadow-[0_24px_70px_rgba(15,23,42,0.06)] backdrop-blur sm:px-6 lg:flex-row lg:items-end;
+    border-color: rgba(0, 0, 0, 0.05);
+    background-color: rgba(255, 255, 255, 0.9);
+  }
+
+  .white-page-toolbar__eyebrow {
+    @apply text-xs font-semibold uppercase tracking-[0.34em];
+    color: rgba(88, 54, 165, 0.7);
+  }
+
+  .white-page-toolbar__title {
+    @apply text-2xl font-semibold text-slate-900 sm:text-3xl;
+  }
+
+  .white-page-toolbar__hint {
+    @apply max-w-2xl text-sm leading-relaxed text-slate-500;
+  }
+
+  .white-page-toolbar__controls {
+    @apply flex flex-col gap-3 sm:flex-row sm:items-center;
+  }
+
+  .white-page-control {
+    @apply flex min-w-[17rem] items-center gap-3 rounded-full border px-4 py-3;
+    border-color: rgb(226, 232, 240);
+    background-color: rgba(248, 250, 252, 0.8);
+  }
+
+  .white-page-control__label {
+    @apply text-sm font-semibold text-slate-700;
+  }
+
+  .white-page-control__slider {
+    @apply h-1 w-full cursor-pointer appearance-none rounded-full bg-slate-200;
+    accent-color: #5836A5;
+  }
+
+  .white-page-control__value {
+    @apply min-w-[4.5rem] text-right text-sm font-semibold;
+    color: #5836A5;
+  }
+
+  .white-page-clear-button {
+    @apply inline-flex items-center justify-center rounded-full border px-5 py-3 text-sm font-semibold text-white shadow-md transition-colors duration-200 hover:bg-[#492d8e] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4;
+    background-color: #5836A5;
+    border-color: rgba(88, 54, 165, 0.2);
+    outline-color: #5836A5;
+  }
+
+  .white-page-board {
+    position: relative;
+    min-height: calc(100vh - 13rem);
+    overflow: hidden;
+    border-radius: 2rem;
+    border: 1px solid rgba(148, 163, 184, 0.18);
+    background:
+      radial-gradient(circle at top left, rgba(88, 54, 165, 0.04), transparent 24%),
+      radial-gradient(circle at bottom right, rgba(88, 54, 165, 0.05), transparent 28%),
+      white;
+    box-shadow:
+      inset 0 0 0 1px rgba(255, 255, 255, 0.7),
+      0 30px 90px rgba(15, 23, 42, 0.05);
+  }
+
+  .white-page-board:focus-visible {
+    outline: 2px solid rgba(88, 54, 165, 0.48);
+    outline-offset: 8px;
+  }
+
+  .white-page-layer {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
+
+  .white-page-empty-state {
+    @apply absolute left-1/2 top-1/2 max-w-md -translate-x-1/2 -translate-y-1/2 rounded-[28px] border px-6 py-5 text-center shadow-[0_12px_48px_rgba(15,23,42,0.06)] backdrop-blur;
+    border-color: rgba(226, 232, 240, 0.8);
+    background-color: rgba(255, 255, 255, 0.82);
+  }
+
+  .white-page-empty-state__title {
+    @apply text-lg font-semibold text-slate-900;
+  }
+
+  .white-page-empty-state__body {
+    @apply mt-1 text-sm leading-relaxed text-slate-500;
+  }
+
+  .white-page-cursor {
+    position: fixed;
+    left: 0;
+    top: 0;
+    z-index: 50;
+    pointer-events: none;
+  }
+
+  .white-page-cursor--visible {
+    opacity: 1;
+  }
+
+  .white-page-cursor__core,
+  .white-page-cursor__halo {
+    position: absolute;
+    left: 0;
+    top: 0;
+    transform: translate(-50%, -50%);
+    border-radius: 9999px;
+  }
+
+  .white-page-cursor__core {
+    width: 8px;
+    height: 8px;
+    background: rgba(88, 54, 165, 0.78);
+    box-shadow:
+      0 0 0 1px rgba(255, 255, 255, 0.9),
+      0 0 16px rgba(88, 54, 165, 0.14);
+  }
+
+  .white-page-cursor__halo {
+    width: var(--graffiti-halo-size, 120px);
+    height: var(--graffiti-halo-size, 120px);
+    border: 1px solid rgba(88, 54, 165, 0.13);
+    background: radial-gradient(circle, rgba(88, 54, 165, 0.045) 0%, rgba(88, 54, 165, 0.018) 45%, rgba(88, 54, 165, 0) 72%);
+    box-shadow:
+      inset 0 0 24px rgba(88, 54, 165, 0.04),
+      0 0 24px rgba(88, 54, 165, 0.035);
+  }
+
+  .white-page-spray {
+    position: absolute;
+    pointer-events: none;
+    transform-origin: center;
+    will-change: transform, opacity;
+    mix-blend-mode: multiply;
+    filter: drop-shadow(0 4px 12px rgba(88, 54, 165, 0.08));
+  }
+
+  .white-page-spray svg {
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+  }
+
+  @media (pointer: coarse) {
+    .white-page-toolbar {
+      @apply gap-3;
+    }
+
+    .white-page-control {
+      @apply min-w-0;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .white-page-cursor {
+      display: none;
+    }
+  }
+}
