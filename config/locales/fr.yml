@@ -165,6 +165,10 @@ fr:
       restore:
         restored_notice: Utilisateur restauré avec succès.
         restore_failed_alert: Impossible de restaurer cet utilisateur.
+      create_web_account:
+        web_account_created: Compte web dormant créé. La personne pourra se connecter en utilisant son email.
+        web_account_already_exists: Cette personne a déjà un compte web.
+        email_required_for_web_account: Un email est obligatoire pour créer un compte web. Renseignez-le d'abord dans le profil.
       set_user:
         person_or_user_missing_alert: Utilisateur non trouvé.
       check_deletion_permissions:

@@ -14,6 +14,7 @@ Rails.application.routes.draw do
     resources :donations, only: %i[new create]
     resources :users do
       post :restore, on: :member
+      post :create_web_account, on: :member
       # Actions pour gérer Person
       get :edit_person, on: :member
       # Actions pour gérer les doublons

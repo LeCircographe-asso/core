@@ -12,7 +12,7 @@ module Admin
     include NewsletterParamParser
     include Admin::Users::ParameterHandling
     include Admin::Users::UpdateHandling
-    before_action :set_user, only: %i[edit update destroy]
+    before_action :set_user, only: %i[edit update destroy create_web_account]
     before_action :set_breadcrumbs, except: %i[index new]
     before_action :check_deletion_permissions, only: [ :destroy ]
     before_action :require_super_admin, only: [ :restore ]
@@ -157,6 +157,33 @@ module Admin
           format.html { redirect_to admin_users_path, status: :see_other, alert: t(".archive_failed_alert") }
           format.json { head :unprocessable_content }
         end
+      end
+    end
+
+    # POST /admin/users/person_1/create_web_account
+    def create_web_account
+      if @person.nil?
+        redirect_to admin_users_path, alert: t(".person_or_user_missing_alert") and return
+      end
+
+      if @person.user.present?
+        redirect_to admin_user_path(person_route_key(@person)), alert: t(".web_account_already_exists") and return
+      end
+
+      if @person.email.blank?
+        redirect_to admin_user_path(person_route_key(@person)), alert: t(".email_required_for_web_account") and return
+      end
+
+      result = People::UserAccountCreator.new(
+        person: @person,
+        system_role: "web_visitor",
+        created_by_admin: true
+      ).call
+
+      if result.success?
+        redirect_to admin_user_path(person_route_key(@person)), notice: t(".web_account_created")
+      else
+        redirect_to admin_user_path(person_route_key(@person)), alert: result.message
       end
     end
 

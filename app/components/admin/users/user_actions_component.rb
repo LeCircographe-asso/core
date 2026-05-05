@@ -26,10 +26,7 @@ module Admin
         # Contribution action
         actions << contribution_action
 
-        # Create web account action - moved to header
-        # if is_person_without_user
-        #   actions << create_web_account_action
-        # end
+        actions << create_web_account_action if is_person_without_user
 
         actions.compact
       end
@@ -109,9 +106,20 @@ module Admin
       end
 
       def create_web_account_action
-        link_to "Créer un compte web",
-                new_admin_user_path(person_id: person.id),
-                class: "inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#5836a5] hover:bg-[#4c2d8a] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#5836a5]"
+        if person.email.present?
+          helpers.button_to(
+            "Créer un compte web",
+            helpers.create_web_account_admin_user_path(person_route_key),
+            method: :post,
+            form: { data: { turbo_confirm: "Créer un compte web dormant pour #{person.full_name} (#{person.email}) ?" } },
+            class: "inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#5836a5] hover:bg-[#4c2d8a] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#5836a5]"
+          )
+        else
+          content_tag :span,
+                      "Compte web (email requis)",
+                      class: "inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-400 bg-gray-50 cursor-not-allowed",
+                      title: "Renseignez un email dans le profil pour activer cette action"
+        end
       end
 
       def edit_information_action
