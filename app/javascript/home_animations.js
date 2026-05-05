@@ -5,6 +5,8 @@ document.addEventListener("turbo:load", initAnimations)
 
 function initAnimations () {
   const titleElement = document.getElementById("title")
+  const heroKicker = document.querySelector(".hero-kicker")
+  const heroIntro = document.querySelector(".hero-intro")
   const mainButton = document.querySelector(".main-button")
   const mainContent = document.getElementById("main-content")
   const scrollArrow = document.querySelector(".scroll-arrow-container")
@@ -20,7 +22,9 @@ function initAnimations () {
 
   gsapScoped(() => {
     if (prefersReducedMotion()) {
+      if (heroKicker) heroKicker.classList.remove("opacity-0")
       if (titleElement) titleElement.classList.remove("opacity-0")
+      if (heroIntro) heroIntro.classList.remove("opacity-0")
       if (mainButton) mainButton.classList.remove("opacity-0")
       if (mainContent) mainContent.classList.remove("opacity-0")
       if (map) map.classList.remove("opacity-0")
@@ -29,6 +33,15 @@ function initAnimations () {
     }
 
     const letters = buildLetterSpans(titleElement)
+    if (heroKicker) {
+      gsap.fromTo(
+        heroKicker,
+        { opacity: 0, y: -14 },
+        { opacity: 1, y: 0, duration: 0.45, ease: "power2.out",
+          onComplete: () => heroKicker.classList.remove("opacity-0") }
+      )
+    }
+
     if (letters.length) {
       gsap.set(letters, { opacity: 0 })
       gsap.to(letters, {
@@ -41,18 +54,27 @@ function initAnimations () {
       titleElement.classList.remove("opacity-0")
     }
 
+    if (heroIntro) {
+      gsap.fromTo(
+        heroIntro,
+        { opacity: 0, y: 18 },
+        { opacity: 1, y: 0, duration: 0.55, delay: 0.45, ease: "power2.out",
+          onComplete: () => heroIntro.classList.remove("opacity-0") }
+      )
+    }
+
     gsap.fromTo(
       mainButton,
-      { opacity: 0 },
-      { opacity: 1, duration: 0.5, delay: 1.5, ease: "power2.out",
+      { opacity: 0, y: 16 },
+      { opacity: 1, y: 0, duration: 0.5, delay: 1.1, ease: "power2.out",
         onComplete: () => mainButton.classList.remove("opacity-0") }
     )
 
     if (scrollArrow) {
       gsap.fromTo(
         scrollArrow,
-        { opacity: 0 },
-        { opacity: 1, duration: 0.5, delay: 1.8, ease: "power2.out",
+        { opacity: 0, y: 10 },
+        { opacity: 1, y: 0, duration: 0.5, delay: 1.35, ease: "power2.out",
           onComplete: () => scrollArrow.classList.remove("opacity-0") }
       )
     }
@@ -65,11 +87,13 @@ function initAnimations () {
     }, 4000)
 
     return () => {
+      if (heroKicker) heroKicker.classList.add("opacity-0")
       const t = document.getElementById("title")
       if (t && savedTitleText != null) {
         t.textContent = savedTitleText
         t.classList.add("opacity-0")
       }
+      if (heroIntro) heroIntro.classList.add("opacity-0")
     }
   }, scopeEl)
 

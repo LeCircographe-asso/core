@@ -195,9 +195,6 @@
                                     <%= link_to t("views.shared.navbar.our_news"), page_path("news"), class: "flex items-center w-full py-4 font-medium text-left text-gray-900", data: { 'nav-active-target': 'link', 'nav-active-path': page_path('news'), 'nav-active-active-classes': 'nav-active-link' } %>
                                 </li>
                                 <li>
-                                    <%= link_to t("views.shared.navbar.blog_newsletters"), page_path("blog_newsletter"), class: "block" %>
-                                </li>
-                                <li>
                                     <%= link_to t("views.shared.navbar.photo_gallery"), page_path("gallery"), class: "block" %>
                                 </li>
                             </ul>
@@ -296,6 +293,9 @@
                         <%= t("views.shared.navbar.sign_up_disabled_reason") %>
                       </p>
                     <% end %>
+                    <p class="col-span-2 min-[844px]:hidden text-xs font-normal text-gray-600 leading-snug text-center px-1">
+                      La connexion fonctionne. Certaines sections publiques sont encore en chantier.
+                    </p>
                 </div>
                 <% end %>
             </div>
