@@ -7,6 +7,7 @@ import "global_animations"
 import "public_animations"
 import "turbo_page_reveal"
 import "confirm_modal"
+import "whatsapp_qr_modal"
 
 // Définir la fonction initFlowbite si elle n'existe pas déjà
 if (typeof window.initFlowbite !== 'function') {
