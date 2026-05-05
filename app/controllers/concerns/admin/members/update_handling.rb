@@ -10,7 +10,7 @@ module Admin
       private
 
       def handle_member_update
-        return handle_person_update if @person.user.nil?
+        return handle_person_update if params[:person].present?
 
         handle_user_update
       end
