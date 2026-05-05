@@ -17,9 +17,6 @@ Rails.application.routes.draw do
       post :create_web_account, on: :member
       # Actions pour gérer Person
       get :edit_person, on: :member
-      # Actions pour gérer les doublons
-      get :duplicates, on: :collection
-
       resources :payments, module: :users, only: %i[index new create show update destroy] do
         post :process_payment, on: :member
       end
