@@ -31,7 +31,6 @@
     <%= javascript_importmap_tags %>
 
     <!-- External services -->
-    <script src="https://js.stripe.com/v3/"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <%= javascript_include_tag "flowbite.turbo.min", "data-turbo-track": "reload" %>
@@ -91,6 +90,8 @@
     <% end %>
 
     <%= render 'shared/confirm_modal' %>
+    <%= render 'shared/whatsapp_qr_modal' %>
+    <%= yield :scripts %>
 </body>
 
 </html>
