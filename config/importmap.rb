@@ -15,3 +15,7 @@ pin "swiper" # @12.0.3
 pin "swiper/bundle", to: "swiper--bundle.js" # @12.0.3
 pin "confirm_modal", to: "confirm_modal.js"
 pin "leaflet" # @1.9.4
+# GSAP 3 — full package under vendor/javascript/gsap (npm extract). Do not use flattened single-file pins.
+pin_all_from "vendor/javascript/gsap", under: "gsap", preload: false
+pin "lib/gsap/register", to: "lib/gsap/register.js"
+pin "lib/gsap/animation_prefs", to: "lib/gsap/animation_prefs.js"

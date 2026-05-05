@@ -1,5 +1,6 @@
 // Configure your import map in config/importmap.rb. Read more: https://github.com/rails/importmap-rails
 import "@hotwired/turbo-rails"
+import "lib/gsap/register"
 import "controllers"
 import "home_animations"
 import "global_animations"
