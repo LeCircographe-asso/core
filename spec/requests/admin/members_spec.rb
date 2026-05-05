@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe 'Admin::Users', type: :request do
+RSpec.describe 'Admin::Members', type: :request do
   describe 'POST /admin/users' do
     let(:admin) { create(:user, :admin) }
 
@@ -24,8 +24,8 @@ RSpec.describe 'Admin::Users', type: :request do
 
       it 'creates person, membership, and payment' do
         expect do
-          post admin_users_path, params: {
-            user: {
+          post admin_members_path, params: {
+            member: {
               create_membership: '1',
               membership_type_id: membership_type.id,
               payment_method: 'cash',
@@ -46,7 +46,7 @@ RSpec.describe 'Admin::Users', type: :request do
                                                                                                 .and change(NewsletterSubscriber, :count).by(1)
 
         person = Person.order(:created_at).last
-        expect(response).to redirect_to(admin_user_path("person_#{person.id}"))
+        expect(response).to redirect_to(admin_member_path(person))
 
         membership = person.memberships.last
         payment = person.payments.last
@@ -64,8 +64,8 @@ RSpec.describe 'Admin::Users', type: :request do
 
       it 'creates a user account and redirects to the person profile' do
         expect do
-          post admin_users_path, params: {
-            user: {
+          post admin_members_path, params: {
+            member: {
               person_id: person.id,
               create_web_account: '1',
               system_role: 'volunteer',
@@ -74,7 +74,7 @@ RSpec.describe 'Admin::Users', type: :request do
           }
         end.to change(User, :count).by(1)
 
-        expect(response).to redirect_to(admin_user_path("person_#{person.id}"))
+        expect(response).to redirect_to(admin_member_path(person))
         expect(person.reload.user).to be_present
       end
     end
@@ -82,8 +82,8 @@ RSpec.describe 'Admin::Users', type: :request do
     context 'with invalid attributes' do
       it 're-renders the form with errors' do
         expect do
-          post admin_users_path, params: {
-            user: {
+          post admin_members_path, params: {
+            member: {
               create_membership: '1',
               membership_type_id: nil,
               person: {
@@ -106,7 +106,7 @@ RSpec.describe 'Admin::Users', type: :request do
   describe 'GET /admin/users' do
     context 'when not authenticated' do
       it 'redirects to login' do
-        get admin_users_path
+        get admin_members_path
         expect(response).to redirect_to(new_session_path)
       end
     end
@@ -117,7 +117,7 @@ RSpec.describe 'Admin::Users', type: :request do
       before { login_as(user) }
 
       it 'redirects to root with alert' do
-        get admin_users_path
+        get admin_members_path
         expect(response).to redirect_to(root_path)
         follow_redirect!
         expect(response.body).to include('accès')
@@ -130,7 +130,7 @@ RSpec.describe 'Admin::Users', type: :request do
       before { login_as(admin) }
 
       it 'returns http success' do
-        get admin_users_path
+        get admin_members_path
         expect(response).to have_http_status(:success)
       end
 
@@ -138,7 +138,7 @@ RSpec.describe 'Admin::Users', type: :request do
         create(:person, first_name: 'Alice', last_name: 'Smith')
         create(:person, first_name: 'Bob', last_name: 'Jones')
 
-        get admin_users_path
+        get admin_members_path
         expect(response.body).to include('Alice')
         expect(response.body).to include('Bob')
       end
@@ -147,7 +147,7 @@ RSpec.describe 'Admin::Users', type: :request do
         active_person = create(:person, deleted_at: nil)
         deleted_person = create(:person, deleted_at: Time.current)
 
-        get admin_users_path
+        get admin_members_path
         expect(response.body).to include(active_person.first_name)
         expect(response.body).not_to include(deleted_person.first_name)
       end
@@ -164,14 +164,14 @@ RSpec.describe 'Admin::Users', type: :request do
       it 'shows person with user' do
         user = create(:user, person: person)
 
-        get admin_user_path(user)
+        get admin_member_path(user)
         expect(response).to have_http_status(:success)
         expect(response.body).to include('John')
         expect(response.body).to include('Doe')
       end
 
       it 'shows person without user (person_123 format)' do
-        get admin_user_path("person_#{person.id}")
+        get admin_member_path(person)
         expect(response).to have_http_status(:success)
         expect(response.body).to include('John')
         expect(response.body).to include("Créer un espace utilisateur")
@@ -180,7 +180,7 @@ RSpec.describe 'Admin::Users', type: :request do
       it "shows recent payments without dead-end 'Voir détails' link" do
         create(:payment, person: person, recorded_by: admin, total_cents: 5000, payment_method: 'cash')
 
-        get admin_user_path("person_#{person.id}")
+        get admin_member_path(person)
 
         expect(response).to have_http_status(:success)
         expect(response.body).to include("/admin/payments?person_id=#{person.id}")
@@ -188,13 +188,13 @@ RSpec.describe 'Admin::Users', type: :request do
       end
 
       it 'returns 404 for non-existent person' do
-        get admin_user_path('person_99999')
+        get admin_member_path('0')
         expect(response).to have_http_status(:not_found)
       end
 
       it 'redirects when numeric user id does not exist' do
-        get admin_user_path(0)
-        expect(response).to redirect_to(admin_users_path)
+        get admin_member_path(0)
+        expect(response).to redirect_to(admin_members_path)
         follow_redirect!
         expect(flash[:alert]).to eq(I18n.t("admin.users.set_user.person_or_user_missing_alert"))
       end
@@ -210,7 +210,7 @@ RSpec.describe 'Admin::Users', type: :request do
       let(:target_person) { create(:person, first_name: 'Lucie', last_name: 'Martin', phone: '0102030405') }
 
       it 'updates person attributes via PersonUpdater' do
-        patch admin_user_path("person_#{target_person.id}"), params: {
+        patch admin_member_path(person), params: {
           person: {
             first_name: 'Lucile',
             phone: '0606060606',
@@ -218,13 +218,13 @@ RSpec.describe 'Admin::Users', type: :request do
           }
         }
 
-        expect(response).to redirect_to(admin_user_path("person_#{target_person.id}"))
+        expect(response).to redirect_to(admin_member_path(person))
         expect(target_person.reload.first_name).to eq('Lucile')
         expect(target_person.phone).to eq('0606060606')
       end
 
       it 'returns validation errors when data invalid' do
-        patch admin_user_path("person_#{target_person.id}"), params: {
+        patch admin_member_path(person), params: {
           person: {
             first_name: '',
             last_name: '',
@@ -245,15 +245,15 @@ RSpec.describe 'Admin::Users', type: :request do
       it "preserves newsletter subscription state" do
         subscriber = create(:newsletter_subscriber, person: target_person, email: target_person.email, subscribed: true)
 
-        patch admin_user_path(target_user), params: {
-          user: {
+        patch admin_member_path(target_user), params: {
+          member: {
             first_name: "Mila-Updated",
             email_address: target_user.email_address,
             system_role: target_user.system_role
           }
         }
 
-        expect(response).to redirect_to(admin_user_path(target_user))
+        expect(response).to redirect_to(admin_member_path(target_user))
         expect(target_person.reload.first_name).to eq("Mila-Updated")
         expect(subscriber.reload.subscribed?).to be(true)
       end
@@ -269,7 +269,7 @@ RSpec.describe 'Admin::Users', type: :request do
 
       it 'restores the user' do
         expect do
-          post restore_admin_user_path(deleted_user)
+          post restore_admin_member_path(deleted_user)
         end.to change { deleted_user.reload.deleted_at }.from(Time).to(nil)
 
         deleted_user.reload
@@ -277,8 +277,8 @@ RSpec.describe 'Admin::Users', type: :request do
       end
 
       it 'redirects to users list with notice' do
-        post restore_admin_user_path(deleted_user)
-        expect(response).to redirect_to(admin_users_path)
+        post restore_admin_member_path(deleted_user)
+        expect(response).to redirect_to(admin_members_path)
         follow_redirect!
         expect(response.body).to include('restauré')
       end
@@ -292,10 +292,10 @@ RSpec.describe 'Admin::Users', type: :request do
 
       it 'does not allow restoration' do
         expect do
-          post restore_admin_user_path(deleted_user)
+          post restore_admin_member_path(deleted_user)
         end.not_to(change { deleted_user.reload.deleted_at })
 
-        expect(response).to redirect_to(admin_users_path)
+        expect(response).to redirect_to(admin_members_path)
         follow_redirect!
         expect(response.body).to include('super-admin')
       end
@@ -310,7 +310,7 @@ RSpec.describe 'Admin::Users', type: :request do
       before { login_as(super_admin) }
 
       it 'archives the user instead of hard delete' do
-        delete admin_user_path(regular_user)
+        delete admin_member_path(regular_user)
         follow_redirect! if response.redirect?
 
         expect(regular_user.reload.deleted?).to eq(true)
@@ -320,10 +320,10 @@ RSpec.describe 'Admin::Users', type: :request do
 
       it 'does not allow deleting self' do
         expect do
-          delete admin_user_path(super_admin)
+          delete admin_member_path(super_admin)
         end.not_to(change { super_admin.reload.deleted? })
 
-        expect(response).to redirect_to(admin_users_path)
+        expect(response).to redirect_to(admin_members_path)
       end
     end
   end
@@ -337,10 +337,10 @@ RSpec.describe 'Admin::Users', type: :request do
       person = create(:person)
 
       expect do
-        delete admin_user_path("person_#{person.id}")
+        delete admin_member_path(person)
       end.to change { person.reload.deleted_at.present? }.from(false).to(true)
 
-      expect(response).to redirect_to(admin_users_path)
+      expect(response).to redirect_to(admin_members_path)
     end
 
     it 'prevents deletion if financial data exists' do
@@ -348,7 +348,7 @@ RSpec.describe 'Admin::Users', type: :request do
       create(:membership, person: person)
 
       expect do
-        delete admin_user_path("person_#{person.id}")
+        delete admin_member_path(person)
       end.not_to(change { person.reload.deleted_at })
 
       follow_redirect!

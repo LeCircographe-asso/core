@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe 'Admin::Users::Payments', type: :request do
+RSpec.describe 'Admin::Members::Payments', type: :request do
   let(:admin_user) { create(:user, :admin) }
   let(:person) { create(:person) }
 
@@ -10,7 +10,7 @@ RSpec.describe 'Admin::Users::Payments', type: :request do
 
   describe 'GET /admin/users/:id/payments' do
     it 'redirects to the filtered payments history for the person' do
-      get admin_user_payments_path("person_#{person.id}")
+      get admin_member_payments_path(person.id)
 
       expect(response).to redirect_to(admin_payments_path(person_id: person.id))
     end
@@ -18,7 +18,7 @@ RSpec.describe 'Admin::Users::Payments', type: :request do
 
   describe 'GET /admin/users/:id/payments/new' do
     it 'redirects to the filtered payments history for the person' do
-      get new_admin_user_payment_path("person_#{person.id}")
+      get new_admin_member_payment_path(person.id)
 
       expect(response).to redirect_to(admin_payments_path(person_id: person.id))
     end
@@ -34,7 +34,7 @@ RSpec.describe 'Admin::Users::Payments', type: :request do
       contribution_formula
 
       expect do
-        post admin_user_payments_path("person_#{person.id}"), params: {
+        post admin_member_payments_path(person.id), params: {
           payment: {
             payment_method: 'cash',
             notes: 'Membership + Pack'
@@ -64,7 +64,7 @@ RSpec.describe 'Admin::Users::Payments', type: :request do
       payment = create(:payment, :success, person: person, recorded_by: admin_user, notes: 'Initial note')
 
       expect do
-        delete admin_user_payment_path("person_#{person.id}", payment)
+        delete admin_member_payment_path(person.id, payment)
       end.not_to change(Payment, :count)
 
       expect(response).to redirect_to(admin_payments_path(person_id: person.id))

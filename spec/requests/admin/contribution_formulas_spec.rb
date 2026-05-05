@@ -18,7 +18,7 @@ RSpec.describe "Admin::ContributionFormulas", type: :request do
 
       expect(response).to have_http_status(:success)
       expect(response.body).to include(person.full_name)
-      expect(response.body).to include(admin_user_path("person_#{person.id}"))
+      expect(response.body).to include(admin_member_path(person))
     end
 
     it "renders a single purchase form for all available formulas" do
@@ -94,7 +94,7 @@ RSpec.describe "Admin::ContributionFormulas", type: :request do
       payment = Payment.order(:created_at).last
       contribution = person.contributions.order(:created_at).last
 
-      expect(response).to redirect_to(admin_user_path("person_#{person.id}"))
+      expect(response).to redirect_to(admin_member_path(person))
       expect(payment.total_cents).to eq(3_200)
       expect(payment.payment_lines.pluck(:item_type, :item_id, :amount_cents)).to contain_exactly(
         [ "Contribution", contribution.id, 2_500 ],
@@ -117,7 +117,7 @@ RSpec.describe "Admin::ContributionFormulas", type: :request do
 
       payment = Payment.order(:created_at).last
 
-      expect(response).to redirect_to(admin_user_path("person_#{person.id}"))
+      expect(response).to redirect_to(admin_member_path(person))
       expect(payment.payment_method).to eq("offered")
       expect(payment.total_cents).to eq(0)
       expect(payment.offer_reason).to eq("Solidarity")

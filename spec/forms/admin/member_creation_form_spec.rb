@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe Admin::UserCreationForm do
+RSpec.describe Admin::MemberCreationForm do
   let(:admin_user) { create(:user, :admin) }
   let(:session) { admin_user.sessions.create!(user_agent: 'RSpec', ip_address: '127.0.0.1') }
 
@@ -92,7 +92,7 @@ RSpec.describe Admin::UserCreationForm do
 
         expect(result.success?).to be(false)
         expect(result.errors.join(', ')).to start_with(
-          I18n.t('admin.users.create.invalid_data_alert', details: '').rstrip
+          I18n.t('admin.members.create.invalid_data_alert', details: '').rstrip
         )
       end
     end
