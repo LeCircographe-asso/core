@@ -17,7 +17,7 @@
             <h2 class="text-lg leading-6 font-medium text-gray-900"><%= t("views.admin.users.new.user_information") %></h2>
           </div>
           <div class="p-6">
-            <%= form_with(model: [:admin, @user], method: :post, data: { turbo: false, controller: "form-toggle" }, class: "space-y-6") do |form| %>
+            <%= form_with(model: [:admin, @user], method: :post, data: { turbo: false, controller: "form-toggle minor-calculator" }, class: "space-y-6") do |form| %>
           <% if @user.errors.any? %>
             <div class="bg-red-50 border-l-4 border-red-400 p-4 mb-6">
               <div class="flex">
@@ -163,7 +163,12 @@
                     <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                       <i class="fas fa-calendar text-gray-400"></i>
                     </div>
-                    <%= person_form.date_field :birth_date, class: "pl-10 block w-full focus:ring-[#1F5C55] focus:border-[#1F5C55] sm:text-sm border-gray-300 rounded-md" %>
+                    <%= person_form.date_field :birth_date,
+                        class: "pl-10 block w-full focus:ring-[#1F5C55] focus:border-[#1F5C55] sm:text-sm border-gray-300 rounded-md",
+                        data: { minor_calculator_target: "birthDate", action: "change->minor-calculator#updateDisplay" } %>
+                  </div>
+                  <div class="mt-1">
+                    <span data-minor-calculator-target="statusDisplay" class="hidden"></span>
                   </div>
                 </div>
 
@@ -210,13 +215,7 @@
                 
                 <div class="space-y-4">
                   
-                  <div>
-                    <div class="flex items-center">
-                      <%= person_form.check_box :is_minor, { class: "focus:ring-[#1F5C55] h-4 w-4 text-[#1F5C55] border-gray-300 rounded" } %>
-                      <%= person_form.label :is_minor, "Personne mineure", class: "ml-2 block text-sm text-gray-900" %>
-                    </div>
-                    <p class="text-xs text-gray-500 mt-1">Cochez si la personne a moins de 18 ans</p>
-                  </div>
+                  <%= person_form.hidden_field :is_minor, value: "false", data: { minor_calculator_target: "isMinor" } %>
                   
                   <div>
                     <%= person_form.label :specialty, "Spécialité", class: "block text-sm font-medium text-gray-700" %>

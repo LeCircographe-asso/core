@@ -15,7 +15,7 @@
       </div>
 
       <div class="p-6">
-        <%= form_with model: @person, url: admin_user_path(Admin::Users::PersonRouteKey.call(@person)), method: :patch, local: true, class: "space-y-6" do |form| %>
+        <%= form_with model: @person, url: admin_user_path(Admin::Users::PersonRouteKey.call(@person)), method: :patch, local: true, class: "space-y-6", data: { controller: "minor-calculator" } do |form| %>
           <% if @person.errors.any? %>
             <div class="bg-red-50 border border-red-200 rounded-md p-4">
               <div class="flex">
@@ -93,8 +93,12 @@
 
           <div>
             <%= form.label :birth_date, "Date de naissance", class: "block text-sm font-medium text-gray-700" %>
-            <%= form.date_field :birth_date, 
-                class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#1F5C55] focus:ring-[#1F5C55] sm:text-sm" %>
+            <%= form.date_field :birth_date,
+                class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#1F5C55] focus:ring-[#1F5C55] sm:text-sm",
+                data: { minor_calculator_target: "birthDate", action: "change->minor-calculator#updateDisplay" } %>
+            <div class="mt-1">
+              <span data-minor-calculator-target="statusDisplay" class="hidden"></span>
+            </div>
           </div>
 
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -135,10 +139,7 @@
               <%= form.label :image_rights, "Droits à l'image", class: "ml-2 block text-sm text-gray-700" %>
             </div>
 
-            <div class="flex items-center">
-              <%= form.check_box :is_minor, class: "h-4 w-4 text-[#1F5C55] focus:ring-[#1F5C55] border-gray-300 rounded" %>
-              <%= form.label :is_minor, "Mineur", class: "ml-2 block text-sm text-gray-700" %>
-            </div>
+            <%= form.hidden_field :is_minor, value: @person.is_minor.to_s, data: { minor_calculator_target: "isMinor" } %>
           </div>
 
           <!-- Reduced Rate Section -->

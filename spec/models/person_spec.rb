@@ -199,8 +199,8 @@ RSpec.describe Person, type: :model do
     end
 
     it 'filters adults and minors' do
-      adult = create(:person, is_minor: false)
-      minor = create(:person, is_minor: true)
+      adult = create(:person, :adult)
+      minor = create(:person, :minor)
 
       expect(Person.adults).to include(adult)
       expect(Person.adults).not_to include(minor)
@@ -359,6 +359,40 @@ RSpec.describe Person, type: :model do
       person.valid?
 
       expect(person.email).to be_nil
+    end
+  end
+
+  describe '#compute_minor_status (before_save)' do
+    it 'sets is_minor to true when birth_date is less than 18 years ago' do
+      person = create(:person, birth_date: 10.years.ago.to_date, is_minor: false)
+
+      expect(person.reload.is_minor).to be true
+    end
+
+    it 'sets is_minor to false when birth_date is more than 18 years ago' do
+      person = create(:person, birth_date: 20.years.ago.to_date, is_minor: true)
+
+      expect(person.reload.is_minor).to be false
+    end
+
+    it 'sets is_minor to false on the exact 18th birthday' do
+      person = create(:person, birth_date: 18.years.ago.to_date)
+
+      expect(person.reload.is_minor).to be false
+    end
+
+    it 'does not override is_minor when birth_date is absent' do
+      person = create(:person, birth_date: nil, is_minor: true)
+
+      expect(person.reload.is_minor).to be true
+    end
+
+    it 'updates is_minor when birth_date is changed' do
+      person = create(:person, birth_date: 20.years.ago.to_date)
+      expect(person.is_minor).to be false
+
+      person.update!(birth_date: 10.years.ago.to_date)
+      expect(person.is_minor).to be true
     end
   end
 

@@ -28,7 +28,9 @@ module Admin
         @current_membership = @person.current_membership
         add_person_context_breadcrumbs(@person, I18n.t("breadcrumbs.admin.memberships.upgrade_to_circus"))
       else
-        @membership_types = MembershipType.current_versions.order(:price_cents)
+        @membership_types = @person.present? \
+          ? MembershipType.available_for(@person).order(:price_cents) \
+          : MembershipType.current_versions.order(:price_cents)
         @is_upgrade = false
         add_person_context_breadcrumbs(@person, I18n.t("breadcrumbs.admin.memberships.new_membership")) if @person.present?
         add_breadcrumb I18n.t("breadcrumbs.admin.memberships.new_membership"), nil unless @person.present?
