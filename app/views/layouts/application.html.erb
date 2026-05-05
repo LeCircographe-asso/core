@@ -62,8 +62,8 @@
         <%= turbo_frame_tag ProfileSectionDomIds::FLASH_FRAME do %>
         <%= render 'shared/flash' %>
         <% end %>
-        <main class="flex-1 min-h-0 overflow-y-auto">
-            <div class="w-full" data-turbo-page-shell>
+        <main class="flex-1 min-h-0">
+            <div class="h-full w-full" data-turbo-page-shell>
             <%= yield %>
             </div>
         </main>
