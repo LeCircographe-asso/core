@@ -75,7 +75,7 @@ RSpec.describe 'Sessions', type: :request do
       end
 
       it 'redirects to return_to url if present' do
-        get admin_users_path # Simulate protected page
+        get admin_members_path # Simulate protected page
         follow_redirect! # Get redirected to login
 
         post session_path, params: {
@@ -83,7 +83,7 @@ RSpec.describe 'Sessions', type: :request do
           password: 'password123'
         }
 
-        expect(response).to redirect_to(admin_users_path)
+        expect(response).to redirect_to(admin_members_path)
       end
     end
 
