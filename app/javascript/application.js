@@ -28,6 +28,15 @@ if (typeof window.initFlowbite !== 'function') {
 
 document.addEventListener("turbo:load", () => {
     window.initFlowbite();
+    registerServiceWorker();
 });
 import "trix"
 import "@rails/actiontext"
+
+function registerServiceWorker() {
+  if (!("serviceWorker" in navigator)) return
+
+  navigator.serviceWorker.register("/service-worker").catch((error) => {
+    console.warn("Service worker registration failed:", error)
+  })
+}
