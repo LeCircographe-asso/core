@@ -1,7 +1,14 @@
 <% content_for :title, "Le Circographe - Détail Événement" %>
 
     <div class="page-container-wide mb-12 fade-in">
-        <h1 class="text-4xl font-bold text-center text-black bg-white/95 py-6 mb-8 rounded-lg shadow-md"><%= @event.title %></h1>
+        <div class="space-y-3 mb-8">
+            <div class="flex justify-center">
+                <span class="inline-flex items-center rounded-full border border-amber-300 bg-amber-50 px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-amber-800">
+                    Démo UX/UI · événement fictif
+                </span>
+            </div>
+            <h1 class="text-4xl font-bold text-center text-black bg-white/95 py-6 rounded-lg shadow-md"><%= @event.title %></h1>
+        </div>
         
         <div class="surface-card bg-white/95 p-6 shadow-md">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -45,8 +52,11 @@
                         <% if current_user %>
                           <%= render "events/interest_button", event: @event, current_user: current_user %>
                         <% else %>
-                          <%= link_to "Je suis intéressé", new_session_path, 
+                          <%= link_to "Se connecter pour indiquer son intérêt", new_session_path,
                               class: "public-cta block w-full text-center" %>
+                          <p class="text-sm text-gray-600 text-center">
+                            Connexion requise pour cette action. Cette page événement est actuellement une démonstration d'interface.
+                          </p>
                         <% end %>
                         <%= button_to "Payer 10€", checkout_create_path(event_id: @event.id), method: :post, data: { turbo: "false" }, class: "public-cta w-full cursor-pointer" %>
                     </div>

@@ -6,8 +6,8 @@
     <% event_time = upcoming_event.date&.in_time_zone(Time.zone) %>
 
   <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-      <div class="flex items-start gap-4">
-        <div class="flex flex-col items-center justify-center w-16 h-16 rounded-2xl bg-brand-primary/10 text-brand-primary font-semibold uppercase tracking-wider">
+        <div class="flex items-start gap-4">
+          <div class="flex flex-col items-center justify-center w-16 h-16 rounded-2xl bg-brand-primary/10 text-brand-primary font-semibold uppercase tracking-wider">
           <% if event_time.present? %>
             <span class="text-lg leading-none"><%= event_time.strftime("%d") %></span>
             <span class="text-xs"><%= event_time.strftime("%b") %></span>
@@ -17,13 +17,19 @@
           <% end %>
         </div>
         <div class="space-y-2">
-          <div class="flex items-center gap-2">
+          <div class="flex flex-wrap items-center gap-2">
             <span class="badge-accent">
               <i class="fas fa-calendar-alt mr-1"></i>
               Prochain événement
             </span>
+            <span class="inline-flex items-center rounded-full border border-amber-300 bg-amber-50 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.16em] text-amber-800">
+              Démo UX/UI
+            </span>
           </div>
           <h3 class="text-xl font-semibold text-gray-900 leading-snug"><%= upcoming_event.title %></h3>
+          <p class="text-xs font-medium uppercase tracking-[0.2em] text-amber-700">
+            Contenu fictif présenté pour la démonstration de l'interface.
+          </p>
           <% description = upcoming_event.middle_description.presence || upcoming_event.upper_description.presence || upcoming_event.description.presence %>
           <% if description.present? %>
             <p class="text-sm sm:text-base text-gray-600 line-clamp-3"><%= description %></p>
