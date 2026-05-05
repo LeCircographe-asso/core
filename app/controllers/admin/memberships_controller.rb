@@ -20,7 +20,11 @@ module Admin
     end
 
     def new
-      @person = Person.find(params[:person_id]) if params[:person_id]
+      unless params[:person_id].present?
+        redirect_to admin_users_path, alert: "Sélectionnez une personne avant de créer une adhésion." and return
+      end
+
+      @person = Person.find(params[:person_id])
 
       if params[:upgrade] == "true" && @person&.current_membership&.basic?
         @membership_types = MembershipType.circus_types.available_for(@person).order(:price_cents)
