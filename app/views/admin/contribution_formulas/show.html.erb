@@ -114,7 +114,7 @@
               <% @contributions.each do |book| %>
                 <tr>
                   <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                    <%= link_to book.person.full_name, admin_user_path(Admin::Users::PersonRouteKey.call(book.person)),
+                    <%= link_to book.person.full_name, admin_member_path(book.person),
                         class: "text-[#1F5C55] hover:underline" %>
                   </td>
                   <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">

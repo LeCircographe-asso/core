@@ -1,0 +1,35 @@
+<div class="relative" data-controller="editable-member-number" data-editable-member-number-person-id-value="<%= person.id %>">
+  <% if can_edit? %>
+    <!-- Editable mode -->
+    <div class="flex items-center space-x-2">
+      <span class="text-white/80 text-xs">#</span>
+      <%= form_with model: person, url: admin_member_path(person), method: :patch,
+          local: false, id: form_id, class: "inline-flex items-center",
+          data: { "editable-member-number-target": "form" } do |form| %>
+        <%= form.text_field :member_number, 
+            value: member_number,
+            id: input_id,
+            class: "bg-white/20 text-white text-xs font-semibold rounded px-2 py-1 w-16 border-0 focus:bg-white focus:text-gray-900 focus:outline-none focus:ring-2 focus:ring-white/50",
+            placeholder: "--",
+            data: { 
+              "editable-member-number-target": "input",
+              action: "blur->editable-member-number#save keydown->editable-member-number#handleKeydown"
+            } %>
+      <% end %>
+      <button type="button" 
+          class="text-white/60 hover:text-white text-xs"
+          data-action="click->editable-member-number#edit"
+          data-editable-member-number-target="editButton">
+        ✏️
+      </button>
+    </div>
+  <% else %>
+    <!-- Read-only mode -->
+    <div class="flex items-center space-x-1">
+      <span class="text-white/80 text-xs">#</span>
+      <span class="text-white text-xs font-semibold">
+        <%= member_number.present? ? member_number : "--" %>
+      </span>
+    </div>
+  <% end %>
+</div>

@@ -1,0 +1,28 @@
+<!-- Primary Actions -->
+<div class="flex flex-wrap gap-3 mb-4">
+  <% if is_deleted %>
+    <!-- Restore user form -->
+    <%= restore_user_form %>
+  <% else %>
+    <!-- Primary action buttons -->
+    <% primary_actions.each do |action| %>
+      <%= action %>
+    <% end %>
+  <% end %>
+</div>
+
+<!-- Secondary Actions -->
+<div class="flex flex-wrap gap-3 text-sm">
+  <% unless is_deleted %>
+    <% secondary_actions.each do |action| %>
+      <%= action %>
+    <% end %>
+  <% end %>
+  
+  <%= link_to "Retour à la liste", admin_members_path,
+      class: "text-gray-600 hover:text-gray-800 hover:underline" %>
+  
+  <% unless is_deleted %>
+    <%= delete_action %>
+  <% end %>
+</div>

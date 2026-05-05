@@ -95,7 +95,7 @@
             <tbody class="divide-y divide-gray-200">
               <% @people_without_user.each do |person| %>
                 <tr>
-                  <td class="py-2"><%= link_to person.id, admin_user_path(Admin::Users::PersonRouteKey.call(person)), class: "text-[#1F5C55] hover:underline" %></td>
+                  <td class="py-2"><%= link_to person.id, admin_member_path(person), class: "text-[#1F5C55] hover:underline" %></td>
                   <td class="py-2"><%= person.full_name %></td>
                   <td class="py-2"><%= person.email.presence || "-" %></td>
                   <td class="py-2"><%= l(person.created_at.to_date) %></td>
@@ -121,7 +121,7 @@
               <p class="text-sm font-medium text-gray-900"><%= email %></p>
               <div class="mt-2 text-sm text-gray-600">
                 <% people.each do |person| %>
-                  <%= link_to person.full_name, admin_user_path(Admin::Users::PersonRouteKey.call(person)), class: "text-[#1F5C55] hover:underline" %>
+                  <%= link_to person.full_name, admin_member_path(person), class: "text-[#1F5C55] hover:underline" %>
                   <span class="text-gray-400">(##<%= person.id %>)</span>
                 <% end %>
               </div>
@@ -145,7 +145,7 @@
               <p class="text-sm font-medium text-gray-900"><%= phone %></p>
               <div class="mt-2 text-sm text-gray-600">
                 <% people.each do |person| %>
-                  <%= link_to person.full_name, admin_user_path(Admin::Users::PersonRouteKey.call(person)), class: "text-[#1F5C55] hover:underline" %>
+                  <%= link_to person.full_name, admin_member_path(person), class: "text-[#1F5C55] hover:underline" %>
                   <span class="text-gray-400">(##<%= person.id %>)</span>
                 <% end %>
               </div>
@@ -213,7 +213,7 @@
                   <td class="py-2 font-medium text-gray-900"><%= payment.id %></td>
                   <td class="py-2">
                     <% if payment.person.present? %>
-                      <%= link_to payment.person.full_name, admin_user_path(Admin::Users::PersonRouteKey.call(payment.person)), class: "text-[#1F5C55] hover:underline" %>
+                      <%= link_to payment.person.full_name, admin_member_path(payment.person), class: "text-[#1F5C55] hover:underline" %>
                     <% else %>
                       -
                     <% end %>
@@ -255,7 +255,7 @@
                   <td class="py-2 font-medium text-gray-900"><%= payment.id %></td>
                   <td class="py-2">
                     <% if payment.person.present? %>
-                      <%= link_to payment.person.full_name, admin_user_path(Admin::Users::PersonRouteKey.call(payment.person)), class: "text-[#1F5C55] hover:underline" %>
+                      <%= link_to payment.person.full_name, admin_member_path(payment.person), class: "text-[#1F5C55] hover:underline" %>
                     <% else %>
                       -
                     <% end %>
@@ -299,7 +299,7 @@
                   <td class="py-2 text-gray-900"><%= line.payment_id %></td>
                   <td class="py-2">
                     <% if line.payment&.person.present? %>
-                      <%= link_to line.payment.person.full_name, admin_user_path(Admin::Users::PersonRouteKey.call(line.payment.person)), class: "text-[#1F5C55] hover:underline" %>
+                      <%= link_to line.payment.person.full_name, admin_member_path(line.payment.person), class: "text-[#1F5C55] hover:underline" %>
                     <% else %>
                       -
                     <% end %>
@@ -341,7 +341,7 @@
                 <tr>
                   <td class="py-2 font-medium text-gray-900"><%= contribution.id %></td>
                   <td class="py-2">
-                    <%= link_to contribution.person.full_name, admin_user_path(Admin::Users::PersonRouteKey.call(contribution.person)), class: "text-[#1F5C55] hover:underline" %>
+                    <%= link_to contribution.person.full_name, admin_member_path(contribution.person), class: "text-[#1F5C55] hover:underline" %>
                   </td>
                   <td class="py-2"><%= contribution.contribution_formula.name %></td>
                   <td class="py-2"><%= contribution.sessions_remaining.nil? ? "-" : contribution.sessions_remaining %></td>
