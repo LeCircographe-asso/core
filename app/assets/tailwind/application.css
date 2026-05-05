@@ -34,6 +34,7 @@
 @import "./components/layout.css";
 @import "./components/dashboard.css";
 @import "./components/timeline.css";
+@import "./components/white_page.css";
 @import "./components/admin_sidebar.css";
 @import "./components/animations.css";
 @import "./components/tooltips.css";
@@ -155,4 +156,3 @@
   .focus\:border-\[\#1F5C55\]:focus { border-color: #5836A5; }
   .focus\:ring-\[\#1F5C55\]:focus { --tw-ring-color: #5836A5; }
 }
-

@@ -1,0 +1,77 @@
+<% content_for :title, "White Page" %>
+
+<section
+  class="white-page-shell"
+  data-controller="graffiti-cursor"
+  data-graffiti-cursor-halo-value="120"
+  data-graffiti-cursor-trail-fade-value="0.22"
+  data-graffiti-cursor-trail-interval-value="34"
+  data-graffiti-cursor-trail-distance-value="18"
+  data-graffiti-cursor-max-transient-value="24"
+  data-graffiti-cursor-max-persistent-value="80"
+  aria-labelledby="white-page-title"
+>
+  <header class="white-page-toolbar">
+    <div class="space-y-1">
+      <p class="white-page-toolbar__eyebrow">Playground</p>
+      <h1 id="white-page-title" class="white-page-toolbar__title">White Page</h1>
+      <p class="white-page-toolbar__hint">
+        Déplace le curseur pour un spray furtif. Clique pour poser une trace persistante.
+      </p>
+    </div>
+
+    <div class="white-page-toolbar__controls">
+      <label class="white-page-control" for="white-page-halo-size">
+        <span class="white-page-control__label">Halo</span>
+        <input
+          id="white-page-halo-size"
+          type="range"
+          min="56"
+          max="240"
+          step="4"
+          value="120"
+          class="white-page-control__slider"
+          data-graffiti-cursor-target="slider"
+          data-action="input->graffiti-cursor#adjustHalo"
+        >
+        <output class="white-page-control__value" data-graffiti-cursor-target="value">120 px</output>
+      </label>
+
+      <button
+        type="button"
+        class="white-page-clear-button"
+        data-action="graffiti-cursor#clearPersistent"
+      >
+        Effacer
+      </button>
+    </div>
+  </header>
+
+  <div
+    class="white-page-board"
+    data-graffiti-cursor-target="board"
+    data-action="
+      pointerenter->graffiti-cursor#showCursor
+      pointermove->graffiti-cursor#track
+      pointerleave->graffiti-cursor#hideCursor
+      pointerdown->graffiti-cursor#persist
+      keydown.enter->graffiti-cursor#plantFromKeyboard
+      keydown.space->graffiti-cursor#plantFromKeyboard
+    "
+    tabindex="0"
+  >
+    <div class="white-page-layer" data-graffiti-cursor-target="layer" aria-hidden="true"></div>
+
+    <div class="white-page-cursor" data-graffiti-cursor-target="cursor" aria-hidden="true">
+      <span class="white-page-cursor__core"></span>
+      <span class="white-page-cursor__halo" data-graffiti-cursor-target="halo"></span>
+    </div>
+
+    <div class="white-page-empty-state">
+      <p class="white-page-empty-state__title">Canvas brut</p>
+      <p class="white-page-empty-state__body">
+        Zone blanche volontairement vide pour tester le rendu spray, splash et halo.
+      </p>
+    </div>
+  </div>
+</section>
