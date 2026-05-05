@@ -16,24 +16,23 @@ class ContextualActionsComponent < ViewComponent::Base
   def build_actions
     actions = []
 
-    # Action "Voir" (toujours disponible)
-    actions << { type: :view, icon: :view_icon, url: person.id,
+    actions << { icon: :view_icon,
+                 url: helpers.admin_member_path(person),
                  class: "action-icon text-gray-600 hover:text-[#1F5C55] mr-2",
                  title: "Voir la fiche", data: { turbo: false } }
 
-    # Action "Créer Espace Utilisateur" (si pas de compte)
     unless person.user
-      actions << { type: :create_user, icon: :create_user_icon, url: "new",
+      actions << { icon: :create_user_icon,
+                   url: helpers.create_web_account_admin_member_path(person),
                    class: "action-icon text-green-600 hover:text-green-800 mr-2",
-                   title: "Créer un compte web", data: { turbo: false } }
+                   title: "Créer un compte web",
+                   data: { turbo_method: :post, turbo_confirm: "Créer un compte web pour #{person.full_name} ?" } }
     end
 
-    # Actions d'adhésion
     actions.concat(membership_actions_data)
 
-    # Actions de cotisation (si adhésion Cirque)
     if person.has_active_membership? && person.current_membership.membership_type.name.downcase.include?("cirque")
-      actions << { type: :contribution, icon: :contribution_icon, url: "#",
+      actions << { icon: :contribution_icon, url: "#",
                    class: "action-icon text-indigo-600 hover:text-indigo-800 mr-2",
                    title: "Ajouter une cotisation" }
     end
@@ -48,19 +47,17 @@ class ContextualActionsComponent < ViewComponent::Base
       current_membership = person.current_membership
 
       if current_membership.membership_type.name.downcase.include?("basic")
-        # Upgrade vers Cirque
-        actions << { type: :upgrade, icon: :upgrade_icon, url: "#",
+        actions << { icon: :upgrade_icon, url: "#",
                      class: "action-icon text-purple-600 hover:text-purple-800 mr-2",
                      title: "Upgrade vers Cirque" }
       end
 
-      # Voir l'adhésion
-      actions << { type: :view_membership, icon: :membership_icon, url: "#",
+      actions << { icon: :membership_icon, url: "#",
                    class: "action-icon text-blue-600 hover:text-blue-800 mr-2",
                    title: "Voir l'adhésion" }
     else
-      # Ajouter une adhésion
-      actions << { type: :add_membership, icon: :add_icon, url: "membership",
+      actions << { icon: :add_icon,
+                   url: helpers.new_admin_membership_path(person_id: person.id),
                    class: "action-icon text-green-600 hover:text-green-800 mr-2",
                    title: "Ajouter une adhésion" }
     end

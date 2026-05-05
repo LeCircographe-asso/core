@@ -1,20 +1,7 @@
 <div class="flex items-center">
   <% actions.each do |action| %>
-    <% 
-      # Construire l'URL selon le type d'action
-      url = case action[:type]
-            when :view
-              admin_member_path(person)
-            when :create_user
-              new_admin_member_path
-            when :add_membership
-              new_admin_membership_path(person_id: person.id)
-            else
-              action[:url]
-            end
-    %>
-    <%= link_to url, 
-                class: action[:class], 
+    <%= link_to action[:url],
+                class: action[:class],
                 title: action[:title],
                 data: action[:data] || {} do %>
       <%= send(action[:icon]) %>
