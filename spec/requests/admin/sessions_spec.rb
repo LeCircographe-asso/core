@@ -26,10 +26,9 @@ RSpec.describe "Admin::Sessions", type: :request do
 
   describe "POST /admin/session" do
     context "avec des identifiants valides" do
-      it "connecte l'utilisateur et redirige" do
+      it "connecte l'utilisateur et redirige vers le dashboard admin" do
         post admin_session_path, params: { email_address: admin.email_address, password: "password123" }
-        expect(response).to have_http_status(:see_other)
-        expect(response).not_to redirect_to(new_session_path)
+        expect(response).to redirect_to(admin_root_path)
       end
     end
 

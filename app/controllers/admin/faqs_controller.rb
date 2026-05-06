@@ -2,24 +2,49 @@
 
 module Admin
   class FaqsController < BaseController
-    def edit
-      data = FaqRepository.load
-      @hero      = data[:hero]
-      @cta_label = data[:cta_label]
-      @entries   = data[:entries]
+    before_action :set_faq, only: %i[edit update destroy]
+
+    def index
+      @faqs = Faq.ordered.group_by(&:label)
+      @labels = Faq::LABELS
     end
 
+    def new
+      @faq = Faq.new(label: params[:label] || "general")
+    end
+
+    def create
+      @faq = Faq.new(faq_params)
+      if @faq.save
+        redirect_to admin_faqs_path, notice: t(".created")
+      else
+        render :new, status: :unprocessable_entity
+      end
+    end
+
+    def edit; end
+
     def update
-      data = JSON.parse(faq_params.to_json)
-      File.write(FaqRepository::CONFIG_PATH, YAML.dump(data))
-      Rails.cache.delete(FaqRepository::CACHE_KEY)
-      redirect_to edit_admin_faq_path, notice: t(".updated")
+      if @faq.update(faq_params)
+        redirect_to admin_faqs_path, notice: t(".updated")
+      else
+        render :edit, status: :unprocessable_entity
+      end
+    end
+
+    def destroy
+      @faq.destroy!
+      redirect_to admin_faqs_path, notice: t(".destroyed"), status: :see_other
     end
 
     private
 
+    def set_faq
+      @faq = Faq.find(params[:id])
+    end
+
     def faq_params
-      params.require(:faq).permit(:hero, :cta_label, entries: %i[question answer])
+      params.require(:faq).permit(:question, :answer, :label, :position)
     end
   end
 end

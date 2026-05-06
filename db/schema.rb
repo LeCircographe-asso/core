@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_05_02_190100) do
+ActiveRecord::Schema[8.1].define(version: 2026_05_06_103539) do
   create_table "account_claims", force: :cascade do |t|
     t.string "confirmation_token", null: false
     t.datetime "created_at", null: false
@@ -167,6 +167,17 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_02_190100) do
     t.index ["category"], name: "index_events_on_category"
     t.index ["creator_id"], name: "index_events_on_creator_id"
     t.index ["date"], name: "index_events_on_date"
+  end
+
+  create_table "faqs", force: :cascade do |t|
+    t.text "answer", null: false
+    t.datetime "created_at", null: false
+    t.string "label", default: "general", null: false
+    t.integer "position", default: 0, null: false
+    t.string "question", null: false
+    t.datetime "updated_at", null: false
+    t.index ["label", "position"], name: "index_faqs_on_label_and_position"
+    t.index ["label"], name: "index_faqs_on_label"
   end
 
   create_table "member_number_histories", force: :cascade do |t|
