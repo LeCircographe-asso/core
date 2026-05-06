@@ -81,9 +81,10 @@ identifier.sqlite
 # IDE files
 /.idea
 
-# Cursor IDE — agent plans and per-developer rules (local only)
+# Cursor IDE — agent plans, rules and skills (local only)
 /.cursor/plans/
 /.cursor/rules/
+/.cursor/skills/
 
 # Documentation drafts (Cursor / ad-hoc audits — never commit)
 docs/_drafts/
@@ -97,3 +98,6 @@ SCRATCH.md
 # Watchman (not used - we use Tailwind watcher instead)
 /watchman
 docs/internal/ux_audit_2025_01.md
+
+# Duplicate vendor folder (Propshaft uses vendor/javascript/ and vendor/assets/)
+/vendor/js/
