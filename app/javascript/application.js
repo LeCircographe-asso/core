@@ -29,15 +29,15 @@ if (typeof window.initFlowbite !== 'function') {
 
 document.addEventListener("turbo:load", () => {
     window.initFlowbite();
-    registerServiceWorker();
 });
 import "trix"
 import "@rails/actiontext"
 
-function registerServiceWorker() {
-  if (!("serviceWorker" in navigator)) return
-
-  navigator.serviceWorker.register("/service-worker").catch((error) => {
-    console.warn("Service worker registration failed:", error)
+// Register once on first load (idempotent but no need to re-run on Turbo navigations)
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker
+      .register("/service-worker", { scope: "/" })
+      .catch((error) => console.warn("Service worker registration failed:", error))
   })
 }
