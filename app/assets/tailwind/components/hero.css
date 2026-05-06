@@ -13,7 +13,7 @@
   }
 
   .public-hero-eyebrow {
-    @apply text-sm uppercase text-white/70;
+    @apply text-sm font-medium uppercase text-white/70;
     letter-spacing: 0.35em;
   }
 
