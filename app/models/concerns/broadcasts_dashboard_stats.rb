@@ -14,5 +14,7 @@ module BroadcastsDashboardStats
       partial: "admin/dashboard/stats_bar",
       locals: { stats: Admin::DashboardStatsBuilder.call }
     )
+  rescue => e
+    Rails.logger.warn("[BroadcastsDashboardStats] broadcast skipped: #{e.message}")
   end
 end
