@@ -3,12 +3,12 @@
 *Revu le 2026-05-04 — aligné avec le code courant.*
 
 ## Now
-- [ ] **Paiements —** Les écrans admin (`Admin::PaymentsController#destroy`, `Admin::Users::PaymentsController#destroy`) passent déjà par `People::PaymentCanceller` (annulation `status: cancel`, pas de suppression ligne). Reste à éliminer ou verrouiller l’usage métier de `Payment#destroy` (hard delete encore présent sur le modèle, utilisé surtout par les specs).
+- [x] **Paiements —** Les écrans admin (`Admin::PaymentsController#destroy`, `Admin::Users::PaymentsController#destroy`) passent déjà par `People::PaymentCanceller` (annulation `status: cancel`, pas de suppression ligne). `Payment#destroy` est désormais verrouillé par défaut ; le hard delete résiduel passe par une intention explicite `Payment#hard_delete!` pour les usages techniques/tests.
 - [ ] Ajouter les métadonnées de reçu de don : numéro, date d’émission, émetteur (non implémenté côté app / pas de feature « reçu » dans le repo à ce jour).
 
 ## Next safe steps
 - [ ] Ajouter l’action admin de génération / réenvoi de reçu de don (dépend des métadonnées ci-dessus).
-- [ ] Documenter explicitement dans la doc d’architecture que `Person#renew_membership!` est le dernier gros workflow conservé sur le modèle avant une extraction éventuelle (mentions déjà présentes : `docs/domain_model.md`, `docs/glossary.md`, `docs/domain/business_logic.md`).
+- [x] Documenter explicitement dans la doc d’architecture que `Person#renew_membership!` est le dernier gros workflow conservé sur le modèle avant une extraction éventuelle (mentions déjà présentes : `docs/domain_model.md`, `docs/glossary.md`, `docs/domain/business_logic.md`).
 - [ ] Continuer la consolidation DRY des shells / layouts Tailwind sans refonte lourde.
 - [ ] Stabiliser le vocabulaire de primitives UI déjà posé (`page-container`, `surface-card`, `admin-page-header`, `admin-metric-card`).
 
