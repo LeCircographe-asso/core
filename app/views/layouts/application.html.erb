@@ -92,6 +92,10 @@
 
     <%= render 'shared/confirm_modal' %>
     <%= render 'shared/whatsapp_qr_modal' %>
+    <%# PWA install banner — mobile only, hidden until controller shows it %>
+    <% unless controller_path.start_with?('admin/') || (controller_name == 'sessions' && action_name == 'new') || (controller_name == 'registrations' && action_name == 'new') %>
+      <%= render 'shared/pwa_install_banner' %>
+    <% end %>
     <%= yield :scripts %>
 </body>
 
