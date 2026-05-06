@@ -1,88 +1,89 @@
 <% events ||= [] %>
 <% upcoming_event = events.first %>
 
-<div class="public-surface-bordered p-6 sm:p-7 space-y-5">
+<div class="public-surface-bordered overflow-hidden">
   <% if upcoming_event.present? %>
+    <%= turbo_stream_from upcoming_event %>
     <% event_time = upcoming_event.date&.in_time_zone(Time.zone) %>
 
-  <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div class="flex items-start gap-4">
-          <div class="flex flex-col items-center justify-center w-16 min-h-16 rounded-2xl bg-brand-primary/10 text-brand-primary font-semibold uppercase tracking-wider py-1">
-          <% if event_time.present? %>
-            <span class="text-lg leading-normal"><%= event_time.strftime("%d") %></span>
-            <span class="text-xs leading-normal"><%= event_time.strftime("%b") %></span>
-          <% else %>
-            <span class="text-xs leading-normal">Date</span>
-            <span class="text-xs leading-normal">à venir</span>
-          <% end %>
-        </div>
-        <div class="space-y-2">
-          <div class="flex flex-wrap items-center gap-2">
-            <span class="badge-accent">
-              <i class="fas fa-calendar-alt mr-1"></i>
-              Prochain événement
-            </span>
-            <span class="inline-flex items-center rounded-full border border-amber-300 bg-amber-50 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.16em] text-amber-800">
-              Démo UX/UI
-            </span>
-          </div>
-          <h3 class="text-xl font-semibold text-gray-900 leading-normal"><%= upcoming_event.title %></h3>
-          <p class="text-xs leading-normal font-medium uppercase tracking-[0.2em] text-amber-700">
-            Contenu fictif présenté pour la démonstration de l'interface.
-          </p>
-          <% description = upcoming_event.middle_description.presence || upcoming_event.upper_description.presence || upcoming_event.description.presence %>
-          <% if description.present? %>
-            <p class="text-sm leading-normal sm:text-base text-gray-600 line-clamp-3"><%= description %></p>
-          <% end %>
-        </div>
-      </div>
+    <div class="relative aspect-[16/7] overflow-hidden bg-gray-100">
+      <%= image_tag(
+            upcoming_event.picture_url.presence || hero_image("event_upcoming_#{upcoming_event.id}".to_sym),
+            alt: upcoming_event.title,
+            class: "w-full h-full object-cover",
+            loading: "eager",
+            decoding: "async"
+          ) %>
+      <div class="absolute inset-0 bg-gradient-to-t from-black/35 to-transparent pointer-events-none" aria-hidden="true"></div>
       <% if event_time.present? %>
-        <div class="hidden sm:flex flex-col items-end text-sm text-gray-600">
-          <div class="inline-flex items-center gap-2">
-            <i class="far fa-clock text-brand-primary"></i>
-            <span><%= l(event_time, format: "%A %d %B %H:%M") %></span>
-          </div>
+        <div class="absolute top-3 left-3 flex flex-col items-center justify-center w-14 h-14 rounded-2xl bg-white/92 backdrop-blur-sm text-brand-primary font-semibold uppercase tracking-wider shadow-sm">
+          <span class="text-base leading-none"><%= event_time.strftime("%d") %></span>
+          <span class="text-[10px] leading-none mt-0.5"><%= event_time.strftime("%b") %></span>
+        </div>
+      <% else %>
+        <div class="absolute top-3 left-3 flex flex-col items-center justify-center w-14 h-14 rounded-2xl bg-white/92 backdrop-blur-sm text-brand-primary font-semibold uppercase tracking-wider shadow-sm">
+          <span class="text-[10px] leading-none">Date</span>
+          <span class="text-[10px] leading-none mt-0.5">à venir</span>
+        </div>
+      <% end %>
+    </div>
+
+    <div class="p-5 sm:p-7 space-y-4">
+      <div class="flex flex-wrap items-center gap-2">
+        <span class="badge-accent">
+          <i class="fas fa-calendar-alt mr-1"></i>
+          Prochain événement
+        </span>
+        <span class="inline-flex items-center rounded-full border border-amber-300 bg-amber-50 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.16em] text-amber-800">
+          Démo UX/UI
+        </span>
+      </div>
+
+      <h3 class="text-xl font-semibold text-gray-900 leading-snug"><%= upcoming_event.title %></h3>
+
+      <p class="text-xs leading-normal font-medium uppercase tracking-[0.2em] text-amber-700">
+        Contenu fictif présenté pour la démonstration de l'interface.
+      </p>
+
+      <% description = upcoming_event.middle_description.presence || upcoming_event.upper_description.presence || upcoming_event.description.presence %>
+      <% if description.present? %>
+        <p class="text-sm leading-relaxed text-gray-600 line-clamp-3"><%= description %></p>
+      <% end %>
+
+      <% if event_time.present? || upcoming_event.location.present? %>
+        <div class="flex flex-col gap-1.5 text-sm text-gray-600">
+          <% if event_time.present? %>
+            <div class="inline-flex items-center gap-2">
+              <i class="far fa-clock text-brand-primary" aria-hidden="true"></i>
+              <span><%= l(event_time, format: "%A %d %B %H:%M") %></span>
+            </div>
+          <% end %>
           <% if upcoming_event.location.present? %>
-            <div class="inline-flex items-center gap-2 mt-1">
-              <i class="fas fa-location-dot text-brand-primary"></i>
+            <div class="inline-flex items-center gap-2">
+              <i class="fas fa-location-dot text-brand-primary" aria-hidden="true"></i>
               <span><%= upcoming_event.location %></span>
             </div>
           <% end %>
         </div>
       <% end %>
-    </div>
 
-    <div class="flex flex-col gap-3 text-sm text-gray-600 sm:hidden">
-      <% if event_time.present? %>
-        <div class="inline-flex items-center gap-2">
-          <i class="far fa-clock text-brand-primary"></i>
-          <span><%= l(event_time, format: "%A %d %B %H:%M") %></span>
-        </div>
-      <% end %>
-      <% if upcoming_event.location.present? %>
-        <div class="inline-flex items-center gap-2">
-          <i class="fas fa-location-dot text-brand-primary"></i>
-          <span><%= upcoming_event.location %></span>
-  </div>
-      <% end %>
-    </div>
-
-    <div class="flex flex-wrap items-center justify-between gap-3">
-      <div class="flex items-center gap-2 text-sm text-gray-500">
-        <i class="fas fa-users text-brand-primary"></i>
-        <span><%= upcoming_event.people.count %> intéressé<%= upcoming_event.people.count > 1 ? "s" : "" %></span>
+      <div class="flex flex-wrap items-center justify-between gap-3 pt-2 border-t border-gray-100">
+        <%= render "events/interest_count", event: upcoming_event, count: upcoming_event.people.count %>
+        <%= link_to "Découvrir l'événement", event_path(upcoming_event),
+                    class: "btn-primary shadow-sm",
+                    data: { turbo_frame: "_top" } %>
       </div>
-      <%= link_to "Découvrir l'événement", event_path(upcoming_event),
-                  class: "btn-primary shadow-sm",
-                  data: { turbo_frame: "_top" } %>
     </div>
+
   <% else %>
-    <% empty_message = safe_join([
-      "C'est calme pour le moment. Aucun événement n'est planifié dans l'immédiat.",
-      "Inscris-toi à",
-      link_to("la newsletter", root_path(anchor: "newsletter-footer"), class: "font-semibold text-brand-primary underline decoration-dotted underline-offset-2", data: { turbo: false }),
-      "pour être averti·e des prochaines dates."
-    ], " ") %>
-    <%= render "shared/events_empty_state", variant: :inline, message: empty_message %>
+    <div class="p-6 sm:p-7">
+      <% empty_message = safe_join([
+        "C'est calme pour le moment. Aucun événement n'est planifié dans l'immédiat.",
+        "Inscris-toi à",
+        link_to("la newsletter", root_path(anchor: "newsletter-footer"), class: "font-semibold text-brand-primary underline decoration-dotted underline-offset-2", data: { turbo: false }),
+        "pour être averti·e des prochaines dates."
+      ], " ") %>
+      <%= render "shared/events_empty_state", variant: :inline, message: empty_message %>
+    </div>
   <% end %>
 </div>

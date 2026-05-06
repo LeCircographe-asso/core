@@ -1,12 +1,19 @@
 <!-- Header with gradient - Same design as membershipcard -->
 <div class="relative w-full">
   <div class="h-24 w-full bg-gradient-to-r from-[#1F5C55] to-[#194A45] rounded-t-xl">
-    <!-- Member Number Badge - Editable -->
-    <div class="absolute top-4 left-4 px-3 py-1 text-xs font-semibold text-white rounded-full bg-white/20">
-      <%= render Admin::Members::EditableMemberNumberComponent.new(
-        person: person,
-        current_user: current_user
-      ) %>
+    <!-- Member Number / Status Badge -->
+    <div class="absolute top-3 left-3 sm:left-4 z-10">
+      <% if person.member_number.present? %>
+        <div class="px-3 py-1.5 rounded-lg bg-white/15 backdrop-blur-sm border border-white/20 text-left shadow-sm max-w-[calc(100%-5rem)] sm:max-w-none">
+          <span class="block text-[10px] uppercase tracking-wider text-white/80 font-medium leading-tight">N° adhérent</span>
+          <%= render Admin::Members::EditableMemberNumberComponent.new(
+            person: person,
+            current_user: current_user
+          ) %>
+        </div>
+      <% else %>
+        <%= render MembershipStatusBadgeComponent.new(person: person) %>
+      <% end %>
     </div>
     
     

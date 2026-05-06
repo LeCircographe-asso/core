@@ -168,7 +168,7 @@
                label: "Questions fréquentes",
                title: "Avant de te déplacer",
                subtitle: "Quelques repères pour préparer ton adhésion.",
-               faqs: @adhesion_faqs,
+               faqs: @avant_visite_faqs,
                footer: "Besoin d’un coup de main ? Écris-nous ou passe pendant un créneau d’ouverture.",
                card_class: "public-soft-section",
                header_align: "left" %>
@@ -204,36 +204,7 @@
       </div>
 
       <%# ── Lignes jours ── %>
-      <% if schedule.present? %>
-        <div class="divide-y divide-gray-50">
-          <% schedule.each do |day, hours| %>
-            <% is_today   = Time.zone.now.strftime("%A").downcase == day.to_s %>
-            <% is_closed  = hours.to_s.downcase == "fermé" %>
-            <% is_weekend = ["samedi", "dimanche"].include?(day.to_s) %>
-            <% row_bg     = is_today ? "bg-[#1F5C55]/6 border-l-2 border-[#1F5C55]" : "" %>
-            <% name_cls   = is_today ? "text-[#1F5C55] font-bold" : (is_weekend ? "text-gray-500" : "text-gray-900") %>
-            <% closed_cls = is_today ? "text-[#1F5C55]/50" : "text-gray-400" %>
-            <% time_cls   = is_today ? "text-[#1F5C55]/80" : "text-gray-600" %>
-            <div class="flex items-center gap-3 px-4 py-2.5 <%= row_bg %>">
-              <span class="w-24 shrink-0 text-sm <%= name_cls %>">
-                <%= day.to_s.capitalize %>
-              </span>
-              <% if is_closed %>
-                <span class="text-sm font-medium <%= closed_cls %>">Fermé</span>
-              <% else %>
-                <span class="text-sm font-semibold tabular-nums <%= time_cls %>">
-                  <%= hours %>
-                </span>
-              <% end %>
-              <% if is_today %>
-                <span class="ml-auto text-[10px] font-semibold uppercase tracking-wider text-[#1F5C55] bg-[#1F5C55]/8 border border-[#1F5C55]/20 px-2 py-0.5 rounded-md">Aujourd’hui</span>
-              <% end %>
-            </div>
-          <% end %>
-        </div>
-      <% else %>
-        <p class="px-4 py-6 text-sm text-gray-500 text-center">Aucun horaire disponible.</p>
-      <% end %>
+      <%= render "shared/opening_hours", schedule: schedule %>
 
       <%# ── Pied horaires ── %>
       <div class="px-4 py-2.5 border-t border-gray-100 flex items-center justify-between gap-3">
