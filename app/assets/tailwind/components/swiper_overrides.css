@@ -45,13 +45,11 @@
     box-shadow: 0 8px 20px rgba(31, 92, 85, 0.15);
   }
 
-  .swiper-button-prev,
-  .swiper-button-prev.swiper-arrow {
+  .swiper-button-prev {
     left: 1rem;
   }
 
-  .swiper-button-next,
-  .swiper-button-next.swiper-arrow {
+  .swiper-button-next {
     right: 1rem;
   }
 
@@ -60,18 +58,8 @@
     color: var(--brand-accent);
   }
 
-  .swiper-button-next:hover,
-  .swiper-button-prev:hover {
-    color: var(--brand-accent);
-  }
-
   .swiper-arrow svg {
     transition: color 0.2s ease-in-out;
-    color: inherit;
-  }
-
-  .swiper-arrow:hover svg {
-    color: var(--brand-accent);
   }
 
   .swiper-button-next::after,
