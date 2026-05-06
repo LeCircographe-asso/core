@@ -1,68 +1,76 @@
-<% content_for :title, "Le Circographe - Détail Événement" %>
+<% content_for :title, "Le Circographe – #{@event.title}" %>
 
-    <div class="page-container-wide mb-12 fade-in">
-        <div class="space-y-3 mb-8">
-            <div class="flex justify-center">
-                <span class="inline-flex items-center rounded-full border border-amber-300 bg-amber-50 px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-amber-800">
-                    Démo UX/UI · événement fictif
-                </span>
-            </div>
-            <div class="public-surface-bordered py-6 px-6">
-                <h1 class="text-4xl font-bold text-center text-black"><%= @event.title %></h1>
-            </div>
+<div class="page-container mb-16 fade-in">
+  <div class="mb-5">
+    <%= link_to page_path("news", anchor: "evenements"),
+          class: "inline-flex items-center gap-2 text-sm font-medium text-brand-primary/80 hover:text-brand-primary transition-colors" do %>
+      <i class="fas fa-arrow-left text-xs" aria-hidden="true"></i>
+      Retour aux événements
+    <% end %>
+  </div>
+
+  <%= turbo_stream_from @event %>
+
+  <article class="public-surface-bordered overflow-hidden">
+    <div class="grid grid-cols-1 md:grid-cols-[2fr_3fr]">
+
+      <div class="relative aspect-[4/3] md:aspect-auto overflow-hidden bg-gray-100 md:min-h-[28rem]">
+        <%= image_tag(
+              @event.picture_url.presence || hero_image("event_show_#{@event.id}".to_sym),
+              alt: @event.title,
+              class: "w-full h-full object-cover"
+            ) %>
+      </div>
+
+      <div class="flex flex-col gap-5 p-6 sm:p-8">
+
+        <div class="space-y-2">
+          <span class="inline-flex items-center rounded-full border border-amber-300 bg-amber-50 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.16em] text-amber-800">
+            Démo UX/UI · événement fictif
+          </span>
+          <h1 class="text-2xl sm:text-3xl font-bold text-gray-900 leading-snug"><%= @event.title %></h1>
         </div>
-        
-        <div class="public-surface-bordered p-6">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <div class="relative aspect-[4/3] overflow-hidden rounded-xl">
-                    <%= image_tag(
-                          @event.picture_url.presence || hero_image("event_show_#{@event.id}".to_sym),
-                          alt: @event.title,
-                          class: "w-full h-full object-cover rounded-xl"
-                        ) %>
-                </div>
 
-                <div class="space-y-6">
-                    <div class="space-y-4">
-                        <p class="text-gray-700"><%= @event.upper_description %></p>
-                        <p class="text-gray-700"><%= @event.middle_description %></p>
-                        <p class="text-gray-700"><%= @event.bottom_description %></p>
-                    </div>
-
-                    <div class="text-gray-600">
-                        <p class="flex items-center gap-2">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 12.414l4.243-4.242L17.657 7.928v8.729zM1 1v2h2v18a2 2 0 002 2h18a2 2 0 002-2V3a2 2 0 00-2-2H1z" />
-                            </svg>
-                            <%= @event.location %>
-                        </p>
-                        <p class="flex items-center gap-2">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m0 8v4M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                            </svg>
-                            <%= @event.date %>
-                        </p>
-                        <p class="flex items-center gap-2">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h.01M12 12h.01M19 12h.01M6 12a1 1 0 11-2 0 1 1 0 002 0zm7 0a1 1 0 11-2 0 1 1 0 002 0zm7 0a1 1 0 11-2 0 1 1 0 002 0z" />
-                            </svg>
-                            <%= @event.people.count %> personnes intéressées
-                        </p>
-                    </div>
-
-                    <div class="mt-6 space-y-2">
-                        <% if current_user %>
-                          <%= render "events/interest_button", event: @event, current_user: current_user %>
-                        <% else %>
-                          <%= link_to "Se connecter pour indiquer son intérêt", new_session_path,
-                              class: "public-cta block w-full text-center" %>
-                          <p class="text-sm text-gray-600 text-center">
-                            Connexion requise pour cette action. Cette page événement est actuellement une démonstration d'interface.
-                          </p>
-                        <% end %>
-                        <%= button_to "Payer 10€", checkout_create_path(event_id: @event.id), method: :post, data: { turbo: "false" }, class: "public-cta w-full cursor-pointer" %>
-                    </div>
-                </div>
+        <% event_time = @event.date&.in_time_zone(Time.zone) %>
+        <div class="flex flex-col gap-2 text-sm text-gray-600">
+          <% if event_time.present? %>
+            <div class="inline-flex items-center gap-2.5">
+              <i class="far fa-clock w-4 text-center text-brand-primary" aria-hidden="true"></i>
+              <span><%= l(event_time, format: "%A %d %B %Y à %H:%M") %></span>
             </div>
+          <% end %>
+          <% if @event.location.present? %>
+            <div class="inline-flex items-center gap-2.5">
+              <i class="fas fa-location-dot w-4 text-center text-brand-primary" aria-hidden="true"></i>
+              <span><%= @event.location %></span>
+            </div>
+          <% end %>
+          <%= render "events/interest_count", event: @event, count: @event.people.count %>
         </div>
+
+        <% descriptions = [@event.upper_description, @event.middle_description, @event.bottom_description, @event.description].compact_blank %>
+        <% if descriptions.any? %>
+          <div class="flex-1 space-y-3 text-sm text-gray-700 leading-relaxed">
+            <% descriptions.each do |desc| %>
+              <p><%= desc %></p>
+            <% end %>
+          </div>
+        <% end %>
+
+        <div class="flex flex-col sm:flex-row gap-3 pt-4 border-t border-gray-100 mt-auto">
+          <div class="flex-1">
+            <% if current_user %>
+              <%= render "events/interest_button" %>
+            <% else %>
+              <%= link_to new_session_path, class: "public-cta block w-full text-center" do %>
+                <i class="fas fa-heart mr-2" aria-hidden="true"></i>
+                Se connecter pour marquer son intérêt
+              <% end %>
+            <% end %>
+          </div>
+        </div>
+
+      </div>
     </div>
+  </article>
+</div>
