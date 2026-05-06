@@ -60,10 +60,6 @@
     color: var(--brand-accent);
   }
 
-  .swiper-button-prev::after {
-    transform: rotate(180deg);
-  }
-
   .swiper-button-next:hover,
   .swiper-button-prev:hover {
     color: var(--brand-accent);
@@ -80,8 +76,8 @@
 
   .swiper-button-next::after,
   .swiper-button-prev::after {
-    font-size: 1.25rem;
-    display: inline-block;
+    content: '';
+    display: none;
   }
 
 
