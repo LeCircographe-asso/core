@@ -20,6 +20,8 @@ class Attendance < ApplicationRecord
 
   before_create :set_date_if_missing
   after_create :decrement_contribution, if: -> { attendance_list_id.present? }
+  after_create_commit :broadcast_interest_count, if: -> { event_id.present? }
+  after_destroy_commit :broadcast_interest_count, if: -> { event_id.present? }
 
   scope :by_person, ->(person) { where(person: person) }
   scope :by_event, ->(event) { where(event: event) }
@@ -38,5 +40,15 @@ class Attendance < ApplicationRecord
     return unless contribution
 
     contribution.use_session!
+  end
+
+  def broadcast_interest_count
+    count = event.people.reload.count
+    broadcast_replace_to(
+      event,
+      target: "event-#{event_id}-interest-count",
+      partial: "events/interest_count",
+      locals: { event: event, count: count }
+    )
   end
 end

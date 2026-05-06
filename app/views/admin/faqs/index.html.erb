@@ -1,0 +1,83 @@
+<div class="min-h-screen bg-gray-50/40 py-6 px-4">
+  <div class="max-w-3xl mx-auto space-y-5">
+
+    <%# ── En-tête ── %>
+    <div class="flex items-end justify-between gap-4">
+      <div>
+        <h1 class="text-xl font-bold text-gray-900">FAQ</h1>
+        <p class="text-sm text-gray-400 mt-0.5">
+          <%= Faq.count %> entrée<%= "s" if Faq.count != 1 %> · 4 catégories · glisser pour réordonner
+        </p>
+      </div>
+      <%= link_to t("admin.faqs.index.new"), new_admin_faq_path,
+            data: { turbo_frame: "modal" },
+            class: "btn-primary text-sm" %>
+    </div>
+
+    <%# ── Sections par catégorie ── %>
+    <% @labels.each do |label| %>
+      <% entries  = @faqs[label] || [] %>
+      <% name     = Faq::LABEL_NAMES.fetch(label, label.humanize) %>
+      <% page_url = Faq::LABEL_PAGES.fetch(label, "/faq") %>
+
+      <div class="bg-white rounded-xl border border-gray-200 overflow-hidden shadow-sm">
+
+        <%# Section header %>
+        <div class="flex items-center justify-between px-4 py-2.5 bg-gray-50 border-b border-gray-100">
+          <div class="flex items-center gap-2 min-w-0">
+            <span class="shrink-0 text-[10px] font-bold uppercase tracking-widest text-gray-400 bg-gray-100 px-1.5 py-0.5 rounded"><%= label %></span>
+            <span class="text-sm font-semibold text-gray-800 truncate"><%= name %></span>
+            <span class="shrink-0 text-xs text-gray-400"><%= page_url %></span>
+          </div>
+          <div class="flex items-center gap-3 shrink-0 ml-3">
+            <span class="text-xs text-gray-400 tabular-nums"><%= entries.count %></span>
+            <%= link_to "+ #{t('admin.faqs.index.add_to_label', label: name)}", new_admin_faq_path(label: label),
+                  data: { turbo_frame: "modal" },
+                  class: "text-xs font-medium text-brand-primary hover:underline whitespace-nowrap" %>
+          </div>
+        </div>
+
+        <%# Entrées (sortable) %>
+        <% if entries.any? %>
+          <div class="divide-y divide-gray-50"
+               data-controller="sortable"
+               data-sortable-url-value="<%= reorder_admin_faqs_path %>">
+            <% entries.each_with_index do |faq, i| %>
+              <div class="group flex items-center gap-2 px-3 py-3 hover:bg-gray-50/60 transition-colors cursor-default"
+                   draggable="true"
+                   data-sortable-row
+                   data-id="<%= faq.id %>"
+                   data-action="dragstart->sortable#dragstart dragend->sortable#dragend dragover->sortable#dragover dragleave->sortable#dragleave drop->sortable#drop">
+                <%# Grip handle %>
+                <span class="shrink-0 text-gray-300 hover:text-gray-500 cursor-grab active:cursor-grabbing select-none text-base leading-none">⠿</span>
+                <%# Numéro %>
+                <span class="shrink-0 text-xs font-mono text-gray-300 w-4 text-right select-none tabular-nums" data-sortable-number><%= i + 1 %></span>
+                <%# Contenu %>
+                <div class="flex-1 min-w-0">
+                  <p class="text-sm font-medium text-gray-900 leading-snug"><%= faq.question %></p>
+                  <p class="text-xs text-gray-400 mt-0.5 line-clamp-1"><%= strip_tags(faq.answer) %></p>
+                </div>
+                <%# Actions %>
+                <div class="flex items-center gap-1 shrink-0 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <%= link_to t("admin.faqs.index.edit"), "/admin/faqs/#{faq.id}/edit",
+                        data: { turbo_frame: "modal" },
+                        class: "text-xs px-2 py-1 rounded-md border border-gray-200 text-gray-600 hover:bg-white hover:border-gray-300 transition-colors" %>
+                  <%= button_to "✕", "/admin/faqs/#{faq.id}",
+                        method: :delete,
+                        data: { turbo_confirm: t("admin.faqs.index.confirm_delete") },
+                        class: "text-xs px-2 py-1 rounded-md border border-transparent text-red-400 hover:border-red-100 hover:bg-red-50 bg-transparent cursor-pointer transition-colors" %>
+                </div>
+              </div>
+            <% end %>
+          </div>
+        <% else %>
+          <p class="px-4 py-5 text-sm text-gray-400 italic text-center"><%= t("admin.faqs.index.empty") %></p>
+        <% end %>
+
+      </div>
+    <% end %>
+
+  </div>
+</div>
+
+<%= turbo_frame_tag "modal" %>

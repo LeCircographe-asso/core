@@ -15,6 +15,16 @@ class FaqRepository
       }
     end
 
+    def save(data)
+      payload = {
+        "hero"      => data[:hero].to_s,
+        "cta_label" => data[:cta_label].to_s,
+        "entries"   => Array.wrap(data[:entries]).map { |e| { "question" => e[:question].to_s, "answer" => e[:answer].to_s } }
+      }
+      File.write(CONFIG_PATH, YAML.dump(payload))
+      Rails.cache.delete(CACHE_KEY)
+    end
+
     private
 
     def read_yaml
