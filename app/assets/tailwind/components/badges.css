@@ -22,16 +22,15 @@
   }
 
   .activities-tab--active {
-    background-color: var(--brand-primary);
+    background-color: var(--brand-accent);
     color: #ffffff;
     border-color: transparent;
   }
 
   .activities-tab--active:hover,
   .activities-tab--active:focus-visible {
-    background-color: var(--brand-primary);
+    background-color: var(--brand-accent);
     color: #ffffff;
     border-color: transparent;
   }
 }
-

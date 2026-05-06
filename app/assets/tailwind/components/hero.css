@@ -18,7 +18,8 @@
   }
 
   .public-hero-title {
-    @apply font-circographe text-3xl font-bold sm:text-4xl lg:text-5xl;
+    @apply text-3xl font-bold sm:text-4xl lg:text-5xl;
+    font-family: "Circographe", Arial, sans-serif;
   }
 
   .public-hero-body {

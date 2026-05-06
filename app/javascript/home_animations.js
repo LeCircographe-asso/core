@@ -75,7 +75,11 @@ function initAnimations () {
         scrollArrow,
         { opacity: 0, y: 10 },
         { opacity: 1, y: 0, duration: 0.5, delay: 1.35, ease: "power2.out",
-          onComplete: () => scrollArrow.classList.remove("opacity-0") }
+          onComplete: () => {
+            scrollArrow.classList.remove("opacity-0")
+            gsap.set([heroKicker, titleElement, heroIntro, mainButton, scrollArrow].filter(Boolean), { clearProps: "transform,will-change" })
+          }
+        }
       )
     }
 

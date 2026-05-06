@@ -202,7 +202,7 @@
       <div class="swiper-wrapper mb-4 sm:mb-8">
         <% news_carousel_image_sources(limit: 12).each_with_index do |filename, index| %>
           <div class="swiper-slide">
-            <div class="rounded-2xl h-64 sm:h-80 md:h-96 flex justify-center items-center overflow-hidden bg-gray-100 select-none">
+            <div class="public-carousel-media rounded-2xl flex justify-center items-center overflow-hidden bg-gray-100 select-none">
               <%= image_tag filename,
                             alt: "Photo du Circographe #{index + 1}",
                             draggable: false,

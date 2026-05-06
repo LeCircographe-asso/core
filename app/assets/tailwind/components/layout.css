@@ -60,6 +60,23 @@
     @apply scroll-mt-[5.25rem] md:scroll-mt-28 lg:scroll-mt-32;
   }
 
+  .public-carousel-media {
+    aspect-ratio: 4 / 5;
+  }
+
+  @media (min-width: 640px) {
+    .public-carousel-media {
+      aspect-ratio: 4 / 3;
+    }
+  }
+
+  @media (min-width: 768px) {
+    .public-carousel-media {
+      aspect-ratio: auto;
+      height: 24rem;
+    }
+  }
+
   /* Typography primitives */
   .section-eyebrow {
     @apply text-sm uppercase tracking-[0.3em];
@@ -106,6 +123,13 @@
   @media (max-width: 640px) {
     .home-hero-title-word {
       display: block;
+    }
+  }
+
+  @media (max-width: 312px) {
+    .home-hero-title {
+      font-size: clamp(2.5rem, 12vw, 3.25rem);
+      line-height: 1.08;
     }
   }
 }
