@@ -12,6 +12,23 @@
     @apply relative text-center space-y-4;
   }
 
+  .public-hero-eyebrow {
+    @apply text-sm uppercase text-white/70;
+    letter-spacing: 0.35em;
+  }
+
+  .public-hero-title {
+    @apply font-circographe text-3xl font-bold sm:text-4xl lg:text-5xl;
+  }
+
+  .public-hero-body {
+    @apply mx-auto max-w-2xl text-base leading-normal text-white/85 sm:text-lg;
+  }
+
+  .public-hero-body-wide {
+    @apply mx-auto max-w-3xl text-base leading-relaxed text-white/85 sm:text-lg;
+  }
+
   .hero-img-filter {
     @apply brightness-95 saturate-120;
   }

@@ -3,11 +3,11 @@
 <section class="public-hero-shell mb-14">
   <%= image_tag hero_image(:about_hero), class: "absolute inset-0 w-full h-full object-cover hero-img-filter", alt: "" %>
   <div class="hero-overlay"></div>
-  <div class="relative hero-panel space-y-6">
-    <p class="text-sm uppercase tracking-[0.4em] text-white/70"><%= t("views.pages.about.join_community") %></p>
-    <h1 class="font-circographe text-3xl sm:text-4xl lg:text-5xl font-bold"><%= t("views.pages.about.heading") %></h1>
-    <p class="max-w-3xl text-lg text-white/85 leading-relaxed"><%= t("views.pages.about.hero_description") %></p>
-    <div class="flex flex-wrap gap-4">
+  <div class="hero-panel public-hero-panel-centered space-y-6 sm:text-left">
+    <p class="public-hero-eyebrow"><%= t("views.pages.about.join_community") %></p>
+    <h1 class="public-hero-title"><%= t("views.pages.about.heading") %></h1>
+    <p class="public-hero-body-wide sm:mx-0"><%= t("views.pages.about.hero_description") %></p>
+    <div class="flex flex-wrap justify-center gap-4 sm:justify-start">
       <%= link_to t("views.pages.about.join"), page_path('become_member'), class: "btn-primary shadow-lg" %>
       <%= link_to t("views.pages.about.discover_place"), page_path('association'), class: "btn-secondary shadow-lg" %>
     </div>
