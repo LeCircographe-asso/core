@@ -5,6 +5,7 @@ class Payment < ApplicationRecord
   include Humanizable
   include Statusable
   include Dateable
+  include BroadcastsDashboardStats
 
   attr_accessor :allow_hard_delete
 
@@ -21,6 +22,7 @@ class Payment < ApplicationRecord
 
   before_create :generate_uuid
   after_create :create_audit_log
+  after_create_commit :broadcast_profile_payments
   # Callbacks legacy supprimés : la création/mise à jour cascade passe désormais par les services People::*.
   after_update :log_status_change, if: -> { saved_change_to_status? }
   after_update :invalidate_totals_cache, if: -> { saved_change_to_total_cents? }
@@ -195,6 +197,16 @@ class Payment < ApplicationRecord
   scope :anonymized, -> { where.not(anonymized_at: nil) }
 
   private
+
+  def broadcast_profile_payments
+    broadcast_replace_to(
+      person,
+      target: "recent-payments-#{person_id}",
+      partial: "shared/recent_payments_list",
+      locals: { person: person.reload }
+    )
+    broadcast_dashboard_stats
+  end
 
   def allow_hard_delete?
     ActiveModel::Type::Boolean.new.cast(allow_hard_delete)

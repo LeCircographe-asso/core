@@ -1,0 +1,98 @@
+<% current_membership   = person.current_membership %>
+<% recent_membership    = person.most_recent_membership %>
+<% membership_lapsed    = current_membership.blank? && recent_membership.present? %>
+<% show_contributions_block = current_membership.present? && (current_membership.basic? || current_membership.circus?) %>
+
+<div id="membership-status-<%= person.id %>">
+  <div class="grid grid-cols-2 divide-x divide-gray-200 border-b border-gray-200">
+
+    <%# ▌Adhésion %>
+    <div class="px-4 py-3 space-y-2">
+      <p class="text-xs font-semibold uppercase tracking-widest text-[#1F5C55]/70">Adhésion</p>
+
+      <% if current_membership.present? %>
+        <div class="flex items-center gap-1.5">
+          <span class="w-2 h-2 rounded-full shrink-0 <%= current_membership.status == 'active' ? 'bg-green-500' : 'bg-red-500' %>"></span>
+          <span class="text-sm font-bold <%= current_membership.status == 'active' ? 'text-green-700' : 'text-red-600' %>">
+            <%= current_membership.status == 'active' ? "Adhésion active" : "Adhésion inactive" %>
+          </span>
+        </div>
+        <p class="text-sm text-gray-700 font-medium leading-tight truncate"><%= current_membership.membership_type.name %></p>
+        <p class="text-sm tabular-nums <%= Date.current > current_membership.ended_at ? 'text-red-500 font-semibold' : 'text-gray-400' %>">
+          <%= t("users.space.membership_card.valid_until_label") %> <%= current_membership.ended_at.strftime("%d/%m/%Y") %>
+        </p>
+      <% elsif membership_lapsed %>
+        <div class="flex items-center gap-1.5">
+          <span class="w-2 h-2 rounded-full shrink-0 bg-amber-400"></span>
+          <span class="text-sm font-bold text-amber-700">Adhésion terminée</span>
+        </div>
+        <p class="text-sm text-gray-400 tabular-nums leading-snug">
+          Fin de la dernière adhésion<br><%= recent_membership.ended_at.strftime("%d/%m/%Y") %>
+        </p>
+        <p class="text-sm text-gray-600 truncate"><%= recent_membership.membership_type.name %></p>
+      <% else %>
+        <div class="flex items-center gap-1.5">
+          <span class="w-2 h-2 rounded-full shrink-0 bg-gray-300"></span>
+          <span class="text-sm font-semibold text-gray-400">Pas d'adhésion en cours</span>
+        </div>
+      <% end %>
+    </div>
+
+    <%# ▌Cotisation %>
+    <div class="px-4 py-3 space-y-2">
+      <p class="text-xs font-semibold uppercase tracking-widest text-[#1F5C55]/70"><%= t("users.space.membership_card.section_contribution") %></p>
+
+      <% if show_contributions_block %>
+        <% active_contributions = person.contributions.where(status: :active) %>
+        <p class="text-sm text-gray-500">Cotisations actives</p>
+        <% if active_contributions.exists? %>
+          <% active_contributions.each do |c| %>
+            <% if c.is_pack10? %>
+              <% remaining = c.sessions_remaining.to_i %>
+              <div class="flex items-center gap-1.5">
+                <span class="w-2 h-2 rounded-full shrink-0 <%= remaining > 3 ? 'bg-green-500' : remaining > 0 ? 'bg-amber-400' : 'bg-red-500' %>"></span>
+                <span class="text-sm font-bold <%= remaining > 3 ? 'text-green-700' : remaining > 0 ? 'text-amber-600' : 'text-red-600' %>">
+                  <%= remaining %> séance<%= remaining > 1 ? "s" : "" %>
+                </span>
+              </div>
+              <p class="text-sm text-gray-400 leading-tight truncate"><%= c.contribution_formula.name %></p>
+              <% if remaining > 0 && remaining <= 3 %>
+                <p class="text-xs text-amber-500 font-semibold">Bientôt épuisé</p>
+              <% end %>
+            <% elsif c.expires_at.present? %>
+              <div class="flex items-center gap-1.5">
+                <span class="w-2 h-2 rounded-full shrink-0 bg-green-500"></span>
+                <span class="text-sm font-bold text-green-700">Active</span>
+              </div>
+              <p class="text-sm text-gray-700 leading-tight truncate"><%= c.contribution_formula.name %></p>
+              <p class="text-sm text-gray-400 tabular-nums">→ <%= c.expires_at.strftime("%d/%m/%Y") %></p>
+            <% else %>
+              <div class="flex items-center gap-1.5">
+                <span class="w-2 h-2 rounded-full shrink-0 bg-green-500"></span>
+                <span class="text-sm font-bold text-green-700">Active</span>
+              </div>
+              <p class="text-sm text-gray-700 leading-tight truncate"><%= c.contribution_formula.name %></p>
+            <% end %>
+          <% end %>
+        <% else %>
+          <div class="flex items-center gap-1.5">
+            <span class="w-2 h-2 rounded-full shrink-0 bg-gray-300"></span>
+            <span class="text-sm text-gray-400">Aucune cotisation active</span>
+          </div>
+        <% end %>
+      <% elsif current_membership.present? %>
+        <div class="flex items-center gap-1.5">
+          <span class="w-2 h-2 rounded-full shrink-0 bg-gray-300"></span>
+          <span class="text-sm text-gray-500">Non applicable</span>
+        </div>
+        <p class="text-sm text-gray-400 leading-snug"><%= t("users.space.membership_card.cotisation_wrong_category") %></p>
+      <% else %>
+        <div class="flex items-center gap-1.5">
+          <span class="w-2 h-2 rounded-full shrink-0 bg-gray-300"></span>
+          <span class="text-sm text-gray-400">—</span>
+        </div>
+      <% end %>
+    </div>
+
+  </div>
+</div>

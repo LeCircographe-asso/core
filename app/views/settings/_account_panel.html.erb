@@ -5,7 +5,7 @@
 <% pref_error_fields = %i[image_rights newsletter_subscribed get_involved dyslexic_font] %>
 <% account_errors = user.errors.attribute_names.any? { |name| pref_error_fields.include?(name) } %>
 
-<div class="bg-white rounded-xl shadow-md overflow-hidden border border-gray-100 relative"
+<div class="bg-white rounded-xl <%= embedded ? 'shadow-md border border-gray-100' : 'shadow-lg' %> overflow-hidden relative"
      data-controller="section-edit email-change-modal"
      data-section-edit-editing-value="<%= account_errors %>"
      data-section-edit-warning-message-value="<%= t("users.space.unsaved_changes_warning") %>"
@@ -26,52 +26,64 @@
      data-email-change-modal-preview-confirm-label-value="<%= t("users.space.preview_confirm") %>"
      data-email-change-modal-preview-back-label-value="<%= t("users.space.preview_back") %>"
      data-email-change-modal-invalid-code-message-value="<%= t("settings.show.email_change_error_invalid_code_format") %>">
-  <header class="<%= compact ? 'px-4 sm:px-5 py-3 border-b border-gray-200 bg-gray-50' : 'h-14 sm:h-16 w-full bg-gradient-to-r from-[#1F5C55] to-[#194A45] flex flex-col justify-center px-4 py-2 sm:py-0' %>">
-    <div class="flex items-start justify-between gap-3">
-      <div class="min-w-0 flex-1">
-        <h2 class="<%= compact ? 'text-base font-semibold text-gray-900' : 'text-lg sm:text-xl font-bold text-white text-center tracking-tight leading-tight' %>">
-          <%= embedded ? t("users.space.account_heading") : t("settings.show.page_title") %>
-        </h2>
-        <% unless embedded || compact %>
-          <p class="text-[11px] sm:text-xs text-white/85 mt-0.5 leading-snug hidden sm:block">
-            <%= t("settings.show.lead") %>
-          </p>
-        <% end %>
+  <% if embedded %>
+    <header class="px-4 sm:px-5 py-3 border-b border-gray-200 bg-gray-50">
+      <div class="flex items-center justify-between gap-3">
+        <h2 class="text-base font-semibold text-gray-900"><%= t("users.space.account_heading") %></h2>
+        <div class="flex flex-shrink-0 items-center gap-2">
+          <div data-section-edit-target="modifyWrap">
+            <button type="button" data-section-edit-target="modifyButton" data-action="section-edit#handleModifyClick"
+                    class="inline-flex items-center rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-white">
+              <%= t("users.space.edit") %>
+            </button>
+          </div>
+          <div data-section-edit-target="cancelWrap" class="hidden">
+            <button type="button" data-section-edit-target="cancelButton" data-action="section-edit#cancelEdit"
+                    class="inline-flex items-center rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-50">
+              <%= t("users.space.cancel") %>
+            </button>
+          </div>
+          <div data-section-edit-target="acceptWrap" class="hidden">
+            <button type="button" data-section-edit-target="acceptButton" data-action="section-edit#handleAcceptClick"
+                    data-loading-text="<%= t("users.space.saving") %>"
+                    class="inline-flex items-center rounded-md border border-transparent px-3 py-1.5 text-sm font-medium text-white bg-[#1F5C55] hover:bg-[#1F5C55]/90 shadow-sm">
+              <%= t("users.space.accept") %>
+            </button>
+          </div>
+        </div>
+      </div>
+    </header>
+  <% else %>
+    <header class="h-16 w-full bg-gradient-to-r from-[#1F5C55] to-[#194A45] flex items-center justify-between px-4 sm:px-5">
+      <div>
+        <p class="text-[10px] uppercase tracking-widest text-white/70 font-medium">Compte</p>
+        <h2 class="text-base font-bold text-white leading-tight"><%= t("settings.show.page_title") %></h2>
       </div>
       <div class="flex flex-shrink-0 items-center gap-2">
         <div data-section-edit-target="modifyWrap">
-          <button type="button"
-                  data-section-edit-target="modifyButton"
-                  data-action="section-edit#handleModifyClick"
-                  class="inline-flex items-center rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-white">
+          <button type="button" data-section-edit-target="modifyButton" data-action="section-edit#handleModifyClick"
+                  class="inline-flex items-center rounded-md border border-white/40 bg-white/10 px-3 py-1.5 text-sm font-medium text-white hover:bg-white/20 disabled:opacity-50 disabled:cursor-not-allowed">
             <%= t("users.space.edit") %>
           </button>
         </div>
         <div data-section-edit-target="cancelWrap" class="hidden">
-          <button type="button"
-                  data-section-edit-target="cancelButton"
-                  data-action="section-edit#cancelEdit"
-                  class="inline-flex items-center rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-50">
+          <button type="button" data-section-edit-target="cancelButton" data-action="section-edit#cancelEdit"
+                  class="inline-flex items-center rounded-md border border-white/30 bg-white/10 px-3 py-1.5 text-sm font-medium text-white/80 hover:bg-white/20">
             <%= t("users.space.cancel") %>
           </button>
         </div>
         <div data-section-edit-target="acceptWrap" class="hidden">
-          <button type="button"
-                  data-section-edit-target="acceptButton"
-                  data-action="section-edit#handleAcceptClick"
+          <button type="button" data-section-edit-target="acceptButton" data-action="section-edit#handleAcceptClick"
                   data-loading-text="<%= t("users.space.saving") %>"
-                  class="inline-flex items-center rounded-md border border-transparent px-3 py-1.5 text-sm font-medium text-white bg-[#1F5C55] hover:bg-[#1F5C55]/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1F5C55] shadow-sm">
+                  class="inline-flex items-center rounded-md border border-transparent px-3 py-1.5 text-sm font-medium text-[#1F5C55] bg-white hover:bg-white/90 shadow-sm">
             <%= t("users.space.accept") %>
           </button>
         </div>
       </div>
-    </div>
-    <% unless embedded %>
-      <p class="sm:hidden text-xs text-gray-500 mt-3 leading-snug"><%= t("settings.show.lead") %></p>
-    <% end %>
-  </header>
+    </header>
+  <% end %>
 
-  <div class="<%= compact ? 'px-4 sm:px-5 py-4 sm:py-5' : 'px-4 sm:px-6 py-5 sm:py-6' %>">
+  <div class="px-4 sm:px-5 py-4 sm:py-5">
     <% if user.errors.any? %>
       <div class="rounded-lg border border-red-200 bg-red-50 p-4 mb-5" role="alert">
         <div class="flex gap-3">
@@ -94,7 +106,7 @@
       </div>
     <% end %>
 
-    <section class="mb-6 pb-6 border-b border-gray-100" aria-labelledby="settings-static-account-heading">
+    <section class="mb-6 pb-6 border-b border-gray-200" aria-labelledby="settings-static-account-heading">
       <div class="flex flex-wrap items-start justify-between gap-2 mb-3">
         <h3 id="settings-static-account-heading" class="text-base font-semibold text-gray-900">
           <%= t("settings.show.section_account") %>
@@ -103,7 +115,7 @@
           <%= t("settings.show.email_shared_badge") %>
         </span>
       </div>
-      <p class="text-xs font-medium tracking-wide text-gray-500 uppercase mb-1"><%= t("settings.show.field_email") %></p>
+      <p class="text-xs font-semibold tracking-widest text-[#1F5C55]/70 uppercase mb-1"><%= t("settings.show.field_email") %></p>
       <p class="text-sm font-semibold text-gray-900 break-all"><%= user.email_address %></p>
       <p class="mt-2 text-xs text-gray-500 leading-relaxed max-w-prose"><%= t("settings.show.email_hint") %></p>
       <button type="button"
@@ -180,7 +192,7 @@
       </div>
     <% end %>
 
-    <div class="<%= compact ? 'mt-6 pt-6 border-t border-gray-200 space-y-2.5' : 'mt-8 pt-8 border-t border-gray-200 space-y-3' %>">
+    <div class="mt-6 pt-6 border-t border-gray-200 space-y-2.5">
       <h3 class="text-sm font-semibold text-gray-800">
         <%= t("settings.show.section_security") %>
       </h3>
@@ -190,7 +202,7 @@
           class: "w-full flex justify-center py-2.5 px-4 border border-gray-300 rounded-lg shadow-sm text-sm font-medium text-gray-800 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1F5C55] transition-colors" %>
     </div>
 
-    <div class="<%= compact ? 'mt-6 pt-6 border-t border-gray-200 space-y-2.5' : 'mt-8 pt-8 border-t border-gray-200 space-y-3' %>">
+    <div class="mt-6 pt-6 border-t border-gray-200 space-y-2.5">
       <h3 class="text-sm font-semibold text-red-800">
         <%= t("settings.show.section_danger") %>
       </h3>
