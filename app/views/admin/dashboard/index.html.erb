@@ -18,6 +18,14 @@
         </div>
         
         <!-- Action Button - Top Right -->
+        <div class="absolute top-4 left-4">
+          <%= link_to new_admin_member_path, class: "group bg-white/20 hover:bg-white/30 text-white px-4 py-2 rounded-lg shadow-lg transition-all duration-200 flex items-center" do %>
+            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m-3 0h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path>
+            </svg>
+            <span class="text-sm font-medium">Nouvel adhérent</span>
+          <% end %>
+        </div>
         <div class="absolute top-4 right-4 flex items-center space-x-2">
           <%= link_to admin_faqs_path, class: "group bg-white/20 hover:bg-white/30 text-white px-4 py-2 rounded-lg shadow-lg transition-all duration-200 flex items-center" do %>
             <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -29,13 +37,7 @@
             <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5l5 5v11a2 2 0 01-2 2z"></path>
             </svg>
-            <span class="text-sm font-medium">Rapport integrite</span>
-          <% end %>
-          <%= link_to new_admin_member_path, class: "group bg-white/20 hover:bg-white/30 text-white px-4 py-2 rounded-lg shadow-lg transition-all duration-200 flex items-center" do %>
-            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m-3 0h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path>
-            </svg>
-            <span class="text-sm font-medium">Nouvel adherent</span>
+            <span class="text-sm font-medium">Rapport intégrité</span>
           <% end %>
         </div>
       </div>
@@ -135,10 +137,7 @@
                     Horaires d'ouverture
                 </h3>
             </div>
-            <div class="p-4">
-                <% @horaires = Rails.cache.fetch("opening_hours") || OpeningHoursHelper.default_opening_hours %>
-                <%= render 'shared/opening_hours' %>
-            </div>
+            <%= render 'shared/opening_hours', schedule: @opening_hours %>
         </div>
 
         <!-- Notepad Section -->
