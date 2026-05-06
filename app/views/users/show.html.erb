@@ -8,11 +8,8 @@
 
   <section id="overview" class="scroll-mt-28 mb-6">
     <%= render "shared/membershipcard",
-        show_account_settings_link: false,
+        show_account_settings_link: true,
         wrapper_classes: "max-w-none mb-0" %>
   </section>
 
-  <div class="grid grid-cols-1 gap-6">
-    <%= render "users/contact_section", user: @user, frame_id: ProfileSectionDomIds::CONTACT_SECTION %>
-  </div>
 </div>
