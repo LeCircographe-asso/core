@@ -101,7 +101,7 @@ function initAnimations () {
 }
 
 function buildLetterSpans (element) {
-  const text = element.textContent
+  const text = element.textContent.trim().replace(/\s+/g, " ")
   if (!text) {
     return []
   }
