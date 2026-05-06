@@ -44,6 +44,33 @@
     @apply rounded-2xl border border-gray-100 bg-white shadow-md;
   }
 
+  /* Typography primitives */
+  .section-eyebrow {
+    @apply text-sm uppercase tracking-[0.3em];
+    color: rgba(31, 92, 85, 0.7);
+  }
+
+  .hero-title {
+    @apply text-3xl font-bold sm:text-4xl lg:text-5xl;
+    font-family: "Circographe", Arial, sans-serif;
+  }
+
+  .section-title {
+    @apply text-2xl font-bold text-gray-900 sm:text-3xl;
+  }
+
+  .subsection-title {
+    @apply text-lg font-semibold text-gray-900;
+  }
+
+  .body-text {
+    @apply text-gray-700 leading-relaxed;
+  }
+
+  .body-text-lg {
+    @apply text-base text-gray-700 leading-relaxed sm:text-lg;
+  }
+
   .outline-contrast-primary {
     outline-color: rgba(31, 92, 85, 0.85);
   }
