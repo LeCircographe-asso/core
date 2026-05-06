@@ -40,6 +40,31 @@ fr:
       destroy:
         destroyed: Présence supprimée avec succès
         failure: Erreur lors de la suppression
+    faqs:
+      index:
+        new: Nouvelle entrée FAQ
+        edit: Modifier
+        delete: Supprimer
+        confirm_delete: Supprimer cette entrée FAQ ?
+        empty: Aucune entrée dans cette catégorie.
+        add_to_label: "Ajouter dans %{label}"
+      create:
+        created: Entrée FAQ créée avec succès
+      update:
+        updated: Entrée FAQ mise à jour avec succès
+      destroy:
+        destroyed: Entrée FAQ supprimée
+      form:
+        new_title: Nouvelle entrée FAQ
+        edit_title: Modifier l'entrée FAQ
+        label: Catégorie
+        question: Question
+        answer: Réponse
+        question_placeholder: Saisissez la question...
+        answer_placeholder: Saisissez la réponse...
+        save: Enregistrer
+        create: Créer
+        cancel: Annuler
     blogs:
       create:
         created: Blog créé avec succès
