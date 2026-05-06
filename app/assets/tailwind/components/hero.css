@@ -8,6 +8,10 @@
     backdrop-filter: blur(10px);
   }
 
+  .public-hero-panel-centered {
+    @apply relative text-center space-y-4;
+  }
+
   .hero-img-filter {
     @apply brightness-95 saturate-120;
   }
@@ -20,4 +24,3 @@
     background: linear-gradient(135deg, rgba(12, 18, 32, 0.55), rgba(12, 18, 32, 0.15));
   }
 }
-

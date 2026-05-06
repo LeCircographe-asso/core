@@ -3,7 +3,7 @@
 <section class="public-hero-shell mb-8">
   <%= image_tag hero_image(:become_member_hero), class: "absolute inset-0 w-full h-full object-cover hero-img-filter", alt: "" %>
   <div class="hero-overlay"></div>
-  <div class="relative hero-panel text-center space-y-3 sm:space-y-4">
+  <div class="hero-panel public-hero-panel-centered space-y-3 sm:space-y-4">
     <p class="text-sm uppercase tracking-[0.35em] text-white/70">Rejoindre la communauté</p>
     <h1 class="font-circographe text-3xl sm:text-4xl lg:text-5xl font-bold">Adhérer au Circographe</h1>
     <p class="max-w-2xl mx-auto text-base sm:text-lg text-white/85 leading-normal">Une rencontre sur place pour rejoindre la communauté, découvrir le lieu et la vie associative.</p>
@@ -170,7 +170,7 @@
                subtitle: "Quelques repères pour préparer ton adhésion.",
                faqs: @adhesion_faqs,
                footer: "Besoin d’un coup de main ? Écris-nous ou passe pendant un créneau d’ouverture.",
-               card_class: "rounded-2xl border border-gray-100 bg-white shadow-sm p-6 sm:p-8",
+               card_class: "public-soft-section",
                header_align: "left" %>
 
     <%# Panneau latéral : Horaires + Accès dans une seule carte %>

@@ -4,7 +4,7 @@
 <% footer = local_assigns[:footer] %>
 <% id = local_assigns.fetch(:id, "faq-section") %>
 <% faqs = local_assigns.fetch(:faqs, []) %>
-<% card_class = local_assigns.fetch(:card_class, "public-surface p-6 sm:p-8") %>
+<% card_class = local_assigns.fetch(:card_class, "public-card-shell") %>
 <% centered = local_assigns.fetch(:header_align, "center") != "left" %>
 
 <section class="<%= card_class %>" aria-labelledby="<%= id %>" data-controller="accordion" data-accordion-animate-value="true">
