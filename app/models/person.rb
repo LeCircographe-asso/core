@@ -2,6 +2,9 @@
 
 class Person < ApplicationRecord
   include PersonPaymentReporting
+  include BroadcastsDashboardStats
+
+  after_create_commit :broadcast_dashboard_stats
 
   REDUCED_RATE_REASONS = [
     "RSA",

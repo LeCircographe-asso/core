@@ -20,7 +20,7 @@ RSpec.describe "User profile (users#show)", type: :request do
       expect(response.body).to include(adhesion_path)
       expect(response.body).to include("Pas d'adhésion en cours")
       expect(response.body).not_to include("Renouveler mon adhésion")
-      expect(response.body).not_to include(I18n.t("users.space.membership_card_settings_link"))
+      expect(response.body).to include(I18n.t("users.space.membership_card_settings_link"))
     end
 
     it "shows renewal CTA and lapsed copy when the last membership is over" do

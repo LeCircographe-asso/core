@@ -46,6 +46,7 @@ module People
 
         instrument_success(source, target)
 
+        broadcast_merged_profile(target)
         success(source_person: source, target_person: target)
       end
     rescue ActiveRecord::RecordNotFound => e
@@ -128,11 +129,34 @@ module People
     end
 
     # Intentional batch reassignment for large merges.
-    # This runs inside a transaction and avoids callback storms.
+    # Bypasses callbacks deliberately to avoid N callbacks per row.
+    # broadcast_merged_profile re-syncs the target's profile after commit.
     def transfer_relation(relation_scope, target_person_id)
       # rubocop:disable Rails/SkipsModelValidations
       relation_scope.update_all(person_id: target_person_id)
       # rubocop:enable Rails/SkipsModelValidations
+    end
+
+    def broadcast_merged_profile(target)
+      target_reloaded = target.reload
+      Turbo::StreamsChannel.broadcast_replace_to(
+        target_reloaded,
+        target: "membership-status-#{target_reloaded.id}",
+        partial: "shared/membership_status_tiles",
+        locals: { person: target_reloaded }
+      )
+      Turbo::StreamsChannel.broadcast_replace_to(
+        target_reloaded,
+        target: "recent-payments-#{target_reloaded.id}",
+        partial: "shared/recent_payments_list",
+        locals: { person: target_reloaded }
+      )
+      Turbo::StreamsChannel.broadcast_replace_to(
+        "admin:dashboard",
+        target: "dashboard-stats-bar",
+        partial: "admin/dashboard/stats_bar",
+        locals: { stats: Admin::DashboardStatsBuilder.call }
+      )
     end
 
     def instrument_success(source, target)
