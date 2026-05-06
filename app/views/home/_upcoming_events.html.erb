@@ -1,7 +1,7 @@
 <% events ||= [] %>
 <% upcoming_event = events.first %>
 
-<div class="bg-white rounded-[24px] shadow-xl border border-gray-100 p-6 sm:p-7 space-y-5">
+<div class="public-surface-bordered p-6 sm:p-7 space-y-5">
   <% if upcoming_event.present? %>
     <% event_time = upcoming_event.date&.in_time_zone(Time.zone) %>
 
