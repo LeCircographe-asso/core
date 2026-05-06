@@ -30,17 +30,13 @@ module Admin
     end
 
     def new
-      @person = Person.find(params[:person_id]) if params[:person_id]
-
       unless @person&.can_buy_contribution_formulas?
         flash[:alert] = t(".needs_circus_membership_alert")
-        redirect_to admin_person_path(@person)
+        redirect_to(@person ? admin_person_path(@person) : admin_members_path)
         return
       end
 
       @contribution_formulas = ContributionFormula.available_for(@person)
-
-      add_breadcrumb I18n.t("breadcrumbs.admin.contribution_formulas.new_contribution"), nil
     end
 
     def edit
@@ -65,7 +61,7 @@ module Admin
       ).call
 
       if result.success?
-        redirect_to admin_user_path(Admin::Users::PersonRouteKey.call(@person)), notice: t(".purchased")
+        redirect_to admin_member_path(@person), notice: t(".purchased")
       else
         redirect_to new_admin_contribution_formula_path(person_id: @person.id),
                     alert: t(".purchase_failed_alert", message: result.message)

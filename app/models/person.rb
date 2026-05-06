@@ -22,6 +22,8 @@ class Person < ApplicationRecord
 
   attr_accessor :skip_membership_validation
 
+  before_save :compute_minor_status
+
   validates :first_name, presence: true
   validates :last_name, presence: true
   validates :email, uniqueness: true, allow_blank: true
@@ -287,6 +289,28 @@ class Person < ApplicationRecord
   end
 
   private
+
+  # NOTE: is_minor and the associated reduced rate are recomputed on each save.
+  # If a person turns 18 between two saves, the flag won't auto-update until
+  # the record is next written. Consider a nightly job if real-time accuracy matters.
+  def compute_minor_status
+    return unless birth_date.present?
+
+    self.is_minor = birth_date > 18.years.ago.to_date
+    sync_reduced_rate_for_minor
+  end
+
+  def sync_reduced_rate_for_minor
+    if is_minor
+      self.reduced_rate_eligible = true
+      self.reduced_rate_reason = "Mineur"
+      self.reduced_rate_proof = nil
+    elsif reduced_rate_reason == "Mineur"
+      # Person just became an adult — clear the minor-specific reduced rate.
+      self.reduced_rate_eligible = false
+      self.reduced_rate_reason = nil
+    end
+  end
 
   def email_not_used_by_other_user_account
     return if email.blank?

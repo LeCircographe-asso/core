@@ -32,7 +32,7 @@
             <%= f.submit t("admin.donations.new.submit"),
                          class: "inline-flex justify-center rounded-md border border-transparent bg-[#1F5C55] px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-[#194A45] focus:outline-none focus:ring-2 focus:ring-[#1F5C55] focus:ring-offset-2" %>
             <%= link_to t("admin.donations.new.cancel"),
-                        (@user.present? ? admin_user_path(@user) : admin_user_path(Admin::Users::PersonRouteKey.call(@person))),
+                        (@person.present? ? admin_member_path(@person) : admin_members_path),
                         class: "inline-flex justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50" %>
           </div>
         <% end %>

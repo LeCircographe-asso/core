@@ -11,11 +11,11 @@ module Admin
     private
 
     def admin_person_path(person)
-      admin_user_path(Admin::Users::PersonRouteKey.call(person))
+      admin_member_path(person)
     end
 
     def add_person_context_breadcrumbs(person, current_label = nil)
-      add_breadcrumb I18n.t("breadcrumbs.admin.users.members_list"), admin_users_path
+      add_breadcrumb I18n.t("breadcrumbs.admin.members.members_list"), admin_members_path
       add_breadcrumb person.full_name, admin_person_path(person)
       add_breadcrumb current_label, nil if current_label.present?
     end

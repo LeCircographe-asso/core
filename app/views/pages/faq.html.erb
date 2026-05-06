@@ -3,65 +3,89 @@
 <section class="public-hero-shell mb-10 sm:mb-12">
   <%= image_tag hero_image(:faq_hero), class: "absolute inset-0 w-full h-full object-cover hero-img-filter", alt: "" %>
   <div class="hero-overlay"></div>
-  <div class="relative hero-panel text-center space-y-4">
-    <h1 class="font-circographe text-3xl sm:text-4xl lg:text-5xl font-bold">Questions fréquentes</h1>
-    <p class="max-w-xl mx-auto text-base sm:text-lg text-white/85 leading-snug">Peu de blabla — les infos utiles, avec le ton du lieu.</p>
-    <div class="flex flex-wrap gap-3 justify-center">
-      <%= link_to "L'association", page_path("association"), class: "btn-primary shadow-lg" %>
-      <%= link_to "Adhérer", page_path("become_member"), class: "btn-secondary shadow-lg" %>
-    </div>
+  <div class="hero-panel public-hero-panel-centered">
+    <h1 class="public-hero-title">Questions fréquentes</h1>
+    <p class="public-hero-body">Peu de blabla — les infos utiles, avec le ton du lieu.</p>
   </div>
 </section>
 
-<section class="page-container max-w-6xl space-y-10 px-6 sm:px-8 lg:px-10 pt-10 pb-12 sm:py-10 rounded-[28px] shadow-xl border border-white/70 bg-white/90 backdrop-blur fade-in mb-10 sm:mb-14">
-  <nav class="flex flex-wrap justify-center gap-2" aria-label="Sommaire FAQ">
-    <a href="#faq-adhesion" class="inline-flex items-center px-4 py-2 text-sm font-semibold rounded-full border border-brand-primary/35 text-brand-primary hover:bg-brand-primary/10 transition-colors">Adhérer & pratiquer</a>
-    <a href="#faq-contact" class="inline-flex items-center px-4 py-2 text-sm font-semibold rounded-full border border-brand-primary/35 text-brand-primary hover:bg-brand-primary/10 transition-colors">Écrire & proposer</a>
-    <a href="#faq-general" class="inline-flex items-center px-4 py-2 text-sm font-semibold rounded-full border border-brand-primary/35 text-brand-primary hover:bg-brand-primary/10 transition-colors">Lieu & horaires</a>
-  </nav>
+<section class="page-container max-w-6xl mb-10 sm:mb-14"
+         data-controller="faq-tabs"
+         role="tablist"
+         aria-label="Catégories FAQ">
 
-  <article id="faq-adhesion" class="scroll-mt-24 space-y-4">
-    <%= render "shared/faq_section",
-      id: "faq-adhesion-list",
-      label: nil,
-      title: "Adhérer & pratiquer",
-      subtitle: nil,
-      faqs: @adhesion_faqs,
-      footer: "Tarifs et créneaux : page Adhérer." %>
+  <%# ── Onglets ── %>
+  <div class="flex flex-wrap justify-center gap-2 mb-8">
+    <button type="button" role="tab"
+            data-faq-tabs-target="tab"
+            data-faq-tabs-panel="faq-adhesion"
+            data-action="click->faq-tabs#show"
+            aria-selected="false"
+            class="faq-tab">
+      Adhérer &amp; pratiquer
+    </button>
+    <button type="button" role="tab"
+            data-faq-tabs-target="tab"
+            data-faq-tabs-panel="faq-contact"
+            data-action="click->faq-tabs#show"
+            aria-selected="false"
+            class="faq-tab">
+      Écrire &amp; proposer
+    </button>
+    <button type="button" role="tab"
+            data-faq-tabs-target="tab"
+            data-faq-tabs-panel="faq-general"
+            data-action="click->faq-tabs#show"
+            aria-selected="false"
+            class="faq-tab">
+      Lieu &amp; horaires
+    </button>
+  </div>
 
-    <div class="flex flex-wrap justify-center gap-3">
-      <%= link_to "Page Adhérer", page_path("become_member"), class: "btn-primary shadow-lg" %>
-      <%= link_to "Créneaux & fonctionnement", page_path("association", anchor: "fonctionnement"), class: "btn-tertiary shadow" %>
-    </div>
-  </article>
+  <%# ── Panneaux ── %>
+  <div class="public-surface-bordered px-6 pt-10 pb-12 sm:px-8 sm:py-10 lg:px-10">
 
-  <article id="faq-contact" class="scroll-mt-24 space-y-4">
-    <%= render "shared/faq_section",
-      id: "faq-contact-list",
-      label: nil,
-      title: "Écrire & proposer",
-      subtitle: nil,
-      faqs: @contact_faqs,
-      footer: "Formulaire sur la page Contact (bas de page)." %>
+    <article id="faq-adhesion" data-faq-tabs-target="panel" role="tabpanel" aria-labelledby="faq-tab-adhesion" class="space-y-4">
+      <%= render "shared/faq_section",
+        id: "faq-adhesion-list",
+        label: nil,
+        title: "Adhérer & pratiquer",
+        subtitle: nil,
+        faqs: @adhesion_faqs,
+        footer: "Tarifs et créneaux : page Adhérer." %>
+      <div class="flex flex-wrap justify-center gap-3 pt-2">
+        <%= link_to "Page Adhérer", page_path("become_member"), class: "btn-primary shadow-lg" %>
+        <%= link_to "Créneaux & fonctionnement", page_path("association", anchor: "fonctionnement"), class: "btn-tertiary shadow" %>
+      </div>
+    </article>
 
-    <div class="flex flex-wrap justify-center gap-3">
-      <%= link_to "Page Contact", page_path("contact_us"), class: "btn-primary shadow-lg" %>
-      <%= link_to "Horaires", page_path("contact_us", anchor: "horaires"), class: "btn-tertiary shadow" %>
-    </div>
-  </article>
+    <article id="faq-contact" data-faq-tabs-target="panel" role="tabpanel" aria-labelledby="faq-tab-contact" class="space-y-4">
+      <%= render "shared/faq_section",
+        id: "faq-contact-list",
+        label: nil,
+        title: "Écrire & proposer",
+        subtitle: nil,
+        faqs: @contact_faqs,
+        footer: "Formulaire sur la page Contact (bas de page)." %>
+      <div class="flex flex-wrap justify-center gap-3 pt-2">
+        <%= link_to "Page Contact", page_path("contact_us", anchor: "contact-form"), class: "btn-primary shadow-lg" %>
+        <%= link_to "Horaires", page_path("contact_us", anchor: "horaires"), class: "btn-tertiary shadow" %>
+      </div>
+    </article>
 
-  <article id="faq-general" class="scroll-mt-24 space-y-4">
-    <%= render "shared/faq_section",
-      id: "faq-general-list",
-      label: nil,
-      title: "Lieu & horaires",
-      subtitle: nil,
-      faqs: @general_faqs,
-      footer: "Programmation : Nos activités · newsletter en bas de site." %>
+    <article id="faq-general" data-faq-tabs-target="panel" role="tabpanel" aria-labelledby="faq-tab-general" class="space-y-4">
+      <%= render "shared/faq_section",
+        id: "faq-general-list",
+        label: nil,
+        title: "Lieu & horaires",
+        subtitle: nil,
+        faqs: @general_faqs,
+        footer: "Programmation : Nos activités · newsletter en bas de site." %>
+      <div class="flex flex-wrap justify-center gap-3 pt-2">
+        <%= link_to "Nos activités", page_path("news"), class: "btn-primary shadow-lg" %>
+        <%= link_to "Tarifs / adhérer", page_path("become_member", anchor: "tarifs"), class: "btn-tertiary shadow" %>
+      </div>
+    </article>
 
-    <div class="flex flex-wrap justify-center gap-3">
-      <%= link_to "Nos activités", page_path("news"), class: "btn-primary shadow-lg" %>
-      <%= link_to "Tarifs / adhérer", page_path("become_member", anchor: "tarifs"), class: "btn-tertiary shadow" %>
-    </div>
-  </article>
+  </div>
 </section>

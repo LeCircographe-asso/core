@@ -1,62 +1,37 @@
 <% slider_options = {
   loop: true,
-  centeredSlides: true,
-  slidesPerView: "auto",
+  slidesPerView: 1,
   spaceBetween: 20,
   breakpoints: {
-    1920 => { slidesPerView: 3, spaceBetween: 30 },
-    1028 => { slidesPerView: 2, spaceBetween: 30 },
-    990 => { slidesPerView: 1, spaceBetween: 0 }
+    640  => { slidesPerView: 1.5, spaceBetween: 20 },
+    1024 => { slidesPerView: 2,   spaceBetween: 24 },
+    1280 => { slidesPerView: 3,   spaceBetween: 24 }
   }
 } %>
 
-<div class="w-full relative p-8">
-    <div class="swiper multiple-slide-carousel swiper-container relative"
-         data-controller="slider"
-         data-slider-options-value="<%= slider_options.to_json %>">
-        <div class="swiper-wrapper mb-16">
-            <% if @events.present? && @events.size > 1 %>
-                <div class="swiper-slide h-auto flex justify-center items-center">
-                    <div class="rounded-2xl h-96 flex justify-center items-center">
-                        <%= render "shared/event_card", event: @events.second %>
-                    </div>
-                </div>
-            <% end %>
-            <% if @events.present? && @events.size > 2 %>
-                <div class="swiper-slide h-auto flex justify-center items-center">
-                    <div class="rounded-2xl h-auto flex justify-center items-center">
-                        <%= render "shared/event_card", event: @events.third %>
-                    </div>
-                </div>
-            <% end %>
-            <% if @events.present? && @events.size > 3 %>
-                <div class="swiper-slide h-auto flex justify-center items-center">
-                    <div class="rounded-2xl h-96 flex justify-center items-center">
-                        <%= render "shared/event_card", event: @events.fourth %>
-                    </div>
-                </div>
-            <% end %>
-            <% if @events.present? && @events.size > 0 %>
-                <div class="swiper-slide h-auto flex justify-center items-center">
-                    <div class="rounded-2xl h-auto flex justify-center items-center">
-                        <%= render "shared/event_card", event: @events.first %>
-                    </div>
-                </div>
-            <% end %>
+<div class="w-full relative px-4 sm:px-8 py-6">
+  <div class="swiper multiple-slide-carousel swiper-container relative"
+       data-controller="slider"
+       data-slider-options-value="<%= slider_options.to_json %>">
+    <div class="swiper-wrapper pb-4">
+      <% @events.each do |event| %>
+        <div class="swiper-slide h-auto">
+          <%= render "shared/event_card", event: event %>
         </div>
-
-        <div class="absolute flex justify-between items-center w-full -translate-x-1/2 left-1/2 top-1/2 -translate-y-1/2 z-50">
-            <button class="swiper-button-prev swiper-arrow" data-carousel-prev>
-                <svg class="h-5 w-5 !text-black hover:!text-gray-800" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
-                    <path d="M10 12L6 8L10 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
-                </svg>
-            </button>
-
-            <button class="swiper-button-next swiper-arrow" data-carousel-prev>
-                <svg class="h-5 w-5 !text-black hover:!text-gray-800" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
-                    <path d="M6 12L10 8L6 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
-                </svg>
-            </button>
-        </div>
+      <% end %>
     </div>
+
+    <div class="absolute flex justify-between items-center w-full -translate-x-1/2 left-1/2 top-1/2 -translate-y-1/2 z-50 pointer-events-none px-1">
+      <button class="swiper-button-prev swiper-arrow pointer-events-auto" aria-label="Événement précédent">
+        <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+          <path d="M10 12L6 8L10 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+      </button>
+      <button class="swiper-button-next swiper-arrow pointer-events-auto" aria-label="Événement suivant">
+        <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+          <path d="M6 12L10 8L6 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+      </button>
+    </div>
+  </div>
 </div>

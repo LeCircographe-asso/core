@@ -3,11 +3,11 @@
 <section class="public-hero-shell mb-14">
   <%= image_tag hero_image(:about_hero), class: "absolute inset-0 w-full h-full object-cover hero-img-filter", alt: "" %>
   <div class="hero-overlay"></div>
-  <div class="relative hero-panel space-y-6">
-    <p class="text-sm uppercase tracking-[0.4em] text-white/70"><%= t("views.pages.about.join_community") %></p>
-    <h1 class="font-circographe text-3xl sm:text-4xl lg:text-5xl font-bold"><%= t("views.pages.about.heading") %></h1>
-    <p class="max-w-3xl text-lg text-white/85 leading-relaxed"><%= t("views.pages.about.hero_description") %></p>
-    <div class="flex flex-wrap gap-4">
+  <div class="hero-panel public-hero-panel-centered space-y-6">
+    <p class="public-hero-eyebrow"><%= t("views.pages.about.eyebrow") %></p>
+    <h1 class="public-hero-title"><%= t("views.pages.about.heading") %></h1>
+    <p class="public-hero-body-wide"><%= t("views.pages.about.hero_description") %></p>
+    <div class="flex flex-wrap justify-center gap-4">
       <%= link_to t("views.pages.about.join"), page_path('become_member'), class: "btn-primary shadow-lg" %>
       <%= link_to t("views.pages.about.discover_place"), page_path('association'), class: "btn-secondary shadow-lg" %>
     </div>
@@ -88,8 +88,16 @@
       <% end %>
     </div>
     <div class="absolute flex justify-between items-center w-full -translate-x-1/2 left-1/2 top-1/2 -translate-y-1/2 z-50">
-      <button class="swiper-button-prev swiper-arrow"></button>
-      <button class="swiper-button-next swiper-arrow"></button>
+      <button class="swiper-button-prev swiper-arrow" aria-label="Précédent">
+        <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+          <path d="M10 12L6 8L10 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+      </button>
+      <button class="swiper-button-next swiper-arrow" aria-label="Suivant">
+        <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+          <path d="M6 12L10 8L6 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+      </button>
     </div>
   </div>
 </section>
@@ -147,7 +155,7 @@
   <header class="text-center mb-5 sm:mb-10 space-y-2 sm:space-y-3">
     <p class="text-xs sm:text-sm uppercase tracking-[0.3em] text-brand-primary/70">Partenaires & soutiens</p>
     <h2 class="text-2xl sm:text-3xl font-semibold text-gray-900 leading-tight">Ils rendent l'aventure possible</h2>
-    <p class="text-sm sm:text-base text-gray-600 max-w-2xl mx-auto leading-snug sm:leading-relaxed">Quelques partenaires mis en avant — la liste complète évolue avec les projets du lieu.</p>
+    <p class="text-sm sm:text-base text-gray-600 max-w-2xl mx-auto leading-normal sm:leading-relaxed">Quelques partenaires mis en avant — la liste complète évolue avec les projets du lieu.</p>
   </header>
 
   <% partner_link_icon = tag.svg(xmlns: "http://www.w3.org/2000/svg", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", stroke_width: "1.75", class: "w-5 h-5") do
@@ -176,7 +184,7 @@
               <h3 class="text-base sm:text-lg font-semibold text-gray-900 leading-snug"><%= partner[:name] %></h3>
               <p class="text-xs sm:text-sm uppercase tracking-[0.2em] text-brand-primary"><%= partner[:category] %></p>
             </div>
-            <p class="text-xs sm:text-sm text-gray-600 leading-snug sm:leading-relaxed flex-1"><%= partner[:bio].presence || "Partenaire du Circographe." %></p>
+            <p class="text-xs sm:text-sm text-gray-600 leading-normal sm:leading-relaxed flex-1"><%= partner[:bio].presence || "Partenaire du Circographe." %></p>
             <% if partner[:url].present? %>
               <div class="flex items-center justify-center gap-3 text-gray-400 pt-0.5">
                 <%= link_to partner[:url], target: "_blank", rel: "noopener", class: "hover:text-brand-primary transition", aria: { label: "Site web de #{partner[:name]}" } do %>
@@ -190,8 +198,16 @@
       <% end %>
     </div>
     <div class="absolute flex justify-between items-center w-full -translate-x-1/2 left-1/2 top-1/2 -translate-y-1/2 z-50">
-      <button type="button" class="swiper-button-prev swiper-arrow" aria-label="Partenaire précédent"></button>
-      <button type="button" class="swiper-button-next swiper-arrow" aria-label="Partenaire suivant"></button>
+      <button type="button" class="swiper-button-prev swiper-arrow" aria-label="Partenaire précédent">
+        <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+          <path d="M10 12L6 8L10 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+      </button>
+      <button type="button" class="swiper-button-next swiper-arrow" aria-label="Partenaire suivant">
+        <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+          <path d="M6 12L10 8L6 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+      </button>
     </div>
   </div>
 </section>

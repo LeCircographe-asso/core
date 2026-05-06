@@ -14,12 +14,12 @@ RSpec.describe 'Admin::Donations', type: :request do
       get new_admin_donation_path(person_id: person.id)
       expect(response).to have_http_status(:success)
       expect(response.body).to include('Ada')
-      expect(response.body).to include(admin_user_path("person_#{person.id}"))
+      expect(response.body).to include(admin_member_path(person))
     end
 
     it 'redirects when person context is missing' do
       get new_admin_donation_path
-      expect(response).to redirect_to(admin_users_path)
+      expect(response).to redirect_to(admin_members_path)
     end
 
     it 'legacy GET /admin/donations redirects to new preserving query string' do

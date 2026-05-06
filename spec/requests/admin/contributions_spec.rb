@@ -29,7 +29,7 @@ RSpec.describe "Admin::Contributions", type: :request do
         }
       end.to change(Payment, :count).by(1)
 
-      expect(response).to redirect_to(admin_user_path("person_#{person.id}"))
+      expect(response).to redirect_to(admin_member_path(person))
       expect(person.reload.contributions.order(:created_at).last.contribution_formula).to eq(to_formula)
     end
 
@@ -43,7 +43,7 @@ RSpec.describe "Admin::Contributions", type: :request do
         }
       end.to change(Payment, :count).by(1)
 
-      expect(response).to redirect_to(admin_user_path("person_#{person.id}"))
+      expect(response).to redirect_to(admin_member_path(person))
       expect(person.reload.contributions.order(:created_at).last.contribution_formula).to eq(to_formula)
     end
   end

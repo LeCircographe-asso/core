@@ -3,14 +3,14 @@
 <section class="public-hero-shell mb-14">
   <%= image_tag hero_image(:news_hero), class: "absolute inset-0 w-full h-full object-cover hero-img-filter", alt: "" %>
   <div class="hero-overlay"></div>
-  <div class="relative hero-panel text-center space-y-4">
-    <p class="text-sm uppercase tracking-[0.35em] text-white/70">Programmation</p>
-    <h1 class="font-circographe text-3xl sm:text-4xl lg:text-5xl font-bold">Nos activités</h1>
-    <p class="max-w-3xl mx-auto text-lg text-white/85 leading-relaxed">Cours, accueils de compagnies, expos, événements : la programmation du lieu.</p>
+  <div class="hero-panel public-hero-panel-centered">
+    <p class="public-hero-eyebrow">Programmation</p>
+    <h1 class="public-hero-title">Nos activités</h1>
+    <p class="public-hero-body-wide">Cours, accueils de compagnies, expos, événements : la programmation du lieu.</p>
   </div>
 </section>
 
-<section id="pratiques-regulieres" class="public-surface scroll-mt-16 md:scroll-mt-20 py-12 sm:py-14 lg:py-16 px-4 sm:px-8 fade-in">
+<section id="pratiques-regulieres" class="public-section-shell scroll-mt-16 md:scroll-mt-20 fade-in">
   <header class="max-w-4xl mx-auto text-center space-y-4">
     <p class="text-sm uppercase tracking-[0.3em] text-brand-primary/70">Pratiques régulières</p>
     <h2 class="text-2xl sm:text-3xl font-bold text-gray-900">Le Cirque</h2>
@@ -44,14 +44,14 @@
   </div>
 </section>
 
-<section id="evenements" class="public-surface py-12 sm:py-14 lg:py-16 px-4 sm:px-8 fade-in space-y-10">
+<section id="evenements" class="public-section-shell fade-in space-y-10">
   <header class="max-w-4xl mx-auto text-center space-y-4">
     <p class="text-sm uppercase tracking-[0.3em] text-brand-primary/70">Moments partagés</p>
     <h2 class="text-2xl sm:text-3xl font-bold text-gray-900">Événements et actualités</h2>
     <p class="text-base sm:text-lg text-gray-700 leading-relaxed">Tout au long de l’année, le Circographe propose des expositions, des plateaux partagés, des soirées d’ouverture de piste et des rendez-vous associatifs ouverts au quartier. Filtre les actualités pour préparer ta prochaine venue.</p>
   </header>
 
-  <section class="bg-white/95 rounded-[24px] shadow-md p-6 sm:p-8 space-y-8"
+  <section class="public-card-shell space-y-8"
            data-controller="tabs"
            data-tabs-initial-value="avenir"
            data-tabs-active-class="activities-tab--active">
@@ -101,28 +101,88 @@
   </section>
 </section>
 
-<section id="autres-projets" class="py-12 sm:py-14 lg:py-16 px-4 sm:px-8 fade-in space-y-10">
-  <div class="public-surface max-w-5xl mx-auto p-8 sm:p-10 text-center space-y-4">
-    <p class="text-sm uppercase tracking-[0.3em] text-brand-primary/70">Autres projets</p>
-    <h2 class="text-2xl sm:text-3xl font-bold text-gray-900">Ateliers, médiation et projets hybrides</h2>
-    <p class="text-base sm:text-lg text-gray-700 leading-relaxed">En plus des créneaux réguliers, on imagine des formats qui croisent disciplines et publics : ateliers de transmission, médiations scolaires, projections, scènes ouvertes graphiques et rencontres avec les artistes de passage.</p>
-  </div>
+<section id="autres-projets" class="py-12 sm:py-14 lg:py-16 px-4 sm:px-8 fade-in">
+  <div class="public-surface max-w-5xl mx-auto overflow-hidden"
+       data-controller="accordion"
+       data-accordion-animate-value="true">
 
-  <div class="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6">
-    <article class="p-6 sm:p-7 rounded-3xl bg-white/95 border border-gray-100 shadow-sm space-y-3">
-      <h3 class="text-lg font-semibold text-gray-900">Ateliers sur mesure</h3>
-      <p class="text-gray-700 leading-relaxed">Pour les structures culturelles, associations de quartier ou établissements scolaires, on crée des ateliers mêlant pratique circassienne et exploration graphique.</p>
+    <div class="p-8 sm:p-10 text-center space-y-3 border-b border-gray-100">
+      <p class="text-sm uppercase tracking-[0.3em] text-brand-primary/70">Autres projets</p>
+      <h2 class="text-2xl sm:text-3xl font-bold text-gray-900">Ateliers, médiation et projets hybrides</h2>
+      <p class="text-base sm:text-lg text-gray-700 leading-relaxed">En plus des créneaux réguliers, on imagine des formats qui croisent disciplines et publics : ateliers de transmission, médiations scolaires, projections, scènes ouvertes graphiques et rencontres avec les artistes de passage.</p>
+    </div>
+
+    <article>
+      <button type="button"
+              class="group w-full flex items-center justify-between gap-4 px-6 sm:px-8 py-5 text-left hover:bg-gray-50 transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-brand-primary"
+              aria-expanded="true"
+              aria-controls="projet-ateliers"
+              data-accordion-target="#projet-ateliers">
+        <h3 class="text-lg font-semibold text-gray-900 transition-colors duration-200 group-hover:text-[#7B5EC4]">Ateliers sur mesure</h3>
+        <svg data-accordion-icon class="shrink-0 w-5 h-5 text-brand-primary/70 transition-transform duration-300" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+        </svg>
+      </button>
+      <div id="projet-ateliers" class="px-6 sm:px-8 pb-6">
+        <p class="text-gray-700 leading-relaxed">Pour les structures culturelles, associations de quartier ou établissements scolaires, on crée des ateliers mêlant pratique circassienne et exploration graphique.</p>
+      </div>
     </article>
-    <article class="p-6 sm:p-7 rounded-3xl bg-white/95 border border-gray-100 shadow-sm space-y-3">
-      <h3 class="text-lg font-semibold text-gray-900">Rencontres publiques</h3>
-      <p class="text-gray-700 leading-relaxed">Des temps d’échanges avec les artistes accueilli·es, des restitutions conviviales et des formats participatifs qui ouvrent la salle à toutes et tous.</p>
+
+    <div class="projet-sep" aria-hidden="true"></div>
+
+    <article>
+      <button type="button"
+              class="group w-full flex items-center justify-between gap-4 px-6 sm:px-8 py-5 text-left hover:bg-gray-50 transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-brand-primary"
+              aria-expanded="false"
+              aria-controls="projet-rencontres"
+              data-accordion-target="#projet-rencontres">
+        <h3 class="text-lg font-semibold text-gray-900 transition-colors duration-200 group-hover:text-[#7B5EC4]">Rencontres publiques</h3>
+        <svg data-accordion-icon class="shrink-0 w-5 h-5 text-brand-primary/70 rotate-180 transition-transform duration-300" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+        </svg>
+      </button>
+      <div id="projet-rencontres" class="px-6 sm:px-8 pb-6 hidden" hidden>
+        <p class="text-gray-700 leading-relaxed">Des temps d’échanges avec les artistes accueilli·es, des restitutions conviviales et des formats participatifs qui ouvrent la salle à toutes et tous.</p>
+      </div>
     </article>
-    <article class="p-6 sm:p-7 rounded-3xl bg-white/95 border border-gray-100 shadow-sm space-y-3">
-      <h3 class="text-lg font-semibold text-gray-900">Capsules visuelles</h3>
-      <p class="text-gray-700 leading-relaxed">On documente les projets hybrides du lieu pour nourrir la mémoire collective : carnets photo, vidéos courtes, focus bénévoles et cartes postales illustrées.</p>
+
+    <div class="projet-sep" aria-hidden="true"></div>
+
+    <article>
+      <button type="button"
+              class="group w-full flex items-center justify-between gap-4 px-6 sm:px-8 py-5 text-left hover:bg-gray-50 transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-brand-primary"
+              aria-expanded="false"
+              aria-controls="projet-capsules"
+              data-accordion-target="#projet-capsules">
+        <h3 class="text-lg font-semibold text-gray-900 transition-colors duration-200 group-hover:text-[#7B5EC4]">Capsules visuelles</h3>
+        <svg data-accordion-icon class="shrink-0 w-5 h-5 text-brand-primary/70 rotate-180 transition-transform duration-300" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+        </svg>
+      </button>
+      <div id="projet-capsules" class="px-6 sm:px-8 pb-6 hidden" hidden>
+        <p class="text-gray-700 leading-relaxed">On documente les projets hybrides du lieu pour nourrir la mémoire collective : carnets photo, vidéos courtes, focus bénévoles et cartes postales illustrées.</p>
+      </div>
     </article>
+
   </div>
 </section>
+
+<style>
+  .projet-sep {
+    height: 1px;
+    background: linear-gradient(to right, transparent, rgba(31,92,85,0.25) 20%, rgba(31,92,85,0.25) 80%, transparent);
+    transform: scaleX(0);
+    transform-origin: center;
+    animation: sep-grow 0.7s cubic-bezier(0.16,1,0.3,1) forwards;
+    animation-play-state: paused;
+  }
+  .fade-in.visible .projet-sep { animation-play-state: running; }
+  .fade-in.visible .projet-sep:nth-of-type(2) { animation-delay: 0.1s; }
+  .fade-in.visible .projet-sep:nth-of-type(3) { animation-delay: 0.25s; }
+  @keyframes sep-grow {
+    to { transform: scaleX(1); }
+  }
+</style>
 
 <section class="py-10 sm:py-16 fade-in">
   <div class="w-full relative">
@@ -142,7 +202,7 @@
       <div class="swiper-wrapper mb-4 sm:mb-8">
         <% news_carousel_image_sources(limit: 12).each_with_index do |filename, index| %>
           <div class="swiper-slide">
-            <div class="rounded-2xl h-64 sm:h-80 md:h-96 flex justify-center items-center overflow-hidden bg-gray-100 select-none">
+            <div class="public-carousel-media rounded-2xl flex justify-center items-center overflow-hidden bg-gray-100 select-none">
               <%= image_tag filename,
                             alt: "Photo du Circographe #{index + 1}",
                             draggable: false,
@@ -170,12 +230,7 @@
   </div>
 
   <div class="mt-6 text-center fade-in">
-    <%= link_to page_path("gallery"), class: "btn-primary inline-flex items-center gap-x-2 text-sm font-medium shadow-2xs" do %>
-      Voir toutes les photos
-      <svg class="shrink-0 w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
-        <path d="M9 18l6-6-6-6" />
-      </svg>
-    <% end %>
+    <%= link_to "Voir toutes les photos", page_path("gallery"), class: "public-cta-pill" %>
   </div>
 </section>
 

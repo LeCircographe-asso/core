@@ -12,7 +12,7 @@ class UsersController < ApplicationController
   # - RegistrationsController: Creating new accounts
   # - UsersController: Managing existing accounts
   # - SessionsController: Handling login/logout
-  before_action :require_authentication, except: %i[change_newsletter_status newsletter_signup]
+  before_action :require_authentication, except: %i[change_newsletter_status newsletter_signup unsubscribe_by_token]
   before_action :set_user, only: %i[show edit update change_newsletter_status destroy]
 
   # User profile view

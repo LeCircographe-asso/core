@@ -151,7 +151,7 @@ RSpec.describe 'Admin::Memberships', type: :request do
             }
           }
 
-          expect(response).to redirect_to(admin_user_path("person_#{person.id}"))
+          expect(response).to redirect_to(admin_member_path(person))
         end
 
         it 'persists offer_reason for an offered membership' do
@@ -315,7 +315,7 @@ RSpec.describe 'Admin::Memberships', type: :request do
             }
           }
 
-          expect(response).to redirect_to(admin_user_path("person_#{person.id}"))
+          expect(response).to redirect_to(admin_member_path(person))
         end
       end
     end

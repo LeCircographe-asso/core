@@ -45,13 +45,11 @@
     box-shadow: 0 8px 20px rgba(31, 92, 85, 0.15);
   }
 
-  .swiper-button-prev,
-  .swiper-button-prev.swiper-arrow {
+  .swiper-button-prev {
     left: 1rem;
   }
 
-  .swiper-button-next,
-  .swiper-button-next.swiper-arrow {
+  .swiper-button-next {
     right: 1rem;
   }
 
@@ -60,33 +58,16 @@
     color: var(--brand-accent);
   }
 
-  .swiper-button-prev::after {
-    transform: rotate(180deg);
-  }
-
-  .swiper-button-next:hover,
-  .swiper-button-prev:hover {
-    color: var(--brand-accent);
-  }
-
   .swiper-arrow svg {
     transition: color 0.2s ease-in-out;
-    color: inherit;
-  }
-
-  .swiper-arrow:hover svg {
-    color: var(--brand-accent);
   }
 
   .swiper-button-next::after,
   .swiper-button-prev::after {
-    font-size: 1.25rem;
-    display: inline-block;
+    content: '';
+    display: none;
   }
 
-  .swiper-button-prev svg {
-    transform: rotate(180deg);
-  }
 
   .swiper-pagination-bullet {
     background: rgba(31, 92, 85, 0.3);

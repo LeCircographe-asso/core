@@ -41,7 +41,7 @@ RSpec.describe "Contacts", type: :request do
         message: "Hello"
       }
 
-      expect(response).to redirect_to(page_path("contact_us"))
+      expect(response).to redirect_to(contact_path)
     end
 
     it "rejects an empty payload without enqueuing mail" do
