@@ -3,6 +3,7 @@
 class Membership < ApplicationRecord
   include Statusable
   include Dateable
+  include BroadcastsDashboardStats
 
   # Relations — voir docs/domain_model.md.
   belongs_to :person
@@ -11,6 +12,10 @@ class Membership < ApplicationRecord
   validates :started_at, presence: true
   validates :ended_at, presence: true
   validates :status, presence: true
+
+  after_create_commit  :broadcast_profile_tiles
+  after_update_commit  :broadcast_profile_tiles, if: -> { saved_change_to_status? || saved_change_to_ended_at? || saved_change_to_started_at? }
+  after_destroy_commit :broadcast_profile_tiles
 
   # Statuts — voir docs/glossary.md.
   enum :status, {
@@ -88,6 +93,16 @@ class Membership < ApplicationRecord
   scope :circus, -> { joins(:membership_type).where(membership_types: { category: :circus }) }
 
   private
+
+  def broadcast_profile_tiles
+    broadcast_replace_to(
+      person,
+      target: "membership-status-#{person_id}",
+      partial: "shared/membership_status_tiles",
+      locals: { person: person.reload }
+    )
+    broadcast_dashboard_stats
+  end
 
   def end_date_after_start_date
     return unless started_at && ended_at

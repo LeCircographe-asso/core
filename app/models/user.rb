@@ -3,6 +3,9 @@
 class User < ApplicationRecord
   include Roleable
   include Dateable
+  include BroadcastsDashboardStats
+
+  after_create_commit :broadcast_dashboard_stats
 
   EMAIL_CHANGE_CODE_TTL = 15.minutes
 
