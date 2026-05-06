@@ -134,6 +134,8 @@ class Contribution < ApplicationRecord
       locals: { person: person.reload }
     )
     broadcast_dashboard_stats
+  rescue => e
+    Rails.logger.warn("[Contribution] broadcast skipped: #{e.message}")
   end
 
   def sessions_remaining_validation

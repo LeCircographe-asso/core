@@ -207,6 +207,8 @@ class Payment < ApplicationRecord
       locals: { person: person.reload }
     )
     broadcast_dashboard_stats
+  rescue => e
+    Rails.logger.warn("[Payment] broadcast skipped: #{e.message}")
   end
 
   def allow_hard_delete?

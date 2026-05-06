@@ -50,5 +50,7 @@ class Attendance < ApplicationRecord
       partial: "events/interest_count",
       locals: { event: event, count: count }
     )
+  rescue => e
+    Rails.logger.warn("[Attendance] broadcast skipped: #{e.message}")
   end
 end

@@ -102,6 +102,8 @@ class Membership < ApplicationRecord
       locals: { person: person.reload }
     )
     broadcast_dashboard_stats
+  rescue => e
+    Rails.logger.warn("[Membership] broadcast skipped: #{e.message}")
   end
 
   def end_date_after_start_date
