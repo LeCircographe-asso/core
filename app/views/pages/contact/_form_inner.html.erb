@@ -7,13 +7,17 @@
 <% else %>
   <%= form_with url: submit_contact_path, method: :post, data: { turbo_stream: true }, class: "space-y-5 mt-5 sm:mt-6" do |form| %>
     <div>
-      <%= form.label :name, "Nom complet", class: "block mb-1.5 text-sm font-medium text-gray-700" %>
-      <%= form.text_field :name, value: contact[:name], placeholder: "Nom Prénom", class: "block w-full min-h-[2.75rem] px-4 py-3 text-base text-gray-800 bg-white border border-gray-200 rounded-xl focus:border-[#5836A5] focus:ring-2 focus:ring-[#5836A5]/25 focus:outline-none touch-manipulation" %>
+      <%= form.label :name, class: "block mb-1.5 text-sm font-medium text-gray-700" do %>
+        Nom complet<span aria-hidden="true" class="text-red-500 ml-0.5">*</span>
+      <% end %>
+      <%= form.text_field :name, value: contact[:name], placeholder: "Nom Prénom", required: true, autocomplete: "name", class: "block w-full min-h-[2.75rem] px-4 py-3 text-base text-gray-800 bg-white border border-gray-200 rounded-xl focus:border-[#5836A5] focus:ring-2 focus:ring-[#5836A5]/25 focus:outline-none touch-manipulation" %>
     </div>
 
     <div>
-      <%= form.label :email, "Adresse email", class: "block mb-1.5 text-sm font-medium text-gray-700" %>
-      <%= form.email_field :email, value: contact[:email], placeholder: "adresse@example.com", class: "block w-full min-h-[2.75rem] px-4 py-3 text-base text-gray-800 bg-white border border-gray-200 rounded-xl focus:border-[#5836A5] focus:ring-2 focus:ring-[#5836A5]/25 focus:outline-none touch-manipulation" %>
+      <%= form.label :email, class: "block mb-1.5 text-sm font-medium text-gray-700" do %>
+        Adresse email<span aria-hidden="true" class="text-red-500 ml-0.5">*</span>
+      <% end %>
+      <%= form.email_field :email, value: contact[:email], placeholder: "adresse@example.com", required: true, autocomplete: "email", class: "block w-full min-h-[2.75rem] px-4 py-3 text-base text-gray-800 bg-white border border-gray-200 rounded-xl focus:border-[#5836A5] focus:ring-2 focus:ring-[#5836A5]/25 focus:outline-none touch-manipulation" %>
     </div>
 
     <div>
