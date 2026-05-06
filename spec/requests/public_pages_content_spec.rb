@@ -58,7 +58,7 @@ RSpec.describe 'Public pages content', type: :request do
     end
 
     it 'links FAQ answers about contacting to the contact form, not an inbox address' do
-      expect(response.body).to include('/pages/contact_us#contact-form')
+      expect(response.body).to include('/contact#contact-form')
       expect(response.body).not_to include('contact@lecircographe.fr')
     end
   end

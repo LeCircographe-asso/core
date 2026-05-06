@@ -2,16 +2,16 @@
 
 # route_name => [page_id, url_slug] — source de vérité unique pour les pages publiques
 PUBLIC_PAGES = {
-  about:                     %w[about                          about],
-  association:               %w[association                    association],
-  adhesion:                  %w[become_member                  adhesion],
-  actualites:                %w[news                           actualites],
-  contact:                   %w[contact_us                     contact],
-  faq:                       %w[faq                            faq],
-  galerie:                   %w[gallery                        galerie],
-  mentions_legales:          %w[terms                          mentions-legales],
-  confidentialite:           %w[privacy_policy                 confidentialite],
-  newsletter_desinscription: %w[newsletter_unsubscribe_success newsletter/desinscription-confirmee],
+  about:                     %w[about about],
+  association:               %w[association association],
+  adhesion:                  %w[become_member adhesion],
+  actualites:                %w[news actualites],
+  contact:                   %w[contact_us contact],
+  faq:                       %w[faq faq],
+  galerie:                   %w[gallery galerie],
+  mentions_legales:          %w[terms mentions-legales],
+  confidentialite:           %w[privacy_policy confidentialite],
+  newsletter_desinscription: %w[newsletter_unsubscribe_success newsletter/desinscription-confirmee]
 }.freeze
 
 PAGE_ID_TO_ROUTE = PUBLIC_PAGES.each_with_object({}) { |(name, (pid, _)), h| h[pid] = name }.freeze
