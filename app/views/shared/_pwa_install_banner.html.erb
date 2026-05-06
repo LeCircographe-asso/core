@@ -45,6 +45,40 @@
         Ajouter à l'écran d'accueil
       </button>
 
+      <%# Android manual (HTTP / prompt non déclenché): instructions menu ⋮ %>
+      <div data-pwa-banner-target="androidHint" hidden>
+        <button type="button"
+                class="mt-3 w-full flex items-center justify-center gap-2 rounded-xl border border-brand-primary/25 bg-brand-primary/8 px-4 py-2.5 text-sm font-semibold text-brand-primary active:scale-[0.98] transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2"
+                data-action="pwa-banner#toggleAndroidInstructions">
+          <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+          </svg>
+          Ajouter à l'écran d'accueil
+        </button>
+
+        <div class="mt-3 rounded-xl bg-gray-50 border border-gray-100 p-3.5 space-y-3"
+             data-pwa-banner-target="androidInstructions"
+             hidden>
+          <p class="text-[11px] font-semibold text-gray-400 uppercase tracking-wider">Dans Chrome Android :</p>
+          <div class="flex items-start gap-2.5">
+            <span class="shrink-0 w-5 h-5 rounded-full bg-brand-primary text-white text-[10px] font-bold flex items-center justify-center mt-0.5">1</span>
+            <p class="text-sm text-gray-700 leading-snug">
+              Touche
+              <svg class="inline w-4 h-4 text-gray-600 align-text-bottom mx-0.5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="5" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="12" cy="19" r="1.5"/></svg>
+              <strong>⋮</strong> en haut à droite de Chrome
+            </p>
+          </div>
+          <div class="flex items-start gap-2.5">
+            <span class="shrink-0 w-5 h-5 rounded-full bg-brand-primary text-white text-[10px] font-bold flex items-center justify-center mt-0.5">2</span>
+            <p class="text-sm text-gray-700 leading-snug">Choisis <strong>Ajouter à l'écran d'accueil</strong></p>
+          </div>
+          <div class="flex items-start gap-2.5">
+            <span class="shrink-0 w-5 h-5 rounded-full bg-brand-primary text-white text-[10px] font-bold flex items-center justify-center mt-0.5">3</span>
+            <p class="text-sm text-gray-700 leading-snug">Touche <strong>Ajouter</strong> pour confirmer</p>
+          </div>
+        </div>
+      </div>
+
       <%# iOS: expandable instructions %>
       <div data-pwa-banner-target="iosHint" hidden>
         <button type="button"

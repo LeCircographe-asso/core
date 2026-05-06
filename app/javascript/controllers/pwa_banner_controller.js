@@ -2,12 +2,12 @@ import { Controller } from "@hotwired/stimulus"
 
 const DISMISS_KEY = "pwa-install-dismissed-at"
 const DISMISS_DAYS = 7
-const IOS_DELAY_MS = 3500
+const SHOW_DELAY_MS = 3500
 
 let deferredPrompt = null
 
 export default class extends Controller {
-  static targets = ["installBtn", "iosHint", "iosInstructions"]
+  static targets = ["installBtn", "iosHint", "iosInstructions", "androidHint", "androidInstructions"]
 
   connect() {
     if (this.isStandalone() || this.isDismissed() || !this.isTouchDevice()) return
@@ -15,6 +15,7 @@ export default class extends Controller {
     this.onBeforeInstall = (event) => {
       event.preventDefault()
       deferredPrompt = event
+      clearTimeout(this.androidTimer) // native prompt arrived, cancel manual fallback
       this.showBanner("android")
     }
     this.onAppInstalled = () => {
@@ -25,10 +26,19 @@ export default class extends Controller {
     window.addEventListener("beforeinstallprompt", this.onBeforeInstall)
     window.addEventListener("appinstalled", this.onAppInstalled)
 
-    // iOS has no beforeinstallprompt — show after a short delay, once per session
-    if (this.isIos() && !sessionStorage.getItem("pwa-banner-ios-shown")) {
-      sessionStorage.setItem("pwa-banner-ios-shown", "1")
-      this.iosTimer = setTimeout(() => this.showBanner("ios"), IOS_DELAY_MS)
+    if (this.isIos()) {
+      if (!sessionStorage.getItem("pwa-banner-ios-shown")) {
+        sessionStorage.setItem("pwa-banner-ios-shown", "1")
+        this.iosTimer = setTimeout(() => this.showBanner("ios"), SHOW_DELAY_MS)
+      }
+    } else {
+      // Android: wait for native prompt; if it never comes (HTTP), show manual guide once per session
+      if (!sessionStorage.getItem("pwa-banner-android-shown")) {
+        sessionStorage.setItem("pwa-banner-android-shown", "1")
+        this.androidTimer = setTimeout(() => {
+          if (!deferredPrompt) this.showBanner("android-manual")
+        }, SHOW_DELAY_MS)
+      }
     }
   }
 
@@ -36,6 +46,7 @@ export default class extends Controller {
     window.removeEventListener("beforeinstallprompt", this.onBeforeInstall)
     window.removeEventListener("appinstalled", this.onAppInstalled)
     clearTimeout(this.iosTimer)
+    clearTimeout(this.androidTimer)
   }
 
   async install() {
@@ -57,16 +68,19 @@ export default class extends Controller {
   }
 
   toggleIosInstructions() {
-    const panel = this.iosInstructionsTarget
-    panel.hidden = !panel.hidden
+    this.iosInstructionsTarget.hidden = !this.iosInstructionsTarget.hidden
+  }
+
+  toggleAndroidInstructions() {
+    this.androidInstructionsTarget.hidden = !this.androidInstructionsTarget.hidden
   }
 
   showBanner(type) {
-    this.installBtnTarget.hidden = type !== "android"
-    this.iosHintTarget.hidden = type !== "ios"
+    this.installBtnTarget.hidden       = type !== "android"
+    this.iosHintTarget.hidden          = type !== "ios"
+    this.androidHintTarget.hidden      = type !== "android-manual"
 
     this.element.hidden = false
-    // Double rAF ensures the initial translate-y-full is painted before we remove it
     requestAnimationFrame(() =>
       requestAnimationFrame(() => {
         this.element.classList.remove("translate-y-full")
