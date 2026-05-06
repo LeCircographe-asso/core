@@ -84,9 +84,6 @@
     display: inline-block;
   }
 
-  .swiper-button-prev svg {
-    transform: rotate(180deg);
-  }
 
   .swiper-pagination-bullet {
     background: rgba(31, 92, 85, 0.3);

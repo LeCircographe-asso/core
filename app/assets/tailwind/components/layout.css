@@ -79,4 +79,17 @@
     color: var(--brand-primary) !important;
     font-weight: 600;
   }
+
+  @media (max-width: 639px) {
+    .home-mobile-background {
+      background-size: 135%;
+      background-position: center top;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .home-hero-title-word {
+      display: block;
+    }
+  }
 }

@@ -71,7 +71,7 @@
     
     <% else %>
 
-    <div class="fixed inset-0 -z-10 bg-cover bg-center bg-no-repeat"
+    <div class="fixed inset-0 -z-10 bg-cover bg-center bg-no-repeat <%= controller_name == 'home' && action_name == 'index' ? 'home-mobile-background' : '' %>"
          style="background-image: url('<%= asset_path(content_for(:background_image) || 'background.webp') %>');"></div>
     <header>
         <%= render 'shared/navbar' %>
@@ -80,7 +80,7 @@
         <%= turbo_frame_tag ProfileSectionDomIds::FLASH_FRAME do %>
         <%= render 'shared/flash' %>
         <% end %>
-        <main id="main-content" tabindex="-1" class="page-container space-y-6 <%= controller_name == 'home' && action_name == 'index' ? 'pt-0' : 'pt-8' %>">
+        <main id="main-content" tabindex="-1" class="<%= controller_name == 'home' && action_name == 'index' ? 'w-full pt-0' : 'page-container space-y-6 pt-8' %>">
         <%# data-turbo-page-shell : transition GSAP au changement de page (turbo_page_reveal.js) %>
         <div class="w-full" data-turbo-page-shell>
             <%= yield %>
