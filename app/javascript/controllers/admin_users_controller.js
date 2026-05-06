@@ -4,7 +4,6 @@ export default class extends Controller {
   static targets = ["statCard", "actionButton", "tableRow"]
   
   connect() {
-    console.log("Admin Users Controller connected")
     this.initializeAnimations()
     this.initializeKeyboardShortcuts()
   }
@@ -73,7 +72,7 @@ export default class extends Controller {
         window.location.href = `/admin/memberships/new?person_id=${personId}`
         break
       default:
-        console.log(`Action ${action} not implemented`)
+        break
     }
   }
   

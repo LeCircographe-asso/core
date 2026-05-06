@@ -4,7 +4,6 @@ export default class extends Controller {
   static values = { content: String }
   
   connect() {
-    console.log("Tooltip controller connected")
     this.setupTooltip()
   }
   
