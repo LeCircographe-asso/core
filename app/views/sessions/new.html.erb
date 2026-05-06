@@ -1,19 +1,19 @@
-<div class="bg-white w-full max-w-full h-full flex flex-col lg:flex-row overflow-hidden">
+<div class="relative min-h-screen overflow-hidden bg-white lg:flex">
     <!-- Background image in mobile version -->
     <div class="lg:hidden absolute inset-0 z-0 opacity-20">
         <%= image_tag("about.jpg", alt: "", class: "w-full h-full object-cover") %>
     </div>
     
     <!-- Image section (left) - visible only on desktop-->
-    <div class="hidden lg:block lg:w-1/2 overflow-hidden">
+    <div class="hidden overflow-hidden lg:block lg:w-1/2">
         <div class="h-full w-full">
             <%= image_tag("about.jpg", alt: "Circographe Image", class: "w-full h-full object-cover") %>
         </div>
     </div>
 
     <!-- Form section (right) -->
-    <div class="flex items-center justify-center w-full lg:w-1/2 p-4 overflow-y-auto overflow-x-hidden relative z-10">
-        <div class="w-full max-w-md bg-white bg-opacity-95 p-5 rounded-lg shadow-sm">
+    <div class="relative z-10 flex w-full items-center justify-center px-4 py-8 lg:w-1/2 lg:px-6">
+        <div class="public-surface-bordered w-full max-w-md p-5 sm:p-6">
             <div class="text-center mb-4">
                 <h1 class="text-2xl font-bold text-gray-700">Se connecter</h1>
             </div>
