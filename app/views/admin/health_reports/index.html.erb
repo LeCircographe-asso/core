@@ -4,49 +4,49 @@
   <div class="page-container">
     <%= render 'shared/breadcrumbs' %>
 
-    <div class="surface-card mb-6">
-      <div class="bg-gradient-to-r from-[#1F5C55] to-[#194A45] px-6 py-4">
+    <div class="admin-page-header">
+      <div class="px-6 py-4">
         <h1 class="text-2xl font-bold text-white">Rapport d'integrite</h1>
         <p class="text-white/80 mt-1">Verifications rapides pour detecter les donnees orphelines ou incoherentes</p>
       </div>
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-8 gap-4 mb-6">
-      <div class="admin-metric-card shadow">
+      <div class="admin-metric-card">
         <p class="text-sm text-gray-600">Utilisateurs sans Person</p>
         <p class="text-2xl font-bold text-gray-900"><%= @users_without_person_count %></p>
       </div>
-      <div class="admin-metric-card shadow">
+      <div class="admin-metric-card">
         <p class="text-sm text-gray-600">Person sans User</p>
         <p class="text-2xl font-bold text-gray-900"><%= @people_without_user_count %></p>
       </div>
-      <div class="admin-metric-card shadow">
+      <div class="admin-metric-card">
         <p class="text-sm text-gray-600">Doublons email</p>
         <p class="text-2xl font-bold text-gray-900"><%= @duplicate_people_by_email_count %></p>
       </div>
-      <div class="admin-metric-card shadow">
+      <div class="admin-metric-card">
         <p class="text-sm text-gray-600">Doublons telephone</p>
         <p class="text-2xl font-bold text-gray-900"><%= @duplicate_people_by_phone_count %></p>
       </div>
-      <div class="bg-white rounded-lg shadow p-4 border border-gray-200">
+      <div class="admin-metric-card">
         <p class="text-sm text-gray-600">Paiements sans ligne</p>
         <p class="text-2xl font-bold text-gray-900"><%= @payments_without_lines_count %></p>
       </div>
-      <div class="bg-white rounded-lg shadow p-4 border border-gray-200">
+      <div class="admin-metric-card">
         <p class="text-sm text-gray-600">Totaux incoherents</p>
         <p class="text-2xl font-bold text-gray-900"><%= @payments_with_mismatched_totals_count %></p>
       </div>
-      <div class="bg-white rounded-lg shadow p-4 border border-gray-200">
+      <div class="admin-metric-card">
         <p class="text-sm text-gray-600">Lignes don legacy</p>
         <p class="text-2xl font-bold text-gray-900"><%= @legacy_donation_lines_count %></p>
       </div>
-      <div class="bg-white rounded-lg shadow p-4 border border-gray-200">
+      <div class="admin-metric-card">
         <p class="text-sm text-gray-600">Cotisations incoherentes</p>
         <p class="text-2xl font-bold text-gray-900"><%= @contribution_invariant_issues_count %></p>
       </div>
     </div>
 
-    <div class="admin-metric-card shadow mb-6 p-6">
+    <div class="admin-metric-card mb-6 p-6">
       <h2 class="text-lg font-semibold text-gray-900 mb-3">Utilisateurs sans Person</h2>
       <% if @users_without_person.any? %>
         <div class="overflow-x-auto">
@@ -79,7 +79,7 @@
       <% end %>
     </div>
 
-    <div class="admin-metric-card shadow mb-6 p-6">
+    <div class="admin-metric-card mb-6 p-6">
       <h2 class="text-lg font-semibold text-gray-900 mb-3">Person sans User</h2>
       <% if @people_without_user.any? %>
         <div class="overflow-x-auto">
@@ -112,7 +112,7 @@
       <% end %>
     </div>
 
-    <div class="admin-metric-card shadow mb-6 p-6">
+    <div class="admin-metric-card mb-6 p-6">
       <h2 class="text-lg font-semibold text-gray-900 mb-3">Doublons par email</h2>
       <% if @duplicate_people_by_email_groups.any? %>
         <div class="space-y-3">
@@ -136,7 +136,7 @@
       <% end %>
     </div>
 
-    <div class="admin-metric-card shadow mb-6 p-6">
+    <div class="admin-metric-card mb-6 p-6">
       <h2 class="text-lg font-semibold text-gray-900 mb-3">Doublons par telephone</h2>
       <% if @duplicate_people_by_phone_groups.any? %>
         <div class="space-y-3">
@@ -160,7 +160,7 @@
       <% end %>
     </div>
 
-    <div class="admin-metric-card shadow p-6">
+    <div class="admin-metric-card p-6">
       <h2 class="text-lg font-semibold text-gray-900 mb-3">Paiements sans Person</h2>
       <% if @payments_without_person.any? %>
         <div class="overflow-x-auto">
@@ -193,7 +193,7 @@
       <% end %>
     </div>
 
-    <div class="bg-white rounded-lg shadow p-6 border border-gray-200 mt-6">
+    <div class="admin-metric-card mt-6 p-6">
       <h2 class="text-lg font-semibold text-gray-900 mb-3">Paiements sans ligne</h2>
       <% if @payments_without_lines.any? %>
         <div class="overflow-x-auto">
