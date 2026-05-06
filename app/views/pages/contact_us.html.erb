@@ -32,8 +32,8 @@
           <div class="rounded-2xl border border-[#5836A5]/30 bg-white px-5 py-5 shadow-sm sm:col-span-2">
             <p class="text-xs uppercase tracking-[0.25em] text-[#5836A5] mb-2">Suivre l'actu</p>
             <div class="flex flex-wrap gap-3 text-sm text-[#1F5C55]">
-              <%= link_to "Facebook", "https://www.facebook.com/lecircographe/?locale=fr_FR", target: "_blank", rel: "noopener", class: "inline-flex items-center gap-2 px-3 py-2 rounded-full border border-[#1F5C55]/40 hover:bg-[#1F5C55] hover:text-white transition" %>
-              <%= link_to "Instagram", "https://www.instagram.com/lecircographe/", target: "_blank", rel: "noopener", class: "inline-flex items-center gap-2 px-3 py-2 rounded-full border border-[#5836A5]/40 hover:bg-[#5836A5] hover:text-white transition" %>
+              <%= link_to "https://www.facebook.com/lecircographe/?locale=fr_FR", target: "_blank", rel: "noopener", class: "inline-flex items-center gap-2 px-3 py-2 rounded-full border border-[#1F5C55]/40 hover:bg-[#1F5C55] hover:text-white transition" do %>Facebook<span class="sr-only"> (ouvre dans un nouvel onglet)</span><% end %>
+              <%= link_to "https://www.instagram.com/lecircographe/", target: "_blank", rel: "noopener", class: "inline-flex items-center gap-2 px-3 py-2 rounded-full border border-[#5836A5]/40 hover:bg-[#5836A5] hover:text-white transition" do %>Instagram<span class="sr-only"> (ouvre dans un nouvel onglet)</span><% end %>
               <button type="button" data-whatsapp-qr
                       class="inline-flex items-center gap-2 px-3 py-2 rounded-full border border-[#1F5C55]/40 hover:bg-[#1F5C55] hover:text-white transition">
                 WhatsApp

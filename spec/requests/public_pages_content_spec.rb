@@ -157,4 +157,70 @@ RSpec.describe 'Public pages content', type: :request do
       expect(response.body).not_to include("souscrivant à l'adhésion soutien")
     end
   end
+
+  describe 'WCAG accessibility — pages publiques' do
+    describe 'GET /' do
+      before { get root_path }
+
+      it 'expose un skip-link vers #main-content' do
+        expect(response.body).to include('href="#main-content"')
+      end
+
+      it 'expose un élément main avec id="main-content"' do
+        expect(response.body).to include('id="main-content"')
+      end
+
+      it 'body a leading-normal pour line-height ≥ 1.5' do
+        expect(response.body).to include('leading-normal')
+      end
+
+      it 'newsletter input a un label sr-only' do
+        expect(response.body).to include('for="user_email_address"')
+      end
+
+      it 'newsletter input a autocomplete="email"' do
+        expect(response.body).to include('autocomplete="email"')
+      end
+
+      it 'newsletter button a focus-visible ring' do
+        expect(response.body).to include('focus-visible:ring-2')
+      end
+
+      it 'honeypot est aria-hidden' do
+        expect(response.body).to include('aria-hidden="true"')
+      end
+
+      it 'les chevrons accordion ont aria-hidden="true"' do
+        expect(response.body).to include('data-accordion-icon')
+      end
+    end
+
+    describe 'GET /pages/contact_us' do
+      before { get contact_path }
+
+      it 'table horaires a une caption' do
+        expect(response.body).to include('<caption')
+      end
+
+      it 'th de la table horaires ont scope="col"' do
+        expect(response.body).to include('scope="col"')
+      end
+
+      it 'formulaire contact a autocomplete="name"' do
+        expect(response.body).to include('autocomplete="name"')
+      end
+
+      it 'formulaire contact a autocomplete="email"' do
+        expect(response.body).to include('autocomplete="email"')
+      end
+
+      it 'formulaire contact champs requis ont required' do
+        expect(response.body).to include('required="required"')
+      end
+
+      it 'liens externes ont indication sr-only ouverture nouvel onglet' do
+        expect(response.body).to include('ouvre dans un nouvel onglet')
+      end
+    end
+  end
 end

@@ -36,8 +36,9 @@
     <%= javascript_include_tag "flowbite.turbo.min", "data-turbo-track": "reload" %>
 </head>
 
-<body class="<%= 'dyslexic-font-enabled' if current_user&.dyslexic_font %> <%= controller_name %>-<%= action_name %> flex flex-col min-h-screen">
+<body class="<%= 'dyslexic-font-enabled' if current_user&.dyslexic_font %> <%= controller_name %>-<%= action_name %> flex flex-col min-h-screen leading-normal">
 
+<a href="#main-content" class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[9999] focus:rounded-md focus:bg-white focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-[#1F5C55] focus:shadow-md focus:ring-2 focus:ring-[#1F5C55]">Aller au contenu principal</a>
 
     <% if controller_path.start_with?('admin/') %>
     <div class="admin-layout">
@@ -61,7 +62,7 @@
         <%= turbo_frame_tag ProfileSectionDomIds::FLASH_FRAME do %>
         <%= render 'shared/flash' %>
         <% end %>
-        <main class="flex-1 min-h-0">
+        <main id="main-content" tabindex="-1" class="flex-1 min-h-0">
             <div class="h-full w-full" data-turbo-page-shell>
             <%= yield %>
             </div>
@@ -79,7 +80,7 @@
         <%= turbo_frame_tag ProfileSectionDomIds::FLASH_FRAME do %>
         <%= render 'shared/flash' %>
         <% end %>
-        <main class="page-container space-y-6 <%= controller_name == 'home' && action_name == 'index' ? 'pt-0' : 'pt-8' %>">
+        <main id="main-content" tabindex="-1" class="page-container space-y-6 <%= controller_name == 'home' && action_name == 'index' ? 'pt-0' : 'pt-8' %>">
         <%# data-turbo-page-shell : transition GSAP au changement de page (turbo_page_reveal.js) %>
         <div class="w-full" data-turbo-page-shell>
             <%= yield %>

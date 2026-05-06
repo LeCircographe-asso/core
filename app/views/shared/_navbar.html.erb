@@ -135,8 +135,10 @@
                         text: t("views.shared.navbar.sign_up"),
                         disabled: true,
                         disabled_reason: t("views.shared.navbar.sign_up_disabled_reason"),
+                        additional_aria_describedby: "navbar-desktop-signup-disabled-note",
                         classes: "btn-primary text-sm shadow-lg"
                       ) %>
+                  <p id="navbar-desktop-signup-disabled-note" class="sr-only"><%= t("views.shared.navbar.sign_up_disabled_reason") %></p>
                 <% end %>
             </div>
             <% end %>
@@ -150,14 +152,14 @@
             <div id="accordion-menu" class="w-full">
                 <!-- The Accordion Place -->
                 <div class="border-b border-gray-200">
-                    <h2 id="accordion-lieu-heading">
+                    <div id="accordion-lieu-heading">
                         <button type="button" class="flex items-center justify-between w-full py-4 font-medium text-left text-gray-900" data-accordion-target="#accordion-lieu-body" aria-expanded="false" aria-controls="accordion-lieu-body">
                             <span><%= t("views.shared.navbar.place") %></span>
-                            <svg data-accordion-icon class="w-3 h-3 rotate-180 shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
+                            <svg data-accordion-icon aria-hidden="true" class="w-3 h-3 rotate-180 shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
                                 <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5 5 1 1 5" />
                             </svg>
                         </button>
-                    </h2>
+                    </div>
                     <div id="accordion-lieu-body" class="hidden" aria-labelledby="accordion-lieu-heading">
                         <div class="pb-4 pl-4">
                             <ul class="space-y-2">
@@ -180,14 +182,14 @@
 
                 <!-- Our accordion news -->
                 <div class="border-b border-gray-200">
-                    <h2 id="accordion-actualites-heading">
+                    <div id="accordion-actualites-heading">
                         <button type="button" class="flex items-center justify-between w-full py-4 font-medium text-left text-gray-900" data-accordion-target="#accordion-actualites-body" aria-expanded="false" aria-controls="accordion-actualites-body">
                             <span><%= t("views.shared.navbar.news") %></span>
-                            <svg data-accordion-icon class="w-3 h-3 rotate-180 shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
+                            <svg data-accordion-icon aria-hidden="true" class="w-3 h-3 rotate-180 shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
                                 <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5 5 1 1 5" />
                             </svg>
                         </button>
-                    </h2>
+                    </div>
                     <div id="accordion-actualites-body" class="hidden" aria-labelledby="accordion-actualites-heading">
                         <div class="pb-4 pl-4">
                             <ul class="space-y-2">
@@ -214,14 +216,14 @@
 
                 <!-- About accordion -->
                 <div class="border-b border-gray-200">
-                    <h2 id="accordion-apropos-heading">
+                    <div id="accordion-apropos-heading">
                         <button type="button" class="flex items-center justify-between w-full py-4 font-medium text-left text-gray-900" data-accordion-target="#accordion-apropos-body" aria-expanded="false" aria-controls="accordion-apropos-body">
                             <span><%= t("views.shared.navbar.about") %></span>
-                            <svg data-accordion-icon class="w-3 h-3 rotate-180 shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
+                            <svg data-accordion-icon aria-hidden="true" class="w-3 h-3 rotate-180 shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
                                 <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5 5 1 1 5" />
                             </svg>
                         </button>
-                    </h2>
+                    </div>
                     <div id="accordion-apropos-body" class="hidden" aria-labelledby="accordion-apropos-heading">
                         <div class="pb-4 pl-4">
                             <ul class="space-y-2">

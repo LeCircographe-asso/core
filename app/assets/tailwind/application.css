@@ -27,6 +27,11 @@
   outline: none;
 }
 
+.leaflet-map-shell-inner.leaflet-container:focus-visible {
+  outline: 3px solid #1F5C55;
+  outline-offset: 2px;
+}
+
 @import "./components/buttons.css";
 @import "./components/forms.css";
 @import "./components/hero.css";
