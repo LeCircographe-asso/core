@@ -3,8 +3,9 @@
 
 <div class="relative w-full" data-home-animations-scope>
   <section class="relative w-full min-h-[calc(100dvh-3.6rem)] sm:min-h-[calc(100dvh-4.2rem)] flex flex-col items-center justify-start px-4 sm:px-6 md:px-10 lg:px-12 pt-[4.5rem] sm:pt-28 md:pt-[min(7.5rem,13vh)] pb-16 sm:pb-20 text-center">
+    <div aria-hidden="true" class="absolute inset-0 bg-gradient-to-b from-black/60 via-black/35 to-black/10 pointer-events-none"></div>
     <div class="flex w-full max-w-full min-w-0 flex-col items-center gap-5 sm:gap-7 md:gap-8 -translate-y-5 sm:-translate-y-8">
-      <p class="hero-kicker opacity-0 text-xs font-semibold uppercase tracking-[0.38em] text-white/75 sm:text-sm">
+      <p class="hero-kicker opacity-0 text-xs leading-normal font-semibold uppercase tracking-[0.38em] text-white/75 sm:text-sm">
         Toulouse · Cirque · Atelier · Vie associative
       </p>
       <h1 id="title" class="font-circographe w-full max-w-[min(100%,44rem)] min-w-0 whitespace-normal break-words text-[clamp(2.75rem,7vw+0.85rem,4.5rem)] font-bold text-white max-sm:tracking-[0.03em] tracking-[0.06em] md:tracking-[0.08em] leading-[1.08] max-sm:leading-[1.06] sm:leading-tight opacity-0 transition-opacity duration-500 [overflow-wrap:anywhere]">Le Circographe</h1>
@@ -31,9 +32,9 @@
         <div class="grid gap-8 lg:gap-10 lg:grid-cols-[minmax(0,1.7fr)_minmax(0,1fr)] items-start" data-gsap-reveal>
           <article class="relative overflow-hidden rounded-[32px] bg-gradient-to-br from-[#0C2F2B] via-[#194A45] to-brand-primary text-white shadow-2xl p-5 sm:p-8 lg:p-10" data-gsap-reveal-item>
             <header class="space-y-2 sm:space-y-3 text-center lg:text-left">
-              <p class="text-sm uppercase tracking-[0.35em] text-white/75">Horaires</p>
-              <h2 id="opening-hours" class="text-xl sm:text-3xl font-semibold leading-snug">Quand passer nous voir ?</h2>
-              <p class="text-sm sm:text-base text-white/80 max-w-2xl mx-auto lg:mx-0 leading-snug">
+              <p class="text-sm leading-normal uppercase tracking-[0.35em] text-white/75">Horaires</p>
+              <h2 id="opening-hours" class="text-xl sm:text-3xl font-semibold leading-normal">Quand passer nous voir ?</h2>
+              <p class="text-sm sm:text-base text-white/80 max-w-2xl mx-auto lg:mx-0 leading-normal">
                 Retrouve les créneaux d'accueil de la semaine et prépare ta prochaine visite au Circographe.
               </p>
             </header>
@@ -46,7 +47,7 @@
                      data-controller="pwa-install"
                      data-pwa-install-target="container"
                      hidden>
-              <p class="text-xs uppercase tracking-[0.32em] text-white/70">Accès rapide</p>
+              <p class="text-xs leading-normal uppercase tracking-[0.32em] text-white/70">Accès rapide</p>
               <h3 class="mt-2 text-lg font-semibold text-white">Ajoute Le Circographe à ton écran d'accueil</h3>
               <p class="mt-2 text-sm leading-6 text-white/85">
                 Pratique pour retrouver les horaires, l'accès et les infos utiles en un tap.
@@ -85,7 +86,7 @@
           <% end %>
         </div>
       <section class="public-surface p-6 sm:p-8 space-y-4 text-center" aria-labelledby="find-us">
-        <h2 id="find-us" class="text-sm uppercase tracking-[0.3em] text-brand-primary/70">Nous trouver</h2>
+        <h2 id="find-us" class="text-sm leading-normal uppercase tracking-[0.3em] text-brand-primary/70">Nous trouver</h2>
         <address class="not-italic text-2xl font-semibold text-gray-800">97 bis Boulevard de Suisse, 31200 Toulouse</address>
         <p class="text-gray-600 max-w-2xl mx-auto">Entraînements libres, murs illustrés par les artistes du lieu et une ambiance chaleureuse : passe quand tu veux, on t’accueille avec plaisir.</p>
         <%= link_to "Voir la carte et l'accès", page_path("contact_us", anchor: "map"),

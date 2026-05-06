@@ -10,14 +10,14 @@
       <%= form.label :name, class: "block mb-1.5 text-sm font-medium text-gray-700" do %>
         Nom complet<span aria-hidden="true" class="text-red-500 ml-0.5">*</span>
       <% end %>
-      <%= form.text_field :name, value: contact[:name], placeholder: "Nom Prénom", required: true, autocomplete: "name", class: "block w-full min-h-[2.75rem] px-4 py-3 text-base text-gray-800 bg-white border border-gray-200 rounded-xl focus:border-[#5836A5] focus:ring-2 focus:ring-[#5836A5]/25 focus:outline-none touch-manipulation" %>
+      <%= form.text_field :name, value: contact[:name], placeholder: "Nom Prénom", required: true, autocomplete: "name", aria: { required: "true" }, class: "block w-full min-h-[2.75rem] px-4 py-3 text-base text-gray-800 bg-white border border-gray-200 rounded-xl focus:border-[#5836A5] focus:ring-2 focus:ring-[#5836A5]/25 focus:outline-none touch-manipulation" %>
     </div>
 
     <div>
       <%= form.label :email, class: "block mb-1.5 text-sm font-medium text-gray-700" do %>
         Adresse email<span aria-hidden="true" class="text-red-500 ml-0.5">*</span>
       <% end %>
-      <%= form.email_field :email, value: contact[:email], placeholder: "adresse@example.com", required: true, autocomplete: "email", class: "block w-full min-h-[2.75rem] px-4 py-3 text-base text-gray-800 bg-white border border-gray-200 rounded-xl focus:border-[#5836A5] focus:ring-2 focus:ring-[#5836A5]/25 focus:outline-none touch-manipulation" %>
+      <%= form.email_field :email, value: contact[:email], placeholder: "adresse@example.com", required: true, autocomplete: "email", aria: { required: "true" }, class: "block w-full min-h-[2.75rem] px-4 py-3 text-base text-gray-800 bg-white border border-gray-200 rounded-xl focus:border-[#5836A5] focus:ring-2 focus:ring-[#5836A5]/25 focus:outline-none touch-manipulation" %>
     </div>
 
     <div>
