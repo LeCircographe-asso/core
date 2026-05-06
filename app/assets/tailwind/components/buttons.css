@@ -117,6 +117,25 @@
     border-color: var(--brand-primary);
   }
 
+  .faq-tab {
+    @apply inline-flex items-center px-5 py-2.5 text-sm font-semibold rounded-full border transition-all duration-200 cursor-pointer;
+    border-color: var(--brand-primary);
+    color: var(--brand-primary);
+    background-color: color-mix(in srgb, var(--brand-primary) 8%, transparent);
+  }
+
+  .faq-tab:hover,
+  .faq-tab[data-active] {
+    background-color: var(--brand-accent);
+    border-color: var(--brand-accent);
+    color: #fff;
+  }
+
+  .faq-tab:focus-visible {
+    outline: 2px solid var(--brand-accent);
+    outline-offset: 3px;
+  }
+
   .admin-btn-primary {
     @apply inline-flex items-center rounded-md border border-transparent px-4 py-2 text-sm font-medium text-white shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2;
     background-color: var(--brand-primary);
