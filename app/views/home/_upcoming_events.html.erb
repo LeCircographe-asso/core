@@ -7,13 +7,13 @@
 
   <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div class="flex items-start gap-4">
-          <div class="flex flex-col items-center justify-center w-16 h-16 rounded-2xl bg-brand-primary/10 text-brand-primary font-semibold uppercase tracking-wider">
+          <div class="flex flex-col items-center justify-center w-16 min-h-16 rounded-2xl bg-brand-primary/10 text-brand-primary font-semibold uppercase tracking-wider py-1">
           <% if event_time.present? %>
-            <span class="text-lg leading-none"><%= event_time.strftime("%d") %></span>
-            <span class="text-xs"><%= event_time.strftime("%b") %></span>
+            <span class="text-lg leading-normal"><%= event_time.strftime("%d") %></span>
+            <span class="text-xs leading-normal"><%= event_time.strftime("%b") %></span>
           <% else %>
-            <span class="text-xs leading-tight">Date</span>
-            <span class="text-xs leading-tight">à venir</span>
+            <span class="text-xs leading-normal">Date</span>
+            <span class="text-xs leading-normal">à venir</span>
           <% end %>
         </div>
         <div class="space-y-2">
