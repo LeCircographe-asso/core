@@ -25,7 +25,7 @@
                   class: "inline-flex w-full min-w-0 items-center justify-center rounded-full border border-white/55 bg-white/10 px-5 py-3 text-base font-medium text-white backdrop-blur-sm transition-colors duration-300 hover:border-[#5836A5] hover:bg-[#5836A5] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#5836A5] sm:w-auto sm:min-w-[15rem] sm:px-8 sm:py-4 sm:text-lg" %>
     </div>
 
-    <%= render "shared/scroll_hint_arrow", section_id: "main-content", position_class: "absolute bottom-24 left-1/2 -translate-x-1/2 sm:bottom-28 md:bottom-32" %>
+    <%= render "shared/scroll_hint_arrow", section_id: "opening-hours", position_class: "absolute bottom-24 left-1/2 -translate-x-1/2 sm:bottom-28 md:bottom-32" %>
 
   </section>
 
@@ -48,10 +48,18 @@
               <%= render "shared/opening_hours", horaires: @opening_hours, bare: true, compact: true %>
             </div>
 
-            <section class="mt-4 rounded-[20px] border border-white/20 bg-white/10 p-4 text-left shadow-lg backdrop-blur-sm"
+            <section class="relative mt-4 rounded-[20px] border border-white/20 bg-white/10 p-4 text-left shadow-lg backdrop-blur-sm"
                      data-controller="pwa-install"
                      data-pwa-install-target="container"
                      hidden>
+              <button type="button"
+                      class="absolute top-3 right-3 text-white/40 hover:text-white/70 transition-colors rounded p-0.5 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-white"
+                      data-action="pwa-install#dismiss"
+                      aria-label="Fermer la suggestion">
+                <svg class="w-4 h-4" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+                  <path d="M3.72 3.72a.75.75 0 0 1 1.06 0L8 6.94l3.22-3.22a.75.75 0 1 1 1.06 1.06L9.06 8l3.22 3.22a.75.75 0 1 1-1.06 1.06L8 9.06l-3.22 3.22a.75.75 0 0 1-1.06-1.06L6.94 8 3.72 4.78a.75.75 0 0 1 0-1.06Z"/>
+                </svg>
+              </button>
               <p class="text-xs leading-normal uppercase tracking-[0.32em] text-white/70">Accès rapide</p>
               <h3 class="mt-2 text-lg font-semibold text-white">Ajoute Le Circographe à ton écran d'accueil</h3>
               <p class="mt-2 text-sm leading-6 text-white/85">
