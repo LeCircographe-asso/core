@@ -39,6 +39,7 @@ Rails.application.routes.draw do
     resources :events, only: %i[new create edit update destroy index]
     resource :session, only: %i[new create destroy]
     resource :notepad, only: %i[edit update]
+    resource :faq, only: %i[edit update], controller: "faqs"
     resources :attendance_lists do
       resources :attendances, only: %i[new index create show edit update]
     end
