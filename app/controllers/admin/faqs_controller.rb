@@ -34,7 +34,7 @@ module Admin
 
     def reorder
       Array(params[:ids]).each_with_index do |id, index|
-        Faq.where(id: id.to_i).update_all(position: index + 1)
+        Faq.find_by(id: id.to_i)&.update(position: index + 1)
       end
       head :ok
     end
@@ -51,7 +51,7 @@ module Admin
     end
 
     def faq_params
-      params.require(:faq).permit(:question, :answer, :label, :position)
+      params.expect(faq: [ :question, :answer, :label, :position ])
     end
   end
 end
