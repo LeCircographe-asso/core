@@ -17,6 +17,7 @@
 - [ ] Ajouter les filtres reporting de dons par période et méthode de paiement.
 - [ ] Construire le flux RGPD d’anonymisation `Person` / `User` avec raison et acteur.
 - [ ] Ajouter un dashboard admin minimal pour les feature flags existants.
+- [ ] Ouvrir une branche d’amorçage OAuth : cadrer le premier provider, le flux de rattachement `User`/`Person`, et les points d’entrée login / revendication de compte avant toute implémentation UI.
 
 ## To verify
 - [ ] Confirmer en production qu’aucune `PaymentLine` legacy de don (`item_type: "Payment"`) ne subsiste après la migration déjà appliquée.
