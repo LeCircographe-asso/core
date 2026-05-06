@@ -1,0 +1,22 @@
+<h1>Modifier la FAQ</h1>
+
+<%= form_with url: admin_faq_path, method: :patch do |f| %>
+  <div>
+    <%= f.label :hero, "Titre hero" %>
+    <%= f.text_field :hero, name: "faq[hero]", value: @hero %>
+  </div>
+
+  <div>
+    <%= f.label :cta_label, "Label CTA" %>
+    <%= f.text_field :cta_label, name: "faq[cta_label]", value: @cta_label %>
+  </div>
+
+  <% @entries.each_with_index do |entry, i| %>
+    <div>
+      <%= f.text_field :question, name: "faq[entries][#{i}][question]", value: entry[:question] %>
+      <%= f.text_area :answer, name: "faq[entries][#{i}][answer]" do %><%= entry[:answer] %><% end %>
+    </div>
+  <% end %>
+
+  <%= f.submit "Enregistrer" %>
+<% end %>
