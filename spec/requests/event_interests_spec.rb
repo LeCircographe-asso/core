@@ -14,7 +14,6 @@ RSpec.describe "EventInterests", type: :request do
       post event_interests_path, params: { id: event.id }
       expect(response).to redirect_to(event)
     end
-
   end
 
   describe "DELETE /event_interests/:id" do
