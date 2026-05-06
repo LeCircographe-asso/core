@@ -44,6 +44,8 @@ Ce document consolide les bonnes pratiques et l'architecture mise en place lors 
 - **Paiement** : `People::PaymentCreator`, `People::PaymentUpdater`, `People::PaymentCanceller`
 
 > Les contrôleurs doivent rester minces : valider les params, appeler un service, render/redirect.
+>
+> Exception notable encore présente côté modèle : `Person#renew_membership!`. C'est le dernier gros workflow métier conservé sur `Person` avant extraction éventuelle vers un service dédié.
 
 ---
 
