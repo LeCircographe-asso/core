@@ -1,85 +1,80 @@
-<% bare = local_assigns.fetch(:bare, false) %>
-<% compact = local_assigns.fetch(:compact, false) %>
-<% wrapper_classes = bare ? "" : "bg-white rounded-lg shadow-md p-4" %>
-<% schedule = local_assigns[:horaires] || @horaires %>
-<% badge_margin = compact ? "mb-1.5 sm:mb-2" : "mb-2 sm:mb-4" %>
-<% cell_py = compact ? "py-1 sm:py-2" : "py-1.5 sm:py-3" %>
-<% head_py = compact ? "py-1 sm:py-1.5" : "py-1 sm:py-2" %>
+<% bare      = local_assigns.fetch(:bare, false) %>
+<% schedule  = local_assigns[:horaires] || @horaires %>
+<% updated_at = Rails.cache.fetch("opening_hours_updated_at") %>
 
-<% inner = capture do %>
-  <div class="text-center <%= badge_margin %>">
-    <span class="inline-flex items-center px-2 py-0.5 sm:px-3 sm:py-1 rounded-full text-xs sm:text-sm font-medium bg-brand-primary/10 text-brand-primary">
-      <i class="fas fa-calendar-week mr-1.5 sm:mr-2 text-[0.85em] sm:text-base"></i>
-      Semaine du <%= Date.current.beginning_of_week.strftime("%d/%m") %> au <%= Date.current.end_of_week.strftime("%d/%m/%Y") %>
+<div class="rounded-2xl overflow-hidden border border-gray-100 shadow-sm">
+
+  <%# ── Header programme ── %>
+  <div class="bg-brand-primary px-5 pt-4 pb-4">
+    <div class="flex items-start justify-between gap-3">
+      <div>
+        <p class="text-xs font-circographe text-white/50 tracking-[0.4em] uppercase mb-1">Programme</p>
+        <h2 class="font-circographe text-xl font-bold text-white leading-tight">
+          Créneaux d'accueil
+        </h2>
+        <p class="mt-1.5 flex items-center gap-1.5 text-white/60 text-sm tabular-nums">
+          <span>
+            <%= Date.current.beginning_of_week.day %>
+            <span class="mx-0.5 font-normal">–</span>
+            <%= Date.current.end_of_week.day %>
+            <%= l(Date.current.end_of_week, format: "%B %Y") %>
+          </span>
+          <button type="button"
+                  class="shrink-0 text-white/40 hover:text-white/70 transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-white rounded"
+                  data-controller="tooltip"
+                  data-tooltip-content-value="Créneaux assurés par des bénévoles, susceptibles d'évoluer chaque semaine. Vérifiez avant de vous déplacer.">
+            <svg class="w-3.5 h-3.5" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+              <path fill-rule="evenodd" d="M15 8A7 7 0 1 1 1 8a7 7 0 0 1 14 0ZM9 5a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM6.75 8a.75.75 0 0 0 0 1.5h.75v1.75a.75.75 0 0 0 1.5 0v-2.5A.75.75 0 0 0 8.25 8h-1.5Z" clip-rule="evenodd"/>
+            </svg>
+            <span class="sr-only">Créneaux bénévoles — susceptibles d'évoluer, vérifiez avant de vous déplacer</span>
+          </button>
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <%# ── Lignes jours ── %>
+  <% if schedule.present? %>
+    <div class="bg-white divide-y divide-gray-50">
+      <% schedule.each do |day, hours| %>
+        <% is_today   = Time.zone.now.strftime("%A").downcase == day.to_s %>
+        <% is_closed  = hours.to_s.downcase == "fermé" %>
+        <% is_weekend = ["samedi", "dimanche"].include?(day.to_s) %>
+        <% row_bg     = is_today ? "bg-amber-50 border-l-2 border-amber-400" : "" %>
+        <% day_cls    = is_today ? "text-amber-900" : (is_weekend ? "text-gray-400" : "text-gray-800") %>
+        <% hrs_cls    = is_today ? "text-amber-800 font-semibold" : "text-gray-500 font-medium" %>
+
+        <div class="flex items-center gap-3 px-5 py-3 <%= row_bg %>">
+          <span class="w-24 shrink-0 text-sm font-semibold <%= day_cls %>">
+            <%= day.to_s.capitalize %>
+          </span>
+
+          <% if is_closed %>
+            <span class="text-sm text-gray-300 line-through">Fermé</span>
+          <% else %>
+            <span class="text-sm tabular-nums <%= hrs_cls %>"><%= hours %></span>
+          <% end %>
+
+          <% if is_today %>
+            <span class="ml-auto shrink-0 text-[10px] font-bold uppercase tracking-[0.15em] text-amber-700 bg-amber-100 border border-amber-200 px-2 py-0.5 rounded-md">
+              Aujourd'hui
+            </span>
+          <% end %>
+        </div>
+      <% end %>
+    </div>
+  <% else %>
+    <p class="bg-white px-5 py-8 text-sm text-gray-400 text-center">Aucun horaire disponible.</p>
+  <% end %>
+
+  <%# ── Pied de carte ── %>
+  <div class="bg-gray-50 border-t border-gray-100 px-5 py-2.5 flex items-center justify-between gap-3">
+    <p class="text-[11px] text-gray-400 leading-none">Mis à jour · lundi soir</p>
+    <span class="text-[11px] text-gray-400 tabular-nums shrink-0 leading-none">
+      <% if updated_at.present? %>
+        <%= l(updated_at.in_time_zone(Time.zone), format: "%-d/%m %H:%M") %>
+      <% else %>—<% end %>
     </span>
   </div>
 
-  <% if schedule.present? %>
-    <table class="w-full border-collapse">
-      <caption class="sr-only">Horaires d'ouverture hebdomadaires</caption>
-      <thead>
-        <tr>
-          <th scope="col" class="border-b-2 border-brand-primary/20 <%= head_py %> text-center font-medium text-gray-600">Jour</th>
-          <th scope="col" class="border-b-2 border-brand-primary/20 <%= head_py %> text-center font-medium text-gray-600">Horaires</th>
-        </tr>
-      </thead>
-      <tbody>
-        <% schedule.each do |day, hours| %>
-          <tr class="border-b border-gray-100">
-            <% 
-              is_weekend = ["samedi", "dimanche"].include?(day.to_s)
-              is_today = Time.zone.now.strftime('%A').downcase == day.to_s
-              row_classes = "hover:bg-gray-50"
-              row_classes += " bg-brand-primary/5" if is_today
-            %>
-            <td class="<%= row_classes %> <%= cell_py %> text-center">
-              <div class="flex items-center justify-center">
-                <% 
-                  icon_class = case day.to_s
-                  when "lundi", "mardi", "mercredi", "jeudi", "vendredi" then "fas fa-briefcase"
-                  when "samedi", "dimanche" then "fas fa-umbrella-beach"
-                  end
-                %>
-                <i class="<%= icon_class %> text-gray-500 mr-2 hidden sm:inline"></i>
-                <span class="<%= is_weekend ? 'font-medium text-brand-primary' : '' %> <%= is_today ? 'font-bold' : '' %>">
-                  <%= day.to_s.capitalize %>
-                  <% if is_today %>
-                    <span class="ml-1 text-xs bg-brand-primary text-white px-1.5 py-0.5 rounded-full">Aujourd'hui</span>
-                  <% end %>
-                </span>
-              </div>
-            </td>
-            <td class="<%= row_classes %> <%= cell_py %> text-center">
-              <% if hours.to_s.downcase == "fermé" %>
-                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
-                  <i class="fas fa-times-circle mr-1"></i>
-                  Fermé
-                </span>
-              <% else %>
-                <span class="text-gray-800">
-                  <i class="far fa-clock text-brand-primary mr-1 hidden sm:inline"></i>
-                  <%= hours %>
-                </span>
-              <% end %>
-            </td>
-          </tr>
-        <% end %>
-      </tbody>
-    </table>
-  <% else %>
-    <div class="text-center py-4 text-gray-500">
-      <i class="fas fa-clock text-brand-primary text-4xl mb-2"></i>
-      <p>Aucun horaire n'est disponible pour le moment.</p>
-    </div>
-  <% end %>
-<% end %>
-
-<% if bare %>
-  <div class="<%= compact ? 'space-y-1.5 sm:space-y-2' : 'space-y-2 sm:space-y-4' %>">
-    <%= inner %>
-  </div>
-<% else %>
-  <div class="<%= wrapper_classes %>">
-    <%= inner %>
-</div> 
-<% end %>
+</div>
