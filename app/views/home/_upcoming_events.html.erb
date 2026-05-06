@@ -26,13 +26,13 @@
               Démo UX/UI
             </span>
           </div>
-          <h3 class="text-xl font-semibold text-gray-900 leading-snug"><%= upcoming_event.title %></h3>
-          <p class="text-xs font-medium uppercase tracking-[0.2em] text-amber-700">
+          <h3 class="text-xl font-semibold text-gray-900 leading-normal"><%= upcoming_event.title %></h3>
+          <p class="text-xs leading-normal font-medium uppercase tracking-[0.2em] text-amber-700">
             Contenu fictif présenté pour la démonstration de l'interface.
           </p>
           <% description = upcoming_event.middle_description.presence || upcoming_event.upper_description.presence || upcoming_event.description.presence %>
           <% if description.present? %>
-            <p class="text-sm sm:text-base text-gray-600 line-clamp-3"><%= description %></p>
+            <p class="text-sm leading-normal sm:text-base text-gray-600 line-clamp-3"><%= description %></p>
           <% end %>
         </div>
       </div>

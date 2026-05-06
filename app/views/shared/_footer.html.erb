@@ -17,7 +17,8 @@
                     <div class="hidden" aria-hidden="true">
                         <%= f.text_field :website,
                             tabindex: "-1",
-                            autocomplete: "off" %>
+                            autocomplete: "off",
+                            aria: { hidden: "true" } %>
                     </div>
 
                     <%= f.submit t("views.shared.footer.sign_up"),
