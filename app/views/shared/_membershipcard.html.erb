@@ -1,23 +1,23 @@
 <% show_account_settings_link = local_assigns.fetch(:show_account_settings_link, true) %>
-<% wrapper_classes = local_assigns.fetch(:wrapper_classes, "max-w-2xl mx-auto mb-12") %>
+<% wrapper_classes = local_assigns.fetch(:wrapper_classes, "max-w-lg mx-auto mb-12") %>
 <% person = @user.person %>
 <% current_membership = person&.current_membership %>
 <% recent_membership = person&.most_recent_membership %>
 <% membership_lapsed = person.present? && current_membership.blank? && recent_membership.present? %>
-<% show_contributions_block = current_membership.present? && (current_membership.basic? || current_membership.circus?) %>
 <% avatar_src, avatar_alt = membership_card_avatar_source_and_alt(@user) %>
-<% ref_membership = current_membership || recent_membership %>
+
+<%= turbo_stream_from person if person.present? %>
 
 <div class="bg-white rounded-xl shadow-lg overflow-hidden <%= wrapper_classes %> w-full">
 
-  <%# ── Bandeau + avatar centré ── %>
+  <%# ━━━ BANDEAU + AVATAR — NE PAS TOUCHER ━━━ %>
   <div class="relative w-full">
     <div class="h-24 w-full bg-gradient-to-r from-[#1F5C55] to-[#194A45] rounded-t-xl">
       <div class="absolute top-3 left-3 sm:left-4 z-10 px-3 py-1.5 rounded-lg bg-white/15 backdrop-blur-sm border border-white/20 text-left shadow-sm max-w-[calc(100%-7rem)] sm:max-w-none">
-        <span class="block text-[10px] uppercase tracking-wider text-white/80 font-medium leading-tight"><%= t("users.space.membership_card.member_number_label") %></span>
+        <span class="block text-xs uppercase tracking-wider text-white/80 font-medium leading-tight"><%= t("users.space.membership_card.member_number_label") %></span>
         <span class="block text-sm font-semibold text-white tabular-nums tracking-tight truncate" title="<%= person&.formatted_member_number %>"><%= person&.formatted_member_number %></span>
       </div>
-      <div class="absolute top-3 right-3 sm:right-4 px-3 py-1 text-xs font-semibold text-white rounded-full <%= membership_card_role_badge_classes(@user.system_role) %>">
+      <div class="absolute top-3 right-3 sm:right-4 px-3 py-1 text-sm font-semibold text-white rounded-full <%= membership_card_role_badge_classes(@user.system_role) %>">
         <%= @user.role_humanized %>
       </div>
     </div>
@@ -27,72 +27,25 @@
       </div>
     </div>
   </div>
+  <%# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ %>
 
-  <%# ── Nom + email + statut ── %>
-  <div class="pt-16 px-4 sm:px-6">
-    <div class="text-center mb-4">
-      <h2 class="text-lg sm:text-xl font-bold text-gray-800"><%= membership_card_display_name(@user) %></h2>
-      <p class="text-gray-500 text-sm mt-1"><%= @user.email_address %></p>
-    </div>
+  <%# ── Identité ── %>
+  <div class="pt-16 px-5 pb-3 text-center border-b border-gray-200">
+    <h2 class="text-base font-bold text-gray-900 leading-tight"><%= membership_card_display_name(@user) %></h2>
+    <p class="text-sm text-gray-400 mt-0.5 truncate"><%= @user.email_address %></p>
   </div>
 
-  <%# ── Statut + N° adhésion ── %>
-  <div class="px-4 pb-3 space-y-3">
-    <div class="flex justify-center">
-      <% if current_membership.present? %>
-        <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium <%= current_membership.status == 'active' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' %>">
-          <span class="w-1.5 h-1.5 rounded-full shrink-0 <%= current_membership.status == 'active' ? 'bg-green-500' : 'bg-red-500' %>"></span>
-          <%= current_membership.status == 'active' ? "Adhésion active" : "Adhésion inactive" %>
-        </span>
-      <% elsif membership_lapsed %>
-        <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium bg-amber-100 text-amber-900">
-          <span class="w-1.5 h-1.5 rounded-full shrink-0 bg-amber-500"></span>
-          Adhésion terminée
-        </span>
-      <% else %>
-        <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium bg-gray-100 text-gray-600">
-          <span class="w-1.5 h-1.5 rounded-full shrink-0 bg-gray-400"></span>
-          Pas d'adhésion en cours
-        </span>
-      <% end %>
-    </div>
+  <%# ── Adhésion + Cotisation (streamable) ── %>
+  <%= render "shared/membership_status_tiles", person: person %>
 
-    <%# ── Expiration + Type (si adhésion) ── %>
-    <% if ref_membership.present? %>
-      <div class="grid grid-cols-2 gap-2.5">
-        <div class="bg-gray-50 rounded-lg px-3 py-2">
-          <p class="text-[10px] font-medium uppercase tracking-wider text-gray-400 mb-0.5">
-            <%= membership_lapsed ? t("users.space.membership_card.last_membership_ended_label") : t("users.space.membership_card.valid_until_label") %>
-          </p>
-          <p class="text-sm font-semibold <%= Date.current > ref_membership.ended_at ? 'text-red-600' : 'text-gray-800' %>">
-            <%= ref_membership.ended_at.strftime("%d/%m/%Y") %>
-          </p>
-        </div>
-        <div class="bg-gray-50 rounded-lg px-3 py-2">
-          <p class="text-[10px] font-medium uppercase tracking-wider text-gray-400 mb-0.5"><%= t("users.space.membership_card.membership_type_label") %></p>
-          <p class="text-sm font-semibold text-gray-800 truncate"><%= ref_membership.membership_type.name %></p>
-        </div>
-      </div>
-    <% end %>
+  <%# ── Derniers paiements (streamable) ── %>
+  <%= render "shared/recent_payments_list", person: person %>
 
-    <%# ── Cotisation ── %>
-    <% if show_contributions_block || current_membership.present? %>
-      <div class="border-t border-gray-100 pt-3">
-        <p class="text-[10px] font-medium uppercase tracking-wider text-gray-400 mb-2"><%= t("users.space.membership_card.section_contribution") %></p>
-        <% if show_contributions_block %>
-          <%= render "shared/membership_card_active_contributions", person: person %>
-        <% else %>
-          <p class="text-sm text-gray-500"><%= t("users.space.membership_card.cotisation_wrong_category") %></p>
-        <% end %>
-      </div>
-    <% end %>
-  </div>
-
-  <%# ── Infos personnelles (coordonnées) ── %>
+  <%# ── Coordonnées (infos perso) ── %>
   <% contact_error_fields = %i[phone address zip_code town country] %>
   <% contact_errors = @user.errors.attribute_names.any? { |n| contact_error_fields.include?(n) } %>
   <%= turbo_frame_tag ProfileSectionDomIds::CONTACT_SECTION do %>
-    <div id="contact" class="border-t border-gray-200 px-4 py-3 scroll-mt-28"
+    <div id="contact" class="border-b border-gray-200 px-5 py-3 scroll-mt-28"
          data-controller="section-edit"
          data-section-edit-editing-value="<%= contact_errors %>"
          data-section-edit-warning-message-value="<%= t("users.space.unsaved_changes_warning") %>"
@@ -106,50 +59,50 @@
          data-section-edit-no-label-value="<%= t("users.space.no") %>">
 
       <div class="flex items-center justify-between gap-3 mb-2.5">
-        <p class="text-xs font-medium text-gray-700"><%= t("users.space.contact_heading") %></p>
+        <p class="text-xs font-semibold uppercase tracking-widest text-[#1F5C55]/70"><%= t("users.space.contact_heading") %></p>
         <div class="flex items-center gap-3">
           <div data-section-edit-target="modifyWrap">
             <button type="button" data-section-edit-target="modifyButton" data-action="section-edit#handleModifyClick"
-                    class="text-xs font-medium text-[#1F5C55] hover:underline disabled:opacity-40 disabled:no-underline">
+                    class="text-sm font-medium text-[#1F5C55] hover:underline disabled:opacity-40">
               <%= t("users.space.edit") %>
             </button>
           </div>
           <div data-section-edit-target="cancelWrap" class="hidden">
             <button type="button" data-section-edit-target="cancelButton" data-action="section-edit#cancelEdit"
-                    class="text-xs text-gray-400 hover:text-gray-600">
+                    class="text-sm text-gray-400 hover:text-gray-600">
               <%= t("users.space.cancel") %>
             </button>
           </div>
           <div data-section-edit-target="acceptWrap" class="hidden">
             <button type="button" data-section-edit-target="acceptButton" data-action="section-edit#handleAcceptClick"
                     data-loading-text="<%= t("users.space.saving") %>"
-                    class="inline-flex items-center rounded-md px-3 py-1 text-xs font-medium text-white bg-[#1F5C55] hover:bg-[#1F5C55]/90 shadow-sm">
+                    class="inline-flex items-center rounded-md px-3 py-1 text-sm font-medium text-white bg-[#1F5C55] hover:bg-[#1F5C55]/90 shadow-sm">
               <%= t("users.space.accept") %>
             </button>
           </div>
         </div>
       </div>
 
-      <div data-section-edit-target="read" class="grid grid-cols-2 gap-x-4 gap-y-2.5">
+      <div data-section-edit-target="read" class="grid grid-cols-2 gap-x-4 gap-y-2">
         <div>
-          <p class="text-[10px] font-medium uppercase tracking-wider text-gray-400"><%= t("users.space.field_phone") %></p>
-          <p class="text-sm font-medium text-gray-800 mt-0.5"><%= @user.phone.presence || "—" %></p>
+          <p class="text-xs font-medium text-gray-500 uppercase tracking-wider"><%= t("users.space.field_phone") %></p>
+          <p class="text-sm font-medium text-gray-700 mt-0.5"><%= @user.phone.presence || "—" %></p>
         </div>
         <div>
-          <p class="text-[10px] font-medium uppercase tracking-wider text-gray-400"><%= t("users.space.field_address") %></p>
-          <p class="text-sm font-medium text-gray-800 mt-0.5"><%= @user.address.presence || "—" %></p>
+          <p class="text-xs font-medium text-gray-500 uppercase tracking-wider"><%= t("users.space.field_address") %></p>
+          <p class="text-sm font-medium text-gray-700 mt-0.5 truncate"><%= @user.address.presence || "—" %></p>
         </div>
         <div>
-          <p class="text-[10px] font-medium uppercase tracking-wider text-gray-400"><%= t("users.space.field_zip") %></p>
-          <p class="text-sm font-medium text-gray-800 mt-0.5"><%= @user.zip_code.presence || "—" %></p>
+          <p class="text-xs font-medium text-gray-500 uppercase tracking-wider"><%= t("users.space.field_zip") %></p>
+          <p class="text-sm font-medium text-gray-700 mt-0.5"><%= @user.zip_code.presence || "—" %></p>
         </div>
         <div>
-          <p class="text-[10px] font-medium uppercase tracking-wider text-gray-400"><%= t("users.space.field_town") %></p>
-          <p class="text-sm font-medium text-gray-800 mt-0.5"><%= @user.town.presence || "—" %></p>
+          <p class="text-xs font-medium text-gray-500 uppercase tracking-wider"><%= t("users.space.field_town") %></p>
+          <p class="text-sm font-medium text-gray-700 mt-0.5"><%= @user.town.presence || "—" %></p>
         </div>
         <div class="col-span-2">
-          <p class="text-[10px] font-medium uppercase tracking-wider text-gray-400"><%= t("users.space.field_country") %></p>
-          <p class="text-sm font-medium text-gray-800 mt-0.5"><%= @user.country.presence || "—" %></p>
+          <p class="text-xs font-medium text-gray-500 uppercase tracking-wider"><%= t("users.space.field_country") %></p>
+          <p class="text-sm font-medium text-gray-700 mt-0.5"><%= @user.country.presence || "—" %></p>
         </div>
       </div>
 
@@ -160,30 +113,30 @@
   <% end %>
 
   <%# ── Newsletter ── %>
-  <div class="border-t border-gray-100 px-4 py-2.5 flex justify-between items-center gap-2">
-    <span class="text-xs text-gray-500"><%= t("users.space.newsletter_row_label") %></span>
-    <span class="text-xs font-medium text-gray-700">
+  <div class="border-b border-gray-200 px-5 py-2.5 flex justify-between items-center gap-3">
+    <span class="text-xs font-semibold uppercase tracking-widest text-[#1F5C55]/70"><%= t("users.space.newsletter_row_label") %></span>
+    <span class="text-sm font-semibold <%= @user.newsletter_subscribed ? 'text-green-700' : 'text-gray-400' %>">
       <%= @user.newsletter_subscribed ? t("users.space.newsletter_subscribed_yes") : t("users.space.newsletter_subscribed_no") %>
     </span>
   </div>
 
   <%# ── Actions ── %>
-  <div class="border-t border-gray-200 px-4 py-3 flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:gap-2">
+  <div class="px-4 py-3 flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:gap-2">
     <% if defined?(form) && form.present? %>
       <%= form.submit "Enregistrer", class: "flex-1 text-center py-2.5 px-4 rounded-lg text-sm font-medium text-white bg-[#1F5C55] hover:bg-[#1F5C55]/90 shadow-sm" %>
     <% else %>
       <% unless current_membership.present? %>
         <%= link_to(membership_lapsed ? "Renouveler mon adhésion" : "Adhérer",
             page_path("become_member"),
-            class: "flex-1 text-center py-2.5 px-4 rounded-lg text-sm font-semibold text-white bg-[#1F5C55] hover:bg-[#1F5C55]/90 shadow-sm") %>
+            class: "flex-1 flex items-center justify-center py-2.5 px-4 rounded-lg text-sm font-semibold text-white bg-[#1F5C55] hover:bg-[#1F5C55]/90 shadow-sm") %>
       <% end %>
       <% if @user.has_privileges? %>
         <%= link_to "Espace administration", admin_root_path,
-            class: "flex-1 text-center py-2.5 px-4 rounded-lg border border-gray-300 text-sm font-medium text-gray-700 bg-white hover:bg-gray-50" %>
+            class: "flex-1 flex items-center justify-center py-2.5 px-4 rounded-lg border border-gray-300 text-sm font-medium text-gray-700 bg-white hover:bg-gray-50" %>
       <% end %>
       <% if show_account_settings_link %>
         <%= link_to t("users.space.membership_card_settings_link"), settings_path,
-            class: "flex-1 text-center py-2.5 px-4 rounded-lg border border-gray-200 text-sm font-medium text-gray-500 bg-white hover:bg-gray-50" %>
+            class: "flex-1 flex items-center justify-center py-2.5 px-4 rounded-lg border border-gray-200 text-sm font-medium text-gray-500 bg-white hover:bg-gray-50" %>
       <% end %>
     <% end %>
   </div>

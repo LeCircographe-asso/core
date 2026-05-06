@@ -1,0 +1,67 @@
+<div class="bg-white rounded-lg border border-gray-200 shadow-sm mb-4 overflow-hidden">
+  <div class="px-4 py-2 border-b border-gray-100 bg-gray-50/80 flex items-center justify-between">
+    <span class="text-[10px] font-semibold uppercase tracking-widest text-[#1F5C55]/70">Vue d'ensemble</span>
+    <span class="text-[10px] text-gray-400 tabular-nums"><%= Date.current.strftime("%d %B %Y") %></span>
+  </div>
+
+  <div class="flex flex-wrap divide-x divide-gray-100">
+
+    <%# Groupe — Adhésions %>
+    <div class="flex items-stretch divide-x divide-gray-100 flex-1 min-w-0">
+      <%= link_to admin_members_path, class: "group flex flex-col justify-center px-4 py-3 hover:bg-gray-50 transition-colors min-w-[5.5rem]" do %>
+        <span class="text-[10px] font-semibold uppercase tracking-widest text-[#1F5C55]/70 whitespace-nowrap">Actives</span>
+        <span class="text-2xl font-bold text-gray-900 group-hover:text-[#1F5C55] tabular-nums leading-tight"><%= stats[:memberships_active] %></span>
+      <% end %>
+      <div class="flex flex-col justify-center px-4 py-3 min-w-[4.5rem]">
+        <span class="text-[10px] font-semibold uppercase tracking-widest text-gray-400 whitespace-nowrap">Basique</span>
+        <span class="text-xl font-bold text-gray-800 tabular-nums leading-tight"><%= stats[:memberships_basic] %></span>
+      </div>
+      <div class="flex flex-col justify-center px-4 py-3 min-w-[4.5rem]">
+        <span class="text-[10px] font-semibold uppercase tracking-widest text-gray-400 whitespace-nowrap">Cirque</span>
+        <span class="text-xl font-bold text-gray-800 tabular-nums leading-tight"><%= stats[:memberships_circus] %></span>
+      </div>
+      <div class="flex flex-col justify-center px-4 py-3 min-w-[5rem]">
+        <span class="text-[10px] font-semibold uppercase tracking-widest <%= stats[:memberships_expiring_30] > 0 ? 'text-amber-500' : 'text-gray-400' %> whitespace-nowrap">Exp. 30j</span>
+        <span class="text-xl font-bold <%= stats[:memberships_expiring_30] > 0 ? 'text-amber-600' : 'text-gray-800' %> tabular-nums leading-tight"><%= stats[:memberships_expiring_30] %></span>
+      </div>
+      <div class="flex flex-col justify-center px-4 py-3 min-w-[5rem]">
+        <span class="text-[10px] font-semibold uppercase tracking-widest <%= stats[:memberships_expired] > 0 ? 'text-red-400' : 'text-gray-400' %> whitespace-nowrap">Expirées</span>
+        <span class="text-xl font-bold <%= stats[:memberships_expired] > 0 ? 'text-red-500' : 'text-gray-800' %> tabular-nums leading-tight"><%= stats[:memberships_expired] %></span>
+      </div>
+    </div>
+
+    <%# Groupe — Cotisations %>
+    <div class="flex flex-col justify-center px-4 py-3 min-w-[5.5rem]">
+      <span class="text-[10px] font-semibold uppercase tracking-widest text-gray-400 whitespace-nowrap">Cotisations</span>
+      <span class="text-xl font-bold text-gray-800 tabular-nums leading-tight"><%= stats[:contributions_active] %></span>
+      <span class="text-[10px] text-gray-400 whitespace-nowrap">actives</span>
+    </div>
+
+    <%# Groupe — Membres / Comptes %>
+    <div class="flex items-stretch divide-x divide-gray-100">
+      <%= link_to admin_members_path, class: "group flex flex-col justify-center px-4 py-3 hover:bg-gray-50 transition-colors min-w-[4.5rem]" do %>
+        <span class="text-[10px] font-semibold uppercase tracking-widest text-gray-400 whitespace-nowrap">Personnes</span>
+        <span class="text-xl font-bold text-gray-800 group-hover:text-[#1F5C55] tabular-nums leading-tight"><%= stats[:persons] %></span>
+      <% end %>
+      <div class="flex flex-col justify-center px-4 py-3 min-w-[4.5rem]">
+        <span class="text-[10px] font-semibold uppercase tracking-widest text-gray-400 whitespace-nowrap">Comptes</span>
+        <span class="text-xl font-bold text-gray-800 tabular-nums leading-tight"><%= stats[:users] %></span>
+      </div>
+    </div>
+
+    <%# Groupe — Finances %>
+    <div class="flex flex-col justify-center px-4 py-3 min-w-[6rem]">
+      <span class="text-[10px] font-semibold uppercase tracking-widest text-gray-400 whitespace-nowrap">Ce mois</span>
+      <span class="text-xl font-bold text-gray-800 tabular-nums leading-tight"><%= number_to_currency(stats[:revenue_month], unit: "€", format: "%n %u", precision: 0) %></span>
+      <span class="text-[10px] text-gray-400 whitespace-nowrap">recettes</span>
+    </div>
+
+    <%# Aujourd'hui %>
+    <div class="flex flex-col justify-center px-4 py-3 min-w-[5rem]">
+      <span class="text-[10px] font-semibold uppercase tracking-widest <%= stats[:new_members_today] > 0 ? 'text-[#1F5C55]/70' : 'text-gray-400' %> whitespace-nowrap">Auj.</span>
+      <span class="text-xl font-bold <%= stats[:new_members_today] > 0 ? 'text-[#1F5C55]' : 'text-gray-800' %> tabular-nums leading-tight"><%= stats[:new_members_today] %></span>
+      <span class="text-[10px] text-gray-400 whitespace-nowrap">nouveaux</span>
+    </div>
+
+  </div>
+</div>

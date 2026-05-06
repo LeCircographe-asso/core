@@ -3,6 +3,7 @@
 class Contribution < ApplicationRecord
   include Statusable
   include Dateable
+  include BroadcastsDashboardStats
 
   belongs_to :person
   belongs_to :contribution_formula
@@ -15,6 +16,9 @@ class Contribution < ApplicationRecord
   validate :sessions_remaining_validation
   validate :day_pass_single_use_validation
   validate :day_pass_expiration_validation
+
+  after_create_commit :broadcast_profile_tiles
+  after_update_commit :broadcast_profile_tiles, if: -> { saved_change_to_status? || saved_change_to_sessions_remaining? }
 
   enum :status, {
     inactive: 0,
@@ -121,6 +125,16 @@ class Contribution < ApplicationRecord
   end
 
   private
+
+  def broadcast_profile_tiles
+    broadcast_replace_to(
+      person,
+      target: "membership-status-#{person_id}",
+      partial: "shared/membership_status_tiles",
+      locals: { person: person.reload }
+    )
+    broadcast_dashboard_stats
+  end
 
   def sessions_remaining_validation
     if contribution_formula&.duration.in?(%w[trimester annual])
