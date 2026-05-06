@@ -23,6 +23,7 @@ class Payment < ApplicationRecord
   before_create :generate_uuid
   after_create :create_audit_log
   after_create_commit :broadcast_profile_payments
+  after_update_commit :broadcast_profile_payments, if: -> { saved_change_to_status? || saved_change_to_total_cents? }
   # Callbacks legacy supprimés : la création/mise à jour cascade passe désormais par les services People::*.
   after_update :log_status_change, if: -> { saved_change_to_status? }
   after_update :invalidate_totals_cache, if: -> { saved_change_to_total_cents? }
