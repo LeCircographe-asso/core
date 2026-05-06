@@ -3,14 +3,14 @@
 <section class="public-hero-shell mb-14">
   <%= image_tag hero_image(:news_hero), class: "absolute inset-0 w-full h-full object-cover hero-img-filter", alt: "" %>
   <div class="hero-overlay"></div>
-  <div class="relative hero-panel text-center space-y-4">
+  <div class="hero-panel public-hero-panel-centered">
     <p class="text-sm uppercase tracking-[0.35em] text-white/70">Programmation</p>
     <h1 class="font-circographe text-3xl sm:text-4xl lg:text-5xl font-bold">Nos activités</h1>
     <p class="max-w-3xl mx-auto text-lg text-white/85 leading-relaxed">Cours, accueils de compagnies, expos, événements : la programmation du lieu.</p>
   </div>
 </section>
 
-<section id="pratiques-regulieres" class="public-surface scroll-mt-16 md:scroll-mt-20 py-12 sm:py-14 lg:py-16 px-4 sm:px-8 fade-in">
+<section id="pratiques-regulieres" class="public-section-shell scroll-mt-16 md:scroll-mt-20 fade-in">
   <header class="max-w-4xl mx-auto text-center space-y-4">
     <p class="text-sm uppercase tracking-[0.3em] text-brand-primary/70">Pratiques régulières</p>
     <h2 class="text-2xl sm:text-3xl font-bold text-gray-900">Le Cirque</h2>
@@ -44,14 +44,14 @@
   </div>
 </section>
 
-<section id="evenements" class="public-surface py-12 sm:py-14 lg:py-16 px-4 sm:px-8 fade-in space-y-10">
+<section id="evenements" class="public-section-shell fade-in space-y-10">
   <header class="max-w-4xl mx-auto text-center space-y-4">
     <p class="text-sm uppercase tracking-[0.3em] text-brand-primary/70">Moments partagés</p>
     <h2 class="text-2xl sm:text-3xl font-bold text-gray-900">Événements et actualités</h2>
     <p class="text-base sm:text-lg text-gray-700 leading-relaxed">Tout au long de l’année, le Circographe propose des expositions, des plateaux partagés, des soirées d’ouverture de piste et des rendez-vous associatifs ouverts au quartier. Filtre les actualités pour préparer ta prochaine venue.</p>
   </header>
 
-  <section class="public-surface p-6 sm:p-8 space-y-8"
+  <section class="public-card-shell space-y-8"
            data-controller="tabs"
            data-tabs-initial-value="avenir"
            data-tabs-active-class="activities-tab--active">
