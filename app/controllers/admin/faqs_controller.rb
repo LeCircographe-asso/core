@@ -32,6 +32,13 @@ module Admin
       end
     end
 
+    def reorder
+      Array(params[:ids]).each_with_index do |id, index|
+        Faq.where(id: id.to_i).update_all(position: index + 1)
+      end
+      head :ok
+    end
+
     def destroy
       @faq.destroy!
       redirect_to admin_faqs_path, notice: t(".destroyed"), status: :see_other
