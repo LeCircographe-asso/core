@@ -59,10 +59,10 @@
                 </div>
                 <%# Actions %>
                 <div class="flex items-center gap-1 shrink-0 opacity-0 group-hover:opacity-100 transition-opacity">
-                  <%= link_to t("admin.faqs.index.edit"), edit_admin_faq_path(faq),
+                  <%= link_to t("admin.faqs.index.edit"), "/admin/faqs/#{faq.id}/edit",
                         data: { turbo_frame: "modal" },
                         class: "text-xs px-2 py-1 rounded-md border border-gray-200 text-gray-600 hover:bg-white hover:border-gray-300 transition-colors" %>
-                  <%= button_to "✕", admin_faq_path(faq),
+                  <%= button_to "✕", "/admin/faqs/#{faq.id}",
                         method: :delete,
                         data: { turbo_confirm: t("admin.faqs.index.confirm_delete") },
                         class: "text-xs px-2 py-1 rounded-md border border-transparent text-red-400 hover:border-red-100 hover:bg-red-50 bg-transparent cursor-pointer transition-colors" %>
