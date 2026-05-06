@@ -1,7 +1,21 @@
 # frozen_string_literal: true
 
 class Faq < ApplicationRecord
-  LABELS = %w[general adhesion contact].freeze
+  LABELS = %w[avant_visite general adhesion contact].freeze
+
+  LABEL_NAMES = {
+    "avant_visite" => "Avant de te déplacer",
+    "adhesion"     => "Adhérer & pratiquer",
+    "general"      => "Lieu & horaires",
+    "contact"      => "Écrire & proposer"
+  }.freeze
+
+  LABEL_PAGES = {
+    "avant_visite" => "/adhesion",
+    "adhesion"     => "/faq",
+    "general"      => "/faq",
+    "contact"      => "/faq"
+  }.freeze
 
   validates :question, presence: true
   validates :answer,   presence: true

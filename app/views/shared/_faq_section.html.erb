@@ -34,11 +34,7 @@
           </button>
         </h3>
         <div id="<%= id %>-body-<%= index %>" class="hidden mt-3 text-gray-600" aria-labelledby="<%= id %>-heading-<%= index %>">
-          <% if faq[:answer_html].present? %>
-            <p><%= faq[:answer_html] %></p>
-          <% else %>
-            <p><%= faq[:answer] %></p>
-          <% end %>
+          <p><%= raw(faq[:answer_html] || faq[:answer]) %></p>
         </div>
       </div>
     <% end %>
