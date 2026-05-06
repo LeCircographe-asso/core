@@ -7,7 +7,13 @@ import { prefersReducedMotion } from "lib/gsap/animation_prefs"
 import { gsap, gsapScoped, ScrollTrigger } from "lib/gsap/register"
 
 document.addEventListener("turbo:load", initPublicReveals)
-document.addEventListener("turbo:frame-load", () => ScrollTrigger.refresh())
+document.addEventListener("turbo:frame-load", () => {
+  if ("onscrollend" in window) {
+    window.addEventListener("scrollend", () => ScrollTrigger.refresh(), { once: true })
+  } else {
+    setTimeout(() => ScrollTrigger.refresh(), 300)
+  }
+})
 
 function initPublicReveals () {
   const roots = document.querySelectorAll("[data-gsap-reveal]")

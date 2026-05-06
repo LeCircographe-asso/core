@@ -19,7 +19,7 @@ module Admin
       def view_action
         # Rediriger vers la personne si elle a un user, sinon vers la liste
         if payment.person&.user
-          link_to admin_user_path(payment.person.user),
+          link_to admin_member_path(payment.person),
                   class: "text-[#1F5C55] hover:text-[#194A45] mr-2",
                   title: "Voir la personne" do
             content_tag :svg,

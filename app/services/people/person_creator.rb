@@ -29,6 +29,9 @@ module People
     attribute :get_involved, :boolean, default: false
     attribute :dyslexic_font, :boolean, default: false
     attribute :is_minor, :boolean, default: false
+    attribute :reduced_rate_eligible, :boolean, default: false
+    attribute :reduced_rate_reason, :string
+    attribute :reduced_rate_proof, :string
 
     attribute :allow_blank_attributes, :boolean, default: false
 
@@ -111,7 +114,10 @@ module People
         image_rights: image_rights,
         get_involved: get_involved,
         dyslexic_font: dyslexic_font,
-        is_minor: is_minor
+        is_minor: is_minor,
+        reduced_rate_eligible: reduced_rate_eligible,
+        reduced_rate_reason: reduced_rate_reason,
+        reduced_rate_proof: reduced_rate_proof
       }
     end
 

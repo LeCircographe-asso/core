@@ -22,6 +22,7 @@ module OpeningHoursManagement
 
         # Sauvegarder dans le cache
         Rails.cache.write("opening_hours", opening_hours)
+        Rails.cache.write("opening_hours_updated_at", Time.current)
 
         # Instrumentation pour audit
         ActiveSupport::Notifications.instrument(

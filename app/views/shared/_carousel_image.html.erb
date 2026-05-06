@@ -16,7 +16,7 @@
         <div class="swiper-wrapper mb-16">
             <% images.each_with_index do |image, index| %>
             <div class="swiper-slide">
-                <div class="rounded-2xl h-96 flex justify-center items-center overflow-hidden">
+                <div class="public-carousel-media rounded-2xl flex justify-center items-center overflow-hidden">
                     <%= image_tag image,
                                   alt: "Carousel Image",
                                   class: "object-cover w-full h-full",
@@ -33,7 +33,7 @@
                 </svg>
             </button>
 
-            <button class="swiper-button-next swiper-arrow" data-carousel-prev>
+            <button class="swiper-button-next swiper-arrow" data-carousel-next>
                 <svg class="h-5 w-5 !text-black hover:!text-gray-800" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
                     <path d="M6 12L10 8L6 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
                 </svg>

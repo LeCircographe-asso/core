@@ -31,14 +31,14 @@
     <%= javascript_importmap_tags %>
 
     <!-- External services -->
-    <script src="https://js.stripe.com/v3/"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <%= javascript_include_tag "flowbite.turbo.min", "data-turbo-track": "reload" %>
 </head>
 
-<body class="<%= 'dyslexic-font-enabled' if current_user&.dyslexic_font %> <%= controller_name %>-<%= action_name %> flex flex-col min-h-screen">
+<body class="<%= 'dyslexic-font-enabled' if current_user&.dyslexic_font %> <%= controller_name %>-<%= action_name %> flex flex-col min-h-[100dvh] leading-normal">
 
+<a href="#main-content" class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[9999] focus:rounded-md focus:bg-white focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-[#1F5C55] focus:shadow-md focus:ring-2 focus:ring-[#1F5C55]">Aller au contenu principal</a>
 
     <% if controller_path.start_with?('admin/') %>
     <div class="admin-layout">
@@ -55,15 +55,15 @@
 
     <% elsif controller_name == 'sessions' && action_name == 'new' || controller_name == 'registrations' && action_name == 'new' || controller_name == 'pages' && action_name == 'terms' || controller_name == 'pages' && action_name == 'privacy_policy' %>
     
-    <div class="flex min-h-[100dvh] flex-col w-full overflow-x-hidden">
+    <div class="flex h-[100dvh] flex-col w-full overflow-hidden">
         <header>
             <%= render 'shared/navbar' %>
         </header>
         <%= turbo_frame_tag ProfileSectionDomIds::FLASH_FRAME do %>
         <%= render 'shared/flash' %>
         <% end %>
-        <main class="flex-1 min-h-0">
-            <div class="w-full" data-turbo-page-shell>
+        <main id="main-content" tabindex="-1" class="flex-1 min-h-0">
+            <div class="h-full w-full" data-turbo-page-shell>
             <%= yield %>
             </div>
         </main>
@@ -71,14 +71,16 @@
     
     <% else %>
 
+    <div class="fixed inset-0 -z-10 bg-cover bg-center bg-no-repeat <%= controller_name == 'home' && action_name == 'index' ? 'home-mobile-background' : '' %>"
+         style="background-image: url('<%= asset_path(content_for(:background_image) || 'background.webp') %>'); transform: translateZ(0); backface-visibility: hidden;"></div>
     <header>
         <%= render 'shared/navbar' %>
     </header>
-    <div class="flex-grow bg-no-repeat bg-cover bg-center <%= 'parallax-bg' if controller_name == 'home' && action_name == 'index' %>" style="background-image: url('<%= asset_path(content_for(:background_image) || 'background.webp') %>'); background-position: center; background-repeat: no-repeat; background-size: cover;">
+    <div class="flex-grow">
         <%= turbo_frame_tag ProfileSectionDomIds::FLASH_FRAME do %>
         <%= render 'shared/flash' %>
         <% end %>
-        <main class="page-container space-y-6 <%= controller_name == 'home' && action_name == 'index' ? 'pt-0' : 'pt-8' %>">
+        <main id="main-content" tabindex="-1" class="<%= controller_name == 'home' && action_name == 'index' ? 'w-full pt-0' : 'page-container space-y-6 pt-8' %>">
         <%# data-turbo-page-shell : transition GSAP au changement de page (turbo_page_reveal.js) %>
         <div class="w-full" data-turbo-page-shell>
             <%= yield %>
@@ -89,6 +91,12 @@
     <% end %>
 
     <%= render 'shared/confirm_modal' %>
+    <%= render 'shared/whatsapp_qr_modal' %>
+    <%# PWA install banner — mobile only, hidden until controller shows it %>
+    <% unless controller_path.start_with?('admin/') || (controller_name == 'sessions' && action_name == 'new') || (controller_name == 'registrations' && action_name == 'new') %>
+      <%= render 'shared/pwa_install_banner' %>
+    <% end %>
+    <%= yield :scripts %>
 </body>
 
 </html>

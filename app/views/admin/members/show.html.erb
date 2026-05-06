@@ -1,0 +1,38 @@
+<div class="min-h-screen py-6">
+  <div class="max-w-4xl mx-auto">
+    <%= render 'shared/breadcrumbs' %>
+
+    <div class="bg-white rounded-xl shadow-lg overflow-hidden mb-6" id="<%= dom_id(@person) %>">
+
+      <%= render Admin::Members::MemberHeaderComponent.new(
+        user: @user,
+        person: @person,
+        is_person_without_user: @is_person_without_user,
+        is_deleted: @user&.deleted?,
+        current_user: current_user
+      ) %>
+
+      <div data-controller="tabs"
+           data-tabs-initial-value="personal"
+           data-tabs-use-hash-value="true"
+           data-tabs-active-class="border-[#1F5C55] text-[#1F5C55]">
+        <%= render Admin::Members::MemberTabsComponent.new(active_tab: "personal") %>
+
+        <%= render "tabs_content",
+          wrapper_class: "px-4 sm:px-6 pb-6",
+          user: @user,
+          person: @person,
+          is_person_without_user: @is_person_without_user,
+          recent_payments: @recent_payments %>
+      </div>
+
+      <div class="border-t bg-gray-50 px-4 sm:px-6 py-4">
+        <%= render Admin::Members::MemberActionsComponent.new(
+          person: @person,
+          is_deleted: @user&.deleted?,
+          current_user: current_user
+        ) %>
+      </div>
+    </div>
+  </div>
+</div>

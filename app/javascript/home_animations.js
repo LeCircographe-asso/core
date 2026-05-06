@@ -75,7 +75,11 @@ function initAnimations () {
         scrollArrow,
         { opacity: 0, y: 10 },
         { opacity: 1, y: 0, duration: 0.5, delay: 1.35, ease: "power2.out",
-          onComplete: () => scrollArrow.classList.remove("opacity-0") }
+          onComplete: () => {
+            scrollArrow.classList.remove("opacity-0")
+            gsap.set([heroKicker, titleElement, heroIntro, mainButton, scrollArrow].filter(Boolean), { clearProps: "transform,will-change" })
+          }
+        }
       )
     }
 
@@ -101,22 +105,31 @@ function initAnimations () {
 }
 
 function buildLetterSpans (element) {
-  const text = element.textContent
-  if (!text) {
-    return []
-  }
+  const text = element.textContent.trim().replace(/\s+/g, " ")
+  if (!text) return []
 
   element.innerHTML = ""
   element.classList.remove("opacity-0")
 
   const letters = []
-  for (let i = 0; i < text.length; i++) {
-    const letterSpan = document.createElement("span")
-    letterSpan.textContent = text[i] === " " ? " " : text[i]
-    letterSpan.style.display = "inline"
-    element.appendChild(letterSpan)
-    letters.push(letterSpan)
-  }
+  text.split(" ").forEach((word, wordIndex, arr) => {
+    const wordSpan = document.createElement("span")
+    wordSpan.className = "home-hero-title-word"
+
+    for (const char of word) {
+      const letterSpan = document.createElement("span")
+      letterSpan.textContent = char
+      letterSpan.style.display = "inline"
+      wordSpan.appendChild(letterSpan)
+      letters.push(letterSpan)
+    }
+
+    element.appendChild(wordSpan)
+    if (wordIndex < arr.length - 1) {
+      element.appendChild(document.createTextNode(" "))
+    }
+  })
+
   return letters
 }
 

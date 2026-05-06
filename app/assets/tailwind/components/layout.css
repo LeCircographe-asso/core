@@ -44,6 +44,66 @@
     @apply rounded-2xl border border-gray-100 bg-white shadow-md;
   }
 
+  .public-section-shell {
+    @apply rounded-[28px] bg-white/95 px-4 py-10 shadow-lg sm:px-8 sm:py-14 lg:py-16;
+  }
+
+  .public-card-shell {
+    @apply rounded-[28px] bg-white/95 p-6 shadow-lg sm:p-8;
+  }
+
+  .public-soft-section {
+    @apply rounded-2xl border border-gray-100 bg-white p-6 shadow-sm sm:p-8;
+  }
+
+  .public-anchor-section {
+    @apply scroll-mt-[5.25rem] md:scroll-mt-28 lg:scroll-mt-32;
+  }
+
+  .public-carousel-media {
+    aspect-ratio: 4 / 5;
+  }
+
+  @media (min-width: 640px) {
+    .public-carousel-media {
+      aspect-ratio: 4 / 3;
+    }
+  }
+
+  @media (min-width: 768px) {
+    .public-carousel-media {
+      aspect-ratio: auto;
+      height: 24rem;
+    }
+  }
+
+  /* Typography primitives */
+  .section-eyebrow {
+    @apply text-sm uppercase tracking-[0.3em];
+    color: rgba(31, 92, 85, 0.7);
+  }
+
+  .hero-title {
+    @apply text-3xl font-bold sm:text-4xl lg:text-5xl;
+    font-family: "Circographe", Arial, sans-serif;
+  }
+
+  .section-title {
+    @apply text-2xl font-bold text-gray-900 sm:text-3xl;
+  }
+
+  .subsection-title {
+    @apply text-lg font-semibold text-gray-900;
+  }
+
+  .body-text {
+    @apply text-gray-700 leading-relaxed;
+  }
+
+  .body-text-lg {
+    @apply text-base text-gray-700 leading-relaxed sm:text-lg;
+  }
+
   .outline-contrast-primary {
     outline-color: rgba(31, 92, 85, 0.85);
   }
@@ -51,5 +111,25 @@
   .nav-active-link {
     color: var(--brand-primary) !important;
     font-weight: 600;
+  }
+
+  @media (max-width: 639px) {
+    .home-mobile-background {
+      background-size: 135%;
+      background-position: center top;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .home-hero-title-word {
+      display: block;
+    }
+  }
+
+  @media (max-width: 312px) {
+    .home-hero-title {
+      font-size: clamp(2.5rem, 12vw, 3.25rem);
+      line-height: 1.08;
+    }
   }
 }

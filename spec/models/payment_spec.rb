@@ -355,17 +355,33 @@ RSpec.describe Payment, type: :model do
   end
 
   describe '#destroy' do
-    it 'logs deletion and invalidates cache' do
+    it 'blocks hard deletion and points callers to the canceller service' do
       payment = create(:payment)
-      PaymentAuditLog.count
 
       Rails.cache.write('total_successful_payments', 1000)
       Rails.cache.write('total_donations', 500)
 
-      # Mock the audit log creation to verify it's called
+      expect(payment.destroy).to be false
+      expect(payment.errors[:base]).to include('Hard delete is forbidden; use People::PaymentCanceller')
+      expect(payment.reload).to be_present
+
+      expect(Rails.cache.read('total_successful_payments')).to eq(1000)
+      expect(Rails.cache.read('total_donations')).to eq(500)
+    end
+  end
+
+  describe '#hard_delete!' do
+    it 'keeps the explicit escape hatch for technical hard deletion' do
+      payment = create(:payment)
+
+      Rails.cache.write('total_successful_payments', 1000)
+      Rails.cache.write('total_donations', 500)
+
       expect(PaymentAuditLog).to receive(:log).with(payment, payment.recorded_by, 'delete')
 
-      payment.destroy
+      expect do
+        payment.hard_delete!
+      end.to change(described_class, :count).by(-1)
 
       expect(Rails.cache.read('total_successful_payments')).to be_nil
       expect(Rails.cache.read('total_donations')).to be_nil

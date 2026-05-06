@@ -1,5 +1,21 @@
 # frozen_string_literal: true
 
+# route_name => [page_id, url_slug] — source de vérité unique pour les pages publiques
+PUBLIC_PAGES = {
+  about:                     %w[about about],
+  association:               %w[association association],
+  adhesion:                  %w[become_member adhesion],
+  actualites:                %w[news actualites],
+  contact:                   %w[contact_us contact],
+  faq:                       %w[faq faq],
+  galerie:                   %w[gallery galerie],
+  mentions_legales:          %w[terms mentions-legales],
+  confidentialite:           %w[privacy_policy confidentialite],
+  newsletter_desinscription: %w[newsletter_unsubscribe_success newsletter/desinscription-confirmee]
+}.freeze
+
+PAGE_ID_TO_ROUTE = PUBLIC_PAGES.each_with_object({}) { |(name, (pid, _)), h| h[pid] = name }.freeze
+
 Rails.application.routes.draw do
   namespace :admin do
     root to: "dashboard#index"
@@ -12,14 +28,11 @@ Rails.application.routes.draw do
       query.present? ? "/admin/donations/new?#{query}" : "/admin/donations/new"
     }
     resources :donations, only: %i[new create]
-    resources :users do
+    resources :members, controller: "members" do
       post :restore, on: :member
-      # Actions pour gérer Person
+      post :create_web_account, on: :member
       get :edit_person, on: :member
-      # Actions pour gérer les doublons
-      get :duplicates, on: :collection
-
-      resources :payments, module: :users, only: %i[index new create show update destroy] do
+      resources :payments, module: :members, only: %i[index new create show update destroy] do
         post :process_payment, on: :member
       end
     end
@@ -57,7 +70,31 @@ Rails.application.routes.draw do
     get :upcoming, on: :collection
     get :past, on: :collection
   end
-  resources :pages, only: %i[show]
+
+  # Pages publiques — générées depuis PUBLIC_PAGES (une seule source de vérité)
+  PUBLIC_PAGES.each do |route_name, (page_id, slug)|
+    get "/#{slug}", to: "pages#show", defaults: { id: page_id }, as: route_name
+  end
+
+  # page_path('become_member') => '/adhesion'
+  # page_path('news', anchor: 'evenements') => '/actualites#evenements'
+  direct(:page) do |id, options|
+    route_name = PAGE_ID_TO_ROUTE[id.to_s] || :root
+    send(:"#{route_name}_path", **options)
+  end
+
+  # Redirects permanents /pages/:id → URL propre (bookmarks, SEO, liens emails)
+  get "/pages/:id", to: redirect(status: 301) { |params, _|
+    route_name = PAGE_ID_TO_ROUTE[params[:id]]
+    if route_name
+      "/#{PUBLIC_PAGES[route_name][1]}"
+    else
+      { "blog_newsletter"      => "/",
+        "circus_details"       => "/association#le-cirque",
+        "graphic_arts_details" => "/association#les-arts-graphiques" }.fetch(params[:id], "/")
+    end
+  }
+
   resource :session, only: %i[new create destroy]
   resources :passwords, only: %i[new create edit update], param: :token
   resource :registration, only: %i[new create]
@@ -91,8 +128,7 @@ Rails.application.routes.draw do
 
   root "home#index"
   get "fonts", to: "home#font_examples", as: "font_examples"
-  get "/faq", to: "faqs#index", as: :faq
-  get "/white_page", to: "pages#show", defaults: { id: "white_page" }, as: :white_page
+  get "/white-page", to: "pages#show", defaults: { id: "white_page" }, as: :white_page
 
   # match "*unmatched", to: "application#url_not_found", via: :all
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html

@@ -1,0 +1,40 @@
+<!-- Header with gradient - Same design as membershipcard -->
+<div class="relative w-full">
+  <div class="h-24 w-full bg-gradient-to-r from-[#1F5C55] to-[#194A45] rounded-t-xl">
+    <!-- Member Number Badge - Editable -->
+    <div class="absolute top-4 left-4 px-3 py-1 text-xs font-semibold text-white rounded-full bg-white/20">
+      <%= render Admin::Members::EditableMemberNumberComponent.new(
+        person: person,
+        current_user: current_user
+      ) %>
+    </div>
+    
+    
+  </div>
+
+  <!-- Avatar - Same positioning as membershipcard -->
+  <div class="absolute -bottom-12 left-1/2 transform -translate-x-1/2">
+    <div class="h-24 w-24 rounded-full border-4 border-white overflow-hidden bg-white shadow-lg <%= 'grayscale' if is_deleted %>">
+      <%= image_tag avatar_image, alt: avatar_alt, class: "h-full w-full object-cover object-center scale-110" %>
+      <% if crown? %>
+        <div class="absolute -top-2 left-1/2 -translate-x-1/2">
+          <span class="text-yellow-500 text-xl">👑</span>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>
+
+<!-- User Info - Same spacing as membershipcard -->
+<div class="pt-16 px-4 sm:px-6 pb-6">
+  <div class="text-center mb-4 sm:mb-6">
+    <h2 class="text-lg sm:text-xl font-bold text-gray-800">
+      <%= user_name %>
+    </h2>
+    <% if is_deleted %>
+      <p class="text-red-500 text-xs mt-1">
+        Compte supprimé le <%= user&.deleted_at&.strftime("%d/%m/%Y à %H:%M") %>
+      </p>
+    <% end %>
+  </div>
+</div>

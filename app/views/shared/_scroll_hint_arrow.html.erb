@@ -1,16 +1,15 @@
 <% position_class ||= "" %>
-<% extra_classes = "opacity-0 transition-opacity duration-500 scroll-arrow-container #{position_class}".strip %>
+<% extra_classes = "z-20 opacity-0 transition-opacity duration-500 scroll-arrow-container #{position_class}".strip %>
 
 <div class="<%= extra_classes %>"
      data-controller="scroll-hint"
      data-scroll-hint-section-id-value="<%= section_id %>">
-  <div data-scroll-hint-target="arrow">
-    <%= link_to "##{section_id}", class: "scroll-arrow inline-flex items-center justify-center rounded-full border-2 border-white/30 bg-white/12 backdrop-blur-sm text-white/80 shadow-md shadow-black/10 px-4 py-3", aria: { label: t("views.shared.scroll_hint.down_to_main") } do %>
-      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-10 sm:w-12 h-10 sm:h-12 text-white/75" aria-hidden="true">
+  <div data-scroll-hint-target="arrow" class="pointer-events-auto">
+    <%= link_to "##{section_id}", class: "scroll-arrow pointer-events-auto inline-flex items-center justify-center rounded-full border-2 border-white/30 bg-white/12 px-4 py-3 text-white/80 shadow-md shadow-black/10 backdrop-blur-sm transition-colors duration-200 hover:border-[#5836A5]/55 hover:bg-[#5836A5]/18 hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#5836A5]", aria: { label: t("views.shared.scroll_hint.down_to_main") } do %>
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="h-10 w-10 text-white/75 transition-colors duration-200 hover:text-white sm:h-12 sm:w-12" aria-hidden="true">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
       </svg>
     <% end %>
   </div>
 </div>
-
 

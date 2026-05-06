@@ -7,6 +7,7 @@ import "global_animations"
 import "public_animations"
 import "turbo_page_reveal"
 import "confirm_modal"
+import "whatsapp_qr_modal"
 
 // Définir la fonction initFlowbite si elle n'existe pas déjà
 if (typeof window.initFlowbite !== 'function') {
@@ -28,15 +29,15 @@ if (typeof window.initFlowbite !== 'function') {
 
 document.addEventListener("turbo:load", () => {
     window.initFlowbite();
-    registerServiceWorker();
 });
 import "trix"
 import "@rails/actiontext"
 
-function registerServiceWorker() {
-  if (!("serviceWorker" in navigator)) return
-
-  navigator.serviceWorker.register("/service-worker").catch((error) => {
-    console.warn("Service worker registration failed:", error)
+// Register once on first load (idempotent but no need to re-run on Turbo navigations)
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker
+      .register("/service-worker", { scope: "/" })
+      .catch((error) => console.warn("Service worker registration failed:", error))
   })
 }

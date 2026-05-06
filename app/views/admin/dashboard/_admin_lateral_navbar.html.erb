@@ -23,7 +23,7 @@
       </div>
       <ul class="sidebar-menu">
         <% if current_user.can_manage_users? %>
-        <li><%= link_to admin_users_path, class: "sidebar-link flex items-center" do %>
+        <li><%= link_to admin_members_path, class: "sidebar-link flex items-center" do %>
               <i class="fas fa-users mr-2 sidebar-icon"></i> <span class="sidebar-text" data-sidebar-target="text">Liste d'adhérents</span>
             <% end %>
         </li>

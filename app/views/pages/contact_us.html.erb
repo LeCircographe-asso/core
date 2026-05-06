@@ -4,76 +4,109 @@
 <section class="public-hero-shell mb-8 sm:mb-12 lg:mb-14">
   <%= image_tag hero_image(:contact_hero), class: "absolute inset-0 w-full h-full object-cover hero-img-filter", alt: "" %>
   <div class="hero-overlay"></div>
-  <div class="relative hero-panel text-center space-y-4">
-    <p class="text-sm uppercase tracking-[0.4em] text-white/70">Écris-nous</p>
-    <h1 class="font-circographe text-3xl sm:text-4xl lg:text-5xl font-bold">Contact</h1>
-    <p class="max-w-2xl mx-auto text-base sm:text-lg text-white/85 leading-snug">Adhésion, cotisation (accès cirque), temps d’accueil en création ou locaux : passe aux créneaux ou écris via le formulaire ci-dessous.</p>
+  <div class="hero-panel public-hero-panel-centered">
+    <p class="public-hero-eyebrow">Écris-nous</p>
+    <h1 class="public-hero-title">Contact</h1>
+    <p class="public-hero-body">Adhésion, cotisation (accès cirque), temps d'accueil en création ou locaux : passe aux créneaux ou écris via le formulaire ci-dessous.</p>
   </div>
 </section>
 
-<section id="contact-details" class="space-y-12 pb-12 sm:pb-16">
-  <%# Ne pas mettre .fade-in sur un ancêtre de Leaflet : translateY + will-change cassent la carte et peuvent provoquer des boucles ResizeObserver. %>
-  <div class="fade-in">
+<section id="contact-details" class="space-y-8 pb-12 sm:pb-16">
+  <%# Pas de .fade-in sur un ancêtre de Leaflet — translateY + will-change cassent la carte %>
   <div class="public-surface overflow-hidden border border-white/70">
-    <header class="px-5 sm:px-10 py-6 sm:py-8 text-center sm:text-left bg-white">
-      <p class="text-xs uppercase tracking-[0.35em] text-[#5836A5]">Infos pratiques</p>
-      <h2 class="mt-2 text-3xl font-semibold text-[#1F5C55]">Horaires, accès et formulaire</h2>
-      <p class="mt-3 text-sm sm:text-base text-gray-600">Réponse sous quelques jours ouvrés par message ; conseils sur place aux créneaux d’ouverture.</p>
-      <span class="mt-4 inline-block h-1 w-16 bg-[#5836A5] rounded-full"></span>
-    </header>
 
-    <div class="px-4 sm:px-10 pb-6 sm:pb-8 grid gap-6 lg:gap-8 lg:grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)]">
-      <div class="space-y-6 order-2 lg:order-1 min-w-0">
-        <div class="grid gap-4 sm:grid-cols-2">
-          <div class="rounded-2xl border border-[#1F5C55]/30 bg-white px-5 py-5 shadow-sm sm:col-span-2">
-            <p class="text-xs uppercase tracking-[0.25em] text-[#1F5C55] mb-2">Accès</p>
-            <p class="font-semibold text-gray-900 leading-relaxed">Bus 15 (Tisséo) — dessert le boulevard de Suisse ; descends à l’arrêt le plus proche de ton numéro.</p>
-          </div>
-          <div class="rounded-2xl border border-[#5836A5]/30 bg-white px-5 py-5 shadow-sm sm:col-span-2">
-            <p class="text-xs uppercase tracking-[0.25em] text-[#5836A5] mb-2">Suivre l'actu</p>
-            <div class="flex flex-wrap gap-3 text-sm text-[#1F5C55]">
-              <%= link_to "Facebook", "https://www.facebook.com/lecircographe/?locale=fr_FR", target: "_blank", rel: "noopener", class: "inline-flex items-center gap-2 px-3 py-2 rounded-full border border-[#1F5C55]/40 hover:bg-[#1F5C55] hover:text-white transition" %>
-              <%= link_to "Instagram", "https://www.instagram.com/lecircographe/", target: "_blank", rel: "noopener", class: "inline-flex items-center gap-2 px-3 py-2 rounded-full border border-[#5836A5]/40 hover:bg-[#5836A5] hover:text-white transition" %>
-              <%= link_to "WhatsApp", "https://wa.me/33612345678", target: "_blank", rel: "noopener", class: "inline-flex items-center gap-2 px-3 py-2 rounded-full border border-[#1F5C55]/40 hover:bg-[#1F5C55] hover:text-white transition" %>
-            </div>
-          </div>
+    <%# ── Header ── %>
+    <header class="px-5 sm:px-10 py-6 sm:py-8 bg-white">
+      <div class="flex items-start justify-between gap-6">
+        <div>
+          <p class="text-xs uppercase tracking-[0.35em] text-brand-accent">Infos pratiques</p>
+          <h2 class="mt-2 text-3xl font-semibold text-brand-primary">Horaires, accès et formulaire</h2>
+          <p class="mt-3 text-sm sm:text-base text-gray-600">
+            Réponse sous quelques jours ouvrés par message ;<br class="hidden sm:block">
+            conseils sur place aux créneaux d'ouverture.
+          </p>
+          <span class="mt-4 inline-block h-1 w-16 bg-brand-accent rounded-full"></span>
         </div>
 
-        <div id="horaires" class="rounded-2xl border border-[#1F5C55]/25 bg-white px-5 py-6 space-y-3 shadow-sm scroll-mt-24">
-          <p class="text-xs uppercase tracking-[0.25em] text-[#1F5C55]">Horaires d'accueil</p>
-          <p class="text-sm text-gray-600">Ouverture du mardi au dimanche selon disponibilité bénévoles — Fermé le lundi.</p>
-          <%= render "shared/opening_hours", horaires: @opening_hours, bare: true %>
+        <%# ── Icônes réseaux sociaux ── %>
+        <div class="shrink-0 flex items-center gap-2 pt-1">
+          <%= link_to "https://www.facebook.com/lecircographe/?locale=fr_FR",
+                target: "_blank", rel: "noopener",
+                class: "w-9 h-9 rounded-full border border-gray-200 flex items-center justify-center text-gray-400 hover:border-[#1877F2] hover:text-[#1877F2] hover:bg-blue-50 transition-colors",
+                aria: { label: "Circographe sur Facebook (ouvre dans un nouvel onglet)" } do %>
+            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M24 12.073C24 5.406 18.627 0 12 0S0 5.406 0 12.073C0 18.1 4.388 23.095 10.125 24v-8.437H7.078v-3.49h3.047V9.41c0-3.025 1.793-4.697 4.533-4.697 1.313 0 2.686.236 2.686.236v2.97h-1.513c-1.491 0-1.956.931-1.956 1.886v2.268h3.328l-.532 3.49h-2.796V24C19.612 23.095 24 18.1 24 12.073z"/>
+            </svg>
+          <% end %>
+
+          <%= link_to "https://www.instagram.com/lecircographe/",
+                target: "_blank", rel: "noopener",
+                class: "w-9 h-9 rounded-full border border-gray-200 flex items-center justify-center text-gray-400 hover:border-[#E1306C] hover:text-[#E1306C] hover:bg-pink-50 transition-colors",
+                aria: { label: "Circographe sur Instagram (ouvre dans un nouvel onglet)" } do %>
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24" aria-hidden="true">
+              <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+              <circle cx="12" cy="12" r="4"/>
+              <circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/>
+            </svg>
+          <% end %>
+
+          <button type="button" data-whatsapp-qr
+                  class="w-9 h-9 rounded-full border border-gray-200 flex items-center justify-center text-gray-400 hover:border-[#25D366] hover:text-[#25D366] hover:bg-green-50 transition-colors"
+                  aria-label="Contact WhatsApp">
+            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+            </svg>
+          </button>
         </div>
       </div>
+    </header>
 
-      <div class="space-y-5 order-1 lg:order-2 min-w-0">
-        <div class="rounded-2xl border border-[#5836A5]/30 bg-white px-5 py-5 sm:px-6 sm:py-6 shadow-sm">
-          <p class="text-xs uppercase tracking-[0.25em] text-[#5836A5] mb-2">Un doute rapide ?</p>
-          <p class="text-gray-700 text-sm sm:text-base leading-relaxed">Aux créneaux : orientation rapide (adhésion, création, technique).</p>
+    <%# ── Grille principale ── %>
+    <div class="px-4 sm:px-10 pb-6 sm:pb-8 grid gap-6 lg:gap-8 lg:grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)]">
+
+      <%# Colonne gauche : Accès+Carte & Horaires %>
+      <div class="space-y-6 order-2 lg:order-1 min-w-0">
+
+        <%# Accès + carte intégrée %>
+        <div id="map" class="rounded-2xl border border-brand-primary/25 bg-white overflow-hidden shadow-sm scroll-mt-24">
+          <div class="px-5 pt-5 pb-3">
+            <p class="text-xs uppercase tracking-[0.25em] text-brand-primary mb-2">Accès</p>
+            <p class="text-sm font-semibold text-gray-900">97 bis boulevard de Suisse — 31200 Toulouse</p>
+            <p class="text-xs text-gray-500 mt-1">Bus 15 (Tisséo) · descends à l'arrêt le plus proche de ton sens de marche</p>
+          </div>
+          <%= render "shared/map_embed", height: 280, caption: nil %>
         </div>
 
+        <%# Horaires d'accueil %>
+        <div id="horaires" class="rounded-2xl border border-brand-primary/25 bg-white overflow-hidden shadow-sm scroll-mt-24">
+          <div class="px-5 pt-4 pb-2 border-b border-gray-50">
+            <p class="text-xs uppercase tracking-[0.25em] text-brand-primary">Horaires d'accueil</p>
+            <p class="text-xs text-gray-500 mt-1">Du mardi au dimanche · selon disponibilité bénévoles</p>
+          </div>
+          <%= render "shared/opening_hours", horaires: @opening_hours, bare: true %>
+        </div>
+
+      </div>
+
+      <%# Colonne droite : doute rapide + formulaire %>
+      <div class="space-y-5 order-1 lg:order-2 min-w-0">
+        <div class="rounded-2xl border border-brand-accent/30 bg-white px-5 py-5 sm:px-6 sm:py-6 shadow-sm">
+          <p class="text-xs uppercase tracking-[0.25em] text-brand-accent mb-2">Un doute rapide ?</p>
+          <p class="text-gray-700 text-sm sm:text-base leading-relaxed">Aux créneaux : orientation rapide (adhésion, création, technique).</p>
+        </div>
         <div id="contact-form" class="scroll-mt-28">
           <%= render "pages/contact/form", contact: @contact || {}, status: nil, embedded: true %>
         </div>
       </div>
+
     </div>
   </div>
-  </div>
 
-  <div class="fade-in space-y-6 max-w-3xl mx-auto lg:max-w-none">
+  <div class="fade-in">
     <p class="text-center text-sm text-gray-600">
-      <%= link_to "Questions fréquentes", page_path("faq"), class: "font-semibold text-[#5836A5] hover:text-[#412886] underline-offset-2 hover:underline" %>
+      <%= link_to "Questions fréquentes", page_path("faq"), class: "font-semibold text-brand-accent hover:text-brand-accent-dark underline-offset-2 hover:underline" %>
       <span class="text-gray-400 mx-1">·</span>
-      <%= link_to "contact & projets", page_path("faq", anchor: "faq-contact"), class: "text-[#5836A5] hover:text-[#412886] underline-offset-2 hover:underline" %>
+      <%= link_to "contact & projets", page_path("faq", anchor: "faq-contact"), class: "text-brand-accent hover:text-brand-accent-dark underline-offset-2 hover:underline" %>
     </p>
-
-    <%= turbo_frame_tag "map" do %>
-      <article id="map" class="public-surface p-6 sm:p-8 space-y-4">
-        <p class="text-sm uppercase tracking-[0.3em] text-[#1F5C55]/70">Nous trouver</p>
-        <h2 class="text-2xl font-semibold text-gray-800">Le Circographe sur la carte</h2>
-        <%# Carte responsive (hauteur clamp) — passer height: N uniquement si besoin d’un px fixe %>
-        <%= render "shared/map_embed" %>
-      </article>
-    <% end %>
   </div>
 </section>

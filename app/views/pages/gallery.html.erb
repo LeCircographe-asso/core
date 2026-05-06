@@ -1,43 +1,84 @@
-<section class="public-surface text-center mb-12 py-6 fade-in">
-    <h1 class="font-circographe text-4xl font-bold text-black">Galerie Photos</h1>
+<% content_for :title, "Le Circographe - Galerie" %>
+
+<section class="public-hero-shell mb-10">
+  <%= image_tag hero_image(:gallery_hero), class: "absolute inset-0 w-full h-full object-cover hero-img-filter", alt: "" %>
+  <div class="hero-overlay"></div>
+  <div class="hero-panel public-hero-panel-centered space-y-3 sm:space-y-4">
+    <p class="public-hero-eyebrow">Le lieu en images</p>
+    <h1 class="public-hero-title">Galerie photos</h1>
+    <p class="public-hero-body">Cirque, arts graphiques, vie associative — snapshots du Circographe.</p>
+  </div>
 </section>
 
-<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-12 fade-in">
-    <% base_images = %w[
-         lelieu1.webp
-         lelieu2.webp
-         graff-img1.webp
-         circus-img2.webp
-         background.webp
-         flowersZoomed.webp
-       ] %>
-    <% excluded_images = base_images + %w[
-         users.png
-         userPicture.webp
-         placeholder_avatar.webp
-         memberVolunteer.webp
-         memberWithMembership.webp
-         circusMember.webp
-         super_admin.webp
-         admin.webp
-         adminUser.webp
-         logo.webp
-         logo.webp
-         circo-admin.webp
-         volunteer.webp
-       ] %>
-    <% hero_pool = available_hero_images(except: excluded_images) %>
-    <% needed = [12 - base_images.size, 0].max %>
-    <% dynamic_hero_images = hero_pool.sample([needed, hero_pool.size].min) %>
-    <% image_files = (base_images + dynamic_hero_images).uniq.first(12) %>
+<%
+  excluded_avatars = %w[users.png userPicture.webp placeholder_avatar.webp memberVolunteer.webp
+                        memberWithMembership.webp circusMember.webp super_admin.webp admin.webp
+                        adminUser.webp circo-admin.webp volunteer.webp logo.webp]
+  base_images = %w[lelieu1.webp lelieu2.webp circus-img2.webp graff-img1.webp
+                   flowersZoomed.webp background.webp]
+  hero_pool   = available_hero_images(except: excluded_avatars + base_images)
+  extra       = hero_pool.sample([18 - base_images.size, hero_pool.size].min)
+  image_files = (base_images + extra).uniq.first(18)
+%>
 
+<section class="mb-12 fade-in">
+
+  <%# ── Grille masonry CSS columns ── %>
+  <div class="columns-2 md:columns-3 gap-3">
+    <% image_files.each_with_index do |image, index| %>
+      <a href="#galerie-photo-<%= index %>"
+         class="block break-inside-avoid mb-3 group relative overflow-hidden rounded-xl shadow-sm cursor-zoom-in"
+         aria-label="Agrandir la photo <%= index + 1 %> sur <%= image_files.size %>">
+        <%= image_tag asset_path(image),
+                      alt: "Photo du Circographe",
+                      class: "w-full h-auto block object-cover transition-transform duration-500 group-hover:scale-[1.025]",
+                      loading: (index < 6 ? "eager" : "lazy"),
+                      decoding: "async" %>
+        <div class="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300 rounded-xl">
+          <div class="absolute bottom-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+            <span class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-white/20 backdrop-blur-sm">
+              <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 1 0 5.197 5.197a7.5 7.5 0 0 0 10.607 10.607ZM10.5 7.5v6m-3-3h6"/>
+              </svg>
+            </span>
+          </div>
+        </div>
+      </a>
+    <% end %>
+  </div>
+
+  <%# ── Lightboxes pure CSS :target (hors flux de colonnes) ── %>
   <% image_files.each_with_index do |image, index| %>
-    <div class="relative fade-in">
-      <%= image_tag asset_path(image),
-                    alt: "Image du Circographe",
-                    class: "w-full h-64 object-cover rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300",
-                    loading: (index.zero? ? "eager" : "lazy"),
-                    decoding: "async" %>
+    <div id="galerie-photo-<%= index %>"
+         class="fixed inset-0 z-[200] opacity-0 pointer-events-none target:opacity-100 target:pointer-events-auto transition-opacity duration-200"
+         style="background: rgba(0,0,0,0.92)">
+
+      <%# Fond transparent — clic partout ferme la lightbox %>
+      <a href="#" class="absolute inset-0" aria-label="Fermer la photo agrandie"></a>
+
+      <%# Image centrée — pointer-events-none sur wrapper pour que les clics autour de l'image atteignent le fond %>
+      <div class="absolute inset-0 flex items-center justify-center p-4 sm:p-12 pointer-events-none">
+        <%= image_tag asset_path(image),
+                      alt: "Photo du Circographe agrandie",
+                      class: "max-w-full max-h-[88vh] object-contain rounded-lg shadow-2xl pointer-events-auto",
+                      loading: "lazy",
+                      decoding: "async" %>
+      </div>
+
+      <%# Bouton fermer ─ au-dessus du fond via z-10 %>
+      <a href="#"
+         class="absolute top-4 right-4 z-10 w-10 h-10 flex items-center justify-center rounded-full bg-white/15 hover:bg-white/30 text-white transition-colors"
+         aria-label="Fermer">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+        </svg>
+      </a>
+
+      <%# Compteur discret %>
+      <p class="absolute bottom-4 left-1/2 -translate-x-1/2 text-xs text-white/50 tabular-nums pointer-events-none">
+        <%= index + 1 %> / <%= image_files.size %>
+      </p>
     </div>
   <% end %>
-</div>
+
+</section>

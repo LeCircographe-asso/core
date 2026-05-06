@@ -6,6 +6,8 @@ class Payment < ApplicationRecord
   include Statusable
   include Dateable
 
+  attr_accessor :allow_hard_delete
+
   # Relations — voir docs/domain_model.md et docs/payments.md.
   belongs_to :person
   belongs_to :recorded_by, class_name: "User"
@@ -22,6 +24,9 @@ class Payment < ApplicationRecord
   # Callbacks legacy supprimés : la création/mise à jour cascade passe désormais par les services People::*.
   after_update :log_status_change, if: -> { saved_change_to_status? }
   after_update :invalidate_totals_cache, if: -> { saved_change_to_total_cents? }
+  before_destroy :prevent_hard_delete, unless: :allow_hard_delete?
+  before_destroy :log_hard_delete, if: :allow_hard_delete?
+  before_destroy :invalidate_totals_cache
 
   # Scope to get active (non-cancelled) payments
   scope :active, -> { where.not(status: :cancel) }
@@ -163,15 +168,14 @@ class Payment < ApplicationRecord
     status != "cancel"
   end
 
-  # Override destroy method to ensure audit trail
-  def destroy
-    PaymentAuditLog.log(self, recorded_by, "delete")
-
-    # Invalidate cache
-    Rails.cache.delete("total_successful_payments")
-    Rails.cache.delete("total_donations")
-
-    super
+  # Intention explicite requise pour les suppressions physiques résiduelles.
+  def hard_delete!(actor: recorded_by)
+    self.allow_hard_delete = true
+    @hard_delete_actor = actor || recorded_by
+    destroy!
+  ensure
+    self.allow_hard_delete = false
+    remove_instance_variable(:@hard_delete_actor) if instance_variable_defined?(:@hard_delete_actor)
   end
 
   # Anonymization for GDPR compliance
@@ -189,4 +193,19 @@ class Payment < ApplicationRecord
   end
 
   scope :anonymized, -> { where.not(anonymized_at: nil) }
+
+  private
+
+  def allow_hard_delete?
+    ActiveModel::Type::Boolean.new.cast(allow_hard_delete)
+  end
+
+  def prevent_hard_delete
+    errors.add(:base, "Hard delete is forbidden; use People::PaymentCanceller")
+    throw(:abort)
+  end
+
+  def log_hard_delete
+    PaymentAuditLog.log(self, @hard_delete_actor || recorded_by, "delete")
+  end
 end

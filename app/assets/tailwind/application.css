@@ -10,6 +10,7 @@
  *
  * Preflight img { max-width: 100% } breaks tiles — reset inside maps only.
  */
+
 .leaflet-container img {
   max-width: none !important;
 }
@@ -24,7 +25,15 @@
   inset: 0 !important;
   width: 100% !important;
   height: 100% !important;
+}
+
+.leaflet-map-shell-inner.leaflet-container:focus:not(:focus-visible) {
   outline: none;
+}
+
+.leaflet-map-shell-inner.leaflet-container:focus-visible {
+  outline: 3px solid #1F5C55;
+  outline-offset: 2px;
 }
 
 @import "./components/buttons.css";

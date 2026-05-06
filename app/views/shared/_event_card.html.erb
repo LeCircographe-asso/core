@@ -1,34 +1,32 @@
-<div class="flex justify-center items-center h-full">
-    <div class="w-full max-w-[320px] mx-2">
-        <div class="relative flex flex-col h-[400px] rounded-xl bg-white shadow-lg">
+<div class="w-full rounded-2xl bg-white shadow-md overflow-hidden flex flex-col">
+  <div class="aspect-[3/2] overflow-hidden bg-gray-100 shrink-0">
+    <%= image_tag(
+          event.picture_url.presence || hero_image("event_card_#{event.id || event.object_id}".to_sym),
+          alt: event.title,
+          class: "w-full h-full object-cover transition-transform duration-300 hover:scale-105",
+          loading: "lazy",
+          decoding: "async"
+        ) %>
+  </div>
 
-            <div class="relative aspect-[4/3] overflow-hidden">
-                <%= image_tag(
-                      event.picture_url.presence || hero_image("event_card_#{event.id || event.object_id}".to_sym),
-                      alt: event.title,
-                      class: "w-full h-[250px] object-cover rounded-xl",
-                      loading: "lazy",
-                      decoding: "async"
-                    ) %>
-                <div class="absolute inset-0 w-full h-full bg-gradient-to-tr from-transparent via-transparent to-black/60"></div>
-            </div>
+  <div class="flex flex-col flex-1 p-5 gap-3">
+    <h5 class="text-lg font-semibold text-gray-900 leading-snug line-clamp-2">
+      <%= event.title %>
+    </h5>
+    <% description = event.middle_description.presence || event.upper_description.presence || event.description.presence %>
+    <% if description.present? %>
+      <p class="text-sm text-gray-600 leading-normal line-clamp-3 flex-1"><%= description %></p>
+    <% end %>
+    <% if event.date.present? %>
+      <p class="text-xs font-medium text-brand-primary/70 uppercase tracking-[0.15em]">
+        <%= l(event.date.in_time_zone(Time.zone), format: "%d %B %Y") %>
+      </p>
+    <% end %>
+  </div>
 
-            <div class="p-6 flex-grow overflow-hidden">
-                <div class="flex items-center justify-between mb-3">
-                    <h5 class="block font-sans text-xl antialiased font-medium leading-snug tracking-normal text-blue-gray-900">
-                        <%= event.title %>
-                    </h5>
-                </div>
-                <p class="block font-sans text-base antialiased font-light leading-relaxed text-gray-700">
-                    <%= event.middle_description %>
-                </p>
-            </div>
-
-            <div class="p-6 pt-3">
-                <%= link_to "Voir l'événement", event_path(event), 
-                     class: "block w-full select-none rounded-lg bg-[#1F5C55] py-3.5 px-7 text-center align-middle font-sans text-sm font-bold uppercase text-white shadow-md border-2 border-[#1F5C55] transition-colors duration-300 hover:bg-gray-100 hover:text-[#1F5C55] hover:border-[#1F5C55] hover:shadow-lg focus:opacity-[0.85] active:opacity-[0.85] disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none",
-                     data: { turbo_frame: "_top" } %>
-            </div>
-        </div>
-    </div>
+  <div class="px-5 pb-5">
+    <%= link_to "Voir l'événement", event_path(event),
+         class: "block w-full text-center rounded-xl bg-brand-primary py-2.5 text-sm font-semibold text-white transition-colors duration-300 hover:bg-[#194A45] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-primary",
+         data: { turbo_frame: "_top" } %>
+  </div>
 </div>

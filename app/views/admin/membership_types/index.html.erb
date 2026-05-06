@@ -14,182 +14,86 @@
       </div>
     </div>
 
-    <!-- Liste des types d'adhésion -->
-    <div class="surface-card p-4 md:p-6 lg:hidden">
+    <div class="grid grid-cols-1 gap-4 max-w-4xl mx-auto">
+      <% @membership_types.each do |membership_type| %>
+        <div class="bg-white rounded-lg shadow-md border border-gray-200 p-4 hover:shadow-lg transition-shadow duration-200">
+          <div class="flex justify-between items-start mb-3">
+            <div class="flex-1">
+              <h3 class="text-lg font-semibold text-gray-900 mb-1"><%= membership_type.name %></h3>
+              <div class="flex items-center space-x-2">
+                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
+                  <%= case membership_type.category
+                      when 'basic' then 'bg-blue-100 text-blue-800'
+                      when 'circus' then 'bg-green-100 text-green-800'
+                      when 'event' then 'bg-yellow-100 text-yellow-800'
+                      else 'bg-gray-100 text-gray-800'
+                      end %>">
+                  <%= membership_type.category_humanized %>
+                </span>
+                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium <%= membership_type.rate_kind_badge_class %>">
+                  <%= membership_type.rate_kind_humanized %>
+                </span>
+                <span class="text-sm text-gray-500">
+                  <%= membership_type.memberships.count %> membres
+                </span>
+              </div>
+            </div>
+            <div class="text-right">
+              <div class="text-xl font-bold text-[#1F5C55]"><%= membership_type.price_euros %>€</div>
+            </div>
+          </div>
 
-      <!-- Mobile-first card layout with max width constraint -->
-      <div class="grid grid-cols-1 gap-4 max-w-4xl mx-auto">
-        <% @membership_types.each do |membership_type| %>
-          <div class="bg-white rounded-lg shadow-md border border-gray-200 p-4 hover:shadow-lg transition-shadow duration-200">
-            <!-- Card Header -->
-            <div class="flex justify-between items-start mb-3">
-              <div class="flex-1">
-                <h3 class="text-lg font-semibold text-gray-900 mb-1"><%= membership_type.name %></h3>
-                <div class="flex items-center space-x-2">
-                  <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
-                    <%= case membership_type.category
-                        when 'basic' then 'bg-blue-100 text-blue-800'
-                        when 'circus' then 'bg-green-100 text-green-800'
-                        when 'event' then 'bg-yellow-100 text-yellow-800'
-                        else 'bg-gray-100 text-gray-800'
-                        end %>">
-                    <%= membership_type.category_humanized %>
-                  </span>
-                  <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium <%= membership_type.rate_kind_badge_class %>">
-                    <%= membership_type.rate_kind_humanized %>
-                  </span>
-                  <span class="text-sm text-gray-500">
-                    <%= membership_type.memberships.count %> membres
-                  </span>
-                </div>
-              </div>
-              <div class="text-right">
-                <div class="text-xl font-bold text-[#1F5C55]"><%= membership_type.price_euros %>€</div>
-              </div>
-            </div>
-            
-            <!-- Description -->
-            <div class="mb-4">
-              <p class="text-sm text-gray-600 leading-relaxed"><%= membership_type.description %></p>
-            </div>
-            
-            <!-- Actions -->
-            <div class="flex justify-end space-x-2">
-              <%= link_to edit_admin_membership_type_path(membership_type), 
-                  class: "inline-flex items-center px-3 py-2 text-sm font-medium text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors duration-200",
-                  title: "Modifier" do %>
-                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
-                </svg>
-                Modifier
-              <% end %>
-              
-              <% if membership_type.memberships.empty? %>
-                <% if Current.user&.system_role == 'super_admin' %>
-                  <%= button_to admin_membership_type_path(membership_type), 
-                      method: :delete,
-                      form: { data: { turbo_confirm: "Êtes-vous sûr de vouloir supprimer ce type d'adhésion ?" } },
-                      class: "inline-flex items-center px-3 py-2 text-sm font-medium text-red-600 bg-red-50 hover:bg-red-100 rounded-lg transition-colors duration-200",
-                      title: "Supprimer" do %>
-                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
-                    </svg>
-                    Supprimer
-                  <% end %>
-                <% else %>
-                  <span class="inline-flex items-center px-3 py-2 text-sm font-medium text-gray-400 bg-gray-50 rounded-lg cursor-not-allowed" 
-                        data-controller="tooltip" 
-                        data-tooltip-content-value="Seul le super-admin peut supprimer des types d'adhésion"
-                        title="Seul le super-admin peut supprimer des types d'adhésion">
-                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
-                    </svg>
-                    Supprimer
-                  </span>
+          <div class="mb-4">
+            <p class="text-sm text-gray-600 leading-relaxed"><%= membership_type.description %></p>
+          </div>
+
+          <div class="flex justify-end space-x-2">
+            <%= link_to edit_admin_membership_type_path(membership_type),
+                class: "inline-flex items-center px-3 py-2 text-sm font-medium text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors duration-200",
+                title: "Modifier" do %>
+              <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+              </svg>
+              Modifier
+            <% end %>
+
+            <% if membership_type.memberships.empty? %>
+              <% if Current.user&.system_role == 'super_admin' %>
+                <%= button_to admin_membership_type_path(membership_type),
+                    method: :delete,
+                    form: { data: { turbo_confirm: "Êtes-vous sûr de vouloir supprimer ce type d'adhésion ?" } },
+                    class: "inline-flex items-center px-3 py-2 text-sm font-medium text-red-600 bg-red-50 hover:bg-red-100 rounded-lg transition-colors duration-200",
+                    title: "Supprimer" do %>
+                  <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                  </svg>
+                  Supprimer
                 <% end %>
               <% else %>
-                <span class="inline-flex items-center px-3 py-2 text-sm font-medium text-gray-400 bg-gray-50 rounded-lg cursor-not-allowed" 
-                      data-controller="tooltip" 
-                      data-tooltip-content-value="Impossible de supprimer - utilisé par des membres"
-                      title="Impossible de supprimer - utilisé par des membres">
+                <span class="inline-flex items-center px-3 py-2 text-sm font-medium text-gray-400 bg-gray-50 rounded-lg cursor-not-allowed"
+                      data-controller="tooltip"
+                      data-tooltip-content-value="Seul le super-admin peut supprimer des types d'adhésion"
+                      title="Seul le super-admin peut supprimer des types d'adhésion">
                   <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
                   </svg>
                   Supprimer
                 </span>
               <% end %>
-            </div>
-          </div>
-        <% end %>
-      </div>
-    </div>
-
-    <!-- Version pour écrans larges (sans conteneur blanc) -->
-    <div class="hidden lg:block">
-      <div class="grid grid-cols-1 gap-4 max-w-4xl mx-auto">
-        <% @membership_types.each do |membership_type| %>
-          <div class="bg-white rounded-lg shadow-md border border-gray-200 p-4 hover:shadow-lg transition-shadow duration-200">
-            <!-- Card Header -->
-            <div class="flex justify-between items-start mb-3">
-              <div class="flex-1">
-                <h3 class="text-lg font-semibold text-gray-900 mb-1"><%= membership_type.name %></h3>
-                <div class="flex items-center space-x-2">
-                  <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
-                    <%= case membership_type.category
-                        when 'basic' then 'bg-blue-100 text-blue-800'
-                        when 'circus' then 'bg-green-100 text-green-800'
-                        when 'event' then 'bg-yellow-100 text-yellow-800'
-                        else 'bg-gray-100 text-gray-800'
-                        end %>">
-                    <%= membership_type.category_humanized %>
-                  </span>
-                  <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium <%= membership_type.rate_kind_badge_class %>">
-                    <%= membership_type.rate_kind_humanized %>
-                  </span>
-                  <span class="text-sm text-gray-500">
-                    <%= membership_type.memberships.count %> membres
-                  </span>
-                </div>
-              </div>
-              <div class="text-right">
-                <div class="text-xl font-bold text-[#1F5C55]"><%= membership_type.price_euros %>€</div>
-              </div>
-            </div>
-            
-            <!-- Description -->
-            <div class="mb-4">
-              <p class="text-sm text-gray-600 leading-relaxed"><%= membership_type.description %></p>
-            </div>
-            
-            <!-- Actions -->
-            <div class="flex justify-end space-x-2">
-              <%= link_to edit_admin_membership_type_path(membership_type), 
-                  class: "inline-flex items-center px-3 py-2 text-sm font-medium text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors duration-200",
-                  title: "Modifier" do %>
+            <% else %>
+              <span class="inline-flex items-center px-3 py-2 text-sm font-medium text-gray-400 bg-gray-50 rounded-lg cursor-not-allowed"
+                    data-controller="tooltip"
+                    data-tooltip-content-value="Impossible de supprimer - utilisé par des membres"
+                    title="Impossible de supprimer - utilisé par des membres">
                 <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
                 </svg>
-                Modifier
-              <% end %>
-              
-              <% if membership_type.memberships.empty? %>
-                <% if Current.user&.system_role == 'super_admin' %>
-                  <%= button_to admin_membership_type_path(membership_type), 
-                      method: :delete,
-                      form: { data: { turbo_confirm: "Êtes-vous sûr de vouloir supprimer ce type d'adhésion ?" } },
-                      class: "inline-flex items-center px-3 py-2 text-sm font-medium text-red-600 bg-red-50 hover:bg-red-100 rounded-lg transition-colors duration-200",
-                      title: "Supprimer" do %>
-                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
-                    </svg>
-                    Supprimer
-                  <% end %>
-                <% else %>
-                  <span class="inline-flex items-center px-3 py-2 text-sm font-medium text-gray-400 bg-gray-50 rounded-lg cursor-not-allowed" 
-                        data-controller="tooltip" 
-                        data-tooltip-content-value="Seul le super-admin peut supprimer des types d'adhésion"
-                        title="Seul le super-admin peut supprimer des types d'adhésion">
-                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
-                    </svg>
-                    Supprimer
-                  </span>
-                <% end %>
-              <% else %>
-                <span class="inline-flex items-center px-3 py-2 text-sm font-medium text-gray-400 bg-gray-50 rounded-lg cursor-not-allowed" 
-                      data-controller="tooltip" 
-                      data-tooltip-content-value="Impossible de supprimer - utilisé par des membres"
-                      title="Impossible de supprimer - utilisé par des membres">
-                  <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
-                  </svg>
-                  Supprimer
-                </span>
-              <% end %>
-            </div>
+                Supprimer
+              </span>
+            <% end %>
           </div>
-        <% end %>
-      </div>
+        </div>
+      <% end %>
     </div>
 
     <!-- Actions -->
