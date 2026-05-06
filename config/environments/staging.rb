@@ -41,6 +41,9 @@ Rails.application.configure do
     protocol: "https"
   }
 
+  # Active Storage
+  config.active_storage.service = :local
+
   # Database
   config.active_record.dump_schema_after_migration = false
 
