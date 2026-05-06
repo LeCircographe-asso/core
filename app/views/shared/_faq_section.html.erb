@@ -4,21 +4,23 @@
 <% footer = local_assigns[:footer] %>
 <% id = local_assigns.fetch(:id, "faq-section") %>
 <% faqs = local_assigns.fetch(:faqs, []) %>
+<% card_class = local_assigns.fetch(:card_class, "public-surface p-6 sm:p-8") %>
+<% centered = local_assigns.fetch(:header_align, "center") != "left" %>
 
-<section class="public-surface p-6 sm:p-8" aria-labelledby="<%= id %>" data-controller="accordion" data-accordion-animate-value="true">
-  <header class="text-center mb-6 space-y-2">
+<section class="<%= card_class %>" aria-labelledby="<%= id %>" data-controller="accordion" data-accordion-animate-value="true">
+  <header class="<%= centered ? 'text-center' : 'text-left' %> mb-6 space-y-2">
     <% if label.present? %>
       <p class="text-sm uppercase tracking-[0.3em] text-brand-primary/70"><%= label %></p>
     <% end %>
     <h2 id="<%= id %>" class="text-2xl font-semibold text-gray-800"><%= title %></h2>
     <% if subtitle.present? %>
-      <p class="text-gray-600 max-w-2xl mx-auto"><%= subtitle %></p>
+      <p class="text-gray-600 <%= centered ? 'max-w-2xl mx-auto' : 'max-w-prose' %>"><%= subtitle %></p>
     <% end %>
   </header>
 
   <div class="space-y-4">
     <% faqs.each_with_index do |faq, index| %>
-      <div class="group p-4 bg-white border border-gray-100 rounded-2xl shadow-sm transition hover:border-[#1F5C55]/40 hover:shadow-md focus-within:border-[#1F5C55]/40 focus-within:shadow-md">
+      <div class="group p-4 bg-white border border-gray-100 rounded-2xl shadow-sm transition hover:border-[#1F5C55]/40 focus-within:border-[#1F5C55]/40">
         <h3 id="<%= id %>-heading-<%= index %>">
           <button type="button"
                   class="flex items-center justify-between w-full text-left text-lg font-semibold text-gray-800 transition-colors group-hover:text-[#1F5C55] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#5836A5] focus-visible:ring-offset-2 focus-visible:ring-offset-white rounded-xl px-1 py-1"
@@ -43,6 +45,6 @@
   </div>
 
   <% if footer.present? %>
-    <p class="mt-4 text-sm text-gray-500 text-center"><%= footer %></p>
+    <p class="mt-4 text-sm text-gray-500 <%= centered ? 'text-center' : 'text-left' %>"><%= footer %></p>
   <% end %>
 </section>
