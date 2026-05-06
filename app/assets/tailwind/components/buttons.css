@@ -19,7 +19,7 @@
   }
 
   .btn-primary {
-    @apply inline-flex items-center gap-2 rounded-full border-2 px-5 py-3 text-sm font-semibold transition-colors duration-300;
+    @apply inline-flex items-center gap-2 rounded-full border-2 px-5 py-3 text-sm font-medium transition-colors duration-300;
     background-color: var(--brand-primary);
     border-color: var(--brand-primary);
     color: #fff;
@@ -121,7 +121,7 @@
     @apply inline-flex items-center px-5 py-2.5 text-sm font-semibold rounded-full border transition-all duration-200 cursor-pointer;
     border-color: var(--brand-primary);
     color: var(--brand-primary);
-    background-color: color-mix(in srgb, var(--brand-primary) 8%, transparent);
+    background-color: color-mix(in srgb, var(--brand-primary) 10%, white);
   }
 
   .faq-tab:hover,
@@ -134,6 +134,38 @@
   .faq-tab:focus-visible {
     outline: 2px solid var(--brand-accent);
     outline-offset: 3px;
+  }
+
+  .mobile-nav-toggle {
+    @apply flex w-full items-center justify-between rounded-xl px-3 py-4 text-left font-medium text-gray-900 transition-colors duration-200 touch-manipulation;
+  }
+
+  .mobile-nav-toggle:hover,
+  .mobile-nav-toggle:focus-visible,
+  .mobile-nav-toggle:active {
+    background-color: rgba(31, 92, 85, 0.06);
+    color: var(--brand-primary);
+  }
+
+  .mobile-nav-toggle:focus-visible {
+    outline: 2px solid rgba(31, 92, 85, 0.35);
+    outline-offset: 2px;
+  }
+
+  .mobile-nav-link {
+    @apply flex w-full items-center rounded-xl px-3 py-3 text-left text-gray-800 transition-colors duration-200 touch-manipulation;
+  }
+
+  .mobile-nav-link:hover,
+  .mobile-nav-link:focus-visible,
+  .mobile-nav-link:active {
+    background-color: rgba(31, 92, 85, 0.06);
+    color: var(--brand-primary);
+  }
+
+  .mobile-nav-link:focus-visible {
+    outline: 2px solid rgba(31, 92, 85, 0.35);
+    outline-offset: 2px;
   }
 
   .admin-btn-primary {
@@ -181,7 +213,7 @@
   }
 
   .public-cta-pill {
-    @apply inline-flex items-center justify-center rounded-full border px-6 py-3 text-sm font-semibold shadow-md transition-colors duration-300;
+    @apply inline-flex items-center justify-center rounded-full border px-6 py-3 text-sm font-medium shadow-md transition-colors duration-300;
     background-color: var(--brand-primary);
     border-color: var(--brand-primary);
     color: #fff;
