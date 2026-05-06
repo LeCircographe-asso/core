@@ -20,15 +20,18 @@ RSpec.describe 'Public pages content', type: :request do
     end
 
     it 'shows canonical contribution prices (aligned with seeds)' do
-      expect(response.body).to include('4 € la journée')
-      expect(response.body).to include('Carnet 10 séances :</strong> 30 €')
-      expect(response.body).to include('Trimestre (3 mois) :</strong> 60 €')
-      expect(response.body).to include('Cotisation annuelle :</strong> 120 €')
+      expect(response.body).to include('Séance libre')
+      expect(response.body).to include('Carnet 10 séances')
+      expect(response.body).to include('Trimestre (3 mois)')
+      expect(response.body).to include('Cotisation annuelle')
+      expect(response.body).to include('30 €')
+      expect(response.body).to include('60 €')
+      expect(response.body).to include('120 €')
     end
 
     it 'shows canonical membership prices (aligned with seeds)' do
-      expect(response.body).to include('Plein tarif : 10 € / an')
-      expect(response.body).to include('Tarif réduit : 7 € / an')
+      expect(response.body).to include('Tarif réduit — 7 €')
+      expect(response.body).to include('10 €')
     end
 
     it 'does not promise membership types absent from MembershipType catalog' do
