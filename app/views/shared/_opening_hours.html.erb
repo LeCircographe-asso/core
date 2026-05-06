@@ -19,10 +19,11 @@
 
     <% if schedule.present? %>
       <table class="w-full border-collapse">
+        <caption class="sr-only">Horaires d'ouverture de la semaine</caption>
         <thead>
           <tr>
-            <th class="border-b-2 border-brand-primary/20 <%= head_py %> text-center text-sm font-medium text-gray-600">Jour</th>
-            <th class="border-b-2 border-brand-primary/20 <%= head_py %> text-center text-sm font-medium text-gray-600">Horaires</th>
+            <th scope="col" class="border-b-2 border-brand-primary/20 <%= head_py %> text-center text-sm font-medium text-gray-600">Jour</th>
+            <th scope="col" class="border-b-2 border-brand-primary/20 <%= head_py %> text-center text-sm font-medium text-gray-600">Horaires</th>
           </tr>
         </thead>
         <tbody>
