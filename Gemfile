@@ -36,7 +36,7 @@ gem "solid_queue"  # Database-backed job queue
 
 # Pagination
 # Pagy 43+ supprime extras/bootstrap et Pagy::Backend — migration non triviale ; rester en 6.x jusqu’à refonte.
-gem "pagy", "~> 6.5"
+gem "pagy", "~> 9.4"
 
 # API and External Services
 gem "jbuilder" # JSON API builder
