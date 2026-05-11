@@ -176,7 +176,7 @@
     <%# Panneau latéral : Horaires + Accès dans une seule carte %>
     <%
       schedule   = @opening_hours
-      updated_at = Rails.cache.fetch("opening_hours_updated_at")
+      updated_at = OpeningHour.latest_update_entry&.updated_at
     %>
     <div class="rounded-2xl border border-gray-100 bg-white shadow-sm overflow-hidden">
 

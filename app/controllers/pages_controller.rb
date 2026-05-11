@@ -23,7 +23,7 @@ class PagesController < ApplicationController
       return redirect_to page_path(target[:page], anchor: target[:anchor]), status: :moved_permanently
     end
 
-    @opening_hours = Rails.cache.fetch("opening_hours") || default_opening_hours
+    @opening_hours = current_opening_hours
     @notepad = Rails.cache.fetch("notepad") || default_notepad
     @blogs = Blog.order(created_at: :desc).limit(3)
 

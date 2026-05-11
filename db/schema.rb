@@ -250,11 +250,15 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_06_103539) do
   end
 
   create_table "opening_hours", force: :cascade do |t|
-    t.time "close_at", null: false
+    t.time "close_at"
+    t.boolean "closed", default: false, null: false
     t.datetime "created_at", null: false
     t.integer "day", null: false
-    t.time "open_at", null: false
+    t.time "open_at"
     t.datetime "updated_at", null: false
+    t.integer "updated_by_user_id"
+    t.index ["day"], name: "index_opening_hours_on_day", unique: true
+    t.index ["updated_by_user_id"], name: "index_opening_hours_on_updated_by_user_id"
   end
 
   create_table "payment_audit_logs", force: :cascade do |t|
@@ -406,6 +410,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_06_103539) do
   add_foreign_key "memberships", "membership_types"
   add_foreign_key "memberships", "people"
   add_foreign_key "newsletter_subscribers", "people", on_delete: :nullify
+  add_foreign_key "opening_hours", "users", column: "updated_by_user_id"
   add_foreign_key "payment_audit_logs", "payments"
   add_foreign_key "payment_audit_logs", "users"
   add_foreign_key "payment_lines", "payments"

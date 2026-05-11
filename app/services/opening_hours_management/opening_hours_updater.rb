@@ -20,9 +20,7 @@ module OpeningHoursManagement
         # Valider les horaires
         return failure("Erreur : l'heure de fermeture doit être après l'heure d'ouverture pour tous les jours ouverts.") unless valid_hours?(opening_hours)
 
-        # Sauvegarder dans le cache
-        Rails.cache.write("opening_hours", opening_hours)
-        Rails.cache.write("opening_hours_updated_at", Time.current)
+        OpeningHour.replace_schedule!(schedule_hash: opening_hours, updated_by_user: updated_by)
 
         # Instrumentation pour audit
         ActiveSupport::Notifications.instrument(

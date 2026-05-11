@@ -16,39 +16,41 @@ module Admin
     end
 
     def update
-      # Reconstruire les horaires à partir des sélecteurs individuels
-      updated_hours = {}
-      days = %w[lundi mardi mercredi jeudi vendredi samedi dimanche]
-
-      days.each do |day|
-        # Vérifier si le jour est fermé
-        closed_param = params["closed_#{day}"]
-        if closed_param == "1"
-          updated_hours[day] = "Fermé"
-        else
-          # Reconstruire les horaires à partir des sélecteurs
-          open_hour = params["open_hour_#{day}"].to_i
-          open_minute = params["open_minute_#{day}"].to_i
-          close_hour = params["close_hour_#{day}"].to_i
-          close_minute = params["close_minute_#{day}"].to_i
-
-          updated_hours[day] = "#{open_hour.to_s.rjust(2, '0')}:#{open_minute.to_s.rjust(2, '0')} - #{close_hour.to_s.rjust(2, '0')}:#{close_minute.to_s.rjust(2, '0')}"
-        end
-      end
-
-      # Persist via cache for now (can be moved to a Setting model later)
-      Rails.cache.write("opening_hours", updated_hours)
+      updated_hours = build_schedule_params
+      OpeningHour.replace_schedule!(schedule_hash: updated_hours, updated_by_user: current_user)
       redirect_to admin_opening_hours_path, notice: t(".success")
+    rescue ActiveRecord::RecordInvalid, ArgumentError => e
+      @opening_hours = updated_hours || current_opening_hours
+      @error_message = e.record&.errors&.full_messages&.to_sentence || e.message
+      render :edit, status: :unprocessable_content
     end
 
     private
 
     def set_opening_hours
-      @opening_hours = Rails.cache.fetch("opening_hours") || default_opening_hours
+      @opening_hours = current_opening_hours
     end
 
     def set_breadcrumbs
       # No need to add dashboard breadcrumb as it's already in the partial
+    end
+
+    def build_schedule_params
+      OpeningHour::DAYS.keys.each_with_object({}) do |day, updated_hours|
+        day_name = day.to_s
+
+        updated_hours[day_name] =
+          if params["closed_#{day_name}"] == "1"
+            "Fermé"
+          else
+            open_hour = params["open_hour_#{day_name}"].to_i
+            open_minute = params["open_minute_#{day_name}"].to_i
+            close_hour = params["close_hour_#{day_name}"].to_i
+            close_minute = params["close_minute_#{day_name}"].to_i
+
+            "#{open_hour.to_s.rjust(2, '0')}:#{open_minute.to_s.rjust(2, '0')} - #{close_hour.to_s.rjust(2, '0')}:#{close_minute.to_s.rjust(2, '0')}"
+          end
+      end
     end
   end
 end

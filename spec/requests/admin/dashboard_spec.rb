@@ -50,12 +50,12 @@ RSpec.describe 'Admin::Dashboard', type: :request do
         expect(response).to have_http_status(:success)
       end
 
-      it 'loads cached opening_hours' do
-        hours = { 'monday' => '09:00 - 17:00' }
-        Rails.cache.write('opening_hours', hours)
+      it 'loads opening_hours from the database' do
+        create(:opening_hour, day: :mardi, open_at: '09:00', close_at: '17:00', updated_by_user: admin)
 
         get admin_dashboard_index_path
         expect(response).to have_http_status(:success)
+        expect(response.body).to include('09:00 - 17:00')
       end
     end
   end
