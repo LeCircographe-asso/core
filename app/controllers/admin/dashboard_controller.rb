@@ -7,7 +7,7 @@ module Admin
 
     def index
       @notepad = Rails.cache.fetch("notepad") || default_notepad
-      @opening_hours = Rails.cache.fetch("opening_hours") || default_opening_hours
+      @opening_hours = current_opening_hours
       @stats = build_dashboard_stats
     end
 
