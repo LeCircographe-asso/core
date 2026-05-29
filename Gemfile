@@ -17,7 +17,7 @@ gem "sqlite3", ">= 2.1"
 gem "tzinfo-data", platforms: %i[windows jruby] # Timezone data
 
 # Asset Pipeline and Frontend
-gem "image_processing", "~> 1.2" # For Active Storage image processing
+gem "image_processing", "~> 2.0" # For Active Storage image processing
 gem "importmap-rails" # JavaScript module imports
 gem "propshaft" # Modern asset pipeline
 gem "stimulus-rails" # Hotwire's JavaScript framework
@@ -36,7 +36,7 @@ gem "solid_queue"  # Database-backed job queue
 
 # Pagination
 # Pagy 43+ supprime extras/bootstrap et Pagy::Backend — migration non triviale ; rester en 6.x jusqu’à refonte.
-gem "pagy", "~> 6.5"
+gem "pagy", "~> 9.4"
 
 # API and External Services
 gem "jbuilder" # JSON API builder
