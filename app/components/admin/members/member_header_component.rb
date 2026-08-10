@@ -23,35 +23,13 @@ module Admin
         user&.email_address || person.email
       end
 
-      def role_text
-        return "Sans compte web" if user.nil?
-
-        case user.system_role
-        when "volunteer" then "Bénévole"
-        when "super_admin" then "Super Admin"
-        when "admin" then "Admin"
-        when "web_visitor" then "Visiteur Web"
-        else user.system_role.humanize
-        end
-      end
-
+      # Source unique : Roleable#avatar_filename / #avatar_alt (User).
       def avatar_image
-        case user&.system_role
-        when "super_admin" then "super_admin.webp"
-        when "admin" then "admin.webp"
-        when "volunteer" then "volunteer.webp"
-        else "users.png"
-        end
+        user&.avatar_filename || Roleable::DEFAULT_AVATAR.first
       end
 
       def avatar_alt
-        case user&.system_role
-        when "super_admin" then "Avatar Super Admin"
-        when "admin" then "Avatar Admin"
-        when "volunteer" then "Avatar Bénévole"
-        when "web_visitor" then "Avatar Utilisateur"
-        else "Avatar"
-        end
+        user&.avatar_alt || Roleable::DEFAULT_AVATAR.last
       end
 
       def crown?

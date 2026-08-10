@@ -3,6 +3,16 @@
 module Roleable
   extend ActiveSupport::Concern
 
+  # [filename sous app/assets/images, alt text] — source unique, utilisée par
+  # MembershipCardHelper et Admin::Members::MemberHeaderComponent.
+  AVATARS = {
+    "super_admin" => [ "super_admin.webp", "Avatar Super administrateur" ],
+    "admin" => [ "admin.webp", "Avatar Administrateur" ],
+    "volunteer" => [ "volunteer.webp", "Avatar Bénévole" ],
+    "web_visitor" => [ "users.png", "Avatar Visiteur web" ]
+  }.freeze
+  DEFAULT_AVATAR = [ "users.png", "Avatar" ].freeze
+
   # Humanization des rôles
   def role_humanized
     case system_role
@@ -12,6 +22,14 @@ module Roleable
     when "web_visitor" then "Visiteur web"
     else system_role.humanize
     end
+  end
+
+  def avatar_filename
+    avatar_source_and_alt.first
+  end
+
+  def avatar_alt
+    avatar_source_and_alt.last
   end
 
   # Les prédicats de rôle exact (super_admin?, admin?, volunteer?, web_visitor?)
@@ -60,26 +78,9 @@ module Roleable
     super_admin? || admin?
   end
 
-  # Méthodes de classe pour les humanizations
-  class_methods do
-    def humanize_role(role)
-      case role.to_s
-      when "super_admin" then "Super administrateur"
-      when "admin" then "Administrateur"
-      when "volunteer" then "Bénévole"
-      when "web_visitor" then "Visiteur web"
-      else role.to_s.humanize
-      end
-    end
+  private
 
-    def role_badge_class(role)
-      case role.to_s
-      when "super_admin" then "bg-purple-100 text-purple-800"
-      when "admin" then "bg-blue-100 text-blue-800"
-      when "volunteer" then "bg-green-100 text-green-800"
-      when "web_visitor" then "bg-gray-100 text-gray-800"
-      else "bg-gray-100 text-gray-800"
-      end
-    end
+  def avatar_source_and_alt
+    AVATARS.fetch(system_role, DEFAULT_AVATAR)
   end
 end
