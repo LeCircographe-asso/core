@@ -7,7 +7,7 @@ class ContributionFormula < ApplicationRecord
   include Versionable
 
   belongs_to :membership_type
-  has_many :contributions, dependent: :destroy
+  has_many :contributions, dependent: :restrict_with_error
   belongs_to :created_by_user, class_name: "User", optional: true
 
   validates :name, presence: true, uniqueness: { scope: :version }

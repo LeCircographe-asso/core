@@ -21,9 +21,8 @@ module People
     end
 
     def validate!
-      raise "Seuls les bénévoles, admins et super-admins peuvent offrir des #{offer_type}s" unless allowed_actor?
+      raise "Seuls les admins et super-admins peuvent offrir des #{offer_type}s" unless allowed_actor?
       raise "Une raison doit être fournie pour offrir une #{offer_type}" if offer_reason.blank?
-      raise "Les bénévoles ne peuvent offrir que des cotisations 'journée'" if volunteer_limited_contribution?
 
       audit!
       true
@@ -35,10 +34,6 @@ module People
 
     def allowed_actor?
       recorded_by.can_offer_items?
-    end
-
-    def volunteer_limited_contribution?
-      recorded_by.volunteer? && offer_type == "contribution" && contribution_formula&.duration != "day"
     end
 
     def audit!

@@ -161,13 +161,26 @@ RSpec.describe ContributionFormula, type: :model do
       expect(plan.contributions).to include(entry1, entry2)
     end
 
-    it 'destroys contributions when deleted' do
+    it 'blocks deletion when contributions exist (no cascade data loss)' do
       person = create(:person)
       create(:contribution, person: person, contribution_formula: plan)
 
       expect do
         plan.destroy
-      end.to change(Contribution, :count).by(-1)
+      end.not_to change(Contribution, :count)
+
+      expect(plan.destroy).to be(false)
+      expect(plan.errors[:base]).to be_present
+    end
+
+    it 'allows deletion once no contribution references the formula' do
+      person = create(:person)
+      contribution = create(:contribution, person: person, contribution_formula: plan)
+      contribution.destroy!
+
+      expect do
+        plan.destroy
+      end.to change(ContributionFormula, :count).by(-1)
     end
   end
 

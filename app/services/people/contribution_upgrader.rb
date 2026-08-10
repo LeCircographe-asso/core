@@ -153,19 +153,23 @@ module People
       formula = contribution.contribution_formula
 
       case formula.duration
-      when "pack10"
-        0
       when "trimester"
-        total_days = 90
-        days_remaining = (contribution.expires_at.to_date - Date.current).to_i
-        (formula.price_cents * days_remaining / total_days.to_f).round
+        prorated_credit(formula.price_cents, contribution.expires_at, total_days: 90)
       when "annual"
-        total_days = 365
-        days_remaining = (contribution.expires_at.to_date - Date.current).to_i
-        (formula.price_cents * days_remaining / total_days.to_f).round
+        prorated_credit(formula.price_cents, contribution.expires_at, total_days: 365)
       else
         0
       end
+    end
+
+    # Jamais de crédit négatif : une cotisation déjà expirée au calendrier (mais dont
+    # le statut n'a pas encore basculé vers "expired") ne doit pas transformer le
+    # crédit en surcoût pour la personne qui upgrade.
+    def prorated_credit(price_cents, expires_at, total_days:)
+      days_remaining = (expires_at.to_date - Date.current).to_i
+      return 0 if days_remaining.negative?
+
+      (price_cents * days_remaining / total_days.to_f).round
     end
 
     def person_identifier_present

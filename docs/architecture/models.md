@@ -197,6 +197,13 @@ Trade-off accepté (flexibilité > intégrité référentielle) mais à garder e
 
 La colonne `people.newsletter_subscribed` a été supprimée (absente de `db/schema.rb`). Seul `newsletter_unsubscribe_token` reste sur `Person` ; le consentement newsletter vit désormais uniquement dans `NewsletterSubscriber`.
 
+### 4.8 Versioning `MembershipType`/`ContributionFormula` — moitié branché
+
+`MembershipType#create_price_change!` / `ContributionFormula#create_price_change!` implémentent correctement le versioning (ferme la version courante, crée une nouvelle ligne) mais **ne sont appelés nulle part** dans l'app. `Admin::MembershipTypesController#update` / `Admin::ContributionFormulasController#update` font un `.update(params)` brut à la place — mutation directe d'une ligne potentiellement déjà référencée par des `Membership`/`Contribution` achetées, sans passer par le versioning prévu.
+
+- ✅ **Résolu** : `ContributionFormula has_many :contributions, dependent: :destroy` (cascade de suppression sur des achats réels) remplacé par `dependent: :restrict_with_error`, aligné sur `MembershipType has_many :memberships, dependent: :restrict_with_error`. Supprimer une formule déjà achetée est maintenant bloqué proprement au lieu d'effacer l'historique.
+- ⚠️ **Encore ouvert** : décider si `update` doit continuer à muter en place (nom/description) tout en routant les changements de `price_cents` vers `create_price_change!`, ou si l'édition du prix doit être bloquée une fois qu'il y a des achats (nouvelle formule à créer à la main). Discussion en cours.
+
 ## 5. Documentation liée
 
 - [`overview.md`](overview.md) — architecture générale Person/User, RGPD, ViewComponents.

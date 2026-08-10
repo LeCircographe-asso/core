@@ -9,9 +9,9 @@ module ApplicationHelper
       [ t("payment_methods.cash", default: "Espèces"), "cash" ],
       [ t("payment_methods.card", default: "Carte bancaire"), "card" ],
       [ t("payment_methods.cheque", default: "Chèque"), "cheque" ],
-      [ t("payment_methods.transfer", default: "Virement"), "transfer" ],
-      [ t("payment_methods.offered", default: "Offert"), "offered" ]
+      [ t("payment_methods.transfer", default: "Virement"), "transfer" ]
     ]
+    options << [ t("payment_methods.offered", default: "Offert"), "offered" ] if current_user&.can_offer_items?
     options << [ t("payment_methods.pending", default: "À payer plus tard"), "pending" ] if include_pending
     options
   end

@@ -20,4 +20,21 @@ RSpec.describe ApplicationHelper, type: :helper do
       expect(helper.news_carousel_image_sources(limit: 100).size).to eq(24)
     end
   end
+
+  describe "#payment_method_options" do
+    it "excludes 'offered' when there is no current_user" do
+      allow(helper).to receive(:current_user).and_return(nil)
+      expect(helper.payment_method_options.map(&:last)).not_to include("offered")
+    end
+
+    it "excludes 'offered' for a volunteer" do
+      allow(helper).to receive(:current_user).and_return(create(:user, :volunteer))
+      expect(helper.payment_method_options.map(&:last)).not_to include("offered")
+    end
+
+    it "includes 'offered' for an admin" do
+      allow(helper).to receive(:current_user).and_return(create(:user, :admin))
+      expect(helper.payment_method_options.map(&:last)).to include("offered")
+    end
+  end
 end

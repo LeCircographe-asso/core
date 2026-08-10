@@ -50,8 +50,10 @@ module Roleable
     super_admin? || admin? || volunteer?
   end
 
+  # Restreint aux admin/super_admin : seul un rôle d'administration peut offrir
+  # une adhésion/cotisation gratuite ou à prix réduit.
   def can_offer_items?
-    super_admin? || admin? || volunteer?
+    super_admin? || admin?
   end
 
   def can_edit_member_numbers?
