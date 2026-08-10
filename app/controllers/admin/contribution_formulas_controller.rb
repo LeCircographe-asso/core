@@ -2,7 +2,6 @@
 
 module Admin
   class ContributionFormulasController < BaseController
-    FORMULA_ATTRS = %i[name duration rate_kind price_cents description membership_type_id sessions_count validity_days].freeze
     PURCHASE_ATTRS = %i[
       person_id
       contribution_formula_id
@@ -14,13 +13,14 @@ module Admin
       donation_amount
     ].freeze
 
-    before_action :set_contribution_formula, only: %i[show edit update destroy]
+    before_action :set_contribution_formula, only: %i[show edit update destroy change_price archive]
     before_action :set_person, only: %i[new create]
     before_action :set_breadcrumbs
-    before_action :require_super_admin, only: %i[edit update destroy]
+    before_action :require_super_admin, only: %i[edit update destroy change_price archive]
 
     def index
-      @contribution_formulas = ContributionFormula.includes(:membership_type).order(:duration, :price_cents)
+      @contribution_formulas = ContributionFormula.current_versions.includes(:membership_type).order(:duration, :price_cents)
+      @archived_contribution_formulas = ContributionFormula.where.not(effective_until: nil).includes(:membership_type).order(effective_until: :desc)
       add_breadcrumb I18n.t("breadcrumbs.admin.contribution_formulas.catalog"), nil
     end
 
@@ -71,13 +71,32 @@ module Admin
       redirect_to new_admin_contribution_formula_path(person_id: @person.id)
     end
 
+    # Édition classique : jamais le prix, la version ou effective_from — ces
+    # champs identifient la ligne pour l'historique/la compta, ils passent
+    # uniquement par #change_price (create_price_change!). Voir docs/architecture/models.md §4.8.
     def update
-      if @contribution_formula.update(contribution_formula_params)
+      if @contribution_formula.update(contribution_formula_update_params)
         redirect_to admin_contribution_formulas_path, notice: t(".updated")
       else
         flash.now[:alert] = @contribution_formula.errors.full_messages.to_sentence
         render :edit, status: :unprocessable_content
       end
+    end
+
+    def change_price
+      new_price_cents = (params[:price].to_f * 100).round
+
+      @contribution_formula.create_price_change!(new_price_cents, reason: params[:reason], user: Current.user)
+      redirect_to admin_contribution_formulas_path, notice: t(".success")
+    rescue ActiveRecord::RecordInvalid => e
+      redirect_to edit_admin_contribution_formula_path(@contribution_formula), alert: t(".failure", message: e.message)
+    end
+
+    def archive
+      @contribution_formula.archive!(user: Current.user)
+      redirect_to admin_contribution_formulas_path, notice: t(".success")
+    rescue ActiveRecord::RecordInvalid => e
+      redirect_to admin_contribution_formulas_path, alert: t(".failure", message: e.message)
     end
 
     def destroy
@@ -112,8 +131,12 @@ module Admin
       end
     end
 
-    def contribution_formula_params
-      params.expect(contribution_formula: FORMULA_ATTRS)
+    # Édition classique : nom/description seulement. duration/rate_kind/
+    # membership_type_id/sessions_count/validity_days définissent ce que
+    # signifie la formule pour les Contribution déjà achetées — les changer en
+    # place réinterpréterait silencieusement un achat passé. Prix : #change_price.
+    def contribution_formula_update_params
+      params.expect(contribution_formula: %i[name description])
     end
 
     def contribution_purchase_params

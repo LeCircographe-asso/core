@@ -294,75 +294,146 @@ RSpec.describe ContributionFormula, type: :model do
       let(:admin_user) { create(:user, system_role: :admin) }
       let!(:current_plan) { create(:contribution_formula, membership_type: circus_membership_type, version: 1, effective_from: 1.month.ago) }
 
-      it 'creates a new version with incremented version number' do
-        new_plan = current_plan.create_price_change!(10_000)
+      context 'when the current version was never sold (no contributions)' do
+        it 'merges the price in place instead of creating a new version' do
+          result = current_plan.create_price_change!(10_000, reason: 'Correction', user: admin_user)
 
-        expect(new_plan.version).to eq(2)
-        expect(new_plan.price_cents).to eq(10_000)
-        expect(new_plan.name).to eq(current_plan.name)
-      end
-
-      it 'closes current version with effective_until set to day before new effective_from' do
-        new_effective_from = Date.current + 1.week
-        current_plan.create_price_change!(10_000, effective_from: new_effective_from)
-
-        current_plan.reload
-        expect(current_plan.effective_until).to eq(new_effective_from - 1.day)
-      end
-
-      it 'sets effective_from for new version' do
-        new_effective_from = Date.current + 1.week
-        new_plan = current_plan.create_price_change!(10_000, effective_from: new_effective_from)
-
-        expect(new_plan.effective_from).to eq(new_effective_from)
-      end
-
-      it 'sets effective_until to nil for new version' do
-        new_plan = current_plan.create_price_change!(10_000)
-
-        expect(new_plan.effective_until).to be_nil
-      end
-
-      it 'sets created_by_user when provided' do
-        new_plan = current_plan.create_price_change!(10_000, user: admin_user)
-
-        expect(new_plan.created_by_user).to eq(admin_user)
-      end
-
-      it 'sets change_reason when provided' do
-        reason = 'Inflation adjustment'
-        new_plan = current_plan.create_price_change!(10_000, reason: reason)
-
-        expect(new_plan.change_reason).to eq(reason)
-      end
-
-      context 'edge cases' do
-        it 'handles same day effective_from correctly' do
-          today = Date.current
-          plan = create(:contribution_formula, membership_type: circus_membership_type, effective_from: today)
-
-          plan.create_price_change!(10_000, effective_from: today)
-
-          plan.reload
-          expect(plan.effective_until.to_date).to eq(today - 1.day)
+          expect(result).to equal(current_plan)
+          expect(current_plan.reload.price_cents).to eq(10_000)
+          expect(current_plan.version).to eq(1)
+          expect(current_plan.effective_until).to be_nil
+          expect(current_plan.change_reason).to eq('Correction')
         end
 
-        it 'handles past effective_from date' do
-          past_date = 1.month.ago.to_date
-          current_plan.create_price_change!(10_000, effective_from: past_date)
-
-          current_plan.reload
-          expect(current_plan.effective_until.to_date).to eq(past_date - 1.day)
+        it 'does not create an additional ContributionFormula row' do
+          expect { current_plan.create_price_change!(10_000) }.not_to change(ContributionFormula, :count)
         end
 
-        it 'duplicates all attributes except version, price, dates, and user fields' do
+        it 'logs the merge in PriceChangeLog' do
+          expect { current_plan.create_price_change!(10_000, user: admin_user) }
+            .to change(PriceChangeLog, :count).by(1)
+
+          log = PriceChangeLog.last
+          expect(log.loggable).to eq(current_plan)
+          expect(log.action).to eq('merged')
+        end
+      end
+
+      context 'when the current version has already been sold (at least one contribution)' do
+        before { create(:contribution, contribution_formula: current_plan, person: create(:person)) }
+
+        it 'creates a new version with incremented version number' do
           new_plan = current_plan.create_price_change!(10_000)
 
+          expect(new_plan).not_to equal(current_plan)
+          expect(new_plan.version).to eq(2)
+          expect(new_plan.price_cents).to eq(10_000)
           expect(new_plan.name).to eq(current_plan.name)
-          expect(new_plan.duration).to eq(current_plan.duration)
-          expect(new_plan.description).to eq(current_plan.description)
-          expect(new_plan.membership_type).to eq(current_plan.membership_type)
         end
+
+        it 'closes current version with effective_until set to day before new effective_from' do
+          new_effective_from = Date.current + 1.week
+          current_plan.create_price_change!(10_000, effective_from: new_effective_from)
+
+          current_plan.reload
+          expect(current_plan.effective_until).to eq(new_effective_from - 1.day)
+        end
+
+        it 'does not change the price on the old (already sold) version' do
+          current_plan.create_price_change!(10_000)
+
+          expect(current_plan.reload.price_cents).not_to eq(10_000)
+        end
+
+        it 'sets effective_from for new version' do
+          new_effective_from = Date.current + 1.week
+          new_plan = current_plan.create_price_change!(10_000, effective_from: new_effective_from)
+
+          expect(new_plan.effective_from).to eq(new_effective_from)
+        end
+
+        it 'sets effective_until to nil for new version' do
+          new_plan = current_plan.create_price_change!(10_000)
+
+          expect(new_plan.effective_until).to be_nil
+        end
+
+        it 'sets created_by_user when provided' do
+          new_plan = current_plan.create_price_change!(10_000, user: admin_user)
+
+          expect(new_plan.created_by_user).to eq(admin_user)
+        end
+
+        it 'sets change_reason when provided' do
+          reason = 'Inflation adjustment'
+          new_plan = current_plan.create_price_change!(10_000, reason: reason)
+
+          expect(new_plan.change_reason).to eq(reason)
+        end
+
+        it 'logs the version fork in PriceChangeLog' do
+          expect { current_plan.create_price_change!(10_000, user: admin_user) }
+            .to change(PriceChangeLog, :count).by(1)
+
+          expect(PriceChangeLog.last.action).to eq('versioned')
+        end
+
+        context 'edge cases' do
+          it 'handles same day effective_from correctly' do
+            today = Date.current
+            plan = create(:contribution_formula, membership_type: circus_membership_type, effective_from: today)
+            create(:contribution, contribution_formula: plan, person: create(:person))
+
+            plan.create_price_change!(10_000, effective_from: today)
+
+            plan.reload
+            expect(plan.effective_until.to_date).to eq(today - 1.day)
+          end
+
+          it 'handles past effective_from date' do
+            past_date = 1.month.ago.to_date
+            current_plan.create_price_change!(10_000, effective_from: past_date)
+
+            current_plan.reload
+            expect(current_plan.effective_until.to_date).to eq(past_date - 1.day)
+          end
+
+          it 'duplicates all attributes except version, price, dates, and user fields' do
+            new_plan = current_plan.create_price_change!(10_000)
+
+            expect(new_plan.name).to eq(current_plan.name)
+            expect(new_plan.duration).to eq(current_plan.duration)
+            expect(new_plan.description).to eq(current_plan.description)
+            expect(new_plan.membership_type).to eq(current_plan.membership_type)
+          end
+        end
+      end
+    end
+
+    describe '#archive!' do
+      let!(:current_plan) { create(:contribution_formula, membership_type: circus_membership_type, effective_until: nil) }
+
+      it 'closes the current version without creating a replacement' do
+        expect { current_plan.archive! }.not_to change(ContributionFormula, :count)
+        expect(current_plan.reload.effective_until).to eq(Date.current)
+        expect(current_plan.current_version?).to be false
+      end
+
+      it 'excludes the archived formula from current_versions' do
+        current_plan.archive!
+        expect(ContributionFormula.current_versions).not_to include(current_plan)
+      end
+
+      it 'keeps existing contributions untouched' do
+        contribution = create(:contribution, contribution_formula: current_plan, person: create(:person))
+        current_plan.archive!
+
+        expect(contribution.reload.contribution_formula).to eq(current_plan)
+      end
+
+      it 'logs the archival in PriceChangeLog' do
+        expect { current_plan.archive!(user: create(:user)) }.to change(PriceChangeLog, :count).by(1)
+        expect(PriceChangeLog.last.action).to eq('archived')
       end
     end
 

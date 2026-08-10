@@ -98,6 +98,12 @@ fr:
       update:
         html_notice: Type d'adhésion mis à jour avec succès !
         turbo_notice: Type d'adhésion mis à jour avec succès !
+      change_price:
+        success: Prix mis à jour avec succès !
+        failure: "Échec du changement de prix : %{message}"
+      archive:
+        success: Type d'adhésion archivé — il n'est plus proposé aux nouveaux achats.
+        failure: "Échec de l'archivage : %{message}"
       destroy:
         destroyed: Type d'adhésion supprimé avec succès !
     memberships:
@@ -158,6 +164,12 @@ fr:
         purchase_failed_alert: 'Erreur lors de l''achat : %{message}'
       update:
         updated: Formule de cotisation mise à jour avec succès !
+      change_price:
+        success: Prix mis à jour avec succès !
+        failure: "Échec du changement de prix : %{message}"
+      archive:
+        success: Formule archivée — elle n'est plus proposée aux nouveaux achats.
+        failure: "Échec de l'archivage : %{message}"
       destroy:
         destroyed: Formule de cotisation supprimée avec succès !
       require_super_admin:

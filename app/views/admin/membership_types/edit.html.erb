@@ -45,50 +45,18 @@
           </div>
 
           <div>
-            <%= form.label :category, "Catégorie", class: "block text-sm font-medium text-gray-700" %>
-            <%= form.select :category, 
-                options_for_select([
-                  ['Basique', 'basic'],
-                  ['Cirque', 'circus'],
-                  ['Événement', 'event']
-                ], @membership_type.category),
-                {},
-                { class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#1F5C55] focus:ring-[#1F5C55] sm:text-sm" } %>
-            <p class="mt-1 text-sm text-gray-500">
-              <strong>Basique</strong> : Accès de base à l'association<br>
-              <strong>Cirque</strong> : Accès aux cours de cirque<br>
-              <strong>Événement</strong> : Pour événements spéciaux
+            <p class="block text-sm font-medium text-gray-700">Catégorie / type tarifaire</p>
+            <p class="mt-1 text-sm text-gray-600">
+              <%= @membership_type.category_humanized %> — <%= @membership_type.rate_kind_humanized %> —
+              non modifiable (réinterpréterait les adhésions déjà achetées). Créez un nouveau type si besoin.
             </p>
           </div>
 
           <div>
-            <%= form.label :rate_kind, "Type tarifaire", class: "block text-sm font-medium text-gray-700" %>
-            <%= form.select :rate_kind,
-                options_for_select(MembershipType.rate_kind_options, @membership_type.rate_kind),
-                {},
-                { class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#1F5C55] focus:ring-[#1F5C55] sm:text-sm" } %>
-            <p class="mt-1 text-sm text-gray-500">Contrôle l'éligibilité standard/réduit indépendamment du libellé.</p>
-          </div>
-
-          <div>
-            <%= form.label :price_cents, "Prix (en centimes)", class: "block text-sm font-medium text-gray-700" %>
-            <%= form.number_field :price_cents, 
-                class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#1F5C55] focus:ring-[#1F5C55] sm:text-sm" %>
-            <p class="mt-1 text-sm text-gray-500">Entrez le prix en centimes (ex: 1000 = 10€)</p>
-          </div>
-
-          <div>
             <%= form.label :description, "Description", class: "block text-sm font-medium text-gray-700" %>
-            <%= form.text_area :description, 
+            <%= form.text_area :description,
                 rows: 3,
                 class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#1F5C55] focus:ring-[#1F5C55] sm:text-sm" %>
-          </div>
-
-          <div>
-            <%= form.label :effective_from, "Date d'effet", class: "block text-sm font-medium text-gray-700" %>
-            <%= form.date_field :effective_from, 
-                class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#1F5C55] focus:ring-[#1F5C55] sm:text-sm" %>
-            <p class="mt-1 text-sm text-gray-500">Date à partir de laquelle ce type d'adhésion est valide</p>
           </div>
 
           <div class="flex justify-end space-x-3">
@@ -98,6 +66,60 @@
                 class: "inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#1F5C55] hover:bg-[#194A45] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1F5C55]" %>
           </div>
         <% end %>
+      </div>
+    </div>
+
+    <!-- Changement de prix : action séparée, ne mute jamais une version déjà vendue -->
+    <div class="surface-card mt-6">
+      <div class="px-6 py-4 border-b border-gray-200">
+        <h2 class="text-lg font-semibold text-gray-900">Changer le prix</h2>
+        <p class="mt-1 text-sm text-gray-500">
+          Prix actuel : <strong><%= @membership_type.price_euros %>€</strong> —
+          <%= pluralize(@membership_type.memberships.count, "adhésion") %> déjà vendue<%= "s" if @membership_type.memberships.count > 1 %> sur cette version.
+        </p>
+        <p class="mt-1 text-sm text-gray-500">
+          <% if @membership_type.memberships.empty? %>
+            Jamais vendue à ce prix : la correction remplacera le prix actuel sans créer de nouvelle version.
+          <% else %>
+            Déjà vendue : le nouveau prix ouvrira une nouvelle version à partir d'aujourd'hui. Les adhésions déjà achetées gardent leur prix d'origine.
+          <% end %>
+        </p>
+      </div>
+
+      <div class="p-6">
+        <%= form_with url: change_price_admin_membership_type_path(@membership_type), method: :post, local: true, class: "space-y-4" do |form| %>
+          <div>
+            <%= form.label :price, "Nouveau prix (€)", class: "block text-sm font-medium text-gray-700" %>
+            <%= form.number_field :price, step: "0.01", min: "0", value: @membership_type.price_euros,
+                class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#1F5C55] focus:ring-[#1F5C55] sm:text-sm" %>
+          </div>
+
+          <div>
+            <%= form.label :reason, "Raison du changement", class: "block text-sm font-medium text-gray-700" %>
+            <%= form.text_field :reason,
+                class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#1F5C55] focus:ring-[#1F5C55] sm:text-sm" %>
+          </div>
+
+          <div class="flex justify-end">
+            <%= form.submit "Changer le prix",
+                data: { turbo_confirm: "Confirmer le changement de prix ?" },
+                class: "inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#1F5C55] hover:bg-[#194A45] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1F5C55]" %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+
+    <!-- Archivage -->
+    <div class="surface-card mt-6">
+      <div class="px-6 py-4">
+        <h2 class="text-lg font-semibold text-gray-900">Archiver</h2>
+        <p class="mt-1 text-sm text-gray-500">
+          N'apparaît plus pour de nouveaux achats, sans supprimer l'historique. Les adhésions déjà créées restent intactes.
+        </p>
+        <%= button_to "Archiver ce type", archive_admin_membership_type_path(@membership_type),
+            method: :post,
+            form: { data: { turbo_confirm: "Archiver #{@membership_type.name} ? Il ne sera plus proposé aux nouveaux achats." } },
+            class: "mt-3 inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50" %>
       </div>
     </div>
   </div>

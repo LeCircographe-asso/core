@@ -2,11 +2,12 @@
 
 module Admin
   class MembershipTypesController < BaseController
-    before_action :set_membership_type, only: %i[show edit update destroy]
+    before_action :set_membership_type, only: %i[show edit update destroy change_price archive]
     before_action :set_breadcrumbs
 
     def index
-      @membership_types = MembershipType.order(:category, :price_cents)
+      @membership_types = MembershipType.current_versions.order(:category, :price_cents)
+      @archived_membership_types = MembershipType.where.not(effective_until: nil).order(effective_until: :desc)
       add_breadcrumb I18n.t("breadcrumbs.admin.membership_types.types"), nil
     end
 
@@ -43,8 +44,11 @@ module Admin
       end
     end
 
+    # Édition classique : jamais le prix, la version ou effective_from — ces
+    # champs identifient la ligne pour l'historique/la compta, ils passent
+    # uniquement par #change_price (create_price_change!). Voir docs/architecture/models.md §4.8.
     def update
-      if @membership_type.update(membership_type_params)
+      if @membership_type.update(membership_type_update_params)
         respond_to do |format|
           format.html { redirect_to admin_membership_types_path, notice: t(".html_notice") }
           format.turbo_stream { redirect_to admin_membership_types_path, notice: t(".turbo_notice") }
@@ -53,6 +57,22 @@ module Admin
         flash.now[:alert] = @membership_type.errors.full_messages.to_sentence
         render :edit, status: :unprocessable_content
       end
+    end
+
+    def change_price
+      new_price_cents = (params[:price].to_f * 100).round
+
+      @membership_type.create_price_change!(new_price_cents, reason: params[:reason], user: Current.user)
+      redirect_to admin_membership_types_path, notice: t(".success")
+    rescue ActiveRecord::RecordInvalid => e
+      redirect_to edit_admin_membership_type_path(@membership_type), alert: t(".failure", message: e.message)
+    end
+
+    def archive
+      @membership_type.archive!(user: Current.user)
+      redirect_to admin_membership_types_path, notice: t(".success")
+    rescue ActiveRecord::RecordInvalid => e
+      redirect_to admin_membership_types_path, alert: t(".failure", message: e.message)
     end
 
     def destroy
@@ -76,6 +96,14 @@ module Admin
 
     def membership_type_params
       params.expect(membership_type: %i[name category rate_kind price_cents description effective_from version created_by_user_id])
+    end
+
+    # Édition classique : nom/description seulement. category/rate_kind
+    # définissent ce que signifie ce type pour les Membership déjà achetées —
+    # les changer en place réinterpréterait silencieusement un achat passé.
+    # Prix : #change_price.
+    def membership_type_update_params
+      params.expect(membership_type: %i[name description])
     end
   end
 end

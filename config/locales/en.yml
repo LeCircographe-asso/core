@@ -54,6 +54,12 @@ en:
         needs_circus_membership_alert: This person needs an active Circus membership to buy a contribution formula.
       update:
         updated: Contribution formula updated successfully!
+      change_price:
+        success: Price updated successfully!
+        failure: "Price change failed: %{message}"
+      archive:
+        success: Contribution formula archived — no longer offered for new purchases.
+        failure: "Archiving failed: %{message}"
       destroy:
         destroyed: Contribution formula deleted successfully!
       require_super_admin:
@@ -152,6 +158,12 @@ en:
       update:
         html_notice: Type d'adhésion mis à jour avec succès !
         turbo_notice: Type d'adhésion mis à jour avec succès !
+      change_price:
+        success: Prix mis à jour avec succès !
+        failure: "Échec du changement de prix : %{message}"
+      archive:
+        success: Type d'adhésion archivé — il n'est plus proposé aux nouveaux achats.
+        failure: "Échec de l'archivage : %{message}"
       destroy:
         destroyed: Type d'adhésion supprimé avec succès !
     notepads:

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_05_06_103539) do
+ActiveRecord::Schema[8.1].define(version: 2026_08_10_120000) do
   create_table "account_claims", force: :cascade do |t|
     t.string "confirmation_token", null: false
     t.datetime "created_at", null: false
@@ -343,6 +343,19 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_06_103539) do
     t.index ["member_number"], name: "index_people_on_member_number", unique: true
     t.index ["newsletter_unsubscribe_token"], name: "index_people_on_newsletter_unsubscribe_token", unique: true
     t.index ["phone"], name: "index_people_on_phone"
+  end
+
+  create_table "price_change_logs", force: :cascade do |t|
+    t.string "action", null: false
+    t.text "change_data"
+    t.datetime "created_at", null: false
+    t.integer "loggable_id", null: false
+    t.string "loggable_type", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "user_id"
+    t.index ["action"], name: "index_price_change_logs_on_action"
+    t.index ["loggable_type", "loggable_id"], name: "index_price_change_logs_on_loggable"
+    t.index ["user_id"], name: "index_price_change_logs_on_user_id"
   end
 
   create_table "sessions", force: :cascade do |t|

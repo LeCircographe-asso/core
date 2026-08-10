@@ -111,7 +111,7 @@ Cadre de **stabilité / risque** pour prioriser les tests. Pour les priorités a
 
 #### Zone 1 — support
 
-`MemberNumberHistory`, `PaymentAuditLog` — tests d'audit, priorité basse.
+`MemberNumberHistory`, `PaymentAuditLog`, `PriceChangeLog` — tests d'audit, priorité basse.
 
 #### Zone 2
 
@@ -197,12 +197,14 @@ Trade-off accepté (flexibilité > intégrité référentielle) mais à garder e
 
 La colonne `people.newsletter_subscribed` a été supprimée (absente de `db/schema.rb`). Seul `newsletter_unsubscribe_token` reste sur `Person` ; le consentement newsletter vit désormais uniquement dans `NewsletterSubscriber`.
 
-### 4.8 Versioning `MembershipType`/`ContributionFormula` — moitié branché
+### 4.8 Versioning `MembershipType`/`ContributionFormula` — ✅ résolu
 
-`MembershipType#create_price_change!` / `ContributionFormula#create_price_change!` implémentent correctement le versioning (ferme la version courante, crée une nouvelle ligne) mais **ne sont appelés nulle part** dans l'app. `Admin::MembershipTypesController#update` / `Admin::ContributionFormulasController#update` font un `.update(params)` brut à la place — mutation directe d'une ligne potentiellement déjà référencée par des `Membership`/`Contribution` achetées, sans passer par le versioning prévu.
+`Admin::MembershipTypesController#update` / `Admin::ContributionFormulasController#update` n'acceptent plus que des champs cosmétiques (`name`, `description`) — `price_cents` (et pour `ContributionFormula` : `duration`, `rate_kind`, `membership_type_id`, `sessions_count`, `validity_days`) sont retirés des strong params. Ces attributs identifient la ligne pour l'historique/la compta ; les muter en place réinterpréterait silencieusement des `Membership`/`Contribution` déjà achetées.
 
-- ✅ **Résolu** : `ContributionFormula has_many :contributions, dependent: :destroy` (cascade de suppression sur des achats réels) remplacé par `dependent: :restrict_with_error`, aligné sur `MembershipType has_many :memberships, dependent: :restrict_with_error`. Supprimer une formule déjà achetée est maintenant bloqué proprement au lieu d'effacer l'historique.
-- ⚠️ **Encore ouvert** : décider si `update` doit continuer à muter en place (nom/description) tout en routant les changements de `price_cents` vers `create_price_change!`, ou si l'édition du prix doit être bloquée une fois qu'il y a des achats (nouvelle formule à créer à la main). Discussion en cours.
+- **Changement de prix** : nouvelle action dédiée `change_price` (`create_price_change!`). Si la version courante n'a jamais été vendue (`memberships.empty?`/`contributions.empty?`), le prix est corrigé **en place** — pas de nouvelle ligne, catalogue propre. Si elle a déjà été vendue, la version courante est fermée (`effective_until`) et une nouvelle est créée ; les achats existants gardent leur ancien prix, inchangé.
+- **Traçabilité** : chaque tentative (mergée ou versionnée) est loggée dans `PriceChangeLog` (table polymorphique `loggable`, pattern `PaymentAuditLog`) — `action: "merged"|"versioned"|"archived"`, `change_data` JSON (ancien/nouveau prix, raison), `user`. Permet de retrouver un tarif testé puis jamais vendu même quand il n'a pas généré de nouvelle ligne catalogue.
+- **Archivage** : `archive!` ferme la version courante sans en ouvrir de nouvelle (exclusion de `current_versions`/`available_for`, donc plus proposée aux nouveaux achats) sans toucher aux `Membership`/`Contribution` déjà créées. Les pages index (`admin/membership_types`, `admin/contribution_formulas`) n'affichent que `current_versions` par défaut ; les versions fermées vont dans une section historique repliée.
+- ✅ `ContributionFormula has_many :contributions, dependent: :destroy` (cascade de suppression sur des achats réels) remplacé par `dependent: :restrict_with_error`, aligné sur `MembershipType has_many :memberships, dependent: :restrict_with_error`. Supprimer une formule déjà achetée reste bloqué proprement.
 
 ## 5. Documentation liée
 

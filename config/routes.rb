@@ -52,8 +52,14 @@ Rails.application.routes.draw do
     resources :health_reports, only: %i[index]
     resources :attendances, only: %i[index show new create destroy]
     resources :memberships, only: %i[index show new create edit update destroy]
-    resources :membership_types, only: %i[index show new create edit update destroy]
-    resources :contribution_formulas, only: %i[index show new create edit update destroy]
+    resources :membership_types, only: %i[index show new create edit update destroy] do
+      post :change_price, on: :member
+      post :archive, on: :member
+    end
+    resources :contribution_formulas, only: %i[index show new create edit update destroy] do
+      post :change_price, on: :member
+      post :archive, on: :member
+    end
     resources :contributions, only: [] do
       post :upgrade, on: :collection
     end

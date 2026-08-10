@@ -286,35 +286,108 @@ RSpec.describe MembershipType, type: :model do
     let(:user) { create(:user) }
     let(:membership_type) { create(:membership_type, price_cents: 1500, version: 1, effective_until: nil) }
 
-    it 'creates new version with new price' do
-      new_effective_date = Date.current + 1.month
-      new_version = membership_type.create_price_change!(
-        2000,
-        effective_from: new_effective_date,
-        reason: 'Price increase',
-        user: user
-      )
+    context 'when the current version was never sold (no memberships)' do
+      it 'merges the price in place instead of creating a new version' do
+        result = membership_type.create_price_change!(2000, reason: 'Correction', user: user)
 
-      expect(new_version).to be_persisted
-      expect(new_version.price_cents).to eq(2000)
-      expect(new_version.version).to eq(2)
-      expect(new_version.effective_from).to eq(new_effective_date)
-      expect(new_version.effective_until).to be_nil
-      expect(new_version.created_by_user).to eq(user)
-      expect(new_version.change_reason).to eq('Price increase')
+        expect(result).to equal(membership_type)
+        expect(membership_type.reload.price_cents).to eq(2000)
+        expect(membership_type.version).to eq(1)
+        expect(membership_type.effective_until).to be_nil
+        expect(membership_type.change_reason).to eq('Correction')
+      end
+
+      it 'does not create an additional MembershipType row' do
+        membership_type
+        expect { membership_type.create_price_change!(2000) }.not_to change(MembershipType, :count)
+      end
+
+      it 'logs the merge in PriceChangeLog' do
+        expect { membership_type.create_price_change!(2000, user: user) }
+          .to change(PriceChangeLog, :count).by(1)
+
+        log = PriceChangeLog.last
+        expect(log.loggable).to eq(membership_type)
+        expect(log.action).to eq('merged')
+        expect(log.user).to eq(user)
+      end
     end
 
-    it 'closes current version' do
-      new_effective_date = Date.current + 1.month
-      membership_type.create_price_change!(2000, effective_from: new_effective_date)
+    context 'when the current version has already been sold (at least one membership)' do
+      before { create(:membership, membership_type: membership_type) }
 
-      expect(membership_type.reload.effective_until).to eq(new_effective_date - 1.day)
+      it 'creates new version with new price' do
+        new_effective_date = Date.current + 1.month
+        new_version = membership_type.create_price_change!(
+          2000,
+          effective_from: new_effective_date,
+          reason: 'Price increase',
+          user: user
+        )
+
+        expect(new_version).to be_persisted
+        expect(new_version).not_to equal(membership_type)
+        expect(new_version.price_cents).to eq(2000)
+        expect(new_version.version).to eq(2)
+        expect(new_version.effective_from).to eq(new_effective_date)
+        expect(new_version.effective_until).to be_nil
+        expect(new_version.created_by_user).to eq(user)
+        expect(new_version.change_reason).to eq('Price increase')
+      end
+
+      it 'closes current version' do
+        new_effective_date = Date.current + 1.month
+        membership_type.create_price_change!(2000, effective_from: new_effective_date)
+
+        expect(membership_type.reload.effective_until).to eq(new_effective_date - 1.day)
+      end
+
+      it 'uses current date as default effective_from' do
+        new_version = membership_type.create_price_change!(2000)
+
+        expect(new_version.effective_from).to eq(Date.current)
+      end
+
+      it 'does not change the price on the old (already sold) version' do
+        membership_type.create_price_change!(2000)
+
+        expect(membership_type.reload.price_cents).to eq(1500)
+      end
+
+      it 'logs the version fork in PriceChangeLog' do
+        expect { membership_type.create_price_change!(2000, user: user) }
+          .to change(PriceChangeLog, :count).by(1)
+
+        expect(PriceChangeLog.last.action).to eq('versioned')
+      end
+    end
+  end
+
+  describe '#archive!' do
+    let(:membership_type) { create(:membership_type, effective_until: nil) }
+
+    it 'closes the current version without creating a replacement' do
+      membership_type
+      expect { membership_type.archive! }.not_to change(MembershipType, :count)
+      expect(membership_type.reload.effective_until).to eq(Date.current)
+      expect(membership_type.current_version?).to be false
     end
 
-    it 'uses current date as default effective_from' do
-      new_version = membership_type.create_price_change!(2000)
+    it 'excludes the archived type from current_versions' do
+      membership_type.archive!
+      expect(MembershipType.current_versions).not_to include(membership_type)
+    end
 
-      expect(new_version.effective_from).to eq(Date.current)
+    it 'keeps existing memberships untouched' do
+      membership = create(:membership, membership_type: membership_type)
+      membership_type.archive!
+
+      expect(membership.reload.membership_type).to eq(membership_type)
+    end
+
+    it 'logs the archival in PriceChangeLog' do
+      expect { membership_type.archive!(user: create(:user)) }.to change(PriceChangeLog, :count).by(1)
+      expect(PriceChangeLog.last.action).to eq('archived')
     end
   end
 

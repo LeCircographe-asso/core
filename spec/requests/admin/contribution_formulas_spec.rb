@@ -131,12 +131,14 @@ RSpec.describe "Admin::ContributionFormulas", type: :request do
 
     before { login_as(super_admin) }
 
-    it "renders the rate_kind choices in the admin form" do
+    it "shows the current rate_kind as read-only info, with no editable price/duration/rate_kind fields" do
       get edit_admin_contribution_formula_path(formula)
 
       expect(response).to have_http_status(:success)
       expect(response.body).to include("Tarif standard")
-      expect(response.body).to include("Tarif réduit")
+      expect(response.body).not_to include('name="contribution_formula[price_cents]"')
+      expect(response.body).not_to include('name="contribution_formula[duration]"')
+      expect(response.body).not_to include('name="contribution_formula[rate_kind]"')
     end
   end
 
@@ -154,22 +156,75 @@ RSpec.describe "Admin::ContributionFormulas", type: :request do
 
     before { login_as(super_admin) }
 
-    it "persists the selected rate_kind" do
+    it "updates the description" do
       patch admin_contribution_formula_path(formula), params: {
-        contribution_formula: {
-          name: formula.name,
-          duration: formula.duration,
-          rate_kind: "reduced",
-          price_cents: formula.price_cents,
-          description: formula.description,
-          membership_type_id: formula.membership_type_id,
-          sessions_count: formula.sessions_count,
-          validity_days: formula.validity_days
-        }
+        contribution_formula: { name: formula.name, description: "Nouvelle description" }
       }
 
       expect(response).to redirect_to(admin_contribution_formulas_path)
-      expect(formula.reload.rate_kind).to eq("reduced")
+      expect(formula.reload.description).to eq("Nouvelle description")
+    end
+
+    it "ignores structural/pricing fields — they only go through #change_price" do
+      original_price = formula.price_cents
+
+      patch admin_contribution_formula_path(formula), params: {
+        contribution_formula: { name: formula.name, rate_kind: "reduced", price_cents: original_price + 500 }
+      }
+
+      formula.reload
+      expect(formula.rate_kind).not_to eq("reduced")
+      expect(formula.price_cents).to eq(original_price)
+    end
+  end
+
+  describe "POST /admin/contribution_formulas/:id/change_price" do
+    let(:super_admin) { create(:user, :super_admin) }
+
+    before { login_as(super_admin) }
+
+    it "merges the price in place when the formula was never sold" do
+      formula
+      expect do
+        post change_price_admin_contribution_formula_path(formula), params: { price: "30.00", reason: "Correction" }
+      end.not_to change(ContributionFormula, :count)
+
+      expect(response).to redirect_to(admin_contribution_formulas_path)
+      expect(formula.reload.price_cents).to eq(3000)
+    end
+
+    it "creates a new version when the formula has already been sold" do
+      create(:contribution, contribution_formula: formula, person: create(:person))
+
+      expect do
+        post change_price_admin_contribution_formula_path(formula), params: { price: "30.00" }
+      end.to change(ContributionFormula, :count).by(1)
+
+      expect(formula.reload.price_cents).to eq(2_500)
+    end
+
+    it "is forbidden for a plain admin (not super_admin)" do
+      login_as(admin)
+      post change_price_admin_contribution_formula_path(formula), params: { price: "30.00" }
+
+      expect(formula.reload.price_cents).to eq(2_500)
+    end
+  end
+
+  describe "POST /admin/contribution_formulas/:id/archive" do
+    let(:super_admin) { create(:user, :super_admin) }
+
+    before { login_as(super_admin) }
+
+    it "closes the version and moves it from the catalog listing to the archived list" do
+      post archive_admin_contribution_formula_path(formula)
+
+      expect(response).to redirect_to(admin_contribution_formulas_path)
+      expect(formula.reload.current_version?).to be false
+
+      get admin_contribution_formulas_path
+      expect(assigns(:contribution_formulas)).not_to include(formula)
+      expect(assigns(:archived_contribution_formulas)).to include(formula)
     end
   end
 end

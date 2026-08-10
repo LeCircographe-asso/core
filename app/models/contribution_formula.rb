@@ -8,6 +8,7 @@ class ContributionFormula < ApplicationRecord
 
   belongs_to :membership_type
   has_many :contributions, dependent: :restrict_with_error
+  has_many :price_change_logs, as: :loggable, dependent: :destroy
   belongs_to :created_by_user, class_name: "User", optional: true
 
   validates :name, presence: true, uniqueness: { scope: :version }
@@ -68,21 +69,48 @@ class ContributionFormula < ApplicationRecord
     is_pack? ? sessions_count : nil
   end
 
+  # Change de prix. Si la version courante n'a jamais été vendue (aucune
+  # Contribution dessus), la correction se fait en place — pas de nouvelle
+  # ligne, le catalogue reste propre. Si elle a déjà été vendue, on ferme cette
+  # version et on en ouvre une nouvelle (les Contribution existantes gardent
+  # leur ancien prix, inchangé). Dans tous les cas, la tentative est tracée
+  # dans PriceChangeLog — y compris les corrections mergées, pour garder une
+  # trace consultable des tarifs testés mais jamais vendus.
   def create_price_change!(new_price_cents, effective_from: Date.current, reason: nil, user: nil)
-    update!(effective_until: effective_from - 1.day)
+    old_price_cents = price_cents
 
-    new_version = dup
-    new_version.assign_attributes(
-      version: version + 1,
-      price_cents: new_price_cents,
-      effective_from: effective_from,
-      effective_until: nil,
-      created_by_user: user,
-      change_reason: reason
-    )
-    new_version.save!
+    result = if contributions.empty?
+      update!(price_cents: new_price_cents, change_reason: reason, created_by_user: user)
+      self
+    else
+      update!(effective_until: effective_from - 1.day)
 
-    new_version
+      new_version = dup
+      new_version.assign_attributes(
+        version: version + 1,
+        price_cents: new_price_cents,
+        effective_from: effective_from,
+        effective_until: nil,
+        created_by_user: user,
+        change_reason: reason
+      )
+      new_version.save!
+      new_version
+    end
+
+    PriceChangeLog.log(self, user, result.equal?(self) ? "merged" : "versioned",
+                        old_price_cents: old_price_cents, new_price_cents: new_price_cents, reason: reason)
+
+    result
+  end
+
+  # Ferme la version courante sans en ouvrir de nouvelle : la formule n'est
+  # plus proposée aux nouveaux achats (exclue de current_versions/available_for)
+  # mais les Contribution déjà créées dessus restent intactes.
+  def archive!(effective_until: Date.current, user: nil)
+    update!(effective_until: effective_until)
+    PriceChangeLog.log(self, user, "archived", price_cents: price_cents)
+    self
   end
 
   def price_evolution

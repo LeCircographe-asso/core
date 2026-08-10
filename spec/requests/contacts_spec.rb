@@ -53,6 +53,13 @@ RSpec.describe "Contacts", type: :request do
       expect(response.body).to include("turbo-stream")
     end
 
+    it "actually shows the error message to the visitor (flash frame updated, not just the form)" do
+      post submit_contact_path, params: {}, as: :turbo_stream
+
+      expect(response.body).to include(%(target="#{ProfileSectionDomIds::FLASH_FRAME}"))
+      expect(response.body).to include(I18n.t("contacts.create.blank_fields"))
+    end
+
     it "rejects a partial payload when required keys are omitted" do
       expect do
         post submit_contact_path,
@@ -91,6 +98,60 @@ RSpec.describe "Contacts", type: :request do
         end.to have_enqueued_mail(UserMailer, :contact_email)
 
         expect(response).to have_http_status(:success)
+      end
+    end
+
+    context "when the category-specific email is not configured" do
+      around do |example|
+        prev_general = ENV.fetch("CONTACT_EMAIL_GENERAL", nil)
+        prev_technical = ENV.fetch("CONTACT_EMAIL_TECHNICAL", nil)
+        ENV["CONTACT_EMAIL_GENERAL"] = "general@example.com"
+        ENV.delete("CONTACT_EMAIL_TECHNICAL")
+        example.run
+      ensure
+        prev_general ? ENV["CONTACT_EMAIL_GENERAL"] = prev_general : ENV.delete("CONTACT_EMAIL_GENERAL")
+        prev_technical ? ENV["CONTACT_EMAIL_TECHNICAL"] = prev_technical : ENV.delete("CONTACT_EMAIL_TECHNICAL")
+      end
+
+      it "falls back to the general inbox instead of losing the message" do
+        expect do
+          post submit_contact_path,
+               params: {
+                 name: "Jane",
+                 email: "jane@example.com",
+                 category: "technical",
+                 message: "Bug sur le site"
+               },
+               as: :turbo_stream
+        end.to have_enqueued_mail(UserMailer, :contact_email).with("Jane", "jane@example.com", "Bug sur le site", "technical", "general@example.com")
+
+        expect(response).to have_http_status(:success)
+      end
+    end
+
+    context "when no recipient email is configured at all" do
+      around do |example|
+        prev_general = ENV.fetch("CONTACT_EMAIL_GENERAL", nil)
+        ENV.delete("CONTACT_EMAIL_GENERAL")
+        example.run
+      ensure
+        prev_general ? ENV["CONTACT_EMAIL_GENERAL"] = prev_general : ENV.delete("CONTACT_EMAIL_GENERAL")
+      end
+
+      it "shows an error instead of silently enqueuing a mail with no recipient" do
+        expect do
+          post submit_contact_path,
+               params: {
+                 name: "Jane",
+                 email: "jane@example.com",
+                 category: "general",
+                 message: "Hello"
+               },
+               as: :turbo_stream
+        end.not_to have_enqueued_mail(UserMailer, :contact_email)
+
+        expect(response).to have_http_status(:success)
+        expect(response.body).to include("erreur est survenue")
       end
     end
 

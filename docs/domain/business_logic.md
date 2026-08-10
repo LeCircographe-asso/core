@@ -221,7 +221,7 @@ enum duration: {
 
 #### Règles métier
 - **Prix** : en centimes (`price_cents`).
-- **Versionnage** : chaque formule est versionnée (`version`, `effective_from`, `effective_until`).
+- **Versionnage** : chaque formule est versionnée (`version`, `effective_from`, `effective_until`). Changement de prix via `create_price_change!` (jamais de mutation directe de `price_cents` sur une ligne déjà vendue) ; détail du mécanisme (merge si jamais vendue, fork sinon, archivage) dans [`../architecture/models.md`](../architecture/models.md) §4.8.
 - **Disponibilité** : `ContributionFormula.available_for(person)` retourne les formules autorisées (actuellement : exige une `Membership` Cirque active).
 
 ### Zone 2: En cours de validation

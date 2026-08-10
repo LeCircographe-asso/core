@@ -96,6 +96,25 @@
       <% end %>
     </div>
 
+    <% if @archived_membership_types.any? %>
+      <details class="mt-6 max-w-4xl mx-auto">
+        <summary class="cursor-pointer text-sm font-medium text-gray-600 hover:text-gray-900">
+          Historique (<%= @archived_membership_types.count %> version<%= "s" if @archived_membership_types.count > 1 %> archivée<%= "s" if @archived_membership_types.count > 1 %>)
+        </summary>
+        <div class="mt-3 space-y-2">
+          <% @archived_membership_types.each do |archived| %>
+            <div class="bg-gray-50 rounded-lg border border-gray-200 p-3 flex justify-between items-center text-sm text-gray-600">
+              <span>
+                <%= archived.name %> — v<%= archived.version %> — <%= archived.price_euros %>€
+                (<%= archived.effective_from&.strftime("%d/%m/%Y") %> → <%= archived.effective_until&.strftime("%d/%m/%Y") %>)
+              </span>
+              <%= link_to "Voir", admin_membership_type_path(archived), class: "text-[#1F5C55] hover:underline" %>
+            </div>
+          <% end %>
+        </div>
+      </details>
+    <% end %>
+
     <!-- Actions -->
     <div class="mt-6 flex justify-between">
       <%= link_to "Retour au tableau de bord", admin_dashboard_index_path,
