@@ -96,5 +96,77 @@ RSpec.describe UserManagement::UserUpdater do
       expect(result.message).to include(I18n.t("services.errors.insufficient_permissions.user_update"))
       expect(user.reload.email_address).not_to eq('unauthorized@example.com')
     end
+
+    it 'allows an admin to assign a role within their assignable_roles' do
+      updater = described_class.new(
+        user_id: user.id, # volunteer
+        system_role: 'web_visitor',
+        updated_by_id: admin.id
+      )
+
+      result = updater.call
+
+      expect(result.success?).to be(true)
+      expect(user.reload.system_role).to eq('web_visitor')
+    end
+
+    it 'rejects an admin promoting a user to super_admin (not in assignable_roles)' do
+      updater = described_class.new(
+        user_id: user.id, # volunteer
+        system_role: 'super_admin',
+        updated_by_id: admin.id
+      )
+
+      result = updater.call
+
+      expect(result.success?).to be(false)
+      expect(result.message).to include(I18n.t("services.errors.insufficient_permissions.role_assignment"))
+      expect(user.reload.system_role).to eq('volunteer')
+    end
+
+    it 'rejects an admin self-promoting to super_admin' do
+      updater = described_class.new(
+        user_id: admin.id,
+        system_role: 'super_admin',
+        updated_by_id: admin.id
+      )
+
+      result = updater.call
+
+      expect(result.success?).to be(false)
+      expect(result.message).to include(I18n.t("services.errors.insufficient_permissions.role_assignment"))
+      expect(admin.reload.system_role).to eq('admin')
+    end
+
+    it 'does not block resubmitting the target user\'s current role unchanged' do
+      admin_target = create(:user, :admin)
+
+      updater = described_class.new(
+        user_id: admin_target.id,
+        system_role: 'admin', # inchangé — un admin (non super_admin) ne pourrait pas l'assigner à nouveau
+        email_address: 'still.admin@example.com',
+        updated_by_id: admin.id
+      )
+
+      result = updater.call
+
+      expect(result.success?).to be(true)
+      expect(admin_target.reload.email_address).to eq('still.admin@example.com')
+    end
+
+    it 'allows a super_admin to assign the admin role' do
+      super_admin = create(:user, :super_admin)
+
+      updater = described_class.new(
+        user_id: user.id, # volunteer
+        system_role: 'admin',
+        updated_by_id: super_admin.id
+      )
+
+      result = updater.call
+
+      expect(result.success?).to be(true)
+      expect(user.reload.system_role).to eq('admin')
+    end
   end
 end

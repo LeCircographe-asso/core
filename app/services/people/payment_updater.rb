@@ -32,7 +32,7 @@ module People
       target_payment = resolve_payment
       updater = resolve_updater
 
-      return failure("Insufficient permissions to update payment") unless updater.super_admin? || updater.admin?
+      return failure("Insufficient permissions to update payment") unless updater.can_administer?
 
       update_attrs = build_update_attributes
 

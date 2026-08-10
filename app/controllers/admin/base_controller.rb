@@ -29,9 +29,18 @@ module Admin
         return
       end
 
-      return if Current.user&.has_privileges?
+      return if Current.user&.can_access_admin_zone?
 
       redirect_to root_path, alert: I18n.t("admin.base.staff_only_alert")
+    end
+
+    # Guard additionnel pour les actions réservées à super_admin (ex: restore,
+    # destroy/edit de barème). À déclarer via `before_action :require_super_admin,
+    # only: [...]` dans le contrôleur — factorisé ici pour éviter la duplication.
+    def require_super_admin
+      return if Current.user&.super_admin?
+
+      redirect_to admin_dashboard_index_path, alert: I18n.t("admin.base.unauthorized_alert")
     end
 
     def store_return_location_for_admin_request

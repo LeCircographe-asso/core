@@ -85,7 +85,7 @@ module MemberNumberManagement
 
     def can_change_member_number?(_person, changed_by)
       # Un admin/super_admin peut changer n'importe quel numéro
-      changed_by.super_admin? || changed_by.admin?
+      changed_by.can_administer?
     end
 
     # success et failure hérités de BaseService

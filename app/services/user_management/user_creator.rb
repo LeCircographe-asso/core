@@ -34,7 +34,7 @@ module UserManagement
         email_address: email,
         system_role: role,
         password: password,
-        created_by_admin: created_by.admin? || created_by.super_admin?,
+        created_by_admin: created_by.can_administer?,
         cgu: true,
         privacy_policy: true
       ).call
@@ -79,14 +79,14 @@ module UserManagement
     end
 
     def validate_creator_permissions!(created_by)
-      return if created_by.super_admin? || created_by.admin?
+      return if created_by.can_administer?
 
       errors.add(:created_by_id, "User does not have permissions to create accounts")
       raise ActiveRecord::RecordInvalid, created_by
     end
 
     def creator_can_manage_accounts?(created_by)
-      created_by.super_admin? || created_by.admin?
+      created_by.can_administer?
     end
 
     # success et failure hérités de BaseService

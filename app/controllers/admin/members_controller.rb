@@ -77,7 +77,7 @@ module Admin
         return
       end
 
-      @array_right = available_roles_for_user(@user)
+      @array_right = Current.user.assignable_roles
       @default_role = @user.system_role
 
       add_breadcrumb I18n.t("breadcrumbs.admin.members.members_list"), admin_members_path
@@ -175,23 +175,6 @@ module Admin
       redirect_to admin_members_path, alert: I18n.t("admin.members.check_deletion_permissions.higher_privileges")
     end
 
-    def available_roles_for_user(user)
-      return [] if user.nil?
-
-      if Current.user&.super_admin?
-        User.system_roles.keys.reject { |role| role == "super_admin" }
-      elsif Current.user&.admin?
-        %w[volunteer web_visitor]
-      else
-        []
-      end
-    end
-
-    def require_super_admin
-      return if Current.user&.super_admin?
-
-      redirect_to admin_members_path, alert: I18n.t("admin.members.require_super_admin.restore_denied_alert")
-    end
 
     # Reconstruit un Person non persisté à partir des valeurs soumises, pour
     # réafficher le formulaire "nouvel adhérent" sans perdre la saisie en cas d'échec.

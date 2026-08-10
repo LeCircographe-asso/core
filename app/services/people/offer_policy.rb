@@ -34,7 +34,7 @@ module People
     attr_reader :recorded_by, :person, :offer_type, :offer_reason, :contribution_formula
 
     def allowed_actor?
-      recorded_by.super_admin? || recorded_by.admin? || recorded_by.volunteer?
+      recorded_by.can_offer_items?
     end
 
     def volunteer_limited_contribution?

@@ -1,6 +1,6 @@
 <div class="events-grid">
     <div class="container-page">
-        <% if current_user&.admin? %>
+        <% if current_user&.can_administer? %>
         <%= link_to 'Créer un nouvel événement', new_admin_event_path, class: 'purple-button' %>
         <% end %>
     </div>

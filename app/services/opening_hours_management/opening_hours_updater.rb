@@ -15,7 +15,7 @@ module OpeningHoursManagement
         updated_by = User.find(updated_by_id)
 
         # Vérifier les permissions
-        return failure("Insufficient permissions to update opening hours") unless updated_by.super_admin? || updated_by.admin?
+        return failure("Insufficient permissions to update opening hours") unless updated_by.can_administer?
 
         # Valider les horaires
         return failure("Erreur : l'heure de fermeture doit être après l'heure d'ouverture pour tous les jours ouverts.") unless valid_hours?(opening_hours)

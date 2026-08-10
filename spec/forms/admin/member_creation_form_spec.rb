@@ -97,6 +97,25 @@ RSpec.describe Admin::MemberCreationForm do
       end
     end
 
+    context 'when the current user cannot assign the requested role' do
+      it 'rejects an admin trying to create a super_admin account' do
+        form = described_class.new(
+          first_name: 'Eve',
+          last_name: 'Hacker',
+          create_web_account: true,
+          email_address: 'eve@example.com',
+          system_role: 'super_admin'
+        )
+
+        expect do
+          form.call
+        end.not_to change(User, :count)
+
+        expect(form).to be_invalid
+        expect(form.errors[:system_role]).to be_present
+      end
+    end
+
     context 'when person already has a user' do
       let(:person) { create(:person, email: 'duplicate@example.com') }
 

@@ -55,7 +55,7 @@ module Admin
       end
 
       def crown?
-        user&.system_role == "super_admin"
+        user&.super_admin? || false
       end
     end
   end

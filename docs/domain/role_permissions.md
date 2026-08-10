@@ -3,7 +3,7 @@
 > **Statut** : stable
 > **Public cible** : contributeur
 > **Dernière vérification** : 2026-08-10
-> **Sources de vérité** : `app/models/user.rb` (enum `system_role`), `app/controllers/admin/base_controller.rb`, `app/controllers/admin/members_controller.rb`.
+> **Sources de vérité** : `app/models/user.rb` (enum `system_role`, `assignable_roles`), `app/models/concerns/roleable.rb`, `app/controllers/admin/base_controller.rb`, `app/controllers/admin/members_controller.rb`.
 
 ---
 
@@ -20,15 +20,26 @@ enum :system_role, { super_admin: 0, admin: 1, volunteer: 2, web_visitor: 3 }
 | `volunteer` | 2 | Accès zone admin en lecture + enregistrement présences |
 | `web_visitor` | 3 | Accès public uniquement (son propre profil) |
 
-**`has_privileges?`** → `true` pour `super_admin`, `admin`, `volunteer` — donne l'accès à la zone admin.  
-**`admin?`** → `true` pour `super_admin` et `admin` uniquement.
+### Convention de nommage (depuis 2026-08-10)
+
+Deux familles de méthodes, jamais mélangées :
+
+- **Rôle exact** (`super_admin?`, `admin?`, `volunteer?`, `web_visitor?`) — générés nativement par l'enum Rails, jamais redéfinis à la main (un override silencieux de `admin?` a existé par le passé et causait un vrai bug de permission — voir historique git de `app/models/user.rb`). `admin?` est `true` **uniquement** pour `admin`, pas pour `super_admin`.
+- **Capacité** (nommée par l'action, cumulative sur plusieurs rôles) — `User#can_access_admin_zone?` (super_admin/admin/volunteer), `Roleable#can_administer?` (super_admin/admin), `Roleable#can_manage_payments?`, `can_manage_events?`, etc. **Toujours privilégier ces méthodes** dans les contrôleurs/vues plutôt qu'un test de rôle brut (`system_role == 'admin'`) ou une combinaison `super_admin? || admin?` recopiée en dur.
+
+**`can_access_admin_zone?`** → `true` pour `super_admin`, `admin`, `volunteer` — donne l'accès à la zone admin.  
+**`can_administer?`** → `true` pour `super_admin` et `admin` uniquement.
 
 ---
 
 ## Accès zone admin
 
-La zone `/admin/` requiert `has_privileges?` via `Admin::BaseController#require_admin_zone_access`.  
+La zone `/admin/` requiert `can_access_admin_zone?` via `Admin::BaseController#require_admin_zone_access`.  
 Les `web_visitor` sont redirigés vers `/` avec une alerte.
+
+## Assignation de rôle
+
+`User#assignable_roles` est la source unique pour « quels rôles cet utilisateur a-t-il le droit d'attribuer à un autre compte » — `super_admin` peut tout distribuer sauf `super_admin` ; `admin` peut distribuer `volunteer`/`web_visitor` uniquement. Utilisée à la fois pour peupler les `<select>` de rôle (formulaires membre) **et** revalidée côté serveur dans `UserManagement::UserUpdater` et `Admin::MemberCreationForm` (`User#can_assign_role?(role)`) — avant le 2026-08-10, la règle n'existait qu'en vue, ce qui permettait à un `admin` de s'auto-promouvoir `super_admin` en forgeant la requête.
 
 ---
 

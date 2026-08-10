@@ -129,12 +129,26 @@ class User < ApplicationRecord
     end
   end
 
-  def has_privileges?
+  # Accès à la zone /admin (super_admin, admin, volunteer). Pour "peut administrer"
+  # (super_admin/admin uniquement), voir Roleable#can_administer?.
+  def can_access_admin_zone?
     %w[admin super_admin volunteer].include?(system_role)
   end
 
-  def admin?
-    %w[admin super_admin].include?(system_role)
+  # Rôles que cet utilisateur a le droit d'attribuer à un autre compte.
+  # super_admin peut distribuer tout sauf super_admin ; admin peut distribuer
+  # volunteer/web_visitor uniquement ; les autres rôles ne peuvent rien assigner.
+  # Seule source de vérité : utilisée à la fois pour peupler un <select> et pour
+  # valider côté serveur (Admin::MemberCreationForm, UserManagement::UserUpdater).
+  def assignable_roles
+    return User.system_roles.keys - %w[super_admin] if super_admin?
+    return %w[volunteer web_visitor] if admin?
+
+    []
+  end
+
+  def can_assign_role?(target_role)
+    assignable_roles.include?(target_role.to_s)
   end
 
   def created_by_admin?

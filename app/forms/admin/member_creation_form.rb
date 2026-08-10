@@ -49,6 +49,7 @@ module Admin
     validates :system_role, inclusion: { in: %w[super_admin admin volunteer web_visitor] }
     validates :membership_type_id, presence: true, if: :membership_requested?
     validates :payment_method, inclusion: { in: %w[cash card cheque transfer offered] }
+    validate :system_role_assignable_by_current_user
 
     def call
       return failure(I18n.t("admin.members.create.invalid_data_alert", details: errors.full_messages.join(", "))) unless valid?
@@ -125,6 +126,15 @@ module Admin
 
     def membership_requested?
       create_membership || membership_type_id.present?
+    end
+
+    # Le formulaire admin whiteliste system_role sans distinguer qui édite (cf.
+    # User#assignable_roles) — revalidation ici pour empêcher un admin non
+    # super_admin d'attribuer un rôle au-delà de ce qu'il a le droit de distribuer.
+    def system_role_assignable_by_current_user
+      return if Current.user&.can_assign_role?(system_role)
+
+      errors.add(:system_role, "n'est pas un rôle que vous avez le droit d'attribuer")
     end
 
     def success(person, message)

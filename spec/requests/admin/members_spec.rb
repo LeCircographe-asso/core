@@ -308,9 +308,9 @@ RSpec.describe 'Admin::Members', type: :request do
           post restore_admin_member_path(deleted_user)
         end.not_to(change { deleted_user.reload.deleted_at })
 
-        expect(response).to redirect_to(admin_members_path)
+        expect(response).to redirect_to(admin_dashboard_index_path)
         follow_redirect!
-        expect(response.body).to include('super-admin')
+        expect(response.body).to include(I18n.t('admin.base.unauthorized_alert'))
       end
     end
   end

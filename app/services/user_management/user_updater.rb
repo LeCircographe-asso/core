@@ -21,6 +21,7 @@ module UserManagement
 
         # Vérifier les permissions
         return failure(I18n.t("services.errors.insufficient_permissions.user_update")) unless can_update_user?(user, updated_by)
+        return failure(I18n.t("services.errors.insufficient_permissions.role_assignment")) unless role_change_allowed?(user, updated_by)
 
         ActiveRecord::Base.transaction do
           # Mettre à jour User (seulement si des attributs sont fournis)
@@ -76,7 +77,20 @@ module UserManagement
       return true if updated_by.id == user.id
 
       # Un admin/super_admin peut mettre à jour n'importe quel compte
-      updated_by.super_admin? || updated_by.admin?
+      updated_by.can_administer?
+    end
+
+    # Un changement RÉEL de system_role doit rester dans les rôles que l'éditeur a
+    # le droit d'attribuer (User#assignable_roles) — y compris sur son propre compte :
+    # se promouvoir soi-même n'est pas plus légitime que promouvoir un tiers.
+    # Ne s'applique que si la valeur change réellement : un formulaire qui
+    # resoumet le rôle actuel sans le modifier ne doit pas être bloqué (ex: un
+    # admin qui édite un autre admin sans toucher au rôle).
+    def role_change_allowed?(user, updated_by)
+      return true if system_role.blank?
+      return true if system_role == user.system_role
+
+      updated_by.can_assign_role?(system_role)
     end
 
     def update_newsletter(person)

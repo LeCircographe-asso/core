@@ -25,7 +25,7 @@ module People
       target_payment = resolve_payment
       deleter = resolve_deleter
 
-      return failure("Insufficient permissions to delete payment") unless deleter.super_admin? || deleter.admin?
+      return failure("Insufficient permissions to delete payment") unless deleter.can_administer?
 
       return failure("Payment is already cancelled") if target_payment.status == "cancel"
 

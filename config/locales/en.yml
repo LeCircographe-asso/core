@@ -342,6 +342,7 @@ en:
         user_update: "Insufficient permissions to update this user"
         membership_update: "Insufficient permissions to update this membership"
         membership_deactivate: "Insufficient permissions to deactivate this membership"
+        role_assignment: "You are not allowed to assign this role"
       newsletter_update_failed: "Error updating newsletter: %{message}"
       user_not_found: "User not found: %{message}"
       register_existing_web_account: "This person already has a web account."

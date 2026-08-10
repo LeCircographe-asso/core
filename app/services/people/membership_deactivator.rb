@@ -60,7 +60,7 @@ module People
     end
 
     def can_deactivate?(user)
-      user.super_admin? || user.admin?
+      user.can_administer?
     end
 
     def membership_presence

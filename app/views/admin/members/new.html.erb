@@ -62,18 +62,17 @@
               
               <!-- Champs conditionnels pour le compte web -->
               <div id="web-account-fields" class="mt-4 space-y-4 <%= 'hidden' unless @person.present? || @member_creation_form.create_web_account %>" data-form-toggle-target="webAccountFields">
-                <% if Current.user&.admin? || Current.user&.super_admin? %>
+                <% if Current.user&.can_administer? %>
                   <!-- Admin/Super Admin peut choisir le rôle -->
                   <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                       <%= form.label :system_role, t("views.admin.members.new.system_role"), class: "block text-sm font-medium text-gray-700" %>
-                      <%= form.select :system_role, 
-                          options_for_select([
-                            [t('views.admin.members.new.roles.web_visitor'), 'web_visitor'],
-                            [t('views.admin.members.new.roles.volunteer'), 'volunteer'],
-                            [t('views.admin.members.new.roles.admin'), 'admin']
-                          ], 'web_visitor'), 
-                          {}, 
+                      <%= form.select :system_role,
+                          options_for_select(
+                            Current.user.assignable_roles.map { |role| [t("views.admin.members.new.roles.#{role}"), role] },
+                            'web_visitor'
+                          ),
+                          {},
                           { class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#1F5C55] focus:ring-[#1F5C55] sm:text-sm" } %>
                     </div>
                     <div>

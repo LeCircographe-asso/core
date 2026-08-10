@@ -491,6 +491,7 @@ fr:
         user_update: "Permissions insuffisantes pour mettre à jour cet utilisateur"
         membership_update: "Permissions insuffisantes pour mettre à jour cette adhésion"
         membership_deactivate: "Permissions insuffisantes pour désactiver cette adhésion"
+        role_assignment: "Vous n'avez pas le droit d'attribuer ce rôle"
       newsletter_update_failed: "Erreur lors de la mise à jour newsletter : %{message}"
       user_not_found: "Utilisateur introuvable : %{message}"
       register_existing_web_account: "Cette personne a déjà un compte web."

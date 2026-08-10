@@ -44,7 +44,7 @@ Rails.application.routes.draw do
       collection { patch :reorder }
     end
     resources :attendance_lists do
-      resources :attendances, only: %i[new index create show edit update]
+      resources :attendances, only: %i[new index create show destroy]
     end
     resources :payments, only: %i[show create new edit update index destroy] do
       post :restore, on: :member

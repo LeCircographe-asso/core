@@ -14,24 +14,13 @@ module Roleable
     end
   end
 
-  # Vérifications de rôle
-  def super_admin?
-    system_role == "super_admin"
-  end
+  # Les prédicats de rôle exact (super_admin?, admin?, volunteer?, web_visitor?)
+  # sont générés nativement par `enum :system_role` sur User — ne pas les
+  # redéfinir ici (ça créerait un conflit silencieux, cf. docs/domain/role_permissions.md).
 
-  def admin?
-    system_role == "admin"
-  end
-
-  def volunteer?
-    system_role == "volunteer"
-  end
-
-  def web_visitor?
-    system_role == "web_visitor"
-  end
-
-  def has_admin_rights?
+  # Droits d'administration élargis (super_admin OU admin). Pour l'accès brut
+  # à la zone /admin (qui inclut aussi volunteer), voir User#can_access_admin_zone?.
+  def can_administer?
     super_admin? || admin?
   end
 

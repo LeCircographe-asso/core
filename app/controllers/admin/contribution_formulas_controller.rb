@@ -94,11 +94,6 @@ module Admin
       contribution_purchase_params[:contribution_formula_id]
     end
 
-    def require_super_admin
-      return if Current.user&.super_admin?
-
-      redirect_to admin_contribution_formulas_path, alert: I18n.t("admin.contribution_formulas.require_super_admin.forbidden")
-    end
 
     def set_contribution_formula
       @contribution_formula = ContributionFormula.find(params[:id])

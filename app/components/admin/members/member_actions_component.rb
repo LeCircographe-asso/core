@@ -130,7 +130,7 @@ module Admin
 
       def delete_action
         if user.nil?
-          return unless current_user.has_admin_rights?
+          return unless current_user.can_administer?
         else
           return unless current_user.has_higher_permissions?(user)
         end

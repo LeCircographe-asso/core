@@ -58,7 +58,7 @@
             <% end %>
 
             <% if membership_type.memberships.empty? %>
-              <% if Current.user&.system_role == 'super_admin' %>
+              <% if Current.user&.super_admin? %>
                 <%= button_to admin_membership_type_path(membership_type),
                     method: :delete,
                     form: { data: { turbo_confirm: "Êtes-vous sûr de vouloir supprimer ce type d'adhésion ?" } },

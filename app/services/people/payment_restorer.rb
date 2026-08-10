@@ -25,7 +25,7 @@ module People
       target_payment = resolve_payment
       restorer = resolve_restorer
 
-      return failure("Insufficient permissions to restore payment") unless restorer.super_admin? || restorer.admin?
+      return failure("Insufficient permissions to restore payment") unless restorer.can_administer?
 
       return failure("Payment is not cancelled and cannot be restored") unless target_payment.status == "cancel"
 
