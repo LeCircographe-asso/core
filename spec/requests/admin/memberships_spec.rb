@@ -61,6 +61,29 @@ RSpec.describe 'Admin::Memberships', type: :request do
         expect(response).to have_http_status(:success)
       end
 
+      it 'shows the reduced-rate reason field server-side (no JS needed) when the person is already eligible' do
+        person.update!(reduced_rate_eligible: true, reduced_rate_reason: 'RSA')
+        create(:membership_type, :circus, rate_kind: 'standard')
+        create(:membership_type, :circus_reduced, rate_kind: 'reduced')
+
+        get new_admin_membership_path(person_id: person.id)
+
+        doc = Nokogiri::HTML5.fragment(response.body)
+        details = doc.at_css('[data-reduced-rate-target="details"]')
+        expect(details['class']).not_to include('hidden')
+      end
+
+      it 'keeps the reduced-rate reason field hidden server-side when the person is not eligible' do
+        create(:membership_type, :circus, rate_kind: 'standard')
+        create(:membership_type, :circus_reduced, rate_kind: 'reduced')
+
+        get new_admin_membership_path(person_id: person.id)
+
+        doc = Nokogiri::HTML5.fragment(response.body)
+        details = doc.at_css('[data-reduced-rate-target="details"]')
+        expect(details['class']).to include('hidden')
+      end
+
       context 'for upgrade' do
         let(:basic_type) { create(:membership_type, category: :basic) }
         let(:circus_type) { create(:membership_type, :circus, name: 'Adhésion Cirque Complète', rate_kind: "standard") }
@@ -74,13 +97,16 @@ RSpec.describe 'Admin::Memberships', type: :request do
 
           get new_admin_membership_path(person_id: person.id, upgrade: 'true')
           expect(response).to have_http_status(:success)
-          expect(response.body).to include("Upgrade d&#39;adhésion")
+          expect(response.body).to include("Passage en adhésion Cirque")
           expect(response.body).to include("Règle d'upgrade")
           expect(response.body).not_to include("Tarif réduit éligible")
           expect(response.body).not_to include("Sélectionnez ci-dessus pour voir le tarif")
         end
 
-        it 'hides reduced circus memberships when the person is not reduced-rate eligible' do
+        it 'always shows reduced circus memberships, even when the person is not yet reduced-rate eligible' do
+          # L'éligibilité au tarif réduit se déclare désormais au moment du choix
+          # (voir Admin::MembershipsController#apply_reduced_rate_selection!),
+          # plus comme un pré-requis qui filtre les options disponibles.
           circus_type
           circus_reduced_type
           misleading_standard_type
@@ -89,21 +115,18 @@ RSpec.describe 'Admin::Memberships', type: :request do
 
           expect(response.body).to include("Adhésion Cirque Complète")
           expect(response.body).to include("Adhésion Cirque Réduite de Test")
-          expect(response.body).not_to include("Adhésion Cirque Solidaire")
+          expect(response.body).to include("Adhésion Cirque Solidaire")
         end
 
-        it 'shows reduced circus memberships when the person is reduced-rate eligible' do
+        it 'still shows the eligibility banner when the person is already reduced-rate eligible' do
           person.update!(reduced_rate_eligible: true, reduced_rate_reason: "Étudiant")
           circus_type
           circus_reduced_type
-          misleading_standard_type
 
           get new_admin_membership_path(person_id: person.id, upgrade: 'true')
 
           expect(response.body).to include("Tarif réduit éligible")
           expect(response.body).to include("Étudiant")
-          expect(response.body).to include("Adhésion Cirque Solidaire")
-          expect(response.body).to include("Adhésion Cirque Réduite de Test")
         end
       end
     end
@@ -186,6 +209,64 @@ RSpec.describe 'Admin::Memberships', type: :request do
           expect(payment.total_cents).to eq(membership_type.price_cents + 550)
           expect(payment.payment_lines.count).to eq(2)
           expect(payment.payment_lines.find_by(item_type: 'Donation')&.amount_cents).to eq(550)
+        end
+      end
+
+      context 'when selecting a reduced-rate circus membership type' do
+        let(:circus_reduced_type) { create(:membership_type, :circus_reduced, price_cents: 2_000) }
+
+        it 'declares the person reduced-rate eligible with the given reason' do
+          expect(person.reduced_rate_eligible?).to be(false)
+
+          post admin_memberships_path, params: {
+            membership: { person_id: person.id, membership_type_id: circus_reduced_type.id, payment_method: 'cash' },
+            reduced_rate_reason: 'Étudiant'
+          }
+
+          person.reload
+          expect(person.reduced_rate_eligible?).to be(true)
+          expect(person.reduced_rate_reason).to eq('Étudiant')
+        end
+
+        it 'creates the membership at the reduced price' do
+          post admin_memberships_path, params: {
+            membership: { person_id: person.id, membership_type_id: circus_reduced_type.id, payment_method: 'cash' },
+            reduced_rate_reason: 'RSA'
+          }
+
+          expect(Payment.order(:created_at).last.total_cents).to eq(2_000)
+        end
+
+        it 'rejects the request when no reason is given' do
+          expect do
+            post admin_memberships_path, params: {
+              membership: { person_id: person.id, membership_type_id: circus_reduced_type.id, payment_method: 'cash' }
+            }
+          end.not_to change(Membership, :count)
+
+          expect(person.reload.reduced_rate_eligible?).to be(false)
+          expect(response).to redirect_to(new_admin_membership_path(person_id: person.id))
+        end
+
+        it 'requires the proof field when the reason is "Autre"' do
+          expect do
+            post admin_memberships_path, params: {
+              membership: { person_id: person.id, membership_type_id: circus_reduced_type.id, payment_method: 'cash' },
+              reduced_rate_reason: 'Autre'
+            }
+          end.not_to change(Membership, :count)
+
+          expect(response).to redirect_to(new_admin_membership_path(person_id: person.id))
+        end
+
+        it 'does not touch reduced-rate fields when a standard type is chosen' do
+          standard_type = create(:membership_type, :circus)
+
+          post admin_memberships_path, params: {
+            membership: { person_id: person.id, membership_type_id: standard_type.id, payment_method: 'cash' }
+          }
+
+          expect(person.reload.reduced_rate_eligible?).to be(false)
         end
       end
 

@@ -27,14 +27,14 @@ module Admin
       @person = Person.find(params[:person_id])
 
       if params[:upgrade] == "true" && @person&.current_membership&.basic?
-        @membership_types = MembershipType.circus_types.available_for(@person).order(:price_cents)
+        # Les deux tarifs (standard/réduit) sont toujours proposés : l'éligibilité au
+        # tarif réduit se déclare au moment du choix, pas comme pré-requis (cf. reason_for_reduced_rate).
+        @membership_types = MembershipType.circus_types.current_versions.order(:price_cents)
         @is_upgrade = true
         @current_membership = @person.current_membership
         add_person_context_breadcrumbs(@person, I18n.t("breadcrumbs.admin.memberships.upgrade_to_circus"))
       else
-        @membership_types = @person.present? \
-          ? MembershipType.available_for(@person).order(:price_cents) \
-          : MembershipType.current_versions.order(:price_cents)
+        @membership_types = MembershipType.current_versions.order(:price_cents)
         @is_upgrade = false
         add_person_context_breadcrumbs(@person, I18n.t("breadcrumbs.admin.memberships.new_membership")) if @person.present?
         add_breadcrumb I18n.t("breadcrumbs.admin.memberships.new_membership"), nil unless @person.present?
@@ -50,6 +50,8 @@ module Admin
     def create
       params_hash = membership_purchase_params
       membership_type = MembershipType.find(params_hash[:membership_type_id])
+
+      return unless apply_reduced_rate_selection!(membership_type, params_hash)
 
       if upgrade_request_for?(@person, params_hash)
         handle_upgrade_flow(@person, membership_type, params_hash)
@@ -174,6 +176,25 @@ module Admin
         redirect_to new_admin_membership_path(person_id: person.id),
                     alert: t("admin.memberships.create.membership_creation_failed_alert", message: result.message)
       end
+    end
+
+    # Déclare le tarif réduit sur la personne au moment même du choix de l'adhésion,
+    # plutôt que d'exiger une déclaration préalable sur la fiche. Voir Person#reduced_rate_consistency
+    # pour la validation (raison obligatoire, justificatif si "Autre").
+    def apply_reduced_rate_selection!(membership_type, params_hash)
+      return true unless membership_type.reduced_rate?
+
+      @person.assign_attributes(
+        reduced_rate_eligible: true,
+        reduced_rate_reason: params[:reduced_rate_reason].presence,
+        reduced_rate_proof: params[:reduced_rate_proof].presence
+      )
+
+      return true if @person.save
+
+      redirect_to new_admin_membership_path(person_id: @person.id, upgrade: params_hash[:upgrade]),
+                  alert: @person.errors.full_messages.to_sentence
+      false
     end
 
     def upgrade_request_for?(person, params_hash)

@@ -42,20 +42,21 @@
     <% end %>
   <% end %>
 
-  <%= form_with model: [:admin, @membership || Membership.new], url: admin_memberships_path, method: :post, local: true, class: "space-y-4", data: { controller: "offer-fields" } do |form| %>
+  <%= form_with model: [:admin, @membership || Membership.new], url: admin_memberships_path, method: :post, local: true, class: "space-y-4", data: { controller: "offer-fields reduced-rate" } do |form| %>
     <%= form.hidden_field :person_id, value: @person.id %>
     <%= form.hidden_field :upgrade, value: @is_upgrade %>
 
     <% default_type_id = @person&.reduced_rate_eligible? ? @membership_types.find(&:reduced_rate?)&.id : nil %>
+    <% reduced_rate_preselected = default_type_id.present? %>
 
     <div>
       <%= form.label :membership_type_id, @is_upgrade ? "Nouvelle adhésion Cirque" : "Type d'adhésion", class: "block text-sm font-medium text-gray-700" %>
       <%= form.select :membership_type_id,
-          @is_upgrade ?
-            upgrade_membership_options_for(@membership_types) :
-            options_from_collection_for_select(@membership_types, :id, :name_with_price, default_type_id),
+          options_for_select(membership_type_select_options(@membership_types), default_type_id),
           { prompt: @is_upgrade ? "Sélectionner le nouveau type" : "Sélectionner un type d'adhésion" },
-          { class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#1F5C55] focus:ring-[#1F5C55] sm:text-sm", required: true } %>
+          { class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#1F5C55] focus:ring-[#1F5C55] sm:text-sm",
+            required: true,
+            data: { "reduced-rate-target": "select", action: "change->reduced-rate#selectChanged" } } %>
       <% if @membership_types.empty? %>
         <p class="text-red-500 text-sm mt-1">⚠️ Aucun type d'adhésion disponible</p>
       <% end %>
@@ -65,7 +66,23 @@
         </div>
       <% end %>
     </div>
-    
+
+    <div class="<%= 'hidden' unless reduced_rate_preselected %>" data-reduced-rate-target="details">
+      <%= label_tag :reduced_rate_reason, "Justificatif du tarif réduit", class: "block text-sm font-medium text-gray-700" %>
+      <%= select_tag :reduced_rate_reason,
+          options_for_select(Person::REDUCED_RATE_REASONS, @person.reduced_rate_reason),
+          include_blank: "Sélectionner...",
+          class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#1F5C55] focus:ring-[#1F5C55] sm:text-sm",
+          data: { "reduced-rate-target": "reason", action: "change->reduced-rate#reasonChanged" } %>
+    </div>
+
+    <div class="<%= 'hidden' unless reduced_rate_preselected && @person.reduced_rate_reason == 'Autre' %>" data-reduced-rate-target="proof">
+      <%= label_tag :reduced_rate_proof, "Précision", class: "block text-sm font-medium text-gray-700" %>
+      <%= text_field_tag :reduced_rate_proof, @person.reduced_rate_proof,
+          placeholder: "Préciser le motif ou le justificatif",
+          class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#1F5C55] focus:ring-[#1F5C55] sm:text-sm" %>
+    </div>
+
     <div>
       <%= form.label :payment_method, "Méthode de paiement", class: "block text-sm font-medium text-gray-700" %>
       <%= form.select :payment_method, 

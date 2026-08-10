@@ -167,59 +167,65 @@
             <table class="min-w-full divide-y divide-gray-200">
               <thead class="bg-gray-50">
                 <tr>
-                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
-                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Numéro</th>
-                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nom</th>
-                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Contact</th>
-                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Statut Adhésion</th>
-                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Cotisations</th>
-                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Compte</th>
-                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                  <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
+                  <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Numéro</th>
+                  <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nom</th>
+                  <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Contact</th>
+                  <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Statut Adhésion</th>
+                  <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Cotisations</th>
+                  <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Compte</th>
+                  <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                 </tr>
               </thead>
               <tbody class="bg-white divide-y divide-gray-200">
                 <% if @people.any? %>
                   <% @people.each do |person| %>
-                    <tr class="table-row hover:bg-gray-50" data-admin-users-target="tableRow">
-                      <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                    <tr class="table-row cursor-pointer hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-[#1F5C55]"
+                        data-admin-users-target="tableRow"
+                        data-controller="clickable-row"
+                        data-clickable-row-url-value="<%= admin_member_path(person) %>"
+                        data-action="click->clickable-row#visit keydown->clickable-row#keydown"
+                        tabindex="0"
+                        aria-label="<%= "Voir la fiche de #{display_name(person)}" %>">
+                      <td class="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-900">
                         <%= person.id %>
                       </td>
-                      
-                      <td class="px-6 py-4 whitespace-nowrap text-sm">
+
+                      <td class="px-4 py-3 whitespace-nowrap text-sm">
                         <%= member_number_display(person) %>
                       </td>
-                      
-                      <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+
+                      <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-900">
                         <%= display_name(person) %>
                       </td>
-                      
-                      <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+
+                      <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-500">
                         <div class="space-y-1">
                           <div><%= display_email(person) %></div>
                           <div><%= display_phone(person) %></div>
                         </div>
                       </td>
-                      
-                      <td class="px-6 py-4 whitespace-nowrap text-sm">
+
+                      <td class="px-4 py-3 whitespace-nowrap text-sm">
                         <%= render MembershipStatusBadgeComponent.new(person: person) %>
                       </td>
-                      
-                      <td class="px-6 py-4 whitespace-nowrap text-sm">
+
+                      <td class="px-4 py-3 whitespace-nowrap text-sm">
                         <%= render ContributionStatusBadgeComponent.new(person: person) %>
                       </td>
-                      
-                      <td class="px-6 py-4 whitespace-nowrap text-sm text-center">
+
+                      <td class="px-4 py-3 whitespace-nowrap text-sm text-center">
                         <%= render WebAccountIconComponent.new(person: person) %>
                       </td>
-                      
-                      <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+
+                      <td class="px-4 py-3 whitespace-nowrap text-sm font-medium">
                         <%= render ContextualActionsComponent.new(person: person) %>
                       </td>
                     </tr>
                   <% end %>
                 <% else %>
                   <tr>
-                    <td colspan="9" class="px-6 py-10 text-center text-gray-500">
+                    <td colspan="8" class="px-6 py-10 text-center text-gray-500">
                       <div class="empty-state flex flex-col items-center">
                         <svg class="h-12 w-12 text-gray-300 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"></path>
