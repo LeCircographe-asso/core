@@ -1,21 +1,20 @@
-#!/usr/bin/env bash
-set -euo pipefail
+#!/usr/bin/env ruby
+# frozen_string_literal: true
 
-APP_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
-cd "$APP_ROOT"
+require "fileutils"
 
-LOCK_DIR="$APP_ROOT/tmp/locks"
-LOCK_FILE="$LOCK_DIR/rspec.sqlite.lock"
+app_root = File.expand_path("..", __dir__)
+Dir.chdir(app_root)
 
-mkdir -p "$LOCK_DIR"
+lock_dir = File.join(app_root, "tmp", "locks")
+FileUtils.mkdir_p(lock_dir)
+lock_file = File.join(lock_dir, "rspec.sqlite.lock")
 
-if ! command -v flock > /dev/null 2>&1; then
-  exec bundle exec rspec "$@"
-fi
-
-if ! flock -n "$LOCK_FILE" true; then
-  echo "⏳ SQLite test DB busy: waiting for the current RSpec process to finish..."
-  echo "   Inspect running test processes with: ps -ef | rg 'bin/test|bin/rspec|guard|rspec'"
-fi
-
-exec flock "$LOCK_FILE" bundle exec rspec "$@"
+File.open(lock_file, File::RDWR | File::CREAT, 0o644) do |f|
+  unless f.flock(File::LOCK_EX | File::LOCK_NB)
+    warn "⏳ SQLite test DB busy: waiting for the current RSpec process to finish..."
+    warn "   Inspect running test processes with: ps -ef | rg 'bin/test|bin/rspec|guard|rspec'"
+    f.flock(File::LOCK_EX)
+  end
+  exec("bundle", "exec", "rspec", *ARGV)
+end

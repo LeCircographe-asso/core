@@ -44,3 +44,4 @@ pidfile ENV["PIDFILE"] if ENV["PIDFILE"]
 # Specify the `port` to listen on (defaults to 3000, configurable via PORT env var)
 # Note: With Rails 8 + Thruster, Puma runs on 3000 and Thruster proxies on PORT (80)
 port ENV.fetch("PORT", 3000)
+bind "tcp://0.0.0.0:3000"
