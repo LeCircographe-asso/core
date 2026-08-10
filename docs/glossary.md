@@ -114,6 +114,10 @@
 - **Définition** : paiement volontaire sans contrepartie, conservé pour reçu fiscal éventuel.
 - **Représentation actuelle** : `PaymentLine` avec `item_type: "Donation"` (création via `People::PaymentRecorder`).
 - **À vérifier** : présence éventuelle de lignes historiques `item_type: "Payment"` en production — voir [payments.md](payments.md).
+
+#### Reçu de don — `DonationReceipt`
+- **Définition** : métadonnées du reçu fiscal (numéro, date d'émission, émetteur) associées à une `PaymentLine` de don. Émis via `People::DonationReceiptIssuer` — voir [payments.md §4.4](payments.md#44-reçu-fiscal--métadonnées-donationreceipt).
+- **À éviter** : confondre avec le futur document PDF/CERFA (non implémenté) ou l'action admin de génération/réenvoi (non implémentée).
 - **Usage correct** :
   - « Don de 5 € lors d'une adhésion ».
   - « Le paiement contient deux lignes : adhésion + don ».

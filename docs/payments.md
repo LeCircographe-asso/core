@@ -117,6 +117,12 @@ payment.payment_lines.create!(
 - Ajout d'un rapport d'intégrité paiement/lignes.
 - Vérifier l'affichage uniforme de `offer_reason` dans tous les écrans admin de paiement.
 
+### 4.4 Reçu fiscal — métadonnées (`DonationReceipt`)
+
+- `DonationReceipt` (`belongs_to :payment_line`) porte les métadonnées du reçu : `number` (séquentiel par année civile, format `"AAAA-NNN"`), `issued_at`, `issuer` (identité de l'association, figée au moment de l'émission plutôt que résolue dynamiquement, pour rester une preuve stable). Au plus un reçu par `payment_line` (index unique sur `payment_line_id`), numéro globalement unique.
+- Émission : `People::DonationReceiptIssuer.new(payment_line:, issued_at: Time.current).call` — refuse une ligne qui n'est pas `item_type: "Donation"`, refuse un doublon si un reçu existe déjà. Émetteur lu via `ENV["ASSOCIATION_RECEIPT_ISSUER"]` (fallback `"Le Circographe"`).
+- **Hors périmètre pour l'instant** (voir `docs/internal/todo.md`) : action admin de génération/réenvoi (controller, vue, email), génération PDF/CERFA. Seule la couche données existe à ce stade.
+
 ---
 
 ## 5. Audit et observabilité

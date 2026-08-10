@@ -84,6 +84,11 @@ en:
         updated: Blog mis à jour avec succès
       destroy:
         destroyed: Blog supprimé avec succès
+    gallery_photos:
+      create:
+        success: Photo added to the gallery
+      destroy:
+        success: Photo removed from the gallery
     donations:
       new:
         title: Record a donation
@@ -163,6 +168,8 @@ en:
         formula_named: 'Formula: %{name}'
         new_contribution: New contribution
         edit_named: 'Edit: %{name}'
+      gallery_photos:
+        gallery: Gallery photos
       opening_hours:
         title: Opening hours
       events:

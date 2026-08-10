@@ -11,25 +11,39 @@
 </section>
 
 <%
-  excluded_avatars = %w[users.png userPicture.webp placeholder_avatar.webp memberVolunteer.webp
-                        memberWithMembership.webp circusMember.webp super_admin.webp admin.webp
-                        adminUser.webp circo-admin.webp volunteer.webp logo.webp]
-  base_images = %w[lelieu1.webp lelieu2.webp circus-img2.webp graff-img1.webp
-                   flowersZoomed.webp background.webp]
-  hero_pool   = available_hero_images(except: excluded_avatars + base_images)
-  extra       = hero_pool.sample([18 - base_images.size, hero_pool.size].min)
-  image_files = (base_images + extra).uniq.first(18)
+  # Repli sur les images statiques tant que la galerie n'a pas été peuplée en base
+  # (bin/rails gallery_photos:import_existing, ou upload admin). Voir Admin::GalleryPhotosController.
+  using_static_fallback = @gallery_photos.blank?
+
+  if using_static_fallback
+    excluded_avatars = %w[users.png userPicture.webp placeholder_avatar.webp memberVolunteer.webp
+                          memberWithMembership.webp circusMember.webp super_admin.webp admin.webp
+                          adminUser.webp circo-admin.webp volunteer.webp logo.webp]
+    base_images = %w[lelieu1.webp lelieu2.webp circus-img2.webp graff-img1.webp
+                     flowersZoomed.webp background.webp]
+    hero_pool   = available_hero_images(except: excluded_avatars + base_images)
+    extra       = hero_pool.sample([18 - base_images.size, hero_pool.size].min)
+    image_files = (base_images + extra).uniq.first(18)
+
+    gallery_items = image_files.map { |image| { thumb: asset_path(image), full: asset_path(image) } }
+  else
+    gallery_items = @gallery_photos.map { |photo| { thumb: url_for(photo.thumb), full: url_for(photo.full) } }
+  end
 %>
 
-<section class="mb-12 fade-in">
+<section class="mb-12 fade-in" data-controller="lightbox">
 
   <%# ── Grille masonry CSS columns ── %>
   <div class="columns-2 md:columns-3 gap-3">
-    <% image_files.each_with_index do |image, index| %>
-      <a href="#galerie-photo-<%= index %>"
-         class="block break-inside-avoid mb-3 group relative overflow-hidden rounded-xl shadow-sm cursor-zoom-in"
-         aria-label="Agrandir la photo <%= index + 1 %> sur <%= image_files.size %>">
-        <%= image_tag asset_path(image),
+    <% gallery_items.each_with_index do |item, index| %>
+      <button type="button"
+         class="block w-full text-left break-inside-avoid mb-3 group relative overflow-hidden rounded-xl shadow-sm cursor-zoom-in"
+         data-action="lightbox#open"
+         data-lightbox-index-param="<%= index %>"
+         data-lightbox-src-param="<%= item[:full] %>"
+         data-lightbox-alt-param="Photo du Circographe agrandie"
+         aria-label="Agrandir la photo <%= index + 1 %> sur <%= gallery_items.size %>">
+        <%= image_tag item[:thumb],
                       alt: "Photo du Circographe",
                       class: "w-full h-auto block object-cover transition-transform duration-500 group-hover:scale-[1.025]",
                       loading: (index < 6 ? "eager" : "lazy"),
@@ -43,42 +57,58 @@
             </span>
           </div>
         </div>
-      </a>
+      </button>
     <% end %>
   </div>
 
-  <%# ── Lightboxes pure CSS :target (hors flux de colonnes) ── %>
-  <% image_files.each_with_index do |image, index| %>
-    <div id="galerie-photo-<%= index %>"
-         class="fixed inset-0 z-[200] opacity-0 pointer-events-none target:opacity-100 target:pointer-events-auto transition-opacity duration-200"
-         style="background: rgba(0,0,0,0.92)">
+  <%# ── Lightbox unique, piloté par Stimulus (remplace l'ancien :target CSS) ── %>
+  <div data-lightbox-target="dialog"
+       class="hidden fixed inset-0 z-[200] transition-opacity duration-200"
+       style="background: rgba(0,0,0,0.92)"
+       role="dialog"
+       aria-modal="true"
+       aria-label="Photo agrandie">
 
-      <%# Fond transparent — clic partout ferme la lightbox %>
-      <a href="#" class="absolute inset-0" aria-label="Fermer la photo agrandie"></a>
+    <%# Fond — clic partout ferme la lightbox %>
+    <button type="button" class="absolute inset-0 cursor-default" data-action="lightbox#close" aria-label="Fermer la photo agrandie"></button>
 
-      <%# Image centrée — pointer-events-none sur wrapper pour que les clics autour de l'image atteignent le fond %>
-      <div class="absolute inset-0 flex items-center justify-center p-4 sm:p-12 pointer-events-none">
-        <%= image_tag asset_path(image),
-                      alt: "Photo du Circographe agrandie",
-                      class: "max-w-full max-h-[88vh] object-contain rounded-lg shadow-2xl pointer-events-auto",
-                      loading: "lazy",
-                      decoding: "async" %>
-      </div>
-
-      <%# Bouton fermer ─ au-dessus du fond via z-10 %>
-      <a href="#"
-         class="absolute top-4 right-4 z-10 w-10 h-10 flex items-center justify-center rounded-full bg-white/15 hover:bg-white/30 text-white transition-colors"
-         aria-label="Fermer">
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
-        </svg>
-      </a>
-
-      <%# Compteur discret %>
-      <p class="absolute bottom-4 left-1/2 -translate-x-1/2 text-xs text-white/50 tabular-nums pointer-events-none">
-        <%= index + 1 %> / <%= image_files.size %>
-      </p>
+    <%# Image centrée — pointer-events-none sur wrapper pour que les clics autour de l'image atteignent le fond %>
+    <div class="absolute inset-0 flex items-center justify-center p-4 sm:p-12 pointer-events-none">
+      <%= tag.img data: { lightbox_target: "image" },
+                  class: "max-w-full max-h-[88vh] object-contain rounded-lg shadow-2xl pointer-events-auto",
+                  alt: "" %>
     </div>
-  <% end %>
+
+    <%# Précédent / suivant %>
+    <button type="button"
+       data-action="lightbox#prev"
+       class="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 z-10 w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center rounded-full bg-white/15 hover:bg-white/30 text-white transition-colors"
+       aria-label="Photo précédente">
+      <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/>
+      </svg>
+    </button>
+    <button type="button"
+       data-action="lightbox#next"
+       class="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 z-10 w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center rounded-full bg-white/15 hover:bg-white/30 text-white transition-colors"
+       aria-label="Photo suivante">
+      <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/>
+      </svg>
+    </button>
+
+    <%# Bouton fermer ─ au-dessus du fond via z-10 %>
+    <button type="button"
+       data-action="lightbox#close"
+       class="absolute top-4 right-4 z-10 w-10 h-10 flex items-center justify-center rounded-full bg-white/15 hover:bg-white/30 text-white transition-colors"
+       aria-label="Fermer">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+      </svg>
+    </button>
+
+    <%# Compteur %>
+    <p data-lightbox-target="counter" class="absolute bottom-4 left-1/2 -translate-x-1/2 text-xs text-white/50 tabular-nums pointer-events-none"></p>
+  </div>
 
 </section>

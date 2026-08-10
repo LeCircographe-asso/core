@@ -1,0 +1,51 @@
+# frozen_string_literal: true
+
+require "rails_helper"
+
+RSpec.describe DonationReceipt, type: :model do
+  let(:payment) { create(:payment, status: :success) }
+  let(:donation_line) do
+    create(:payment_line, payment: payment, item_type: "Donation", item_id: payment.id, amount_cents: 500, description: "Don libre")
+  end
+
+  it "is valid with number, issued_at, issuer and a donation payment_line" do
+    receipt = DonationReceipt.new(payment_line: donation_line, number: "2026-001", issued_at: Time.current, issuer: "Le Circographe")
+
+    expect(receipt).to be_valid
+  end
+
+  it "is invalid without number, issued_at or issuer" do
+    receipt = DonationReceipt.new(payment_line: donation_line)
+
+    expect(receipt).not_to be_valid
+    expect(receipt.errors[:number]).to be_present
+    expect(receipt.errors[:issued_at]).to be_present
+    expect(receipt.errors[:issuer]).to be_present
+  end
+
+  it "rejects a payment_line that is not a donation" do
+    membership_line = create(:payment_line, payment: payment, item_type: "MembershipType")
+    receipt = DonationReceipt.new(payment_line: membership_line, number: "2026-001", issued_at: Time.current, issuer: "Le Circographe")
+
+    expect(receipt).not_to be_valid
+    expect(receipt.errors[:payment_line]).to be_present
+  end
+
+  it "enforces a unique receipt number" do
+    DonationReceipt.create!(payment_line: donation_line, number: "2026-001", issued_at: Time.current, issuer: "Le Circographe")
+    other_line = create(:payment_line, payment: payment, item_type: "Donation", item_id: create(:payment, status: :success).id)
+
+    duplicate = DonationReceipt.new(payment_line: other_line, number: "2026-001", issued_at: Time.current, issuer: "Le Circographe")
+
+    expect(duplicate).not_to be_valid
+    expect(duplicate.errors[:number]).to be_present
+  end
+
+  it "enforces at most one receipt per payment_line" do
+    DonationReceipt.create!(payment_line: donation_line, number: "2026-001", issued_at: Time.current, issuer: "Le Circographe")
+
+    expect {
+      DonationReceipt.create!(payment_line: donation_line, number: "2026-002", issued_at: Time.current, issuer: "Le Circographe")
+    }.to raise_error(ActiveRecord::RecordNotUnique)
+  end
+end

@@ -20,6 +20,7 @@ Rails.application.routes.draw do
   namespace :admin do
     root to: "dashboard#index"
     resources :blogs
+    resources :gallery_photos, only: %i[index create destroy]
     resources :dashboard, only: %i[index], path: "dashboard"
     resource :opening_hours, only: %i[show edit update]
     # Legacy: "Faire un don" used GET /admin/donations?person_id=… before +new+ existed.

@@ -9,7 +9,7 @@
 
 ## Now
 - [x] **Paiements —** Les écrans admin (`Admin::PaymentsController#destroy`, `Admin::Members::PaymentsController#destroy`) passent déjà par `People::PaymentCanceller` (annulation `status: cancel`, pas de suppression ligne). `Payment#destroy` est désormais verrouillé par défaut ; le hard delete résiduel passe par une intention explicite `Payment#hard_delete!` pour les usages techniques/tests.
-- [ ] Ajouter les métadonnées de reçu de don : numéro, date d’émission, émetteur (non implémenté côté app / pas de feature « reçu » dans le repo à ce jour).
+- [x] Ajouter les métadonnées de reçu de don : numéro, date d’émission, émetteur. *(`DonationReceipt` + `People::DonationReceiptIssuer` ; numéro séquentiel par année civile, émetteur figé à l'émission via `ENV["ASSOCIATION_RECEIPT_ISSUER"]`, voir `docs/payments.md` §4.4. Couche données uniquement — pas d'action admin ni de PDF, voir item suivant.)*
 
 ## Next safe steps
 - [ ] Ajouter l’action admin de génération / réenvoi de reçu de don (dépend des métadonnées ci-dessus).
@@ -23,6 +23,7 @@
 - [x] Ajuster la home pour le mobile sans casser desktop. *(wrapper plein écran pour `home#index`, fond mobile zoomé, titre forcé sur deux lignes ≤ `640px`, CTA re-positionnés plus bas, nettoyage `swiper_overrides`)* 
 
 ## Later
+- [ ] **Galerie photo — suite (Phase 2/3)** : Phase 1 faite le 2026-08-10 (`GalleryPhoto`, upload admin, lightbox Stimulus). Reste à faire quand utile : réordonnancement (`position`), modération/nudité (photos de profil membres — pas la galerie admin, risque plus faible car uploadeurs de confiance), réutilisation du même pattern `has_one_attached` pour `board_members`/`partners` (actuellement YAML statique dans `PagesController#show`, voir `load_yaml_content`).
 - [ ] **Billetterie événements payants via HelloAsso** — feature à cadrer, contrainte structurelle identifiée (2026-08-10) : l'API publique HelloAsso ne permet **pas** de créer un formulaire/événement par API (aucun endpoint `POST forms` documenté, confirmé par recherche doc + forum dev.helloasso.com sans réponse officielle). Conséquence : double saisie manuelle obligatoire — créer l'`Event` chez nous **et** le formulaire de billetterie dans le back-office HelloAsso — puis les lier à la main (garder le slug/ID du formulaire HelloAsso sur notre `Event`).
   - Paiement : `POST /v5/organizations/{slug}/checkout-intents` avec `metadata` (`event_id` + `person_id`) → redirection vers page HelloAsso → webhook `Payment` (signature HMAC-SHA256, retries jusqu'à ~16 tentatives donc prévoir l'idempotence) pour marquer le paiement reçu.
   - `EventAttendee` (`belongs_to :payment, optional: true`) actuellement mort dans le code est le point d'ancrage naturel pour stocker la référence du paiement HelloAsso — à réactiver plutôt qu'à supprimer (voir note phase 4 dans `../migrations/vocabulary_migration.md`).

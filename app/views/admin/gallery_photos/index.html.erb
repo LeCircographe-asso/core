@@ -1,0 +1,43 @@
+<div class="min-h-screen bg-gray-50 py-6">
+  <div class="page-container-wide">
+    <div class="admin-page-header">
+      <div class="px-6 py-4">
+        <h1 class="text-2xl font-bold text-white">Galerie photos</h1>
+        <p class="text-green-100 mt-1">Photos affichées sur la page publique <%= link_to "/galerie", "/galerie", class: "underline", target: "_blank", rel: "noopener" %></p>
+      </div>
+    </div>
+
+    <div class="surface-card p-6 mb-6">
+      <h2 class="text-lg font-semibold text-gray-900 mb-1">Ajouter une photo</h2>
+      <p class="text-sm text-gray-500 mb-4">
+        JPEG, PNG, WEBP ou GIF — <%= GalleryPhoto::MAX_UPLOAD_SIZE / 1.megabyte %> Mo maximum.
+        L'image est automatiquement redimensionnée et compressée pour un chargement rapide sur le site public.
+      </p>
+      <%= form_with url: admin_gallery_photos_path, method: :post, local: true, multipart: true, class: "flex flex-wrap items-end gap-4" do |form| %>
+        <div>
+          <%= form.label "gallery_photo[image]", "Fichier image", class: "block text-sm font-medium text-gray-700" %>
+          <%= form.file_field "gallery_photo[image]", accept: "image/*", required: true,
+              class: "mt-1 block text-sm text-gray-700" %>
+        </div>
+        <%= form.submit "Ajouter", class: "inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#1F5C55] hover:bg-[#194A45]" %>
+      <% end %>
+    </div>
+
+    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+      <% @gallery_photos.each do |photo| %>
+        <div class="relative group rounded-lg overflow-hidden shadow-sm border border-gray-200">
+          <%= image_tag photo.thumb, class: "w-full h-32 object-cover", alt: "" %>
+          <%= button_to admin_gallery_photo_path(photo), method: :delete,
+              form: { data: { turbo_confirm: "Supprimer cette photo de la galerie ?" }, class: "absolute top-1 right-1" },
+              class: "w-7 h-7 flex items-center justify-center rounded-full bg-red-600/90 hover:bg-red-700 text-white text-xs" do %>
+            ✕
+          <% end %>
+        </div>
+      <% end %>
+    </div>
+
+    <% if @gallery_photos.empty? %>
+      <p class="text-sm text-gray-500 mt-4">Aucune photo pour le moment.</p>
+    <% end %>
+  </div>
+</div>

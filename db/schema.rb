@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_08_10_120000) do
+ActiveRecord::Schema[8.1].define(version: 2026_08_10_140000) do
   create_table "account_claims", force: :cascade do |t|
     t.string "confirmation_token", null: false
     t.datetime "created_at", null: false
@@ -139,6 +139,17 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_10_120000) do
     t.index ["status"], name: "index_contributions_on_status"
   end
 
+  create_table "donation_receipts", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.datetime "issued_at", null: false
+    t.string "issuer", null: false
+    t.string "number", null: false
+    t.integer "payment_line_id", null: false
+    t.datetime "updated_at", null: false
+    t.index ["number"], name: "index_donation_receipts_on_number", unique: true
+    t.index ["payment_line_id"], name: "index_donation_receipts_on_payment_line_id", unique: true
+  end
+
   create_table "event_attendees", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.bigint "event_id", null: false
@@ -178,6 +189,13 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_10_120000) do
     t.datetime "updated_at", null: false
     t.index ["label", "position"], name: "index_faqs_on_label_and_position"
     t.index ["label"], name: "index_faqs_on_label"
+  end
+
+  create_table "gallery_photos", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.bigint "created_by_user_id"
+    t.datetime "updated_at", null: false
+    t.index ["created_by_user_id"], name: "index_gallery_photos_on_created_by_user_id"
   end
 
   create_table "member_number_histories", force: :cascade do |t|
@@ -414,6 +432,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_10_120000) do
   add_foreign_key "contribution_formulas", "users", column: "created_by_user_id"
   add_foreign_key "contributions", "contribution_formulas"
   add_foreign_key "contributions", "people"
+  add_foreign_key "donation_receipts", "payment_lines"
   add_foreign_key "event_attendees", "events"
   add_foreign_key "event_attendees", "payments"
   add_foreign_key "event_attendees", "users"

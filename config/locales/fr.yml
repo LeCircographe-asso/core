@@ -72,6 +72,11 @@ fr:
         updated: Blog mis à jour avec succès
       destroy:
         destroyed: Blog supprimé avec succès
+    gallery_photos:
+      create:
+        success: Photo ajoutée à la galerie
+      destroy:
+        success: Photo supprimée de la galerie
     donations:
       new:
         title: Enregistrer un don
@@ -487,6 +492,8 @@ fr:
         edit_named: 'Modifier : %{name}'
       opening_hours:
         title: Horaires d'ouverture
+      gallery_photos:
+        gallery: Galerie photos
       events:
         events: Événements
         new_event: Nouvel événement

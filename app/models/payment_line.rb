@@ -14,6 +14,7 @@ class PaymentLine < ApplicationRecord
 
   belongs_to :payment
   belongs_to :item, polymorphic: true, optional: true
+  has_one :donation_receipt, dependent: :destroy
 
   validates :amount_cents, presence: true, numericality: { greater_than_or_equal_to: 0 }
   validates :item_type, presence: true, inclusion: { in: ALLOWED_ITEM_TYPES, message: :not_allowed }

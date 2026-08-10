@@ -50,6 +50,10 @@ class PagesController < ApplicationController
       @partners = load_yaml_content("partners")
     end
 
+    # Mélangé à chaque chargement (comme l'ancien pool statique) — l'admin
+    # gère quelles photos existent, pas leur ordre d'affichage.
+    @gallery_photos = GalleryPhoto.all.to_a.sample(18) if params[:id] == "gallery"
+
     page_id = params[:id].to_s
     raise ActiveRecord::RecordNotFound unless ALLOWED_PAGE_IDS.include?(page_id)
 
