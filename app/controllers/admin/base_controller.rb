@@ -43,6 +43,14 @@ module Admin
       redirect_to admin_dashboard_index_path, alert: I18n.t("admin.base.unauthorized_alert")
     end
 
+    # Guard pour les actions réservées à admin/super_admin (exclut volunteer),
+    # ex: exports de données personnelles. Voir docs/domain/role_permissions.md.
+    def require_admin_rights
+      return if Current.user&.can_administer?
+
+      redirect_to admin_dashboard_index_path, alert: I18n.t("admin.base.unauthorized_alert")
+    end
+
     def store_return_location_for_admin_request
       uri = URI.parse(request.url)
       path = uri.path.to_s.presence || "/"

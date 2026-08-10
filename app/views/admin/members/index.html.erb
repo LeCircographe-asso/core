@@ -80,13 +80,15 @@
           <%= link_to t("views.admin.members.index.create_member"), new_admin_member_path,
               class: "admin-btn-primary" %>
           
-          <%= link_to "Export CSV", all_users_admin_exports_path, 
-              class: "admin-btn-accent",
-              data: { 
-                action: "click->admin-users#exportData",
-                format: "csv"
-              } %>
-          
+          <% if current_user.can_administer? %>
+            <%= link_to "Export CSV", all_users_admin_exports_path,
+                class: "admin-btn-accent",
+                data: {
+                  action: "click->admin-users#exportData",
+                  format: "csv"
+                } %>
+          <% end %>
+
         </div>
 
         <!-- Barre de recherche et filtres -->

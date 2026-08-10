@@ -4,6 +4,8 @@ module Admin
   class ExportsController < BaseController
     require "csv"
 
+    before_action :require_admin_rights
+
     def index
     end
 
