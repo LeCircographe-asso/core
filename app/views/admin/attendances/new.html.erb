@@ -4,92 +4,91 @@
   <div class="page-container max-w-5xl">
     <!-- Breadcrumbs -->
     <%= render 'shared/breadcrumbs' %>
-    
+
     <!-- Header -->
     <div class="mb-6">
       <div class="flex items-center">
-        <%= link_to admin_attendance_list_attendances_path(@attendance_list), class: "mr-4 text-gray-500 hover:text-[#1F5C55]" do %>
-          <i class="fas fa-arrow-left"></i>
+        <% if @attendance_list %>
+          <%= link_to admin_attendance_list_path(@attendance_list), class: "mr-4 text-gray-500 hover:text-[#1F5C55]" do %>
+            <i class="fas fa-arrow-left"></i>
+          <% end %>
+        <% else %>
+          <%= link_to admin_attendances_path, class: "mr-4 text-gray-500 hover:text-[#1F5C55]" do %>
+            <i class="fas fa-arrow-left"></i>
+          <% end %>
         <% end %>
         <h1 class="text-2xl font-bold text-gray-900">Ajouter des participants</h1>
       </div>
-      <div class="mt-2">
-        <p class="text-sm text-gray-500">
-          <% list_type_label = @attendance_list.list_type.humanize %>
-          <% 
-            icon_class = case @attendance_list.list_type 
-            when "training" then "fas fa-graduation-cap text-blue-500"
-            when "event" then "fas fa-calendar-check text-purple-500"
-            when "meeting" then "fas fa-users text-green-500"
-            else "fas fa-list text-gray-500"
-            end
-          %>
-          Ajout de présences pour <span class="font-medium"><%= list_type_label %></span> du 
-          <span class="font-medium"><%= @attendance_list.start_date.strftime("%d/%m/%Y") %></span>
-        </p>
-      </div>
+      <% if @attendance_list %>
+        <div class="mt-2">
+          <p class="text-sm text-gray-500">
+            Ajout de présences pour <span class="font-medium"><%= @attendance_list.list_type.humanize %></span> du
+            <span class="font-medium"><%= @attendance_list.start_date.strftime("%d/%m/%Y") %></span>
+          </p>
+        </div>
+      <% end %>
     </div>
 
-    <!-- List of available users -->
+    <!-- List of available people -->
     <div class="surface-card">
       <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
-        <h2 class="text-lg font-medium text-gray-900">Utilisateurs disponibles</h2>
-        <p class="text-sm text-gray-500"><%= pluralize(@users_not_in_list.count, "utilisateur", "utilisateurs") %> disponible(s)</p>
+        <h2 class="text-lg font-medium text-gray-900">Personnes disponibles</h2>
+        <p class="text-sm text-gray-500"><%= pluralize(@people_available.count, "personne", "personnes") %> disponible(s)</p>
       </div>
 
-      <% if @users_not_in_list.present? %>
+      <% if @people_available.present? %>
         <ul class="divide-y divide-gray-200">
-          <% @users_not_in_list.each do |user| %> <!-- Correct loop on unadded users -->
+          <% @people_available.each do |person| %>
             <li class="flex items-center justify-between hover:bg-gray-50 px-6 py-4">
               <div class="flex items-center">
-                <!-- User avatar -->
                 <div class="flex-shrink-0 h-10 w-10">
                   <div class="h-10 w-10 rounded-full bg-[#1F5C55]/10 flex items-center justify-center">
                     <span class="text-[#1F5C55] font-medium">
-                      <%= "#{user.first_name&.first}#{user.last_name&.first}".strip.presence || "?" %>
+                      <%= "#{person.first_name&.first}#{person.last_name&.first}".strip.presence || "?" %>
                     </span>
                   </div>
                 </div>
 
-                <!-- User information -->
                 <div class="ml-4">
                   <div class="text-sm font-medium text-gray-900">
-                    <%= [user.first_name, user.last_name].compact.join(" ") %>
+                    <%= [ person.first_name, person.last_name ].compact.join(" ") %>
                   </div>
-                  <div class="text-sm text-gray-500"><%= user.email %></div>
+                  <div class="text-sm text-gray-500 flex items-center gap-2">
+                    <%= person.email.presence || "Pas d'email" %>
+                    <%= render MembershipStatusBadgeComponent.new(person: person) %>
+                  </div>
                 </div>
               </div>
 
-              <!-- Button or message depending on membership -->
-              <% if user.user_memberships.joins(:membership)
-                      .where(user_memberships: { status: "active" })
-                      .where(memberships: { type_name: ["Circus", "Basic"] })
-                      .exists? %>
-                <!-- User is a member, show "Add" button -->
-                <%= button_to admin_attendance_list_attendances_path(attendance_list_id: @attendance_list.id, user_id: user.id), 
-                    method: :post, 
-                    class: "px-3 py-1.5 bg-[#1F5C55] hover:bg-[#194A45] text-white text-sm font-medium rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1F5C55] flex items-center" do %>
-                  <i class="fas fa-plus mr-1.5"></i> Ajouter
-                <% end %>
-              <% else %>
-                <!-- User is not a member, display message -->
-                <span class="text-sm text-gray-500">Non membre</span>
+              <%= button_to(
+                    @attendance_list ? admin_attendance_list_attendances_path(@attendance_list) : admin_attendances_path,
+                    method: :post,
+                    params: {
+                      attendance: {
+                        person_id: person.id,
+                        attendance_list_id: @attendance_list&.id
+                      }
+                    },
+                    class: "px-3 py-1.5 bg-[#1F5C55] hover:bg-[#194A45] text-white text-sm font-medium rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1F5C55] flex items-center"
+                  ) do %>
+                <i class="fas fa-plus mr-1.5"></i> Ajouter
               <% end %>
             </li>
-          <% end %> <!-- End of loop on unadded users -->
+          <% end %>
         </ul>
       <% else %>
-        <!-- Message if no user available -->
         <div class="p-6 text-center">
           <div class="flex flex-col items-center py-6">
             <i class="fas fa-check-circle text-green-500 text-3xl mb-3"></i>
-            <p class="text-gray-500">Tous les utilisateurs ont déjà été ajoutés à cette liste</p>
-            <p class="mt-1 text-xs text-gray-500">
-              <%= link_to "Retour à la liste des participants", admin_attendance_list_attendances_path(@attendance_list), class: "text-[#1F5C55] hover:underline" %>
-            </p>
+            <p class="text-gray-500">Toutes les personnes ont déjà été ajoutées à cette liste</p>
+            <% if @attendance_list %>
+              <p class="mt-1 text-xs text-gray-500">
+                <%= link_to "Retour à la liste des participants", admin_attendance_list_path(@attendance_list), class: "text-[#1F5C55] hover:underline" %>
+              </p>
+            <% end %>
           </div>
         </div>
-      <% end %> <!-- End of condition to display available users -->
+      <% end %>
     </div>
   </div>
 </div>

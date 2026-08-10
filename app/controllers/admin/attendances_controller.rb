@@ -17,7 +17,7 @@ module Admin
       @attendances = @attendances.today if params[:today].present?
 
       # Pagination
-      @attendances = @attendances.order(date: :desc).page(params[:page]).per(20)
+      @pagy, @attendances = pagy(@attendances.order(date: :desc), items: 20)
 
       add_breadcrumb I18n.t("breadcrumbs.admin.attendances.management"), nil
     end
@@ -28,19 +28,22 @@ module Admin
     end
 
     def new
-      @attendance = Attendance.new
-      @people = Person.order(:first_name, :last_name)
-      @events = Event.upcoming.order(:date)
+      @attendance_list = AttendanceList.find(params[:attendance_list_id]) if params[:attendance_list_id]
+
+      already_added_person_ids = @attendance_list ? @attendance_list.attendances.pluck(:person_id) : []
+      @people_available = Person.order(:first_name, :last_name).where.not(id: already_added_person_ids)
 
       add_breadcrumb I18n.t("breadcrumbs.admin.attendances.management"), admin_attendances_path
       add_breadcrumb I18n.t("breadcrumbs.admin.attendances.new_attendance"), nil
     end
 
     def create
+      attendance_list_id = attendance_params[:attendance_list_id].presence || params[:attendance_list_id]
+
       creator = AttendanceManagement::AttendanceCreator.new(
         person_id: attendance_params[:person_id],
         event_id: attendance_params[:event_id],
-        attendance_list_id: attendance_params[:attendance_list_id],
+        attendance_list_id: attendance_list_id,
         contribution_id: attendance_params[:contribution_id],
         date: attendance_params[:date]
       )
@@ -48,31 +51,36 @@ module Admin
       result = creator.call
 
       if result.success?
-        redirect_to admin_attendance_path(result.attendance), notice: t(".success")
+        redirect_to after_attendance_create_path(attendance_list_id, result.attendance), notice: t(".success")
       else
-        @attendance = Attendance.new(attendance_params)
-        @people = Person.order(:first_name, :last_name)
-        @events = Event.upcoming.order(:date)
-        flash.now[:alert] = "Erreur: #{result.message}"
-        render :new
+        redirect_to after_attendance_create_path(attendance_list_id), alert: "Erreur: #{result.message}"
       end
     rescue StandardError => e
-      @attendance = Attendance.new(attendance_params)
-      @people = Person.order(:first_name, :last_name)
-      @events = Event.upcoming.order(:date)
-      flash.now[:alert] = "Erreur: #{e.message}"
-      render :new
+      redirect_to after_attendance_create_path(attendance_list_id), alert: "Erreur: #{e.message}"
     end
 
     def destroy
-      if @attendance.destroy
-        redirect_to admin_attendances_path, notice: t(".destroyed")
+      redirect_target = @attendance.attendance_list_id ? admin_attendance_list_path(@attendance.attendance_list_id) : admin_attendances_path
+
+      result = AttendanceManagement::AttendanceRemover.new(
+        attendance_id: @attendance.id,
+        deleted_by_id: Current.user.id
+      ).call
+
+      if result.success?
+        redirect_to redirect_target, notice: t(".destroyed")
       else
-        redirect_to admin_attendances_path, alert: t(".failure")
+        redirect_to redirect_target, alert: result.message
       end
     end
 
     private
+
+    def after_attendance_create_path(attendance_list_id, attendance = nil)
+      return admin_attendance_list_path(attendance_list_id) if attendance_list_id.present?
+
+      attendance ? admin_attendance_path(attendance) : admin_attendances_path
+    end
 
     def set_attendance
       @attendance = Attendance.find(params[:id])
