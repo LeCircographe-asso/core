@@ -310,7 +310,8 @@ RSpec.describe 'Admin::Members', type: :request do
 
         expect(response).to redirect_to(admin_dashboard_index_path)
         follow_redirect!
-        expect(response.body).to include(I18n.t('admin.base.unauthorized_alert'))
+        # CGI.escapeHTML : le flash est rendu échappé (apostrophe -> &#39;)
+        expect(response.body).to include(CGI.escapeHTML(I18n.t('admin.base.unauthorized_alert')))
       end
     end
   end
