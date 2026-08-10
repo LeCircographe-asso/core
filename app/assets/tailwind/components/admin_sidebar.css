@@ -147,8 +147,7 @@
   }
 
   .admin-main {
-    padding: 25px;
-    padding-left: calc(25px + 260px);
+    padding: 25px 25px 25px calc(25px + 260px);
   }
 
   .admin-content.expanded .admin-main {
