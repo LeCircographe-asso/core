@@ -42,10 +42,10 @@ export default class extends Controller {
   }
 
   get webAccountCheckbox() {
-    return this.element.querySelector('input[name="user[create_web_account]"]')
+    return this.element.querySelector('input[name="member[create_web_account]"]')
   }
 
   get newsletterCheckbox() {
-    return this.element.querySelector('input[name="user[person][newsletter_subscribed]"]')
+    return this.element.querySelector('input[name="member[person][newsletter_subscribed]"]')
   }
 }
