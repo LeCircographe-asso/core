@@ -101,3 +101,5 @@ docs/internal/ux_audit_2025_01.md
 
 # Duplicate vendor folder (Propshaft uses vendor/javascript/ and vendor/assets/)
 /vendor/js/
+.mcp.json
+bin/*.bak
