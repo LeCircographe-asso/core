@@ -48,6 +48,7 @@ module Admin
 
     def new
       @member_creation_form = Admin::MemberCreationForm.new
+      @person_preview = Person.new
 
       if params[:person_id].present?
         @person = PersonQuery.active.find(params[:person_id])
@@ -91,7 +92,8 @@ module Admin
       if result.success?
         redirect_to admin_member_path(result.person), notice: result.message
       else
-        @member_creation_form = Admin::MemberCreationForm.new
+        @member_creation_form = form
+        @person_preview = build_person_preview(form)
         flash.now[:alert] = result.message
         render :new, status: :unprocessable_content
       end
@@ -189,6 +191,25 @@ module Admin
       return if Current.user&.super_admin?
 
       redirect_to admin_members_path, alert: I18n.t("admin.members.require_super_admin.restore_denied_alert")
+    end
+
+    # Reconstruit un Person non persisté à partir des valeurs soumises, pour
+    # réafficher le formulaire "nouvel adhérent" sans perdre la saisie en cas d'échec.
+    def build_person_preview(source)
+      Person.new(
+        first_name: source.first_name,
+        last_name: source.last_name,
+        email: source.email,
+        phone: source.phone,
+        address: source.address,
+        birth_date: source.birth_date,
+        specialty: source.specialty,
+        get_involved: source.get_involved,
+        image_rights: source.image_rights,
+        reduced_rate_eligible: source.reduced_rate_eligible,
+        reduced_rate_reason: source.reduced_rate_reason,
+        reduced_rate_proof: source.reduced_rate_proof
+      )
     end
 
     def load_recent_payments(person)

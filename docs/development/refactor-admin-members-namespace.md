@@ -1,5 +1,12 @@
 # Refactor : admin/users → admin/members
 
+> **Statut** : legacy (migration terminée — conservé comme trace de décision)
+> **Public cible** : contributeur
+> **Dernière vérification** : 2026-08-10
+> **Sources de vérité** : `app/controllers/admin/members_controller.rb`, `config/routes.rb`, `app/components/admin/members/`.
+
+> ✅ **Cette migration est terminée en code** (routes, controller, vues, composants, helpers, forms, hacks `ViewUserAdapter`/`person_route_key` supprimés). Le plan ci-dessous est conservé tel qu'écrit à l'origine (cases non cochées) comme trace de la décision et de son découpage ; ne pas le relire comme un TODO actif. Vérification : `grep -r "admin_user\b|Admin::Users\b|admin/users\b|UserCreationForm|ViewUserAdapter|PersonRouteKey" app/ config/` ne retourne plus rien côté `app/`/`config/` (hors faux positifs `let(:admin_user)` dans les specs).
+
 ## Pourquoi
 
 `admin/users` gère des `Person` (adhérents CRM), pas des `User` (comptes web).

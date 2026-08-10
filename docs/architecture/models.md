@@ -2,17 +2,10 @@
 
 > **Statut** : stable
 > **Public cible** : contributeur
-> **Dernière vérification** : 2026-05-01
+> **Dernière vérification** : 2026-08-10
 > **Sources de vérité** : `app/models/`, `app/models/concerns/`, `db/schema.rb`, `spec/models/`.
 
-> **Vocabulaire DDD-light** (voir [`../glossary.md`](../glossary.md))
->
-> Les noms de classes Ruby utilisés ci-dessous sont systématiquement annotés `(cible : …)` quand ils correspondent à du code legacy en cours de migration :
->
-> - `ContributionFormula` → `ContributionFormula`
-> - `Contribution` → `Contribution`
->
-> Plan de renommage : [`../migrations/vocabulary_migration.md`](../migrations/vocabulary_migration.md), `phase3-model-rename`.
+> **Vocabulaire DDD-light** (voir [`../glossary.md`](../glossary.md)) : `Contribution` / `ContributionFormula` sont les noms de code actuels — le renommage `phase3-model-rename` du [plan de migration](../migrations/vocabulary_migration.md) est terminé, plus d'annotation `(cible : …)` nécessaire.
 
 Ce document remplace l'ancien trio `docs/MODEL_EVALUATION.md` + `docs/CONCERNS_ANALYSIS.md` + `docs/ZONES_CLASSIFICATION.md` qui s'étaient mis à diverger.
 
@@ -23,12 +16,12 @@ Person (CRM, données personnelles)
   ├─> User (authentification — au plus un ; tout User a une Person)
   ├─> Membership (adhésion annuelle)
   ├─> Payment (transactions)
-  ├─> Contribution (cible : Contribution — cotisation cirque)
+  ├─> Contribution (cotisation cirque)
   ├─> Attendance (présence quotidienne)
   └─> MemberNumberHistory (historique numéro membre)
 ```
 
-Les formules de cotisation sont stockées dans `ContributionFormula` *(cible : `ContributionFormula`)*.
+Les formules de cotisation sont stockées dans `ContributionFormula`.
 
 ### Points forts confirmés
 
@@ -39,20 +32,20 @@ Les formules de cotisation sont stockées dans `ContributionFormula` *(cible : `
 - Côté `Person`, `has_one :user, dependent: :restrict_with_error` : pas de suppression incompatible tant qu’un compte web existe (archive / RGPD).
 - `Payment` → `PaymentLine` polymorphique = un paiement peut regrouper adhésion + cotisation + don.
 - Audit trail complet via `PaymentAuditLog` + UUID externe.
-- Versioning sur `MembershipType` et `ContributionFormula` *(cible : `ContributionFormula`)* (`version`, `effective_from/until`, `change_reason`, `created_by_user_id`).
+- Versioning sur `MembershipType` et `ContributionFormula` (`version`, `effective_from/until`, `change_reason`, `created_by_user_id`).
 
 ### Verdict d'audit (snapshot 2025-01-31)
 
 | Dimension | Score | Commentaire |
 | --- | --- | --- |
-| Robustesse métier | 8 / 10 | Validations solides, quelques contradictions sur `Contribution` *(cible : `Contribution`)* |
+| Robustesse métier | 8 / 10 | Validations solides, quelques contradictions sur `Contribution` |
 | Performance | 6 / 10 | Indexes composites manquants (cf. §4) |
 | Maintenabilité | 7 / 10 | Concerns bien organisés, dualité `expired?` à clarifier |
 | Testabilité | 6 / 10 | Polymorphisme `PaymentLine` + `skip_overlap_validation` augmentent le coût des tests |
 
 ## 2. Concerns
 
-Dix concerns en place :
+Douze concerns en place (`app/models/concerns/`) :
 
 - `Dateable` — formatage et scopes temporels.
 - `Priceable` — conversion centimes / euros.
@@ -60,14 +53,18 @@ Dix concerns en place :
 - `Categorizable` — humanization des catégories.
 - `Humanizable` — humanization d'enums divers.
 - `Roleable` — gestion des rôles utilisateur.
-- `Versionable` — versioning (`MembershipType`, `ContributionFormula` *(cible : `ContributionFormula`)*).
-- `Validatable` — validations communes.
-- `Duplicatable` — détection / fusion de doublons.
+- `Versionable` — versioning (`MembershipType`, `ContributionFormula`).
 - `SoftDeletable` — soft delete avec `deleted_at`.
+- `EmailNormalizable` — normalisation email.
+- `RateKindable` — tarif réduit / plein tarif.
+- `PersonPaymentReporting` — agrégats paiements par personne.
+- `BroadcastsDashboardStats` — diffusion des stats dashboard admin (Turbo Streams).
+
+> ⚠️ `Validatable` et `Duplicatable` (détection/fusion de doublons), présents dans une version antérieure de ce document, **n'existent plus** dans `app/models/concerns/`. La fonctionnalité de doublons est en réflexion, voir [`../internal/todo.md`](../internal/todo.md).
 
 ### Tableau d'inclusion
 
-> Dans le tableau ci-dessous, `Contribution` cible `Contribution` et `ContributionFormula` cible `ContributionFormula` (cf. encadré en tête).
+> ⚠️ Tableau non ré-audité modèle par modèle lors de la dernière vérification (2026-08-10) — les colonnes reflètent l'état à 2026-05-01 et n'incluent pas les 4 concerns ajoutés depuis (`EmailNormalizable` est déjà présent, les 3 autres non). À recroiser avec le code avant de s'y fier pour une tâche précise.
 
 | Modèle | Statusable | Dateable | Priceable | Categorizable | Humanizable | Roleable | Versionable | SoftDeletable | EmailNormalizable |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -103,11 +100,11 @@ Cadre de **stabilité / risque** pour prioriser les tests. Pour les priorités a
 
 #### Zone 1 — core business
 
-`User`, `Person`, `Membership`, `Payment`, `PaymentLine`, `MembershipType`, `Contribution` *(cible : `Contribution`)* — tous testés, à compléter selon les gaps.
+`User`, `Person`, `Membership`, `Payment`, `PaymentLine`, `MembershipType`, `Contribution` — tous testés, à compléter selon les gaps.
 
 #### Zone 1 — business logic prioritaire
 
-- `ContributionFormula` *(cible : `ContributionFormula`)* — pas de spec dédiée, **critique pour le pricing**, priorité haute.
+- `ContributionFormula` — spec dédiée existe (`spec/models/contribution_formula_spec.rb`), critique pour le pricing.
 - `Event` — partiel, ajouter edge cases.
 - `AccountClaim` — workflow à couvrir.
 - `Attendance` — logique quotidienne à couvrir.
@@ -119,7 +116,6 @@ Cadre de **stabilité / risque** pour prioriser les tests. Pour les priorités a
 #### Zone 2
 
 - `AttendanceList` — logique quotidienne à finaliser.
-- `UserService` — usage incertain, à clarifier avant tests.
 
 #### Zone 3
 
@@ -139,17 +135,17 @@ Cadre de **stabilité / risque** pour prioriser les tests. Pour les priorités a
 
 `Web::UserRegistration`, `People::Register`, `People::PaymentUpdater`, `People::PaymentCanceller`, `People::PaymentRestorer`, `People::AttachUserToPerson`, `People::AccountLinker`, `UserManagement::UserDeleter`, `People::AccountMerger`.
 
-> Les classes `EventManagement::EventCreator/Updater/Deleter` existent dans `app/services/event_management/` mais sont **orphelines** : aucun contrôleur ne les appelle (CRUD inline dans `Admin::EventsController`). Cleanup tracé dans [`../internal/todo.md`](../internal/todo.md).
+> ✅ `app/services/event_management/` et `app/services/admin/operations/` (mentionnés comme orphelins/non-utilisés dans une version antérieure de ce document) ont depuis été supprimés — CRUD inline confirmé dans `Admin::EventsController`.
 
 #### Zone 3
 
-`People::PaymentRefund` (à concevoir), services dans `app/services/admin/operations/` (non utilisés, à auditer / nettoyer).
+`People::PaymentRefund` (à concevoir).
 
 ### Contrôleurs
 
 Voir [`controllers.md`](controllers.md) pour le détail. Résumé :
 
-- **Zone 1** — admin CRUD critiques (`Admin::Users`, `Admin::Memberships`, `Admin::Payments`, `Admin::Events`, `Admin::Dashboard`) et auth/checkout publics (`Sessions`, `Registrations`, `Checkout`).
+- **Zone 1** — admin CRUD critiques (`Admin::Members`, `Admin::Memberships`, `Admin::Payments`, `Admin::Events`, `Admin::Dashboard`) et auth/checkout publics (`Sessions`, `Registrations`, `Checkout`).
 - **Zone 2** — `AccountClaims`, `Passwords`, `Admin::ContributionFormulas`, `Admin::MemberNumbers`, autres admin CRUD standards.
 - **Zone 3** — `Home`, `Pages`, `Events` public, `Blogs`, `Contacts`, `Admin::Blogs`, `Admin::Attendances`, `Admin::AttendanceLists`.
 
@@ -175,24 +171,9 @@ end
 # Contribution : OK tel quel
 ```
 
-### 4.2 `Contribution` *(cible : `Contribution`)* — validations contradictoires
+### 4.2 `Contribution` — validations `sessions_remaining` (à revérifier)
 
-`sessions_remaining` est forcé à `0` par défaut, validé `presence: true` si `has_session_limit?`, `presence: false` si Pack 10, et la validation custom contredit le default. Tests fragiles.
-
-Action ciblée :
-
-```ruby
-# Migration
-change_column_null :book_of_entries, :sessions_remaining, true
-remove_column_default :book_of_entries, :sessions_remaining
-
-# Validations
-validates :sessions_remaining, presence: true,
-                               numericality: { greater_than: 0 },
-                               if: :has_session_limit?
-validates :sessions_remaining, absence: true,
-                               if: -> { subscription_plan&.duration.in?(["trimester", "annual"]) }
-```
+`app/models/contribution.rb` a désormais une validation `presence` standard (`if: :has_session_limit?`) **et** une validation custom `sessions_remaining_validation` qui revérifie présence/absence selon `is_pack10?`. Les deux se recoupent — à relire pour confirmer si la contradiction d'origine (default vs validation) persiste ou si c'est un doublon inoffensif.
 
 ### 4.3 `Membership#upgrade_to!` — `skip_overlap_validation` partout
 
@@ -200,31 +181,21 @@ validates :sessions_remaining, absence: true,
 
 Action ciblée : inactiver l'ancienne dans la même transaction, puis créer la nouvelle, puis retirer `skip_overlap_validation`.
 
-### 4.4 Indexes manquants
+### 4.4 Indexes manquants — ✅ résolu
 
-```ruby
-add_index :payments, [:status, :created_at], name: "idx_payments_status_created"
-add_index :memberships, [:membership_type_id, :status], name: "idx_memberships_type_status"
-add_index :payment_lines, :amount_cents, name: "idx_payment_lines_amount"
-add_index :book_of_entries, [:person_id, :status, :expires_at], name: "idx_boe_person_status_exp"
-add_index :subscription_plans, [:membership_type_id, :duration], name: "idx_sub_plans_type_duration"
-```
+Les 5 indexes listés dans une version antérieure de ce document sont tous présents en base (`idx_payments_status_created`, `idx_memberships_circus_active` sur `[membership_type_id, status]`, `idx_payment_lines_amount`, `idx_contributions_person_status_exp`, `idx_contribution_formulas_type_duration`) — noms adaptés au renommage `phase3-model-rename`.
 
-Impact attendu : dashboards admin plus rapides, scalabilité accrue.
+### 4.5 `Contribution.expires_at` nullable — ✅ résolu
 
-### 4.5 `Contribution.expires_at` *(cible : `Contribution.expires_at`)* nullable mais NOT NULL en migration
-
-Pack 10 force `expires_at` à `Time.current + 100.years` faute d'accepter `NULL`. Conséquence : queries `WHERE expires_at < ?` partout, factories complexes.
-
-Action ciblée : autoriser `NULL` pour Pack 10 ou table séparée pour les packs « illimités ». À discuter en équipe.
+`expires_at` est nullable en base et `validates :expires_at, presence: true, unless: :is_pack10?` en modèle : plus de hack `Time.current + 100.years` pour Pack 10.
 
 ### 4.6 `PaymentLine` — polymorphisme sans foreign key
 
 Trade-off accepté (flexibilité > intégrité référentielle) mais à garder en tête lors des migrations. Voir [`../payments.md`](../payments.md) pour la dette `item_type:"Payment"` sur les dons.
 
-### 4.7 Newsletter `newsletter_subscribed` toujours sur `Person`
+### 4.7 Newsletter `newsletter_subscribed` sur `Person` — ✅ résolu
 
-Legacy non supprimé. Le module Newsletter a son propre modèle `NewsletterSubscriber`. Action : retirer l'attribut sur `Person` ou clarifier son rôle (drapeau de consentement, par ex.).
+La colonne `people.newsletter_subscribed` a été supprimée (absente de `db/schema.rb`). Seul `newsletter_unsubscribe_token` reste sur `Person` ; le consentement newsletter vit désormais uniquement dans `NewsletterSubscriber`.
 
 ## 5. Documentation liée
 

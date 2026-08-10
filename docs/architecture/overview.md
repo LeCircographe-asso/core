@@ -2,7 +2,7 @@
 
 > **Statut** : stable
 > **Public cible** : contributeur
-> **Dernière vérification** : 2026-05-01
+> **Dernière vérification** : 2026-08-10
 > **Sources de vérité** : `app/models/person.rb`, `app/models/user.rb`, `app/components/`, `app/services/people/`.
 
 > **Vocabulaire** : le composant `contribution_status_badge_component` et les services `People::Contribution*` sont la référence canonique. Voir [`../glossary.md`](../glossary.md).
@@ -58,112 +58,77 @@ Ce document consolide les bonnes pratiques et l'architecture mise en place lors 
 
 ---
 
-## 🧩 Architecture View Components
+## 🧩 View Components
 
-### Structure des Composants
+### Structure réelle
 
 ```
-app/components/admin/users/
-├── membership_status_badge_component.rb + .html.erb
-├── membership_type_badge_component.rb + .html.erb
-├── contribution_status_badge_component.rb + .html.erb
-├── web_account_icon_component.rb + .html.erb
-├── contextual_actions_component.rb + .html.erb
-└── member_number_history_component.rb + .html.erb
+app/components/
+├── membership_status_badge_component.rb + .html.erb   (top-level)
+├── contribution_status_badge_component.rb + .html.erb (top-level)
+├── web_account_icon_component.rb + .html.erb          (top-level)
+├── contextual_actions_component.rb + .html.erb        (top-level)
+├── ui/                                                 (composants UI génériques)
+├── admin/members/                                      (9 composants spécifiques fiche membre)
+└── admin/payments/                                      (payment_display, payment_summary, payment_actions)
 ```
+
+Les badges et actions génériques sont **top-level**, pas namespacés — réutilisables aussi bien en admin qu'en public. Seuls les composants propres à une vue admin précise (fiche membre, paiements) sont namespacés sous `Admin::Members::` / `Admin::Payments::`.
+
+> **Hygiène** : `app/components/` a accumulé des composants créés puis jamais branchés (ex. anciens `MemberNumberHistoryComponent`, `AttendanceStatusComponent`, `MembershipTypeBadgeComponent`, supprimés du schéma ci-dessus le 2026-08-10 faute d'usage réel). Avant de considérer un composant comme référence, vérifier qu'il est bien rendu quelque part : `grep -rn "NomDuComponent" app/views app/components app/controllers` doit remonter autre chose que sa propre définition.
+
+### Partial vs Component — comment choisir
+
+Les deux coexistent volontairement dans ce projet, pour deux besoins différents — ce n'est pas une hésitation entre deux approches, chacun a son rôle :
+
+- **Partial** (`_xxx.html.erb`) : fragment de HTML réutilisable, sans classe Ruby dédiée, sans contrat explicite sur ses `locals`. À réserver à l'assemblage pur (aucune décision/logique), ou comme **point d'adressage pour Turbo Streams** — `turbo_stream.replace("cible", partial: "...", locals: {...})` a besoin d'un nom de fichier, pas d'une classe Ruby.
+- **Component** (`ViewComponent::Base`) : dès qu'il y a la moindre logique (formatage, `render?` conditionnel, statut calculé). Contrat explicite via `initialize(...)`, logique testable en isolation (`render_inline` en spec), sans polluer un helper global.
+
+**Pattern « pont Turbo » légitime** — ex. `admin/payments/_payment_summary.html.erb` → `Admin::Payments::PaymentSummaryComponent` : la partial ne contient qu'un `render Admin::Payments::PaymentSummaryComponent.new(...)`, rien d'autre. C'est voulu : elle sert uniquement de nom adressable pour `turbo_stream.replace`, tout le contenu réel vit dans le component. Même chose pour `_payment_actions.html.erb` → `PaymentActionsComponent`. Ne pas « simplifier » ces paires, c'est le pont qui permet d'avoir à la fois un component testable et une cible Turbo Stream.
+
+**Signal d'alerte (doublon mort, pas un pont voulu)** : une partial et un component au nom proche qui contiennent CHACUN leur propre HTML indépendant, au lieu que l'un délègue à l'autre. Dans ce cas l'un des deux ne sert plus à rien — vérifier avec le grep ci-dessus avant d'en garder deux, et supprimer celui qui n'a aucun usage réel plutôt que de le laisser trainer.
 
 ### Bonnes Pratiques View Components
 
-#### 1. Structure des Fichiers
 - **Un composant = un fichier Ruby + un template ERB**
 - **Nommage** : `snake_case_component.rb` + `snake_case_component.html.erb`
-- **Namespace** : `Admin::Users::` pour les composants spécifiques à l'admin
+- **Namespace** uniquement si le composant est spécifique à une zone (`Admin::Members::`, `Admin::Payments::`) ; sinon top-level
 
-#### 2. Classe Ruby
 ```ruby
-module Admin
-  module Users
-    class MembershipStatusBadgeComponent < ViewComponent::Base
-      def initialize(person:)
-        @person = person
-      end
-
-      private
-
-      attr_reader :person
-
-      def badge_class
-        # Logique de style
-      end
-
-      def status_text
-        # Logique d'affichage
-      end
-    end
+class MembershipStatusBadgeComponent < ViewComponent::Base
+  def initialize(person:)
+    @person = person
   end
+
+  private
+
+  attr_reader :person
 end
 ```
 
-#### 3. Template ERB
 ```erb
-<span class="<%= badge_class %>" 
-      data-controller="tooltip" 
-      data-tooltip-text-value="<%= tooltip_text %>">
-  <%= status_text %>
-</span>
-```
-
-#### 4. Utilisation dans les Vues
-```erb
-<%= render Admin::Users::MembershipStatusBadgeComponent.new(person: person) %>
+<%= render MembershipStatusBadgeComponent.new(person: person) %>
 ```
 
 ---
 
-## 🔧 Architecture des Helpers Modulaires
+## 🔧 Helpers Admin
 
-### Structure des Helpers
+### Structure réelle
 
 ```
-app/helpers/admin/users/
-├── display_helper.rb      # Formatage des données (30 lignes)
-├── status_helper.rb       # Badges de statut (40 lignes)
-└── actions_helper.rb      # Boutons d'action (60 lignes)
+app/helpers/admin/
+├── members_helper.rb
+├── memberships_helper.rb
+└── payments_helper.rb
 ```
 
-### Bonnes Pratiques Helpers
+Un helper par ressource admin (pas de split Display/Status/Actions en sous-modules), inclus directement dans le contrôleur correspondant.
 
-#### 1. Séparation par Responsabilité
-- **DisplayHelper** : Formatage, dates, numéros
-- **StatusHelper** : Logique des statuts et badges
-- **ActionsHelper** : Boutons et liens d'action
-
-#### 2. Inclusion dans le Contrôleur
 ```ruby
-class Admin::UsersController < BaseController
-  include Admin::Users::DisplayHelper
-  include Admin::Users::StatusHelper
-  include Admin::Users::ActionsHelper
+class Admin::MembersController < BaseController
+  include Admin::MembersHelper
   # ...
-end
-```
-
-#### 3. Méthodes Privées
-```ruby
-module Admin
-  module Users
-    module DisplayHelper
-      def format_member_number(number)
-        number ? "##{number}" : "-"
-      end
-
-      private
-
-      def format_date(date)
-        # Logique privée
-      end
-    end
-  end
 end
 ```
 
@@ -227,142 +192,56 @@ export default class extends Controller {
 
 ---
 
-## 🎛️ Architecture des Contrôleurs
+## 🎛️ Contrôleurs Admin
 
-### Structure Modulaire
+### Structure réelle
 
 ```
-app/controllers/admin/users/
-├── duplicates_controller.rb     # Détection des doublons
-├── payments_controller.rb       # Gestion des paiements
-└── memberships_controller.rb    # Gestion des adhésions
+app/controllers/admin/
+├── members_controller.rb           # CRUD membres (Person/User)
+├── members/payments_controller.rb  # Paiements imbriqués sous un membre (seule exception au flat)
+├── payments_controller.rb          # Paiements admin, vue globale
+├── memberships_controller.rb
+├── contribution_formulas_controller.rb
+├── contributions_controller.rb
+├── events_controller.rb
+├── base_controller.rb              # Permissions communes
+└── ... (un contrôleur plat par ressource, CRUD inline)
 ```
 
-### Bonnes Pratiques Contrôleurs
+Les contrôleurs admin sont **plats** (un fichier par ressource, pas de sous-namespace), à une exception près : `Admin::Members::PaymentsController`, imbriqué car les paiements y sont toujours scopés à un membre.
 
-#### 1. Héritage et Permissions
 ```ruby
 module Admin
-  module Users
-    class DuplicatesController < BaseController
-      before_action :set_breadcrumbs
-      # Hérite automatiquement de require_admin_or_super_admin
-    end
+  class MembersController < BaseController
+    # Hérite de BaseController pour les permissions (require_admin_zone_access)
   end
 end
 ```
 
-#### 2. Actions Spécialisées
-```ruby
-def index
-  @duplicate_report = DuplicateDetectionService.generate_report
-  add_breadcrumb "Détection des doublons", nil
-end
-
-def merge
-  result = MemberManagementService.merge_duplicate_persons(primary, secondary)
-  # Logique de fusion
-end
-```
+> Note : la route `resources :duplicates` (`config/routes.rb`) est déclarée sans contrôleur `Admin::DuplicatesController` correspondant — fonctionnalité de détection/fusion de doublons en réflexion (import Excel de membres à venir), pas encore décidée. Voir [`internal/todo.md`](../internal/todo.md).
 
 ---
 
-## 🧪 Architecture des Tests
+## 🧪 Tests
 
-### Structure des Tests
+Rails 8 / RSpec : **request specs**, pas de controller specs classiques.
 
 ```
 spec/
-├── components/admin/users/
-│   ├── membership_status_badge_component_spec.rb
-│   └── membership_type_badge_component_spec.rb
-├── helpers/admin/users/
-│   ├── display_helper_spec.rb
-│   └── status_helper_spec.rb
-└── controllers/admin/users/
-    ├── duplicates_controller_spec.rb
-    └── payments_controller_spec.rb
+├── requests/admin/
+│   ├── members_spec.rb
+│   ├── member_payments_spec.rb
+│   └── ... (un spec par ressource)
+├── components/
+│   ├── admin/payments/  (payment_display, payment_summary)
+│   └── ui/               (disabled_button)
+└── helpers/
+    ├── application_helper_spec.rb
+    └── membership_card_helper_spec.rb
 ```
 
-### Bonnes Pratiques Tests
-
-#### 1. Tests View Components
-```ruby
-RSpec.describe Admin::Users::MembershipStatusBadgeComponent do
-  let(:person) { create(:person, :with_active_membership) }
-  
-  it "renders active status badge" do
-    render_inline(described_class.new(person: person))
-    expect(page).to have_css('.badge', text: 'Actif')
-  end
-end
-```
-
-#### 2. Tests Helpers
-```ruby
-RSpec.describe Admin::Users::DisplayHelper do
-  describe '#format_member_number' do
-    it 'formats member number correctly' do
-      expect(helper.format_member_number(123)).to eq('#123')
-    end
-  end
-end
-```
-
-#### 3. Tests Contrôleurs
-```ruby
-RSpec.describe Admin::Users::DuplicatesController do
-  describe 'GET #index' do
-    it 'returns success' do
-      get :index
-      expect(response).to have_http_status(:success)
-    end
-  end
-end
-```
-
----
-
-## 🚀 Guidelines pour les Futurs Développements
-
-### 1. Ajout de Nouveaux Composants
-
-1. **Créer le composant** dans `app/components/admin/users/`
-2. **Ajouter les tests** dans `spec/components/admin/users/`
-3. **Documenter l'utilisation** dans ce guide
-4. **Vérifier la compatibilité** avec Stimulus si nécessaire
-
-### 2. Ajout de Nouveaux Helpers
-
-1. **Identifier la responsabilité** (Display, Status, Actions)
-2. **Créer ou étendre** le helper approprié
-3. **Inclure dans le contrôleur** si nécessaire
-4. **Ajouter les tests** correspondants
-
-### 3. Ajout de Nouveaux Contrôleurs
-
-1. **Hériter de BaseController** pour les permissions
-2. **Utiliser les services** pour la logique métier
-3. **Ajouter les breadcrumbs** appropriés
-4. **Créer les tests** de contrôleur
-
-### 4. Migration Progressive
-
-1. **Tester en local** avec les routes de test
-2. **Valider les View Components** individuellement
-3. **Migrer progressivement** les vues existantes
-4. **Supprimer l'ancien code** une fois validé
-
----
-
-## 📊 Métriques de Succès
-
-| Aspect | Avant | Après | Amélioration |
-|--------|-------|-------|--------------|
-| **Complexité** | 413 lignes monolithiques | 3 helpers (30-60 lignes) + 6 components (50-80 lignes) | **-60%** |
-| **Testabilité** | Difficile (helpers mélangés) | Tests unitaires isolés | **+100%** |
-| **Réutilisabilité** | Couplé aux vues admin/users | Components réutilisables partout | **+100%** |
-| **Maintenabilité** | Code difficile à maintenir | Architecture modulaire claire | **+70%** |
+Les component specs pour les badges top-level (`MembershipStatusBadgeComponent`, etc.) ne sont pas encore écrits — voir [`development/testing.md`](../development/testing.md) pour la philosophie de test complète et les gaps de couverture.
 
 ---
 
@@ -372,8 +251,3 @@ end
 - [Hotwire Documentation](https://hotwired.dev/)
 - [Stimulus Documentation](https://stimulus.hotwired.dev/)
 - [Rails 8 Best Practices](https://guides.rubyonrails.org/)
-
----
-
-*Dernière mise à jour : Octobre 2025*
-*Version : 1.0*

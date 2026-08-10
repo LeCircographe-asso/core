@@ -2,8 +2,8 @@
 
 > **Statut** : stable
 > **Public cible** : contributeur
-> **Dernière vérification** : 2026-05-01
-> **Sources de vérité** : `app/services/people/`, `app/services/event_management/`, `app/services/attendance_management/`, `app/services/user_management/`.
+> **Dernière vérification** : 2026-08-10
+> **Sources de vérité** : `app/services/people/`, `app/services/attendance_management/`, `app/services/user_management/`.
 
 **Création initiale:** 2025-01-31  
 **Dernière revue contenu:** 2025-11-09  
@@ -62,7 +62,7 @@ Cette séparation “Entity / Account” garantit :
 **Utilisé dans :**
 - `Admin::PaymentsController` (create, update, destroy)
 - `Admin::DonationsController` (create)
-- `Admin::Users::PaymentsController` (create, update, destroy via `People::PaymentCreator` multi-lignes)
+- `Admin::Members::PaymentsController` (create, update, destroy via `People::PaymentCreator` multi-lignes)
 
 **Donations — état actuel et cible**
 - **Cible** : une donation est une `PaymentLine` avec `item_type: "Donation"` et `item_id` adapté (souvent `payment.id` pour les dons « libres »). Aucune nouvelle ligne ne doit utiliser `item_type: "Payment"` pour un don.
@@ -75,8 +75,8 @@ Cette séparation “Entity / Account” garantit :
 - **`People::AccountLinker`** : orchestration (attach via `AttachUserToPerson`, merge optionnel de l’ancienne fiche avec `People::AccountMerger`). Événement `people.account_linked`.
 - Utilisé aussi par `AccountClaimManagement::AccountClaimConfirmer` (attach direct possible) et scripts (`scripts/fix_person_user_merge.rb`).
 
-### ⚠️ PersonManagement (Legacy ciblé)
-- Ancien namespace conservé uniquement pour compatibilité. Les nouvelles fusions / liaisons doivent passer par `People::AttachUserToPerson`, `People::AccountLinker` ou `People::AccountMerger`.
+### ✅ PersonManagement — supprimé
+- ~~Ancien namespace conservé uniquement pour compatibilité~~ : n'existe plus du tout dans `app/`. Fusions / liaisons passent par `People::AttachUserToPerson`, `People::AccountLinker` ou `People::AccountMerger`.
 
 ### ✅ UserManagement (Stable)
 - `UserDeleter` - Suppression d'utilisateurs (Person)
@@ -119,8 +119,10 @@ Cette séparation “Entity / Account” garantit :
 ### ❌ MembershipTypeManagement (Removed)
 - Géré directement par `Admin::MembershipTypesController` (CRUD inline)
 
-### ⚠️ OpeningHours (Simple cache)
-- Mise à jour via cache dans `Admin::OpeningHoursController` (à migrer vers un modèle `Setting` si besoin)
+### ✅ OpeningHours (Modèle `OpeningHour`, DB)
+- `Admin::OpeningHoursController#update` délègue à `OpeningHour.replace_schedule!(schedule_hash:, updated_by_user:)`.
+- Persisté en base (table `opening_hours`, un enregistrement par jour), plus de `Rails.cache.fetch("opening_hours")`.
+- Service `OpeningHoursManagement::OpeningHoursUpdater` (`app/services/opening_hours_management/`).
 
 ### ✅ Newsletter
 - Public: `People::NewsletterSignup` (instrumentation: `people.newsletter_signed_up`, `people.newsletter_signup.skipped`, `people.newsletter_signup.failed`)
@@ -130,7 +132,7 @@ Cette séparation “Entity / Account” garantit :
 
 **Services non-standard (pas dans *Management):**
 - `Admin::PaymentsService` - Helper service pour filtres et statistiques (utilisé dans `Admin::PaymentsController#index`)
-- `Admin::DashboardStatisticsService` - Service pour calculer les statistiques du dashboard admin (utilisé dans `Admin::UsersController#index`)
+- `Admin::DashboardStatisticsService` - Service pour calculer les statistiques du dashboard admin (utilisé dans `Admin::MembersController#index`)
 - `MemberManagementService` - Service legacy pour génération numéros d'adhérent (utilisé par `MemberNumberManagement::*`)
 - `People::NewsletterSignup` - Inscription newsletter publique (remplace `NewsletterSignupService`)
 - `Web::UserRegistration` - Service pour inscription web (utilisé dans `RegistrationsController`)
@@ -142,16 +144,16 @@ Cette séparation “Entity / Account” garantit :
 
 ## View Components & Helpers
 
-L'application utilise **ViewComponent** pour les composants réutilisables (21 composants actifs).
+L'application utilise **ViewComponent** pour les composants réutilisables (20 composants actifs).
 
 **Structure:**
-- `app/components/admin/users/` - Composants admin users (badges, actions, display)
+- `app/components/admin/members/` - Composants admin members (badges, actions, display)
 - `app/components/admin/payments/` - Composants payments (summary, display, actions)
 - `app/components/ui/` - Composants UI réutilisables
 
 **Bonnes pratiques:**
 - Un composant = un fichier Ruby + un template ERB
-- Namespace par domaine (Admin::Users::, Admin::Payments::)
+- Namespace par domaine (Admin::Members::, Admin::Payments::)
 - Logique de présentation uniquement (pas de logique métier)
 
 **Helpers communs:**

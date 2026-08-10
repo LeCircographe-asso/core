@@ -2,7 +2,7 @@
 
 > **Statut** : stable
 > **Public cible** : contributeur
-> **Dernière vérification** : 2026-05-01
+> **Dernière vérification** : 2026-08-10
 > **Sources de vérité** : `spec/`, `bin/test`, `bin/test_fast`, `spec/rails_helper.rb`, `.rspec`.
 
 > Vocabulaire : voir [`../glossary.md`](../glossary.md). Les exemples de code utilisent le vocabulaire canonique `ContributionFormula` / `Contribution`.
@@ -432,27 +432,26 @@ Ces listes sont un instantané et doivent être recroisées avec [`../internal/t
 
 ### Models testés
 
-`User`, `Person`, `Membership`, `Payment`, `PaymentLine`, `MembershipType`, `Contribution` (couverture business complète), `Event` (basique).
+`User`, `Person`, `Membership`, `Payment`, `PaymentLine`, `MembershipType`, `Contribution` (couverture business complète), `ContributionFormula`, `Event` (basique).
 
 ### Models non testés
 
-`ContributionFormula`, `AccountClaim`, `Attendance`, `AttendanceList`, `Blog`, `Tag`, `TagBlog`, `PriceCatalog`, `PriceEntry`, `PaymentAuditLog`, `MemberNumberHistory`, `EventAttendee`, `Session`, `UserService`.
+`AccountClaim`, `Attendance`, `AttendanceList`, `Blog`, `Tag`, `TagBlog`, `PriceCatalog`, `PriceEntry`, `PaymentAuditLog`, `MemberNumberHistory`, `EventAttendee`, `Session`.
 
 ### Contrôleurs testés (Zone 1)
 
-`Admin::UsersController`, `Admin::PaymentsController`, `Admin::MembershipsController`, `Admin::EventsController`, `Admin::DashboardController`, `SessionsController`, `RegistrationsController`, `CheckoutController`.
+`Admin::MembersController`, `Admin::PaymentsController`, `Admin::MembershipsController`, `Admin::EventsController`, `Admin::DashboardController`, `SessionsController`, `RegistrationsController`, `CheckoutController`.
 
 ### Services testés
 
-L'ensemble des services `People::*`, `AccountClaimManagement::*`, `AttendanceManagement::*`, `AttendanceListManagement::*`, `BlogManagement::*`, `OpeningHoursManagement::*`, `NewsletterManagement::*`, `UserManagement::*` (Updater, Deleter), `EventManagement::*`, `MemberNumberManagement::*`.
+L'ensemble des services `People::*`, `AccountClaimManagement::*`, `AttendanceManagement::*`, `AttendanceListManagement::*`, `BlogManagement::*`, `OpeningHoursManagement::*`, `NewsletterManagement::*`, `UserManagement::*` (Updater, Deleter), `MemberNumberManagement::*`.
 
 ### Priorités courtes
 
-1. `OpeningHoursController` (mise à jour via cache).
-2. Newsletter (flow authentifié) via `NewsletterManagement::NewsletterUpdater`.
-3. `UserDeleter` (suppression / archivage sécurisé).
-4. Observabilité : tests d'événements (`ActiveSupport::Notifications`) sur `People::*`.
-5. Request specs CRUD inline : `Events`, `MembershipTypes`, `ContributionFormulas`.
+1. Newsletter (flow authentifié) via `NewsletterManagement::NewsletterUpdater`.
+2. `UserDeleter` (suppression / archivage sécurisé).
+3. Observabilité : tests d'événements (`ActiveSupport::Notifications`) sur `People::*`.
+4. Request specs CRUD inline : `Events`, `MembershipTypes`, `ContributionFormulas`.
 6. Edge cases modèles (dates, enums, scopes).
 
 ## 9. CI/CD

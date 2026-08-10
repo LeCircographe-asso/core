@@ -2,8 +2,8 @@
 
 > **Statut** : stable
 > **Public cible** : contributeur
-> **Dernière vérification** : 2026-05-01
-> **Sources de vérité** : `app/models/user.rb` (enum `system_role`), `app/controllers/admin/base_controller.rb`, `app/controllers/admin/users_controller.rb`.
+> **Dernière vérification** : 2026-08-10
+> **Sources de vérité** : `app/models/user.rb` (enum `system_role`), `app/controllers/admin/base_controller.rb`, `app/controllers/admin/members_controller.rb`.
 
 ---
 
@@ -34,7 +34,7 @@ Les `web_visitor` sont redirigés vers `/` avec une alerte.
 
 ## Matrice des permissions par action
 
-### Gestion des membres (Admin::UsersController)
+### Gestion des membres (Admin::MembersController)
 
 | Action | super_admin | admin | volunteer |
 |--------|-------------|-------|-----------|

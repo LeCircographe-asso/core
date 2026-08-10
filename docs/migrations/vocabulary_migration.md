@@ -2,11 +2,12 @@
 
 > **Statut** : stable (transitionnel — disparaît à la fin de phase 4)
 > **Public cible** : contributeur
-> **Dernière vérification** : 2026-05-01
+> **Dernière vérification** : 2026-08-10
 > **Sources de vérité** : `app/models/`, `app/services/people/`, [`../glossary.md`](../glossary.md).
 
 > Plan progressif d'alignement vocabulaire / code / documentation, sans big-bang. Chaque phase est livrable seule, sans casser la précédente.
 > **Vocabulaire cible :** voir [../glossary.md](../glossary.md).
+> **Avancement** : phases 0 à 3 terminées côté code. Seule la phase 4 (cleanup legacy) reste ouverte — voir §2 et §3.
 
 ---
 
@@ -64,47 +65,32 @@
 
 ## 2. Phases (ordre canonique)
 
-### Phase 0 — Quick wins (zéro impact DB)
-- Renommer `User#inferior_rights` → `User#subordinate_roles` (sans alias rétro-compat).
-- Renommer `User#active_subscription?` → `User#active_membership?` (sans alias rétro-compat).
+### ✅ Phase 0 — Quick wins (zéro impact DB) — fait
+- ✅ Renommé `User#inferior_rights` → `User#subordinate_roles` (sans alias rétro-compat).
+- ✅ Renommé `User#active_subscription?` → `User#active_membership?` (sans alias rétro-compat).
 - Supprimer logs de debug oubliés (`Rails.logger.debug` orphelins, `puts`).
-- ✅ **Tests à mettre à jour** : remplacer les usages existants.
+- ✅ **Tests à mettre à jour** : remplacé les usages existants.
 
-### Phase 1 — Donations propres
-- ✅ `People::PaymentCreator` : la réécriture `item_type: "Donation" → "Payment"` **n’existe plus** sur le chemin simple ; conserver les migrations / specs jusqu’à disparition totale des lignes legacy.
-- Data migration : `PaymentLine.where(item_type: "Payment").where("description ILIKE '%don%' OR description = 'Donation'").update_all(item_type: "Donation")`.
-- Backfill : pour chaque `Payment.where("donation > 0")`, créer une `PaymentLine` `item_type: "Donation"` si absente.
-- Migration DB : `remove_column :payments, :donation`.
-- Simplifier `Payment#with_donations`, `Admin::PaymentsService` (filtrage propre `item_type = "Donation"`).
-- Ajouter `validates :item_type, inclusion: { in: %w[Membership MembershipType ContributionFormula Contribution Donation SubscriptionPlan BookOfEntry] }` sur `PaymentLine` (les valeurs legacy seront retirées en phase 3).
-- Mettre à jour `spec/factories/payments.rb` (trait `:with_donation`).
+### ✅ Phase 1 — Donations propres — fait côté code
+- ✅ `People::PaymentCreator` : la réécriture `item_type: "Donation" → "Payment"` **n'existe plus** sur le chemin simple.
+- ✅ Migration DB appliquée : `remove_column :payments, :donation` (colonne absente de `db/schema.rb`).
+- ✅ `PaymentLine::ALLOWED_ITEM_TYPES` n'accepte plus `SubscriptionPlan` / `BookOfEntry`.
+- Reste en surveillance continue (pas un chantier de code) : `Admin::HealthReport#legacy_donation_lines` détecte en prod les `PaymentLine` avec `item_type: "Payment"` résiduelles — voir [`internal/todo.md`](../internal/todo.md) « Confirmer en production qu'aucune `PaymentLine` legacy de don ne subsiste ».
 
-### Phase 2 — Composant cosmétique
-- Renommer `SubscriptionStatusBadgeComponent` → `ContributionStatusBadgeComponent`.
-- Mettre à jour les 7 vues qui le référencent.
+### ✅ Phase 2 — Composant cosmétique — fait
+- ✅ Renommé `SubscriptionStatusBadgeComponent` → `ContributionStatusBadgeComponent` (`app/components/contribution_status_badge_component.rb`).
 - Pas d'impact DB ni service.
 
-### Phase 3 — Renommage modèles + DB
-- **Pré-requis** : phases 0 + 1 + 2 mergées et stables en staging.
-- DB :
-  - `rename_table :subscription_plans, :contribution_formulas`.
-  - `rename_table :book_of_entries, :contributions`.
-  - `rename_column :attendances, :book_of_entry_id, :contribution_id`.
-  - `rename_column :contributions, :subscription_plan_id, :contribution_formula_id`.
-  - Data migration : `payment_lines.item_type` (`SubscriptionPlan → ContributionFormula`, `BookOfEntry → Contribution`).
-- Code :
-  - Renommer modèles `SubscriptionPlan` → `ContributionFormula`, `BookOfEntry` → `Contribution`.
-  - Renommer fichiers (snake_case Zeitwerk).
-  - Renommer services `People::Subscription*` → `People::Contribution*`.
-  - Renommer méthodes `Person#*subscription*` → `Person#*contribution*` (sans phase d'alias).
-- Mettre à jour validation `PaymentLine` pour ne plus accepter `SubscriptionPlan` / `BookOfEntry`.
-- Mettre à jour TOUTES les vues, helpers, factories, specs, locales.
+### ✅ Phase 3 — Renommage modèles + DB — fait
+- DB : tables `contribution_formulas` et `contributions` en place (`db/schema.rb`), colonnes `book_of_entry_id`/`subscription_plan_id` renommées.
+- Code : plus aucune référence à `SubscriptionPlan` / `BookOfEntry` dans `app/` (modèles, services `People::Contribution*`, méthodes `Person#*contribution*`).
+- ✅ Validation `PaymentLine` ne pas accepter `SubscriptionPlan` / `BookOfEntry`.
 
-### Phase 4 — Cleanup legacy
-- Auditer puis supprimer `EventAttendee` si la fonctionnalité est intégrée à `Attendance`.
-- Extraire la logique métier de `Person` (>500 lignes) vers des services dédiés.
-- Supprimer définitivement les derniers termes legacy restants.
-- Supprimer le champ `donation` de `payments` (si pas déjà fait phase 1).
+### ⚠️ Phase 4 — Cleanup legacy — à faire
+- [ ] Auditer puis supprimer `EventAttendee` si la fonctionnalité est intégrée à `Attendance` (`app/models/event_attendee.rb` existe toujours).
+- [ ] Extraire la logique métier de `Person` vers des services dédiés (le modèle est descendu à ~340 lignes, le seuil ">500 lignes" n'est plus le déclencheur ; à réévaluer si le besoin d'extraction persiste).
+- [ ] Supprimer définitivement les derniers termes legacy restants (hors « newsletter subscription », qui est un vocabulaire distinct et légitime).
+- ✅ Champ `donation` de `payments` déjà supprimé en phase 1.
 
 ---
 
@@ -112,15 +98,14 @@
 
 | Phase | Code | Doc principale | Glossaire |
 | --- | --- | --- | --- |
-| Phase 0 | en cours | mentionne « code actuel : `subordinate_roles`, `active_membership?` » | utilise `subordinate_roles` |
-| Phase 1 | en cours | mentionne « actuel : `item_type: "Payment"` pour les dons (legacy à retirer) » | utilise `Donation` |
-| Phase 2 | done | composant `ContributionStatusBadgeComponent` (legacy `SubscriptionStatusBadgeComponent` supprimé) | idem |
-| Phase 3 | à faire | mentionne `Contribution` (code actuel : `BookOfEntry`) jusqu'au merge | idem |
-| Phase 4 | à faire | toute mention legacy est supprimée | idem |
+| Phase 0 | ✅ done | utilise `subordinate_roles`, `active_membership?` | utilise `subordinate_roles` |
+| Phase 1 | ✅ done (code) | utilise `Donation` ; surveillance prod des lignes legacy résiduelles via `Admin::HealthReport` | utilise `Donation` |
+| Phase 2 | ✅ done | composant `ContributionStatusBadgeComponent` (legacy `SubscriptionStatusBadgeComponent` supprimé) | idem |
+| Phase 3 | ✅ done | utilise `ContributionFormula`/`Contribution` (plus de `SubscriptionPlan`/`BookOfEntry` en code) | idem |
+| Phase 4 | ⚠️ à faire | `EventAttendee` pas encore audité/supprimé | idem |
 
-> **Convention documentaire** : tant que le code n'est pas migré, les documents utilisent la forme :
-> > « Vocabulaire cible : `Contribution` (code actuel : `BookOfEntry`) ».
-> > Quand la phase 3 est fusionnée, cette mention disparaît.
+> **Convention documentaire** (historique) : tant que le code n'était pas migré, les documents utilisaient la forme
+> « Vocabulaire cible : `Contribution` (code actuel : `BookOfEntry`) ». **La phase 3 est fusionnée : cette mention a disparu**, les documents utilisent directement `Contribution` / `ContributionFormula`.
 
 ---
 

@@ -48,7 +48,6 @@ Voir le template global dans [`../README.md`](../README.md) section « Gouvernan
 
 - `todo.md` — backlog produit et dette technique (fusion de `to-do.md` racine et `docs/TODO.md`).
 - `optimizations_backlog.md` — backlog optimisations infra/UX.
-- `ux_audit_2025_01.md` — audit UX/UI daté 2025-01-31 (snapshot).
 - `refonte.md` — feuille de route refonte UX/UI (working document).
 - `css_migration.md` — plan de migration CSS.
 - `sqlite_deployment.md` — alternative bare-metal au flux Kamal (non testée en CI).

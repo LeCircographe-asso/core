@@ -1,9 +1,14 @@
 # TODO — Le Circographe
 
-*Revu le 2026-05-06 — ratissage élargi des 12 derniers commits + scan `rg` ciblé du repo.*
+> **Statut** : internal
+> **Public cible** : équipe dev
+> **Dernière vérification** : 2026-08-10
+> **Sources de vérité** : `app/`, historique git.
+
+*Revu le 2026-05-06 — ratissage élargi des 12 derniers commits + scan `rg` ciblé du repo. Complété le 2026-08-10 avec les items relevés lors d'un audit de la doc (voir entrées ajoutées ci-dessous).*
 
 ## Now
-- [x] **Paiements —** Les écrans admin (`Admin::PaymentsController#destroy`, `Admin::Users::PaymentsController#destroy`) passent déjà par `People::PaymentCanceller` (annulation `status: cancel`, pas de suppression ligne). `Payment#destroy` est désormais verrouillé par défaut ; le hard delete résiduel passe par une intention explicite `Payment#hard_delete!` pour les usages techniques/tests.
+- [x] **Paiements —** Les écrans admin (`Admin::PaymentsController#destroy`, `Admin::Members::PaymentsController#destroy`) passent déjà par `People::PaymentCanceller` (annulation `status: cancel`, pas de suppression ligne). `Payment#destroy` est désormais verrouillé par défaut ; le hard delete résiduel passe par une intention explicite `Payment#hard_delete!` pour les usages techniques/tests.
 - [ ] Ajouter les métadonnées de reçu de don : numéro, date d’émission, émetteur (non implémenté côté app / pas de feature « reçu » dans le repo à ce jour).
 
 ## Next safe steps
@@ -18,6 +23,7 @@
 - [x] Ajuster la home pour le mobile sans casser desktop. *(wrapper plein écran pour `home#index`, fond mobile zoomé, titre forcé sur deux lignes ≤ `640px`, CTA re-positionnés plus bas, nettoyage `swiper_overrides`)* 
 
 ## Later
+- [ ] Décider de la marche à suivre pour la détection/fusion de doublons `Person` (route `admin/duplicates` déclarée dans `config/routes.rb` sans `Admin::DuplicatesController` — en attente d'une décision liée à un futur import de membres par Excel).
 - [ ] Ajouter les filtres reporting de dons par période et méthode de paiement.
 - [ ] Construire le flux RGPD d’anonymisation `Person` / `User` avec raison et acteur.
 - [ ] Ajouter un dashboard admin minimal pour les feature flags existants.
@@ -33,7 +39,7 @@
 - [ ] Confirmer que les exemptions d’auth récentes (`BlogsController#index/show`, `UsersController#unsubscribe_by_token`) sont bien intentionnelles, documentées et couvertes par tests.
 - [ ] Vérifier le comportement clavier / focus / hash navigation de la FAQ à onglets sur mobile et desktop.
 - [ ] Vérifier le rendu réel des horaires compacts sur toutes les vues publiques qui embarquent `shared/_opening_hours` (home, adhésion, autres shells publics).
-- [ ] Vérifier que `opening_hours_updated_at` est bien affiché de façon cohérente partout où la fraîcheur des horaires compte, ou retirer l’ambiguïté si la donnée reste seulement en cache technique.
+- [ ] Vérifier que la fraîcheur des horaires (`OpeningHour.latest_update_entry.updated_at`, DB) est affichée de façon cohérente partout où elle compte : présente sur `become_member`, absente de `shared/_opening_hours` (utilisé aussi par `home`, `contact_us`).
 
 ## Mobile first
 - [x] Navigation : meilleur feedback tactile / actif dans le menu mobile. *(toggles + liens avec état pressé/actif plus lisible)*

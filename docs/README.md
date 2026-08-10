@@ -2,7 +2,7 @@
 
 > **Statut** : stable
 > **Public cible** : contributeur, équipe
-> **Dernière vérification** : 2026-05-01
+> **Dernière vérification** : 2026-08-10
 > **Sources de vérité** : structure réelle du dossier `docs/`.
 
 Index de la documentation Markdown du projet. Pour le démarrage et le déploiement, voir le [`README.md`](../README.md) à la racine.
@@ -26,7 +26,6 @@ docs/
 
   migrations/           plan DDD-light transitionnel
   legacy/               snapshots historiques non normatifs
-  rake_archive/         Rake tasks one-shot historiques
 
   internal/             ← versionné, mais réservé équipe
                           (TODO, backlogs, audits datés, plans en cours)
@@ -94,6 +93,7 @@ Chaque document Markdown déclare un statut dans son header :
 ## Tests
 
 - [`development/testing.md`](development/testing.md) — guide TDD unifié (philosophie, setup, couverture, gaps, CI).
+- [`development/refactor-admin-members-namespace.md`](development/refactor-admin-members-namespace.md) — trace de la migration `admin/users` → `admin/members` (terminée).
 
 ## Frontend, UX et design
 
@@ -111,7 +111,6 @@ Chaque document Markdown déclare un statut dans son header :
 - [`legacy/README.md`](legacy/README.md) — documents historiques non normatifs.
 - [`legacy/incidents/oct_2025_lessons.md`](legacy/incidents/oct_2025_lessons.md) — synthèse des incidents staging/production d'oct. 2025.
 - [`legacy/production_deployment_plan.md`](legacy/production_deployment_plan.md) — snapshot du plan de mise en prod « mode maintenance ».
-- [`rake_archive/`](rake_archive/) — Rake tasks de migration one-shot, **ne plus exécuter**.
 
 ## Documentation interne (équipe)
 
@@ -119,7 +118,6 @@ Chaque document Markdown déclare un statut dans son header :
 
 - [`internal/todo.md`](internal/todo.md) — backlog produit + dette technique.
 - [`internal/optimizations_backlog.md`](internal/optimizations_backlog.md) — backlog optimisations infra/UX.
-- [`internal/ux_audit_2025_01.md`](internal/ux_audit_2025_01.md) — audit UX/UI daté 2025-01-31 (snapshot).
 - [`internal/refonte.md`](internal/refonte.md) — feuille de route refonte UX/UI (working document).
 - [`internal/css_migration.md`](internal/css_migration.md) — plan de migration CSS.
 - [`internal/sqlite_deployment.md`](internal/sqlite_deployment.md) — alternative bare-metal au flux Kamal.
