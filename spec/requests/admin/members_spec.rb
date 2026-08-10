@@ -97,7 +97,7 @@ RSpec.describe 'Admin::Members', type: :request do
 
         expect(response).to have_http_status(:unprocessable_content)
         expect(flash[:alert]).to start_with(
-          I18n.t("admin.users.create.invalid_data_alert", details: "").rstrip
+          I18n.t("admin.members.create.invalid_data_alert", details: "").rstrip
         )
       end
 

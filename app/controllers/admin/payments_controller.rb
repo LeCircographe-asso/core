@@ -325,7 +325,7 @@ module Admin
       if params[:person_id].present?
         person = Person.find_by(id: params[:person_id])
         if person
-          add_breadcrumb I18n.t("breadcrumbs.admin.users.members_list"), admin_members_path
+          add_breadcrumb I18n.t("breadcrumbs.admin.members.members_list"), admin_members_path
           add_breadcrumb person.full_name, admin_member_path(person)
           add_breadcrumb I18n.t("breadcrumbs.admin.payments.history"), nil
           return

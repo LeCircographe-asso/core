@@ -72,6 +72,10 @@ module Roleable
     super_admin? || admin?
   end
 
+  def can_manage_gallery?
+    super_admin? || admin?
+  end
+
   def can_manage_opening_hours?
     super_admin? || admin?
   end

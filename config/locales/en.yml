@@ -69,54 +69,6 @@ en:
         success_notice: Contribution upgraded successfully.
         credit_applied_suffix: " Credit applied: %{amount}€"
         failure_alert: 'Error during upgrade: %{message}'
-    users:
-      create:
-        invalid_data_alert: 'Invalid data: %{details}'
-        success_person_user_membership: Person, web account and membership created successfully!
-        success_person_user: Person and web account created successfully!
-        success_person_membership: Person and membership created successfully!
-        success_person_only: Person created successfully!
-        error_existing_web_account: This person already has a web account.
-        error_email_required: An email is required to create a web account.
-      payments:
-        create:
-          failure_alert: 'Error creating payment: %{message}'
-          success: Paiement créé avec succès
-        update:
-          failure_alert: 'Error updating payment: %{message}'
-          success: Paiement mis à jour avec succès
-        destroy:
-          failure_alert: 'Error deleting payment: %{message}'
-          destroyed: Paiement supprimé avec succès
-        process_payment:
-          failure_alert: 'Error processing payment: %{message}'
-          processed: Paiement traité avec succès
-          already_processed: Paiement déjà traité
-      show:
-        merged_person_notice: Cette fiche a été fusionnée avec une autre. Retour à la liste des utilisateurs.
-      edit:
-        user_not_found: Utilisateur non trouvé.
-        edit_error: Une erreur est survenue lors de l'édition de l'utilisateur.
-      update:
-        person_saved_notice: Informations mises à jour avec succès.
-        ajax_success_json_message: Informations mises à jour avec succès.
-        html_updated: Utilisateur mis à jour avec succès.
-        turbo_notice: Utilisateur mis à jour avec succès.
-      destroy:
-        person_not_found_alert: Personne non trouvée.
-        person_deleted_notice: Personne supprimée avec succès.
-        destruction_failed_alert_html: "❌ %{message}"
-        user_archived_notice: Utilisateur archivé avec succès.
-        archive_failed_alert: Impossible d'archiver cet utilisateur.
-      restore:
-        restored_notice: Utilisateur restauré avec succès.
-        restore_failed_alert: Impossible de restaurer cet utilisateur.
-      set_user:
-        person_or_user_missing_alert: Utilisateur non trouvé.
-      check_deletion_permissions:
-        higher_privileges: Impossible de supprimer un utilisateur avec des privilèges égaux ou supérieurs.
-      require_super_admin:
-        restore_denied_alert: Seul le super-admin peut restaurer des utilisateurs.
     base:
       unauthorized_alert: Vous n'avez pas accès à cette page.
     attendances:
@@ -144,6 +96,12 @@ en:
         missing_person: Select a person to record a donation.
       create:
         recorded: Donation recorded
+    duplicates:
+      breadcrumb: Duplicates
+      merge:
+        missing_selection_alert: Select a record to keep and at least one to merge.
+        success_notice: "%{count} record(s) merged successfully."
+        failure_alert: "Merge failed: %{message}"
     events:
       create:
         created: Événement créé avec succès
@@ -187,7 +145,7 @@ en:
         administration: Administration
         dashboard: Dashboard
         edit: Edit
-      users:
+      members:
         members_list: Members list
         create_web_account: Create web account
         new_member: New member
@@ -203,8 +161,6 @@ en:
       contribution_formulas:
         catalog: Contribution formulas
         formula_named: 'Formula: %{name}'
-        plans: Contribution formulas
-        plan_named: 'Formula: %{name}'
         new_contribution: New contribution
         edit_named: 'Edit: %{name}'
       opening_hours:
@@ -226,13 +182,6 @@ en:
         new_list: New list
       health_reports:
         integrity_report: Integrity report
-  helpers:
-    admin:
-      users:
-        display:
-          not_provided: Not provided
-          no_email: No email
-          name_not_provided: Name not provided
   layouts:
     application:
       title: Le Circographe
@@ -263,7 +212,6 @@ en:
         association: Association
         news: News
         our_news: Our news
-        blog_newsletters: Blog & Newsletters
         photo_gallery: Photo gallery
         events: Our Events
       scroll_hint:
@@ -314,7 +262,6 @@ en:
     pages:
       about:
         page_title: Le Circographe - About
-        join_community: Join the community
         heading: About Le Circographe
         hero_description: A laboratory of shared artistic practices where circus and graphic arts meet — self-management and solidarity.
         join: Join us
@@ -416,21 +363,14 @@ en:
       signed_out_notice: Déconnecté avec succès !
   settings:
     nav:
-      breadcrumb_label: Breadcrumb
       home: Home
       profile: Profile
-      settings_current: Settings
-      back_to_profile: Back to profile
     show:
       page_title: Account settings
       lead: Sign-in email, preferences, and security.
-      membership_hint_html: Membership, contributions, and recent payments are summarized on your %{link}.
-      view_profile_link: profile page
       section_account: Account
       section_preferences: Preferences
       section_preferences_edit_hint: Toggle the options below, then confirm with Accept.
-      section_communication: Communication & involvement
-      section_display: Display
       section_security: Security
       section_danger: Sensitive actions
       email_shared_badge: Shared
@@ -440,7 +380,6 @@ en:
       email_change_modal_intro: "Enter the new address, confirm it, then submit the verification code sent to that address."
       email_change_confirm_field: Confirm new address
       email_change_placeholder: new.address@example.com
-      email_change_submit: Save this address
       email_change_send_code: Send code
       email_change_confirm_code: Confirm code
       email_change_close: Close
@@ -483,14 +422,6 @@ en:
   users:
     space:
       page_title: My space
-      quick_hint: Update then save.
-      intro_title: Profile, membership & account
-      intro_lead: "Manage your profile, contact details, and account here."
-      nav_aria: Account sections
-      nav_overview: Summary
-      nav_contact: Contact details
-      nav_account: Account & security
-      nav_faq: FAQ
       newsletter_row_label: Newsletter
       newsletter_subscribed_yes: Subscribed
       newsletter_subscribed_no: Not subscribed
@@ -527,9 +458,7 @@ en:
       'no': 'No'
       saving: Saving...
       unsaved_changes_warning: You have unsaved changes.
-      contact_submit: Save contact details
     update:
-      profile_updated: Your profile has been updated successfully.
       coordinates_updated: Contact details saved.
     destroy:
       deleted_notice: Votre compte a été supprimé avec succès.

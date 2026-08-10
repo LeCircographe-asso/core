@@ -113,7 +113,10 @@
     </div>
 
     <div class="admin-metric-card mb-6 p-6">
-      <h2 class="text-lg font-semibold text-gray-900 mb-3">Doublons par email</h2>
+      <div class="flex items-center justify-between mb-3">
+        <h2 class="text-lg font-semibold text-gray-900">Doublons par email</h2>
+        <%= link_to "Fusionner des doublons →", admin_duplicates_path, class: "text-sm text-[#1F5C55] hover:underline" %>
+      </div>
       <% if @duplicate_people_by_email_groups.any? %>
         <div class="space-y-3">
           <% @duplicate_people_by_email_groups.each do |email, people| %>

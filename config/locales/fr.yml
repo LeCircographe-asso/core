@@ -84,6 +84,12 @@ fr:
         missing_person: Sélectionnez une personne pour enregistrer un don.
       create:
         recorded: Donation prise en compte
+    duplicates:
+      breadcrumb: Doublons
+      merge:
+        missing_selection_alert: Sélectionnez une fiche à garder et au moins une fiche à fusionner.
+        success_notice: "%{count} fiche(s) fusionnée(s) avec succès."
+        failure_alert: "Échec de la fusion : %{message}"
     events:
       create:
         created: Événement créé avec succès
@@ -179,58 +185,6 @@ fr:
         success_notice: Cotisation upgradée avec succès.
         credit_applied_suffix: " Crédit appliqué: %{amount}€"
         failure_alert: 'Erreur lors de l''upgrade: %{message}'
-    users:
-      create:
-        invalid_data_alert: 'Données invalides : %{details}'
-        success_person_user_membership: Personne, compte web et adhésion créés avec succès !
-        success_person_user: Personne et compte web créés avec succès !
-        success_person_membership: Personne et adhésion créées avec succès !
-        success_person_only: Personne créée avec succès !
-        error_existing_web_account: Cette personne a déjà un compte web.
-        error_email_required: Un email est obligatoire pour créer un compte web.
-      show:
-        merged_person_notice: Cette fiche a été fusionnée avec une autre. Retour à la liste des utilisateurs.
-      edit:
-        user_not_found: Utilisateur non trouvé.
-        edit_error: Une erreur est survenue lors de l'édition de l'utilisateur.
-      update:
-        person_saved_notice: Informations mises à jour avec succès.
-        ajax_success_json_message: Informations mises à jour avec succès.
-        html_updated: Utilisateur mis à jour avec succès.
-        turbo_notice: Utilisateur mis à jour avec succès.
-      destroy:
-        person_not_found_alert: Personne non trouvée.
-        person_deleted_notice: Personne supprimée avec succès.
-        destruction_failed_alert_html: "❌ %{message}"
-        user_archived_notice: Utilisateur archivé avec succès.
-        archive_failed_alert: Impossible d'archiver cet utilisateur.
-      restore:
-        restored_notice: Utilisateur restauré avec succès.
-        restore_failed_alert: Impossible de restaurer cet utilisateur.
-      create_web_account:
-        web_account_created: Compte web dormant créé. La personne pourra se connecter en utilisant son email.
-        web_account_already_exists: Cette personne a déjà un compte web.
-        email_required_for_web_account: Un email est obligatoire pour créer un compte web. Renseignez-le d'abord dans le profil.
-      set_user:
-        person_or_user_missing_alert: Utilisateur non trouvé.
-      check_deletion_permissions:
-        higher_privileges: Impossible de supprimer un utilisateur avec des privilèges égaux ou supérieurs.
-      require_super_admin:
-        restore_denied_alert: Seul le super-admin peut restaurer des utilisateurs.
-      payments:
-        create:
-          success: Paiement créé avec succès
-          failure_alert: 'Erreur lors de la création du paiement: %{message}'
-        update:
-          success: Paiement mis à jour avec succès
-          failure_alert: 'Erreur lors de la mise à jour: %{message}'
-        destroy:
-          destroyed: Paiement supprimé avec succès
-          failure_alert: 'Erreur lors de la suppression: %{message}'
-        process_payment:
-          processed: Paiement traité avec succès
-          already_processed: Paiement déjà traité
-          failure_alert: 'Erreur lors du traitement: %{message}'
     members:
       create:
         invalid_data_alert: 'Données invalides : %{details}'
@@ -240,10 +194,6 @@ fr:
         success_person_only: Personne créée avec succès !
         error_existing_web_account: Cette personne a déjà un compte web.
         error_email_required: Un email est obligatoire pour créer un compte web.
-      show:
-        merged_person_notice: Cette fiche a été fusionnée avec une autre. Retour à la liste.
-      edit:
-        person_not_found: Personne non trouvée.
       update:
         person_saved_notice: Informations mises à jour avec succès.
         ajax_success_json_message: Informations mises à jour avec succès.
@@ -262,8 +212,6 @@ fr:
         email_required_for_web_account: Un email est obligatoire pour créer un compte web. Renseignez-le d'abord dans le profil.
       check_deletion_permissions:
         higher_privileges: Impossible de supprimer un membre avec des privilèges égaux ou supérieurs.
-      require_super_admin:
-        restore_denied_alert: Seul le super-admin peut restaurer des comptes.
       payments:
         create:
           success: Paiement créé avec succès
@@ -327,21 +275,14 @@ fr:
       signed_out_notice: Déconnecté avec succès !
   settings:
     nav:
-      breadcrumb_label: Fil d'Ariane
       home: Accueil
       profile: Profil
-      settings_current: Paramètres
-      back_to_profile: Retour au profil
     show:
       page_title: Paramètres du compte
       lead: Adresse de connexion, préférences du compte et sécurité.
-      membership_hint_html: Adhésion, cotisations et paiements récents sont récapitulés sur votre %{link}.
-      view_profile_link: fiche profil
       section_account: Compte
       section_preferences: Préférences
       section_preferences_edit_hint: Cochez ou décochez pour mettre à jour, puis validez avec Accepter.
-      section_communication: Communication et engagement
-      section_display: Affichage
       section_security: Sécurité
       section_danger: Zone sensible
       email_shared_badge: Commun
@@ -351,7 +292,6 @@ fr:
       email_change_modal_intro: "Renseignez la nouvelle adresse, confirmez-la, puis saisissez le code recu par email pour valider le changement."
       email_change_confirm_field: Confirmer la nouvelle adresse
       email_change_placeholder: nouvelle.adresse@exemple.com
-      email_change_submit: Enregistrer cette adresse
       email_change_send_code: Envoyer le code
       email_change_confirm_code: Valider le code
       email_change_close: Fermer
@@ -394,14 +334,6 @@ fr:
   users:
     space:
       page_title: Mon espace
-      quick_hint: Mets à jour puis enregistre.
-      intro_title: Profil, adhésion et compte
-      intro_lead: "Gère ici ton profil, tes coordonnées et ton compte."
-      nav_aria: Sections de mon espace
-      nav_overview: Résumé
-      nav_contact: Coordonnées
-      nav_account: Compte & sécurité
-      nav_faq: FAQ
       newsletter_row_label: Newsletter
       newsletter_subscribed_yes: Inscrit
       newsletter_subscribed_no: Non inscrit
@@ -438,9 +370,7 @@ fr:
       'no': Non
       saving: Enregistrement...
       unsaved_changes_warning: Vous avez des modifications non enregistrées.
-      contact_submit: Enregistrer mes coordonnées
     update:
-      profile_updated: Votre profil a été mis à jour avec succès.
       coordinates_updated: Coordonnées enregistrées.
     destroy:
       deleted_notice: Votre compte a été supprimé avec succès.
@@ -537,10 +467,6 @@ fr:
         administration: Administration
         dashboard: Tableau de bord
         edit: Modifier
-      users:
-        members_list: Liste d'adhérents
-        create_web_account: Créer un compte web
-        new_member: Nouvel adhérent
       members:
         members_list: Liste d'adhérents
         create_web_account: Créer un compte web
@@ -557,8 +483,6 @@ fr:
       contribution_formulas:
         catalog: Formules de cotisation
         formula_named: 'Formule : %{name}'
-        plans: Formules de cotisation
-        plan_named: 'Formule : %{name}'
         new_contribution: Nouvelle cotisation
         edit_named: 'Modifier : %{name}'
       opening_hours:
@@ -580,13 +504,6 @@ fr:
         new_list: Nouveau registre
       health_reports:
         integrity_report: Rapport d'intégrité
-  helpers:
-    admin:
-      users:
-        display:
-          not_provided: Non renseigné
-          no_email: Pas d'email
-          name_not_provided: Nom non renseigné
   layouts:
     application:
       title: Le Circographe
@@ -617,7 +534,6 @@ fr:
         association: L'Association
         news: Actualités
         our_news: Nos actualités
-        blog_newsletters: Blog & Newsletters
         photo_gallery: Galerie Photos
         events: Nos Événements
       scroll_hint:
@@ -693,7 +609,6 @@ fr:
       about:
         page_title: Le Circographe - À propos
         eyebrow: Apprendre entre tous
-        join_community: Rejoindre la communauté
         heading: A propos du Circographe
         hero_description: Laboratoire de pratiques artistiques partagées où cirque et arts graphiques se rencontrent — autogestion et solidarité.
         join: Nous rejoindre

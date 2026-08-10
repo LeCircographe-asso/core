@@ -1,0 +1,86 @@
+<% content_for :title, "Doublons" %>
+
+<div class="min-h-screen py-6">
+  <div class="page-container">
+    <%= render 'shared/breadcrumbs' %>
+
+    <div class="admin-page-header">
+      <div class="px-6 py-4">
+        <h1 class="text-2xl font-bold text-white">Doublons</h1>
+        <p class="text-white/80 mt-1">
+          Choisissez la fiche à garder, cochez les autres, puis fusionnez.
+          Fusionner transfère adhésions, cotisations, paiements et présences vers la fiche gardée,
+          et supprime les fiches cochées. Cette action est irréversible.
+        </p>
+      </div>
+    </div>
+
+    <div class="admin-metric-card mb-6 p-6">
+      <h2 class="text-lg font-semibold text-gray-900 mb-3">Doublons par email</h2>
+      <% if @duplicate_people_by_email_groups.any? %>
+        <div class="space-y-4">
+          <% @duplicate_people_by_email_groups.each do |email, people| %>
+            <div class="border border-gray-200 rounded-md p-3">
+              <p class="text-sm font-medium text-gray-900 mb-2"><%= email %></p>
+              <%= form_with url: merge_admin_duplicates_path, method: :post, data: { turbo_confirm: "Fusionner ces fiches ? Cette action est irréversible." } do |f| %>
+                <div class="space-y-1">
+                  <% people.each do |person| %>
+                    <label class="flex items-center gap-3 text-sm text-gray-700">
+                      <span class="inline-flex items-center gap-1">
+                        <%= radio_button_tag :target_person_id, person.id, false, class: "text-[#1F5C55]" %>
+                        <span class="text-xs text-gray-500">garder</span>
+                      </span>
+                      <span class="inline-flex items-center gap-1">
+                        <%= check_box_tag "source_person_ids[]", person.id %>
+                        <span class="text-xs text-gray-500">fusionner</span>
+                      </span>
+                      <%= link_to person.full_name, admin_member_path(person), class: "text-[#1F5C55] hover:underline" %>
+                      <span class="text-gray-400">(##<%= person.id %>)</span>
+                    </label>
+                  <% end %>
+                </div>
+                <%= submit_tag "Fusionner", class: "mt-3 px-3 py-1.5 text-sm font-medium text-white bg-[#1F5C55] hover:bg-[#194A45] rounded-md" %>
+              <% end %>
+            </div>
+          <% end %>
+        </div>
+      <% else %>
+        <p class="text-sm text-gray-600">Aucun doublon email détecté.</p>
+      <% end %>
+    </div>
+
+    <div class="admin-metric-card mb-6 p-6">
+      <h2 class="text-lg font-semibold text-gray-900 mb-3">Doublons par téléphone</h2>
+      <% if @duplicate_people_by_phone_groups.any? %>
+        <div class="space-y-4">
+          <% @duplicate_people_by_phone_groups.each do |phone, people| %>
+            <div class="border border-gray-200 rounded-md p-3">
+              <p class="text-sm font-medium text-gray-900 mb-2"><%= phone %></p>
+              <%= form_with url: merge_admin_duplicates_path, method: :post, data: { turbo_confirm: "Fusionner ces fiches ? Cette action est irréversible." } do |f| %>
+                <div class="space-y-1">
+                  <% people.each do |person| %>
+                    <label class="flex items-center gap-3 text-sm text-gray-700">
+                      <span class="inline-flex items-center gap-1">
+                        <%= radio_button_tag :target_person_id, person.id, false, class: "text-[#1F5C55]" %>
+                        <span class="text-xs text-gray-500">garder</span>
+                      </span>
+                      <span class="inline-flex items-center gap-1">
+                        <%= check_box_tag "source_person_ids[]", person.id %>
+                        <span class="text-xs text-gray-500">fusionner</span>
+                      </span>
+                      <%= link_to person.full_name, admin_member_path(person), class: "text-[#1F5C55] hover:underline" %>
+                      <span class="text-gray-400">(##<%= person.id %>)</span>
+                    </label>
+                  <% end %>
+                </div>
+                <%= submit_tag "Fusionner", class: "mt-3 px-3 py-1.5 text-sm font-medium text-white bg-[#1F5C55] hover:bg-[#194A45] rounded-md" %>
+              <% end %>
+            </div>
+          <% end %>
+        </div>
+      <% else %>
+        <p class="text-sm text-gray-600">Aucun doublon téléphone détecté.</p>
+      <% end %>
+    </div>
+  </div>
+</div>

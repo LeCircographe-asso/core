@@ -71,9 +71,6 @@ group :development do
 end
 
 group :test do
-  # UTILES POUR CI/CD
-  gem "rspec_junit_formatter" # JUnit XML output for CI/CD integration
-
   # Tests système / Capybara
   gem "capybara"
   gem "rails-controller-testing"
