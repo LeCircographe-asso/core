@@ -5,7 +5,6 @@ module Admin
     require "csv"
 
     def index
-      Rails.logger.debug "#" * 111
     end
 
     def newsletter_subscribed
