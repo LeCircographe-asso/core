@@ -48,10 +48,7 @@ en:
         creation_disabled_notice: Création de paiement temporairement désactivée
     contribution_formulas:
       create:
-        purchase_failed_alert: 'Error purchasing contribution formula: %{message}'
-        purchased: Contribution recorded successfully!
-      new:
-        needs_circus_membership_alert: This person needs an active Circus membership to buy a contribution formula.
+        success: Contribution formula created successfully!
       update:
         updated: Contribution formula updated successfully!
       change_price:
@@ -60,11 +57,18 @@ en:
       archive:
         success: Contribution formula archived — no longer offered for new purchases.
         failure: "Archiving failed: %{message}"
+      unarchive:
+        success: Contribution formula unarchived — offered for new purchases again.
+        failure: "Unarchiving failed: %{message}"
       destroy:
         destroyed: Contribution formula deleted successfully!
-      require_super_admin:
-        forbidden: Only super-admin can edit or delete contribution formulas.
     contributions:
+      new:
+        person_required_alert: Select a person before buying a contribution.
+        needs_circus_membership_alert: This person needs an active Circus membership to buy a contribution formula.
+      create:
+        purchase_failed_alert: 'Error purchasing contribution formula: %{message}'
+        purchased: Contribution recorded successfully!
       upgrade:
         success_notice: Contribution upgraded successfully.
         credit_applied_suffix: " Credit applied: %{amount}€"
@@ -178,6 +182,9 @@ en:
       archive:
         success: Type d'adhésion archivé — il n'est plus proposé aux nouveaux achats.
         failure: "Échec de l'archivage : %{message}"
+      unarchive:
+        success: Type d'adhésion désarchivé — de nouveau proposé aux achats.
+        failure: "Échec du désarchivage : %{message}"
       destroy:
         destroyed: Type d'adhésion supprimé avec succès !
     notepads:
@@ -217,8 +224,10 @@ en:
       contribution_formulas:
         catalog: Contribution formulas
         formula_named: 'Formula: %{name}'
-        new_contribution: New contribution
+        new_formula: New formula
         edit_named: 'Edit: %{name}'
+      contributions:
+        new_contribution: New contribution
       gallery_photos:
         gallery: Gallery photos
       board_members:

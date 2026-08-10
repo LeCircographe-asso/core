@@ -2,21 +2,9 @@
 
 module Admin
   class ContributionFormulasController < BaseController
-    PURCHASE_ATTRS = %i[
-      person_id
-      contribution_formula_id
-      payment_method
-      record_attendance
-      attendance_date
-      custom_amount_cents
-      offer_reason
-      donation_amount
-    ].freeze
-
-    before_action :set_contribution_formula, only: %i[show edit update destroy change_price archive]
-    before_action :set_person, only: %i[new create]
+    before_action :set_contribution_formula, only: %i[show edit update destroy change_price archive unarchive]
     before_action :set_breadcrumbs
-    before_action :require_super_admin, only: %i[edit update destroy change_price archive]
+    before_action :require_admin_rights, only: %i[new create edit update destroy change_price archive unarchive]
 
     def index
       @contribution_formulas = ContributionFormula.current_versions.includes(:membership_type).order(:duration, :price_cents)
@@ -30,13 +18,13 @@ module Admin
     end
 
     def new
-      unless @person&.can_buy_contribution_formulas?
-        flash[:alert] = t(".needs_circus_membership_alert")
-        redirect_to(@person ? admin_person_path(@person) : admin_members_path)
-        return
-      end
-
-      @contribution_formulas = ContributionFormula.available_for(@person)
+      @contribution_formula = ContributionFormula.new(
+        effective_from: Date.current,
+        rate_kind: "standard",
+        version: 1,
+        created_by_user: Current.user
+      )
+      add_breadcrumb I18n.t("breadcrumbs.admin.contribution_formulas.new_formula"), nil
     end
 
     def edit
@@ -44,31 +32,14 @@ module Admin
     end
 
     def create
-      @person = Person.find(contribution_purchase_params[:person_id])
+      @contribution_formula = ContributionFormula.new(contribution_formula_create_params.merge(created_by_user: Current.user))
 
-      custom_amount = (contribution_purchase_params[:custom_amount_cents].to_i if contribution_purchase_params[:payment_method] == "offered")
-      donation_cents = donation_cents_from(contribution_purchase_params)
-
-      result = People::ContributionCreator.new(
-        person: @person,
-        contribution_formula_id: contribution_formula_id_from_purchase_params,
-        payment_method: contribution_purchase_params[:payment_method].presence || "cash",
-        recorded_by_id: Current.user&.id,
-        record_attendance: false,
-        custom_amount_cents: custom_amount,
-        offer_reason: contribution_purchase_params[:offer_reason],
-        donation_cents: donation_cents
-      ).call
-
-      if result.success?
-        redirect_to admin_member_path(@person), notice: t(".purchased")
+      if @contribution_formula.save
+        redirect_to admin_contribution_formulas_path, notice: t(".success")
       else
-        redirect_to new_admin_contribution_formula_path(person_id: @person.id),
-                    alert: t(".purchase_failed_alert", message: result.message)
+        flash.now[:alert] = @contribution_formula.errors.full_messages.to_sentence
+        render :new, status: :unprocessable_content
       end
-    rescue StandardError => e
-      flash[:alert] = t(".purchase_failed_alert", message: e.message)
-      redirect_to new_admin_contribution_formula_path(person_id: @person.id)
     end
 
     # Édition classique : jamais le prix, la version ou effective_from — ces
@@ -99,6 +70,13 @@ module Admin
       redirect_to admin_contribution_formulas_path, alert: t(".failure", message: e.message)
     end
 
+    def unarchive
+      @contribution_formula.unarchive!(user: Current.user)
+      redirect_to admin_contribution_formulas_path, notice: t(".success")
+    rescue ActiveRecord::RecordInvalid => e
+      redirect_to admin_contribution_formulas_path, alert: t(".failure", message: e.message)
+    end
+
     def destroy
       if @contribution_formula.destroy
         redirect_to admin_contribution_formulas_path, notice: t(".destroyed")
@@ -109,26 +87,17 @@ module Admin
 
     private
 
-    def contribution_formula_id_from_purchase_params
-      contribution_purchase_params[:contribution_formula_id]
-    end
-
-
     def set_contribution_formula
       @contribution_formula = ContributionFormula.find(params[:id])
     end
 
-    def set_person
-      @person = Person.find(params[:person_id]) if params[:person_id]
-    end
-
     def set_breadcrumbs
       add_breadcrumb I18n.t("breadcrumbs.admin.common.administration"), admin_dashboard_index_path
-      if @person.present?
-        add_person_context_breadcrumbs(@person, I18n.t("breadcrumbs.admin.contribution_formulas.new_contribution"))
-      else
-        add_breadcrumb I18n.t("breadcrumbs.admin.contribution_formulas.catalog"), admin_contribution_formulas_path
-      end
+      add_breadcrumb I18n.t("breadcrumbs.admin.contribution_formulas.catalog"), admin_contribution_formulas_path
+    end
+
+    def contribution_formula_create_params
+      params.expect(contribution_formula: %i[name description duration rate_kind membership_type_id price_cents sessions_count validity_days effective_from])
     end
 
     # Édition classique : nom/description seulement. duration/rate_kind/
@@ -137,17 +106,6 @@ module Admin
     # place réinterpréterait silencieusement un achat passé. Prix : #change_price.
     def contribution_formula_update_params
       params.expect(contribution_formula: %i[name description])
-    end
-
-    def contribution_purchase_params
-      params.expect(contribution_formula: PURCHASE_ATTRS).merge(recorded_by_id: Current.user.id)
-    end
-
-    def donation_cents_from(params_hash)
-      return nil if params_hash[:donation_amount].blank?
-
-      cents = (params_hash[:donation_amount].to_f * 100).to_i
-      cents.positive? ? cents : nil
     end
   end
 end

@@ -1,245 +1,123 @@
-<% content_for :title, "Nouvelle cotisation" %>
-
-<div class="min-h-screen py-6">
-  <div class="mx-auto max-w-6xl px-4 sm:px-6">
-    <%= render "shared/breadcrumbs" %>
-
-    <div class="mb-4 overflow-hidden rounded-lg bg-white shadow-lg">
-      <div class="bg-gradient-to-r from-[#1F5C55] to-[#194A45] px-4 py-3 sm:px-5">
-        <h1 class="text-lg font-bold text-white sm:text-xl">Nouvelle cotisation</h1>
-        <p class="mt-1 text-sm text-white/80">
-          <% if @person %>
-            Pour <%= @person.full_name %>
-          <% else %>
-            Sélectionnez une formule de cotisation
-          <% end %>
-        </p>
+<div class="min-h-screen bg-gray-50 py-6">
+  <div class="page-container max-w-2xl">
+    <!-- Header -->
+    <div class="admin-page-header">
+      <div class="px-6 py-4">
+        <h1 class="text-2xl font-bold text-white">Nouvelle Formule de Cotisation</h1>
+        <p class="text-green-100 mt-1">Créer une nouvelle formule de cotisation (catalogue)</p>
       </div>
     </div>
 
-    <div class="overflow-hidden rounded-lg bg-white shadow-lg">
-      <div class="p-4 sm:p-5">
-        <% if @person&.can_buy_contribution_formulas? %>
-          <% selected_formula = @contribution_formulas.first %>
-          <% current_membership = @person.current_membership %>
-          <% active_contributions = @person.contributions.active.includes(:contribution_formula).order(expires_at: :asc, created_at: :desc) %>
-          <% formula_label = lambda do |formula|
-               case formula.duration
-               when "day" then "Journée"
-               when "trimester" then "Trimestriel"
-               when "annual" then "Annuel"
-               when "pack10" then "Carnet 10"
-               else formula.name
-               end
-             end %>
-          <% formula_constraint = lambda do |formula|
-               if formula.duration == "day"
-                 "Usage unique, valable jusqu'à la fin de la journée"
-               elsif formula.sessions_count.present? && formula.validity_days.present?
-                 "#{formula.sessions_count} séances à utiliser sous #{formula.validity_days} jours"
-               elsif formula.duration == "trimester"
-                 "Séances illimitées pendant 3 mois"
-               elsif formula.duration == "annual"
-                 "Séances illimitées pendant 1 an"
-               else
-                 formula.duration_humanized
-               end
-             end %>
-          <% formula_alert = lambda do |formula|
-               matching_active_contribution = active_contributions.find { |contribution| contribution.contribution_formula.duration == formula.duration }
-               next nil unless matching_active_contribution
+    <!-- Formulaire -->
+    <div class="surface-card">
+      <div class="px-6 py-4 border-b border-gray-200">
+        <h2 class="text-lg font-semibold text-gray-900">Informations de la Formule</h2>
+      </div>
 
-               case formula.duration
-               when "day"
-                 "Déjà une journée active aujourd'hui"
-               when "pack10"
-                 "Un carnet 10 est déjà disponible"
-               when "trimester"
-                 "Un trimestriel est déjà actif"
-               when "annual"
-                 "Un annuel est déjà actif"
-               end
-             end %>
-          <% contribution_alert = lambda do |contribution|
-               formula = contribution.contribution_formula
-
-               if formula.duration == "day"
-                 "Journée active jusqu'au #{l(contribution.expires_at.to_date)}"
-               elsif contribution.is_pack10?
-                 "Carnet 10 disponible : #{contribution.sessions_remaining} séances restantes"
-               elsif formula.duration == "trimester"
-                 "Trimestriel actif jusqu'au #{l(contribution.expires_at.to_date)}"
-               elsif formula.duration == "annual"
-                 "Annuel actif jusqu'au #{l(contribution.expires_at.to_date)}"
-               elsif contribution.expires_at.present?
-                 "#{formula_label.call(formula)} actif jusqu'au #{l(contribution.expires_at.to_date)}"
-               else
-                 "#{formula_label.call(formula)} actif"
-               end
-             end %>
-
-          <% if selected_formula.present? %>
-            <section class="mb-5 rounded-lg border border-gray-200 bg-gray-50 p-3 sm:p-4">
-              <div class="grid gap-3 lg:grid-cols-[minmax(0,16rem)_minmax(0,1fr)]">
-                <div class="space-y-2 text-sm">
-                  <div>
-                    <span class="text-xs font-medium uppercase tracking-wide text-gray-500">Adhésion</span>
-                    <% if current_membership.present? %>
-                      <p class="mt-1 font-medium text-gray-900"><%= current_membership.membership_type.name %></p>
-                      <p class="text-gray-600">Jusqu'au <%= l(current_membership.ended_at) %></p>
-                    <% else %>
-                      <p class="mt-1 text-gray-600">Aucune adhésion active</p>
-                    <% end %>
-                  </div>
-
-                  <% if @person.member_number.present? %>
-                    <div>
-                      <span class="text-xs font-medium uppercase tracking-wide text-gray-500">N° membre</span>
-                      <p class="mt-1 text-gray-900"><%= @person.formatted_member_number %></p>
-                    </div>
-                  <% end %>
+      <div class="p-6">
+        <%= form_with model: [:admin, @contribution_formula], local: true, class: "space-y-6" do |form| %>
+          <% if @contribution_formula.errors.any? %>
+            <div class="bg-red-50 border border-red-200 rounded-md p-4">
+              <div class="flex">
+                <div class="flex-shrink-0">
+                  <svg class="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+                  </svg>
                 </div>
-
-                <div>
-                  <span class="text-xs font-medium uppercase tracking-wide text-gray-500">Cotisations en cours</span>
-                  <% if active_contributions.any? %>
-                    <div class="mt-2 space-y-1.5">
-                      <% active_contributions.each do |contribution| %>
-                        <div class="rounded-md bg-white px-3 py-2 text-sm text-gray-700">
-                          <%= contribution_alert.call(contribution) %>
-                        </div>
+                <div class="ml-3">
+                  <h3 class="text-sm font-medium text-red-800">Erreurs à corriger :</h3>
+                  <div class="mt-2 text-sm text-red-700">
+                    <ul class="list-disc list-inside space-y-1">
+                      <% @contribution_formula.errors.full_messages.each do |message| %>
+                        <li><%= message %></li>
                       <% end %>
-                    </div>
-                  <% else %>
-                    <p class="mt-2 text-sm text-gray-600">Aucune cotisation active</p>
-                  <% end %>
+                    </ul>
+                  </div>
                 </div>
               </div>
-            </section>
-
-            <%= form_with url: admin_contribution_formulas_path,
-                method: :post,
-                local: true,
-                scope: :contribution_formula,
-                class: "space-y-5",
-                data: { controller: "contribution-purchase offer-fields" } do |form| %>
-              <%= form.hidden_field :person_id, value: @person.id %>
-
-            <section class="space-y-3">
-              <h2 class="text-base font-semibold text-gray-900">Cotisation</h2>
-
-              <div class="grid gap-2 lg:grid-cols-2">
-                <% @contribution_formulas.each_with_index do |contribution_formula, index| %>
-                  <label class="block cursor-pointer rounded-lg border border-gray-200 p-3 transition hover:border-[#1F5C55] hover:bg-gray-50 has-[:checked]:border-[#1F5C55] has-[:checked]:bg-[#1F5C55]/5">
-                    <%= form.radio_button :contribution_formula_id,
-                        contribution_formula.id,
-                        checked: index.zero?,
-                        class: "sr-only",
-                        data: {
-                          contribution_purchase_target: "formula",
-                          action: "change->contribution-purchase#refresh",
-                          formula_name: formula_label.call(contribution_formula),
-                          formula_price: "#{contribution_formula.price_euros} €",
-                          formula_constraint: formula_constraint.call(contribution_formula),
-                          formula_alert: formula_alert.call(contribution_formula)
-                        } %>
-
-                    <div class="flex items-start justify-between gap-3">
-                      <div class="min-w-0">
-                        <h3 class="text-sm font-semibold text-gray-900"><%= formula_label.call(contribution_formula) %></h3>
-                        <p class="mt-0.5 text-sm text-gray-600"><%= formula_constraint.call(contribution_formula) %></p>
-                        <% if formula_alert.call(contribution_formula).present? %>
-                          <p class="mt-1 text-xs font-medium text-amber-700"><%= formula_alert.call(contribution_formula) %></p>
-                        <% end %>
-                      </div>
-
-                      <div class="shrink-0 rounded-md bg-gray-50 px-3 py-2 text-right">
-                        <p class="text-lg font-bold text-[#1F5C55]"><%= contribution_formula.price_euros %> €</p>
-                      </div>
-                    </div>
-                  </label>
-                <% end %>
-              </div>
-            </section>
-
-            <section class="space-y-4 rounded-lg border border-gray-200 p-4 sm:p-5">
-              <div class="flex flex-col gap-1 sm:flex-row sm:items-start sm:justify-between">
-                <div>
-                  <h2 class="text-base font-semibold text-gray-900">Paiement</h2>
-                  <p class="mt-0.5 text-sm text-gray-600">
-                    <span class="font-medium text-gray-900" data-contribution-purchase-target="summaryName"><%= formula_label.call(selected_formula) %></span>
-                    ·
-                    <span data-contribution-purchase-target="summaryConstraint"><%= formula_constraint.call(selected_formula) %></span>
-                  </p>
-                </div>
-                <p class="text-lg font-bold text-[#1F5C55]" data-contribution-purchase-target="summaryPrice"><%= selected_formula.price_euros %> €</p>
-              </div>
-
-              <div class="grid gap-3 md:grid-cols-2">
-                <div>
-                  <%= form.label :payment_method, "Mode de paiement", class: "mb-1 block text-sm font-medium text-gray-700" %>
-                  <%= form.select :payment_method,
-                      options_for_select(payment_method_options),
-                      { selected: "cash" },
-                      { class: "w-full rounded-md border-gray-300 text-sm focus:border-[#1F5C55] focus:ring-[#1F5C55]",
-                        data: { offer_fields_target: "paymentMethod", action: "change->offer-fields#refresh" } } %>
-                </div>
-
-                <div>
-                  <%= form.label :donation_amount, "Don additionnel (€)", class: "mb-1 block text-sm font-medium text-gray-700" %>
-                  <%= form.number_field :donation_amount,
-                      step: 0.01,
-                      min: 0,
-                      placeholder: "0.00",
-                      class: "w-full rounded-md border-gray-300 text-sm focus:border-[#1F5C55] focus:ring-[#1F5C55]" %>
-                </div>
-              </div>
-
-              <div class="hidden" data-offer-fields-target="customAmount">
-                <%= form.label :custom_amount_cents, "Montant offert (€)", class: "mb-1 block text-sm font-medium text-gray-700" %>
-                <%= form.number_field :custom_amount_cents,
-                    step: 0.01,
-                    min: 0,
-                    placeholder: "0.00",
-                    class: "w-full rounded-md border-gray-300 text-sm focus:border-[#1F5C55] focus:ring-[#1F5C55]" %>
-              </div>
-
-                <div class="hidden" data-offer-fields-target="offerReason">
-                  <%= form.label :offer_reason, "Raison de l'offre", class: "mb-1 block text-sm font-medium text-gray-700" %>
-                  <%= form.text_area :offer_reason,
-                    rows: 2,
-                    placeholder: "Ex : bénévolat, geste commercial, partenariat...",
-                    class: "w-full rounded-md border-gray-300 text-sm focus:border-[#1F5C55] focus:ring-[#1F5C55]",
-                    data: { offer_fields_target: "offerReasonInput" } %>
-                </div>
-
-              <div class="<%= formula_alert.call(selected_formula).present? ? '' : 'hidden' %> rounded-md border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-800" data-contribution-purchase-target="summaryAlert">
-                <%= formula_alert.call(selected_formula) %>
-              </div>
-
-              <div class="flex flex-col gap-3 border-t border-gray-200 pt-4 sm:flex-row sm:items-center sm:justify-between">
-                <p class="text-sm text-gray-500">Retour ensuite sur la fiche personne.</p>
-                <%= form.submit "Acheter la cotisation",
-                    class: "inline-flex items-center justify-center rounded-md border border-transparent bg-[#1F5C55] px-4 py-2 text-sm font-medium text-white hover:bg-[#194A45] focus:outline-none focus:ring-2 focus:ring-[#1F5C55] focus:ring-offset-2" %>
-              </div>
-            </section>
-            <% end %>
-          <% else %>
-            <div class="rounded-md border border-yellow-200 bg-yellow-50 p-4">
-              <p class="text-sm text-yellow-800">Aucune formule de cotisation active n'est disponible pour cette adhésion Cirque.</p>
             </div>
           <% end %>
-        <% else %>
-          <div class="rounded-md border border-yellow-200 bg-yellow-50 p-4">
-            <p class="text-sm text-yellow-800">Cette personne doit avoir une adhésion Cirque pour acheter une formule de cotisation.</p>
-          </div>
-        <% end %>
 
-        <% if @person.present? %>
-          <div class="mt-6 border-t border-gray-200 pt-6">
-            <%= link_to "← Retour à la fiche",
-                admin_member_path(@person),
-                class: "inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50" %>
+          <div>
+            <%= form.label :name, "Nom de la formule", class: "block text-sm font-medium text-gray-700" %>
+            <%= form.text_field :name,
+                class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#1F5C55] focus:ring-[#1F5C55] sm:text-sm",
+                placeholder: "ex: Trimestre - Adhésion Cirque Complète" %>
+          </div>
+
+          <div>
+            <%= form.label :membership_type_id, "Type d'adhésion requis", class: "block text-sm font-medium text-gray-700" %>
+            <%= form.select :membership_type_id,
+                options_for_select(MembershipType.circus_types.current_versions.order(:name).map { |mt| [ mt.name, mt.id ] }, @contribution_formula.membership_type_id),
+                { prompt: "Sélectionner un type d'adhésion" },
+                { class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#1F5C55] focus:ring-[#1F5C55] sm:text-sm" } %>
+            <p class="mt-1 text-sm text-gray-500">Seules les adhésions Cirque donnent accès aux cotisations.</p>
+          </div>
+
+          <div>
+            <%= form.label :duration, "Durée", class: "block text-sm font-medium text-gray-700" %>
+            <%= form.select :duration,
+                options_for_select(ContributionFormula.durations.keys.map { |d| [ ContributionFormula.humanize_contribution_duration(d), d ] }, @contribution_formula.duration),
+                {},
+                { class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#1F5C55] focus:ring-[#1F5C55] sm:text-sm" } %>
+          </div>
+
+          <div>
+            <%= form.label :rate_kind, "Type tarifaire", class: "block text-sm font-medium text-gray-700" %>
+            <%= form.select :rate_kind,
+                options_for_select(ContributionFormula.rate_kind_options, @contribution_formula.rate_kind),
+                {},
+                { class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#1F5C55] focus:ring-[#1F5C55] sm:text-sm" } %>
+          </div>
+
+          <div>
+            <%= form.label :price_cents, "Prix (en centimes)", class: "block text-sm font-medium text-gray-700" %>
+            <%= form.number_field :price_cents,
+                class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#1F5C55] focus:ring-[#1F5C55] sm:text-sm",
+                placeholder: "ex: 6000 pour 60€" %>
+            <p class="mt-1 text-sm text-gray-500">Entrez le prix en centimes (ex: 6000 = 60€)</p>
+          </div>
+
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <%= form.label :sessions_count, "Nombre de séances", class: "block text-sm font-medium text-gray-700" %>
+              <%= form.number_field :sessions_count,
+                  class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#1F5C55] focus:ring-[#1F5C55] sm:text-sm",
+                  placeholder: "ex: 10" %>
+              <p class="mt-1 text-sm text-gray-500">Requis uniquement pour un pack de séances.</p>
+            </div>
+
+            <div>
+              <%= form.label :validity_days, "Validité (jours)", class: "block text-sm font-medium text-gray-700" %>
+              <%= form.number_field :validity_days,
+                  class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#1F5C55] focus:ring-[#1F5C55] sm:text-sm",
+                  placeholder: "ex: 365" %>
+              <p class="mt-1 text-sm text-gray-500">Requis uniquement pour un pack de séances.</p>
+            </div>
+          </div>
+
+          <div>
+            <%= form.label :description, "Description", class: "block text-sm font-medium text-gray-700" %>
+            <%= form.text_area :description,
+                rows: 3,
+                class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#1F5C55] focus:ring-[#1F5C55] sm:text-sm",
+                placeholder: "Description de la formule..." %>
+          </div>
+
+          <div>
+            <%= form.label :effective_from, "Date d'effet", class: "block text-sm font-medium text-gray-700" %>
+            <%= form.date_field :effective_from,
+                class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#1F5C55] focus:ring-[#1F5C55] sm:text-sm" %>
+            <p class="mt-1 text-sm text-gray-500">Date à partir de laquelle cette formule est valide</p>
+          </div>
+
+          <%= form.hidden_field :version, value: 1 %>
+
+          <div class="flex justify-end space-x-3">
+            <%= link_to "Annuler", admin_contribution_formulas_path,
+                class: "inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1F5C55]" %>
+            <%= form.submit "Créer la formule",
+                class: "inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#1F5C55] hover:bg-[#194A45] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1F5C55]" %>
           </div>
         <% end %>
       </div>

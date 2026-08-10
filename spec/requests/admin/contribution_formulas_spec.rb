@@ -1,135 +1,84 @@
 # frozen_string_literal: true
 
 require "rails_helper"
-require "cgi"
 
 RSpec.describe "Admin::ContributionFormulas", type: :request do
   let(:admin) { create(:user, :admin) }
+  let(:volunteer) { create(:user, :volunteer) }
   let(:person) { create(:person, :with_circus_membership) }
   let(:formula) { create(:contribution_formula, :pack10, membership_type: person.current_membership.membership_type, price_cents: 2_500) }
 
   before { login_as(admin) }
 
   describe "GET /admin/contribution_formulas/new" do
-    before { formula }
-
-    it "keeps the person context in breadcrumbs and return link" do
-      get new_admin_contribution_formula_path(person_id: person.id)
+    it "renders the catalog creation form for an admin" do
+      get new_admin_contribution_formula_path
 
       expect(response).to have_http_status(:success)
-      expect(response.body).to include(person.full_name)
-      expect(response.body).to include(admin_member_path(person))
+      expect(response.body).to include('name="contribution_formula[name]"')
+      expect(response.body).to include('name="contribution_formula[membership_type_id]"')
     end
 
-    it "renders a single purchase form for all available formulas" do
-      create(:contribution_formula, :annual, membership_type: person.current_membership.membership_type)
+    it "is forbidden for a volunteer" do
+      login_as(volunteer)
+      get new_admin_contribution_formula_path
 
-      get new_admin_contribution_formula_path(person_id: person.id)
-
-      document = Nokogiri::HTML.parse(response.body)
-      forms = document.css("form[action='#{admin_contribution_formulas_path}']")
-      formula_inputs = document.css("input[type='radio'][name='contribution_formula[contribution_formula_id]']")
-
-      expect(forms.count).to eq(1)
-      expect(formula_inputs.count).to eq(2)
-    end
-
-    it "renders a compact checkout block with business constraint" do
-      get new_admin_contribution_formula_path(person_id: person.id)
-
-      expect(response.body).to include("Paiement")
-      expect(response.body).not_to include("Résumé")
-      expect(response.body).to include("10 séances à utiliser sous 365 jours")
-    end
-
-    it "shows the person's current membership and active contributions" do
-      create(
-        :contribution,
-        person: person,
-        contribution_formula: formula,
-        sessions_remaining: 4,
-        status: :active
-      )
-
-      get new_admin_contribution_formula_path(person_id: person.id)
-
-      expect(response.body).to include("Adhésion")
-      expect(response.body).to include(person.current_membership.membership_type.name)
-      expect(response.body).to include("Cotisations en cours")
-      expect(response.body).to include("Carnet 10 disponible : 4 séances restantes")
-    end
-
-    it "warns when a day pass is already active today" do
-      day_formula = create(:contribution_formula, :day, membership_type: person.current_membership.membership_type)
-      create(
-        :contribution,
-        person: person,
-        contribution_formula: day_formula,
-        purchased_at: Time.current,
-        expires_at: Time.current.end_of_day,
-        sessions_remaining: 1,
-        status: :active
-      )
-
-      get new_admin_contribution_formula_path(person_id: person.id)
-
-      expect(CGI.unescapeHTML(response.body)).to include("Déjà une journée active aujourd'hui")
+      expect(response).to redirect_to(admin_dashboard_index_path)
     end
   end
 
   describe "POST /admin/contribution_formulas" do
-    it "creates a contribution payment with contribution and donation lines" do
+    it "creates a new catalog formula" do
+      membership_type = person.current_membership.membership_type
+
       expect do
         post admin_contribution_formulas_path, params: {
           contribution_formula: {
-            person_id: person.id,
-            contribution_formula_id: formula.id,
-            payment_method: "cash",
-            donation_amount: "7.00"
+            name: "Trimestre - #{membership_type.name}",
+            description: "Accès aux cours pendant 3 mois",
+            duration: "trimester",
+            rate_kind: "standard",
+            membership_type_id: membership_type.id,
+            price_cents: 6_000,
+            effective_from: Date.current
           }
         }
-      end.to change(Contribution, :count).by(1)
-        .and change(Payment, :count).by(1)
+      end.to change(ContributionFormula, :count).by(1)
 
-      payment = Payment.order(:created_at).last
-      contribution = person.contributions.order(:created_at).last
-
-      expect(response).to redirect_to(admin_member_path(person))
-      expect(payment.total_cents).to eq(3_200)
-      expect(payment.payment_lines.pluck(:item_type, :item_id, :amount_cents)).to contain_exactly(
-        [ "Contribution", contribution.id, 2_500 ],
-        [ "Donation", payment.id, 700 ]
-      )
+      expect(response).to redirect_to(admin_contribution_formulas_path)
+      expect(ContributionFormula.order(:created_at).last.price_cents).to eq(6_000)
     end
 
-    it "creates an offered contribution payment with persisted offer_reason" do
-      super_admin = create(:user, :super_admin)
-      login_as(super_admin)
-
-      post admin_contribution_formulas_path, params: {
-        contribution_formula: {
-          person_id: person.id,
-          contribution_formula_id: formula.id,
-          payment_method: "offered",
-          offer_reason: "Solidarity"
+    it "re-renders the form with errors when invalid" do
+      expect do
+        post admin_contribution_formulas_path, params: {
+          contribution_formula: { name: "", duration: "trimester" }
         }
-      }
+      end.not_to change(ContributionFormula, :count)
 
-      payment = Payment.order(:created_at).last
+      expect(response).to have_http_status(:unprocessable_content)
+    end
 
-      expect(response).to redirect_to(admin_member_path(person))
-      expect(payment.payment_method).to eq("offered")
-      expect(payment.total_cents).to eq(0)
-      expect(payment.offer_reason).to eq("Solidarity")
-      expect(payment.payment_lines.sole.item_type).to eq("Contribution")
-      expect(payment.payment_lines.sole.amount_cents).to eq(0)
+    it "is forbidden for a volunteer" do
+      login_as(volunteer)
+      membership_type = person.current_membership.membership_type
+
+      expect do
+        post admin_contribution_formulas_path, params: {
+          contribution_formula: { name: "X", duration: "trimester", rate_kind: "standard", membership_type_id: membership_type.id, price_cents: 1000, effective_from: Date.current }
+        }
+      end.not_to change(ContributionFormula, :count)
+
+      expect(response).to redirect_to(admin_dashboard_index_path)
     end
   end
 
   describe "GET /admin/contribution_formulas/:id/edit" do
-    let(:super_admin) { create(:user, :super_admin) }
+    it "is accessible to a plain admin, not only super_admin" do
+      get edit_admin_contribution_formula_path(formula)
 
-    before { login_as(super_admin) }
+      expect(response).to have_http_status(:success)
+    end
 
     it "shows the current rate_kind as read-only info, with no editable price/duration/rate_kind fields" do
       get edit_admin_contribution_formula_path(formula)
@@ -139,6 +88,13 @@ RSpec.describe "Admin::ContributionFormulas", type: :request do
       expect(response.body).not_to include('name="contribution_formula[price_cents]"')
       expect(response.body).not_to include('name="contribution_formula[duration]"')
       expect(response.body).not_to include('name="contribution_formula[rate_kind]"')
+    end
+
+    it "is forbidden for a volunteer" do
+      login_as(volunteer)
+      get edit_admin_contribution_formula_path(formula)
+
+      expect(response).to redirect_to(admin_dashboard_index_path)
     end
   end
 
@@ -152,10 +108,6 @@ RSpec.describe "Admin::ContributionFormulas", type: :request do
   end
 
   describe "PATCH /admin/contribution_formulas/:id" do
-    let(:super_admin) { create(:user, :super_admin) }
-
-    before { login_as(super_admin) }
-
     it "updates the description" do
       patch admin_contribution_formula_path(formula), params: {
         contribution_formula: { name: formula.name, description: "Nouvelle description" }
@@ -179,10 +131,6 @@ RSpec.describe "Admin::ContributionFormulas", type: :request do
   end
 
   describe "POST /admin/contribution_formulas/:id/change_price" do
-    let(:super_admin) { create(:user, :super_admin) }
-
-    before { login_as(super_admin) }
-
     it "merges the price in place when the formula was never sold" do
       formula
       expect do
@@ -203,8 +151,14 @@ RSpec.describe "Admin::ContributionFormulas", type: :request do
       expect(formula.reload.price_cents).to eq(2_500)
     end
 
-    it "is forbidden for a plain admin (not super_admin)" do
-      login_as(admin)
+    it "is allowed for a plain admin (not only super_admin)" do
+      post change_price_admin_contribution_formula_path(formula), params: { price: "30.00" }
+
+      expect(formula.reload.price_cents).to eq(3000)
+    end
+
+    it "is forbidden for a volunteer" do
+      login_as(volunteer)
       post change_price_admin_contribution_formula_path(formula), params: { price: "30.00" }
 
       expect(formula.reload.price_cents).to eq(2_500)
@@ -212,10 +166,6 @@ RSpec.describe "Admin::ContributionFormulas", type: :request do
   end
 
   describe "POST /admin/contribution_formulas/:id/archive" do
-    let(:super_admin) { create(:user, :super_admin) }
-
-    before { login_as(super_admin) }
-
     it "closes the version and moves it from the catalog listing to the archived list" do
       post archive_admin_contribution_formula_path(formula)
 
@@ -225,6 +175,45 @@ RSpec.describe "Admin::ContributionFormulas", type: :request do
       get admin_contribution_formulas_path
       expect(assigns(:contribution_formulas)).not_to include(formula)
       expect(assigns(:archived_contribution_formulas)).to include(formula)
+    end
+
+    it "is forbidden for a volunteer" do
+      login_as(volunteer)
+      post archive_admin_contribution_formula_path(formula)
+
+      expect(formula.reload.current_version?).to be true
+    end
+  end
+
+  describe "POST /admin/contribution_formulas/:id/unarchive" do
+    before { formula.archive!(user: admin) }
+
+    it "reopens the version and moves it back to the catalog listing" do
+      post unarchive_admin_contribution_formula_path(formula)
+
+      expect(response).to redirect_to(admin_contribution_formulas_path)
+      expect(formula.reload.current_version?).to be true
+
+      get admin_contribution_formulas_path
+      expect(assigns(:contribution_formulas)).to include(formula)
+      expect(assigns(:archived_contribution_formulas)).not_to include(formula)
+    end
+
+    it "refuses when a newer version of the same name is already current" do
+      newer = formula.dup
+      newer.assign_attributes(version: formula.version + 1, effective_from: Date.current, effective_until: nil)
+      newer.save!(validate: false)
+
+      post unarchive_admin_contribution_formula_path(formula)
+
+      expect(formula.reload.current_version?).to be false
+    end
+
+    it "is forbidden for a volunteer" do
+      login_as(volunteer)
+      post unarchive_admin_contribution_formula_path(formula)
+
+      expect(formula.reload.current_version?).to be false
     end
   end
 end

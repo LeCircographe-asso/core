@@ -77,7 +77,7 @@ module Admin
             end
             links << link_to(label, "#{admin_member_path(person)}#payments", class: "#{btn_class} mr-2")
           end
-          links << link_to(contribution_action_label, new_admin_contribution_formula_path(person_id: person.id), class: btn_class)
+          links << link_to(contribution_action_label, new_admin_contribution_path(person_id: person.id), class: btn_class)
           helpers.safe_join(links)
         else
           content_tag :span, "Non applicable", class: disabled_class

@@ -2,8 +2,9 @@
 
 module Admin
   class MembershipTypesController < BaseController
-    before_action :set_membership_type, only: %i[show edit update destroy change_price archive]
+    before_action :set_membership_type, only: %i[show edit update destroy change_price archive unarchive]
     before_action :set_breadcrumbs
+    before_action :require_admin_rights, only: %i[new create edit update destroy change_price archive unarchive]
 
     def index
       @membership_types = MembershipType.current_versions.order(:category, :price_cents)
@@ -70,6 +71,13 @@ module Admin
 
     def archive
       @membership_type.archive!(user: Current.user)
+      redirect_to admin_membership_types_path, notice: t(".success")
+    rescue ActiveRecord::RecordInvalid => e
+      redirect_to admin_membership_types_path, alert: t(".failure", message: e.message)
+    end
+
+    def unarchive
+      @membership_type.unarchive!(user: Current.user)
       redirect_to admin_membership_types_path, notice: t(".success")
     rescue ActiveRecord::RecordInvalid => e
       redirect_to admin_membership_types_path, alert: t(".failure", message: e.message)

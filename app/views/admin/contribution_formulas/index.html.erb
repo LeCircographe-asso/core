@@ -7,10 +7,12 @@
           <h1 class="text-2xl font-bold text-white">Formules de cotisation</h1>
           <p class="text-green-100 mt-1">Catalogue des formules et tarifs (accès cirque)</p>
         </div>
-        <div>
-          <%= link_to "Nouvelle formule", new_admin_contribution_formula_path,
-              class: "inline-flex items-center px-4 py-2 border border-white rounded-md shadow-sm text-sm font-medium text-[#1F5C55] bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-white" %>
-        </div>
+        <% if Current.user&.can_administer? %>
+          <div>
+            <%= link_to "Nouvelle formule", new_admin_contribution_formula_path,
+                class: "inline-flex items-center px-4 py-2 border border-white rounded-md shadow-sm text-sm font-medium text-[#1F5C55] bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-white" %>
+          </div>
+        <% end %>
       </div>
     </div>
 
@@ -81,7 +83,7 @@
           </div>
 
           <div class="flex justify-end space-x-2">
-            <% if Current.user&.super_admin? %>
+            <% if Current.user&.can_administer? %>
               <%= link_to edit_admin_contribution_formula_path(plan),
                   class: "inline-flex items-center px-3 py-2 text-sm font-medium text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors duration-200",
                   title: "Modifier" do %>
@@ -93,7 +95,7 @@
             <% end %>
 
             <% if plan.contributions.empty? %>
-              <% if Current.user&.super_admin? %>
+              <% if Current.user&.can_administer? %>
                 <%= button_to admin_contribution_formula_path(plan),
                     method: :delete,
                     form: { data: { turbo_confirm: "Êtes-vous sûr de vouloir supprimer cette formule de cotisation ?" } },
@@ -107,8 +109,8 @@
               <% else %>
                 <span class="inline-flex items-center px-3 py-2 text-sm font-medium text-gray-400 bg-gray-50 rounded-lg cursor-not-allowed"
                       data-controller="tooltip"
-                      data-tooltip-content-value="Seul le super-admin peut supprimer des cotisations"
-                      title="Seul le super-admin peut supprimer des cotisations">
+                      data-tooltip-content-value="Seuls les admins peuvent supprimer des cotisations"
+                      title="Seuls les admins peuvent supprimer des cotisations">
                   <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
                   </svg>
@@ -143,7 +145,14 @@
                 <%= archived.name %> — v<%= archived.version %> — <%= archived.price_euros %>€
                 (<%= archived.effective_from&.strftime("%d/%m/%Y") %> → <%= archived.effective_until&.strftime("%d/%m/%Y") %>)
               </span>
-              <%= link_to "Voir", admin_contribution_formula_path(archived), class: "text-[#1F5C55] hover:underline" %>
+              <div class="flex items-center space-x-3">
+                <% if Current.user&.can_administer? %>
+                  <%= button_to "Désarchiver", unarchive_admin_contribution_formula_path(archived),
+                      method: :post,
+                      class: "text-[#1F5C55] hover:underline" %>
+                <% end %>
+                <%= link_to "Voir", admin_contribution_formula_path(archived), class: "text-[#1F5C55] hover:underline" %>
+              </div>
             </div>
           <% end %>
         </div>

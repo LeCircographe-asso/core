@@ -81,6 +81,20 @@ class MembershipType < ApplicationRecord
     self
   end
 
+  # Rouvre une version archivée par erreur. Refuse si une version plus
+  # récente du même nom est déjà courante — on ne veut jamais deux versions
+  # « current » simultanées pour un même type d'adhésion.
+  def unarchive!(user: nil)
+    if self.class.where(name: name).current_versions.where.not(id: id).exists?
+      errors.add(:base, "Une version plus récente de ce type d'adhésion est déjà active")
+      raise ActiveRecord::RecordInvalid, self
+    end
+
+    update!(effective_until: nil)
+    PriceChangeLog.log(self, user, "unarchived", price_cents: price_cents)
+    self
+  end
+
   def price_evolution
     # Récupérer l'historique des prix pour ce type d'adhésion
     MembershipType.where(name: name).price_history

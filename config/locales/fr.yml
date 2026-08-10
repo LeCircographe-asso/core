@@ -166,6 +166,9 @@ fr:
       archive:
         success: Type d'adhésion archivé — il n'est plus proposé aux nouveaux achats.
         failure: "Échec de l'archivage : %{message}"
+      unarchive:
+        success: Type d'adhésion désarchivé — de nouveau proposé aux achats.
+        failure: "Échec du désarchivage : %{message}"
       destroy:
         destroyed: Type d'adhésion supprimé avec succès !
     memberships:
@@ -219,11 +222,8 @@ fr:
       destroy:
         signed_out: Déconnecté avec succès !
     contribution_formulas:
-      new:
-        needs_circus_membership_alert: Cette personne doit avoir une adhésion Cirque pour acheter une cotisation (formule).
       create:
-        purchased: Cotisation enregistrée avec succès !
-        purchase_failed_alert: 'Erreur lors de l''achat : %{message}'
+        success: Formule de cotisation créée avec succès !
       update:
         updated: Formule de cotisation mise à jour avec succès !
       change_price:
@@ -232,11 +232,18 @@ fr:
       archive:
         success: Formule archivée — elle n'est plus proposée aux nouveaux achats.
         failure: "Échec de l'archivage : %{message}"
+      unarchive:
+        success: Formule désarchivée — de nouveau proposée aux achats.
+        failure: "Échec du désarchivage : %{message}"
       destroy:
         destroyed: Formule de cotisation supprimée avec succès !
-      require_super_admin:
-        forbidden: Seul le super-admin peut modifier ou supprimer des formules de cotisation.
     contributions:
+      new:
+        person_required_alert: Sélectionnez une personne avant d'acheter une cotisation.
+        needs_circus_membership_alert: Cette personne doit avoir une adhésion Cirque pour acheter une cotisation (formule).
+      create:
+        purchased: Cotisation enregistrée avec succès !
+        purchase_failed_alert: 'Erreur lors de l''achat : %{message}'
       upgrade:
         success_notice: Cotisation upgradée avec succès.
         credit_applied_suffix: " Crédit appliqué: %{amount}€"
@@ -539,8 +546,10 @@ fr:
       contribution_formulas:
         catalog: Formules de cotisation
         formula_named: 'Formule : %{name}'
-        new_contribution: Nouvelle cotisation
+        new_formula: Nouvelle formule
         edit_named: 'Modifier : %{name}'
+      contributions:
+        new_contribution: Nouvelle cotisation
       opening_hours:
         title: Horaires d'ouverture
       gallery_photos:

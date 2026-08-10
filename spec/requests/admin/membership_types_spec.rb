@@ -4,6 +4,7 @@ require "rails_helper"
 
 RSpec.describe "Admin::MembershipTypes", type: :request do
   let(:admin) { create(:user, :admin) }
+  let(:volunteer) { create(:user, :volunteer) }
 
   before { login_as(admin) }
 
@@ -14,6 +15,13 @@ RSpec.describe "Admin::MembershipTypes", type: :request do
       expect(response).to have_http_status(:success)
       expect(response.body).to include("Tarif standard")
       expect(response.body).to include("Tarif réduit")
+    end
+
+    it "is forbidden for a volunteer" do
+      login_as(volunteer)
+      get new_admin_membership_type_path
+
+      expect(response).to redirect_to(admin_dashboard_index_path)
     end
   end
 
@@ -112,6 +120,41 @@ RSpec.describe "Admin::MembershipTypes", type: :request do
       get admin_membership_types_path
       expect(assigns(:membership_types)).not_to include(membership_type)
       expect(assigns(:archived_membership_types)).to include(membership_type)
+    end
+
+    it "is forbidden for a volunteer" do
+      membership_type = create(:membership_type, name: "Adhésion Test Archive")
+      login_as(volunteer)
+
+      post archive_admin_membership_type_path(membership_type)
+
+      expect(membership_type.reload.current_version?).to be true
+    end
+  end
+
+  describe "POST /admin/membership_types/:id/unarchive" do
+    it "reopens the version and moves it back to the catalog listing" do
+      membership_type = create(:membership_type, name: "Adhésion Test Unarchive")
+      membership_type.archive!(user: admin)
+
+      post unarchive_admin_membership_type_path(membership_type)
+
+      expect(response).to redirect_to(admin_membership_types_path)
+      expect(membership_type.reload.current_version?).to be true
+
+      get admin_membership_types_path
+      expect(assigns(:membership_types)).to include(membership_type)
+      expect(assigns(:archived_membership_types)).not_to include(membership_type)
+    end
+
+    it "is forbidden for a volunteer" do
+      membership_type = create(:membership_type, name: "Adhésion Test Unarchive")
+      membership_type.archive!(user: admin)
+      login_as(volunteer)
+
+      post unarchive_admin_membership_type_path(membership_type)
+
+      expect(membership_type.reload.current_version?).to be false
     end
   end
 end
