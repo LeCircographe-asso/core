@@ -48,7 +48,7 @@
                     <%= form.check_box :create_web_account,
                         {
                           class: "focus:ring-[#1F5C55] h-4 w-4 text-[#1F5C55] border-gray-300 rounded",
-                          checked: @person.present?,
+                          checked: @person.present? || @member_creation_form.create_web_account,
                           data: { action: "change->form-toggle#createWebAccountChanged" }
                         },
                         "true",
@@ -61,7 +61,7 @@
               </div>
               
               <!-- Champs conditionnels pour le compte web -->
-              <div id="web-account-fields" class="mt-4 space-y-4 <%= 'hidden' unless @person.present? %>" data-form-toggle-target="webAccountFields">
+              <div id="web-account-fields" class="mt-4 space-y-4 <%= 'hidden' unless @person.present? || @member_creation_form.create_web_account %>" data-form-toggle-target="webAccountFields">
                 <% if Current.user&.admin? || Current.user&.super_admin? %>
                   <!-- Admin/Super Admin peut choisir le rôle -->
                   <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -110,7 +110,7 @@
           <!-- Section Person (Données réelles) -->
           <div class="mb-6">
             <h3 class="text-lg font-medium text-gray-900 mb-4">Informations personnelles</h3>
-            <%= form.fields_for :person, Person.new do |person_form| %>
+            <%= form.fields_for :person, @person_preview do |person_form| %>
               <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <%= person_form.label :first_name, "Prénom", class: "block text-sm font-medium text-gray-700" %>
@@ -188,7 +188,7 @@
           <!-- Section Préférences et Options -->
           <div class="mb-6">
             <h3 class="text-lg font-medium text-gray-900 mb-4">Préférences et Options</h3>
-            <%= form.fields_for :person, Person.new do |person_form| %>
+            <%= form.fields_for :person, @person_preview do |person_form| %>
               <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div class="space-y-4">
                   <div class="flex items-center">

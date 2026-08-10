@@ -100,6 +100,27 @@ RSpec.describe 'Admin::Members', type: :request do
           I18n.t("admin.users.create.invalid_data_alert", details: "").rstrip
         )
       end
+
+      it 'preserves the submitted values and the web account checkbox when re-rendering after a failure' do
+        create(:person, email: 'deja-utilise@example.com')
+
+        post admin_members_path, params: {
+          member: {
+            create_web_account: '1',
+            person: {
+              first_name: 'Camille',
+              last_name: 'Martin',
+              email: 'deja-utilise@example.com'
+            }
+          }
+        }
+
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(response.body).to include('value="Camille"')
+        expect(response.body).to include('value="Martin"')
+        expect(response.body).to include('value="deja-utilise@example.com"')
+        expect(response.body).to match(/name="member\[create_web_account\]".*checked="checked"/)
+      end
     end
   end
 

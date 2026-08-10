@@ -36,6 +36,9 @@ module People
 
       update_attrs = build_update_attributes
 
+      mismatch = total_cents_mismatch_message(target_payment, update_attrs)
+      return failure(mismatch) if mismatch
+
       ActiveRecord::Base.transaction do
         target_payment.update!(update_attrs) if update_attrs.any?
 
@@ -79,6 +82,17 @@ module People
         attrs[:offer_reason] = normalized_offer_reason if should_update_offer_reason?
         attrs[:offer_reason] = nil if clears_offer_reason?
       end
+    end
+
+    def total_cents_mismatch_message(target_payment, update_attrs)
+      return nil unless update_attrs.key?(:total_cents)
+
+      return nil if target_payment.payment_lines.none?
+
+      lines_sum = target_payment.payment_lines.sum(:amount_cents)
+      return nil if update_attrs[:total_cents].to_i == lines_sum
+
+      "La somme des lignes (#{lines_sum} cents) ne correspond pas au total (#{update_attrs[:total_cents]} cents)"
     end
 
     def payment_identifier_present

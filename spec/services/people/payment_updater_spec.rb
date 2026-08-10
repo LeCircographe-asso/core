@@ -115,6 +115,35 @@ RSpec.describe People::PaymentUpdater do
         expect(result.success?).to be(false)
         expect(result.message).to include('Offer reason')
       end
+
+      it 'rejects a total_cents change that would desync from existing payment_lines' do
+        membership = create(:membership, person: person)
+        create(:payment_line, payment: payment, item: membership, item_type: 'Membership', amount_cents: payment.total_cents)
+
+        result = described_class.new(
+          payment: payment,
+          total_cents: payment.total_cents + 1_000,
+          updated_by_id: admin_user.id
+        ).call
+
+        expect(result.success?).to be(false)
+        expect(result.message).to include('ne correspond pas au total')
+        expect(payment.reload.total_cents).to eq(2_500)
+      end
+
+      it 'allows a total_cents change that still matches existing payment_lines' do
+        membership = create(:membership, person: person)
+        create(:payment_line, payment: payment, item: membership, item_type: 'Membership', amount_cents: payment.total_cents)
+
+        result = described_class.new(
+          payment: payment,
+          total_cents: payment.total_cents,
+          notes: 'Touched without changing the amount',
+          updated_by_id: admin_user.id
+        ).call
+
+        expect(result.success?).to be(true)
+      end
     end
 
     context 'with permissions' do
