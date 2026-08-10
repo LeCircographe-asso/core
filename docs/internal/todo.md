@@ -23,6 +23,11 @@
 - [x] Ajuster la home pour le mobile sans casser desktop. *(wrapper plein écran pour `home#index`, fond mobile zoomé, titre forcé sur deux lignes ≤ `640px`, CTA re-positionnés plus bas, nettoyage `swiper_overrides`)* 
 
 ## Later
+- [ ] **Billetterie événements payants via HelloAsso** — feature à cadrer, contrainte structurelle identifiée (2026-08-10) : l'API publique HelloAsso ne permet **pas** de créer un formulaire/événement par API (aucun endpoint `POST forms` documenté, confirmé par recherche doc + forum dev.helloasso.com sans réponse officielle). Conséquence : double saisie manuelle obligatoire — créer l'`Event` chez nous **et** le formulaire de billetterie dans le back-office HelloAsso — puis les lier à la main (garder le slug/ID du formulaire HelloAsso sur notre `Event`).
+  - Paiement : `POST /v5/organizations/{slug}/checkout-intents` avec `metadata` (`event_id` + `person_id`) → redirection vers page HelloAsso → webhook `Payment` (signature HMAC-SHA256, retries jusqu'à ~16 tentatives donc prévoir l'idempotence) pour marquer le paiement reçu.
+  - `EventAttendee` (`belongs_to :payment, optional: true`) actuellement mort dans le code est le point d'ancrage naturel pour stocker la référence du paiement HelloAsso — à réactiver plutôt qu'à supprimer (voir note phase 4 dans `../migrations/vocabulary_migration.md`).
+  - Zones d'incertitude à lever avant de s'engager : (1) places restantes non exposées par l'endpoint public `forms/{type}/{slug}/public` (signalé sans réponse officielle sur leur forum) ; (2) paiement en invité vs création de compte HelloAsso obligatoire pour le payeur — non confirmé dans leur doc technique, à tester en sandbox (`helloasso-sandbox.com`).
+  - Pas de SDK Ruby officiel — prévoir un client HTTP maison (Faraday) plutôt qu'un gem communautaire non audité.
 - [ ] Décider de la marche à suivre pour la détection/fusion de doublons `Person` (route `admin/duplicates` déclarée dans `config/routes.rb` sans `Admin::DuplicatesController` — en attente d'une décision liée à un futur import de membres par Excel).
 - [ ] Ajouter les filtres reporting de dons par période et méthode de paiement.
 - [ ] Construire le flux RGPD d’anonymisation `Person` / `User` avec raison et acteur.
