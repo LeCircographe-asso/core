@@ -13,16 +13,16 @@ Ce document décrit le flux nominal de chaque opération métier principale — 
 
 **Acteur :** admin  
 **Service :** `People::Register`  
-**Contrôleur :** `Admin::UsersController#create` (via `Admin::UserCreationForm`)
+**Contrôleur :** `Admin::MembersController#create` (via `Admin::MemberCreationForm`)
 
 ### Étapes nominales
 
 1. L'admin remplit le formulaire new user (nom, prénom, email, rôle, adhésion optionnelle).
-2. `Admin::UserCreationForm#call` délègue à `People::Register`.
+2. `Admin::MemberCreationForm#call` délègue à `People::Register`.
 3. `People::PersonCreator` crée ou met à jour la `Person` (email normalisé).
-4. Si `create_user_account: true` → `People::UserAccountCreator` crée le `User` lié à la `Person`.
+4. Si `create_web_account: true` → `People::UserAccountCreator` crée le `User` lié à la `Person`.
 5. Si `create_membership: true` → `People::MembershipCreator` crée l'adhésion + paiement associé.
-6. Redirection vers `admin_user_path("person_#{person.id}")` avec notice de succès.
+6. Redirection vers `admin_member_path(person)` avec notice de succès.
 
 ### Invariants
 

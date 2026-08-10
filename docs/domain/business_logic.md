@@ -2,7 +2,7 @@
 
 > **Statut** : stable
 > **Public cible** : contributeur, métier
-> **Dernière vérification** : 2026-05-01
+> **Dernière vérification** : 2026-08-10
 > **Sources de vérité** : `app/models/person.rb`, `app/models/membership.rb`, `app/services/people/*.rb`, `db/seeds/membership_types.rb`, `db/seeds/contribution_formulas.rb`.
 
 **Application:** Gestion complète pour association de cirque  
@@ -552,13 +552,13 @@ NewsletterSubscriber#link_to_person!(person)
 ## Services Zone 2 (En Exploration)
 
 ⚠️ `UserManagement::UserCreator` - Création utilisateurs  
-⚠️ `PersonManagement::PersonCreator` - Création personnes  
-⚠️ `EventManagement::*` - Gestion événements (déprécié au profit du CRUD inline du contrôleur admin)  
 
 ## Services Zone 3 (Obsolètes/Supprimés)
 
 ❌ `Payments::Process` - OBSOLÈTE (remplacé par Person-based logic)  
 ❌ `Memberships::Upgrade` - OBSOLÈTE (remplacé par People::MembershipUpgrader)  
+❌ `PersonManagement::PersonCreator` - SUPPRIMÉ (remplacé par `People::PersonCreator`, plus aucune trace de `PersonManagement` dans `app/`)  
+❌ `EventManagement::*` - SUPPRIMÉ (`app/services/event_management/` n'existe plus, CRUD inline dans `Admin::EventsController` — cf. ligne 305)  
 
 ---
 
@@ -740,7 +740,7 @@ Admin::UserCreationForm
   - `annual` : 1 an à partir de `purchased_at`
   - `pack10` : pas d’expiration (`expires_at` nil) ; suspendu si upgrade
 - **Suspension/Expiration:**
-  - Si l’adhésion (`membership`) expire, tous les carnets associés (book_of_entries) sont suspendus jusqu’à renouvellement/adherence active.
+  - Si l’adhésion (`membership`) expire, toutes les cotisations associées (`Contribution`) sont suspendues jusqu’à renouvellement/adhésion active.
   - Réactivation automatique quand une nouvelle adhésion circus redevient active.
 
 **Tarifs Réduits:**

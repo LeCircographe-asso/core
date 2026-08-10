@@ -57,20 +57,23 @@
 
 ### Admin Controllers (CRUD Essentiels)
 
-#### 1. `Admin::UsersController` 🔴 **URGENT**
+#### 1. `Admin::MembersController` 🔴 **URGENT**
 
-**Complexité:** ⭐⭐⭐⭐⭐ (Très élevée - 505 lignes)
+*Renommé depuis `Admin::UsersController`, migration namespace `admin/users` → `admin/members` terminée — voir [`development/refactor-admin-members-namespace.md`](../development/refactor-admin-members-namespace.md).*
+
+**Complexité:** ⭐⭐⭐ (Moyenne - 203 lignes, `Person.find(params[:id])` direct, plus de hack `person_route_key`/format `person_123`)
 
 **Actions à tester:**
-- `index` - Liste avec filtres, recherche, pagination
-- `show` - Affichage Person/User (support format `person_123`)
+- `index` - Liste avec filtres, recherche, pagination (`Admin::Members::IndexQuery`)
+- `show` - Affichage Person/User
 - `new` - Création avec/without `person_id`
-- `create` - Utilise `Admin::UserCreationForm`
+- `create` - Utilise `Admin::MemberCreationForm`
 - `edit` - Édition User/Person
 - `update` - Mise à jour User + Person séparément
 - `destroy` - Suppression via `UserManagement::UserDeleter`
 - `restore` - Restauration User soft-deleted
 - `edit_person` - Édition Person directement
+- `create_web_account` - Création d'un compte User pour une Person qui n'en a pas (via `People::UserAccountCreator`)
 
 **Invariants métier à tester:**
 - ✅ Seuls admin/super_admin peuvent accéder
@@ -80,10 +83,10 @@
 - ✅ Destruction Person → User soft-deleted si existe
 
 **Services utilisés:**
-- `Admin::UserCreationForm`
+- `Admin::MemberCreationForm`
 - `UserManagement::UserDeleter` (à conserver pour suppression/archivage sécurisée)
+- `People::UserAccountCreator`
 - `PersonQuery`
-- `People::Register`
 
 **Estimation:** 25-30 request specs
 
@@ -169,7 +172,7 @@
 - ✅ Category par défaut: 'other'
 
 **Services utilisés:**
-- *(aucun)* — les classes `EventManagement::EventCreator/Updater/Deleter` existent dans `app/services/event_management/` mais ne sont plus appelées depuis `app/`. Voir l'item « Cleanup `EventManagement::*` orphelins » dans [`../internal/todo.md`](../internal/todo.md).
+- *(aucun)* — `app/services/event_management/` a été supprimé, le cleanup mentionné dans une version antérieure de ce document est fait.
 
 **Estimation:** 12-15 request specs
 
@@ -180,11 +183,11 @@
 **Complexité:** ⭐ (Simple - 10 lignes)
 
 **Actions à tester:**
-- `index` - Affichage dashboard avec cache
+- `index` - Affichage dashboard (notepad en cache, opening_hours en DB)
 
 **Invariants métier à tester:**
 - ✅ Seuls admin/super_admin peuvent accéder
-- ✅ Cache notepad et opening_hours
+- ✅ Cache `notepad` (`Rails.cache.fetch`) ; `opening_hours` lu depuis le modèle `OpeningHour` (DB, plus de cache)
 
 **Estimation:** 3-5 request specs
 
@@ -314,7 +317,7 @@
 2. ✅ `RegistrationsController` - Signup critique
 3. ✅ `Admin::PaymentsController` - Financier critique
 4. ✅ `Admin::MembershipsController` - Business critique
-5. ✅ `Admin::UsersController` - Gestion critique
+5. ✅ `Admin::MembersController` - Gestion critique
 6. ✅ `CheckoutController` - Paiement critique
 7. ✅ `Admin::EventsController` - CRUD critique
 8. ✅ `Admin::DashboardController` - Home admin
@@ -355,17 +358,17 @@
 ### Pattern Request Spec
 
 ```ruby
-# spec/requests/admin/users_spec.rb
-RSpec.describe "Admin::Users", type: :request do
+# spec/requests/admin/members_spec.rb
+RSpec.describe "Admin::Members", type: :request do
   let(:admin_user) { create(:user, system_role: :admin) }
   let(:regular_user) { create(:user, system_role: :web_visitor) }
 
   before { sign_in_as admin_user }
 
-  describe "GET /admin/users" do
+  describe "GET /admin/members" do
     context "when authenticated as admin" do
       it "returns success" do
-        get admin_users_path
+        get admin_members_path
         expect(response).to have_http_status(:success)
       end
 
@@ -373,7 +376,7 @@ RSpec.describe "Admin::Users", type: :request do
         create(:person, :with_active_membership)
         create(:person, :without_membership)
 
-        get admin_users_path, params: { filter: "with_active_membership" }
+        get admin_members_path, params: { filter: "with_active_membership" }
         
         expect(assigns(:people).count).to eq(1)
       end
@@ -382,17 +385,17 @@ RSpec.describe "Admin::Users", type: :request do
     context "when not authenticated" do
       it "redirects to login" do
         sign_out
-        get admin_users_path
+        get admin_members_path
         expect(response).to redirect_to(new_session_path)
       end
     end
   end
 
-  describe "POST /admin/users" do
+  describe "POST /admin/members" do
     context "with valid params" do
       let(:valid_params) do
         {
-          user: {
+          member: {
             first_name: "John",
             last_name: "Doe",
             email: "john@example.com",
@@ -405,15 +408,15 @@ RSpec.describe "Admin::Users", type: :request do
 
       it "creates a new user and person" do
         expect {
-          post admin_users_path, params: valid_params
+          post admin_members_path, params: valid_params
         }.to change(Person, :count).by(1)
           .and change(User, :count).by(1)
       end
 
-      it "redirects to user show page" do
-        post admin_users_path, params: valid_params
+      it "redirects to member show page" do
+        post admin_members_path, params: valid_params
         person = Person.last
-        expect(response).to redirect_to(admin_user_path("person_#{person.id}"))
+        expect(response).to redirect_to(admin_member_path(person))
       end
     end
   end
@@ -430,24 +433,24 @@ end
 context "authorization" do
   it "allows admin access" do
     sign_in_as create(:user, system_role: :admin)
-    get admin_users_path
+    get admin_members_path
     expect(response).to have_http_status(:success)
   end
 
   it "allows super_admin access" do
     sign_in_as create(:user, system_role: :super_admin)
-    get admin_users_path
+    get admin_members_path
     expect(response).to have_http_status(:success)
   end
 
   it "denies volunteer access" do
     sign_in_as create(:user, system_role: :volunteer)
-    get admin_users_path
+    get admin_members_path
     expect(response).to redirect_to(root_path)
   end
 
   it "denies unauthenticated access" do
-    get admin_users_path
+    get admin_members_path
     expect(response).to redirect_to(new_session_path)
   end
 end
