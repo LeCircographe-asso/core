@@ -26,7 +26,7 @@ module Admin
       end
     end
 
-    # PATCH /admin/member_numbers/:person_id/change
+    # PATCH /admin/member_numbers/:id/change
     def change
       changer = MemberNumberManagement::MemberNumberChanger.new(
         person_id: @person.id,
@@ -56,7 +56,7 @@ module Admin
     private
 
     def set_person
-      @person = Person.find(params[:person_id]) if params[:person_id]
+      @person = Person.find(params[:id]) if params[:id]
     end
   end
 end

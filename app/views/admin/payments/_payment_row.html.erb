@@ -1,32 +1,33 @@
+<% payment_display = Admin::Payments::PaymentDisplayComponent.new(payment: payment) %>
 <tr id="payment_row_<%= payment.id %>" class="table-row hover:bg-gray-50" data-admin-payments-target="tableRow">
   <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-    <%= payment_date_display(payment) %>
+    <%= payment_display.display_date %>
   </td>
-  
+
   <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-    <%= payment_person_display(payment) %>
+    <%= payment_display.display_person %>
   </td>
-  
+
   <td class="px-6 py-4 whitespace-nowrap text-sm">
-    <%= payment_status_display(payment) %>
+    <%= payment_display.display_status %>
   </td>
 
   <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-    <%= payment_method_display(payment) %>
+    <%= payment_display.display_payment_method %>
   </td>
 
   <td class="px-6 py-4 text-sm text-gray-500">
-    <%= payment_lines_display(payment) %>
+    <%= payment_display.display_payment_lines %>
   </td>
 
   <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-    <%= payment_amount_display(payment) %>
+    <%= payment_display.display_amount %>
   </td>
 
   <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-    <%= payment_recorded_by_display(payment) %>
+    <%= payment_display.display_recorded_by %>
   </td>
-  
+
   <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
     <%= render "payment_actions",
                payment: payment,

@@ -61,6 +61,30 @@ export default class extends Controller {
     this.customNumberTarget.value = this.originalValue
   }
 
+  submitChange(event) {
+    event.preventDefault()
+
+    const formData = new FormData(this.formTarget)
+
+    fetch(this.formTarget.action, {
+      method: "PATCH",
+      headers: {
+        "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]').content,
+        "X-Requested-With": "XMLHttpRequest"
+      },
+      body: formData
+    })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          window.location.reload()
+        } else {
+          this.showError(data.error || "Erreur lors du changement de numéro")
+        }
+      })
+      .catch(() => this.showError("Erreur de connexion"))
+  }
+
   showError(message) {
     // Créer une notification d'erreur temporaire
     const errorDiv = document.createElement('div')

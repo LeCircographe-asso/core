@@ -9,6 +9,11 @@
 
   <div class="tab-content hidden" id="membership-tab" data-tabs-target="panel" data-tabs-name-value="membership">
     <%= render Admin::Members::MembershipDisplayComponent.new(person: person) %>
+
+    <div class="mt-4" data-controller="member-number-change">
+      <%= render Admin::Members::MemberNumberHistoryComponent.new(person: person, current_user: current_user) %>
+      <%= render Admin::Members::MemberNumberChangeComponent.new(person: person, current_user: current_user) %>
+    </div>
   </div>
 
   <div class="tab-content hidden" id="payments-tab" data-tabs-target="panel" data-tabs-name-value="payments">

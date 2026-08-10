@@ -38,6 +38,10 @@
     <h2 class="text-lg sm:text-xl font-bold text-gray-800">
       <%= user_name %>
     </h2>
+    <div class="flex items-center justify-center gap-2 mt-2">
+      <%= render MembershipTypeBadgeComponent.new(person: person) %>
+      <%= render AttendanceStatusComponent.new(person: person) %>
+    </div>
     <% if is_deleted %>
       <p class="text-red-500 text-xs mt-1">
         Compte supprimé le <%= user&.deleted_at&.strftime("%d/%m/%Y à %H:%M") %>

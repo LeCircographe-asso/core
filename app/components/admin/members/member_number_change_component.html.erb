@@ -21,9 +21,13 @@
       </div>
 
       <!-- Form -->
-      <%= form_with model: person, url: admin_member_path(person), method: :patch,
-          local: false, id: "member-number-change-form",
-          data: { "member-number-change-target": "form" } do |form| %>
+      <%= form_with url: change_admin_member_number_path(person), method: :patch,
+          id: "member-number-change-form",
+          data: {
+            turbo: false,
+            "member-number-change-target": "form",
+            action: "submit->member-number-change#submitChange"
+          } do |form| %>
         
         <div class="space-y-4">
           <!-- Membership Type Selection -->
