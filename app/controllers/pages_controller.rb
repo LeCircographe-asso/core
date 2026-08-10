@@ -37,7 +37,14 @@ class PagesController < ApplicationController
       @contact = {}
     end
 
-    @avant_visite_faqs = Faq.by_label("avant_visite") if params[:id] == "become_member"
+    if params[:id] == "become_member"
+      @avant_visite_faqs = Faq.by_label("avant_visite")
+      @visitor_membership_min_price_cents = MembershipType.current_versions.where(category: "basic").minimum(:price_cents)
+      @circus_membership_types = MembershipType.current_versions.where(category: "circus").index_by(&:rate_kind)
+      @contribution_formulas = ContributionFormula.current_versions
+                                                    .where(membership_type: MembershipType.current_versions.where(category: "circus"))
+                                                    .index_by(&:duration)
+    end
 
     if params[:id] == "faq"
       @contact_faqs  = Faq.by_label("contact")
@@ -46,8 +53,8 @@ class PagesController < ApplicationController
     end
 
     if params[:id] == "about"
-      @board_members = load_yaml_content("board_members")
-      @partners = load_yaml_content("partners")
+      @board_members = BoardMember.ordered
+      @partners = Partner.ordered
     end
 
     # Mélangé à chaque chargement (comme l'ancien pool statique) — l'admin
@@ -58,18 +65,5 @@ class PagesController < ApplicationController
     raise ActiveRecord::RecordNotFound unless ALLOWED_PAGE_IDS.include?(page_id)
 
     render template: "pages/#{page_id}"
-  end
-
-  private
-
-  def load_yaml_content(key)
-    path = Rails.root.join("config/content/#{key}.yml")
-    raw = YAML.load_file(path)
-    Array(raw).each_with_index.map { |entry, idx| entry.to_h.deep_symbolize_keys.merge(_idx: idx) }
-                              .sort_by { |entry| [ entry[:display_order] || Float::INFINITY, entry[:_idx] ] }
-                              .map { |entry| entry.except(:_idx) }
-  rescue Errno::ENOENT, Psych::SyntaxError => e
-    Rails.logger.error("Content load failed: #{e.message}")
-    []
   end
 end

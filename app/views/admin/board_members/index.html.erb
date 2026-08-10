@@ -1,0 +1,60 @@
+<div class="min-h-screen bg-gray-50/40 py-6 px-4">
+  <div class="max-w-3xl mx-auto space-y-5">
+
+    <div class="flex items-end justify-between gap-4">
+      <div>
+        <h1 class="text-xl font-bold text-gray-900">Conseil d'administration</h1>
+        <p class="text-sm text-gray-400 mt-0.5">
+          <%= BoardMember.count %> membre<%= "s" if BoardMember.count != 1 %> · glisser pour réordonner
+        </p>
+      </div>
+      <%= link_to t("admin.board_members.index.new"), new_admin_board_member_path,
+            data: { turbo_frame: "modal" },
+            class: "btn-primary text-sm" %>
+    </div>
+
+    <div class="bg-white rounded-xl border border-gray-200 overflow-hidden shadow-sm">
+      <% if @board_members.any? %>
+        <div class="divide-y divide-gray-50"
+             data-controller="sortable"
+             data-sortable-url-value="<%= reorder_admin_board_members_path %>">
+          <% @board_members.each_with_index do |member, i| %>
+            <div class="group flex items-center gap-3 px-3 py-3 hover:bg-gray-50/60 transition-colors cursor-default"
+                 draggable="true"
+                 data-sortable-row
+                 data-id="<%= member.id %>"
+                 data-action="dragstart->sortable#dragstart dragend->sortable#dragend dragover->sortable#dragover dragleave->sortable#dragleave drop->sortable#drop">
+              <span class="shrink-0 text-gray-300 hover:text-gray-500 cursor-grab active:cursor-grabbing select-none text-base leading-none">⠿</span>
+              <span class="shrink-0 text-xs font-mono text-gray-300 w-4 text-right select-none tabular-nums" data-sortable-number><%= i + 1 %></span>
+              <div class="shrink-0 w-10 h-10 rounded-full overflow-hidden bg-gray-100">
+                <% if member.avatar.attached? %>
+                  <%= image_tag member.avatar.variant(resize_to_fill: [ 80, 80 ]), class: "w-full h-full object-cover" %>
+                <% else %>
+                  <%= image_tag "placeholder_avatar.webp", class: "w-full h-full object-cover" %>
+                <% end %>
+              </div>
+              <div class="flex-1 min-w-0">
+                <p class="text-sm font-medium text-gray-900 leading-snug"><%= member.name %></p>
+                <p class="text-xs text-gray-400 mt-0.5 line-clamp-1"><%= member.role %></p>
+              </div>
+              <div class="flex items-center gap-1 shrink-0 opacity-0 group-hover:opacity-100 transition-opacity">
+                <%= link_to t("admin.board_members.index.edit"), edit_admin_board_member_path(member),
+                      data: { turbo_frame: "modal" },
+                      class: "text-xs px-2 py-1 rounded-md border border-gray-200 text-gray-600 hover:bg-white hover:border-gray-300 transition-colors" %>
+                <%= button_to "✕", admin_board_member_path(member),
+                      method: :delete,
+                      data: { turbo_confirm: t("admin.board_members.index.confirm_delete") },
+                      class: "text-xs px-2 py-1 rounded-md border border-transparent text-red-400 hover:border-red-100 hover:bg-red-50 bg-transparent cursor-pointer transition-colors" %>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      <% else %>
+        <p class="px-4 py-5 text-sm text-gray-400 italic text-center"><%= t("admin.board_members.index.empty") %></p>
+      <% end %>
+    </div>
+
+  </div>
+</div>
+
+<%= turbo_frame_tag "modal" %>

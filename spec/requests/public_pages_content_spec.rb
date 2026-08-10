@@ -13,6 +13,16 @@ require 'rails_helper'
 # (mettre à jour le test + docs), soit une régression de vocabulaire est arrivée.
 RSpec.describe 'Public pages content', type: :request do
   describe 'GET /pages/become_member' do
+    let!(:circus_membership_type) { create(:membership_type, category: 'circus', rate_kind: 'standard', price_cents: 1000) }
+
+    before do
+      create(:membership_type, category: 'circus', rate_kind: 'reduced', price_cents: 700)
+      create(:contribution_formula, membership_type: circus_membership_type, duration: 'day', price_cents: 400)
+      create(:contribution_formula, membership_type: circus_membership_type, duration: 'pack10', price_cents: 3000, sessions_count: 10, validity_days: 365)
+      create(:contribution_formula, membership_type: circus_membership_type, duration: 'trimester', price_cents: 6000)
+      create(:contribution_formula, membership_type: circus_membership_type, duration: 'annual', price_cents: 12_000)
+    end
+
     it 'affiche les tarifs canoniques et rejette les termes legacy', :aggregate_failures do
       get adhesion_path
 
@@ -92,6 +102,19 @@ RSpec.describe 'Public pages content', type: :request do
 
       expect(response).to have_http_status(:success)
       expect(response.body).not_to include('data-controller="map"')
+    end
+  end
+
+  describe 'GET /pages/about' do
+    it 'affiche les membres du CA et les partenaires depuis la base', :aggregate_failures do
+      create(:board_member, name: 'Léa Martin', role: 'Présidente')
+      create(:partner, name: 'La Grainerie', category: 'Lieu associé')
+
+      get about_path
+
+      expect(response).to have_http_status(:success)
+      expect(response.body).to include('Léa Martin')
+      expect(response.body).to include('La Grainerie')
     end
   end
 

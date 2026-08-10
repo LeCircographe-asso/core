@@ -17,7 +17,9 @@ SEED_STEPS_BASE = [
   ["catalogue des types d'adhesion", "membership_types.rb"],
   ["catalogue des formules de cotisation", "contribution_formulas.rb"],
   ["creation des evenements", "events.rb"],
-  ["FAQ", "faq.rb"]
+  ["FAQ", "faq.rb"],
+  ["conseil d'administration", "board_members.rb"],
+  ["partenaires", "partners.rb"]
 ].freeze
 
 SEED_STEPS_FULL = (SEED_STEPS_BASE + [
@@ -119,7 +121,7 @@ if SEED_FAST_TEST
 
   puts "\n--- Mode SEED_FAST_TEST (~1 message / #{SEED_TICK_SECONDS}s) ---\n"
 
-  %w[admin.rb membership_types.rb contribution_formulas.rb events.rb faq.rb].each { |f| load_seed_file(f) }
+  %w[admin.rb membership_types.rb contribution_formulas.rb events.rb faq.rb board_members.rb partners.rb].each { |f| load_seed_file(f) }
   seed_fast_tick("[1/3] OK — Comptes système + catalogue + événements.")
 
   load_seed_file("populate.rb")

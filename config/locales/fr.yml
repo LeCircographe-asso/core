@@ -77,6 +77,57 @@ fr:
         success: Photo ajoutée à la galerie
       destroy:
         success: Photo supprimée de la galerie
+    board_members:
+      index:
+        new: Nouveau membre
+        edit: Modifier
+        delete: Supprimer
+        confirm_delete: Supprimer ce membre du CA ?
+        empty: Aucun membre du CA pour l'instant.
+      create:
+        created: Membre du CA créé avec succès
+      update:
+        updated: Membre du CA mis à jour avec succès
+      destroy:
+        destroyed: Membre du CA supprimé
+      form:
+        new_title: Nouveau membre du CA
+        edit_title: Modifier le membre du CA
+        name: Nom
+        role: Rôle
+        bio: Bio
+        avatar: Photo
+        instagram_url: Instagram (URL)
+        linkedin_url: LinkedIn (URL)
+        behance_url: Behance (URL)
+        save: Enregistrer
+        create: Créer
+        cancel: Annuler
+    partners:
+      index:
+        new: Nouveau partenaire
+        edit: Modifier
+        delete: Supprimer
+        confirm_delete: Supprimer ce partenaire ?
+        empty: Aucun partenaire pour l'instant.
+      create:
+        created: Partenaire créé avec succès
+      update:
+        updated: Partenaire mis à jour avec succès
+      destroy:
+        destroyed: Partenaire supprimé
+      form:
+        new_title: Nouveau partenaire
+        edit_title: Modifier le partenaire
+        name: Nom
+        category: Catégorie
+        bio: Description
+        url: Site web (URL)
+        initials: Initiales (si pas de logo)
+        logo: Logo
+        save: Enregistrer
+        create: Créer
+        cancel: Annuler
     donations:
       new:
         title: Enregistrer un don
@@ -494,6 +545,10 @@ fr:
         title: Horaires d'ouverture
       gallery_photos:
         gallery: Galerie photos
+      board_members:
+        index: Conseil d'administration
+      partners:
+        index: Partenaires
       events:
         events: Événements
         new_event: Nouvel événement

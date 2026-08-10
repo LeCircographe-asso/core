@@ -61,22 +61,30 @@
         <div class="swiper-slide">
           <article class="bg-white rounded-3xl border border-gray-200 shadow-md px-6 py-8 h-full flex flex-col items-center text-center space-y-4">
             <div class="w-32 h-32 rounded-full overflow-hidden bg-gray-100 shadow-inner">
-              <%= image_tag member.fetch(:avatar, "placeholder_avatar.webp"),
-                            alt: member[:name],
-                            class: "w-full h-full object-cover",
-                            loading: (index.zero? ? "eager" : "lazy"),
-                            decoding: "async" %>
+              <% if member.avatar.attached? %>
+                <%= image_tag member.avatar.variant(resize_to_fill: [ 256, 256 ]),
+                              alt: member.name,
+                              class: "w-full h-full object-cover",
+                              loading: (index.zero? ? "eager" : "lazy"),
+                              decoding: "async" %>
+              <% else %>
+                <%= image_tag "placeholder_avatar.webp",
+                              alt: member.name,
+                              class: "w-full h-full object-cover",
+                              loading: (index.zero? ? "eager" : "lazy"),
+                              decoding: "async" %>
+              <% end %>
             </div>
             <div class="space-y-1">
-              <h3 class="text-lg font-semibold text-gray-900"><%= member[:name] %></h3>
-              <p class="text-sm uppercase tracking-[0.2em] text-brand-primary"><%= member[:role] %></p>
+              <h3 class="text-lg font-semibold text-gray-900"><%= member.name %></h3>
+              <p class="text-sm uppercase tracking-[0.2em] text-brand-primary"><%= member.role %></p>
             </div>
-            <p class="text-sm text-gray-600 leading-relaxed flex-1"><%= member[:bio] %></p>
-            <% if member[:socials].present? %>
+            <p class="text-sm text-gray-600 leading-relaxed flex-1"><%= member.bio %></p>
+            <% if member.socials.present? %>
               <div class="flex items-center justify-center gap-3 text-gray-400">
-                <% member[:socials].each do |platform, url| %>
+                <% member.socials.each do |platform, url| %>
                   <% icon = social_icons[platform.to_sym] %>
-                  <%= link_to url, target: "_blank", rel: "noopener", class: "hover:text-brand-primary transition", aria: { label: "Profil #{platform} de #{member[:name]}" } do %>
+                  <%= link_to url, target: "_blank", rel: "noopener", class: "hover:text-brand-primary transition", aria: { label: "Profil #{platform} de #{member.name}" } do %>
                     <%= icon || tag.svg(xmlns: "http://www.w3.org/2000/svg", viewBox: "0 0 24 24", fill: "currentColor", class: "w-5 h-5") { tag.circle(cx: 12, cy: 12, r: 10) } %>
                   <% end %>
                 <% end %>
@@ -170,24 +178,24 @@
         <div class="swiper-slide">
           <article class="bg-white rounded-2xl sm:rounded-3xl border border-gray-200 shadow-md px-4 py-5 sm:px-6 sm:py-8 h-full flex flex-col items-center text-center space-y-2.5 sm:space-y-4">
             <div class="w-24 h-24 sm:w-32 sm:h-32 rounded-full overflow-hidden bg-gray-100 shadow-inner flex items-center justify-center p-3 sm:p-4 shrink-0">
-              <% if partner[:logo].present? && asset_available?(partner[:logo]) %>
-                <%= image_tag partner[:logo],
-                              alt: partner[:name],
+              <% if partner.logo.attached? %>
+                <%= image_tag partner.logo.variant(resize_to_limit: [ 256, 256 ]),
+                              alt: partner.name,
                               class: "max-h-full max-w-full object-contain",
                               loading: (index.zero? ? "eager" : "lazy"),
                               decoding: "async" %>
               <% else %>
-                <span class="text-xl sm:text-2xl font-semibold text-brand-primary"><%= (partner[:initials].presence || partner[:name].to_s.first(2)).to_s.upcase %></span>
+                <span class="text-xl sm:text-2xl font-semibold text-brand-primary"><%= partner.initials_label %></span>
               <% end %>
             </div>
             <div class="space-y-0.5 sm:space-y-1">
-              <h3 class="text-base sm:text-lg font-semibold text-gray-900 leading-snug"><%= partner[:name] %></h3>
-              <p class="text-xs sm:text-sm uppercase tracking-[0.2em] text-brand-primary"><%= partner[:category] %></p>
+              <h3 class="text-base sm:text-lg font-semibold text-gray-900 leading-snug"><%= partner.name %></h3>
+              <p class="text-xs sm:text-sm uppercase tracking-[0.2em] text-brand-primary"><%= partner.category %></p>
             </div>
-            <p class="text-xs sm:text-sm text-gray-600 leading-normal sm:leading-relaxed flex-1"><%= partner[:bio].presence || "Partenaire du Circographe." %></p>
-            <% if partner[:url].present? %>
+            <p class="text-xs sm:text-sm text-gray-600 leading-normal sm:leading-relaxed flex-1"><%= partner.bio.presence || "Partenaire du Circographe." %></p>
+            <% if partner.url.present? %>
               <div class="flex items-center justify-center gap-3 text-gray-400 pt-0.5">
-                <%= link_to partner[:url], target: "_blank", rel: "noopener", class: "hover:text-brand-primary transition", aria: { label: "Site web de #{partner[:name]}" } do %>
+                <%= link_to partner.url, target: "_blank", rel: "noopener", class: "hover:text-brand-primary transition", aria: { label: "Site web de #{partner.name}" } do %>
                   <%= partner_link_icon %>
                 <% end %>
               </div>

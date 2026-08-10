@@ -74,6 +74,18 @@
             <% end %>
         </li>
         <% end %>
+        <% if current_user.can_manage_board_members? %>
+        <li><%= link_to admin_board_members_path, class: "sidebar-link flex items-center" do %>
+              <i class="fas fa-user-tie mr-2 sidebar-icon"></i> <span class="sidebar-text" data-sidebar-target="text">Conseil d'administration</span>
+            <% end %>
+        </li>
+        <% end %>
+        <% if current_user.can_manage_partners? %>
+        <li><%= link_to admin_partners_path, class: "sidebar-link flex items-center" do %>
+              <i class="fas fa-handshake mr-2 sidebar-icon"></i> <span class="sidebar-text" data-sidebar-target="text">Partenaires</span>
+            <% end %>
+        </li>
+        <% end %>
         <% if current_user.can_manage_opening_hours? %>
         <li><%= link_to admin_opening_hours_path, class: "sidebar-link flex items-center" do %>
               <i class="fas fa-clock mr-2 sidebar-icon"></i> <span class="sidebar-text" data-sidebar-target="text">Horaires</span>

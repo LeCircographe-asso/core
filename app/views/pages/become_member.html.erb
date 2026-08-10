@@ -64,16 +64,32 @@
               </div>
               <p class="text-xs text-gray-500 mt-0.5 leading-normal">Temps ouverts · sans pratique.</p>
             </div>
-            <span class="shrink-0 text-sm font-semibold text-gray-400 tabular-nums">dès 1 €<span class="font-normal text-xs text-gray-400"> / an</span></span>
+            <span class="shrink-0 text-sm font-semibold text-gray-400 tabular-nums">
+              <% if @visitor_membership_min_price_cents %>
+                dès <%= number_to_currency(@visitor_membership_min_price_cents / 100.0, unit: "€", format: "%n %u", precision: 0) %>
+              <% else %>
+                —
+              <% end %>
+              <span class="font-normal text-xs text-gray-400"> / an</span>
+            </span>
           </li>
 
           <li class="flex items-center justify-between gap-4 px-1 py-3">
             <div class="min-w-0">
               <span class="text-sm font-semibold text-gray-800">Adhésion cirque</span>
               <p class="text-xs text-gray-500 mt-0.5 leading-normal">Entraînements libres · date à date.</p>
-              <span class="inline-block mt-1 text-xs px-2 py-0.5 rounded-full border border-gray-200 text-gray-500">Tarif réduit — 7 €</span>
+              <% if (reduced = @circus_membership_types["reduced"]) %>
+                <span class="inline-block mt-1 text-xs px-2 py-0.5 rounded-full border border-gray-200 text-gray-500">Tarif réduit — <%= number_to_currency(reduced.price_euros, unit: "€", format: "%n %u", precision: 0) %></span>
+              <% end %>
             </div>
-            <span class="shrink-0 text-sm font-semibold text-brand-primary tabular-nums">10 €<span class="font-normal text-xs text-gray-400"> / an</span></span>
+            <span class="shrink-0 text-sm font-semibold text-brand-primary tabular-nums">
+              <% if (standard = @circus_membership_types["standard"]) %>
+                <%= number_to_currency(standard.price_euros, unit: "€", format: "%n %u", precision: 0) %>
+              <% else %>
+                —
+              <% end %>
+              <span class="font-normal text-xs text-gray-400"> / an</span>
+            </span>
           </li>
 
           <li class="flex items-center justify-between gap-4 px-1 py-3 opacity-50">
@@ -100,10 +116,14 @@
         <h2 class="text-xl font-semibold text-gray-900">Autogestion du lieu</h2>
         <p class="text-xs text-gray-500">Choisis la formule qui colle à ta pratique.</p>
 
+        <% day_formula = @contribution_formulas["day"]
+           pack10_formula = @contribution_formulas["pack10"]
+           trimester_formula = @contribution_formulas["trimester"]
+           annual_formula = @contribution_formulas["annual"] %>
         <ul class="space-y-2 text-sm">
           <li class="flex items-center justify-between py-2 border-b border-gray-50">
             <span class="text-gray-600">Séance libre</span>
-            <span class="font-semibold text-gray-800 tabular-nums">4 €</span>
+            <span class="font-semibold text-gray-800 tabular-nums"><%= day_formula ? number_to_currency(day_formula.price_euros, unit: "€", format: "%n %u", precision: 0) : "—" %></span>
           </li>
           <li class="flex items-center justify-between px-3 py-2 rounded-xl border border-[#5836A5]/20 bg-[#5836A5]/5">
             <div class="min-w-0">
@@ -111,18 +131,18 @@
               <span class="ml-2 text-xs font-medium px-1.5 py-0.5 rounded-full bg-[#5836A5]/10 text-[#5836A5]">Populaire</span>
               <p class="text-xs text-gray-500 mt-0.5">Sans expiration.</p>
             </div>
-            <span class="font-bold text-[#5836A5] tabular-nums shrink-0 ml-3">30 €</span>
+            <span class="font-bold text-[#5836A5] tabular-nums shrink-0 ml-3"><%= pack10_formula ? number_to_currency(pack10_formula.price_euros, unit: "€", format: "%n %u", precision: 0) : "—" %></span>
           </li>
           <li class="flex items-center justify-between py-2 border-b border-gray-50">
             <span class="text-gray-600">Trimestre (3 mois)</span>
-            <span class="font-semibold text-gray-800 tabular-nums">60 €</span>
+            <span class="font-semibold text-gray-800 tabular-nums"><%= trimester_formula ? number_to_currency(trimester_formula.price_euros, unit: "€", format: "%n %u", precision: 0) : "—" %></span>
           </li>
           <li class="flex items-center justify-between px-3 py-2 rounded-xl border border-brand-primary/20 bg-brand-primary/5">
             <div class="min-w-0">
               <span class="font-semibold text-gray-900">Cotisation annuelle</span>
               <p class="text-xs text-gray-500 mt-0.5">Date à date.</p>
             </div>
-            <span class="font-bold text-brand-primary tabular-nums shrink-0 ml-3">120 €</span>
+            <span class="font-bold text-brand-primary tabular-nums shrink-0 ml-3"><%= annual_formula ? number_to_currency(annual_formula.price_euros, unit: "€", format: "%n %u", precision: 0) : "—" %></span>
           </li>
         </ul>
       </div>

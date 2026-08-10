@@ -89,6 +89,57 @@ en:
         success: Photo added to the gallery
       destroy:
         success: Photo removed from the gallery
+    board_members:
+      index:
+        new: New member
+        edit: Edit
+        delete: Delete
+        confirm_delete: Remove this board member?
+        empty: No board members yet.
+      create:
+        created: Board member created successfully
+      update:
+        updated: Board member updated successfully
+      destroy:
+        destroyed: Board member removed
+      form:
+        new_title: New board member
+        edit_title: Edit board member
+        name: Name
+        role: Role
+        bio: Bio
+        avatar: Photo
+        instagram_url: Instagram (URL)
+        linkedin_url: LinkedIn (URL)
+        behance_url: Behance (URL)
+        save: Save
+        create: Create
+        cancel: Cancel
+    partners:
+      index:
+        new: New partner
+        edit: Edit
+        delete: Delete
+        confirm_delete: Remove this partner?
+        empty: No partners yet.
+      create:
+        created: Partner created successfully
+      update:
+        updated: Partner updated successfully
+      destroy:
+        destroyed: Partner removed
+      form:
+        new_title: New partner
+        edit_title: Edit partner
+        name: Name
+        category: Category
+        bio: Description
+        url: Website (URL)
+        initials: Initials (fallback if no logo)
+        logo: Logo
+        save: Save
+        create: Create
+        cancel: Cancel
     donations:
       new:
         title: Record a donation
@@ -170,6 +221,10 @@ en:
         edit_named: 'Edit: %{name}'
       gallery_photos:
         gallery: Gallery photos
+      board_members:
+        index: Board of directors
+      partners:
+        index: Partners
       opening_hours:
         title: Opening hours
       events:

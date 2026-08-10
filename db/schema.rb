@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_08_10_140000) do
+ActiveRecord::Schema[8.1].define(version: 2026_08_10_160000) do
   create_table "account_claims", force: :cascade do |t|
     t.string "confirmation_token", null: false
     t.datetime "created_at", null: false
@@ -92,6 +92,19 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_10_140000) do
     t.datetime "created_at", null: false
     t.string "title"
     t.datetime "updated_at", null: false
+  end
+
+  create_table "board_members", force: :cascade do |t|
+    t.string "behance_url"
+    t.text "bio"
+    t.datetime "created_at", null: false
+    t.integer "display_order", null: false
+    t.string "instagram_url"
+    t.string "linkedin_url"
+    t.string "name", null: false
+    t.string "role", null: false
+    t.datetime "updated_at", null: false
+    t.index ["display_order"], name: "index_board_members_on_display_order"
   end
 
   create_table "contribution_formulas", force: :cascade do |t|
@@ -277,6 +290,18 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_10_140000) do
     t.integer "updated_by_user_id"
     t.index ["day"], name: "index_opening_hours_on_day", unique: true
     t.index ["updated_by_user_id"], name: "index_opening_hours_on_updated_by_user_id"
+  end
+
+  create_table "partners", force: :cascade do |t|
+    t.text "bio"
+    t.string "category"
+    t.datetime "created_at", null: false
+    t.integer "display_order", null: false
+    t.string "initials"
+    t.string "name", null: false
+    t.datetime "updated_at", null: false
+    t.string "url"
+    t.index ["display_order"], name: "index_partners_on_display_order"
   end
 
   create_table "payment_audit_logs", force: :cascade do |t|

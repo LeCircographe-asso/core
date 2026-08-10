@@ -4,7 +4,7 @@ class PartnersController < ApplicationController
   allow_unauthenticated_access only: :index
 
   def index
-    @partners = PartnersCatalog.public_partners
+    @partners = Partner.ordered
 
     respond_to do |format|
       format.turbo_stream do

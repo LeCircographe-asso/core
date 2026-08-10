@@ -1,0 +1,69 @@
+<%= turbo_frame_tag "modal" do %>
+  <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 overflow-y-auto py-8" id="board-member-modal">
+    <div class="bg-white rounded-xl shadow-xl w-full max-w-lg mx-4 p-6">
+      <div class="flex items-center justify-between mb-4">
+        <h2 class="text-lg font-semibold text-gray-900">
+          <%= board_member.persisted? ? t("admin.board_members.form.edit_title") : t("admin.board_members.form.new_title") %>
+        </h2>
+        <%= link_to "✕", admin_board_members_path, data: { turbo_frame: "modal" }, class: "text-gray-400 hover:text-gray-600 text-xl" %>
+      </div>
+
+      <% if board_member.errors.any? %>
+        <div class="mb-4 text-sm text-red-600 bg-red-50 border border-red-100 rounded-lg px-3 py-2">
+          <%= board_member.errors.full_messages.to_sentence %>
+        </div>
+      <% end %>
+
+      <%= form_with model: [ :admin, board_member ], data: { turbo_frame: "_top" }, class: "space-y-4" do |f| %>
+        <% if board_member.avatar.attached? %>
+          <div class="w-16 h-16 rounded-full overflow-hidden bg-gray-100">
+            <%= image_tag board_member.avatar.variant(resize_to_fill: [ 128, 128 ]), class: "w-full h-full object-cover" %>
+          </div>
+        <% end %>
+
+        <div>
+          <%= f.label :name, t("admin.board_members.form.name"), class: "block text-sm font-medium text-gray-700 mb-1" %>
+          <%= f.text_field :name, class: "w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" %>
+        </div>
+
+        <div>
+          <%= f.label :role, t("admin.board_members.form.role"), class: "block text-sm font-medium text-gray-700 mb-1" %>
+          <%= f.text_field :role, class: "w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" %>
+        </div>
+
+        <div>
+          <%= f.label :bio, t("admin.board_members.form.bio"), class: "block text-sm font-medium text-gray-700 mb-1" %>
+          <%= f.text_area :bio, rows: 3, class: "w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" %>
+        </div>
+
+        <div>
+          <%= f.label :avatar, t("admin.board_members.form.avatar"), class: "block text-sm font-medium text-gray-700 mb-1" %>
+          <%= f.file_field :avatar, accept: "image/*", class: "block text-sm text-gray-700" %>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div>
+            <%= f.label :instagram_url, t("admin.board_members.form.instagram_url"), class: "block text-xs font-medium text-gray-700 mb-1" %>
+            <%= f.url_field :instagram_url, class: "w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" %>
+          </div>
+          <div>
+            <%= f.label :linkedin_url, t("admin.board_members.form.linkedin_url"), class: "block text-xs font-medium text-gray-700 mb-1" %>
+            <%= f.url_field :linkedin_url, class: "w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" %>
+          </div>
+          <div>
+            <%= f.label :behance_url, t("admin.board_members.form.behance_url"), class: "block text-xs font-medium text-gray-700 mb-1" %>
+            <%= f.url_field :behance_url, class: "w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" %>
+          </div>
+        </div>
+
+        <div class="flex justify-end gap-3 pt-2">
+          <%= link_to t("admin.board_members.form.cancel"), admin_board_members_path,
+                data: { turbo_frame: "modal" },
+                class: "text-sm text-gray-600 hover:underline" %>
+          <%= f.submit board_member.persisted? ? t("admin.board_members.form.save") : t("admin.board_members.form.create"),
+                class: "btn-primary text-sm" %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+<% end %>

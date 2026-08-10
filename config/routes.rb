@@ -44,6 +44,12 @@ Rails.application.routes.draw do
     resources :faqs, only: %i[index new create edit update destroy] do
       collection { patch :reorder }
     end
+    resources :board_members, only: %i[index new create edit update destroy] do
+      collection { patch :reorder }
+    end
+    resources :partners, only: %i[index new create edit update destroy] do
+      collection { patch :reorder }
+    end
     resources :attendance_lists do
       resources :attendances, only: %i[new index create show destroy]
     end
