@@ -42,5 +42,14 @@ RSpec.describe AttendanceManagement::CheckInService do
       expect(result.success?).to be false
       expect(result.message).to include('Record not found')
     end
+
+    it 'returns a clear failure reason when no list exists and none can be created (training closed)' do
+      travel_to Date.current.next_occurring(:monday).beginning_of_day + 12.hours do
+        result = described_class.new(person_id: person.id).call
+
+        expect(result.success?).to be false
+        expect(result.message).to include('closed on Mondays')
+      end
+    end
   end
 end

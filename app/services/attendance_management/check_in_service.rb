@@ -53,7 +53,13 @@ module AttendanceManagement
                            .first
       return list if list
 
-      AttendanceListManagement::DailyListGenerator.new(date: target_date).call.attendance_list
+      result = AttendanceListManagement::DailyListGenerator.new(date: target_date).call
+      # `result` est un OpenStruct de succès/échec (BaseService) : sur échec (ex. "Free
+      # training closed on Mondays"), `.attendance_list` n'existe pas et vaudrait nil sans
+      # ce garde-fou — mieux vaut remonter la vraie raison que planter plus loin sur `nil.id`.
+      raise result.message unless result.success?
+
+      result.attendance_list
     end
   end
 end
