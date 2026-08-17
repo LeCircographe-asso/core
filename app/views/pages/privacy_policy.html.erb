@@ -1,12 +1,10 @@
 <% content_for :title, "Le Circographe - Politique de Confidentialité" %>
 
-<section class="py-8">
-    <div class="page-container max-w-3xl">
-        <div class="public-surface flex flex-col px-6 py-8 md:px-8 md:py-12">
-            <!-- Title -->
-            <h2 class="mb-10 text-3xl font-bold text-center md:text-5xl">
-                Politique de Confidentialité
-            </h2>
+<%= render layout: "shared/legal_page_shell" do %>
+  <!-- Title -->
+  <h2 class="mb-10 text-3xl font-bold text-center md:text-5xl">
+    Politique de Confidentialité
+  </h2>
             <p class="mb-5 text-sm font-bold text-center sm:text-base">
                 Dernière mise à jour le 18 Mars 2025
             </p>
@@ -180,11 +178,9 @@
                 </p>
             </div>
 
-            <!-- Term -->
-            <div class="my-8 min-h-[1px] min-w-full bg-gray-300"></div>
-            <p class="mb-6 text-sm sm:text-base">
-                En utilisant nos services, vous acceptez cette Politique de Confidentialité dans son intégralité. Si vous avez des questions, n'hésitez pas à nous contacter.
-            </p>
-        </div>
-    </div>
-</section>
+  <!-- Term -->
+  <div class="my-8 min-h-[1px] min-w-full bg-gray-300"></div>
+  <p class="mb-6 text-sm sm:text-base">
+    En utilisant nos services, vous acceptez cette Politique de Confidentialité dans son intégralité. Si vous avez des questions, n'hésitez pas à nous contacter.
+  </p>
+<% end %>

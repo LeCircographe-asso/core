@@ -65,31 +65,7 @@
                 class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#1F5C55] focus:ring-[#1F5C55] sm:text-sm" %>
           </div>
 
-          <div>
-            <%= form.label :address, "Adresse", class: "block text-sm font-medium text-gray-700" %>
-            <%= form.text_area :address, rows: 2,
-                class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#1F5C55] focus:ring-[#1F5C55] sm:text-sm" %>
-          </div>
-
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div>
-              <%= form.label :zip_code, "Code postal", class: "block text-sm font-medium text-gray-700" %>
-              <%= form.text_field :zip_code, 
-                  class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#1F5C55] focus:ring-[#1F5C55] sm:text-sm" %>
-            </div>
-
-            <div>
-              <%= form.label :town, "Ville", class: "block text-sm font-medium text-gray-700" %>
-              <%= form.text_field :town, 
-                  class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#1F5C55] focus:ring-[#1F5C55] sm:text-sm" %>
-            </div>
-
-            <div>
-              <%= form.label :country, "Pays", class: "block text-sm font-medium text-gray-700" %>
-              <%= form.text_field :country, 
-                  class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#1F5C55] focus:ring-[#1F5C55] sm:text-sm" %>
-            </div>
-          </div>
+          <%= render "address_fields", form: form %>
 
           <div>
             <%= form.label :birth_date, "Date de naissance", class: "block text-sm font-medium text-gray-700" %>

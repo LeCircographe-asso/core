@@ -68,7 +68,7 @@
       <div class="space-y-6 order-2 lg:order-1 min-w-0">
 
         <%# Accès + carte intégrée %>
-        <div id="map" class="rounded-2xl border border-brand-primary/25 bg-white overflow-hidden shadow-sm scroll-mt-24">
+        <div id="map" class="rounded-2xl border border-brand-primary/25 bg-white overflow-hidden shadow-sm public-anchor-section">
           <div class="px-5 pt-5 pb-3">
             <p class="text-xs uppercase tracking-[0.25em] text-brand-primary mb-2">Accès</p>
             <p class="text-sm font-semibold text-gray-900">97 bis boulevard de Suisse — 31200 Toulouse</p>
@@ -78,7 +78,7 @@
         </div>
 
         <%# Horaires d'accueil %>
-        <div id="horaires" class="rounded-2xl border border-brand-primary/25 bg-white overflow-hidden shadow-sm scroll-mt-24">
+        <div id="horaires" class="rounded-2xl border border-brand-primary/25 bg-white overflow-hidden shadow-sm public-anchor-section">
           <div class="px-5 pt-4 pb-2 border-b border-gray-50">
             <p class="text-xs uppercase tracking-[0.25em] text-brand-primary">Horaires d'accueil</p>
             <p class="text-xs text-gray-500 mt-1">Du mardi au dimanche · selon disponibilité bénévoles</p>
@@ -94,7 +94,7 @@
           <p class="text-xs uppercase tracking-[0.25em] text-brand-accent mb-2">Un doute rapide ?</p>
           <p class="text-gray-700 text-sm sm:text-base leading-relaxed">Aux créneaux : orientation rapide (adhésion, création, technique).</p>
         </div>
-        <div id="contact-form" class="scroll-mt-28">
+        <div id="contact-form" class="public-anchor-section">
           <%= render "pages/contact/form", contact: @contact || {}, status: nil, embedded: true %>
         </div>
       </div>

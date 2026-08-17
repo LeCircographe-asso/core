@@ -150,14 +150,8 @@
             </div>
 
             <!-- Address -->
-            <div class="space-y-2">
-              <%= form.label :address, "Adresse", class: "block text-sm font-medium text-gray-700" %>
-              <%= form.text_field :address, placeholder: "Adresse", class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#1F5C55] focus:ring-[#1F5C55] sm:text-sm" %>
-              <div class="grid grid-cols-2 gap-2">
-                <%= form.text_field :zip_code, placeholder: "Code postal", class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#1F5C55] focus:ring-[#1F5C55] sm:text-sm" %>
-                <%= form.text_field :town, placeholder: "Ville", class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#1F5C55] focus:ring-[#1F5C55] sm:text-sm" %>
-              </div>
-              <%= form.text_field :country, placeholder: "Pays", class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#1F5C55] focus:ring-[#1F5C55] sm:text-sm" %>
+            <div class="space-y-4">
+              <%= render "address_fields", form: form %>
             </div>
 
             <!-- Preferences -->
