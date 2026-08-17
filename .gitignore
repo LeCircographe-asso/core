@@ -36,10 +36,8 @@
 
 /app/assets/builds/*
 !/app/assets/builds/.keep
-# /docs - Commented out, we want to track TDD documentation
 /node_modules
 /.cursorrules
-/.cert
 
 # Add SimpleCov coverage reports to ignore list
 /coverage/
@@ -50,9 +48,6 @@
 /config/credentials/*.key
 /config/database.yml.local
 /config/secrets.yml
-.env.local
-.env.production
-.env.staging
 
 # Certificats SSL
 /.cert/
@@ -80,11 +75,17 @@ identifier.sqlite
 
 # IDE files
 /.idea
+/.vscode
 
-# Cursor IDE — agent plans, rules and skills (local only)
-/.cursor/plans/
-/.cursor/rules/
-/.cursor/skills/
+# OS junk
+.DS_Store
+Thumbs.db
+
+# AI coding agents — local config/rules/plans, never commit
+/.cursor/
+/.claude/
+/.codex/
+/.agents/
 
 # Documentation drafts (Cursor / ad-hoc audits — never commit)
 docs/_drafts/
@@ -95,11 +96,8 @@ NOTES.md
 SCRATCH.md
 .notes/
 
-# Watchman (not used - we use Tailwind watcher instead)
-/watchman
-docs/internal/ux_audit_2025_01.md
-
 # Duplicate vendor folder (Propshaft uses vendor/javascript/ and vendor/assets/)
 /vendor/js/
 .mcp.json
 bin/*.bak
+/CLAUDE.md

@@ -89,30 +89,6 @@ RSpec.describe 'Admin::Payments', type: :request do
     end
   end
 
-  describe 'GET /admin/payments/new' do
-    let(:admin) { create(:user, :admin) }
-
-    before { login_as(admin) }
-
-    it 'redirects to index with notice' do
-      get new_admin_payment_path
-      expect(response).to redirect_to(admin_payments_path)
-      follow_redirect!
-      expect(response.body).to include('Création de paiement temporairement désactivée')
-    end
-
-    context 'with person_id param' do
-      let(:person) { create(:person) }
-
-      it 'redirects to index with notice' do
-        get new_admin_payment_path, params: { person_id: person.id }
-        expect(response).to redirect_to(admin_payments_path)
-        follow_redirect!
-        expect(response.body).to include('Création de paiement temporairement désactivée')
-      end
-    end
-  end
-
   describe 'POST /admin/payments' do
     let(:admin) { create(:user, :admin) }
     let(:person) { create(:person) }
@@ -368,7 +344,7 @@ RSpec.describe 'Admin::Payments', type: :request do
 
         expect(response).to redirect_to(admin_payment_path(payment))
         follow_redirect!
-        expect(response).to redirect_to(admin_payments_path)
+        expect(response).to redirect_to(admin_payments_path(person_id: payment.person_id, anchor: "payment_row_#{payment.id}"))
         follow_redirect!
         # The flash from show action overwrites the error message
         expect(response.body).to include('édition inline')
@@ -449,9 +425,11 @@ RSpec.describe 'Admin::Payments', type: :request do
 
     before { login_as(admin) }
 
-    it 'redirects to payments index with notice' do
+    it 'redirects to payments index filtered by person with notice' do
       get admin_payment_path(payment)
-      expect(response).to redirect_to(admin_payments_path)
+      expect(response).to redirect_to(admin_payments_path(person_id: payment.person_id, anchor: "payment_row_#{payment.id}"))
+      follow_redirect!
+      expect(response.body).to include('édition inline')
     end
   end
 end

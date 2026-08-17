@@ -6,7 +6,39 @@ module Admin
     before_action :set_breadcrumbs
 
     def index
-      @attendance_list = AttendanceList.order(created_at: :desc)
+      scope = AttendanceList.all
+
+      # Filter by list_type (training/event/meeting)
+      scope = scope.where(list_type: params[:list_type]) if params[:list_type].present?
+
+      # Search by name
+      if params[:search].present?
+        search_term = "%#{params[:search]}%"
+        scope = scope.where("name LIKE ? COLLATE NOCASE", search_term)
+      end
+
+      # Filter by status
+      scope = scope.where(status: params[:status]) if params[:status].present?
+
+      # Filter by month (on start_date)
+      if params[:month].present?
+        begin
+          month = Date.parse("#{params[:month]}-01")
+          month_start = month.beginning_of_month
+          month_end = month.end_of_month
+          scope = scope.where(start_date: month_start..month_end)
+        rescue StandardError
+          # Invalid month format, skip filter
+        end
+      end
+
+      # Sort by start_date (default desc = most recent first)
+      sort = params[:sort] == "asc" ? :asc : :desc
+      scope = scope.order(start_date: sort)
+
+      # Pagination
+      @pagy, @attendance_list = pagy(scope, items: 20)
+
       add_breadcrumb I18n.t("breadcrumbs.admin.attendance_lists.lists"), nil
     end
 

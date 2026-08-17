@@ -45,7 +45,6 @@ en:
       show:
         use_inline_notice: Utilisez l'édition inline pour modifier les paiements
       new:
-        creation_disabled_notice: Création de paiement temporairement désactivée
     members:
       attendances:
         already_present: "%{name} is already checked in for today."
@@ -269,6 +268,12 @@ en:
         new_list: New list
       health_reports:
         integrity_report: Integrity report
+      exports:
+        index:
+          page_title: Export data
+          page_subtitle: Export association data in CSV format
+          newsletter_subscribers: List of newsletter subscribers
+          all_users: All users
   layouts:
     application:
       title: Le Circographe

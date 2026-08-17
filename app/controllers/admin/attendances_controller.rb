@@ -16,6 +16,16 @@ module Admin
 
       @attendances = @attendances.today if params[:today].present?
 
+      # Search by person name/email
+      if params[:search].present?
+        search_term = "%#{params[:search]}%"
+        @attendances = @attendances.joins(:person)
+                                    .where(
+                                      "people.first_name LIKE ? COLLATE NOCASE OR people.last_name LIKE ? COLLATE NOCASE OR people.email LIKE ? COLLATE NOCASE",
+                                      search_term, search_term, search_term
+                                    )
+      end
+
       # Pagination
       @pagy, @attendances = pagy(@attendances.order(date: :desc), items: 20)
 

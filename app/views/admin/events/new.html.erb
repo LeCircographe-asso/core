@@ -11,31 +11,37 @@
         <div class="space-y-4">
           <!-- Title Field -->
           <div class="form-group">
+            <%= form.label :title, class: "block text-sm font-medium text-gray-700 mb-1" %>
             <%= form.text_field :title, required: true, placeholder: "ex.: Concert Super Cool", maxlength: 72, class: "w-full p-3 border border-gray-300 rounded-md bg-gray-50 focus:ring-[#1F5C55] focus:border-[#1F5C55]" %>
           </div>
 
           <!-- Field Description High -->
           <div class="form-group">
+            <%= form.label :upper_description, class: "block text-sm font-medium text-gray-700 mb-1" %>
             <%= form.text_area :upper_description, required: false, placeholder: "Description haute", maxlength: 72, class: "w-full p-3 border border-gray-300 rounded-md bg-gray-50 focus:ring-[#1F5C55] focus:border-[#1F5C55]" %>
           </div>
 
           <!-- Field Description Middle -->
           <div class="form-group">
+            <%= form.label :middle_description, class: "block text-sm font-medium text-gray-700 mb-1" %>
             <%= form.text_area :middle_description, required: true, placeholder: "Description milieu", maxlength: 72, class: "w-full p-3 border border-gray-300 rounded-md bg-gray-50 focus:ring-[#1F5C55] focus:border-[#1F5C55]" %>
           </div>
 
           <!-- Field Description Low -->
           <div class="form-group">
+            <%= form.label :bottom_description, class: "block text-sm font-medium text-gray-700 mb-1" %>
             <%= form.text_area :bottom_description, required: false, placeholder: "Description basse", maxlength: 72, class: "w-full p-3 border border-gray-300 rounded-md bg-gray-50 focus:ring-[#1F5C55] focus:border-[#1F5C55]" %>
           </div>
 
           <!-- Field Location -->
           <div class="form-group">
+            <%= form.label :location, class: "block text-sm font-medium text-gray-700 mb-1" %>
             <%= form.text_field :location, required: true, placeholder: "ex.: Toulouse", maxlength: 72, class: "w-full p-3 border border-gray-300 rounded-md bg-gray-50 focus:ring-[#1F5C55] focus:border-[#1F5C55]" %>
           </div>
 
           <!-- Date Field -->
           <div class="form-group">
+            <%= form.label :date, class: "block text-sm font-medium text-gray-700 mb-1" %>
             <%= form.date_field :date, required: true, maxlength: 72, class: "w-full p-3 border border-gray-300 rounded-md bg-gray-50 focus:ring-[#1F5C55] focus:border-[#1F5C55]" %>
           </div>
 

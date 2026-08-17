@@ -22,14 +22,11 @@ module Admin
     end
 
     def show
-      # Rediriger vers la liste des paiements avec un message
-      redirect_to admin_payments_path, notice: t(".use_inline_notice")
+      payment = Payment.find(params[:id])
+      redirect_to admin_payments_path(person_id: payment.person_id, anchor: "payment_row_#{payment.id}"),
+                  notice: t(".use_inline_notice")
     end
 
-    def new
-      # Payment creation is currently disabled, redirect to index
-      redirect_to admin_payments_path, notice: t(".creation_disabled_notice")
-    end
 
     def edit
       @payment = Payment.find(params[:id])

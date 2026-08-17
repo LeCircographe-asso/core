@@ -1,4 +1,53 @@
-<div class="admin-dashboard">
-  <p>liste des utilisateur inscrit à la newsletter</p>
-  <%= link_to "exporter au format Excel", newsletter_subscribed_admin_exports_path	, class: "sidebar-link" %>
+<% content_for :title, t(".page_title") %>
+
+<div class="min-h-screen py-6">
+  <div class="page-container-wide">
+    <!-- Breadcrumbs -->
+    <%= render 'shared/breadcrumbs' %>
+
+    <!-- Header with gradient -->
+    <div class="surface-card mb-6">
+      <div class="bg-gradient-to-r from-[#1F5C55] to-[#194A45] px-6 py-4">
+        <h1 class="text-2xl font-bold text-white"><%= t(".page_title") %></h1>
+        <p class="text-white/80 mt-1">
+          <%= t(".page_subtitle") %>
+        </p>
+      </div>
+
+      <div class="p-6">
+        <!-- Export options -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <!-- Newsletter subscribers export -->
+          <div class="admin-metric-card p-6">
+            <div class="flex items-start justify-between mb-4">
+              <div>
+                <h3 class="text-lg font-semibold text-gray-900"><%= t(".newsletter_subscribers") %></h3>
+                <p class="text-sm text-gray-600 mt-1">CSV format</p>
+              </div>
+              <i class="fas fa-envelope text-2xl text-[#1F5C55]/30"></i>
+            </div>
+            <div class="mt-4">
+              <%= link_to "Exporter", newsletter_subscribed_admin_exports_path(format: :csv),
+                  class: "admin-btn-primary" %>
+            </div>
+          </div>
+
+          <!-- All users export -->
+          <div class="admin-metric-card p-6">
+            <div class="flex items-start justify-between mb-4">
+              <div>
+                <h3 class="text-lg font-semibold text-gray-900"><%= t(".all_users") %></h3>
+                <p class="text-sm text-gray-600 mt-1">CSV format</p>
+              </div>
+              <i class="fas fa-users text-2xl text-[#1F5C55]/30"></i>
+            </div>
+            <div class="mt-4">
+              <%= link_to "Exporter", all_users_admin_exports_path(format: :csv),
+                  class: "admin-btn-primary" %>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>

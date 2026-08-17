@@ -54,7 +54,7 @@ Rails.application.routes.draw do
     resources :attendance_lists do
       resources :attendances, only: %i[new index create show destroy]
     end
-    resources :payments, only: %i[show create new edit update index destroy] do
+    resources :payments, only: %i[show create edit update index destroy] do
       post :restore, on: :member
     end
     resources :health_reports, only: %i[index]

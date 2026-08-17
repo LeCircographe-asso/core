@@ -1,4 +1,4 @@
-<% content_for :title, "Rapport d'integrite" %>
+<% content_for :title, t("breadcrumbs.admin.health_reports.integrity_report") %>
 
 <div class="min-h-screen py-6">
   <div class="page-container">
@@ -6,8 +6,8 @@
 
     <div class="admin-page-header">
       <div class="px-6 py-4">
-        <h1 class="text-2xl font-bold text-white">Rapport d'integrite</h1>
-        <p class="text-white/80 mt-1">Verifications rapides pour detecter les donnees orphelines ou incoherentes</p>
+        <h1 class="text-2xl font-bold text-white"><%= t("breadcrumbs.admin.health_reports.integrity_report") %></h1>
+        <p class="text-white/80 mt-1">Vérifications rapides pour détecter les données orphelines ou incohérentes</p>
       </div>
     </div>
 
@@ -25,7 +25,7 @@
         <p class="text-2xl font-bold text-gray-900"><%= @duplicate_people_by_email_count %></p>
       </div>
       <div class="admin-metric-card">
-        <p class="text-sm text-gray-600">Doublons telephone</p>
+        <p class="text-sm text-gray-600">Doublons téléphone</p>
         <p class="text-2xl font-bold text-gray-900"><%= @duplicate_people_by_phone_count %></p>
       </div>
       <div class="admin-metric-card">
@@ -33,7 +33,7 @@
         <p class="text-2xl font-bold text-gray-900"><%= @payments_without_lines_count %></p>
       </div>
       <div class="admin-metric-card">
-        <p class="text-sm text-gray-600">Totaux incoherents</p>
+        <p class="text-sm text-gray-600">Totaux incohérents</p>
         <p class="text-2xl font-bold text-gray-900"><%= @payments_with_mismatched_totals_count %></p>
       </div>
       <div class="admin-metric-card">
@@ -41,7 +41,7 @@
         <p class="text-2xl font-bold text-gray-900"><%= @legacy_donation_lines_count %></p>
       </div>
       <div class="admin-metric-card">
-        <p class="text-sm text-gray-600">Cotisations incoherentes</p>
+        <p class="text-sm text-gray-600">Cotisations incohérentes</p>
         <p class="text-2xl font-bold text-gray-900"><%= @contribution_invariant_issues_count %></p>
       </div>
     </div>
@@ -72,7 +72,7 @@
           </table>
         </div>
         <% if @users_without_person_count > @users_without_person.size %>
-          <p class="text-xs text-gray-500 mt-2">Liste limitee a <%= @list_limit %> elements.</p>
+          <p class="text-xs text-gray-500 mt-2">Liste limitée à <%= @list_limit %> elements.</p>
         <% end %>
       <% else %>
         <p class="text-sm text-gray-600">Aucun utilisateur sans Person.</p>
@@ -105,7 +105,7 @@
           </table>
         </div>
         <% if @people_without_user_count > @people_without_user.size %>
-          <p class="text-xs text-gray-500 mt-2">Liste limitee a <%= @list_limit %> elements.</p>
+          <p class="text-xs text-gray-500 mt-2">Liste limitée à <%= @list_limit %> elements.</p>
         <% end %>
       <% else %>
         <p class="text-sm text-gray-600">Aucune Person sans User.</p>
@@ -132,10 +132,10 @@
           <% end %>
         </div>
         <% if @duplicate_people_by_email_count > @duplicate_people_by_email_groups.size %>
-          <p class="text-xs text-gray-500 mt-2">Liste limitee a <%= @list_limit %> elements.</p>
+          <p class="text-xs text-gray-500 mt-2">Liste limitée à <%= @list_limit %> elements.</p>
         <% end %>
       <% else %>
-        <p class="text-sm text-gray-600">Aucun doublon email detecte.</p>
+        <p class="text-sm text-gray-600">Aucun doublon email détecté.</p>
       <% end %>
     </div>
 
@@ -156,10 +156,10 @@
           <% end %>
         </div>
         <% if @duplicate_people_by_phone_count > @duplicate_people_by_phone_groups.size %>
-          <p class="text-xs text-gray-500 mt-2">Liste limitee a <%= @list_limit %> elements.</p>
+          <p class="text-xs text-gray-500 mt-2">Liste limitée à <%= @list_limit %> elements.</p>
         <% end %>
       <% else %>
-        <p class="text-sm text-gray-600">Aucun doublon telephone detecte.</p>
+        <p class="text-sm text-gray-600">Aucun doublon telephone détecté.</p>
       <% end %>
     </div>
 
@@ -189,10 +189,10 @@
           </table>
         </div>
         <% if @payments_without_person_count > @payments_without_person.size %>
-          <p class="text-xs text-gray-500 mt-2">Liste limitee a <%= @list_limit %> elements.</p>
+          <p class="text-xs text-gray-500 mt-2">Liste limitée à <%= @list_limit %> elements.</p>
         <% end %>
       <% else %>
-        <p class="text-sm text-gray-600">Aucun paiement orphelin detecte.</p>
+        <p class="text-sm text-gray-600">Aucun paiement orphelin détecté.</p>
       <% end %>
     </div>
 
@@ -230,10 +230,10 @@
           </table>
         </div>
         <% if @payments_without_lines_count > @payments_without_lines.size %>
-          <p class="text-xs text-gray-500 mt-2">Liste limitee a <%= @list_limit %> elements.</p>
+          <p class="text-xs text-gray-500 mt-2">Liste limitée à <%= @list_limit %> elements.</p>
         <% end %>
       <% else %>
-        <p class="text-sm text-gray-600">Aucun paiement sans ligne detecte.</p>
+        <p class="text-sm text-gray-600">Aucun paiement sans ligne détecté.</p>
       <% end %>
     </div>
 
@@ -273,10 +273,10 @@
           </table>
         </div>
         <% if @payments_with_mismatched_totals_count > @payments_with_mismatched_totals.size %>
-          <p class="text-xs text-gray-500 mt-2">Liste limitee a <%= @list_limit %> elements.</p>
+          <p class="text-xs text-gray-500 mt-2">Liste limitée à <%= @list_limit %> elements.</p>
         <% end %>
       <% else %>
-        <p class="text-sm text-gray-600">Aucun paiement avec total incoherent detecte.</p>
+        <p class="text-sm text-gray-600">Aucun paiement avec total incohérent détecté.</p>
       <% end %>
     </div>
 
@@ -316,10 +316,10 @@
           </table>
         </div>
         <% if @legacy_donation_lines_count > @legacy_donation_lines.size %>
-          <p class="text-xs text-gray-500 mt-2">Liste limitee a <%= @list_limit %> elements.</p>
+          <p class="text-xs text-gray-500 mt-2">Liste limitée à <%= @list_limit %> elements.</p>
         <% end %>
       <% else %>
-        <p class="text-sm text-gray-600">Aucune ligne de don legacy detectee.</p>
+        <p class="text-sm text-gray-600">Aucune ligne de don legacy détectée.</p>
       <% end %>
     </div>
 
@@ -356,10 +356,10 @@
           </table>
         </div>
         <% if @contribution_invariant_issues_count > @contribution_invariant_issues.size %>
-          <p class="text-xs text-gray-500 mt-2">Liste limitee a <%= @list_limit %> elements.</p>
+          <p class="text-xs text-gray-500 mt-2">Liste limitée à <%= @list_limit %> elements.</p>
         <% end %>
       <% else %>
-        <p class="text-sm text-gray-600">Aucune cotisation incoherente detectee.</p>
+        <p class="text-sm text-gray-600">Aucune cotisation incoherente détectée.</p>
       <% end %>
     </div>
   </div>

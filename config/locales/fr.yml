@@ -201,7 +201,6 @@ fr:
       show:
         use_inline_notice: Utilisez l'édition inline pour modifier les paiements
       new:
-        creation_disabled_notice: Création de paiement temporairement désactivée
       create:
         created_notice: Paiement créé avec succès
         failure_alert: 'Erreur lors de la création du paiement: %{message}'
@@ -590,6 +589,12 @@ fr:
         new_list: Nouveau registre
       health_reports:
         integrity_report: Rapport d'intégrité
+      exports:
+        index:
+          page_title: Exporter les données
+          page_subtitle: Exporter les données de l'association aux formats CSV
+          newsletter_subscribers: Liste des utilisateurs inscrits à la newsletter
+          all_users: Tous les utilisateurs
   layouts:
     application:
       title: Le Circographe
