@@ -35,7 +35,9 @@
                   </div>
                 </div>
                 <div class="ml-4">
-                  <div class="text-sm font-medium text-gray-900"><%= attendance.person.full_name %></div>
+                  <div class="text-sm font-medium text-gray-900">
+                    <%= link_to attendance.person.full_name, admin_member_path(attendance.person), class: "hover:text-[#1F5C55] hover:underline" %>
+                  </div>
                   <div class="text-sm text-gray-500"><%= attendance.person.email.presence || "Pas d'email" %></div>
                 </div>
               </div>

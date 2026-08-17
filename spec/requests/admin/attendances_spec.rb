@@ -63,6 +63,15 @@ RSpec.describe 'Admin::Attendances', type: :request do
 
       expect(response).to have_http_status(:success)
     end
+
+    it "links each participant's name to their member profile" do
+      person = create(:person)
+      create(:attendance, person: person, event: nil, date: Date.current)
+
+      get admin_attendances_path
+
+      expect(response.body).to include(admin_member_path(person))
+    end
   end
 
   describe 'GET /admin/attendance_lists/:id (participants shown on the list page)' do
@@ -76,6 +85,29 @@ RSpec.describe 'Admin::Attendances', type: :request do
       expect(response).to have_http_status(:success)
       expect(response.body).to include(person.full_name)
       expect(response.body).to include(admin_attendance_list_attendance_path(attendance_list, attendance))
+    end
+
+    it "links the participant's name to their member profile" do
+      attendance_list = create(:attendance_list)
+      person = create(:person)
+      create(:attendance, person: person, event: nil, attendance_list: attendance_list)
+
+      get admin_attendance_list_path(attendance_list)
+
+      expect(response.body).to include(admin_member_path(person))
+    end
+
+    it "links the lender's name when the session was covered by someone else's Pack10" do
+      attendance_list = create(:attendance_list)
+      recipient = create(:person, :with_circus_membership)
+      lender = create(:person, :with_circus_membership)
+      pack10 = create(:contribution, person: lender, contribution_formula: create(:contribution_formula, :pack10), sessions_remaining: 3)
+      create(:attendance, person: recipient, event: nil, attendance_list: attendance_list, contribution: pack10)
+
+      get admin_attendance_list_path(attendance_list)
+
+      expect(response.body).to include("Carnet de")
+      expect(response.body).to include(admin_member_path(lender))
     end
   end
 end
