@@ -6,7 +6,7 @@ module Admin
     include Admin::Members::ParameterHandling
     include Admin::Members::UpdateHandling
     before_action :set_person, only: %i[show edit update destroy create_web_account edit_person]
-    before_action :set_breadcrumbs, except: %i[index new]
+    before_action :set_breadcrumbs
     before_action :check_deletion_permissions, only: [ :destroy ]
     before_action :require_super_admin, only: [ :restore ]
 
@@ -164,7 +164,7 @@ module Admin
     end
 
     def set_breadcrumbs
-      add_breadcrumb I18n.t("breadcrumbs.admin.common.dashboard"), admin_dashboard_index_path
+      add_breadcrumb I18n.t("breadcrumbs.admin.common.administration"), admin_dashboard_index_path
     end
 
     def check_deletion_permissions

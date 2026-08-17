@@ -1,11 +1,11 @@
 <div class="flex items-center gap-1 shrink-0 <%= local_assigns[:extra_class] %>">
   <% if local_assigns[:show_path] %>
-    <%= link_to show_text || "Voir", show_path, data: local_assigns[:show_data] || {}, class: "text-xs px-2 py-1 rounded-md border border-gray-200 text-gray-600 hover:bg-white hover:border-gray-300 transition-colors" %>
+    <%= link_to local_assigns[:show_text] || "Voir", show_path, data: local_assigns[:show_data] || {}, class: "text-xs px-2 py-1 rounded-md border border-gray-200 text-gray-600 hover:bg-white hover:border-gray-300 transition-colors" %>
   <% end %>
   <% if local_assigns[:edit_path] %>
-    <%= link_to edit_text || "Modifier", edit_path, data: local_assigns[:edit_data] || {}, class: "text-xs px-2 py-1 rounded-md border border-gray-200 text-gray-600 hover:bg-white hover:border-gray-300 transition-colors" %>
+    <%= link_to local_assigns[:edit_text] || "Modifier", edit_path, data: local_assigns[:edit_data] || {}, class: "text-xs px-2 py-1 rounded-md border border-gray-200 text-gray-600 hover:bg-white hover:border-gray-300 transition-colors" %>
   <% end %>
   <% if local_assigns[:delete_path] %>
-    <%= button_to delete_text || "✕", delete_path, method: :delete, data: { turbo_confirm: confirm_delete_text }, class: "text-xs px-2 py-1 rounded-md border border-transparent text-red-400 hover:border-red-100 hover:bg-red-50 bg-transparent cursor-pointer transition-colors" %>
+    <%= button_to local_assigns[:delete_text] || "✕", delete_path, method: :delete, data: { turbo_confirm: local_assigns[:confirm_delete_text] }, class: "text-xs px-2 py-1 rounded-md border border-transparent text-red-400 hover:border-red-100 hover:bg-red-50 bg-transparent cursor-pointer transition-colors" %>
   <% end %>
 </div>
