@@ -1,18 +1,26 @@
-<% recent_payments = person.payments.order(created_at: :desc).limit(4) %>
+<% recent_payments = PaymentQuery.visible_to(person).includes(:person, payment_lines: :person).order(created_at: :desc).limit(4) %>
 <div id="recent-payments-<%= person.id %>">
   <% if recent_payments.any? %>
     <div class="px-5 py-3 border-b border-gray-200">
       <p class="text-xs font-semibold uppercase tracking-widest text-[#1F5C55]/70 mb-2">Derniers paiements</p>
       <div class="space-y-2">
         <% recent_payments.each do |payment| %>
+          <% is_beneficiary_only = payment.person_id != person.id %>
+          <%# Montant = ce que CETTE personne a payé ; 0 si quelqu'un d'autre a réglé pour elle. %>
+          <% displayed_amount_cents = is_beneficiary_only ? 0 : payment.total_cents %>
           <div class="flex items-center justify-between gap-3">
             <div class="flex items-center gap-2 min-w-0">
               <span class="w-1.5 h-1.5 rounded-full shrink-0 <%= payment.success? ? 'bg-green-500' : payment.pending? ? 'bg-amber-400' : 'bg-gray-300' %>"></span>
-              <span class="text-sm text-gray-600 truncate"><%= payment.payment_type %></span>
+              <span class="text-sm text-gray-600 truncate">
+                <%= payment.payment_type %>
+                <% if is_beneficiary_only %>
+                  <span class="text-blue-700">(payé par <%= payment.person.full_name %>)</span>
+                <% end %>
+              </span>
             </div>
             <div class="flex items-center gap-3 shrink-0 text-right">
               <span class="text-sm tabular-nums text-gray-400"><%= payment.created_at.strftime("%d/%m/%Y") %></span>
-              <span class="text-sm font-semibold text-gray-800 tabular-nums w-14 text-right"><%= number_to_currency(payment.total_euros, unit: "€", format: "%n %u", precision: 2) %></span>
+              <span class="text-sm font-semibold text-gray-800 tabular-nums w-14 text-right"><%= number_to_currency(displayed_amount_cents / 100.0, unit: "€", format: "%n %u", precision: 2) %></span>
             </div>
           </div>
         <% end %>

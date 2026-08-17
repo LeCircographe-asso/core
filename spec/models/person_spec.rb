@@ -320,6 +320,19 @@ RSpec.describe Person, type: :model do
     end
   end
 
+  describe '.eligible_for_contribution_formulas' do
+    it 'matches #can_buy_contribution_formulas? at the SQL level' do
+      circus_person = create(:person, :with_circus_membership)
+      basic_person = create(:person, :with_basic_membership)
+      no_membership_person = create(:person, :without_membership)
+
+      eligible = Person.eligible_for_contribution_formulas
+
+      expect(eligible).to include(circus_person)
+      expect(eligible).not_to include(basic_person, no_membership_person)
+    end
+  end
+
   describe '#change_member_number' do
     let(:person) { create(:person, member_number: '25U001') }
 

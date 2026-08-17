@@ -21,7 +21,6 @@ class Payment < ApplicationRecord
   validates :offer_reason, presence: true, if: :is_offered?
 
   before_create :generate_uuid
-  after_create :create_audit_log
   after_create_commit :broadcast_profile_payments
   after_update_commit :broadcast_profile_payments, if: -> { saved_change_to_status? || saved_change_to_total_cents? }
   # Callbacks legacy supprimés : la création/mise à jour cascade passe désormais par les services People::*.
@@ -115,11 +114,6 @@ class Payment < ApplicationRecord
     self.uuid = SecureRandom.uuid
   end
 
-  # Create an audit log entry for new payments
-  def create_audit_log
-    PaymentAuditLog.log(self, recorded_by, "create")
-  end
-
   # Log status changes
   def log_status_change
     return unless saved_change_to_status
@@ -200,12 +194,20 @@ class Payment < ApplicationRecord
   private
 
   def broadcast_profile_payments
-    broadcast_replace_to(
-      person,
-      target: "recent-payments-#{person_id}",
-      partial: "shared/recent_payments_list",
-      locals: { person: person.reload }
-    )
+    beneficiary_ids = payment_lines.where.not(person_id: nil).distinct.pluck(:person_id)
+
+    (beneficiary_ids + [ person_id ]).uniq.each do |target_person_id|
+      target_person = target_person_id == person_id ? person : Person.find_by(id: target_person_id)
+      next unless target_person
+
+      broadcast_replace_to(
+        target_person,
+        target: "recent-payments-#{target_person_id}",
+        partial: "shared/recent_payments_list",
+        locals: { person: target_person.reload }
+      )
+    end
+
     broadcast_dashboard_stats
   rescue => e
     Rails.logger.warn("[Payment] broadcast skipped: #{e.message}")

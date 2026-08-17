@@ -199,7 +199,7 @@ module Admin
       return [] unless person
 
       PaymentQuery.with_person_and_recorded_by
-                  .where(person_id: person.id)
+                  .merge(PaymentQuery.visible_to(person))
                   .order(created_at: :desc)
                   .limit(10)
     end

@@ -66,7 +66,7 @@ RSpec.describe Payment, type: :model do
 
     it 'has many payment_audit_logs' do
       payment = create(:payment)
-      audit_log = payment.payment_audit_logs.last
+      audit_log = create(:payment_audit_log, payment: payment)
 
       expect(payment.payment_audit_logs).to include(audit_log)
     end
@@ -94,16 +94,17 @@ RSpec.describe Payment, type: :model do
       expect(payment.uuid).to match(/\A[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\z/)
     end
 
-    it 'creates audit log after create' do
+    # Le log de création (action "create") n'est plus posé par un callback modèle :
+    # People::PaymentRecorder le crée explicitement une fois les payment_lines
+    # persistées (voir spec/services/people/payment_recorder_spec.rb), pour pouvoir
+    # y inclure le détail des lignes/bénéficiaires. Un `Payment.save!` isolé,
+    # hors service, ne produit donc plus de log de création.
+    it 'does not log on a bare save (creation logging moved to PaymentRecorder)' do
       payment = build(:payment)
 
       expect do
         payment.save!
-      end.to change(PaymentAuditLog, :count).by(1)
-
-      audit_log = PaymentAuditLog.last
-      expect(audit_log.payment).to eq(payment)
-      expect(audit_log.action).to eq('create')
+      end.not_to change(PaymentAuditLog, :count)
     end
 
     it 'logs status changes after update' do

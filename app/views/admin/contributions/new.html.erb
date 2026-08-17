@@ -136,6 +136,7 @@
                           action: "change->contribution-purchase#refresh",
                           formula_name: formula_label.call(contribution_formula),
                           formula_price: "#{contribution_formula.price_euros} €",
+                          formula_price_cents: contribution_formula.price_cents,
                           formula_constraint: formula_constraint.call(contribution_formula),
                           formula_alert: formula_alert.call(contribution_formula)
                         } %>
@@ -158,6 +159,28 @@
               </div>
             </section>
 
+            <section class="space-y-3"
+                data-controller="beneficiary-list"
+                data-action="beneficiary-list:changed->contribution-purchase#refresh"
+                data-beneficiary-list-search-url-value="<%= beneficiary_search_admin_contributions_path(person_id: @person.id) %>">
+              <h2 class="text-base font-semibold text-gray-900">Bénéficiaires additionnels</h2>
+              <p class="text-sm text-gray-600">
+                Cette cotisation reste enregistrée pour <%= @person.full_name %>. Ajoutez d'autres personnes si ce paiement couvre aussi leur cotisation.
+              </p>
+
+              <template data-beneficiary-list-target="template">
+                <%= render "beneficiary_row", contribution_formulas: @contribution_formulas %>
+              </template>
+
+              <div class="space-y-3" data-beneficiary-list-target="rows"></div>
+
+              <button type="button"
+                  data-action="beneficiary-list#addRow"
+                  class="text-sm font-medium text-[#1F5C55] hover:text-[#194A45]">
+                + Ajouter un bénéficiaire
+              </button>
+            </section>
+
             <section class="space-y-4 rounded-lg border border-gray-200 p-4 sm:p-5">
               <div class="flex flex-col gap-1 sm:flex-row sm:items-start sm:justify-between">
                 <div>
@@ -170,6 +193,10 @@
                 </div>
                 <p class="text-lg font-bold text-[#1F5C55]" data-contribution-purchase-target="summaryPrice"><%= selected_formula.price_euros %> €</p>
               </div>
+              <p class="text-xs text-gray-500">
+                Montant pour <%= @person.full_name %> ci-dessus. Total du paiement (avec bénéficiaires additionnels) :
+                <span class="font-semibold text-gray-700" data-contribution-purchase-target="totalPrice"><%= selected_formula.price_euros %> €</span>
+              </p>
 
               <div class="grid gap-3 md:grid-cols-2">
                 <div>
@@ -211,6 +238,11 @@
 
               <div class="<%= formula_alert.call(selected_formula).present? ? '' : 'hidden' %> rounded-md border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-800" data-contribution-purchase-target="summaryAlert">
                 <%= formula_alert.call(selected_formula) %>
+              </div>
+
+              <div class="flex items-center gap-2">
+                <%= form.check_box :record_attendance, { checked: true, class: "rounded border-gray-300 text-[#1F5C55] focus:ring-[#1F5C55]" }, "1", "0" %>
+                <%= form.label :record_attendance, "Enregistrer la présence aujourd'hui", class: "text-sm text-gray-700" %>
               </div>
 
               <div class="flex flex-col gap-3 border-t border-gray-200 pt-4 sm:flex-row sm:items-center sm:justify-between">

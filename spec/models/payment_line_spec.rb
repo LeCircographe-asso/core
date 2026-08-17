@@ -88,6 +88,23 @@ RSpec.describe PaymentLine, type: :model do
       )
     end
 
+    it 'requires a person for Contribution lines (beneficiary)' do
+      payment = build_stubbed(:payment)
+      contribution = build_stubbed(:contribution)
+      payment_line = PaymentLine.new(payment: payment, item: contribution, item_type: 'Contribution', amount_cents: 1500)
+
+      expect(payment_line).not_to be_valid
+      expect(payment_line.errors[:person_id]).to include(I18n.t('errors.messages.blank'))
+    end
+
+    it 'does not require a person for non-Contribution lines' do
+      payment = build_stubbed(:payment)
+      membership_type = build_stubbed(:membership_type)
+      payment_line = PaymentLine.new(payment: payment, item: membership_type, amount_cents: 1500)
+
+      expect(payment_line).to be_valid
+    end
+
     it 'accepts the canonical Donation item_type' do
       payment = build_stubbed(:payment)
       payment_line = PaymentLine.new(

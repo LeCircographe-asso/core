@@ -288,7 +288,7 @@ module Admin
 
     def payment_for_ui_row(payment_or_id)
       id = payment_or_id.is_a?(Payment) ? payment_or_id.id : payment_or_id
-      Payment.includes(:person, :recorded_by, :payment_lines).find(id)
+      Payment.includes(:person, :recorded_by, payment_lines: :person).find(id)
     end
 
     def apply_payments_sort(relation, filter_params)

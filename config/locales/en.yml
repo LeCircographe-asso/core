@@ -84,6 +84,7 @@ en:
       create:
         purchase_failed_alert: 'Error purchasing contribution formula: %{message}'
         purchased: Contribution recorded successfully!
+        attendance_not_recorded_warning: 'Warning, attendance not recorded: %{details}'
       upgrade:
         success_notice: Contribution upgraded successfully.
         credit_applied_suffix: " Credit applied: %{amount}€"

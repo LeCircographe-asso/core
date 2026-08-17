@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_08_10_160000) do
+ActiveRecord::Schema[8.1].define(version: 2026_08_17_090000) do
   create_table "account_claims", force: :cascade do |t|
     t.string "confirmation_token", null: false
     t.datetime "created_at", null: false
@@ -324,11 +324,13 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_10_160000) do
     t.bigint "item_id", null: false
     t.string "item_type", null: false
     t.bigint "payment_id", null: false
+    t.integer "person_id"
     t.datetime "updated_at", null: false
     t.index ["amount_cents"], name: "idx_payment_lines_amount"
     t.index ["item_type", "item_id"], name: "index_payment_lines_on_item_type_and_item_id"
     t.index ["payment_id", "item_type", "item_id"], name: "index_payment_lines_unique_item", unique: true
     t.index ["payment_id"], name: "index_payment_lines_on_payment_id"
+    t.index ["person_id"], name: "index_payment_lines_on_person_id"
   end
 
   create_table "payments", force: :cascade do |t|
@@ -471,6 +473,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_10_160000) do
   add_foreign_key "payment_audit_logs", "payments"
   add_foreign_key "payment_audit_logs", "users"
   add_foreign_key "payment_lines", "payments"
+  add_foreign_key "payment_lines", "people"
   add_foreign_key "payments", "people"
   add_foreign_key "payments", "users", column: "recorded_by_id"
   add_foreign_key "sessions", "users"

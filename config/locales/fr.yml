@@ -244,6 +244,7 @@ fr:
       create:
         purchased: Cotisation enregistrée avec succès !
         purchase_failed_alert: 'Erreur lors de l''achat : %{message}'
+        attendance_not_recorded_warning: 'Attention, présence non enregistrée : %{details}'
       upgrade:
         success_notice: Cotisation upgradée avec succès.
         credit_applied_suffix: " Crédit appliqué: %{amount}€"

@@ -1,0 +1,44 @@
+<div class="rounded-lg border border-gray-200 p-3 space-y-3" data-beneficiary-list-target="row">
+  <div class="flex items-start justify-between gap-2">
+    <div class="min-w-0 flex-1">
+      <div class="relative">
+        <input type="text"
+               placeholder="Rechercher une personne..."
+               class="w-full rounded-md border-gray-300 text-sm focus:border-[#1F5C55] focus:ring-[#1F5C55]"
+               data-beneficiary-list-target="searchInput"
+               data-action="input->beneficiary-list#search" />
+        <p class="mt-0.5 text-xs text-gray-500">Seules les personnes avec une adhésion Cirque active apparaissent.</p>
+        <div class="mt-1 space-y-1" data-beneficiary-list-target="results"></div>
+      </div>
+      <p class="mt-1 text-sm font-medium text-gray-900" data-beneficiary-list-target="selectedName"></p>
+      <%= hidden_field_tag "contribution[beneficiaries][__INDEX__][person_id]", "", data: { beneficiary_list_target: "personIdField" } %>
+    </div>
+    <button type="button"
+            class="shrink-0 text-sm font-medium text-red-600 hover:text-red-800"
+            data-action="beneficiary-list#removeRow">
+      Retirer
+    </button>
+  </div>
+
+  <div class="grid gap-2 sm:grid-cols-2">
+    <% contribution_formulas.each_with_index do |formula, index| %>
+      <label class="block cursor-pointer rounded-md border border-gray-200 p-2 text-sm transition hover:border-[#1F5C55] has-[:checked]:border-[#1F5C55] has-[:checked]:bg-[#1F5C55]/5">
+        <input type="radio"
+               name="contribution[beneficiaries][__INDEX__][contribution_formula_id]"
+               value="<%= formula.id %>"
+               <%= "checked" if index.zero? %>
+               data-action="change->contribution-purchase#refresh"
+               data-formula-price-cents="<%= formula.price_cents %>"
+               class="sr-only" />
+        <span class="font-medium text-gray-900"><%= formula.name %></span>
+        <span class="ml-1 text-gray-600"><%= formula.price_euros %> €</span>
+      </label>
+    <% end %>
+  </div>
+
+  <label class="flex items-center gap-2 text-sm text-gray-700">
+    <%= check_box_tag "contribution[beneficiaries][__INDEX__][record_attendance]", "1", true,
+        class: "rounded border-gray-300 text-[#1F5C55] focus:ring-[#1F5C55]" %>
+    Enregistrer la présence aujourd'hui
+  </label>
+</div>

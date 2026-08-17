@@ -46,7 +46,7 @@ module Admin
         if payment.payment_lines.any?
           payment.payment_lines.map do |line|
             content_tag :div, class: "text-xs" do
-              "#{line.history_description}: #{number_to_currency(line.amount_cents / 100.0, unit: '€', separator: ',', delimiter: ' ')}"
+              "#{line.history_description}: #{number_to_currency(line.amount_cents / 100.0, unit: '€', separator: ',', delimiter: ' ')}#{beneficiary_suffix(line)}"
             end
           end.join.html_safe
         else
@@ -66,6 +66,14 @@ module Admin
         return "-" if amount_cents.blank?
 
         number_to_currency(amount_cents / 100.0, unit: "€", separator: ",", delimiter: " ")
+      end
+
+      private
+
+      def beneficiary_suffix(line)
+        return "" unless line.person_id.present? && line.person_id != payment.person_id
+
+        " (pour #{line.person&.full_name})"
       end
     end
   end

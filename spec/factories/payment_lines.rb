@@ -18,5 +18,10 @@ FactoryBot.define do
     trait :for_membership do
       association :item, factory: :membership
     end
+
+    trait :for_contribution do
+      association :item, factory: :contribution
+      person { item.person }
+    end
   end
 end

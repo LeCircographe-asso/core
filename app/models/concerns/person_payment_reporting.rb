@@ -32,20 +32,31 @@ module PersonPaymentReporting
     end
   end
 
+  # NOTE : ces compteurs/totaux s'appuient sur payment_lines.person_id (bénéficiaire),
+  # pas sur payments.person_id (payeur), car un paiement multi-bénéficiaires peut
+  # couvrir la cotisation d'une autre personne que le payeur. `payments` (payeur
+  # uniquement) reste utilisé pour membership_upgrades_count, hors périmètre v1.
+
   def offered_payments_count
-    payments.where(payment_method: "offered").count
+    Payment.where(payment_method: "offered", id: payment_lines_for_person.select(:payment_id)).count
   end
 
   def offered_payments_total
-    payments.where(payment_method: "offered").sum(:total_cents)
+    # Somme des lignes qui bénéficient à CETTE personne, pas payment.total_cents
+    # (qui inclurait les lignes des autres bénéficiaires du même paiement).
+    offered_lines_for_person.sum(:amount_cents)
   end
 
   def free_offers_count
-    payments.where(payment_method: "offered", total_cents: 0).count
+    offered_lines_for_person.where(amount_cents: 0).count
   end
 
   def paid_offers_count
-    payments.where(payment_method: "offered").where("total_cents > 0").count
+    offered_lines_for_person.where("payment_lines.amount_cents > 0").count
+  end
+
+  def offered_lines_for_person
+    payment_lines_for_person.joins(:payment).where(payments: { payment_method: "offered" })
   end
 
   def membership_upgrades_count
@@ -55,9 +66,11 @@ module PersonPaymentReporting
   end
 
   def contribution_purchases_count
-    payments.joins(:payment_lines)
-            .where(payment_lines: { item_type: "Contribution" })
-            .count
+    payment_lines_for_person.where(item_type: "Contribution").count
+  end
+
+  def payment_lines_for_person
+    PaymentLine.where(person_id: id)
   end
 
   def newsletter_subscribed?

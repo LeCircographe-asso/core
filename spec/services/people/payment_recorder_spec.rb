@@ -29,6 +29,61 @@ RSpec.describe People::PaymentRecorder do
       )
     end
 
+    it "persists an explicit person_id per line, distinct from the payer" do
+      beneficiary = create(:person)
+
+      result = described_class.new(
+        person: person,
+        recorded_by: admin_user,
+        payment_method: "cash",
+        total_cents: 2_500,
+        payment_lines: [
+          { item_type: "ContributionFormula", item_id: contribution_formula.id, person_id: beneficiary.id, amount_cents: 2_500, description: "Pack 10" }
+        ]
+      ).call
+
+      expect(result.success?).to be(true)
+      expect(result.payment.person).to eq(person)
+      expect(result.payment.payment_lines.first.person).to eq(beneficiary)
+    end
+
+    it "logs a create audit entry with the line/beneficiary detail" do
+      beneficiary = create(:person)
+
+      expect do
+        described_class.new(
+          person: person,
+          recorded_by: admin_user,
+          payment_method: "cash",
+          total_cents: 2_500,
+          payment_lines: [
+            { item_type: "ContributionFormula", item_id: contribution_formula.id, person_id: beneficiary.id, amount_cents: 2_500, description: "Pack 10" }
+          ]
+        ).call
+      end.to change(PaymentAuditLog, :count).by(1)
+
+      audit_log = PaymentAuditLog.last
+      expect(audit_log.action).to eq("create")
+      change_data = JSON.parse(audit_log.change_data)
+      expect(change_data["lines"].sole["person_id"]).to eq(beneficiary.id)
+      expect(change_data["lines"].sole["amount_cents"]).to eq(2_500)
+    end
+
+    it "falls back to the payer's id when a line omits person_id" do
+      result = described_class.new(
+        person: person,
+        recorded_by: admin_user,
+        payment_method: "cash",
+        total_cents: 1_000,
+        payment_lines: [
+          { item_type: "Membership", item_id: membership.id, amount_cents: 1_000, description: "Adhésion" }
+        ]
+      ).call
+
+      expect(result.success?).to be(true)
+      expect(result.payment.payment_lines.first.person).to eq(person)
+    end
+
     it "rejects a payment when line totals do not match the payment total" do
       result = described_class.new(
         person: person,

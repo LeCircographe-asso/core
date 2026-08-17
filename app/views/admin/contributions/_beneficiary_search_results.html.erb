@@ -1,0 +1,17 @@
+<% if candidates.empty? %>
+  <p class="px-2 py-1 text-xs text-gray-500">Aucun résultat</p>
+<% else %>
+  <ul class="divide-y divide-gray-100 rounded-md border border-gray-200 bg-white shadow-sm">
+    <% candidates.each do |candidate| %>
+      <li>
+        <button type="button"
+                class="w-full px-2 py-1.5 text-left text-sm hover:bg-gray-50"
+                data-action="beneficiary-list#selectPerson"
+                data-person-id="<%= candidate.id %>"
+                data-person-name="<%= candidate.full_name %>">
+          <%= candidate.full_name %>
+        </button>
+      </li>
+    <% end %>
+  </ul>
+<% end %>

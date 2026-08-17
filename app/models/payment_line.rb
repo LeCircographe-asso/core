@@ -14,12 +14,16 @@ class PaymentLine < ApplicationRecord
 
   belongs_to :payment
   belongs_to :item, polymorphic: true, optional: true
+  belongs_to :person, optional: true
   has_one :donation_receipt, dependent: :destroy
 
   validates :amount_cents, presence: true, numericality: { greater_than_or_equal_to: 0 }
   validates :item_type, presence: true, inclusion: { in: ALLOWED_ITEM_TYPES, message: :not_allowed }
   validates :item_id, presence: true
   validates :payment_id, uniqueness: { scope: %i[item_type item_id] }
+  # Bénéficiaire obligatoire pour une cotisation : c'est la seule ligne où
+  # payeur et bénéficiaire peuvent diverger (paiement multi-bénéficiaires).
+  validates :person_id, presence: true, if: -> { item_type == "Contribution" }
 
   # Méthodes
   def item_description
@@ -73,6 +77,7 @@ class PaymentLine < ApplicationRecord
     create!(
       payment: payment,
       item: membership,
+      person_id: payment.person_id,
       amount_cents: amount_cents,
       description: normalize_membership_name(membership.membership_type.name)
     )
@@ -82,6 +87,7 @@ class PaymentLine < ApplicationRecord
     create!(
       payment: payment,
       item: contribution_formula,
+      person_id: payment.person_id,
       amount_cents: amount_cents,
       description: I18n.t("payment_line.descriptions.contribution_formula",
                           name: contribution_formula.name,
@@ -93,6 +99,7 @@ class PaymentLine < ApplicationRecord
     create!(
       payment: payment,
       item: membership_type,
+      person_id: payment.person_id,
       amount_cents: amount_cents,
       description: normalize_membership_name(membership_type.name)
     )

@@ -227,6 +227,38 @@ RSpec.describe 'Admin::Members', type: :request do
 
         expect(response.body).not_to include(new_admin_member_attendance_path(person))
       end
+
+      it "shows a payment paid by someone else with a 'payé par' badge, showing 0€ and only the beneficiary's own line" do
+        membership_type = create(:membership_type, category: :circus)
+        create(:membership, person: person, membership_type: membership_type, status: :active)
+        payer = create(:person, first_name: 'Alice', last_name: 'Payeuse')
+        create(:membership, person: payer, membership_type: membership_type, status: :active)
+        payer_formula = create(:contribution_formula, :annual, membership_type: membership_type, price_cents: 12_000)
+        beneficiary_formula = create(:contribution_formula, :trimester, membership_type: membership_type, price_cents: 6_000)
+
+        People::ContributionCreator.new(
+          person: payer,
+          recorded_by_id: admin.id,
+          payment_method: 'cash',
+          beneficiaries: [
+            { person: payer, contribution_formula_id: payer_formula.id, record_attendance: false },
+            { person: person, contribution_formula_id: beneficiary_formula.id, record_attendance: false }
+          ]
+        ).call
+
+        get admin_member_path(person)
+
+        expect(response).to have_http_status(:success)
+        expect(response.body).to include('payé par Alice Payeuse')
+        # Le paiement partagé totalise 180,00 € (120 € + 60 €), mais cette personne n'a rien
+        # payé elle-même (Alice a tout réglé) : le montant affiché doit être 0, pas 180.
+        expect(response.body).to include('0,00')
+        expect(response.body).not_to include('180,00')
+        # Sa fiche ne doit montrer que sa propre ligne (Trimestriel), pas l'achat d'Alice
+        # pour elle-même (Annuel) dans la même transaction — ça ne la concerne pas.
+        expect(response.body).to include('Cotisation Trimestriel')
+        expect(response.body).not_to include('Cotisation Annuel')
+      end
     end
   end
 

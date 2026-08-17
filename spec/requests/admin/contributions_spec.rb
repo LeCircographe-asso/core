@@ -4,19 +4,13 @@ require "rails_helper"
 require "cgi"
 
 RSpec.describe "Admin::Contributions", type: :request do
+  include ActiveSupport::Testing::TimeHelpers
+
   let(:admin) { create(:user, :admin) }
   let(:person) { create(:person, :with_circus_membership) }
   let(:from_formula) { create(:contribution_formula, :pack10) }
   let(:to_formula) { create(:contribution_formula, :trimester) }
   let(:formula) { create(:contribution_formula, :pack10, membership_type: person.current_membership.membership_type, price_cents: 2_500) }
-  let!(:existing_contribution) do
-    People::ContributionCreator.new(
-      person: person,
-      contribution_formula_id: from_formula.id,
-      payment_method: "cash",
-      recorded_by_id: admin.id
-    ).call.contribution
-  end
 
   before { login_as(admin) }
 
@@ -118,6 +112,56 @@ RSpec.describe "Admin::Contributions", type: :request do
       )
     end
 
+    it "creates a shared payment covering an additional beneficiary" do
+      other_person = create(:person, :with_circus_membership)
+
+      # Le vrai formulaire soumet un index numérique explicite par ligne
+      # (contribution[beneficiaries][0][...]), que Rails parse en Hash, pas en Array —
+      # cf. incident : un Array ne reproduit pas la vraie forme envoyée par le navigateur.
+      expect do
+        post admin_contributions_path, params: {
+          person_id: person.id,
+          contribution: {
+            contribution_formula_id: formula.id,
+            payment_method: "cash",
+            beneficiaries: {
+              "0" => { person_id: other_person.id, contribution_formula_id: formula.id, record_attendance: "0" }
+            }
+          }
+        }
+      end.to change(Contribution, :count).by(2).and change(Payment, :count).by(1)
+
+      payment = Payment.order(:created_at).last
+
+      expect(response).to redirect_to(admin_member_path(person))
+      expect(payment.person).to eq(person)
+      expect(payment.total_cents).to eq(formula.price_cents * 2)
+      expect(person.reload.contributions.order(:created_at).last.person).to eq(person)
+      expect(other_person.reload.contributions.order(:created_at).last.person).to eq(other_person)
+    end
+
+    it "fails loudly instead of silently dropping a beneficiary row without a selected person" do
+      contribution_count_before = Contribution.count
+      payment_count_before = Payment.count
+
+      post admin_contributions_path, params: {
+        person_id: person.id,
+        contribution: {
+          contribution_formula_id: formula.id,
+          payment_method: "cash",
+          beneficiaries: {
+            "0" => { person_id: "", contribution_formula_id: formula.id, record_attendance: "0" }
+          }
+        }
+      }
+
+      expect(Contribution.count).to eq(contribution_count_before)
+      expect(Payment.count).to eq(payment_count_before)
+      expect(response).to redirect_to(new_admin_contribution_path(person_id: person.id))
+      follow_redirect!
+      expect(response.body).to include("bénéficiaire additionnel")
+    end
+
     it "creates an offered contribution payment with persisted offer_reason" do
       super_admin = create(:user, :super_admin)
       login_as(super_admin)
@@ -140,9 +184,96 @@ RSpec.describe "Admin::Contributions", type: :request do
       expect(payment.payment_lines.sole.item_type).to eq("Contribution")
       expect(payment.payment_lines.sole.amount_cents).to eq(0)
     end
+
+    it "keeps the purchase but warns visibly when attendance cannot be recorded (training closed)" do
+      travel_to Date.current.next_occurring(:monday).beginning_of_day + 12.hours do
+        expect do
+          post admin_contributions_path, params: {
+            person_id: person.id,
+            contribution: { contribution_formula_id: formula.id, payment_method: "cash", record_attendance: "1" }
+          }
+        end.to change(Contribution, :count).by(1)
+
+        expect(response).to redirect_to(admin_member_path(person))
+        follow_redirect!
+        expect(response.body).to include("présence non enregistrée")
+      end
+    end
+
+    it "blocks a purchase when the person already has an active contribution (garde-fou anti-doublon)" do
+      post admin_contributions_path, params: {
+        person_id: person.id,
+        contribution: { contribution_formula_id: formula.id, payment_method: "cash" }
+      }
+
+      contribution_count_before = Contribution.count
+      payment_count_before = Payment.count
+
+      post admin_contributions_path, params: {
+        person_id: person.id,
+        contribution: { contribution_formula_id: create(:contribution_formula, :day).id, payment_method: "cash" }
+      }
+
+      expect(Contribution.count).to eq(contribution_count_before)
+      expect(Payment.count).to eq(payment_count_before)
+      expect(response).to redirect_to(new_admin_contribution_path(person_id: person.id))
+      follow_redirect!
+      expect(response.body).to include("a déjà une cotisation active")
+    end
+  end
+
+  describe "GET /admin/contributions/beneficiary_search" do
+    it "finds people by name and excludes the given ids" do
+      match = create(:person, :with_circus_membership, first_name: "Camille", last_name: "Durand")
+      excluded = create(:person, :with_circus_membership, first_name: "Camille", last_name: "Autre")
+      create(:person, :with_circus_membership, first_name: "Someone", last_name: "Else")
+
+      get beneficiary_search_admin_contributions_path, params: { person_id: person.id, q: "Camille", exclude_ids: [ excluded.id ] }
+
+      expect(response).to have_http_status(:success)
+      expect(response.body).to include(match.full_name)
+      expect(response.body).not_to include(excluded.full_name)
+    end
+
+    it "excludes people without an active circus membership (garde-fou métier)" do
+      basic_membership_type = create(:membership_type, category: :basic)
+      ineligible = create(:person, first_name: "Camille", last_name: "SansCirque")
+      create(:membership, person: ineligible, membership_type: basic_membership_type, status: :active)
+
+      get beneficiary_search_admin_contributions_path, params: { person_id: person.id, q: "Camille" }
+
+      expect(response.body).not_to include(ineligible.full_name)
+    end
+
+    it "excludes the payer from results" do
+      get beneficiary_search_admin_contributions_path, params: { person_id: person.id, q: person.first_name }
+
+      expect(response.body).not_to include(person.full_name)
+    end
+
+    it "returns nothing for a query shorter than 2 characters" do
+      create(:person, first_name: "A")
+
+      get beneficiary_search_admin_contributions_path, params: { person_id: person.id, q: "a" }
+
+      expect(response.body).to include("Aucun résultat")
+    end
   end
 
   describe "POST /admin/contributions/upgrade" do
+    # Scopé ici (pas au niveau du describe racine) : depuis le garde-fou anti-doublon dans
+    # ContributionCreator, une cotisation active préexistante bloquerait les tests POST
+    # /admin/contributions "normaux" ailleurs dans ce fichier — seul le flux upgrade doit
+    # partir d'une personne qui a déjà une cotisation active.
+    let!(:existing_contribution) do
+      People::ContributionCreator.new(
+        person: person,
+        contribution_formula_id: from_formula.id,
+        payment_method: "cash",
+        recorded_by_id: admin.id
+      ).call.contribution
+    end
+
     it "upgrades using canonical params" do
       expect do
         post upgrade_admin_contributions_path, params: {

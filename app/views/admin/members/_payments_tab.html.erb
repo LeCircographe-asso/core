@@ -7,20 +7,36 @@
         <div class="bg-gray-50 rounded-lg p-4">
           <div class="flex justify-between items-start mb-2">
             <div class="flex-1">
+              <% is_beneficiary_only = person.present? && payment.person_id != person.id %>
+              <%# "Montant" = ce que CETTE personne a payé. Bénéficiaire pur (n'a rien payé,
+                  quelqu'un d'autre a réglé) : 0 — la valeur de sa cotisation n'est pas ce
+                  qu'elle a payé, l'afficher ici donnerait l'impression trompeuse du contraire. %>
+              <% displayed_amount_cents = is_beneficiary_only ? 0 : payment.total_cents %>
+              <%# Un bénéficiaire pur ne voit que ce qui le concerne, pas tout le panier du
+                  payeur (ex. sa propre cotisation achetée dans la même transaction). %>
+              <% displayed_lines = is_beneficiary_only ? payment.payment_lines.select { |line| line.person_id == person.id } : payment.payment_lines %>
               <div class="flex flex-wrap items-center gap-2 mb-1">
                 <div class="text-sm font-medium text-gray-900">
                   <% if payment.is_offered? %>
                     <span class="text-purple-600 font-semibold">Offert</span>
                   <% else %>
-                    <%= number_to_currency(payment.total_cents / 100.0, unit: "€", format: "%n %u") %>
+                    <%= number_to_currency(displayed_amount_cents / 100.0, unit: "€", format: "%n %u") %>
                   <% end %>
                 </div>
-                <% payment.payment_lines.each do |line| %>
+                <% displayed_lines.each do |line| %>
                   <span class="text-xs text-gray-500 bg-gray-200 px-2 py-1 rounded">
                     <%= line.history_description %>
                     <% if line.item_type == "Donation" %>
                       (<%= number_to_currency(line.amount_cents / 100.0, unit: "€", format: "%n %u") %>)
                     <% end %>
+                    <% if line.person_id.present? && person.present? && line.person_id != person.id %>
+                      <span class="text-amber-700">(pour <%= line.person&.full_name %>)</span>
+                    <% end %>
+                  </span>
+                <% end %>
+                <% if is_beneficiary_only %>
+                  <span class="text-xs text-blue-700 bg-blue-50 px-2 py-1 rounded">
+                    payé par <%= payment.person.full_name %>
                   </span>
                 <% end %>
               </div>

@@ -13,7 +13,7 @@ module Admin
     ].freeze
 
     before_action :set_person, only: %i[create upgrade]
-    before_action :set_person_for_new, only: %i[new]
+    before_action :set_person_for_new, only: %i[new beneficiary_search]
     before_action :set_breadcrumbs, only: %i[new create]
 
     def new
@@ -39,14 +39,15 @@ module Admin
         contribution_formula_id: contribution_purchase_params[:contribution_formula_id],
         payment_method: contribution_purchase_params[:payment_method].presence || "cash",
         recorded_by_id: Current.user&.id,
-        record_attendance: false,
+        record_attendance: ActiveModel::Type::Boolean.new.cast(contribution_purchase_params[:record_attendance]),
+        beneficiaries: build_beneficiary_entries,
         custom_amount_cents: custom_amount,
         offer_reason: contribution_purchase_params[:offer_reason],
         donation_cents: donation_cents
       ).call
 
       if result.success?
-        redirect_to admin_person_path(@person), notice: t(".purchased")
+        redirect_to admin_person_path(@person), notice: purchase_notice_with_warnings(result)
       else
         redirect_to new_admin_contribution_path(person_id: @person.id),
                     alert: t(".purchase_failed_alert", message: result.message)
@@ -54,6 +55,18 @@ module Admin
     rescue StandardError => e
       flash[:alert] = t(".purchase_failed_alert", message: e.message)
       redirect_to new_admin_contribution_path(person_id: @person.id)
+    end
+
+    def beneficiary_search
+      exclude_ids = Array(params[:exclude_ids]).map(&:to_i)
+      exclude_ids << @person.id if @person
+
+      # Garde-fou : seules les personnes avec une adhésion Cirque active peuvent
+      # bénéficier d'une cotisation — ne pas les proposer évite un rejet après coup.
+      @candidates = PersonNameSearch.call(query: params[:q], exclude_ids: exclude_ids)
+                                     .merge(Person.eligible_for_contribution_formulas)
+
+      render partial: "admin/contributions/beneficiary_search_results", locals: { candidates: @candidates }
     end
 
     def upgrade
@@ -87,8 +100,63 @@ module Admin
       admin_member_path(person)
     end
 
+    # La présence est enregistrée en best-effort (cf. People::ContributionCreator) : la
+    # cotisation reste valable même si la présence échoue (jour fermé, déjà présent...).
+    # On ne veut plus que ça disparaisse silencieusement pour autant — on l'ajoute au notice.
+    def purchase_notice_with_warnings(result)
+      return t(".purchased") if result.attendance_warnings.blank?
+
+      "#{t('.purchased')} #{t('.attendance_not_recorded_warning', details: result.attendance_warnings.join(' · '))}"
+    end
+
     def contribution_purchase_params
       params.expect(contribution: PURCHASE_ATTRS).merge(recorded_by_id: Current.user.id)
+    end
+
+    # `contribution[beneficiaries][0][person_id]`, etc. — le formulaire utilise un index
+    # numérique explicite par ligne (nécessaire pour que les boutons radio "formule" de
+    # chaque bénéficiaire ne se regroupent pas entre eux). Rails/Rack parse alors
+    # `beneficiaries` comme un Hash `{"0" => {...}, "1" => {...}}`, PAS comme un Array —
+    # `params.expect(beneficiaries: [[...]])` exige strictement un Array et échouait donc
+    # silencieusement sur toute soumission réelle (voir incident : bénéficiaire ignoré sans
+    # erreur visible). On lit et on permit chaque entrée à la main plutôt que via `expect`.
+    def raw_beneficiary_params
+      raw = params.dig(:contribution, :beneficiaries)
+      return [] if raw.blank?
+
+      # Chaque entrée n'est jamais utilisée que pour lire person_id/contribution_formula_id/
+      # record_attendance (jamais de mass-assignment sur un modèle) : to_unsafe_h suffit ici,
+      # même patron que People::PaymentRecorder#normalize_payment_lines.
+      raw.to_unsafe_h.values
+    end
+
+    # nil si aucun bénéficiaire additionnel n'a été soumis : People::ContributionCreator
+    # retombe alors sur son chemin single-bénéficiaire historique (achat pour @person
+    # uniquement). Une ligne bénéficiaire soumise SANS person_id est en revanche une
+    # anomalie (jamais un cas normal, cf. incident où une personne payait sans que le
+    # bénéficiaire ne reçoive rien, silencieusement) : on échoue bruyamment plutôt que
+    # de l'ignorer et de facturer un montant différent de ce que l'admin avait sous les yeux.
+    def build_beneficiary_entries
+      raw = raw_beneficiary_params
+      return nil if raw.blank?
+
+      if raw.any? { |beneficiary| beneficiary[:person_id].blank? }
+        raise "Un bénéficiaire additionnel n'a pas de personne sélectionnée dans le formulaire — rien n'a été enregistré, merci de réessayer."
+      end
+
+      payer_entry = {
+        person: @person,
+        contribution_formula_id: contribution_purchase_params[:contribution_formula_id],
+        record_attendance: ActiveModel::Type::Boolean.new.cast(contribution_purchase_params[:record_attendance])
+      }
+
+      [ payer_entry ] + raw.map do |beneficiary|
+        {
+          person: Person.find(beneficiary[:person_id]),
+          contribution_formula_id: beneficiary[:contribution_formula_id],
+          record_attendance: ActiveModel::Type::Boolean.new.cast(beneficiary[:record_attendance])
+        }
+      end
     end
 
     def donation_cents_from(params_hash)

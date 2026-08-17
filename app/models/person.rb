@@ -120,6 +120,11 @@ class Person < ApplicationRecord
     current_membership.membership_type.circus?
   end
 
+  # Équivalent SQL de #can_buy_contribution_formulas?, pour filtrer une recherche
+  # (ex. picker de bénéficiaires) sans devoir charger puis rejeter chaque candidat
+  # en Ruby. Garder les deux définitions alignées si la règle change.
+  scope :eligible_for_contribution_formulas, -> { joins(:memberships).merge(Membership.active.current.circus).distinct }
+
   def minor?
     is_minor
   end

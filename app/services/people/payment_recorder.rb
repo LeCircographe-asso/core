@@ -51,11 +51,13 @@ module People
           payment.payment_lines.create!(
             item_type: line[:item_type],
             item_id: item_id_for(line, payment),
+            person_id: line[:person_id] || payment.person_id,
             amount_cents: line[:amount_cents].to_i,
             description: line[:description]
           )
         end
 
+        log_audit_create(payment, recorder, created_lines)
         instrument_payment_created(payment, created_lines.length)
       end
 
@@ -102,6 +104,15 @@ module People
 
     def donation_line?(item_type)
       item_type.to_s.casecmp("donation").zero?
+    end
+
+    # Le log de création vit ici (pas dans un callback `Payment#after_create`) car
+    # `payment_lines` n'existe qu'une fois cette méthode passée — voir plan Phase 2.B.
+    def log_audit_create(payment, recorder, created_lines)
+      change_data = {
+        lines: created_lines.map { |line| { item_type: line.item_type, item_id: line.item_id, person_id: line.person_id, amount_cents: line.amount_cents } }
+      }
+      PaymentAuditLog.log(payment, recorder, "create", change_data)
     end
 
     def normalized_offer_reason

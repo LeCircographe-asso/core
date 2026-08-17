@@ -68,5 +68,24 @@ RSpec.describe Admin::Payments::PaymentDisplayComponent, type: :component do
         expect(component.display_payment_lines).to include("text-gray-400")
       end
     end
+
+    context "avec une ligne dont le bénéficiaire diffère du payeur" do
+      it "affiche la mention 'pour <nom>'" do
+        beneficiary = create(:person, first_name: "Camille", last_name: "Dupont")
+        contribution = create(:contribution, person: beneficiary)
+        create(:payment_line, payment: payment, item: contribution, person: beneficiary, amount_cents: 2500)
+
+        expect(component.display_payment_lines).to include("pour Camille Dupont")
+      end
+    end
+
+    context "avec une ligne dont le bénéficiaire est le payeur" do
+      it "n'affiche pas de mention 'pour'" do
+        contribution = create(:contribution, person: person)
+        create(:payment_line, payment: payment, item: contribution, person: person, amount_cents: 2500)
+
+        expect(component.display_payment_lines).not_to include("pour")
+      end
+    end
   end
 end

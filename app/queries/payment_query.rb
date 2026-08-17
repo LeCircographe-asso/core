@@ -5,6 +5,15 @@ module PaymentQuery
     Payment.where(person_id: person_id)
   end
 
+  # Paiements où la personne est payeuse OU bénéficiaire d'au moins une ligne
+  # (paiement multi-bénéficiaires). `by_person` reste payeur-uniquement pour
+  # les usages financiers où "qui a payé" compte réellement.
+  def self.visible_to(person)
+    Payment.left_joins(:payment_lines)
+           .where("payments.person_id = :id OR payment_lines.person_id = :id", id: person.id)
+           .distinct
+  end
+
   def self.by_user(user_id)
     user = User.find(user_id)
     user.person ? Payment.where(person_id: user.person.id) : Payment.none
@@ -23,7 +32,7 @@ module PaymentQuery
   end
 
   def self.with_person_and_recorded_by
-    Payment.includes(:person, :recorded_by, :payment_lines)
+    Payment.includes(:person, :recorded_by, payment_lines: :person)
   end
 
   def self.ordered_by_date(direction = :desc)
