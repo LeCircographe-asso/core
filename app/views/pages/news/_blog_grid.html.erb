@@ -3,9 +3,9 @@
 <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
   <% blogs.each do |blog| %>
     <article class="group flex flex-col h-full bg-white/95 border border-gray-200 hover:border-transparent hover:shadow-lg transition duration-300 rounded-2xl p-5">
-      <% if blog.cover_image_url.present? %>
+      <% if blog.cover_image.attached? %>
         <div class="aspect-w-16 aspect-h-11 mb-4 overflow-hidden rounded-xl">
-          <%= image_tag blog.cover_image_url,
+          <%= image_tag blog.cover_image,
                         alt: blog.title,
                         class: "w-full h-full object-cover group-hover:scale-105 transition-transform duration-500",
                         loading: "lazy",
