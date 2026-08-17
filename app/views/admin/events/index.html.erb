@@ -53,18 +53,16 @@
                     </div>
                   </div>
                   
-                  <div class="flex justify-between items-center pt-3 border-t border-gray-100">
-                    <%= link_to event_path(event), class: "text-sm text-green-600 hover:text-green-800", data: { turbo_frame: "_top" } do %>
-                      <i class="fas fa-eye mr-1"></i> Voir
-                    <% end %>
-                    
-                    <%= link_to edit_admin_event_path(event), class: "text-sm text-blue-600 hover:text-blue-800" do %>
-                      <i class="fas fa-edit mr-1"></i> Modifier
-                    <% end %>
-                    
-                    <%= button_to admin_event_path(event), method: :delete, class: "text-sm text-red-600 hover:text-red-800", form: { data: { turbo_confirm: "Êtes-vous sûr de vouloir supprimer cet événement ?" } } do %>
-                      <i class="fas fa-trash-alt mr-1"></i> Supprimer
-                    <% end %>
+                  <div class="pt-3 border-t border-gray-100">
+                    <%= render "admin/shared/row_actions",
+                        show_path: event_path(event),
+                        show_text: "Voir",
+                        show_data: { turbo_frame: "_top" },
+                        edit_path: edit_admin_event_path(event),
+                        edit_text: "Modifier",
+                        delete_path: admin_event_path(event),
+                        delete_text: "Supprimer",
+                        confirm_delete_text: "Êtes-vous sûr de vouloir supprimer cet événement ?" %>
                   </div>
                 </div>
               </div>
