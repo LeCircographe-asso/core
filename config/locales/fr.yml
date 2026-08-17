@@ -289,6 +289,20 @@ fr:
           processed: Paiement traité avec succès
           already_processed: Paiement déjà traité
           failure_alert: 'Erreur lors du traitement: %{message}'
+      attendances:
+        already_present: "%{name} est déjà enregistré·e comme présent·e aujourd'hui."
+        needs_membership: Une adhésion Cirque active est nécessaire pour enregistrer une présence.
+        confirm_title: Enregistrer la présence ?
+        confirm_button: Enregistrer la présence
+        no_usable_contribution: Aucune cotisation utilisable pour aujourd'hui.
+        buy_and_record: Acheter une cotisation
+        lend_prompt: Ou utiliser le carnet Pack 10 de quelqu'un d'autre (déjà adhérent Cirque)
+        search_placeholder: Nom, prénom...
+        search_submit: Chercher
+        no_lenders_found: Aucun carnet disponible trouvé.
+        use_lender_button: Utiliser ce carnet
+        success: Présence enregistrée !
+        lent_by: "Séance empruntée au carnet de %{name}."
   checkout:
     success:
       payment_ok: Paiement réussi et commande mise à jour.

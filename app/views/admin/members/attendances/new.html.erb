@@ -1,0 +1,9 @@
+<%= turbo_frame_tag "attendance-frame-#{@person.id}" do %>
+  <%= render "state",
+        person: @person,
+        already_present_today: @already_present_today,
+        needs_membership: @needs_membership,
+        usable_contribution: @usable_contribution,
+        lender_query: @lender_query,
+        lenders: @lenders %>
+<% end %>

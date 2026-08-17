@@ -1,0 +1,13 @@
+<div class="bg-green-50 border border-green-200 rounded-lg p-4">
+  <div class="flex items-center">
+    <i class="fas fa-check-circle text-green-600 text-2xl mr-3"></i>
+    <div>
+      <p class="font-medium text-green-900"><%= t("admin.members.attendances.success") %></p>
+      <% if result.attendance.contribution && result.attendance.contribution.person_id != result.attendance.person_id %>
+        <p class="text-sm text-green-700 mt-1">
+          <%= t("admin.members.attendances.lent_by", name: result.attendance.contribution.person.full_name) %>
+        </p>
+      <% end %>
+    </div>
+  </div>
+</div>

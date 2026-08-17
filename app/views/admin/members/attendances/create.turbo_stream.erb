@@ -1,0 +1,16 @@
+<%= turbo_stream.replace "attendance-frame-#{@person.id}" do %>
+  <%= turbo_frame_tag "attendance-frame-#{@person.id}" do %>
+    <% if @result.success? %>
+      <%= render "success", result: @result %>
+    <% else %>
+      <%= render "state",
+            person: @person,
+            already_present_today: @already_present_today,
+            needs_membership: @needs_membership,
+            usable_contribution: @usable_contribution,
+            lender_query: @lender_query,
+            lenders: @lenders %>
+      <p class="mt-2 text-sm text-red-700"><%= @result.message %></p>
+    <% end %>
+  <% end %>
+<% end %>

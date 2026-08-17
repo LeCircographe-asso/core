@@ -13,6 +13,10 @@ module AttendanceManagement
       person = Person.find(person_id)
       contribution = find_contribution(person)
 
+      if contribution && contribution.person_id != person.id && !contribution.lendable_to?(person)
+        return failure("Ce carnet ne peut pas être prêté à cette personne : Pack10 actif requis avec des séances restantes, et le bénéficiaire doit avoir une adhésion Cirque active.")
+      end
+
       list = find_or_create_attendance_list
       creator = AttendanceCreator.new(
         person_id: person.id,

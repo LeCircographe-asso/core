@@ -36,6 +36,7 @@ Rails.application.routes.draw do
       resources :payments, module: :members, only: %i[index new create show update destroy] do
         post :process_payment, on: :member
       end
+      resources :attendances, module: :members, only: %i[new create]
     end
     resources :events, only: %i[new create edit update destroy index]
     resource :session, only: %i[new create destroy]
@@ -71,6 +72,7 @@ Rails.application.routes.draw do
     end
     resources :contributions, only: %i[new create] do
       post :upgrade, on: :collection
+      get :beneficiary_search, on: :collection
     end
     resources :member_numbers, only: [] do
       post :suggest, on: :collection

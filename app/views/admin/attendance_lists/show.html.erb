@@ -145,7 +145,12 @@
                   <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                     <% if attendance.contribution.present? %>
                       <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
-                        <i class="fas fa-ticket-alt mr-1"></i> Carnet
+                        <i class="fas fa-ticket-alt mr-1"></i>
+                        <% if attendance.contribution.person_id != attendance.person_id %>
+                          Carnet de <%= attendance.contribution.person.full_name %>
+                        <% else %>
+                          Carnet
+                        <% end %>
                       </span>
                     <% else %>
                       <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">

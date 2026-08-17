@@ -233,6 +233,33 @@ RSpec.describe Contribution, type: :model do
     end
   end
 
+  describe '#lendable_to?' do
+    let(:owner) { create(:person, :with_circus_membership) }
+    let(:pack10) { create(:contribution, person: owner, contribution_formula: pack10_plan, sessions_remaining: 3) }
+
+    it 'returns true when the recipient has an active circus membership' do
+      recipient = create(:person, :with_circus_membership)
+      expect(pack10.lendable_to?(recipient)).to be true
+    end
+
+    it 'returns false when the recipient has no active circus membership' do
+      recipient = create(:person, :with_basic_membership)
+      expect(pack10.lendable_to?(recipient)).to be false
+    end
+
+    it 'returns false when there are no sessions remaining' do
+      pack10.update!(sessions_remaining: 0, status: :consumed)
+      recipient = create(:person, :with_circus_membership)
+      expect(pack10.lendable_to?(recipient)).to be false
+    end
+
+    it 'returns false for a non-pack10 formula' do
+      book = create(:contribution, person: owner, contribution_formula: trimester_plan, sessions_remaining: nil, expires_at: 3.months.from_now)
+      recipient = create(:person, :with_circus_membership)
+      expect(book.lendable_to?(recipient)).to be false
+    end
+  end
+
   describe '#expired?' do
     context 'with pack10 plan' do
       let(:contribution) { create(:contribution, person: person, contribution_formula: pack10_plan) }
@@ -439,6 +466,13 @@ RSpec.describe Contribution, type: :model do
     describe '.with_expiration' do
       it 'returns books with expiration date' do
         expect(Contribution.with_expiration).to include(expired_book)
+      end
+    end
+
+    describe '.pack10' do
+      it 'returns only pack10 contributions' do
+        expect(Contribution.pack10).to include(active_book, consumed_book)
+        expect(Contribution.pack10).not_to include(expired_book)
       end
     end
   end

@@ -33,6 +33,7 @@
           is_deleted: @user&.deleted?,
           current_user: current_user
         ) %>
+        <%= turbo_frame_tag "attendance-frame-#{@person.id}", class: "block empty:hidden mt-4" %>
       </div>
     </div>
   </div>

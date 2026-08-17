@@ -212,6 +212,21 @@ RSpec.describe 'Admin::Members', type: :request do
         get admin_member_path(0)
         expect(response).to redirect_to(admin_members_path)
       end
+
+      it 'offers to record attendance when the person has an active circus membership' do
+        membership_type = create(:membership_type, category: :circus)
+        create(:membership, person: person, membership_type: membership_type, status: :active)
+
+        get admin_member_path(person)
+
+        expect(response.body).to include(new_admin_member_attendance_path(person))
+      end
+
+      it 'does not offer to record attendance without an active circus membership' do
+        get admin_member_path(person)
+
+        expect(response.body).not_to include(new_admin_member_attendance_path(person))
+      end
     end
   end
 

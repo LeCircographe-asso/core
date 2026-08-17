@@ -54,6 +54,13 @@ class Contribution < ApplicationRecord
     save!
   end
 
+  # Un Pack10 peut couvrir la présence d'une autre personne (prêt de carnet) :
+  # la condition d'adhésion Cirque porte alors sur le bénéficiaire, pas sur le
+  # propriétaire du carnet (contrairement à #can_use?).
+  def lendable_to?(recipient)
+    is_pack10? && active? && sessions_remaining.to_i.positive? && recipient.can_buy_contribution_formulas?
+  end
+
   def refund_session!
     return true unless has_session_limit?
 
@@ -101,6 +108,8 @@ class Contribution < ApplicationRecord
       .where("expires_at IS NULL OR expires_at > ?", Date.current)
       .where("sessions_remaining IS NULL OR sessions_remaining > 0")
   }
+
+  scope :pack10, -> { joins(:contribution_formula).where(contribution_formulas: { duration: "pack10" }) }
 
   def self.reactivate_suspended_packs_for_person(person)
     return unless person.can_buy_contribution_formulas?

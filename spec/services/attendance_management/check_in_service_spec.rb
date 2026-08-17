@@ -52,4 +52,33 @@ RSpec.describe AttendanceManagement::CheckInService do
       end
     end
   end
+
+  describe 'lending a contribution to someone else' do
+    let(:owner) { create(:person, :with_circus_membership) }
+    let(:borrowed_pack10) { create(:contribution, person: owner, contribution_formula: pack_plan, sessions_remaining: 4) }
+
+    context 'when the recipient has an active circus membership' do
+      let(:recipient) { create(:person, :with_circus_membership) }
+
+      it 'creates the attendance and decrements the lender contribution' do
+        result = described_class.new(person_id: recipient.id, attendance_list_id: attendance_list.id, contribution_id: borrowed_pack10.id).call
+
+        expect(result.success?).to be true
+        expect(result.attendance.person).to eq(recipient)
+        expect(result.attendance.contribution).to eq(borrowed_pack10)
+        expect(borrowed_pack10.reload.sessions_remaining).to eq(3)
+      end
+    end
+
+    context 'when the recipient has no active circus membership' do
+      let(:recipient) { create(:person, :with_basic_membership) }
+
+      it 'fails without creating an attendance or decrementing the contribution' do
+        expect do
+          result = described_class.new(person_id: recipient.id, attendance_list_id: attendance_list.id, contribution_id: borrowed_pack10.id).call
+          expect(result.success?).to be false
+        end.not_to(change { borrowed_pack10.reload.sessions_remaining })
+      end
+    end
+  end
 end

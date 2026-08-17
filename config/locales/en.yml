@@ -46,6 +46,21 @@ en:
         use_inline_notice: Utilisez l'édition inline pour modifier les paiements
       new:
         creation_disabled_notice: Création de paiement temporairement désactivée
+    members:
+      attendances:
+        already_present: "%{name} is already checked in for today."
+        needs_membership: An active Circus membership is required to record attendance.
+        confirm_title: Record attendance?
+        confirm_button: Record attendance
+        no_usable_contribution: No usable contribution for today.
+        buy_and_record: Buy a contribution
+        lend_prompt: Or use someone else's Pack10 (must already be a Circus member)
+        search_placeholder: First name, last name...
+        search_submit: Search
+        no_lenders_found: No available Pack10 found.
+        use_lender_button: Use this Pack10
+        success: Attendance recorded!
+        lent_by: "Session borrowed from %{name}'s Pack10."
     contribution_formulas:
       create:
         success: Contribution formula created successfully!
