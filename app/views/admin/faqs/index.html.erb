@@ -1,5 +1,6 @@
 <div class="min-h-screen bg-gray-50/40 py-6 px-4">
   <div class="max-w-3xl mx-auto space-y-5">
+    <%= render 'shared/breadcrumbs' %>
 
     <%# ── En-tête ── %>
     <div class="flex items-end justify-between gap-4">
@@ -39,37 +40,20 @@
 
         <%# Entrées (sortable) %>
         <% if entries.any? %>
-          <div class="divide-y divide-gray-50"
-               data-controller="sortable"
-               data-sortable-url-value="<%= reorder_admin_faqs_path %>">
+          <%= render layout: "admin/shared/sortable_list", locals: { reorder_url: reorder_admin_faqs_path } do %>
             <% entries.each_with_index do |faq, i| %>
-              <div class="group flex items-center gap-2 px-3 py-3 hover:bg-gray-50/60 transition-colors cursor-default"
-                   draggable="true"
-                   data-sortable-row
-                   data-id="<%= faq.id %>"
-                   data-action="dragstart->sortable#dragstart dragend->sortable#dragend dragover->sortable#dragover dragleave->sortable#dragleave drop->sortable#drop">
-                <%# Grip handle %>
-                <span class="shrink-0 text-gray-300 hover:text-gray-500 cursor-grab active:cursor-grabbing select-none text-base leading-none">⠿</span>
-                <%# Numéro %>
-                <span class="shrink-0 text-xs font-mono text-gray-300 w-4 text-right select-none tabular-nums" data-sortable-number><%= i + 1 %></span>
-                <%# Contenu %>
+              <%= render "admin/shared/sortable_row", item: faq, index: i,
+                  edit_path: edit_admin_faq_path(faq),
+                  edit_text: t("admin.faqs.index.edit"),
+                  delete_path: admin_faq_path(faq),
+                  confirm_delete_text: t("admin.faqs.index.confirm_delete") do %>
                 <div class="flex-1 min-w-0">
                   <p class="text-sm font-medium text-gray-900 leading-snug"><%= faq.question %></p>
                   <p class="text-xs text-gray-400 mt-0.5 line-clamp-1"><%= strip_tags(faq.answer) %></p>
                 </div>
-                <%# Actions %>
-                <div class="flex items-center gap-1 shrink-0 opacity-0 group-hover:opacity-100 transition-opacity">
-                  <%= link_to t("admin.faqs.index.edit"), "/admin/faqs/#{faq.id}/edit",
-                        data: { turbo_frame: "modal" },
-                        class: "text-xs px-2 py-1 rounded-md border border-gray-200 text-gray-600 hover:bg-white hover:border-gray-300 transition-colors" %>
-                  <%= button_to "✕", "/admin/faqs/#{faq.id}",
-                        method: :delete,
-                        data: { turbo_confirm: t("admin.faqs.index.confirm_delete") },
-                        class: "text-xs px-2 py-1 rounded-md border border-transparent text-red-400 hover:border-red-100 hover:bg-red-50 bg-transparent cursor-pointer transition-colors" %>
-                </div>
-              </div>
+              <% end %>
             <% end %>
-          </div>
+          <% end %>
         <% else %>
           <p class="px-4 py-5 text-sm text-gray-400 italic text-center"><%= t("admin.faqs.index.empty") %></p>
         <% end %>

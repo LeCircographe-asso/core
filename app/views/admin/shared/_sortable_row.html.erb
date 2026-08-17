@@ -1,0 +1,8 @@
+<div class="group flex items-center gap-3 px-3 py-3 hover:bg-gray-50/60 transition-colors cursor-default"
+     draggable="true" data-sortable-row data-id="<%= item.id %>"
+     data-action="dragstart->sortable#dragstart dragend->sortable#dragend dragover->sortable#dragover dragleave->sortable#dragleave drop->sortable#drop">
+  <span class="shrink-0 text-gray-300 hover:text-gray-500 cursor-grab active:cursor-grabbing select-none text-base leading-none">⠿</span>
+  <span class="shrink-0 text-xs font-mono text-gray-300 w-4 text-right select-none tabular-nums" data-sortable-number><%= index + 1 %></span>
+  <%= yield %>
+  <%= render "admin/shared/row_actions", edit_path:, delete_path:, edit_text:, confirm_delete_text:, extra_class: local_assigns[:extra_class] || "opacity-0 group-hover:opacity-100 transition-opacity" %>
+</div>
