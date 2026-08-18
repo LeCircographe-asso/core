@@ -37,8 +37,20 @@ Rails.application.configure do
   config.ssl_options = { redirect: { exclude: ->(request) { request.path == "/up" } } }
 
   # Mailer
+  # Sandbox Mailjet account (same as development) — the association's own
+  # Mailjet account isn't accessible yet. Not real prod-grade sending, but
+  # unblocks testing the actual email workflow on staging instead of every
+  # delivery silently failing against localhost:25 (no smtp_settings at all).
   config.action_mailer.perform_caching = false
   config.action_mailer.delivery_method = :smtp
+  config.action_mailer.smtp_settings = {
+    address: "in-v3.mailjet.com",
+    port: 587,
+    user_name: Rails.application.credentials.dig(:mailjet, :sandbox, :api_key),
+    password: Rails.application.credentials.dig(:mailjet, :sandbox, :secret_key),
+    authentication: :plain,
+    enable_starttls_auto: true
+  }
   config.action_mailer.default_url_options = {
     host: "staging.lecircographe.fr",
     protocol: "https"
