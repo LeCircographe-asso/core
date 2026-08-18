@@ -298,8 +298,8 @@ document.addEventListener("turbo:load", () => {
   }
 })
 
-Turbo.setConfirmMethod((message, element) => {
+Turbo.config.forms.confirm = (message, element) => {
   return showModal(message, element)
-})
+}
 
 
