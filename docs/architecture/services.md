@@ -70,6 +70,12 @@ Cette séparation “Entity / Account” garantit :
 - **Comportement attendu côté appelant** : passer `item_type: "Donation"` (ou laisser le défaut du service) ; fournir montants cohérents avec `total_cents`.
 - **Validation** : la somme des `payment_lines` doit égaler `total_cents` ; sinon, `failure`.
 
+### ✅ Imports::MemberImportService (v1, 2026-08-18)
+- Import CSV en masse (`Person` + `Membership` Cirque + `Payment` via `People::PaymentRecorder`) depuis un export Google Sheets. Colonnes lues **par position**, pas par nom (fichier source à deux colonnes homonymes) — voir `COLUMNS` dans le service.
+- Statut `Membership` calculé à l'import (`:active`/`:expired` selon `ended_at`), tarif sélectionné par montant payé.
+- **Limite connue** : doublons cross-personnes (même email légitimement partagé, ré-adhésion ambiguë) non arbitrés automatiquement — voir `docs/internal/todo.md` § Import membres.
+- **Utilisé dans :** `Admin::ImportsController#create`, UI modal Stimulus (`import_modal_controller.js`).
+
 ### ✅ People::AttachUserToPerson & People::AccountLinker (liaison CRM)
 - **`People::AttachUserToPerson`** : rattache un `User` à une `Person` cible (refuse si la cible a déjà un autre `User`), instrumentation `people.user_attached`.
 - **`People::AccountLinker`** : orchestration (attach via `AttachUserToPerson`, merge optionnel de l’ancienne fiche avec `People::AccountMerger`). Événement `people.account_linked`.
