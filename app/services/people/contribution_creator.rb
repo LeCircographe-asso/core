@@ -22,6 +22,7 @@ module People
     attribute :custom_amount_cents, :integer
     attribute :offer_reason, :string
     attribute :donation_cents, :integer
+    attribute :purchased_at, :datetime
 
     validates :contribution_formula_id, presence: true, if: -> { beneficiaries.blank? }
     validates :payment_method, presence: true, inclusion: { in: %w[cash card cheque transfer offered pending] }
@@ -132,7 +133,7 @@ module People
 
       contribution = beneficiary.contributions.create!(
         People::ContributionPayloadBuilder.call(contribution_formula)
-          .merge(contribution_formula: contribution_formula, status: :active, purchased_at: Time.current)
+          .merge(contribution_formula: contribution_formula, status: :active, purchased_at: purchased_at || Time.current)
       )
 
       amount_cents = amount_for(contribution_formula.price_cents)

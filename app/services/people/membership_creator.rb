@@ -16,6 +16,7 @@ module People
     attribute :custom_amount_cents, :integer
     attribute :offer_reason, :string
     attribute :donation_cents, :integer
+    attribute :started_at, :date
 
     validates :person, presence: true
     validates :membership_type_id, presence: true
@@ -44,10 +45,11 @@ module People
           offer_reason: offer_reason
         ) if payment_method == "offered"
 
+        start_date = started_at || Date.current
         membership = person.memberships.create!(
           membership_type: membership_type,
-          started_at: Date.current,
-          ended_at: Date.current + 1.year,
+          started_at: start_date,
+          ended_at: start_date + 1.year,
           status: :active
         )
 

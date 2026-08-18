@@ -22,6 +22,10 @@ Rails.application.routes.draw do
     resources :blogs
     resources :gallery_photos, only: %i[index create destroy]
     resources :dashboard, only: %i[index], path: "dashboard"
+    namespace :hubs do
+      get :memberships
+      get :pages
+    end
     resource :opening_hours, only: %i[show edit update]
     # Legacy: "Faire un don" used GET /admin/donations?person_id=… before +new+ existed.
     get "donations", to: redirect { |_path_params, request|
@@ -70,7 +74,7 @@ Rails.application.routes.draw do
       post :archive, on: :member
       post :unarchive, on: :member
     end
-    resources :contributions, only: %i[new create] do
+    resources :contributions, only: %i[new create edit update] do
       post :upgrade, on: :collection
       get :beneficiary_search, on: :collection
     end
@@ -117,14 +121,16 @@ Rails.application.routes.draw do
   }
 
   resource :session, only: %i[new create destroy]
-  resources :passwords, only: %i[new create edit update], param: :token
+  resources :passwords, only: %i[new create edit update], param: :token do
+    get :request_reset, on: :collection
+  end
   resource :registration, only: %i[new create]
   resources :event_interests, only: %i[create destroy]
   resources :blogs, only: %i[show] do
     get :latest, on: :collection
+    get :index, on: :collection, as: :newsletter
   end
   resources :partners, only: %i[index]
-  get "/blog-newsletter", to: "blogs#index"
   resources :users, only: %i[show edit update destroy] do
     post "change_newsletter_status", on: :member
     get "change_newsletter_status", on: :member
@@ -141,10 +147,12 @@ Rails.application.routes.draw do
   # Route for newsletter unsubscribe by token (from emails)
   get "/newsletter/unsubscribe/:token", to: "users#unsubscribe_by_token", as: "newsletter_unsubscribe"
 
-  scope "/checkout" do
-    post "create", to: "checkout#create", as: "checkout_create"
-    get "success", to: "checkout#success", as: "checkout_success"
-    get "cancel", to: "checkout#cancel", as: "checkout_cancel"
+  resources :checkouts, only: [] do
+    collection do
+      post :create, as: :create
+      get :success, as: :success
+      get :cancel, as: :cancel
+    end
   end
 
   root "home#index"
@@ -169,10 +177,6 @@ Rails.application.routes.draw do
   post "/submit_contact", to: "contacts#create"
 
   mount LetterOpenerWeb::Engine, at: "/letter_opener" if Rails.env.development?
-
-  resource :password, only: %i[new create edit update] do
-    get :request_reset, on: :collection
-  end
 
   resource :settings, only: %i[show update], controller: "settings"
 end
