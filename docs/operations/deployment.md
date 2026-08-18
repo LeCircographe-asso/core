@@ -1,31 +1,9 @@
-# Guide de déploiement — Le Circographe
+# Déploiement — Le Circographe
 
-> **Statut** : stable
-> **Public cible** : équipe ops, contributeur
-> **Dernière vérification** : 2026-04-27
-> **Sources de vérité** : `config/deploy.staging.yml`, `config/deploy.production.yml`, `.github/workflows/deploy-staging.yml`, `.github/workflows/deploy-production.yml`, `.github/workflows/deploy-promote-main.yml`, `Dockerfile`.
+> **Statut** : stable | **Dernière vérification** : 2026-08-18
+> **Stack** : Kamal + Docker + GitHub Actions | **Branches** : `dev` → `staging` → `main` (prod)
 
-> Source de vérité **unique** pour le déploiement Kamal (staging + production).
-> Fusion de l'ancien `knowledge/DEPLOYMENT_GUIDE.md` et des « règles d'or » de `knowledge/KNOWLEDGE_BASE.md`.
-> Pour un déploiement bare-metal alternatif (sans Kamal), voir [`../internal/sqlite_deployment.md`](../internal/sqlite_deployment.md).
->
-> **Branches actives** (cf. `.github/workflows/deploy-*.yml`) :
-> `dev` (intégration) → `staging` (déploie staging) → `main` (déploie production).
-
-### Comprendre « staging a le code mais rien ne part sur le VPS »
-
-Ce sont **deux étapes distinctes** :
-
-1. **Git** : la branche `staging` pointe sur un commit (merge depuis `dev`, promote, ou push manuel). Les « fichiers » sont à jour sur GitHub.
-2. **CI/CD** : le workflow **`deploy-staging`** construit l’image Docker, la pousse vers **GHCR**, puis **Kamal** déploie sur le VPS. Si cette étape échoue ou ne tourne pas, le serveur garde l’**ancienne** image.
-
-Cas fréquents :
-
-| Situation | Effet |
-|-----------|--------|
-| Push fait par **GitHub Actions** avec `GITHUB_TOKEN` (promote) | Le push **ne déclenche pas** un second workflow `on: push`. Il faut le **`workflow_dispatch`** explicite (`gh workflow run deploy-staging`) — c’est ce que fait **`deploy-promote-to-staging`**, qui **attend maintenant la fin** du déploiement (succès ou échec visible dans le même job promote). |
-| Variables **`vars.STAGING_SERVER_IP`** ou secrets manquants | Le job **deploy** ou **build** échoue ; le merge Git peut quand même être vert. |
-| Erreur Kamal / proxy / registry | Même constat : corriger les logs du workflow **`deploy-staging`**. |
+**Key insight:** Git push ≠ VPS deploy. `staging` branch updated ≠ CI/CD ran. If workflow fails, VPS keeps old image. Check `.github/workflows/deploy-{staging,production}.yml` logs.
 
 ## 1. Workflow Git standard
 
@@ -102,156 +80,44 @@ SECRET_KEY_BASE=${SECRET_KEY_BASE:-}              # optionnel locally
 
 **Jamais**: `KAMAL_REGISTRY_PASSWORD=ghcr_abc123xyz` (hardcodé). Toujours `$VARIABLE`.
 
-## 4. Règles critiques (à ne jamais oublier)
+## 4. Règles Critiques (Kamal healthchecks)
 
-Ces règles sont issues de plusieurs incidents en staging/production. Les ignorer
-casse les health checks Kamal ou rend le conteneur inaccessible.
+| Règle | Raison | Fix |
+|-------|--------|-----|
+| `/up` toujours accessible (no auth, no redirects) | Kamal teste `/up` pour santé. 401/301 = down = rollback. | `return @app.call(env) if request.path == "/up"` |
+| `config.hosts.clear` en staging/prod | Container ID Docker est hostname pour healthcheck | Ajout dans `config/environments/{staging,production}.rb` |
+| `SSL exclude /up` | Force SSL redirige /up en 301 = healthcheck fail | `config.ssl_options = { redirect: { exclude: ->(req) { req.path == "/up" } } }` |
+| Assets precompiled + `public/assets` in Docker | Missing assets = crash | `SECRET_KEY_BASE=dummy RAILS_ENV=staging bundle exec rails assets:precompile` |
+| Single image, dual env | One image for staging + prod (RAILS_ENV at runtime) | Don’t hardcode RAILS_ENV in Dockerfile |
 
-### 4.1 Middleware d'authentification — toujours exclure `/up`
+## 5. Troubleshooting
 
-```ruby
-return @app.call(env) if request.path == "/up"
-```
+| Symptôme | Cause | Résolution |
+|----------|-------|-----------|
+| `Propshaft::MissingAssetError` | Assets not compiled | Check Dockerfile + `.dockerignore` |
+| `HTTP 401/301 on /up` | Auth middleware blocks healthcheck | Exclude `/up` in middleware |
+| `Blocked hosts: <container-id>` | Host Authorization issue | `config.hosts.clear` missing |
+| Healthcheck timeout | SSL redirect on /up | Add exclude in `ssl_options` |
+| `Exit 255` / no healthy container | App crashed during startup | Check logs in `.github/workflows/deploy-*.yml` |
+| `Missing secret_key_base` | Credentials not loaded | Verify GitHub Secrets set |
 
-**Pourquoi** : Kamal teste `/up` pour décider de la santé du conteneur.
-Toute réponse `401`/`301` sur `/up` ⇒ conteneur considéré comme down ⇒ rollback.
+## 6. Architecture Kamal
 
-### 4.2 Assets Propshaft
+**One image → build once, run everywhere:**
+- Build: precompile assets avec dummy `SECRET_KEY_BASE`
+- Runtime: `RAILS_ENV` (staging/prod) + secrets via `.kamal/secrets`
+- Credentials flow: `ENV["SECRET_KEY_BASE"]` → fallback `credentials.yml.enc`
 
-- Assets précompilés requis en staging/prod.
-- Une `SECRET_KEY_BASE` dummy suffit pendant le build.
-- `public/assets` doit être inclus dans l'image Docker (donc **absent** de `.dockerignore`).
-
-```dockerfile
-RUN SECRET_KEY_BASE="a1b2c3...dummy...e1f2" RAILS_ENV=staging \
-    ./bin/rails assets:precompile
-```
-
-### 4.3 `RAILS_ENV` — build vs runtime
-
-- **Build time** : pas de `ENV RAILS_ENV` en dur dans le `Dockerfile`.
-- **Runtime** : configuré via Kamal (staging ou production).
-- **Conséquence** : une seule image Docker pour 2 environnements applicatifs.
-
-### 4.4 Host Authorization vs kamal-proxy
-
-```ruby
-# config/environments/{staging,production}.rb
-config.hosts.clear  # autoriser les container IDs Docker (ex: f4753d38178e)
-```
-
-**Pourquoi** : kamal-proxy utilise les IDs de conteneur comme hostnames lors
-des healthchecks. Sans `hosts.clear`, Rails renvoie `Blocked hosts`.
-
-### 4.5 SSL redirect vs healthcheck
-
-```ruby
-config.ssl_options = {
-  redirect: { exclude: ->(request) { request.path == "/up" } }
-}
-```
-
-**Pourquoi** : kamal-proxy frappe `/up` en HTTP. Un redirect `301 → https`
-fait échouer le healthcheck.
-
-## 5. Troubleshooting rapide
-
-| Erreur                              | Cause probable                       | Solution                                              |
-|-------------------------------------|--------------------------------------|-------------------------------------------------------|
-| `Propshaft::MissingAssetError`      | Assets non compilés                  | Vérifier `Dockerfile` + `.dockerignore` (cf. § 6.1)   |
-| `HTTP 401 sur /up`                  | Middleware d'auth bloque healthcheck | Exclure `/up` du middleware (§ 4.1)                   |
-| `Blocked hosts: f4753…:80`          | Host Authorization Rails             | `config.hosts.clear` (§ 4.4)                          |
-| Healthcheck timeout (`301`)         | `force_ssl` redirige `/up`           | `ssl_options` exclude `/up` (§ 4.5)                   |
-| `Exit 255`                          | Conteneur unhealthy                  | Vérifier logs + healthchecks                          |
-| `Missing secret_key_base`           | Credentials manquantes               | Vérifier GitHub Secrets                               |
-| `SharedEnvironmentConfig Error`     | Module inexistant inclus             | Supprimer `include SharedEnvironmentConfig`           |
-
-## 6. Solutions historisées
-
-### 6.1 `Propshaft::MissingAssetError`
-
-- `config.public_file_server.enabled = true`
-- `config.assets.paths << Rails.root.join("app", "assets", "builds")`
-- Précompilation pendant le build avec dummy `SECRET_KEY_BASE`.
-
-**Cas particulier (résolu 2025-10-12)** : `application.scss` ne génère pas
-`application.css` avec Propshaft + DartSass. Solution : renommer en
-`application.css` avec contenu CSS complet.
-
-### 6.2 Pipeline CSS (rappel)
-
-```
-Tailwind CSS  → app/assets/tailwind/application.css → app/assets/builds/
-DartSass      → app/assets/stylesheets/application.scss → ❌ ne génère pas .css
-Propshaft     → cherche "application" → veut "application.css"
-```
-
-**Conclusion** : le fichier final doit s'appeler `application.css` pour Propshaft.
-
-### 6.3 Fonts custom — bonnes pratiques
-
-```css
-@font-face {
-  font-family: 'Circographe';
-  src: font-url('Circographe-Regular.woff2') format('woff2');
-  font-display: swap;
-}
-```
-
-- `font-url()` → résolu par Rails vers `/assets/` après compilation.
-- Formats multiples (`woff2`, `woff`, `otf`) pour compatibilité.
-- `font-display: swap` pour éviter le flash de texte invisible.
-
-## 7. Architecture déploiement
-
-### 7.0 Kamal : image, hôte, proxy (CI)
-
-- **`config/deploy.staging.yml` — clé `image`** : `lecircographe-asso/circographe-staging` (sans `ghcr.io/`) ; le registry dans le YAML complète l’URL.
-- **Hôtes** : `STAGING_SERVER_IP` / `PRODUCTION_SERVER_IP` sont lus via `ENV.fetch` : en local, exporter l’IP avant `kamal` (sinon erreur *hosts/0*). Sur GitHub Actions : `vars.*`.
-- **`kamal proxy reboot` en non-interactif (CI)** : `bundle exec kamal proxy reboot --confirmed -c config/deploy.staging.yml` (évite la question *Are you sure?*).
-
-### 7.1 Une image, deux environnements
-
-- Build : assets compilés avec dummy key.
-- Runtime : `RAILS_ENV` injecté via Kamal.
-- Middlewares activés conditionnellement selon variables d'env.
-
-### 7.2 Volumes Kamal (persistance SQLite)
-
+**Volumes (persistence):**
 ```yaml
 volumes:
-  - "circographe_staging_storage:/rails/storage"   # base SQLite
-  - "/srv/www/lecircographe_staging/log:/app/log"  # logs accessibles
+  - "circographe_storage:/rails/storage"  # SQLite
+  - "/srv/log:/app/log"                   # Logs
 ```
 
-Sans volumes, la base SQLite serait recréée à chaque déploiement.
+**Kamal proxy:** SSL via Let’s Encrypt, forwards to app port 80.
 
-### 7.3 Flux des credentials Rails
-
-```ruby
-# staging.rb / production.rb
-config.secret_key_base = ENV["SECRET_KEY_BASE"] ||
-                         Rails.application.credentials.secret_key_base
-```
-
-- Build : dummy `SECRET_KEY_BASE` pour précompilation.
-- Runtime : `RAILS_MASTER_KEY` déchiffre `credentials.yml.enc`.
-- Kamal exporte `RAILS_MASTER_KEY` + `SECRET_KEY_BASE` via `.kamal/secrets`.
-- Ordre de priorité : `ENV` → `credentials.yml.enc`.
-
-### 7.4 Configuration Kamal type
-
-```yaml
-# config/deploy.staging.yml
-proxy:
-  ssl: true                    # Let's Encrypt automatique
-  host: staging.lecircographe.fr
-  app_port: 80                 # port interne conteneur
-
-volumes:
-  - "circographe_staging_storage:/rails/storage"
-  - "/srv/www/lecircographe_staging/log:/app/log"
-```
+**Secrets:** Only via `.kamal/secrets` (Kamal exports to container, never hardcoded).
 
 ## 8. Mode maintenance (production)
 
@@ -326,47 +192,36 @@ git filter-repo --path config/master.key  # ou git-filter-branch (plus lent)
 - `RAILS_LOG_LEVEL=info`
 - Force SSL + HSTS
 
-## 10. Importmap & Swiper assets
+## 7. Known Issues & Lessons
 
-- Depuis avril 2025, `assets:precompile` déclenche automatiquement
-  `importmap:normalize_modules`.
-- Le hook copie chaque module ES fingerprinté
-  (`public/assets/_/Cfv2l5G4-*.js`) vers un alias sans digest
-  (`public/assets/_/Cfv2l5G4.js`).
-- En local, `bin/rails_assets_reset` exécute la même opération (étape 8).
+**Fonts** (2025-10-12 incident): Propshaft searches for `application.css`. If using DartSass, `application.scss` doesn't generate `.css` — rename to `application.css`. Use `@font-face` with `font-url()` (resolved by Rails to `/assets/` after compile). Formats: woff2, woff, otf. Add `font-display: swap` to avoid text flash.
 
-### Vérification post-déploiement
+## 8. Maintenance Mode
 
-- Kamal / Docker build : rien à ajouter, le hook tourne durant `assets:precompile`.
-- VPS / serveurs : après `kamal deploy`, vérifier `ls public/assets/_/`.
-- Fallback : `bin/rails importmap:normalize_modules`.
+**Middleware:** `app/middleware/maintenance_mode_middleware.rb`
+- Allow: `/up` (healthcheck)
+- Allow: `/sessions/*` (login)
+- Allow: `/admin/*` if admin session valid
+- Else: 503 maintenance page
 
-## 11. Commandes utiles
+**Opening hours:** `Rails.cache.fetch("opening_hours")` with fallback.
+
+## 8. Commandes Utiles
 
 ```bash
+# Logs
 docker logs <container-id> --tail 50
+docker exec -it <container-id> bash
 
+# GitHub Actions
 gh run list --limit 5
 gh run view <run-id> --log
 gh run watch
 
+# Kamal
 kamal rollback -c config/deploy.staging.yml
-
-docker exec -it <container-id> bash
 ```
-
-## 12. Pièges évités (checklist)
-
-1. Mélanger les environnements (build en `development`, runtime en `production`).
-2. Inclure des credentials réelles dans le `Dockerfile` (la dummy key suffit pour le build).
-3. Oublier d'exclure `/up` d'un middleware (§ 4.1).
-4. Exclure `public/assets` du `.dockerignore` (doit y rester).
-5. Coder `RAILS_ENV` en dur dans le `Dockerfile`.
-6. Oublier `config.hosts.clear` (§ 4.4).
-7. Forcer SSL sur `/up` (§ 4.5).
-8. Ne pas exporter `RAILS_MASTER_KEY` côté Kamal.
-9. Coder les credentials sans fallback `ENV`.
 
 ---
 
-**Voir aussi :** [`../internal/optimizations_backlog.md`](../internal/optimizations_backlog.md) (backlog optimisation infra/Docker) · [`../internal/sqlite_deployment.md`](../internal/sqlite_deployment.md) (alternative bare-metal sans Kamal).
+**See also:** [`../internal/sqlite_deployment.md`](../internal/sqlite_deployment.md) (bare-metal alternative).
