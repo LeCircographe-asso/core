@@ -8,7 +8,7 @@
 class DonationReceipt < ApplicationRecord
   belongs_to :payment_line
 
-  validates :number, :issued_at, :issuer, presence: true
+  validates :number, :issued_at, :issuer, :donor_name, presence: true
   validates :number, uniqueness: true
   validate :payment_line_is_a_donation
 

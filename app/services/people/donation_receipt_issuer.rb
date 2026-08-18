@@ -3,13 +3,15 @@
 require "ostruct"
 
 module People
-  # Émet le reçu fiscal (métadonnées : numéro, date d'émission, émetteur) d'une
-  # ligne de paiement de don. Le numéro est séquentiel par année civile
-  # ("AAAA-NNN"), ce qui correspond à l'usage courant des reçus de dons
-  # associatifs en France (l'année du reçu est l'année de déclaration fiscale
-  # du donateur). L'émetteur est figé à l'émission plutôt que résolu à
-  # l'affichage, pour rester une preuve stable même si l'identité légale de
-  # l'association change plus tard.
+  # Émet le reçu de don (métadonnées : numéro, émetteur, donateur — pas de PDF
+  # stocké, voir DonationReceiptGenerator). Le numéro est séquentiel par année
+  # civile ("AAAA-NNN"). Émetteur et donateur sont figés à l'émission plutôt
+  # que résolus à l'affichage, pour rester une preuve stable même si l'adresse
+  # de l'association ou de la personne change ensuite.
+  #
+  # Ne constitue pas un reçu fiscal (art. 200/238 bis CGI) : l'éligibilité
+  # "intérêt général" de l'association n'est pas encore confirmée. Ne pas
+  # ajouter de mention de réduction d'impôt tant que ce n'est pas tranché.
   class DonationReceiptIssuer
     include ActiveModel::Model
     include ActiveModel::Attributes
@@ -31,6 +33,8 @@ module People
       target_line = resolve_payment_line
       return failure("Payment line not found") if target_line.blank?
       return failure("Payment line is not a donation") unless target_line.item_type == "Donation"
+      return failure("Payment is not successful") unless target_line.payment.status == "success"
+      return failure("Payment method does not represent a real monetary flow") if target_line.payment.payment_method == "offered"
 
       existing = target_line.donation_receipt
       return failure("A receipt already exists for this donation", donation_receipt: existing) if existing.present?
@@ -61,11 +65,16 @@ module People
 
       begin
         attempts += 1
+        donor = target_line.payment.person
+
         DonationReceipt.create!(
           payment_line: target_line,
           number: next_number(issued_at.year),
           issued_at: issued_at,
-          issuer: issuer_snapshot
+          issuer: issuer_snapshot,
+          issuer_address: issuer_address_snapshot,
+          donor_name: donor.full_name,
+          donor_address: address_snapshot(donor)
         )
       rescue ActiveRecord::RecordNotUnique
         raise if attempts >= MAX_ATTEMPTS
@@ -83,6 +92,17 @@ module People
 
     def issuer_snapshot
       ENV.fetch("ASSOCIATION_RECEIPT_ISSUER", "Le Circographe")
+    end
+
+    def issuer_address_snapshot
+      ENV.fetch("ASSOCIATION_RECEIPT_ADDRESS", "")
+    end
+
+    def address_snapshot(person)
+      [ person.address, "#{person.zip_code} #{person.town}".strip, person.country ]
+        .map(&:presence)
+        .compact
+        .join("\n")
     end
 
     def payment_line_identifier_present

@@ -87,5 +87,34 @@ RSpec.describe People::DonationReceiptIssuer do
       expect(result.success?).to be(false)
       expect(result.message).to include("not found")
     end
+
+    it "snapshots the donor's name and address at issuance" do
+      payment.person.update!(address: "5 rue du Trapèze", zip_code: "75011", town: "Paris", country: "France")
+
+      result = described_class.new(payment_line: donation_line).call
+
+      expect(result.donation_receipt.donor_name).to eq(payment.person.full_name)
+      expect(result.donation_receipt.donor_address).to eq("5 rue du Trapèze\n75011 Paris\nFrance")
+    end
+
+    it "fails when the payment is not successful" do
+      pending_payment = create(:payment, status: :pending)
+      pending_line = create(:payment_line, payment: pending_payment, item_type: "Donation", item_id: pending_payment.id)
+
+      result = described_class.new(payment_line: pending_line).call
+
+      expect(result.success?).to be(false)
+      expect(result.message).to include("not successful")
+    end
+
+    it "fails when the payment method is 'offered'" do
+      offered_payment = create(:payment, :success, :offered)
+      offered_line = create(:payment_line, payment: offered_payment, item_type: "Donation", item_id: offered_payment.id)
+
+      result = described_class.new(payment_line: offered_line).call
+
+      expect(result.success?).to be(false)
+      expect(result.message).to include("monetary flow")
+    end
   end
 end
