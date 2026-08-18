@@ -5,7 +5,7 @@ module Admin
     before_action :authorize_administer!, only: %i[index create]
 
     def index
-      add_breadcrumb I18n.t("breadcrumbs.admin.common.administration"), admin_dashboard_index_path
+      add_breadcrumb I18n.t("breadcrumbs.admin.common.dashboard"), admin_dashboard_index_path
       add_breadcrumb "Import/Export", nil
     end
 

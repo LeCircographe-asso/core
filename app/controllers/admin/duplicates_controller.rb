@@ -15,7 +15,7 @@ module Admin
       @duplicate_people_by_email_groups = report.duplicate_people_by_email.group_by { |person| person.email.to_s.downcase }
       @duplicate_people_by_phone_groups = report.duplicate_people_by_phone.group_by { |person| person.phone.to_s }
 
-      add_breadcrumb I18n.t("breadcrumbs.admin.common.administration"), admin_dashboard_index_path
+      add_breadcrumb I18n.t("breadcrumbs.admin.common.dashboard"), admin_dashboard_index_path
       add_breadcrumb I18n.t("admin.duplicates.breadcrumb"), nil
     end
 

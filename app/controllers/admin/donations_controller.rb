@@ -25,7 +25,7 @@ module Admin
     private
 
     def set_breadcrumbs
-      add_breadcrumb I18n.t("breadcrumbs.admin.common.administration"), admin_dashboard_index_path
+      add_breadcrumb I18n.t("breadcrumbs.admin.common.dashboard"), admin_dashboard_index_path
       add_person_context_breadcrumbs(@person, I18n.t("admin.donations.new.title"))
     end
 

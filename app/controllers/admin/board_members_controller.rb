@@ -49,7 +49,7 @@ module Admin
     private
 
     def set_breadcrumbs
-      add_breadcrumb I18n.t("breadcrumbs.admin.common.administration"), admin_dashboard_index_path
+      add_breadcrumb I18n.t("breadcrumbs.admin.common.dashboard"), admin_dashboard_index_path
     end
 
     def set_board_member

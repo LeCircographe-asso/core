@@ -92,7 +92,7 @@ module Admin
     end
 
     def set_breadcrumbs
-      add_breadcrumb I18n.t("breadcrumbs.admin.common.administration"), admin_dashboard_index_path
+      add_breadcrumb I18n.t("breadcrumbs.admin.common.dashboard"), admin_dashboard_index_path
       add_breadcrumb I18n.t("breadcrumbs.admin.contribution_formulas.catalog"), admin_contribution_formulas_path
     end
 
