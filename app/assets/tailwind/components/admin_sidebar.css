@@ -88,6 +88,15 @@
     justify-content: center;
     align-items: center;
     padding: 0.75rem 0;
+    flex-direction: column;
+  }
+
+  .admin-sidebar.collapsed .sidebar-menu li button {
+    justify-content: center;
+  }
+
+  .admin-sidebar.collapsed .sidebar-menu li button .submenu-chevron {
+    display: none;
   }
 
   .admin-sidebar.collapsed .sidebar-menu li a i,
@@ -132,6 +141,38 @@
     transition: transform 0.3s ease;
   }
 
+  /* Section headers — improved visual separation */
+  .sidebar-section {
+    margin-top: 1rem;
+    padding-top: 0.75rem;
+    padding-bottom: 0.25rem;
+    border-top: 2px solid transparent;
+    border-image: linear-gradient(90deg, #1F5C55, #f0f0f0) 1;
+    position: relative;
+  }
+
+  .sidebar-section:first-of-type {
+    margin-top: 0;
+    padding-top: 0;
+    border-top: none;
+  }
+
+  .sidebar-section > .text-sm {
+    font-weight: 700;
+    background: linear-gradient(90deg, #1F5C55, #2a7570);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-transform: uppercase;
+    font-size: 0.7rem;
+    letter-spacing: 0.8px;
+    transition: all 0.2s ease;
+  }
+
+  .sidebar-section:hover > .text-sm {
+    letter-spacing: 1px;
+  }
+
   .admin-layout {
     display: flex;
     width: 100%;
@@ -152,6 +193,56 @@
 
   .admin-content.expanded .admin-main {
     padding-left: calc(25px + 70px);
+  }
+
+  /* Submenu styles */
+  .submenu {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    max-height: 500px;
+    opacity: 1;
+    overflow: hidden;
+    transition: max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+                opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+                margin 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .submenu.hidden {
+    max-height: 0;
+    opacity: 0;
+    margin: 0;
+    pointer-events: none;
+  }
+
+  .submenu li {
+    margin-bottom: 0;
+  }
+
+  .submenu-chevron {
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .submenu-chevron.rotate-90 {
+    transform: rotate(90deg);
+  }
+
+  .admin-sidebar.collapsed .submenu {
+    display: none;
+  }
+
+  /* Submenu buttons styling */
+  .sidebar-menu button[data-action*="toggleSubmenu"] {
+    position: relative;
+  }
+
+  .sidebar-menu button[data-action*="toggleSubmenu"]:hover {
+    background-color: #1F5C55;
+    color: #fff;
+  }
+
+  .sidebar-menu button[data-action*="toggleSubmenu"]:hover .submenu-chevron {
+    color: #fff;
   }
 }
 
