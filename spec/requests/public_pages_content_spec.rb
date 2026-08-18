@@ -134,6 +134,17 @@ RSpec.describe 'Public pages content', type: :request do
       expect(response.body).to include('Léa Martin')
       expect(response.body).to include('La Grainerie')
     end
+
+    it "n'affiche pas les sections CA/partenaires (carrousel vide) quand elles n'ont aucune donnée" do
+      expect(BoardMember.count).to eq(0)
+      expect(Partner.count).to eq(0)
+
+      get about_path
+
+      expect(response).to have_http_status(:success)
+      expect(response.body).not_to include("Le Conseil d'administration")
+      expect(response.body).not_to include('Partenaires &amp; soutiens')
+    end
   end
 
   describe 'GET /pages/association' do
