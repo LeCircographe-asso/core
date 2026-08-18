@@ -36,6 +36,10 @@ env:
     PRODUCTION_MODE: true
     RAILS_SERVE_STATIC_FILES: true
     SOLID_QUEUE_IN_PUMA: true
+    # Réplication continue SQLite → IONOS Object Storage (config/initializers/litestream.rb).
+    # Credentials via config/credentials.yml.enc (litestream:), déchiffrées avec RAILS_MASTER_KEY
+    # déjà présent ci-dessus — pas de nouveau secret Kamal à ajouter.
+    LITESTREAM_REPLICATE_IN_PUMA: true
     # Optimisations pour VPS M
     WEB_CONCURRENCY: 0  # ← Single mode (pas de workers)
     JOB_CONCURRENCY: 1

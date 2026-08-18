@@ -37,6 +37,10 @@ plugin :tmp_restart
 # Run the Solid Queue supervisor inside of Puma for single-server deployments
 plugin :solid_queue if ENV["SOLID_QUEUE_IN_PUMA"]
 
+# Réplication continue de storage/production.sqlite3 vers IONOS (S3-compatible) — prod uniquement,
+# activé explicitement via env (voir config/deploy.production.yml). Pas en staging (BDD volatile).
+plugin :litestream if ENV["LITESTREAM_REPLICATE_IN_PUMA"]
+
 # Specify the PID file. Defaults to tmp/pids/server.pid in development.
 # In other environments, only set the PID file if requested.
 pidfile ENV["PIDFILE"] if ENV["PIDFILE"]

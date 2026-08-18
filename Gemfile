@@ -80,3 +80,5 @@ end
 
 # Deployment
 gem "kamal", require: false # Docker deployment
+
+gem "litestream", "~> 0.14.0"

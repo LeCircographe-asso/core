@@ -23,6 +23,7 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
     libjemalloc2 \
     libvips \
     libyaml-0-2 \
+    rclone \
     sqlite3
 
 # Set bundle configuration (RAILS_ENV will be set at runtime via Kamal)

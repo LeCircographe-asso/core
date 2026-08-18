@@ -28,12 +28,16 @@
 - [ ] *(lien, déjà trackée en `Later`)* RGPD anonymisation `Person`/`User` — item conformité/sécurité, pas dupliqué ici.
 
 ## Backup base de données prod (2026-08-17)
-- [ ] **Volume Kamal** `circographe_storage` (SQLite + Active Storage) — **aucun mécanisme configuré**. Choisir : **Litestream** (Rails 8 standard, continu → S3/Backblaze) ou snapshot planifié (cron).
-  - **Recommandé : Litestream** — ref Rails 8.1 `rails new --database=sqlite3 --skip-sqlite-backup` (Litestream opt-in). `config/deploy.yml` : ajouter accessory + `DATABASE_URL` env.
-  - [ ] Binaire Litestream dans Dockerfile (`apt-get install litestream`)
-  - [ ] Kamal secret : S3 endpoint + credentials
-  - [ ] Test restauration : `litestream restore -o /tmp/test.db s3://bucket/path` (prod jamais testé = cassé)
-  - [ ] Doc: `docs/backup-restore.md`
+- [ ] **Volume Kamal** `circographe_storage` (SQLite + Active Storage) — code en place (2026-08-18), **manuel + test réel restants avant de cocher**.
+  - Architecture retenue : gem `litestream` officielle (Puma plugin, in-process — pas d'accessory Kamal séparé) → **IONOS Object Storage** pour `production.sqlite3` en continu ; `Backups::NightlySnapshotJob` (SolidQueue recurring, 3h) → `rclone` → **Google Drive** pour les fichiers Active Storage + une 2e copie indépendante de la BDD. Détail complet : `docs/backup-restore.md`.
+  - [x] Gem `litestream` + `config/litestream.yml` + `config/initializers/litestream.rb` (credentials via `Rails.application.credentials.litestream`, pas de nouveau secret Kamal — réutilise `RAILS_MASTER_KEY` déjà présent).
+  - [x] Plugin Puma gated par `LITESTREAM_REPLICATE_IN_PUMA` (prod uniquement, `config/deploy.production.yml`).
+  - [x] Garde-fou disaster recovery dans `bin/docker-entrypoint` : restauration Litestream auto si `storage/production.sqlite3` absent au boot.
+  - [x] `rclone` dans le `Dockerfile` + `Backups::NightlySnapshotService`/`NightlySnapshotJob` + entrée `config/recurring.yml` (production uniquement, pas staging).
+  - [x] Doc : `docs/backup-restore.md`.
+  - [ ] **Manuel utilisateur** : créer le bucket/clé IONOS, remplir `bin/rails credentials:edit` (bloc `litestream:`), lancer `rclone config` en local pour Google Drive, déployer le `rclone.conf` sur le serveur (hors dépôt git).
+  - [ ] **Test restauration réel** : `litestream:restore` en prod vers un fichier temporaire + vérification du contenu (prod jamais testé = cassé — ne pas cocher l'item parent avant ce test).
+  - [ ] Vérifier le déclenchement manuel du snapshot nocturne (`Backups::NightlySnapshotJob.perform_now`) et l'apparition du fichier sur Google Drive.
 
 ## Mailer transactionnel (2026-08-18)
 - [x] **Mailjet SMTP local setup** (dev environment tested + working). Personal account credentials in `credentials.yml.enc`. Mailers: welcome, password_reset, password_changed, account_claim_confirmation.

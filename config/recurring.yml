@@ -3,6 +3,10 @@ production:
     class: MembershipExpirationReminderJob
     queue: default
     schedule: every day at 8am
+  nightly_snapshot:
+    class: Backups::NightlySnapshotJob
+    queue: default
+    schedule: every day at 3am
 
 staging:
   membership_expiration_reminder:

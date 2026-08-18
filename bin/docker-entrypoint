@@ -8,6 +8,13 @@ fi
 
 # If running the rails server then create or migrate existing database
 if [ "${@: -2:1}" == "./bin/rails" ] && [ "${@: -1:1}" == "server" ]; then
+  # Disaster recovery : volume perdu/VPS recréé en prod (storage/production.sqlite3 absent).
+  # Restaure depuis IONOS via Litestream avant db:prepare plutôt que de repartir d'une base vide.
+  if [ "${RAILS_ENV:-}" == "production" ] && [ ! -f storage/production.sqlite3 ]; then
+    echo "[production] storage/production.sqlite3 absent — restauration Litestream depuis IONOS..."
+    ./bin/rails litestream:restore -- -database=storage/production.sqlite3
+  fi
+
   echo "[${RAILS_ENV:-development}] Preparing database (db:prepare)..."
   ./bin/rails db:prepare
 fi
