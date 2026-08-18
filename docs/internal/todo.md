@@ -24,6 +24,13 @@
 - [ ] **Permissions-Policy** : créer `config/initializers/permissions_policy.rb` (Rails 8.1 standard). **Quick win**: 5 lignes, désactiver par défaut. Ref: `Rails::Application.config.permissions_policy`.
   - [ ] Template: `policy.camera :none; microphone :none; geolocation :none; payment :self`
 - [ ] **Session timeout par inactivité** (idée 2026-08-18) : contexte multi-utilisateur physique (PC partagé asso). Forcer re-authentification (pas déconnexion silencieuse) après inactivité — admin/super_admin 15min, volunteer 30min, web_visitor sans limite. Middleware check `Session.updated_at`, redirect vers form re-auth pré-rempli, redirection vers page d'avant après succès. Complexité modérée (2-3h), dépiloter après structuration accounts + emails par rôle.
+- [ ] **Mise à jour dépendances sécurité (bundler-audit)** (2026-08-18) : 4 vulnérabilités HIGH trouvées.
+  - [ ] concurrent-ruby 1.3.6 → 1.3.7 (CVE-2026-54904 AtomicReference livelock)
+  - [ ] faraday 2.14.1 → 2.14.3 (CVE-2026-54297 DoS via nested params)
+  - [ ] view_component 4.8.0 → 4.12.0 (CVE-2026-54498 HTML-Safety bypass)
+  - [ ] websocket-driver 0.8.0 → 0.8.2 (CVE-2026-61666 DoS via malformed Host)
+  - [ ] 9 gems Medium/Low priority aussi (crass, loofah, net-imap, sqlite3, etc.)
+  - [ ] Cmd: `bundle update concurrent-ruby faraday view_component websocket-driver` + test suite
 - [ ] Confirmer que Brakeman/bundler-audit font échouer la CI en cas d'alerte (pas juste un log silencieux).
 - [ ] *(lien, déjà trackée en `Later`)* RGPD anonymisation `Person`/`User` — item conformité/sécurité, pas dupliqué ici.
 
