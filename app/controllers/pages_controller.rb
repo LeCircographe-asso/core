@@ -31,6 +31,9 @@ class PagesController < ApplicationController
       @upcoming_events = Event.upcoming.by_date.limit(6)
       @past_events = Event.past.order(date: :desc).limit(6)
       @latest_posts = Blog.order(created_at: :desc).limit(6)
+      # Même repli que la page galerie (voir plus bas) : vraies photos si la
+      # galerie a été peuplée, sinon le pool d'images génériques existant.
+      @news_carousel_photos = GalleryPhoto.all.to_a.sample(12)
     end
 
     if params[:id] == "contact_us"

@@ -65,6 +65,24 @@ RSpec.describe 'Public pages content', type: :request do
       expect(response.body).not_to include('data-tabs-name-value="horaires"')
       expect(response.body).not_to include("Abonne-toi à la newsletter")
     end
+
+    it "affiche les vraies photos de la galerie dans le carrousel quand elle est peuplée (une seule slide, pas le pool de 12)" do
+      image_path = Rails.root.join("app/assets/images/lelieu1.webp")
+      GalleryPhoto.create!(image: { io: File.open(image_path), filename: "lelieu1.webp" })
+
+      get actualites_path
+
+      expect(response.body.scan("swiper-slide\"").count).to eq(1)
+    end
+
+    it "retombe sur le pool générique (12 slides) quand la galerie est vide" do
+      expect(GalleryPhoto.count).to eq(0)
+
+      get actualites_path
+
+      expect(response).to have_http_status(:success)
+      expect(response.body.scan("swiper-slide\"").count).to eq(12)
+    end
   end
 
   describe 'GET /pages/contact_us' do
