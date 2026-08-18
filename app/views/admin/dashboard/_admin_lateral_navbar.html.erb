@@ -15,33 +15,13 @@
     </div>
     
     
+    <!-- GESTION -->
     <div class="px-4 py-2 sidebar-section">
-      
-      <div class="text-sm font-medium text-gray-600 mb-1 sidebar-text">
-        Administration
-      </div>
+      <div class="text-sm font-medium text-gray-600 mb-1 sidebar-text">Gestion</div>
       <ul class="sidebar-menu">
         <% if current_user.can_manage_users? %>
         <li><%= link_to admin_members_path, class: "sidebar-link flex items-center" do %>
               <i class="fas fa-users mr-2 sidebar-icon"></i> <span class="sidebar-text" data-sidebar-target="text">Liste d'adhérents</span>
-            <% end %>
-        </li>
-        <% end %>
-        <% if current_user.can_manage_events? %>
-        <li><%= link_to admin_events_path, class: "sidebar-link flex items-center" do %>
-              <i class="fas fa-calendar-alt mr-2 sidebar-icon"></i> <span class="sidebar-text" data-sidebar-target="text">Événements</span>
-            <% end %>
-        </li>
-        <% end %>
-        <% if current_user.can_manage_notepad? %>
-        <li><%= link_to edit_admin_notepad_path, class: "sidebar-link flex items-center" do %>
-              <i class="fas fa-sticky-note mr-2 sidebar-icon"></i> <span class="sidebar-text" data-sidebar-target="text">Bloc notes</span>
-            <% end %>
-        </li>
-        <% end %>
-        <% if current_user.can_manage_attendance_lists? %>
-        <li><%= link_to admin_attendance_lists_path, class: "sidebar-link flex items-center" do %>
-              <i class="fas fa-clipboard-list mr-2 sidebar-icon"></i> <span class="sidebar-text" data-sidebar-target="text">Registre de présence</span>
             <% end %>
         </li>
         <% end %>
@@ -51,43 +31,81 @@
             <% end %>
         </li>
         <% end %>
-        <% if current_user.can_administer? %>
-        <li><%= link_to admin_membership_types_path, class: "sidebar-link flex items-center" do %>
-              <i class="fas fa-id-card mr-2 sidebar-icon"></i> <span class="sidebar-text" data-sidebar-target="text">Types d'Adhésion</span>
+        <% if current_user.can_manage_attendance_lists? %>
+        <li><%= link_to admin_attendance_lists_path, class: "sidebar-link flex items-center" do %>
+              <i class="fas fa-clipboard-list mr-2 sidebar-icon"></i> <span class="sidebar-text" data-sidebar-target="text">Registre de présence</span>
             <% end %>
         </li>
-        <li><%= link_to admin_contribution_formulas_path, class: "sidebar-link flex items-center" do %>
-              <i class="fas fa-ticket-alt mr-2 sidebar-icon"></i> <span class="sidebar-text" data-sidebar-target="text">Formules de cotisation</span>
+        <% end %>
+        <!-- Adhésions & Cotisations (hub link) -->
+        <% if current_user.can_administer? %>
+        <li><%= link_to admin_hubs_memberships_path, class: "sidebar-link flex items-center justify-between" do %>
+              <span class="flex items-center flex-1">
+                <i class="fas fa-id-card mr-2 sidebar-icon"></i> <span class="sidebar-text" data-sidebar-target="text">Adhésions & Cotisations</span>
+              </span>
+              <i class="fas fa-chevron-right text-xs ml-auto flex-shrink-0 sidebar-icon hidden-chevron"></i>
+            <% end %>
+        </li>
+        <% end %>
+      </ul>
+    </div>
+
+    <!-- ÉVÉNEMENTS & ACTUALITÉS -->
+    <div class="px-4 py-2 sidebar-section">
+      <div class="text-sm font-medium text-gray-600 mb-1 sidebar-text">Événements & Actualités</div>
+      <ul class="sidebar-menu">
+        <% if current_user.can_manage_events? %>
+        <li><%= link_to admin_events_path, class: "sidebar-link flex items-center" do %>
+              <i class="fas fa-calendar-alt mr-2 sidebar-icon"></i> <span class="sidebar-text" data-sidebar-target="text">Événements</span>
             <% end %>
         </li>
         <% end %>
         <% if current_user.can_manage_blogs? %>
         <li><%= link_to admin_blogs_path, class: "sidebar-link flex items-center" do %>
-              <i class="fas fa-blog mr-2 sidebar-icon"></i> <span class="sidebar-text" data-sidebar-target="text">Blog</span>
+              <i class="fas fa-blog mr-2 sidebar-icon"></i> <span class="sidebar-text" data-sidebar-target="text">Blog / Actualités</span>
             <% end %>
         </li>
         <% end %>
+      </ul>
+    </div>
+
+    <!-- CONTENU PUBLIC -->
+    <div class="px-4 py-2 sidebar-section">
+      <div class="text-sm font-medium text-gray-600 mb-1 sidebar-text">Contenu Public</div>
+      <ul class="sidebar-menu">
         <% if current_user.can_manage_gallery? %>
         <li><%= link_to admin_gallery_photos_path, class: "sidebar-link flex items-center" do %>
               <i class="fas fa-images mr-2 sidebar-icon"></i> <span class="sidebar-text" data-sidebar-target="text">Galerie photos</span>
             <% end %>
         </li>
         <% end %>
-        <% if current_user.can_manage_board_members? %>
-        <li><%= link_to admin_board_members_path, class: "sidebar-link flex items-center" do %>
-              <i class="fas fa-user-tie mr-2 sidebar-icon"></i> <span class="sidebar-text" data-sidebar-target="text">Conseil d'administration</span>
+        <!-- Pages statiques (hub link) -->
+        <% if current_user.can_manage_board_members? || current_user.can_manage_partners? || current_user.can_manage_opening_hours? %>
+        <li><%= link_to admin_hubs_pages_path, class: "sidebar-link flex items-center justify-between" do %>
+              <span class="flex items-center flex-1">
+                <i class="fas fa-file-alt mr-2 sidebar-icon"></i> <span class="sidebar-text" data-sidebar-target="text">Pages statiques</span>
+              </span>
+              <i class="fas fa-chevron-right text-xs ml-auto flex-shrink-0 sidebar-icon hidden-chevron"></i>
             <% end %>
         </li>
         <% end %>
-        <% if current_user.can_manage_partners? %>
-        <li><%= link_to admin_partners_path, class: "sidebar-link flex items-center" do %>
-              <i class="fas fa-handshake mr-2 sidebar-icon"></i> <span class="sidebar-text" data-sidebar-target="text">Partenaires</span>
+      </ul>
+    </div>
+
+    <!-- OUTILS -->
+    <div class="px-4 py-2 sidebar-section">
+      <div class="text-sm font-medium text-gray-600 mb-1 sidebar-text">Outils</div>
+      <ul class="sidebar-menu">
+        <% if current_user.can_manage_notepad? %>
+        <li><%= link_to edit_admin_notepad_path, class: "sidebar-link flex items-center" do %>
+              <i class="fas fa-sticky-note mr-2 sidebar-icon"></i> <span class="sidebar-text" data-sidebar-target="text">Bloc notes</span>
             <% end %>
         </li>
         <% end %>
-        <% if current_user.can_manage_opening_hours? %>
-        <li><%= link_to admin_opening_hours_path, class: "sidebar-link flex items-center" do %>
-              <i class="fas fa-clock mr-2 sidebar-icon"></i> <span class="sidebar-text" data-sidebar-target="text">Horaires</span>
+        <!-- Import/Export -->
+        <% if current_user.can_administer? %>
+        <li><%= link_to admin_imports_path, class: "sidebar-link flex items-center" do %>
+              <i class="fas fa-exchange-alt mr-2 sidebar-icon"></i> <span class="sidebar-text" data-sidebar-target="text">Import/Export</span>
             <% end %>
         </li>
         <% end %>

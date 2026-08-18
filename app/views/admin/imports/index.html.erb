@@ -1,0 +1,137 @@
+<% content_for :title, "Import/Export" %>
+
+<div class="min-h-screen py-4" data-controller="import-modal" data-import-modal-url-value="<%= admin_imports_path %>">
+  <div class="page-container">
+    <%= render 'shared/breadcrumbs' %>
+
+    <div class="admin-page-header mb-6">
+      <div class="px-6 py-6">
+        <h1 class="text-2xl font-bold text-white mb-1">Import/Export</h1>
+        <p class="text-white/80 text-base">Gérer les données en masse</p>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <!-- Import Section -->
+      <div class="surface-card">
+        <div class="bg-gradient-to-r from-[#1F5C55] to-[#194A45] px-4 py-3">
+          <h2 class="text-base font-semibold text-white flex items-center">
+            <i class="fas fa-upload mr-2"></i> Import Adhérents
+          </h2>
+        </div>
+        <div class="p-6">
+          <p class="text-gray-600 text-sm mb-4">
+            Importez un fichier CSV (virgules ou tabulations) avec les adhérents cirque, leurs adhésions et paiements.
+          </p>
+
+          <div class="mb-4">
+            <h3 class="text-sm font-semibold text-gray-900 mb-2">Colonnes attendues :</h3>
+            <ul class="text-xs text-gray-600 space-y-1">
+              <li>• <strong>N° adhérent</strong> : optionnel (pour traçabilité)</li>
+              <li>• <strong>Nom</strong>, <strong>Prénom</strong> : obligatoires</li>
+              <li>• <strong>Email</strong>, <strong>Téléphone</strong> : pour détection doublons</li>
+              <li>• <strong>Date de naissance</strong> : format DD/MM/YYYY</li>
+              <li>• <strong>Adresse</strong>, <strong>Code postal</strong>, <strong>Ville</strong>, <strong>Pays</strong></li>
+              <li>• <strong>Profession</strong>, <strong>Spécialité</strong></li>
+              <li>• <strong>Autorisation droit à l'image</strong> : Oui/Non</li>
+              <li>• <strong>Newsletter</strong> : Oui/Non</li>
+              <li>• <strong>S'investir dans le projet</strong> : Oui/Non</li>
+              <li>• <strong>Montant payé</strong>, <strong>Type de paiement</strong>, <strong>Date</strong></li>
+            </ul>
+          </div>
+
+          <button type="button" class="w-full bg-[#1F5C55] hover:bg-[#194A45] text-white font-medium py-2 rounded-lg transition-colors cursor-pointer" data-action="click->import-modal#open">
+            <i class="fas fa-upload mr-2"></i> Importer un fichier
+          </button>
+        </div>
+      </div>
+
+      <!-- Export Section -->
+      <div class="surface-card">
+        <div class="bg-gradient-to-r from-[#1F5C55] to-[#194A45] px-4 py-3">
+          <h2 class="text-base font-semibold text-white flex items-center">
+            <i class="fas fa-download mr-2"></i> Export Données
+          </h2>
+        </div>
+        <div class="p-6">
+          <p class="text-gray-600 text-sm mb-4">
+            Exporter les données pour sauvegarde ou analyse externe.
+          </p>
+
+          <div class="space-y-2">
+            <button class="w-full text-left p-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors opacity-50 cursor-not-allowed">
+              <i class="fas fa-users mr-2 text-gray-600"></i>
+              <span class="text-sm font-medium text-gray-600">Adhérents (en construction)</span>
+            </button>
+            <button class="w-full text-left p-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors opacity-50 cursor-not-allowed">
+              <i class="fas fa-money-bill mr-2 text-gray-600"></i>
+              <span class="text-sm font-medium text-gray-600">Paiements (en construction)</span>
+            </button>
+            <button class="w-full text-left p-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors opacity-50 cursor-not-allowed">
+              <i class="fas fa-chart-bar mr-2 text-gray-600"></i>
+              <span class="text-sm font-medium text-gray-600">Présences (en construction)</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Info Box -->
+    <div class="mt-6 surface-card border-l-4 border-l-[#1F5C55]">
+      <div class="p-4">
+        <h3 class="text-sm font-semibold text-gray-900 mb-2">
+          <i class="fas fa-info-circle text-[#1F5C55] mr-2"></i> Notes
+        </h3>
+        <ul class="text-xs text-gray-600 space-y-1">
+          <li>• Les doublons (email/téléphone existants) sont automatiquement ignorés</li>
+          <li>• Chaque adhérent crée une adhésion Cirque avec la date du paiement</li>
+          <li>• Un rapport détaillé s'affiche après l'import</li>
+          <li>• Test d'abord en staging avant la production</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Import Modal -->
+  <div
+    class="fixed inset-0 bg-black/50 z-50 hidden items-center justify-center p-4"
+    data-import-modal-target="modal"
+    data-action="click->import-modal#handleBackdropClick"
+  >
+    <div class="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[85vh] overflow-hidden flex flex-col">
+      <!-- Header -->
+      <div class="bg-gradient-to-r from-[#1F5C55] to-[#194A45] px-6 py-4 flex items-center justify-between flex-shrink-0">
+        <h2 class="text-lg font-bold text-white">Import adhérents</h2>
+        <button type="button" class="text-white/80 hover:text-white" data-action="click->import-modal#close">
+          <i class="fas fa-times text-xl"></i>
+        </button>
+      </div>
+
+      <!-- Dropzone state -->
+      <div data-import-modal-target="dropzone" class="p-8">
+        <div
+          class="border-2 border-dashed border-gray-300 rounded-lg p-12 text-center transition-colors cursor-pointer"
+          data-action="dragover->import-modal#dragOver dragleave->import-modal#dragLeave drop->import-modal#drop click->import-modal#triggerFilePicker"
+        >
+          <i class="fas fa-file-csv text-4xl text-gray-400 mb-4"></i>
+          <p class="text-gray-700 font-medium mb-1">Glissez-déposez votre fichier CSV ici</p>
+          <p class="text-gray-500 text-sm">ou cliquez pour choisir un fichier</p>
+          <p class="text-gray-400 text-xs mt-3">Virgules ou tabulations — format Google Sheets accepté</p>
+        </div>
+        <input type="file" accept=".csv,.txt" class="hidden" data-import-modal-target="fileInput" data-action="change->import-modal#onFileSelected">
+      </div>
+
+      <!-- Loading state -->
+      <div data-import-modal-target="loading" class="hidden p-12 text-center">
+        <i class="fas fa-circle-notch fa-spin text-4xl text-[#1F5C55] mb-4"></i>
+        <p class="text-gray-700 font-medium">Import en cours...</p>
+        <p class="text-gray-500 text-sm mt-1" data-import-modal-target="fileName"></p>
+      </div>
+
+      <!-- Result state -->
+      <div data-import-modal-target="result" class="hidden flex-1 overflow-y-auto flex flex-col">
+        <div data-import-modal-target="resultContent"></div>
+      </div>
+    </div>
+  </div>
+</div>

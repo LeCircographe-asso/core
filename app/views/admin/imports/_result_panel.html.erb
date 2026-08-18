@@ -1,0 +1,65 @@
+<!-- Summary Bar -->
+<div class="bg-gray-50 px-6 py-4 border-b border-gray-200">
+  <div class="grid grid-cols-3 gap-4 text-center">
+    <div>
+      <div class="text-2xl font-bold text-green-600"><%= result.created_count %></div>
+      <div class="text-xs text-gray-600">Créés</div>
+    </div>
+    <div>
+      <div class="text-2xl font-bold text-yellow-600"><%= result.duplicate_count %></div>
+      <div class="text-xs text-gray-600">Doublons</div>
+    </div>
+    <div>
+      <div class="text-2xl font-bold text-red-600"><%= result.error_count %></div>
+      <div class="text-xs text-gray-600">Erreurs</div>
+    </div>
+  </div>
+</div>
+
+<!-- Details List -->
+<div class="flex-1 overflow-y-auto px-6 py-4" style="max-height: 50vh;">
+  <% if result.details.blank? %>
+    <p class="text-gray-500 text-center py-8"><%= result.message %></p>
+  <% else %>
+    <ul class="space-y-2">
+      <% result.details.each do |detail| %>
+        <% row_class = case detail[:status]
+             when :success then "bg-green-50 border-green-200"
+             when :duplicate then "bg-yellow-50 border-yellow-200"
+             when :error then "bg-red-50 border-red-200"
+           end %>
+        <li class="p-3 rounded-lg border <%= row_class %>">
+          <div class="flex items-start justify-between">
+            <div class="flex-1">
+              <p class="text-sm font-medium text-gray-900">
+                <% case detail[:status] %>
+                <% when :success %>
+                  <span class="text-green-600"><i class="fas fa-check-circle mr-2"></i></span>
+                <% when :duplicate %>
+                  <span class="text-yellow-600"><i class="fas fa-exclamation-circle mr-2"></i></span>
+                <% when :error %>
+                  <span class="text-red-600"><i class="fas fa-times-circle mr-2"></i></span>
+                <% end %>
+                <%= detail[:name] %>
+              </p>
+              <p class="text-xs text-gray-600 mt-1"><%= detail[:message] %></p>
+            </div>
+            <span class="text-xs text-gray-500 ml-2">Ligne <%= detail[:line] %></span>
+          </div>
+        </li>
+      <% end %>
+    </ul>
+  <% end %>
+</div>
+
+<!-- Footer -->
+<div class="bg-gray-50 px-6 py-4 border-t border-gray-200 flex justify-end gap-2">
+  <% if result.created_count.positive? %>
+    <%= link_to admin_members_path, class: "px-4 py-2 bg-[#1F5C55] hover:bg-[#194A45] text-white rounded-lg transition-colors" do %>
+      <i class="fas fa-eye mr-2"></i> Voir les adhérents
+    <% end %>
+  <% end %>
+  <button type="button" class="px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-800 rounded-lg transition-colors" data-action="click->import-modal#close">
+    OK
+  </button>
+</div>
