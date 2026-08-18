@@ -104,6 +104,14 @@ RSpec.describe User, type: :model do
     end
   end
 
+  describe "email format" do
+    it "rejects an email_address without a valid format" do
+      user = build(:user, email_address: "not-an-email")
+      expect(user).not_to be_valid
+      expect(user.errors[:email_address]).to be_present
+    end
+  end
+
   describe "email identity consistency" do
     it "blocks a user email already used by another person record" do
       create(:person, email: "another.person@example.com")

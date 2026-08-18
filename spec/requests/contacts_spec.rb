@@ -44,6 +44,22 @@ RSpec.describe "Contacts", type: :request do
       expect(response).to redirect_to(contact_path)
     end
 
+    it "rejects an invalid email format without enqueuing mail" do
+      expect do
+        post submit_contact_path,
+             params: {
+               name: "Jane",
+               email: "not-an-email",
+               category: "general",
+               message: "Hello"
+             },
+             as: :turbo_stream
+      end.not_to have_enqueued_mail(UserMailer, :contact_email)
+
+      expect(response).to have_http_status(:success)
+      expect(response.body).to include(I18n.t("contacts.create.invalid_email"))
+    end
+
     it "rejects an empty payload without enqueuing mail" do
       expect do
         post submit_contact_path, params: {}, as: :turbo_stream

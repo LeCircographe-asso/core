@@ -315,6 +315,7 @@ fr:
   contacts:
     create:
       blank_fields: Veuillez remplir tous les champs du formulaire.
+      invalid_email: Merci de renseigner une adresse email valide.
       success_title: Merci !
       sent_notice: Votre message a été envoyé avec succès ! Nous revenons vers vous rapidement.
       send_error: Une erreur est survenue lors de l'envoi. Réessaie dans quelques instants.

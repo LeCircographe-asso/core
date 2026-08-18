@@ -420,6 +420,7 @@ en:
   contacts:
     create:
       blank_fields: Please fill in all form fields.
+      invalid_email: Please enter a valid email address.
       success_title: Thank you!
       sent_notice: Your message was sent successfully. We'll get back to you soon.
       send_error: Something went wrong while sending. Please try again in a moment.

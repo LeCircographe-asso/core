@@ -29,7 +29,7 @@ class Person < ApplicationRecord
 
   validates :first_name, presence: true
   validates :last_name, presence: true
-  validates :email, uniqueness: true, allow_blank: true
+  validates :email, uniqueness: true, allow_blank: true, format: { with: URI::MailTo::EMAIL_REGEXP, allow_blank: true }
   validates :phone, uniqueness: true, allow_blank: true
   validates :member_number, uniqueness: true, allow_blank: true
   validate :email_not_used_by_other_user_account

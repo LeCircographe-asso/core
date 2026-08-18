@@ -33,6 +33,12 @@ RSpec.describe Person, type: :model do
       expect(person).to be_valid
     end
 
+    it 'rejects an email without a valid format' do
+      person = Person.new(first_name: 'John', last_name: 'Doe', email: 'not-an-email')
+      expect(person).not_to be_valid
+      expect(person.errors[:email]).to be_present
+    end
+
     it 'validates email uniqueness' do
       create(:person, email: 'test@example.com')
       person = Person.new(first_name: 'John', last_name: 'Doe', email: 'test@example.com')

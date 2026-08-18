@@ -56,7 +56,7 @@ class User < ApplicationRecord
 
   normalizes :email_address, with: ->(e) { e&.strip&.downcase }
 
-  validates :email_address, presence: true
+  validates :email_address, presence: true, format: { with: URI::MailTo::EMAIL_REGEXP }
   validates :person, presence: true
   validate :email_uniqueness_and_identity_consistency
   validates :cgu, acceptance: { message: :must_accept }, unless: :created_by_admin?

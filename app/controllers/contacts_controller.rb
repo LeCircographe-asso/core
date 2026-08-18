@@ -16,6 +16,11 @@ class ContactsController < ApplicationController
       return
     end
 
+    unless @contact[:email].match?(URI::MailTo::EMAIL_REGEXP)
+      respond_with_error(t(".invalid_email"))
+      return
+    end
+
     category = canonical_contact_category(@contact[:category])
     recipient_email = recipient_email_for(category)
 
