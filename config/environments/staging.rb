@@ -7,7 +7,10 @@ Rails.application.configure do
   # Use the default credentials secret_key_base for staging
   # Rails will use config/credentials.yml.enc with RAILS_MASTER_KEY
   # Allow ENV override for Docker build (asset compilation)
-  config.secret_key_base = ENV["SECRET_KEY_BASE"] || Rails.application.credentials.secret_key_base
+  # .presence, not ||: an empty (but set) ENV var is truthy in Ruby and would
+  # silently poison secret_key_base — every session cookie fails to decrypt,
+  # so a fresh session is minted on every single request.
+  config.secret_key_base = ENV["SECRET_KEY_BASE"].presence || Rails.application.credentials.secret_key_base
 
   # Environnement
   config.enable_reloading = false
