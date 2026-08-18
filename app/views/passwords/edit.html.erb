@@ -4,7 +4,7 @@
             <div class="px-4 py-5 sm:p-6">
                 <h1 class="text-center text-2xl font-bold text-gray-900 mb-6">Réinitialiser votre mot de passe</h1>
 
-                <%= form_with url: password_path(params[:token]), method: :patch, local: true, class: "space-y-4" do |form| %>
+                <%= form_with url: passwords_path(token: params[:token]), method: :patch, local: true, class: "space-y-4" do |form| %>
                     <% if @user.errors.any? %>
                         <div class="bg-red-50 p-4 rounded-md">
                             <div class="flex">

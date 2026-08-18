@@ -22,9 +22,9 @@ class CheckoutController < ApplicationController
         }
       ],
       mode: "payment",
-      success_url: "#{checkout_success_url}?session_id={CHECKOUT_SESSION_ID}&event_id=#{@event.id}",
+      success_url: "#{checkouts_success_url}?session_id={CHECKOUT_SESSION_ID}&event_id=#{@event.id}",
 
-      cancel_url: checkout_cancel_url,
+      cancel_url: checkouts_cancel_url,
       metadata: {
         event_id: @event.id,
         user_id: Current.user.id

@@ -22,6 +22,7 @@ Rails.application.routes.draw do
     resources :blogs
     resources :gallery_photos, only: %i[index create destroy]
     resources :dashboard, only: %i[index], path: "dashboard"
+    resources :imports, only: %i[index create]
     namespace :hubs do
       get :memberships
       get :pages
