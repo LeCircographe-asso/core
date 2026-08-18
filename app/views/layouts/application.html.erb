@@ -71,8 +71,14 @@
     
     <% else %>
 
-    <div class="fixed inset-0 -z-10 bg-cover bg-center bg-no-repeat <%= controller_name == 'home' && action_name == 'index' ? 'home-mobile-background' : '' %>"
-         style="background-image: url('<%= asset_path(content_for(:background_image) || 'background.webp') %>'); transform: translateZ(0); backface-visibility: hidden;"></div>
+    <style nonce="<%= request.session.id %>">
+      .public-bg-image {
+        background-image: url('<%= asset_path(content_for(:background_image) || 'background.webp') %>');
+        transform: translateZ(0);
+        backface-visibility: hidden;
+      }
+    </style>
+    <div class="fixed inset-0 -z-10 bg-cover bg-center bg-no-repeat public-bg-image <%= controller_name == 'home' && action_name == 'index' ? 'home-mobile-background' : '' %>"></div>
     <header>
         <%= render 'shared/navbar' %>
     </header>
