@@ -33,6 +33,23 @@ RSpec.describe Person, type: :model do
       expect(person).to be_valid
     end
 
+    it 'rejects a phone number containing letters' do
+      person = Person.new(first_name: 'John', last_name: 'Doe', phone: 'not-a-phone')
+      expect(person).not_to be_valid
+      expect(person.errors[:phone]).to be_present
+    end
+
+    it 'accepts common phone formats (spaces, international prefix)' do
+      person = build(:person, phone: '+33 6 12 34 56 78')
+      expect(person).to be_valid
+    end
+
+    it 'rejects an emergency contact phone containing letters' do
+      person = Person.new(first_name: 'John', last_name: 'Doe', emergency_contact_phone: 'call-me')
+      expect(person).not_to be_valid
+      expect(person.errors[:emergency_contact_phone]).to be_present
+    end
+
     it 'rejects an email without a valid format' do
       person = Person.new(first_name: 'John', last_name: 'Doe', email: 'not-an-email')
       expect(person).not_to be_valid

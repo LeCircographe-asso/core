@@ -6,6 +6,10 @@ class Person < ApplicationRecord
 
   after_create_commit :broadcast_dashboard_stats
 
+  # Permissif sur les séparateurs (espaces, points, tirets, parenthèses, indicatif +)
+  # pour rester utilisable à l'international, mais rejette les lettres.
+  PHONE_FORMAT = /\A[+]?[\d\s.\-()]{6,20}\z/
+
   REDUCED_RATE_REASONS = [
     "RSA",
     "Mineur",
@@ -30,7 +34,8 @@ class Person < ApplicationRecord
   validates :first_name, presence: true
   validates :last_name, presence: true
   validates :email, uniqueness: true, allow_blank: true, format: { with: URI::MailTo::EMAIL_REGEXP, allow_blank: true }
-  validates :phone, uniqueness: true, allow_blank: true
+  validates :phone, uniqueness: true, allow_blank: true, format: { with: PHONE_FORMAT, allow_blank: true }
+  validates :emergency_contact_phone, format: { with: PHONE_FORMAT, allow_blank: true }
   validates :member_number, uniqueness: true, allow_blank: true
   validate :email_not_used_by_other_user_account
   validate :reduced_rate_consistency
