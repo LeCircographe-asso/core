@@ -26,8 +26,8 @@ Rails.application.configure do
     # No flash/applets/plugins
     policy.object_src :none
 
-    # Allow WebSocket connections for Turbo Cable
-    policy.connect_src :self, :wss
+    # Allow WebSocket connections for Turbo Cable + external APIs (address autocomplete)
+    policy.connect_src :self, :wss, "api-adresse.data.gouv.fr"
 
     # Frame ancestors: only allow same-origin (prevent clickjacking)
     policy.frame_ancestors :self

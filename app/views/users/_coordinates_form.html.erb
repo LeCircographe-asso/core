@@ -1,7 +1,7 @@
 <% form_class = local_assigns.fetch(:form_class, "space-y-5") %>
 <% user_record = local_assigns.fetch(:user, @user) %>
 
-<%= form_with model: user_record, url: user_path(user_record), method: :patch, class: form_class, data: { section_edit_target: "form", action: "submit->section-edit#handleFormSubmit input->section-edit#handleInput change->section-edit#handleInput" } do |f| %>
+<%= form_with model: user_record, url: user_path(user_record), method: :patch, class: form_class, data: { controller: "address-autocomplete", section_edit_target: "form", action: "submit->section-edit#handleFormSubmit input->section-edit#handleInput change->section-edit#handleInput" } do |f| %>
   <% coordinate_error_fields = %i[phone address zip_code town country] %>
   <% coordinate_errors = user_record.errors.select { |error| coordinate_error_fields.include?(error.attribute) } %>
   <% if coordinate_errors.any? %>
@@ -22,22 +22,26 @@
           data: { section_edit_target: "field" },
           class: "block w-full rounded-lg border-gray-300 shadow-sm text-sm focus:border-[#1F5C55] focus:ring-[#1F5C55]" %>
     </div>
-    <div class="sm:col-span-2">
+    <div class="sm:col-span-2 relative">
       <%= f.label :address, t("users.space.field_address"), class: "block text-sm font-medium text-gray-700 mb-1.5" %>
       <%= f.text_field :address,
-          data: { section_edit_target: "field" },
+          data: { section_edit_target: "field", "address-autocomplete-target": "query", action: "input->address-autocomplete#search" },
           class: "block w-full rounded-lg border-gray-300 shadow-sm text-sm focus:border-[#1F5C55] focus:ring-[#1F5C55]" %>
+      <div class="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg"
+           data-address-autocomplete-target="results"
+           style="display: none; top: 100%; left: 0;">
+      </div>
     </div>
     <div>
       <%= f.label :zip_code, t("users.space.field_zip"), class: "block text-sm font-medium text-gray-700 mb-1.5" %>
       <%= f.text_field :zip_code,
-          data: { section_edit_target: "field" },
+          data: { section_edit_target: "field", "address-autocomplete-target": "zip" },
           class: "block w-full rounded-lg border-gray-300 shadow-sm text-sm focus:border-[#1F5C55] focus:ring-[#1F5C55]" %>
     </div>
     <div>
       <%= f.label :town, t("users.space.field_town"), class: "block text-sm font-medium text-gray-700 mb-1.5" %>
       <%= f.text_field :town,
-          data: { section_edit_target: "field" },
+          data: { section_edit_target: "field", "address-autocomplete-target": "town" },
           class: "block w-full rounded-lg border-gray-300 shadow-sm text-sm focus:border-[#1F5C55] focus:ring-[#1F5C55]" %>
     </div>
     <div class="sm:col-span-2">
