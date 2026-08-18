@@ -36,6 +36,15 @@
   outline-offset: 2px;
 }
 
+/* Zone tactile Leaflet par défaut (~30px) sous le minimum recommandé (44px). */
+.leaflet-control-zoom-in,
+.leaflet-control-zoom-out {
+  width: 44px !important;
+  height: 44px !important;
+  line-height: 44px !important;
+  font-size: 20px !important;
+}
+
 @import "./components/buttons.css";
 @import "./components/forms.css";
 @import "./components/hero.css";

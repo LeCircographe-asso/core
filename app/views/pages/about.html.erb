@@ -81,10 +81,11 @@
             </div>
             <p class="text-sm text-gray-600 leading-relaxed flex-1"><%= member.bio %></p>
             <% if member.socials.present? %>
-              <div class="flex items-center justify-center gap-3 text-gray-400">
+              <%# p-3 porte la zone tactile à 44px (icône 20px + padding) sans agrandir le pictogramme visuellement. %>
+              <div class="flex items-center justify-center gap-1 -my-2 text-gray-400">
                 <% member.socials.each do |platform, url| %>
                   <% icon = social_icons[platform.to_sym] %>
-                  <%= link_to url, target: "_blank", rel: "noopener", class: "hover:text-brand-primary transition", aria: { label: "Profil #{platform} de #{member.name}" } do %>
+                  <%= link_to url, target: "_blank", rel: "noopener", class: "p-3 rounded-full hover:text-brand-primary hover:bg-brand-primary/5 transition", aria: { label: "Profil #{platform} de #{member.name}" } do %>
                     <%= icon || tag.svg(xmlns: "http://www.w3.org/2000/svg", viewBox: "0 0 24 24", fill: "currentColor", class: "w-5 h-5") { tag.circle(cx: 12, cy: 12, r: 10) } %>
                   <% end %>
                 <% end %>
