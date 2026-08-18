@@ -35,7 +35,7 @@
   - [ ] Doc: `docs/backup-restore.md`
 
 ## Mailer transactionnel (2026-08-18)
-- [ ] **Brancher un mailer transactionnel en prod (Jetmail)** : `smtp_settings` commenté en prod, aucun envoi réel configuré (voir constat ci-dessus). Prévoir clés API/SMTP Jetmail en secret Kamal (`.kamal/secrets`) + `credentials.yml.enc`, jamais en clair. Vérifier aussi la config staging (`delivery_method: :smtp` sans `smtp_settings` visible).
+- [ ] **Mailjet setup** (Standby: awaiting Circographe account). See `docs/mailers/mailjet.md` for strategy. Personal account (dev/staging) → Circographe (prod). Mailers: welcome, password_reset, password_changed, account_claim_confirmation.
 
 ## Performance (2026-08-18)
 - [ ] **Passe de performance** — Rails 8.1 stack (SolidCache, Propshaft, SQLite). Priorités:
