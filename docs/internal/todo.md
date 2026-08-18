@@ -56,14 +56,14 @@
   - [ ] Mailer: `DonationMailer#receipt_email` (dépend Jetmail, voir section Mailer)
   - Ref: `Payment#hard_delete!` pattern pour intention explicite.
 - [x] Documenter explicitement dans la doc d’architecture que `Person#renew_membership!` est le dernier gros workflow conservé sur le modèle avant une extraction éventuelle (mentions déjà présentes : `docs/domain_model.md`, `docs/glossary.md`, `docs/domain/business_logic.md`).
-- [ ] **Consolidation DRY des shells / layouts Tailwind (chantier continu)** — effort de maintenabilité/SOLID réconduit à chaque intervention future sur l'admin ou les pages publiques.
+- **✨ Consolidation DRY des shells / layouts Tailwind (chantier continu 2026-08-18 → ongoing)** — effort de maintenabilité/SOLID réconduit à chaque intervention future sur l'admin ou les pages publiques. Ne cocher jamais de façon définitive ; c'est un espace vivant où chaque nouvelle passe ajoute les items découverts. Six patterns refactorisés en passe initiale (A–F) ; voir suivi ci-dessous.
   - [x] (2026-08-18) **A** : Legal page wrapper (`terms`, `privacy_policy`) → `shared/_legal_page_shell.html.erb`
   - [x] (2026-08-18) **B** : Scroll anchor offsets (`news`, `contact_us`) → unified `public-anchor-section`
   - [x] (2026-08-18) **C** : Reorderable lists (3× duplication `faqs`, `board_members`, `partners`) → `_sortable_list`, `_sortable_row`, breadcrumbs rendering
   - [x] (2026-08-18) **D** : Breadcrumb consistency (4 views + 2 controllers) → uniform "Administration" prefix, remove legacy exceptions
   - [x] (2026-08-18) **E** : Row action buttons (3 styles) → unified `_row_actions.html.erb` thin-border style
   - [x] (2026-08-18) **F** : Address form duplication (`edit`/`edit_person` members) → `_address_fields.html.erb`, fixes A11y regression
-  - [ ] *(À déterminer)* **G+** : Autres patterns identifiés futurs (screens non encore auditées, opportuniste)
+  - [ ] **Passe 2 (TBD)** : Autres patterns identifiés futurs (screens non encore auditées, opportuniste) — à ajouter à la prochaine intervention sur l'admin ou pages publiques
 - [x] Rendre dynamiques les prix affichés sur `become_member` (page publique adhésion/tarifs), auparavant codés en dur en HTML alors que le catalogue existe déjà en base. *(2026-08-10 : `PagesController#show` charge `MembershipType.current_versions` / `ContributionFormula.current_versions`, la vue affiche via `number_to_currency`. `Adhésion événement` reste statique — pas de `MembershipType` catégorie `event` en base, cf. item billetterie HelloAsso.)*
 - [x] Corriger les offenses WCAG critiques/majeures/mineures sur les pages publiques. *(skip-link, main#main-content, label newsletter, autocomplete, table horaires caption+scope, SVG aria-hidden, line-height body, contact form required+autocomplete, liens externes SR, Leaflet focus-visible, h2 accordion→div, adresse postale→address)*
 - [x] Stabiliser le vocabulaire de primitives UI déjà posé (`page-container`, `surface-card`, `admin-page-header`, `admin-metric-card`). *(Étendu : `section-eyebrow`, `hero-title`, `section-title`, `subsection-title`, `body-text`, `body-text-lg` ajoutés dans `layout.css` ; couleur hardcodée `#1F5C55` remplacée par `text-brand-primary/70` dans 5 fichiers. Migration des vues existantes : opportuniste.)*
