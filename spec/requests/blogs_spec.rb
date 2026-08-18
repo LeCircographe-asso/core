@@ -5,7 +5,7 @@ require "rails_helper"
 RSpec.describe "Blogs", type: :request do
   describe "GET /blogs (index)" do
     it "is accessible without authentication" do
-      get "/blog-newsletter"
+      get newsletter_blogs_path
 
       expect(response).to have_http_status(:ok)
     end

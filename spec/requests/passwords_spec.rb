@@ -73,14 +73,14 @@ RSpec.describe "Passwords", type: :request do
       login_as(user)
 
       expect do
-        get request_reset_password_path
+        get request_reset_passwords_path
       end.to have_enqueued_mail(PasswordsMailer, :reset).with(user)
 
       expect(response).to redirect_to(user_path(user))
     end
 
     it "redirects guests to sign in" do
-      get request_reset_password_path
+      get request_reset_passwords_path
 
       expect(response).to redirect_to(new_session_path)
     end

@@ -196,7 +196,7 @@
       <h3 class="text-sm font-semibold text-gray-800">
         <%= t("settings.show.section_security") %>
       </h3>
-      <%= button_to t("settings.show.password_reset_cta"), request_reset_password_path,
+      <%= button_to t("settings.show.password_reset_cta"), request_reset_passwords_path,
           method: :get,
           form: { data: { turbo_confirm: t("settings.show.password_reset_confirm", email: user.email_address), section_edit_target: "protectedAction" } },
           class: "w-full flex justify-center py-2.5 px-4 border border-gray-300 rounded-lg shadow-sm text-sm font-medium text-gray-800 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1F5C55] transition-colors" %>
