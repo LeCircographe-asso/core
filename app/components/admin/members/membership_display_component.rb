@@ -19,6 +19,14 @@ module Admin
         current_membership.present?
       end
 
+      def most_recent_membership
+        @most_recent_membership ||= person.most_recent_membership
+      end
+
+      def has_lapsed_membership?
+        current_membership.blank? && most_recent_membership.present?
+      end
+
       def membership_type_name
         current_membership&.membership_type&.name
       end
