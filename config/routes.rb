@@ -61,6 +61,9 @@ Rails.application.routes.draw do
     end
     resources :payments, only: %i[show create edit update index destroy] do
       post :restore, on: :member
+      resource :donation_receipt, only: %i[show create], controller: "donation_receipts" do
+        post :resend
+      end
     end
     resources :health_reports, only: %i[index]
     resources :attendances, only: %i[index show new create destroy]

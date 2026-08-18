@@ -105,8 +105,47 @@ module Admin
         end
       end
 
+      def donation_line
+        return @donation_line if defined?(@donation_line)
+
+        @donation_line = payment.payment_lines.to_a.find { |line| line.item_type == "Donation" }
+      end
+
+      def donation_receipt_action
+        return unless donation_line
+        return unless payment.status == "success"
+
+        if donation_line.donation_receipt.present?
+          safe_join([
+            link_to(helpers.admin_payment_donation_receipt_path(payment),
+                    class: "text-[#1F5C55] hover:text-[#194A45]",
+                    title: "Télécharger le reçu",
+                    target: "_blank",
+                    rel: "noopener") do
+              content_tag :svg, class: "h-5 w-5", fill: "none", viewBox: "0 0 24 24", stroke: "currentColor" do
+                content_tag :path, nil, 'stroke-linecap': "round", 'stroke-linejoin': "round", 'stroke-width': "2",
+                            d: "M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+              end
+            end,
+            button_to(helpers.resend_admin_payment_donation_receipt_path(payment),
+                      method: :post,
+                      form: { data: { turbo_frame: "_top" } },
+                      class: "text-xs px-2 py-1 rounded-md border border-gray-200 text-gray-600 hover:bg-white hover:border-gray-300 transition-colors bg-transparent cursor-pointer",
+                      title: "Renvoyer le reçu par email") { "✉" }
+          ], " ")
+        else
+          button_to helpers.admin_payment_donation_receipt_path(payment),
+                    method: :post,
+                    form: { data: { turbo_frame: "_top" } },
+                    class: "text-xs px-2 py-1 rounded-md border border-gray-200 text-gray-600 hover:bg-white hover:border-gray-300 transition-colors bg-transparent cursor-pointer",
+                    title: "Émettre le reçu de don" do
+            "Reçu"
+          end
+        end
+      end
+
       def actions
-        [ view_action, edit_action, cancel_action ].compact
+        [ view_action, edit_action, donation_receipt_action, cancel_action ].compact
       end
     end
   end

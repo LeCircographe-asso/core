@@ -140,6 +140,15 @@ fr:
         missing_person: Sélectionnez une personne pour enregistrer un don.
       create:
         recorded: Donation prise en compte
+    donation_receipts:
+      show:
+        missing: Aucun reçu n'a encore été émis pour ce don.
+      create:
+        issued: Reçu de don émis avec succès.
+        not_a_donation: Ce paiement ne comporte pas de ligne de don.
+      resend:
+        missing: Aucun reçu n'a encore été émis pour ce don.
+        resent: Reçu envoyé par email.
     duplicates:
       breadcrumb: Doublons
       merge:
@@ -518,6 +527,12 @@ fr:
     account_claim_mailer:
       confirmation_email:
         subject: Confirmez votre revendication de compte - Le Circographe
+    donation_mailer:
+      receipt_email:
+        subject: 'Votre reçu de don n°%{number} - Le Circographe'
+        title: Reçu de don
+        greeting: Bonjour %{name},
+        body: Vous trouverez ci-joint votre reçu de don n°%{number}. Merci pour votre soutien à l'association !
     passwords_mailer:
       reset:
         subject: Réinitialisez votre mot de passe

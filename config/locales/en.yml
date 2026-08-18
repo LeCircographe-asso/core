@@ -173,6 +173,15 @@ en:
         missing_person: Select a person to record a donation.
       create:
         recorded: Donation recorded
+    donation_receipts:
+      show:
+        missing: No receipt has been issued for this donation yet.
+      create:
+        issued: Donation receipt issued successfully.
+        not_a_donation: This payment has no donation line.
+      resend:
+        missing: No receipt has been issued for this donation yet.
+        resent: Receipt sent by email.
     duplicates:
       breadcrumb: Duplicates
       merge:
@@ -572,6 +581,12 @@ en:
     account_claim_mailer:
       confirmation_email:
         subject: Confirmez votre revendication de compte - Le Circographe
+    donation_mailer:
+      receipt_email:
+        subject: 'Your donation receipt #%{number} - Le Circographe'
+        title: Donation receipt
+        greeting: Hello %{name},
+        body: Please find attached your donation receipt #%{number}. Thank you for supporting the association!
     passwords_mailer:
       reset:
         subject: Réinitialisez votre mot de passe
