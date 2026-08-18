@@ -19,7 +19,7 @@ module Imports
       rows = parse_csv
       return failure("Aucune ligne à importer") if rows.empty?
 
-      puts "[Import] Début import avec #{rows.count} lignes"
+      Rails.logger.debug "[Import] Début import avec #{rows.count} lignes"
 
       created = 0
       duplicates = 0
@@ -43,23 +43,23 @@ module Imports
           created += 1
           detail[:status] = :success
           detail[:message] = "✓ Créé"
-          puts "[Line #{line_num}] ✓ Créé"
+          Rails.logger.debug "[Line #{line_num}] ✓ Créé"
         elsif result[:duplicate]
           duplicates += 1
           detail[:status] = :duplicate
           detail[:message] = result[:error]
-          puts "[Line #{line_num}] ⊘ Doublon: #{result[:error]}"
+          Rails.logger.debug "[Line #{line_num}] ⊘ Doublon: #{result[:error]}"
         else
           errors_list << result[:error]
           detail[:status] = :error
           detail[:message] = result[:error]
-          puts "[Line #{line_num}] ✗ Erreur: #{result[:error]}"
+          Rails.logger.debug "[Line #{line_num}] ✗ Erreur: #{result[:error]}"
         end
 
         details << detail
       end
 
-      puts "[Import] Résultat final: #{created} créés, #{duplicates} doublons, #{errors_list.count} erreurs"
+      Rails.logger.debug "[Import] Résultat final: #{created} créés, #{duplicates} doublons, #{errors_list.count} erreurs"
 
       success(
         created_count: created,
@@ -89,7 +89,7 @@ module Imports
       CSV.parse(cleaned, headers: true, col_sep: sep, liberal_parsing: true, encoding: "UTF-8")
     rescue StandardError => e
       Rails.logger.error("[MemberImportService] CSV parse error: #{e.message}")
-      puts "Error details: #{e.inspect}"
+      Rails.logger.debug "Error details: #{e.inspect}"
       []
     end
 
@@ -202,7 +202,9 @@ module Imports
 
           # Payment n'a pas de champ dédié à la date historique : on force created_at
           # pour que le paiement importé reflète la date réelle du CSV, pas la date d'import.
+          # rubocop:disable Rails/SkipsModelValidations -- timestamp de backdatage, aucune validation métier concernée
           payment_result.payment.update_column(:created_at, payment_date)
+          # rubocop:enable Rails/SkipsModelValidations
         end
       end
 

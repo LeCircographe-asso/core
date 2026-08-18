@@ -17,7 +17,9 @@ RSpec.describe 'Admin::Duplicates', type: :request do
       person_b = create(:person, email: 'other@example.com')
       # DB index is case-sensitive; insert_all bypasses normalize_email so a
       # case-variant collides logically (LOWER()) without violating the unique index.
+      # rubocop:disable Rails/SkipsModelValidations -- deliberately bypassing normalize_email to simulate a bugged import
       Person.where(id: person_b.id).update_all(email: 'SHARED@example.com')
+      # rubocop:enable Rails/SkipsModelValidations
 
       get admin_duplicates_path
 
