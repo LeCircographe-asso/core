@@ -11,8 +11,8 @@ Rails.application.configure do
     # Default: only allow same-origin resources
     policy.default_src :self
 
-    # Scripts: self + CDN (SweetAlert2, Leaflet)
-    policy.script_src :self, :unsafe_inline, "cdn.jsdelivr.net"
+    # Scripts: self only (SweetAlert2/jsdelivr removed — no call site, unused)
+    policy.script_src :self, :unsafe_inline
 
     # Styles: self + CDN (FontAwesome, Leaflet)
     policy.style_src :self, :unsafe_inline, "cdn.jsdelivr.net", "cdnjs.cloudflare.com"
