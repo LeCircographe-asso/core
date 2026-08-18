@@ -2,7 +2,7 @@
 
 > **Statut** : internal
 > **Public cible** : équipe dev
-> **Dernière vérification** : 2026-08-18 (reçu de don PDF + fix régression CSP)
+> **Dernière vérification** : 2026-08-19 (lot de retours utilisateurs réels : validations, mailer staging, UX admin)
 > **Sources de vérité** : `app/`, historique git, `docs/`.
 
 *Audit continu : revu 2026-05-06 (12 commits), complété 2026-08-10 (audit doc), SESSION 2026-08-18 (sécurité: rate limiting, CSP nonce fix, Permissions-Policy, Brakeman/bundler-audit, 4 HIGH gems; autocomplete: API BAN, Stimulus controller, DRY form consolidation), SESSION 2026-08-18 bis (reçu de don : PDF Prawn généré à la volée, UI admin ; fix régression CSP nonce vide + styles inline non noncés — carte Leaflet `/contact` cassée ; sidebar admin scrollable sur 1080p ; SweetAlert2 mort supprimé). Prochaine passe : Jetmail mailer + local env (Docker/Litestream), Turbo Streams audit.*
@@ -10,6 +10,20 @@
 ## Now
 - [x] **Paiements —** Les écrans admin (`Admin::PaymentsController#destroy`, `Admin::Members::PaymentsController#destroy`) passent déjà par `People::PaymentCanceller` (annulation `status: cancel`, pas de suppression ligne). `Payment#destroy` est désormais verrouillé par défaut ; le hard delete résiduel passe par une intention explicite `Payment#hard_delete!` pour les usages techniques/tests.
 - [x] Ajouter les métadonnées de reçu de don : numéro, date d’émission, émetteur. *(`DonationReceipt` + `People::DonationReceiptIssuer` ; numéro séquentiel par année civile, émetteur figé à l'émission via `ENV["ASSOCIATION_RECEIPT_ISSUER"]`, voir `docs/payments.md` §4.4. Couche données uniquement — pas d'action admin ni de PDF, voir item suivant.)*
+
+## Retours utilisateurs réels (2026-08-19)
+Lot de petits bugs remontés par de vrais utilisateurs après la mise à jour de staging. Triés puis corrigés le jour même sauf mention contraire.
+- [x] Téléphone/email acceptaient n'importe quelle chaîne (aucune validation de format sur `Person#phone`/`#email`, `User#email_address`, formulaire de contact public).
+- [x] Carrousel de la page actualités 100% en images stock, jamais connecté à la vraie galerie même quand elle est peuplée.
+- [x] Pas de fallback si CA/partenaires vides (`about.html.erb`) — carrousel vide affiché sous un titre.
+- [x] Aucune indication visuelle constante sur `/admin/members` que la ligne entière est cliquable (colonne Actions vide dans le cas courant).
+- [x] Breadcrumb admin incohérent avec le titre de la page dashboard ("Administration" vs "Tableau de bord" pour le même lien) — 13 contrôleurs corrigés.
+- [x] Libellés de stats dashboard cryptiques ("Exp. 30j", "Auj.", "Ce mois") sans contexte — tooltips ajoutés.
+- [x] **Emails jamais envoyés sur staging** : `staging.rb` activait `delivery_method: :smtp` sans jamais définir `smtp_settings` → échec systématique. Corrigé avec le compte sandbox (le vrai compte Mailjet du Circographe est inaccessible pour le moment — **prod reste non configurée**, bloqué en attente d'accès).
+- [ ] **Colonnes sensibles visibles sur `/admin/payments`/`/admin/members`** (retour utilisateur) : accès bénévole documenté comme intentionnel (`docs/domain/role_permissions.md`), pas un bug de permission — mais possible sur-affichage d'infos sur un écran d'accueil partagé. **Discussion différée** : l'utilisateur signale que le dashboard admin dans son ensemble mérite une repasse UI/UX plus large, à cadrer avant de retoucher ces colonnes isolément.
+- [ ] **Actions peu claires sur `/admin/payments`** (retour utilisateur) : icônes seules, label uniquement en `title=` (invisible sans survol). Pas encore traité — même remarque que ci-dessus, possiblement à regrouper dans la repasse dashboard.
+- [ ] **"Content is missing" Turbo Frame par intermittence** (retour utilisateur) : un cas déjà documenté (`users/_coordinates_form.html.erb`, voir section Turbo Streams plus bas), le reste nécessite un audit dédié — pas encore cerné, gros chantier potentiel.
+- [ ] **Import CSV corrompu constaté a posteriori** (retour utilisateur) : voir section Import ci-dessous pour le détail.
 
 ## Sécurité (2026-08-17)
 - [ ] **Audit sécurité complet (prod + staging + code)** (2026-08-18) : passe dédiée au-delà des points déjà listés ci-dessous — revue systématique code (Brakeman approfondi, dépendances, gestion des secrets, mass assignment, validations upload ActiveStorage), configuration prod (`config/environments/production.rb`, `config/deploy.yml`, headers de sécurité, TLS/HSTS réel), et staging (`StagingAuth` middleware, `config.hosts.clear` en `staging.rb` mérite un second regard). Sert de filet avant la mise en place de CSP/Permissions-Policy déjà trackées ci-dessous.
@@ -103,6 +117,7 @@
 - [ ] **Modal d'import — feedback insuffisant** *(retour utilisateur 2026-08-18)* : fonctionne mais manque de feedback pendant le traitement (actuellement : dropzone → spinner générique → résultat final d'un coup, ~390 lignes traitées sans retour intermédiaire). Pistes : progression ligne par ligne (nécessiterait Turbo Streams/ActionCable plutôt que le fetch() synchrone actuel), ou au minimum un compteur "X/Y lignes traitées" si le traitement reste synchrone.
 - [ ] Import séances antérieures + présences : mapping vers `AttendanceList`/`Attendance` en écriture directe (pas via `CheckInService`, fait passé). À trancher avant de coder : décrémentent-elles un Pack10 rétroactivement, ou tracent-elles juste un fait sans toucher aux compteurs actuels ?
 - [ ] Import/ajout rétroactif de cotisations (le fichier actuel ne couvre que l'adhésion Cirque, pas les cotisations type Pack10/trimestre).
+- [ ] **Import corrompu constaté a posteriori (retour utilisateur 2026-08-19)** : au fur et à mesure de l'import, les colonnes lues se seraient décalées (lecture par position, voir item v1 ci-dessus — un CSV mal formé/ligne avec un nombre de colonnes différent du header ferait glisser tout le mapping positionnel pour les lignes suivantes). Hypothèse de l'utilisateur : certaines données du fichier source original étaient mal saisies/mal échappées, et la conversion (Sheet → CSV) a introduit un décalage. Pas encore investigué en détail — nécessite de rejouer l'import avec le fichier réel et de comparer ligne à ligne pour localiser où le décalage commence.
 
 ## Export de données (2026-08-17)
 - [ ] Existant : `Admin::ExportsController`, 2 exports CSV étroits (newsletter, `Person` basique). Rien sur paiements/cotisations/présences.
