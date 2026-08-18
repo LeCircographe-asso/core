@@ -21,7 +21,7 @@
         <span class="text-xl font-bold text-gray-800 tabular-nums leading-tight"><%= stats[:memberships_circus] %></span>
       </div>
       <div class="flex flex-col justify-center px-4 py-3 min-w-[5rem]">
-        <span class="text-[10px] font-semibold uppercase tracking-widest <%= stats[:memberships_expiring_30] > 0 ? 'text-amber-500' : 'text-gray-400' %> whitespace-nowrap">Exp. 30j</span>
+        <span class="text-[10px] font-semibold uppercase tracking-widest <%= stats[:memberships_expiring_30] > 0 ? 'text-amber-500' : 'text-gray-400' %> whitespace-nowrap" title="Adhésions expirant dans les 30 prochains jours">Exp. 30j</span>
         <span class="text-xl font-bold <%= stats[:memberships_expiring_30] > 0 ? 'text-amber-600' : 'text-gray-800' %> tabular-nums leading-tight"><%= stats[:memberships_expiring_30] %></span>
       </div>
       <div class="flex flex-col justify-center px-4 py-3 min-w-[5rem]">
@@ -51,14 +51,14 @@
 
     <%# Groupe — Finances %>
     <div class="flex flex-col justify-center px-4 py-3 min-w-[6rem]">
-      <span class="text-[10px] font-semibold uppercase tracking-widest text-gray-400 whitespace-nowrap">Ce mois</span>
+      <span class="text-[10px] font-semibold uppercase tracking-widest text-gray-400 whitespace-nowrap" title="Recettes encaissées ce mois-ci (adhésions, cotisations, dons)">Ce mois</span>
       <span class="text-xl font-bold text-gray-800 tabular-nums leading-tight"><%= number_to_currency(stats[:revenue_month], unit: "€", format: "%n %u", precision: 0) %></span>
       <span class="text-[10px] text-gray-400 whitespace-nowrap">recettes</span>
     </div>
 
     <%# Aujourd'hui %>
     <div class="flex flex-col justify-center px-4 py-3 min-w-[5rem]">
-      <span class="text-[10px] font-semibold uppercase tracking-widest <%= stats[:new_members_today] > 0 ? 'text-[#1F5C55]/70' : 'text-gray-400' %> whitespace-nowrap">Auj.</span>
+      <span class="text-[10px] font-semibold uppercase tracking-widest <%= stats[:new_members_today] > 0 ? 'text-[#1F5C55]/70' : 'text-gray-400' %> whitespace-nowrap" title="Nouveaux adhérents créés aujourd'hui">Auj.</span>
       <span class="text-xl font-bold <%= stats[:new_members_today] > 0 ? 'text-[#1F5C55]' : 'text-gray-800' %> tabular-nums leading-tight"><%= stats[:new_members_today] %></span>
       <span class="text-[10px] text-gray-400 whitespace-nowrap">nouveaux</span>
     </div>
