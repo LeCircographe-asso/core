@@ -103,7 +103,7 @@ module Admin
     end
 
     def membership_type_params
-      params.expect(membership_type: %i[name category rate_kind price_cents description effective_from version created_by_user_id])
+      params.expect(membership_type: %i[name category rate_kind price_euros description effective_from version created_by_user_id])
     end
 
     # Édition classique : nom/description seulement. category/rate_kind

@@ -97,7 +97,7 @@ module Admin
     end
 
     def contribution_formula_create_params
-      params.expect(contribution_formula: %i[name description duration rate_kind membership_type_id price_cents sessions_count validity_days effective_from])
+      params.expect(contribution_formula: %i[name description duration rate_kind membership_type_id price_euros sessions_count validity_days effective_from])
     end
 
     # Édition classique : nom/description seulement. duration/rate_kind/

@@ -43,7 +43,7 @@ RSpec.describe "Admin::MembershipTypes", type: :request do
           name: "Adhésion Cirque Solidaire",
           category: "circus",
           rate_kind: "reduced",
-          price_cents: 1700,
+          price_euros: "17.00",
           description: "Adhésion à tarif réduit",
           effective_from: Date.current,
           version: 1

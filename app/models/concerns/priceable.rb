@@ -15,7 +15,7 @@ module Priceable
     else
               0
     end
-    cents / 100.0
+    cents.nil? ? nil : cents / 100.0
   end
 
   def total_euros

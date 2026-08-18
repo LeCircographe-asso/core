@@ -39,7 +39,7 @@ RSpec.describe "Admin::ContributionFormulas", type: :request do
             duration: "trimester",
             rate_kind: "standard",
             membership_type_id: membership_type.id,
-            price_cents: 6_000,
+            price_euros: "60.00",
             effective_from: Date.current
           }
         }
@@ -65,7 +65,7 @@ RSpec.describe "Admin::ContributionFormulas", type: :request do
 
       expect do
         post admin_contribution_formulas_path, params: {
-          contribution_formula: { name: "X", duration: "trimester", rate_kind: "standard", membership_type_id: membership_type.id, price_cents: 1000, effective_from: Date.current }
+          contribution_formula: { name: "X", duration: "trimester", rate_kind: "standard", membership_type_id: membership_type.id, price_euros: "10.00", effective_from: Date.current }
         }
       end.not_to change(ContributionFormula, :count)
 
