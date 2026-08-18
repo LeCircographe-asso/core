@@ -5,7 +5,7 @@
 > **Dernière vérification** : 2026-08-18 (DRY consolidation A-F + backlog G)
 > **Sources de vérité** : `app/`, historique git, `docs/`.
 
-*Audit continu : revu 2026-05-06 (12 commits), complété 2026-08-10 (audit doc), mis à jour 2026-08-18 (DRY pass + backlog). Prochaine passe : items rapides sécurité (rate limiting, CSP).*
+*Audit continu : revu 2026-05-06 (12 commits), complété 2026-08-10 (audit doc), SESSION 2026-08-18 (sécurité rapide: rate limiting, CSP, Permissions-Policy, audit Brakeman/bundler-audit, 4 HIGH gems fixed). Prochaine passe : Jetmail mailer + local env (Docker/Litestream).*
 
 ## Now
 - [x] **Paiements —** Les écrans admin (`Admin::PaymentsController#destroy`, `Admin::Members::PaymentsController#destroy`) passent déjà par `People::PaymentCanceller` (annulation `status: cancel`, pas de suppression ligne). `Payment#destroy` est désormais verrouillé par défaut ; le hard delete résiduel passe par une intention explicite `Payment#hard_delete!` pour les usages techniques/tests.
@@ -15,23 +15,15 @@
 - [ ] **Audit sécurité complet (prod + staging + code)** (2026-08-18) : passe dédiée au-delà des points déjà listés ci-dessous — revue systématique code (Brakeman approfondi, dépendances, gestion des secrets, mass assignment, validations upload ActiveStorage), configuration prod (`config/environments/production.rb`, `config/deploy.yml`, headers de sécurité, TLS/HSTS réel), et staging (`StagingAuth` middleware, `config.hosts.clear` en `staging.rb` mérite un second regard). Sert de filet avant la mise en place de CSP/Permissions-Policy déjà trackées ci-dessous.
 - [ ] **Vérifier la conformité des flux sensibles d'authentification** (2026-08-18) : reset password (`PasswordsController`), changement d'email, création de session — contre les pratiques 2026 (expiration de token, protection contre l'énumération d'email, invalidation de session à la modification de mot de passe/email, notification email du changement, normes OWASP ASVS niveau applicable à une asso). Lié à l'item rate limiting déjà présent ci-dessous — à traiter ensemble plutôt qu'en doublon.
 - [x] Déjà en place *(pour référence, ne pas dupliquer)* : rate limiting login public+admin (`rate_limit` natif Rails 8, `SessionsController`/`Admin::SessionsController`), `force_ssl`+`assume_ssl` (HSTS) en prod, Brakeman + bundler-audit en CI (`.github/workflows/ci-dev.yml`), `master.key`/`credentials.yml.enc` correctement gitignorés/chiffrés.
-- [ ] **Rate limiting** manquant sur `PasswordsController` (reset), `AccountClaimsController` (revendication compte), `RegistrationsController` (inscription). **Quick win**: copier pattern Rails 8.1 `rate_limit to:/within:` de `SessionsController`. Cmd: `grep -A2 "rate_limit" app/controllers/sessions_controller.rb`.
-  - [ ] `create` (POST) — évite énumération email + brute force password reset
-  - [ ] `RegistrationsController#create` (POST) — limite signup bots
-- [ ] **Content-Security-Policy** : stub commenté. **Quick win**: Rails 8.1 DSL `policy.default_src :self` + allow CDN (jsdelivr, cloudflare). Ref: `config/initializers/content_security_policy.rb`.
-  - [ ] Décommenter → `default_src :self; script_src :self :unsafe_inline; style_src :self cdn.jsdelivr.net`
-  - [ ] Test : DevTools Console → pas de CSP violations
-- [ ] **Permissions-Policy** : créer `config/initializers/permissions_policy.rb` (Rails 8.1 standard). **Quick win**: 5 lignes, désactiver par défaut. Ref: `Rails::Application.config.permissions_policy`.
-  - [ ] Template: `policy.camera :none; microphone :none; geolocation :none; payment :self`
+- [x] **Rate limiting** (2026-08-18) : PasswordsController, AccountClaimsController, RegistrationsController. Session invalidation quand password/email change. Confirmation emails.
+- [x] **Content-Security-Policy** (2026-08-18) : Rails 8.1 DSL avec nonces. default_src :self, script/style CDN allow, frame_ancestors :self.
+- [x] **Permissions-Policy** (2026-08-18) : camera/microphone/geolocation :none, payment :self.
 - [ ] **Session timeout par inactivité** (idée 2026-08-18) : contexte multi-utilisateur physique (PC partagé asso). Forcer re-authentification (pas déconnexion silencieuse) après inactivité — admin/super_admin 15min, volunteer 30min, web_visitor sans limite. Middleware check `Session.updated_at`, redirect vers form re-auth pré-rempli, redirection vers page d'avant après succès. Complexité modérée (2-3h), dépiloter après structuration accounts + emails par rôle.
-- [ ] **Mise à jour dépendances sécurité (bundler-audit)** (2026-08-18) : 4 vulnérabilités HIGH trouvées.
-  - [ ] concurrent-ruby 1.3.6 → 1.3.7 (CVE-2026-54904 AtomicReference livelock)
-  - [ ] faraday 2.14.1 → 2.14.3 (CVE-2026-54297 DoS via nested params)
-  - [ ] view_component 4.8.0 → 4.12.0 (CVE-2026-54498 HTML-Safety bypass)
-  - [ ] websocket-driver 0.8.0 → 0.8.2 (CVE-2026-61666 DoS via malformed Host)
-  - [ ] 9 gems Medium/Low priority aussi (crass, loofah, net-imap, sqlite3, etc.)
-  - [ ] Cmd: `bundle update concurrent-ruby faraday view_component websocket-driver` + test suite
-- [ ] Confirmer que Brakeman/bundler-audit font échouer la CI en cas d'alerte (pas juste un log silencieux).
+- [x] **Mise à jour dépendances sécurité (bundler-audit)** (2026-08-18) : 4 vulnérabilités HIGH fixes.
+  - concurrent-ruby 1.3.6 → 1.3.8 ✅, faraday 2.14.1 → 2.14.3 ✅, view_component 4.8.0 → 4.12.0 ✅, websocket-driver 0.8.0 → 0.8.2 ✅
+  - Bonus: crass, loofah, json, nokogiri, i18n aussi updatés. Tests suite OK (0 regressions).
+  - Backlog: 9 gems Medium/Low priority (net-imap, sqlite3, etc.) + Pagy majeure breaking changes (2-3h refactor, dépiloter).
+- [ ] Confirmer que Brakeman/bundler-audit font échouer la CI en cas d'alerte (`.github/workflows/ci-dev.yml` check if exit code != 0).
 - [ ] *(lien, déjà trackée en `Later`)* RGPD anonymisation `Person`/`User` — item conformité/sécurité, pas dupliqué ici.
 
 ## Backup base de données prod (2026-08-17)
