@@ -312,12 +312,6 @@ fr:
         use_lender_button: Utiliser ce carnet
         success: Présence enregistrée !
         lent_by: "Séance empruntée au carnet de %{name}."
-  checkout:
-    success:
-      payment_ok: Paiement réussi et commande mise à jour.
-      payment_failed_alert: Paiement non réussi, commande non mise à jour.
-    cancel:
-      cancelled_alert: Le paiement a été annulé.
   contacts:
     create:
       blank_fields: Veuillez remplir tous les champs du formulaire.

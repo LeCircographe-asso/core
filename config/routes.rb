@@ -151,14 +151,6 @@ Rails.application.routes.draw do
   # Route for newsletter unsubscribe by token (from emails)
   get "/newsletter/unsubscribe/:token", to: "users#unsubscribe_by_token", as: "newsletter_unsubscribe"
 
-  resources :checkouts, only: [] do
-    collection do
-      post :create, as: :create
-      get :success, as: :success
-      get :cancel, as: :cancel
-    end
-  end
-
   root "home#index"
   get "fonts", to: "home#font_examples", as: "font_examples"
   get "/white-page", to: "pages#show", defaults: { id: "white_page" }, as: :white_page

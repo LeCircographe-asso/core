@@ -8,8 +8,9 @@ class Event < ApplicationRecord
   belongs_to :creator, class_name: "User"
   has_many :attendances, dependent: :destroy
   has_many :people, through: :attendances
-  # `event_attendees` reste réservé à la billetterie (paiement Stripe) — voir
-  # docs/glossary.md. Les présences "registre" passent par `attendances`.
+  # `event_attendees` reste réservé à une future billetterie en ligne (non
+  # implémentée) — voir docs/glossary.md. Les présences "registre" passent
+  # par `attendances`.
   has_many :event_attendees, dependent: :destroy
   # Validations
   validates :name, :date, presence: true

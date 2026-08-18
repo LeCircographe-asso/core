@@ -417,12 +417,6 @@ en:
           email_in_use_orphan_user: This address is already tied to a user account.
           user_email_login_taken: This login email is already in use.
           user_email_person_has_account: This email is already used for a web account.
-  checkout:
-    success:
-      payment_ok: Paiement réussi et commande mise à jour.
-      payment_failed_alert: Paiement non réussi, commande non mise à jour.
-    cancel:
-      cancelled_alert: Le paiement a été annulé.
   contacts:
     create:
       blank_fields: Please fill in all form fields.

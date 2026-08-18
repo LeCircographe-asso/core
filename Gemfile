@@ -43,7 +43,6 @@ gem "jbuilder" # JSON API builder
 gem "json", ">= 2.19.2" # Pin patched version for security advisories
 gem "mailjet" # Email service
 gem "rack-cors" # Cross-Origin Resource Sharing
-gem "stripe" # Payment processing
 
 # Development and Testing
 group :development, :test do
