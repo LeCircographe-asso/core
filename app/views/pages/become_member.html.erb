@@ -28,7 +28,7 @@
       </div>
 
       <%# Q2 — En résumé (haut-droite) %>
-      <div class="tarif-quad space-y-4 p-6 sm:p-8 border-b border-gray-200" style="background: rgba(31,92,85,0.07)">
+      <div class="tarif-quad space-y-4 p-6 sm:p-8 border-b border-gray-200 bg-brand-primary/7">
         <div class="w-6 h-[3px] rounded-full bg-brand-primary mb-1"></div>
         <p class="text-xs font-medium uppercase tracking-[0.32em] text-brand-primary/70">En résumé</p>
         <ul class="space-y-2.5">
@@ -110,8 +110,8 @@
       </div>
 
       <%# Q4 — Cotisations (bas-droite) %>
-      <div class="tarif-quad space-y-4 p-6 sm:p-8" style="background: rgba(88,54,165,0.04)">
-        <div class="w-6 h-[3px] rounded-full mb-1" style="background: #5836A5"></div>
+      <div class="tarif-quad space-y-4 p-6 sm:p-8 bg-brand-accent/4">
+        <div class="w-6 h-[3px] rounded-full mb-1 bg-brand-accent"></div>
         <p class="text-xs font-medium uppercase tracking-[0.32em] text-brand-primary/70">Cotisations</p>
         <h2 class="text-xl font-semibold text-gray-900">Autogestion du lieu</h2>
         <p class="text-xs text-gray-500">Choisis la formule qui colle à ta pratique.</p>
@@ -161,7 +161,7 @@
   </div>
 </section>
 
-<style>
+<style nonce="<%= content_security_policy_nonce %>">
   .tarif-quad {
     opacity: 0;
     transform: translateY(8px);
@@ -220,7 +220,7 @@
             <span class="sr-only">— créneaux volatils</span>
           </button>
         </div>
-        <div class="mt-3 h-px" style="background: linear-gradient(to right, #1F5C55, #5836A5, transparent)"></div>
+        <div class="mt-3 h-px tarif-divider-gradient"></div>
       </div>
 
       <%# ── Lignes jours ── %>

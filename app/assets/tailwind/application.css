@@ -145,18 +145,24 @@
   .text-brand-primary\/70 { color: rgba(31, 92, 85, 0.7); }
   .bg-brand-primary { background-color: #1F5C55; }
   .bg-brand-primary\/5 { background-color: rgba(31, 92, 85, 0.05); }
+  .bg-brand-primary\/7 { background-color: rgba(31, 92, 85, 0.07); }
   .bg-brand-primary\/10 { background-color: rgba(31, 92, 85, 0.1); }
   .border-brand-primary { border-color: #1F5C55; }
   .border-brand-primary\/20 { border-color: rgba(31, 92, 85, 0.2); }
 
   .text-brand-accent { color: #5836A5; }
   .bg-brand-accent { background-color: #5836A5; }
+  .bg-brand-accent\/4 { background-color: rgba(88, 54, 165, 0.04); }
   .bg-brand-accent\/10 { background-color: rgba(88, 54, 165, 0.1); }
   /* Opacity variants used in markup; not always emitted by Tailwind v4 scan */
   .bg-brand-accent\/72 { background-color: rgba(88, 54, 165, 0.72); }
   .border-brand-accent { border-color: #5836A5; }
   .border-brand-accent\/20 { border-color: rgba(88, 54, 165, 0.2); }
   .border-brand-accent\/45 { border-color: rgba(88, 54, 165, 0.45); }
+
+  /* Styles inline autrefois bloqués par la CSP style-src-attr sans nonce */
+  .tarif-divider-gradient { background: linear-gradient(to right, #1F5C55, #5836A5, transparent); }
+  .lightbox-backdrop { background: rgba(0, 0, 0, 0.92); }
 
   .focus-visible\:outline-brand-primary:focus-visible { outline-color: #1F5C55; }
   .focus-visible\:outline-brand-accent:focus-visible { outline-color: #5836A5; }

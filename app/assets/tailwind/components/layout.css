@@ -132,4 +132,9 @@
       line-height: 1.08;
     }
   }
+
+  /* Évite un style inline (bloqué par la CSP style-src-attr sans nonce). */
+  .pwa-safe-area-bottom {
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
 }

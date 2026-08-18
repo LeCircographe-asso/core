@@ -71,7 +71,7 @@
     
     <% else %>
 
-    <style nonce="<%= request.session.id %>">
+    <style nonce="<%= content_security_policy_nonce %>">
       .public-bg-image {
         background-image: url('<%= asset_path(content_for(:background_image) || 'background.webp') %>');
         transform: translateZ(0);

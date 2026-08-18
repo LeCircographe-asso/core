@@ -102,11 +102,8 @@
     </div>
   </div>
 
-  <div class="fade-in">
-    <p class="text-center text-sm text-gray-600">
-      <%= link_to "Questions fréquentes", page_path("faq"), class: "font-semibold text-brand-accent hover:text-brand-accent-dark underline-offset-2 hover:underline" %>
-      <span class="text-gray-400 mx-1">·</span>
-      <%= link_to "contact & projets", page_path("faq", anchor: "faq-contact"), class: "text-brand-accent hover:text-brand-accent-dark underline-offset-2 hover:underline" %>
-    </p>
+  <div class="fade-in flex flex-wrap justify-center gap-2">
+    <%= link_to "Questions fréquentes", page_path("faq"), class: "faq-tab" %>
+    <%= link_to "Contact & projets", page_path("faq", anchor: "faq-contact"), class: "faq-tab" %>
   </div>
 </section>

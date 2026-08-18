@@ -35,7 +35,12 @@ Rails.application.configure do
 
   # Generate session nonces for permitted importmap, inline scripts, and inline styles.
   # Rails 8.1 automatically adds nonce to <script> and <style> tags
-  config.content_security_policy_nonce_generator = ->(request) { request.session.id.to_s }
+  #
+  # request.session.id is nil until something writes to the session (Rack lazily
+  # assigns it) — an anonymous visit to a public page with no prior session cookie
+  # produces an empty "'nonce-'" token, which is invalid CSP syntax (browsers log
+  # and drop it). Fall back to a random nonce so the header is always well-formed.
+  config.content_security_policy_nonce_generator = ->(request) { request.session.id.to_s.presence || SecureRandom.base64(16) }
   config.content_security_policy_nonce_directives = %w[script-src style-src]
 
   # Uncomment to test CSP violations without blocking (only log them)

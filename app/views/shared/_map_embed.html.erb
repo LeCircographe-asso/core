@@ -8,14 +8,21 @@
   shell_classes = %w[
     leaflet-map-shell rounded-2xl overflow-hidden border border-gray-200 shadow-inner w-full bg-gray-100
   ]
-  shell_style = nil
+  shell_id = nil
   if fixed_height_px.present?
-    shell_style = "height: #{fixed_height_px.to_i}px;"
+    shell_id = "leaflet-map-shell-#{SecureRandom.hex(4)}"
   else
     shell_classes += %w[min-h-[280px] h-[clamp(280px,48vw,520px)]]
   end
 %>
-<div class="<%= shell_classes.join(" ") %>"<%= " style=\"#{shell_style}\"".html_safe if shell_style %>>
+<%# style-src-attr n'accepte pas les nonces sur un style="..." inline (seuls <style>/<script> le peuvent) —
+    hauteur fixe posée via un <style> noncé scopé par id plutôt qu'un attribut style. %>
+<% if shell_id %>
+  <style nonce="<%= content_security_policy_nonce %>">
+    #<%= shell_id %> { height: <%= fixed_height_px.to_i %>px; }
+  </style>
+<% end %>
+<div id="<%= shell_id %>" class="<%= shell_classes.join(" ") %>">
   <div
     class="leaflet-map-shell-inner leaflet-map-target absolute inset-0 z-0 min-h-0 min-w-0"
     data-controller="map"
