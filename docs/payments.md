@@ -117,11 +117,13 @@ payment.payment_lines.create!(
 - Ajout d'un rapport d'intégrité paiement/lignes.
 - Vérifier l'affichage uniforme de `offer_reason` dans tous les écrans admin de paiement.
 
-### 4.4 Reçu fiscal — métadonnées (`DonationReceipt`)
+### 4.4 Reçu de don (`DonationReceipt`)
 
-- `DonationReceipt` (`belongs_to :payment_line`) porte les métadonnées du reçu : `number` (séquentiel par année civile, format `"AAAA-NNN"`), `issued_at`, `issuer` (identité de l'association, figée au moment de l'émission plutôt que résolue dynamiquement, pour rester une preuve stable). Au plus un reçu par `payment_line` (index unique sur `payment_line_id`), numéro globalement unique.
-- Émission : `People::DonationReceiptIssuer.new(payment_line:, issued_at: Time.current).call` — refuse une ligne qui n'est pas `item_type: "Donation"`, refuse un doublon si un reçu existe déjà. Émetteur lu via `ENV["ASSOCIATION_RECEIPT_ISSUER"]` (fallback `"Le Circographe"`).
-- **Hors périmètre pour l'instant** (voir `docs/internal/todo.md`) : action admin de génération/réenvoi (controller, vue, email), génération PDF/CERFA. Seule la couche données existe à ce stade.
+- `DonationReceipt` (`belongs_to :payment_line`) porte les métadonnées du reçu : `number` (séquentiel par année civile, format `"AAAA-NNN"`), `issued_at`, `issuer`/`issuer_address`, `donor_name`/`donor_address` — tout figé au moment de l'émission plutôt que résolu dynamiquement, pour rester une preuve stable même si l'adresse de l'association ou de la personne change ensuite. Au plus un reçu par `payment_line` (index unique sur `payment_line_id`), numéro globalement unique.
+- Émission : `People::DonationReceiptIssuer.new(payment_line:, issued_at: Time.current).call` — refuse une ligne qui n'est pas `item_type: "Donation"`, refuse un doublon, refuse un paiement `status != "success"` ou `payment_method: "offered"` (pas de flux monétaire réel à attester). Émetteur lu via `ENV["ASSOCIATION_RECEIPT_ISSUER"]`/`ASSOCIATION_RECEIPT_ADDRESS` (fallback `"Le Circographe"`/vide).
+- PDF : `People::DonationReceiptGenerator` (gem `prawn`, pur Ruby) génère le PDF **à la volée** à partir des métadonnées ci-dessus — jamais stocké sur disque ni ActiveStorage, régénéré à chaque téléchargement/envoi. Coût de stockage nul au-delà de la ligne `donation_receipts`.
+- Admin : `Admin::DonationReceiptsController#create/show/resend` (bouton sur les lignes de don dans `admin/payments`) ; `DonationMailer#receipt_email` attache le PDF généré en mémoire.
+- **Volontairement pas de mention fiscale** (art. 200/238 bis du CGI, Cerfa 11580*04) : l'éligibilité "intérêt général" de l'association n'est pas confirmée à ce jour — émettre un reçu ouvrant droit à réduction d'impôt sans base légale est sanctionné (art. 1740 A du CGI). C'est un simple justificatif de don. Voir `docs/internal/todo.md` pour l'item de suivi.
 
 ---
 
