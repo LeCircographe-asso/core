@@ -5,4 +5,9 @@ class PasswordsMailer < ApplicationMailer
     @user = user
     mail subject: I18n.t("mailers.passwords_mailer.reset.subject"), to: user.email_address
   end
+
+  def changed(user)
+    @user = user
+    mail subject: I18n.t("mailers.passwords_mailer.changed.subject"), to: user.email_address
+  end
 end

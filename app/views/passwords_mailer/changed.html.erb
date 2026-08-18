@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta content='text/html; charset=UTF-8' http-equiv='Content-Type' />
+</head>
+<body>
+  <div class="max-w-lg mx-auto font-sans text-gray-800">
+    <div class="bg-gray-100 p-5 text-center border-b border-gray-300">
+      <h1 class="text-xl text-gray-800">Votre mot de passe a été modifié</h1>
+    </div>
+    <div class="p-5">
+      <p>Bonjour <%= @user.email_address %>,</p>
+
+      <p>Votre mot de passe a été réinitialisé avec succès. Vous pouvez maintenant vous connecter avec votre nouveau mot de passe.</p>
+
+      <p class="mt-4 p-3 bg-amber-50 border border-amber-200 rounded">
+        <strong>⚠️ N'avez-vous pas demandé ce changement ?</strong><br>
+        Si vous n'avez pas réinitialisé votre mot de passe, contactez immédiatement notre équipe pour sécuriser votre compte.
+      </p>
+    </div>
+
+    <div class="bg-gray-100 p-5 text-center border-t border-gray-300">
+      <p>Cordialement,<br>
+      L'équipe Le Circographe</p>
+    </div>
+  </div>
+</body>
+</html>

@@ -3,6 +3,10 @@
 class AccountClaimsController < ApplicationController
   before_action :ensure_account_claim_enabled!, only: %i[new create confirm]
   before_action :require_authentication, only: [ :create ]
+  rate_limit to: 5, within: 1.hour, only: :create,
+              with: -> { redirect_to root_path, alert: I18n.t("account_claims.rate_limited_alert") }
+  rate_limit to: 3, within: 24.hours, only: :confirm,
+              with: -> { redirect_to root_path, alert: I18n.t("account_claims.confirm_rate_limited_alert") }
 
   def new
     @claim = AccountClaim.new

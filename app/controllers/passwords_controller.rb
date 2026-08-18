@@ -2,6 +2,10 @@
 
 class PasswordsController < ApplicationController
   allow_unauthenticated_access
+  rate_limit to: 5, within: 15.minutes, only: :create,
+              with: -> { redirect_to new_password_path, alert: I18n.t("passwords.rate_limited_alert") }
+  rate_limit to: 10, within: 1.hour, only: :update,
+              with: -> { redirect_to new_password_path, alert: I18n.t("passwords.reset_rate_limited_alert") }
   before_action :set_user_by_token, only: %i[edit update]
 
   def new; end
@@ -18,6 +22,8 @@ class PasswordsController < ApplicationController
 
   def update
     if @user.update(params.permit(:password, :password_confirmation))
+      PasswordsMailer.changed(@user).deliver_later
+      @user.sessions.destroy_all
       redirect_to new_session_path, notice: t(".password_reset_success")
     else
       render :edit, status: :unprocessable_content

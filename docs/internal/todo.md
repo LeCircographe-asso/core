@@ -2,10 +2,10 @@
 
 > **Statut** : internal
 > **Public cible** : équipe dev
-> **Dernière vérification** : 2026-08-17
-> **Sources de vérité** : `app/`, historique git.
+> **Dernière vérification** : 2026-08-18 (DRY consolidation A-F + backlog G)
+> **Sources de vérité** : `app/`, historique git, `docs/`.
 
-*Revu le 2026-05-06 — ratissage élargi des 12 derniers commits + scan `rg` ciblé du repo. Complété le 2026-08-10 avec les items relevés lors d'un audit de la doc (voir entrées ajoutées ci-dessous).*
+*Audit continu : revu 2026-05-06 (12 commits), complété 2026-08-10 (audit doc), mis à jour 2026-08-18 (DRY pass + backlog). Prochaine passe : items rapides sécurité (rate limiting, CSP).*
 
 ## Now
 - [x] **Paiements —** Les écrans admin (`Admin::PaymentsController#destroy`, `Admin::Members::PaymentsController#destroy`) passent déjà par `People::PaymentCanceller` (annulation `status: cancel`, pas de suppression ligne). `Payment#destroy` est désormais verrouillé par défaut ; le hard delete résiduel passe par une intention explicite `Payment#hard_delete!` pour les usages techniques/tests.
@@ -15,29 +15,45 @@
 - [ ] **Audit sécurité complet (prod + staging + code)** (2026-08-18) : passe dédiée au-delà des points déjà listés ci-dessous — revue systématique code (Brakeman approfondi, dépendances, gestion des secrets, mass assignment, validations upload ActiveStorage), configuration prod (`config/environments/production.rb`, `config/deploy.yml`, headers de sécurité, TLS/HSTS réel), et staging (`StagingAuth` middleware, `config.hosts.clear` en `staging.rb` mérite un second regard). Sert de filet avant la mise en place de CSP/Permissions-Policy déjà trackées ci-dessous.
 - [ ] **Vérifier la conformité des flux sensibles d'authentification** (2026-08-18) : reset password (`PasswordsController`), changement d'email, création de session — contre les pratiques 2026 (expiration de token, protection contre l'énumération d'email, invalidation de session à la modification de mot de passe/email, notification email du changement, normes OWASP ASVS niveau applicable à une asso). Lié à l'item rate limiting déjà présent ci-dessous — à traiter ensemble plutôt qu'en doublon.
 - [x] Déjà en place *(pour référence, ne pas dupliquer)* : rate limiting login public+admin (`rate_limit` natif Rails 8, `SessionsController`/`Admin::SessionsController`), `force_ssl`+`assume_ssl` (HSTS) en prod, Brakeman + bundler-audit en CI (`.github/workflows/ci-dev.yml`), `master.key`/`credentials.yml.enc` correctement gitignorés/chiffrés.
-- [ ] Rate limiting manquant sur `PasswordsController` (reset), `AccountClaimsController` (revendication compte), `RegistrationsController` (inscription) — même pattern `rate_limit to:/within:` que `SessionsController`.
-- [ ] Content-Security-Policy jamais activée (`config/initializers/content_security_policy.rb` = stub commenté par défaut). Définir a minima `default_src :self` + autoriser les CDN déjà utilisés (jsdelivr, cloudflare fontawesome/leaflet).
-- [ ] Permissions-Policy absente (pas de `config/initializers/permissions_policy.rb`). Ajouter, désactiver caméra/micro/géoloc par défaut.
+- [ ] **Rate limiting** manquant sur `PasswordsController` (reset), `AccountClaimsController` (revendication compte), `RegistrationsController` (inscription). **Quick win**: copier pattern Rails 8.1 `rate_limit to:/within:` de `SessionsController`. Cmd: `grep -A2 "rate_limit" app/controllers/sessions_controller.rb`.
+  - [ ] `create` (POST) — évite énumération email + brute force password reset
+  - [ ] `RegistrationsController#create` (POST) — limite signup bots
+- [ ] **Content-Security-Policy** : stub commenté. **Quick win**: Rails 8.1 DSL `policy.default_src :self` + allow CDN (jsdelivr, cloudflare). Ref: `config/initializers/content_security_policy.rb`.
+  - [ ] Décommenter → `default_src :self; script_src :self :unsafe_inline; style_src :self cdn.jsdelivr.net`
+  - [ ] Test : DevTools Console → pas de CSP violations
+- [ ] **Permissions-Policy** : créer `config/initializers/permissions_policy.rb` (Rails 8.1 standard). **Quick win**: 5 lignes, désactiver par défaut. Ref: `Rails::Application.config.permissions_policy`.
+  - [ ] Template: `policy.camera :none; microphone :none; geolocation :none; payment :self`
+- [ ] **Session timeout par inactivité** (idée 2026-08-18) : contexte multi-utilisateur physique (PC partagé asso). Forcer re-authentification (pas déconnexion silencieuse) après inactivité — admin/super_admin 15min, volunteer 30min, web_visitor sans limite. Middleware check `Session.updated_at`, redirect vers form re-auth pré-rempli, redirection vers page d'avant après succès. Complexité modérée (2-3h), dépiloter après structuration accounts + emails par rôle.
 - [ ] Confirmer que Brakeman/bundler-audit font échouer la CI en cas d'alerte (pas juste un log silencieux).
 - [ ] *(lien, déjà trackée en `Later`)* RGPD anonymisation `Person`/`User` — item conformité/sécurité, pas dupliqué ici.
 
 ## Backup base de données prod (2026-08-17)
-- [ ] Volume Kamal `circographe_storage` (SQLite + Active Storage local, `config/deploy.yml`) commenté "à sauvegarder hors serveur" mais **aucun mécanisme configuré** — zéro backup en cas de perte serveur/volume.
-  - [ ] Choisir la stratégie : Litestream (réplication continue SQLite → S3/Backblaze, standard Rails 8) vs snapshot planifié (cron + upload).
-  - [ ] Si Litestream : binaire dans l'image Docker + accessory/process Kamal + bucket S3-compatible + clé d'accès en secret Kamal (`.kamal/secrets`).
-  - [ ] Définir fréquence/rétention.
-  - [ ] Tester une restauration réelle une fois configuré (backup jamais vérifié = pas fiable).
-  - [ ] Documenter la procédure de restauration dans `docs/`.
+- [ ] **Volume Kamal** `circographe_storage` (SQLite + Active Storage) — **aucun mécanisme configuré**. Choisir : **Litestream** (Rails 8 standard, continu → S3/Backblaze) ou snapshot planifié (cron).
+  - **Recommandé : Litestream** — ref Rails 8.1 `rails new --database=sqlite3 --skip-sqlite-backup` (Litestream opt-in). `config/deploy.yml` : ajouter accessory + `DATABASE_URL` env.
+  - [ ] Binaire Litestream dans Dockerfile (`apt-get install litestream`)
+  - [ ] Kamal secret : S3 endpoint + credentials
+  - [ ] Test restauration : `litestream restore -o /tmp/test.db s3://bucket/path` (prod jamais testé = cassé)
+  - [ ] Doc: `docs/backup-restore.md`
 
 ## Mailer transactionnel (2026-08-18)
 - [ ] **Brancher un mailer transactionnel en prod (Jetmail)** : `smtp_settings` commenté en prod, aucun envoi réel configuré (voir constat ci-dessus). Prévoir clés API/SMTP Jetmail en secret Kamal (`.kamal/secrets`) + `credentials.yml.enc`, jamais en clair. Vérifier aussi la config staging (`delivery_method: :smtp` sans `smtp_settings` visible).
 
 ## Performance (2026-08-18)
-- [ ] **Passe de performance** : audit requêtes N+1 (pas de gem `bullet` en place aujourd'hui — à évaluer), utilisation effective de SolidCache, index DB manquants sur les colonnes de recherche/filtre (dont celles ajoutées récemment sur `attendances`/`attendance_lists`), poids des assets JS/CSS servis (Propshaft, pas de bundling agressif aujourd'hui), temps de réponse des pages publiques à fort trafic potentiel (`home`, `become_member`).
+- [ ] **Passe de performance** — Rails 8.1 stack (SolidCache, Propshaft, SQLite). Priorités:
+  - [ ] **N+1 queries**: `gem "bullet", :require => false` en dev. Cmd: `grep -r "include_" spec/requests/ | wc -l` (benchmark current eager-loading usage).
+  - [ ] **SolidCache**: `config.cache_store` actuellement ? Vérifier prod config. Ref: `Rails.cache.write/read` dans services.
+  - [ ] **DB indexes**: `attendances`, `attendance_lists` (recherche nom/date). Cmd: `rails db:show_indexes`.
+  - [ ] **Assets**: Propshaft + Tailwind → `app/assets/builds/` size. DevTools → Network → CSS/JS bytes.
+  - [ ] **Public pages latency**: `/home`, `/become_member` → benchmark baseline (New Relic ou simple `curl -w @timer.txt`).
+  - **Next**: profile en prod avec `rack-mini-profiler` (require opt-in).
 
 ## Next safe steps
 - [x] **Présence directe depuis la fiche membre** *(fait 2026-08-10)* : action « Marquer présent aujourd'hui » sur `Admin::Members::MemberActionsComponent` (visible si adhésion Cirque active), ouvrant `Admin::Members::AttendancesController#new/create` dans un turbo frame sur la fiche membre. Réutilise le service `AttendanceManagement::CheckInService`, déjà écrit et testé mais jamais branché nulle part (même trouvaille que les partials orphelins ci-dessous) — complété d'un garde-fou de prêt plutôt que d'un nouveau service. Remplace les partials orphelins jamais reliés à une route : `_attendance_contribution_confirmation`, `_attendance_direct_confirmation`, `_attendance_contribution_options`, `_attendance_success` (supprimés). Cas « prêt de carnet » couvert : un Pack10 actif avec séances restantes peut couvrir la présence d'une autre personne si **cette personne** (pas le prêteur) a une adhésion Cirque active (`Contribution#lendable_to?`, distinct de `#can_use?` qui teste le propriétaire) ; recherche inline du prêteur par nom. Traçabilité : badge « Carnet de X » sur `admin/attendance_lists` quand `contribution.person != attendance.person`. Bonus : le flag `record_attendance` de `People::ContributionCreator` (déclaré mais jamais utilisé) est maintenant câblé — achat de cotisation + présence en une seule action, case à cocher sur `admin/contributions/new`.
-- [ ] Ajouter l’action admin de génération / réenvoi de reçu de don (dépend des métadonnées ci-dessus).
+- [ ] **Ajouter action admin génération/réenvoi reçu de don** — dépend `DonationReceipt` (fait 2026-08-10). **Quick win**: 
+  - [ ] View: `/admin/donations/:id/receipt` (lien bouton "Éditer reçu" + "Renvoyer par email")
+  - [ ] Service: `People::DonationReceiptGenerator` (render template → PDF ou HTML)
+  - [ ] Mailer: `DonationMailer#receipt_email` (dépend Jetmail, voir section Mailer)
+  - Ref: `Payment#hard_delete!` pattern pour intention explicite.
 - [x] Documenter explicitement dans la doc d’architecture que `Person#renew_membership!` est le dernier gros workflow conservé sur le modèle avant une extraction éventuelle (mentions déjà présentes : `docs/domain_model.md`, `docs/glossary.md`, `docs/domain/business_logic.md`).
 - [ ] **Consolidation DRY des shells / layouts Tailwind (chantier continu)** — effort de maintenabilité/SOLID réconduit à chaque intervention future sur l'admin ou les pages publiques.
   - [x] (2026-08-18) **A** : Legal page wrapper (`terms`, `privacy_policy`) → `shared/_legal_page_shell.html.erb`
@@ -72,6 +88,7 @@
 - [ ] **Autocomplete adresse** *(idée 2026-08-17)* : brancher l'API Adresse gouvernementale (BAN, `api-adresse.data.gouv.fr`, gratuite, sans clé) en Stimulus sur les champs `address`/`zip_code`/`town` de `Person`. À faire en même temps que l'item de fusion des formulaires adresse dupliqués ci-dessous (UI / DRY) plutôt qu'avant — éviter de coder l'autocomplete 3 fois.
 - [ ] **Hub d'événements admin en temps réel** *(idée 2026-08-18)* : le dashboard admin devrait recevoir en direct les événements métier (nouvel adhérent, nouveau paiement, nouvel événement créé, nouvelle cotisation payée, etc.) plutôt qu'un rechargement manuel. Pistes de stack déjà en place : Turbo Streams + `ActiveSupport::Notifications` (déjà le pattern d'instrumentation des services) ou SolidCable. À cadrer avant implémentation : quels événements exactement, où ils s'affichent (dashboard seul ou notification globale), rétention.
 - [ ] **Système de visualisation de logs pour super admin** *(idée 2026-08-18)* : écran admin listant les actions sensibles — qui a fait quoi, modifications inline compta, accès refusés/tentatives, erreurs métier. `PaymentAuditLog` (voir constat ci-dessus) est une base partielle à généraliser plutôt qu'à dupliquer : étendre le pattern à d'autres modèles sensibles (`Membership`, `Contribution`, changements de rôle `User`) + écran de consultation/filtre réservé super_admin (`require_super_admin` déjà dans `Admin::BaseController`).
+- [ ] **PWA — Investigations fonctionnalités avancées** *(idée 2026-08-18)* : cadrer et implémenter progressivement les capacités PWA pour améliorer l'expérience mobile et desktop. Points d'investigation : (1) notifications natives (téléphone + desktop) via Web Push API + Service Worker ; (2) mode hors-ligne (cache Strategy, sync en arrière-plan via Background Sync API) ; (3) installation native (manifest.json amélioré, splashscreen, icônes multiples, theme colors) ; (4) partage natif (Web Share API) ; (5) actions de notification cliquables (action buttons, badges compteurs). Stack actuelle : `app/javascript/service_worker.js` existe mais est minimal. Pistes : `importmap` actuels (pas de Node → choix de libs avec soin), Service Worker Workbox vs. homemade, Firebase Cloud Messaging vs. VAPID keys custom Rails + Solid stack (SolidCable podrait servir de base pour push temps réel). À cadrer avant implémentation : priorités utilisateur, support navigateur cible, coûts d'infrastructure (APNS/FCM vs. custom), impact perf Service Worker.
 
 ## Import membres & historique — Google Sheet (2026-08-17)
 - [ ] **Prérequis technique (à faire en premier — l'import ne peut pas fonctionner sans)** :

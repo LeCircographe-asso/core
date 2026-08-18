@@ -8,9 +8,11 @@ en:
     create:
       rescue_alert: 'Error: %{message}'
       success: Demande de réclamation envoyée. Vérifiez vos emails.
+      rate_limited_alert: Trop de demandes de réclamation. Veuillez réessayer dans 1 heure.
     confirm:
       rescue_alert: 'Error while claiming account: %{message}'
       success: "✅ Compte revendiqué ! Votre historique est maintenant disponible."
+      rate_limited_alert: Trop de tentatives de confirmation. Veuillez réessayer dans 24 heures.
   admin:
     base:
       unauthorized_alert: You do not have access to this page.
@@ -435,10 +437,13 @@ en:
       sent_to_email_notice: Instructions de réinitialisation du mot de passe envoyées à %{email}.
       must_be_signed_in_alert: Vous devez être connecté pour effectuer cette action.
     invalid_token_alert: Le lien de réinitialisation du mot de passe est invalide ou a expiré.
+    rate_limited_alert: Trop de tentatives de réinitialisation. Veuillez réessayer dans 15 minutes.
+    reset_rate_limited_alert: Trop de changements de mot de passe. Veuillez réessayer plus tard.
   registrations:
     disabled_notice: Public sign-up is temporarily disabled.
     create:
       success_notice: Inscription réussie !
+      rate_limited_alert: Trop d'inscriptions. Veuillez réessayer dans 1 heure.
   sessions:
     already_signed_in_notice: You are already signed in. Sign out first to switch accounts.
     new:
@@ -570,6 +575,8 @@ en:
     passwords_mailer:
       reset:
         subject: Réinitialisez votre mot de passe
+      changed:
+        subject: Votre mot de passe a été modifié
     user_mailer:
       welcome_by_admin:
         subject: 'Bienvenue au Circographe ! '

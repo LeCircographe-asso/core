@@ -2,6 +2,8 @@
 
 class RegistrationsController < ApplicationController
   allow_unauthenticated_access only: %i[new create]
+  rate_limit to: 5, within: 1.hour, only: :create,
+              with: -> { redirect_to new_user_registration_path, alert: I18n.t("registrations.rate_limited_alert") }
 
   before_action :ensure_public_registration_enabled!, only: %i[new create]
 

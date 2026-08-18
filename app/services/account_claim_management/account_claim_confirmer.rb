@@ -45,6 +45,8 @@ module AccountClaimManagement
 
         claim.update!(status: :confirmed)
 
+        claim.user.sessions.destroy_all
+
         ActiveSupport::Notifications.instrument(
           "account_claim.confirmed",
           account_claim_id: claim.id,

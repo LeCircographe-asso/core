@@ -28,7 +28,8 @@ module AccountClaimManagement
           status: :pending
         )
 
-        # Instrumentation pour audit
+        AccountClaimMailer.confirmation_email(claim).deliver_later
+
         ActiveSupport::Notifications.instrument(
           "account_claim.created",
           account_claim_id: claim.id,
@@ -36,9 +37,6 @@ module AccountClaimManagement
           user_id: user_id,
           email: email
         )
-
-        # TODO: Envoyer l'email de confirmation
-        # AccountClaimMailer.confirmation_email(claim).deliver_later
 
         success(claim: claim, message: "Demande de réclamation créée avec succès")
       rescue ActiveRecord::RecordNotFound => e
