@@ -12,13 +12,14 @@
     background-color: #fff;
     border-right: 1px solid #f0f0f0;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
-    transition: all 0.3s ease-in-out;
+    transition: width 0.35s cubic-bezier(0.3, 0.7, 0.4, 1);
     z-index: 100;
   }
 
   .admin-sidebar.collapsed {
     width: 70px;
     overflow: visible;
+    transition: width 0.35s cubic-bezier(0.3, 0.7, 0.4, 1);
   }
 
   .sidebar-logo img.image-main {
@@ -46,6 +47,18 @@
 
   .sidebar-menu li {
     margin-bottom: 1px;
+    animation: slideIn 0.3s ease-out forwards;
+  }
+
+  @keyframes slideIn {
+    from {
+      opacity: 0;
+      transform: translateX(-8px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
   }
 
   .sidebar-link {
@@ -60,7 +73,7 @@
     border: none;
     background: none;
     border-radius: 5px;
-    transition: all 0.2s ease;
+    transition: all 0.25s cubic-bezier(0.3, 0.7, 0.4, 1);
   }
 
   .sidebar-link:hover {
@@ -99,6 +112,23 @@
     display: none;
   }
 
+  /* Hidden chevron for hub links */
+  .hidden-chevron {
+    opacity: 0.5;
+    transition: opacity 0.3s cubic-bezier(0.3, 0.7, 0.4, 1),
+                transform 0.3s cubic-bezier(0.3, 0.7, 0.4, 1);
+    transform: translateX(0);
+  }
+
+  .sidebar-link:hover .hidden-chevron {
+    opacity: 1;
+    transform: translateX(2px);
+  }
+
+  .admin-sidebar.collapsed .hidden-chevron {
+    display: none;
+  }
+
   .admin-sidebar.collapsed .sidebar-menu li a i,
   .admin-sidebar.collapsed .sidebar-menu li button i,
   .admin-sidebar.collapsed .sidebar-icon,
@@ -123,14 +153,19 @@
     background-color: #fff;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: all 0.3s cubic-bezier(0.3, 0.7, 0.4, 1);
     transform: translateY(-50%);
   }
 
   .toggle-indicator:hover {
-    transform: translateY(-50%) scale(1.1);
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
-    color: #2d3748;
+    transform: translateY(-50%) scale(1.15);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    color: #1F5C55;
+    background-color: #f0fffe;
+  }
+
+  .toggle-indicator:active {
+    transform: translateY(-50%) scale(0.95);
   }
 
   .admin-sidebar.collapsed .toggle-indicator {
@@ -138,7 +173,8 @@
   }
 
   .toggle-icon {
-    transition: transform 0.3s ease;
+    transition: transform 0.35s cubic-bezier(0.3, 0.7, 0.4, 1);
+    display: inline-block;
   }
 
   /* Section headers — improved visual separation */
@@ -149,12 +185,23 @@
     border-top: 2px solid transparent;
     border-image: linear-gradient(90deg, #1F5C55, #f0f0f0) 1;
     position: relative;
+    animation: fadeIn 0.4s ease-out;
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
   }
 
   .sidebar-section:first-of-type {
     margin-top: 0;
     padding-top: 0;
     border-top: none;
+    animation: none;
   }
 
   .sidebar-section > .text-sm {
@@ -166,7 +213,7 @@
     text-transform: uppercase;
     font-size: 0.7rem;
     letter-spacing: 0.8px;
-    transition: all 0.2s ease;
+    transition: letter-spacing 0.3s cubic-bezier(0.3, 0.7, 0.4, 1);
   }
 
   .sidebar-section:hover > .text-sm {
@@ -203,9 +250,9 @@
     max-height: 500px;
     opacity: 1;
     overflow: hidden;
-    transition: max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-                opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-                margin 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: max-height 0.35s cubic-bezier(0.3, 0.7, 0.4, 1),
+                opacity 0.35s cubic-bezier(0.3, 0.7, 0.4, 1),
+                margin 0.35s cubic-bezier(0.3, 0.7, 0.4, 1);
   }
 
   .submenu.hidden {
@@ -217,10 +264,12 @@
 
   .submenu li {
     margin-bottom: 0;
+    animation: slideIn 0.3s ease-out forwards;
   }
 
   .submenu-chevron {
-    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: transform 0.35s cubic-bezier(0.3, 0.7, 0.4, 1);
+    display: inline-block;
   }
 
   .submenu-chevron.rotate-90 {

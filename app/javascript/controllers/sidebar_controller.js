@@ -2,8 +2,10 @@ import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
   static targets = ["sidebar", "content", "text"]
+  static outlets = ["submenu"]
 
   connect() {
+    this.isAnimating = false
     this.checkInitialState()
     this.addResizeListener()
   }
@@ -14,20 +16,39 @@ export default class extends Controller {
 
   toggle(event) {
     event.preventDefault()
+    if (this.isAnimating) return
+
+    this.isAnimating = true
     this.sidebarTarget.classList.toggle('collapsed')
-    
+
     if (this.hasContentTarget) {
       this.contentTarget.classList.toggle('expanded')
     }
-    
+
     if (this.sidebarTarget.classList.contains('collapsed')) {
       this.textTargets.forEach(text => text.classList.add('hidden'))
     } else {
       this.textTargets.forEach(text => text.classList.remove('hidden'))
     }
-    
+
     if (window.innerWidth > 768) {
       localStorage.setItem('sidebarCollapsed', this.sidebarTarget.classList.contains('collapsed'))
+    }
+
+    setTimeout(() => { this.isAnimating = false }, 350)
+  }
+
+  toggleSubmenu(event) {
+    event.preventDefault()
+    const button = event.currentTarget
+    const submenu = button.nextElementSibling
+    const chevron = button.querySelector('.submenu-chevron')
+
+    if (!submenu) return
+
+    submenu.classList.toggle('hidden')
+    if (chevron) {
+      chevron.classList.toggle('rotate-90')
     }
   }
 
