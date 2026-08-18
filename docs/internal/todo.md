@@ -35,7 +35,9 @@
   - [ ] Doc: `docs/backup-restore.md`
 
 ## Mailer transactionnel (2026-08-18)
-- [ ] **Mailjet setup** (Standby: awaiting Circographe account). See `docs/mailers/mailjet.md` for strategy. Personal account (dev/staging) → Circographe (prod). Mailers: welcome, password_reset, password_changed, account_claim_confirmation.
+- [x] **Mailjet SMTP local setup** (dev environment tested + working). Personal account credentials in `credentials.yml.enc`. Mailers: welcome, password_reset, password_changed, account_claim_confirmation.
+- [ ] **Welcome email refactor** (v1): logo + branding (léger), lien site, info adhésion (court). See `docs/mailers/mailjet.md`.
+- [ ] **Event interest notification mailer** (nouveau): déclenché quand utilisateur clique "Intéressé" sur un événement.
 
 ## Performance (2026-08-18)
 - [ ] **Passe de performance** — Rails 8.1 stack (SolidCache, Propshaft, SQLite). Priorités:
