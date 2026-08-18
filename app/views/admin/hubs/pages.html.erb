@@ -1,0 +1,82 @@
+<% content_for :title, "Pages statiques" %>
+
+<div class="min-h-screen py-12">
+  <div class="page-container max-w-3xl">
+    <!-- Header -->
+    <div class="mb-12">
+      <%= link_to admin_dashboard_index_path, class: "text-sm text-gray-600 hover:text-gray-900 mb-6 inline-flex items-center" do %>
+        <i class="fas fa-arrow-left mr-2"></i> Retour au dashboard
+      <% end %>
+
+      <h1 class="text-3xl font-bold text-gray-900 mb-2">Pages statiques</h1>
+      <p class="text-gray-600">Sélectionnez la page à modifier</p>
+    </div>
+
+    <!-- Selection Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <!-- Conseil d'administration -->
+      <div class="group">
+        <%= link_to admin_board_members_path, class: "block h-full" do %>
+          <div class="surface-card h-full p-8 hover:shadow-lg transition-all duration-300 flex flex-col items-center justify-center text-center">
+            <div class="w-16 h-16 bg-gradient-to-br from-[#1F5C55] to-[#194A45] rounded-lg flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+              <i class="fas fa-user-tie text-white text-2xl"></i>
+            </div>
+            <h2 class="text-lg font-semibold text-gray-900 mb-3">Conseil d'administration</h2>
+            <p class="text-sm text-gray-600 mb-6">Gérer les membres du conseil</p>
+            <span class="inline-flex items-center px-3 py-1.5 rounded-lg bg-[#1F5C55]/10 text-[#1F5C55] text-xs font-medium group-hover:bg-[#1F5C55] group-hover:text-white transition-colors">
+              Modifier <i class="fas fa-arrow-right ml-2"></i>
+            </span>
+          </div>
+        <% end %>
+      </div>
+
+      <!-- Partenaires -->
+      <div class="group">
+        <%= link_to admin_partners_path, class: "block h-full" do %>
+          <div class="surface-card h-full p-8 hover:shadow-lg transition-all duration-300 flex flex-col items-center justify-center text-center">
+            <div class="w-16 h-16 bg-gradient-to-br from-[#1F5C55] to-[#194A45] rounded-lg flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+              <i class="fas fa-handshake text-white text-2xl"></i>
+            </div>
+            <h2 class="text-lg font-semibold text-gray-900 mb-3">Partenaires</h2>
+            <p class="text-sm text-gray-600 mb-6">Gérer les partenaires de l'asso</p>
+            <span class="inline-flex items-center px-3 py-1.5 rounded-lg bg-[#1F5C55]/10 text-[#1F5C55] text-xs font-medium group-hover:bg-[#1F5C55] group-hover:text-white transition-colors">
+              Modifier <i class="fas fa-arrow-right ml-2"></i>
+            </span>
+          </div>
+        <% end %>
+      </div>
+
+      <!-- Horaires -->
+      <div class="group">
+        <%= link_to edit_admin_opening_hours_path, class: "block h-full" do %>
+          <div class="surface-card h-full p-8 hover:shadow-lg transition-all duration-300 flex flex-col items-center justify-center text-center">
+            <div class="w-16 h-16 bg-gradient-to-br from-[#1F5C55] to-[#194A45] rounded-lg flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+              <i class="fas fa-clock text-white text-2xl"></i>
+            </div>
+            <h2 class="text-lg font-semibold text-gray-900 mb-3">Horaires d'ouverture</h2>
+            <p class="text-sm text-gray-600 mb-6">Configurer les horaires</p>
+            <span class="inline-flex items-center px-3 py-1.5 rounded-lg bg-[#1F5C55]/10 text-[#1F5C55] text-xs font-medium group-hover:bg-[#1F5C55] group-hover:text-white transition-colors">
+              Modifier <i class="fas fa-arrow-right ml-2"></i>
+            </span>
+          </div>
+        <% end %>
+      </div>
+
+      <!-- FAQ -->
+      <div class="group">
+        <%= link_to admin_faqs_path, class: "block h-full" do %>
+          <div class="surface-card h-full p-8 hover:shadow-lg transition-all duration-300 flex flex-col items-center justify-center text-center">
+            <div class="w-16 h-16 bg-gradient-to-br from-[#1F5C55] to-[#194A45] rounded-lg flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+              <i class="fas fa-question-circle text-white text-2xl"></i>
+            </div>
+            <h2 class="text-lg font-semibold text-gray-900 mb-3">FAQ</h2>
+            <p class="text-sm text-gray-600 mb-6">Gérer les questions fréquentes</p>
+            <span class="inline-flex items-center px-3 py-1.5 rounded-lg bg-[#1F5C55]/10 text-[#1F5C55] text-xs font-medium group-hover:bg-[#1F5C55] group-hover:text-white transition-colors">
+              Modifier <i class="fas fa-arrow-right ml-2"></i>
+            </span>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>
