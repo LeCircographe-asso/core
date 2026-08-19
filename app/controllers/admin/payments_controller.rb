@@ -2,9 +2,6 @@
 
 module Admin
   class PaymentsController < BaseController
-    # Remove the before_action since we don't need the dashboard breadcrumb
-    # before_action :set_breadcrumbs
-
     def index
       @filter_params = payments_index_filter_params
       service_result = Admin::PaymentsService.new(@filter_params.to_unsafe_h).call
@@ -56,21 +53,6 @@ module Admin
       respond_to_failed_payment_create(e.message)
     end
 
-    # OLD: logique directe (commentée pour rollback)
-    # begin
-    #   person = Person.find(payment_params[:person_id])
-    #   payment = person.payments.create!(
-    #     total_cents: payment_params[:total_cents],
-    #     payment_method: payment_params[:payment_method] || "cash",
-    #     status: :success,
-    #     recorded_by: Current.user,
-    #     notes: payment_params[:notes]
-    #   )
-    #   redirect_to admin_payment_path(payment), notice: "Paiement créé avec succès"
-    # rescue => e
-    #   redirect_to admin_payments_path, alert: "Erreur lors de la création du paiement: #{e.message}"
-    # end
-
     def update
       # Convertir le montant en centimes si fourni en euros
       total_cents = payment_params[:total_cents]
@@ -112,17 +94,8 @@ module Admin
           end
         end
       end
-
-      # OLD: logique directe (commentée pour rollback)
-      # @payment = Payment.find(params[:id])
-      # if @payment.update(payment_params)
-      #   redirect_to admin_payment_path(@payment), notice: "Mise à jour réussie"
-      # else
-      #   redirect_to admin_payment_path(@payment), alert: "Échec de la mise à jour"
-      # end
     end
 
-    # Add destroy method with soft deletion support
     def destroy
       result = People::PaymentCanceller.new(
         payment_id: params[:id],
@@ -151,21 +124,8 @@ module Admin
           end
         end
       end
-
-      # OLD: logique directe (commentée pour rollback)
-      # @payment = Payment.find(params[:id])
-      # if @payment.update(status: :cancel)
-      #   Rails.cache.delete("total_successful_payments")
-      #   Rails.cache.delete("total_donations")
-      #   expire_fragment(/payments_summary/)
-      #   expire_fragment(/payments_total_amount/)
-      #   redirect_to admin_payments_path, notice: "Paiement annulé avec succès"
-      # else
-      #   redirect_to admin_payments_path, alert: "Échec de l'annulation du paiement"
-      # end
     end
 
-    # POST /admin/payments/:id/restore
     def restore
       result = People::PaymentRestorer.new(
         payment_id: params[:id],
