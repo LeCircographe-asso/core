@@ -43,7 +43,7 @@
       <p class="text-xs font-semibold uppercase tracking-widest text-[#1F5C55]/70"><%= t("users.space.membership_card.section_contribution") %></p>
 
       <% if show_contributions_block %>
-        <% active_contributions = person.contributions.where(status: :active) %>
+        <% active_contributions = person.contributions.currently_active %>
         <p class="text-sm text-gray-500">Cotisations actives</p>
         <% if active_contributions.exists? %>
           <% active_contributions.each do |c| %>

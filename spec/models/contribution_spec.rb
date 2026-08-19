@@ -463,6 +463,23 @@ RSpec.describe Contribution, type: :model do
       end
     end
 
+    describe '.currently_active' do
+      it 'excludes a book whose status is still active but whose date has passed' do
+        # Rien ne repasse `status` à `expired` quand la date passe (pas de job) : une
+        # cotisation "Trimestre" achetée il y a longtemps reste status: active en base.
+        stale_active_book = create(:contribution, :active, person: person, contribution_formula: trimester_plan,
+                                                            purchased_at: 4.months.ago, expires_at: 1.month.ago)
+
+        expect(Contribution.active).to include(stale_active_book)
+        expect(Contribution.currently_active).not_to include(stale_active_book)
+      end
+
+      it 'includes active books that are not expired, and pack10 books regardless of expires_at' do
+        expect(Contribution.currently_active).to include(active_book)
+        expect(Contribution.currently_active).not_to include(consumed_book, expired_book)
+      end
+    end
+
     describe '.with_expiration' do
       it 'returns books with expiration date' do
         expect(Contribution.with_expiration).to include(expired_book)

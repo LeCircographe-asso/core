@@ -44,11 +44,11 @@
     <% end %>
   </div>
 
-  <% if person.contributions&.active&.any? %>
+  <% if person.contributions&.currently_active&.any? %>
     <div class="bg-white rounded-lg border border-gray-200 p-4">
       <h3 class="text-lg font-semibold text-gray-900 mb-3">Cotisations Actives</h3>
       <div class="space-y-2">
-        <% person.contributions.active.each do |contribution| %>
+        <% person.contributions.currently_active.each do |contribution| %>
           <div class="flex items-center justify-between py-2 px-3 bg-gray-50 rounded-md">
             <div class="text-sm">
               <span class="font-medium text-gray-900"><%= contribution.contribution_formula.name %></span>

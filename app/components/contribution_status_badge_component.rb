@@ -67,11 +67,11 @@ class ContributionStatusBadgeComponent < ViewComponent::Base
   end
 
   def has_active_contributions?
-    person.contributions.active.any?
+    person.contributions.currently_active.any?
   end
 
   def total_sessions
-    person.contributions.active.sum(&:sessions_remaining)
+    person.contributions.currently_active.sum(&:sessions_remaining)
   end
 
   private
@@ -79,6 +79,6 @@ class ContributionStatusBadgeComponent < ViewComponent::Base
   attr_reader :person
 
   def active_contribution
-    person.contributions.active.first
+    person.contributions.currently_active.first
   end
 end

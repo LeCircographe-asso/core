@@ -100,6 +100,12 @@ class Contribution < ApplicationRecord
 
   scope :active, -> { where(status: :active) }
   scope :expired, -> { where(status: :expired) }
+
+  # `status: :active` seul ne suffit pas : rien ne repasse une cotisation en
+  # `expired` quand sa date passe (pas de job — voir `expired?`). Utiliser ce
+  # scope partout où l'intention est « valable maintenant », par opposition à
+  # « colonne status posée à active ».
+  scope :currently_active, -> { active.not_expired_by_date }
   scope :consumed, -> { where(status: :consumed) }
   scope :suspended, -> { where(status: :suspended) }
 

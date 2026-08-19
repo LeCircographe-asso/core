@@ -10,7 +10,7 @@ module Admin
         memberships_circus:      active.joins(:membership_type).where(membership_types: { category: "circus" }).count,
         memberships_expiring_30: active.where("ended_at <= ?", 30.days.from_now).count,
         memberships_expired:     Membership.expired.count,
-        contributions_active:    Contribution.active.count,
+        contributions_active:    Contribution.currently_active.count,
         persons:                 Person.count,
         users:                   User.count,
         revenue_month:           Payment.this_month.where(status: :success).sum(:total_cents) / 100.0,

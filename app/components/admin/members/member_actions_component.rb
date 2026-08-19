@@ -68,7 +68,7 @@ module Admin
         elsif current_membership.membership_type.basic?
           content_tag :span, "Adhésion Basique", class: disabled_class
         elsif current_membership.membership_type.circus?
-          active_contribution = person.contributions.active.first
+          active_contribution = person.contributions.currently_active.first
           links = []
           if active_contribution
             label = "Voir cotisation"
@@ -161,7 +161,7 @@ module Admin
       end
 
       def contribution_action_label
-        active_contribution = person.contributions.active.first
+        active_contribution = person.contributions.currently_active.first
         return "Acheter une cotisation" unless active_contribution
         return "Gérer les cotisations" unless active_contribution.contribution_formula.duration == "pack10"
 

@@ -18,7 +18,7 @@
         <% if @person.can_buy_contribution_formulas? %>
           <% selected_formula = @contribution_formulas.first %>
           <% current_membership = @person.current_membership %>
-          <% active_contributions = @person.contributions.active.includes(:contribution_formula).order(expires_at: :asc, created_at: :desc) %>
+          <% active_contributions = @person.contributions.currently_active.includes(:contribution_formula).order(expires_at: :asc, created_at: :desc) %>
           <% formula_label = lambda do |formula|
                case formula.duration
                when "day" then "Journée"
