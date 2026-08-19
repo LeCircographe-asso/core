@@ -46,7 +46,7 @@ en:
         restored_notice: Paiement restauré avec succès
       show:
         use_inline_notice: Utilisez l'édition inline pour modifier les paiements
-      new:
+      not_found_alert: Payment not found.
     members:
       attendances:
         already_present: "%{name} is already checked in for today."

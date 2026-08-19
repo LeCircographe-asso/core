@@ -2,6 +2,8 @@
 
 module Admin
   class PaymentsController < BaseController
+    rescue_from ActiveRecord::RecordNotFound, with: :redirect_payment_not_found
+
     def index
       @filter_params = payments_index_filter_params
       service_result = Admin::PaymentsService.new(@filter_params.to_unsafe_h).call
@@ -143,6 +145,10 @@ module Admin
     private
 
     FILTER_PARAM_KEYS = Admin::PaymentsHelper::PAYMENTS_INDEX_QUERY_KEYS
+
+    def redirect_payment_not_found
+      redirect_to admin_payments_path, alert: t("admin.payments.not_found_alert")
+    end
 
     def build_payment_create_result
       person = Person.find(payment_create_params[:person_id])

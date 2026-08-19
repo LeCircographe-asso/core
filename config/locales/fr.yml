@@ -209,7 +209,7 @@ fr:
     payments:
       show:
         use_inline_notice: Utilisez l'édition inline pour modifier les paiements
-      new:
+      not_found_alert: Paiement introuvable.
       create:
         created_notice: Paiement créé avec succès
         failure_alert: 'Erreur lors de la création du paiement: %{message}'

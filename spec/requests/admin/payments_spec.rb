@@ -431,5 +431,15 @@ RSpec.describe 'Admin::Payments', type: :request do
       follow_redirect!
       expect(response.body).to include('édition inline')
     end
+
+    it 'redirects gracefully instead of raising when the id does not resolve to a payment' do
+      # Il n'existe pas de route `new` pour /admin/payments (création via modal inline
+      # ou via /admin/members/:id/payments) — GET /admin/payments/new matche donc #show
+      # avec id="new" et doit être géré sans lever ActiveRecord::RecordNotFound.
+      get '/admin/payments/new'
+      expect(response).to redirect_to(admin_payments_path)
+      follow_redirect!
+      expect(response.body).to include('introuvable')
+    end
   end
 end
