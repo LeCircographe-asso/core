@@ -85,23 +85,6 @@ class User < ApplicationRecord
     end
   end
 
-  # Check if the user has any active payments
-  def has_active_payments?
-    payments.active.exists?
-  end
-
-  # Handle deletion when user has payments
-  def handle_deletion_with_payments
-    super # Call SoftDeletable's destroy method
-
-    # Mark all of the user's payments as cancelled
-    payments.each do |payment|
-      payment.handle_user_deletion if payment.respond_to?(:handle_user_deletion)
-    end
-
-    anonymize_personal_data
-  end
-
   def welcome_send
     return if web_visitor?
     return if Rails.env.test?
