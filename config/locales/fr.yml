@@ -200,9 +200,6 @@ fr:
         breadcrumb_modify: Modifier le bloc-note
       update:
         updated: Bloc-note mis à jour !
-    faq_config:
-      update:
-        updated: FAQ mise à jour avec succès
     opening_hours:
       update:
         success: Horaires mis à jour avec succès
