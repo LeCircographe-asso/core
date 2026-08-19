@@ -42,11 +42,11 @@ module Admin
     end
 
     def basic_memberships
-      Membership.joins(:membership_type).where(membership_types: { name: "Basic" }).count
+      Membership.active.joins(:membership_type).where(membership_types: { category: "basic" }).count
     end
 
     def circus_memberships
-      Membership.joins(:membership_type).where(membership_types: { name: "Cirque" }).count
+      Membership.active.joins(:membership_type).where(membership_types: { category: "circus" }).count
     end
 
     def active_memberships
