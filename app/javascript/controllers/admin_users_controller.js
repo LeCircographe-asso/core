@@ -93,46 +93,6 @@ export default class extends Controller {
     }
   }
   
-  // Exporter les données
-  exportData(event) {
-    const format = event.currentTarget.dataset.format || 'csv'
-    const filters = this.getCurrentFilters()
-    
-    // Afficher un indicateur de chargement
-    const button = event.currentTarget
-    const originalText = button.textContent
-    button.textContent = 'Export en cours...'
-    button.disabled = true
-    
-    // Construire l'URL d'export
-    const params = new URLSearchParams(filters)
-    params.set('format', format)
-    
-    // Rediriger vers l'export
-    window.location.href = `/admin/exports/all_users?${params.toString()}`
-    
-    // Restaurer le bouton après un délai
-    setTimeout(() => {
-      button.textContent = originalText
-      button.disabled = false
-    }, 2000)
-  }
-  
-  // Obtenir les filtres actuels
-  getCurrentFilters() {
-    const form = document.querySelector('form[action*="admin/users"]')
-    if (!form) return {}
-    
-    const formData = new FormData(form)
-    const filters = {}
-    
-    for (let [key, value] of formData.entries()) {
-      if (value) filters[key] = value
-    }
-    
-    return filters
-  }
-  
   // Gestion des raccourcis clavier
   handleKeyboard(event) {
     // Ctrl/Cmd + K pour focus sur la recherche
