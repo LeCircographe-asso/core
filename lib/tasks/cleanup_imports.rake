@@ -8,18 +8,25 @@ namespace :db do
     person_ids = people.pluck(:id)
 
     if person_ids.any?
-      payment_ids = Payment.where(person_id: person_ids).pluck(:id)
+      ActiveRecord::Base.transaction do
+        payment_ids = Payment.where(person_id: person_ids).pluck(:id)
 
-      # Ordre imposé par les FK : audit logs et lignes avant les paiements,
-      # paiements/adhésions/cotisations/présences avant la personne.
-      ActiveRecord::Base.connection.execute("DELETE FROM payment_audit_logs WHERE payment_id IN (#{payment_ids.join(',')})") if payment_ids.any?
-      ActiveRecord::Base.connection.execute("DELETE FROM payment_lines WHERE payment_id IN (#{payment_ids.join(',')})") if payment_ids.any?
-      Payment.where(id: payment_ids).delete_all
-      Membership.where(person_id: person_ids).delete_all
-      Contribution.where(person_id: person_ids).delete_all
-      Attendance.where(person_id: person_ids).delete_all
-      NewsletterSubscriber.where(email: people.pluck(:email).compact).delete_all
-      Person.where(id: person_ids).delete_all
+        # Ordre imposé par les FK : audit logs et lignes avant les paiements,
+        # paiements/adhésions/cotisations/présences/historique de numéro/demandes
+        # de compte avant la personne. Transaction : un FK non prévu ne doit pas
+        # laisser la base à moitié nettoyée (vécu le 2026-08-19 avec
+        # member_number_histories, ajouté ci-dessous).
+        ActiveRecord::Base.connection.execute("DELETE FROM payment_audit_logs WHERE payment_id IN (#{payment_ids.join(',')})") if payment_ids.any?
+        ActiveRecord::Base.connection.execute("DELETE FROM payment_lines WHERE payment_id IN (#{payment_ids.join(',')})") if payment_ids.any?
+        Payment.where(id: payment_ids).delete_all
+        Membership.where(person_id: person_ids).delete_all
+        Contribution.where(person_id: person_ids).delete_all
+        Attendance.where(person_id: person_ids).delete_all
+        MemberNumberHistory.where(person_id: person_ids).delete_all
+        AccountClaim.where(person_id: person_ids).delete_all
+        NewsletterSubscriber.where(email: people.pluck(:email).compact).delete_all
+        Person.where(id: person_ids).delete_all
+      end
     end
 
     puts "✓ #{count} adhérents supprimés"
