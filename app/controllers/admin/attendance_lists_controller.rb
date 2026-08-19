@@ -123,7 +123,7 @@ module Admin
     end
 
     def set_breadcrumbs
-      # No need to add dashboard breadcrumb as it's already in the partial
+      add_breadcrumb I18n.t("breadcrumbs.admin.common.dashboard"), admin_dashboard_index_path
     end
   end
 end

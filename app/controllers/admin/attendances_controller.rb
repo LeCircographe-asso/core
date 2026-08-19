@@ -3,6 +3,7 @@
 module Admin
   class AttendancesController < BaseController
     before_action :set_attendance, only: %i[show destroy]
+    before_action :set_breadcrumbs, only: %i[index show new]
 
     def index
       @attendances = Attendance.includes(:person, :event)
@@ -94,6 +95,10 @@ module Admin
 
     def set_attendance
       @attendance = Attendance.find(params[:id])
+    end
+
+    def set_breadcrumbs
+      add_breadcrumb I18n.t("breadcrumbs.admin.common.dashboard"), admin_dashboard_index_path
     end
 
     def attendance_params
