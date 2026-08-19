@@ -194,7 +194,7 @@ fr:
         membership_creation_failed_alert: 'Erreur lors de la création de l''adhésion: %{message}'
         upgrade_notice_offered: Adhésion upgradée avec succès ! %{name} - Offert
         upgrade_notice_paid: 'Adhésion upgradée avec succès ! %{name} - Montant: %{amount}€'
-        upgrade_notice_member_number_suffix: " | Numéro d'adhérent changé: %{old_number} → %{new_number}"
+        member_number_changed_suffix: " | Numéro d'adhérent changé: %{old_number} → %{new_number}"
     notepads:
       edit:
         breadcrumb_modify: Modifier le bloc-note

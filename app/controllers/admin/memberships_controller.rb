@@ -170,7 +170,7 @@ module Admin
                       alert: t(".duplicate_active")
         else
           redirect_to admin_person_path(person),
-                      notice: t(".success_with_contribution_hint")
+                      notice: t(".success_with_contribution_hint") + member_number_change_suffix(result)
         end
       else
         redirect_to new_admin_membership_path(person_id: person.id),
@@ -214,15 +214,18 @@ module Admin
           )
         end
 
-      if result.member_number_changed
-        message += I18n.t(
-          "admin.memberships.create.upgrade_notice_member_number_suffix",
-          old_number: result.old_member_number,
-          new_number: result.new_member_number
-        )
-      end
-
+      message += member_number_change_suffix(result)
       message
+    end
+
+    def member_number_change_suffix(result)
+      return "" unless result.member_number_changed
+
+      I18n.t(
+        "admin.memberships.create.member_number_changed_suffix",
+        old_number: result.old_member_number,
+        new_number: result.new_member_number
+      )
     end
   end
 end

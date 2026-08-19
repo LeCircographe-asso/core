@@ -7,7 +7,8 @@ module People
     include ActiveModel::Model
     include ActiveModel::Attributes
 
-    Result = Struct.new(:success?, :membership, :payment, :errors, :message, :already_existed, keyword_init: true)
+    Result = Struct.new(:success?, :membership, :payment, :errors, :message, :already_existed,
+                         :member_number_changed, :old_member_number, :new_member_number, keyword_init: true)
 
     attribute :person
     attribute :membership_type_id, :integer
@@ -30,7 +31,9 @@ module People
           "membership.skipped",
           person_id: person.id, reason: "already_active", membership_type_id: membership_type_id
         )
-        return Result.new(success?: true, membership: person.memberships.active.current.first, payment: nil, errors: [], message: I18n.t("services.success.membership_already_active"), already_existed: true)
+        return Result.new(success?: true, membership: person.memberships.active.current.first, payment: nil, errors: [],
+                           message: I18n.t("services.success.membership_already_active"), already_existed: true,
+                           member_number_changed: false, old_member_number: person.member_number, new_member_number: person.member_number)
       end
 
       membership_type = MembershipType.find(membership_type_id)
@@ -53,7 +56,8 @@ module People
           status: :active
         )
 
-        assign_member_number_if_needed!(membership_type)
+        old_member_number = person.member_number
+        new_member_number = assign_or_reissue_member_number!(membership_type, recorded_by)
 
         amount_cents = amount_for(membership_type.price_cents)
         payment = record_payment!(
@@ -64,7 +68,10 @@ module People
           notes: "Paiement pour #{payment_description(membership_type.name)}"
         )
 
-        membership_data = { membership: membership, payment: payment }
+        membership_data = {
+          membership: membership, payment: payment,
+          old_member_number: old_member_number, new_member_number: new_member_number
+        }
       end
 
       ActiveSupport::Notifications.instrument(
@@ -79,7 +86,10 @@ module People
         payment: membership_data[:payment],
         errors: [],
         message: I18n.t("services.success.membership_created"),
-        already_existed: false
+        already_existed: false,
+        member_number_changed: membership_data[:old_member_number] != membership_data[:new_member_number],
+        old_member_number: membership_data[:old_member_number],
+        new_member_number: membership_data[:new_member_number]
       )
     rescue ActiveRecord::RecordNotFound => e
       ActiveSupport::Notifications.instrument("membership.failed", error: e.message, reason: "record_not_found")
@@ -108,11 +118,19 @@ module People
       end
     end
 
-    def assign_member_number_if_needed!(membership_type)
-      return if person.member_number.present?
-
+    # Première adhésion (pas encore de numéro) : on assigne, comme avant.
+    # Reprise (numéro déjà présent — la garde en tête de #call garantit qu'on n'arrive
+    # ici que si la personne n'avait aucune adhésion en cours) : on réémet un nouveau
+    # numéro et on trace le changement, même logique que People::MembershipUpgrader.
+    def assign_or_reissue_member_number!(membership_type, recorded_by)
       category = membership_type.circus? ? "CIRQUE" : "BASIQUE"
-      MemberManagementService.assign_member_number(person, category) unless Rails.env.test?
+
+      if person.member_number.present?
+        MemberManagementService.reissue_member_number!(person, membership_type: category, recorded_by: recorded_by)
+      else
+        MemberManagementService.assign_member_number(person, category) unless Rails.env.test?
+        person.member_number
+      end
     end
 
     def amount_for(base_price_cents)
@@ -171,7 +189,10 @@ module People
         payment: nil,
         errors: Array(error_list || message),
         message: message,
-        already_existed: false
+        already_existed: false,
+        member_number_changed: false,
+        old_member_number: nil,
+        new_member_number: nil
       )
     end
   end

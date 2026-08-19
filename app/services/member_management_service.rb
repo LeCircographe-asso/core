@@ -86,6 +86,32 @@ class MemberManagementService
     person.member_number
   end
 
+  # Réémet un numéro d'adhérent lors d'une reprise d'adhésion : contrairement à
+  # #assign_member_number (première assignation), la Person a déjà un numéro — on le
+  # remplace et on trace le changement, sur le même modèle que
+  # People::MembershipUpgrader#handle_member_number_change!.
+  def self.reissue_member_number!(person, membership_type:, recorded_by:)
+    old_number = person.member_number
+    new_number = generate_member_number(membership_type)
+
+    old_history = person.member_number_histories.where(member_number: old_number, replaced_at: nil).first
+    old_history&.mark_as_replaced!
+
+    type_label = MemberNumberManagement::Policy.type_label_for(membership_type)
+    person.member_number_histories.create!(
+      member_number: new_number,
+      membership_type: type_label,
+      year: Date.current.year,
+      notes: "Reprise d'adhésion #{type_label} — enregistré par #{recorded_by.email}",
+      assigned_at: Time.current
+    )
+
+    person.skip_membership_validation = true
+    person.update!(member_number: new_number)
+
+    new_number
+  end
+
   # Fusionne deux Person en gardant la "principale" (celle avec User ou plus récente)
   def self.merge_duplicate_persons(primary_person, secondary_person)
     ActiveRecord::Base.transaction do
