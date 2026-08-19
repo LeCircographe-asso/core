@@ -1,4 +1,7 @@
-<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium <%= badge_class %>">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium cursor-help <%= badge_class %>"
+      <% tooltip_data.each do |key, value| %>
+        data-<%= key %>="<%= value %>"
+      <% end %>>
   <i class="<%= icon_class %> mr-1"></i>
   <%= status_text %>
 </span>

@@ -25,4 +25,19 @@ class AttendanceStatusComponent < ViewComponent::Base
   def status_text
     present? ? "Présent" : "Absent"
   end
+
+  def tooltip_text
+    if present?
+      "Présence enregistrée aujourd'hui à #{attendance.created_at.strftime('%H:%M')}"
+    else
+      "Aucune présence enregistrée pour aujourd'hui (#{@date.strftime('%d/%m/%Y')})"
+    end
+  end
+
+  def tooltip_data
+    {
+      controller: "tooltip",
+      "tooltip-content-value": tooltip_text
+    }
+  end
 end
