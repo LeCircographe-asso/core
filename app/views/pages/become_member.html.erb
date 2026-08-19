@@ -194,10 +194,7 @@
                header_align: "left" %>
 
     <%# Panneau latéral : Horaires + Accès dans une seule carte %>
-    <%
-      schedule   = @opening_hours
-      updated_at = OpeningHour.latest_update_entry&.updated_at
-    %>
+    <% schedule = @opening_hours %>
     <div class="rounded-2xl border border-gray-100 bg-white shadow-sm overflow-hidden">
 
       <%# ── En-tête horaires ── %>
@@ -212,7 +209,7 @@
           <button type="button"
                   class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg border border-amber-200 bg-amber-50 text-amber-800 text-xs font-semibold hover:bg-amber-100 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500"
                   data-controller="tooltip"
-                  data-tooltip-content-value="Créneaux assurés par des bénévoles, susceptibles d’évoluer chaque semaine. Vérifiez avant de vous déplacer.">
+                  data-tooltip-content-value="Créneaux assurés par des bénévoles, susceptibles d’évoluer chaque semaine (généralement mis à jour le lundi soir). Vérifiez avant de vous déplacer.">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="w-3 h-3 shrink-0" aria-hidden="true">
               <path fill-rule="evenodd" d="M15 8A7 7 0 1 1 1 8a7 7 0 0 1 14 0ZM9 5a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM6.75 8a.75.75 0 0 0 0 1.5h.75v1.75a.75.75 0 0 0 1.5 0v-2.5A.75.75 0 0 0 8.25 8h-1.5Z" clip-rule="evenodd"/>
             </svg>
@@ -224,19 +221,7 @@
       </div>
 
       <%# ── Lignes jours ── %>
-      <%= render "shared/opening_hours", schedule: schedule %>
-
-      <%# ── Pied horaires ── %>
-      <div class="px-4 py-2.5 border-t border-gray-100 flex items-center justify-between gap-3">
-        <p class="text-xs text-gray-500">Mis à jour régulièrement · lundi soir</p>
-        <span class="text-xs text-gray-400 tabular-nums shrink-0">
-          <% if updated_at.present? %>
-            <%= l(updated_at.in_time_zone(Time.zone), format: "%-d/%m %H:%M") %>
-          <% else %>
-            —
-          <% end %>
-        </span>
-      </div>
+      <%= render "shared/opening_hours", schedule: schedule, show_freshness: true %>
 
       <%# ── Accès (intégré dans la même carte) ── %>
       <div class="border-t border-gray-100 px-4 py-4 space-y-3 bg-gray-50/60">

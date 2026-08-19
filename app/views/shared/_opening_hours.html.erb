@@ -1,9 +1,24 @@
-<%# Params: schedule (hash), compact (bool), table (bool) %>
-<% schedule = local_assigns[:schedule] || local_assigns[:horaires] || @opening_hours || @horaires %>
-<% compact  = local_assigns.fetch(:compact, false) %>
-<% table    = local_assigns.fetch(:table, false) %>
-<% px       = compact ? "px-3" : "px-4" %>
-<% py       = compact ? "py-2" : "py-2.5" %>
+<%# Params: schedule (hash), compact (bool), table (bool), show_freshness (bool) %>
+<% schedule       = local_assigns[:schedule] || local_assigns[:horaires] || @opening_hours || @horaires %>
+<% compact        = local_assigns.fetch(:compact, false) %>
+<% table          = local_assigns.fetch(:table, false) %>
+<% show_freshness = local_assigns.fetch(:show_freshness, false) %>
+<% px             = compact ? "px-3" : "px-4" %>
+<% py             = compact ? "py-2" : "py-2.5" %>
+<% updated_at     = show_freshness ? OpeningHour.latest_update_entry&.updated_at : nil %>
+
+<%
+  freshness_badge = capture do
+    if show_freshness
+      concat content_tag(:div, class: "flex justify-center #{compact ? 'mt-1.5' : 'mt-2.5'}") {
+        content_tag(:span, class: "inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-brand-primary/10 text-brand-primary") do
+          concat content_tag(:i, nil, class: "far fa-clock", "aria-hidden": true)
+          concat "Mis à jour #{updated_at.present? ? l(updated_at.in_time_zone(Time.zone), format: '%-d/%m %H:%M') : '—'}"
+        end
+      }
+    end
+  end
+%>
 
 <% if table %>
 
@@ -73,6 +88,8 @@
         <p class="text-sm">Aucun horaire disponible pour le moment.</p>
       </div>
     <% end %>
+
+    <%= freshness_badge %>
   </div>
 
 <% else %>
@@ -103,5 +120,7 @@
   <% else %>
     <p class="<%= px %> py-6 text-sm text-gray-500 text-center">Aucun horaire disponible.</p>
   <% end %>
+
+  <%= freshness_badge %>
 
 <% end %>
