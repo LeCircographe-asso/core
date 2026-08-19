@@ -4,7 +4,7 @@
     <!-- Member Number / Status Badge -->
     <div class="absolute top-3 left-3 sm:left-4 z-10">
       <% if person.member_number.present? %>
-        <div class="px-3 py-1.5 rounded-lg bg-white/15 backdrop-blur-sm border border-white/20 text-left shadow-sm max-w-[calc(100%-5rem)] sm:max-w-none">
+        <div class="px-3 py-1.5 rounded-lg bg-white/15 backdrop-blur-sm border border-white/20 text-left shadow-sm">
           <span class="block text-[10px] uppercase tracking-wider text-white/80 font-medium leading-tight">N° adhérent</span>
           <%= render Admin::Members::EditableMemberNumberComponent.new(
             person: person,
