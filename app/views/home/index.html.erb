@@ -36,6 +36,7 @@
 
         <div class="grid gap-8 lg:gap-10 lg:grid-cols-[minmax(0,1.7fr)_minmax(0,1fr)] items-start" data-gsap-reveal>
           <article class="relative overflow-hidden rounded-[32px] bg-gradient-to-br from-[#0C2F2B] via-[#194A45] to-brand-primary text-white shadow-2xl p-5 sm:p-8 lg:p-10" data-gsap-reveal-item>
+            <%= render "shared/exceptional_closure_ribbon" if @exceptional_closure&.in_effect? %>
             <header class="space-y-2 sm:space-y-3 text-center lg:text-left">
               <p class="text-sm leading-normal uppercase tracking-[0.35em] text-white/75">Horaires</p>
               <h2 id="opening-hours" class="text-xl sm:text-3xl font-semibold leading-normal">Quand passer nous voir ?</h2>
@@ -45,7 +46,7 @@
             </header>
 
             <div class="mt-4 sm:mt-7 bg-white/95 text-gray-900 rounded-[20px] shadow-xl p-4 sm:p-6">
-              <%= render "shared/opening_hours", schedule: @opening_hours, table: true, compact: true, show_freshness: true %>
+              <%= render "shared/opening_hours", schedule: @opening_hours, table: true, compact: true, show_freshness: true, closure: @exceptional_closure %>
             </div>
 
             <section class="relative mt-4 rounded-[20px] border border-white/20 bg-white/10 p-4 text-left shadow-lg backdrop-blur-sm"

@@ -203,6 +203,9 @@ fr:
     opening_hours:
       update:
         success: Horaires mis à jour avec succès
+    exceptional_closures:
+      update:
+        success: Fermeture exceptionnelle mise à jour avec succès
     payments:
       show:
         use_inline_notice: Utilisez l'édition inline pour modifier les paiements

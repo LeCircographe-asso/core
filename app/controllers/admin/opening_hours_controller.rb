@@ -29,6 +29,7 @@ module Admin
 
     def set_opening_hours
       @opening_hours = current_opening_hours
+      @exceptional_closure = ExceptionalClosure.current
     end
 
     def set_breadcrumbs

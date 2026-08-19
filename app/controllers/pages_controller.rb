@@ -24,6 +24,7 @@ class PagesController < ApplicationController
     end
 
     @opening_hours = current_opening_hours
+    @exceptional_closure = current_exceptional_closure
     @notepad = Rails.cache.fetch("notepad") || default_notepad
     @blogs = Blog.order(created_at: :desc).limit(3)
 

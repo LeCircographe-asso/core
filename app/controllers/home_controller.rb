@@ -8,6 +8,7 @@ class HomeController < ApplicationController
   def index
     @upcoming_events = Event.upcoming.by_date.limit(1)
     @opening_hours = current_opening_hours
+    @exceptional_closure = current_exceptional_closure
   end
 
   def dashboard; end

@@ -1,15 +1,28 @@
-<%# Params: schedule (hash), compact (bool), table (bool), show_freshness (bool) %>
+<%# Params: schedule (hash), compact (bool), table (bool), show_freshness (bool), closure (ExceptionalClosure) %>
 <% schedule       = local_assigns[:schedule] || local_assigns[:horaires] || @opening_hours || @horaires %>
 <% compact        = local_assigns.fetch(:compact, false) %>
 <% table          = local_assigns.fetch(:table, false) %>
 <% show_freshness = local_assigns.fetch(:show_freshness, false) %>
+<% closure        = local_assigns[:closure] %>
+<% closed_now     = closure&.in_effect? %>
+<% updated_at     = show_freshness ? OpeningHour.latest_update_entry&.updated_at : nil %>
 <% px             = compact ? "px-3" : "px-4" %>
 <% py             = compact ? "py-2" : "py-2.5" %>
-<% updated_at     = show_freshness ? OpeningHour.latest_update_entry&.updated_at : nil %>
+<% grid_dim_class = closed_now ? "opacity-40 grayscale-[.4]" : "" %>
 
 <%
-  freshness_badge = capture do
-    if show_freshness
+  # La fermeture exceptionnelle prime sur la fraîcheur : c'est l'info la plus pertinente
+  # à ce moment-là, pas la peine d'afficher les deux pastilles à la fois.
+  status_badge = capture do
+    if closed_now
+      concat content_tag(:div, class: "flex justify-center #{compact ? 'mt-1.5' : 'mt-2.5'}") {
+        content_tag(:span, class: "inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-red-50 text-red-700 border border-red-200") do
+          concat content_tag(:i, nil, class: "fas fa-umbrella-beach", "aria-hidden": true)
+          label_part = [ closure.label.presence, closure.ends_on.present? ? "jusqu'au #{l(closure.ends_on, format: '%d/%m')}" : nil ].compact.join(" — ")
+          concat [ "Fermeture exceptionnelle", label_part.presence ].compact.join(" · ")
+        end
+      }
+    elsif show_freshness
       concat content_tag(:div, class: "flex justify-center #{compact ? 'mt-1.5' : 'mt-2.5'}") {
         content_tag(:span, class: "inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-brand-primary/10 text-brand-primary") do
           concat content_tag(:i, nil, class: "far fa-clock", "aria-hidden": true)
@@ -36,7 +49,7 @@
     </div>
 
     <% if schedule.present? %>
-      <table class="w-full border-collapse">
+      <table class="w-full border-collapse <%= grid_dim_class %>">
         <caption class="sr-only">Horaires d'ouverture de la semaine</caption>
         <thead>
           <tr>
@@ -89,14 +102,14 @@
       </div>
     <% end %>
 
-    <%= freshness_badge %>
+    <%= status_badge %>
   </div>
 
 <% else %>
 
   <%# ── Variante liste (autres pages) ── %>
   <% if schedule.present? %>
-    <div class="divide-y divide-gray-50">
+    <div class="divide-y divide-gray-50 <%= grid_dim_class %>">
       <% schedule.each do |day, hours| %>
         <% is_today   = Time.zone.now.strftime("%A").downcase == day.to_s %>
         <% is_closed  = hours.to_s.downcase == "fermé" %>
@@ -121,6 +134,6 @@
     <p class="<%= px %> py-6 text-sm text-gray-500 text-center">Aucun horaire disponible.</p>
   <% end %>
 
-  <%= freshness_badge %>
+  <%= status_badge %>
 
 <% end %>

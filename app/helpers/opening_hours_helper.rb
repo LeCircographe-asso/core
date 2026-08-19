@@ -14,4 +14,10 @@ module OpeningHoursHelper
   rescue ActiveModel::MissingAttributeError, NoMethodError
     default_opening_hours
   end
+
+  def current_exceptional_closure
+    ExceptionalClosure.current
+  rescue ActiveModel::MissingAttributeError, NoMethodError
+    nil
+  end
 end

@@ -78,12 +78,13 @@
         </div>
 
         <%# Horaires d'accueil %>
-        <div id="horaires" class="rounded-2xl border border-brand-primary/25 bg-white overflow-hidden shadow-sm public-anchor-section">
+        <div id="horaires" class="relative rounded-2xl border border-brand-primary/25 bg-white overflow-hidden shadow-sm public-anchor-section">
+          <%= render "shared/exceptional_closure_ribbon" if @exceptional_closure&.in_effect? %>
           <div class="px-5 pt-4 pb-2 border-b border-gray-50">
             <p class="text-xs uppercase tracking-[0.25em] text-brand-primary">Horaires d'accueil</p>
             <p class="text-xs text-gray-500 mt-1">Du mardi au dimanche · selon disponibilité bénévoles</p>
           </div>
-          <%= render "shared/opening_hours", schedule: @opening_hours, table: true, show_freshness: true %>
+          <%= render "shared/opening_hours", schedule: @opening_hours, table: true, show_freshness: true, closure: @exceptional_closure %>
         </div>
 
       </div>
