@@ -37,7 +37,6 @@ RSpec.describe People::ContributionUpgrader do
         expect(result.success?).to be(true)
         expect(result.new_contribution).to be_present
         expect(result.payment).to be_present
-        expect(result.credit_applied).to be >= 0
         expect(result.payment.payment_lines.sum(:amount_cents)).to eq(result.payment.total_cents)
         expect(result.payment.payment_lines.pluck(:item_type).uniq).to eq([ "Contribution" ])
       end
@@ -73,7 +72,7 @@ RSpec.describe People::ContributionUpgrader do
         expect(result.payment.offer_reason).to eq('Solidarity')
       end
 
-      it 'returns no credit when upgrading from pack10' do
+      it 'charges the full price of the new formula, no proration' do
         contribution
 
         result = described_class.new(
@@ -86,10 +85,12 @@ RSpec.describe People::ContributionUpgrader do
 
         expect(result.success?).to be(true)
         expect(result.old_contribution.reload.status).to eq('suspended')
-        expect(result.credit_applied).to eq(0)
+        expect(result.payment.total_cents).to eq(to_plan.price_cents)
       end
 
-      it 'applies prorata credit when upgrading from trimester to annual' do
+      it 'still charges the full price when the source contribution has plenty of time remaining' do
+        # Chaque formule a son propre prix, sans crédit sur le temps restant de
+        # l'ancienne cotisation — décision actée le 2026-08-19.
         travel_to Time.zone.local(2026, 5, 1, 12, 0, 0) do
           annual_plan = create(:contribution_formula, :annual, price_cents: 20_000)
           trimester_plan = create(:contribution_formula, :trimester, price_cents: 6_000)
@@ -112,38 +113,8 @@ RSpec.describe People::ContributionUpgrader do
 
           expect(result.success?).to be(true)
           expect(result.old_contribution.reload.status).to eq('suspended')
-          expect(result.credit_applied).to eq(2_000)
-          expect(result.payment.total_cents).to eq(18_000)
-          expect(result.payment.payment_lines.sole.amount_cents).to eq(18_000)
-        end
-      end
-
-      it 'never charges more than the full price when the source contribution is already calendar-expired' do
-        travel_to Time.zone.local(2026, 5, 1, 12, 0, 0) do
-          annual_plan = create(:contribution_formula, :annual, price_cents: 20_000)
-          trimester_plan = create(:contribution_formula, :trimester, price_cents: 6_000)
-          # status still "active" in DB even though expires_at is in the past: nothing
-          # in the app auto-transitions status on expiry.
-          trimester_contribution = create(
-            :contribution,
-            person: person,
-            contribution_formula: trimester_plan,
-            status: :active,
-            expires_at: Date.current - 10.days,
-            sessions_remaining: nil
-          )
-
-          result = described_class.new(
-            person: person,
-            from_contribution_id: trimester_contribution.id,
-            to_formula_id: annual_plan.id,
-            payment_method: 'cash',
-            recorded_by_id: admin_user.id
-          ).call
-
-          expect(result.success?).to be(true)
-          expect(result.credit_applied).to eq(0)
           expect(result.payment.total_cents).to eq(20_000)
+          expect(result.payment.payment_lines.sole.amount_cents).to eq(20_000)
         end
       end
     end

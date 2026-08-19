@@ -255,7 +255,6 @@ fr:
         attendance_not_recorded_warning: 'Attention, présence non enregistrée : %{details}'
       upgrade:
         success_notice: Cotisation upgradée avec succès.
-        credit_applied_suffix: " Crédit appliqué: %{amount}€"
         failure_alert: 'Erreur lors de l''upgrade: %{message}'
     members:
       create:

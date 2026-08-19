@@ -88,7 +88,6 @@ en:
         attendance_not_recorded_warning: 'Warning, attendance not recorded: %{details}'
       upgrade:
         success_notice: Contribution upgraded successfully.
-        credit_applied_suffix: " Credit applied: %{amount}€"
         failure_alert: 'Error during upgrade: %{message}'
     base:
       unauthorized_alert: Vous n'avez pas accès à cette page.

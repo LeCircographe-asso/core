@@ -7,7 +7,7 @@ module People
     include ActiveModel::Model
     include ActiveModel::Attributes
 
-    Result = Struct.new(:success?, :old_contribution, :new_contribution, :payment, :credit_applied, :errors, :message, keyword_init: true)
+    Result = Struct.new(:success?, :old_contribution, :new_contribution, :payment, :errors, :message, keyword_init: true)
 
     attr_accessor :person
 
@@ -47,10 +47,10 @@ module People
           contribution_formula: to_formula
         ) if payment_method == "offered"
 
-        credit_cents = calculate_contribution_credit(from_contribution)
         from_contribution.suspend!(reason: "Upgrade vers #{to_formula.name}")
 
-        amount_to_pay = [ to_formula.price_cents - credit_cents, 0 ].max
+        # Chaque formule a son propre prix, sans prorata ni crédit sur le temps
+        # restant de l'ancienne cotisation — décision actée le 2026-08-19.
         new_contribution = target_person.contributions.create!(
           People::ContributionPayloadBuilder.call(to_formula)
             .merge(contribution_formula: to_formula, status: :active, purchased_at: Time.current)
@@ -60,15 +60,14 @@ module People
           person: target_person,
           recorded_by: recorded_by,
           contribution: new_contribution,
-          amount_cents: amount_to_pay,
-          notes: "Upgrade cotisation: #{from_contribution.contribution_formula.name} → #{to_formula.name}. Crédit: #{credit_cents / 100.0}€"
+          amount_cents: to_formula.price_cents,
+          notes: "Upgrade cotisation: #{from_contribution.contribution_formula.name} → #{to_formula.name}"
         )
 
         result = {
           old_contribution: from_contribution,
           new_contribution: new_contribution,
-          payment: payment,
-          credit_applied: credit_cents
+          payment: payment
         }
       end
 
@@ -78,7 +77,6 @@ module People
         old_contribution: result[:old_contribution],
         new_contribution: result[:new_contribution],
         payment: result[:payment],
-        credit_applied: result[:credit_applied] || 0,
         message: I18n.t("services.success.contribution_upgraded")
       )
     rescue ActiveRecord::RecordNotFound => e
@@ -108,8 +106,7 @@ module People
         to_formula_id: to_formula_id,
         payment_method: payment_method,
         recorded_by_id: recorded_by.id,
-        amount_cents: result[:payment]&.total_cents || 0,
-        credit_applied: result[:credit_applied] || 0
+        amount_cents: result[:payment]&.total_cents || 0
       )
     end
 
@@ -127,7 +124,7 @@ module People
             item_type: "Contribution",
             item_id: contribution.id,
             amount_cents: amount_cents,
-            description: "Upgrade avec crédit prorata"
+            description: "Upgrade cotisation"
           }
         ]
       ).call
@@ -149,39 +146,16 @@ module People
       raise "Upgrade #{from_duration} → #{to_duration} non autorisé" unless allowed&.include?(to_duration)
     end
 
-    def calculate_contribution_credit(contribution)
-      formula = contribution.contribution_formula
-
-      case formula.duration
-      when "trimester"
-        prorated_credit(formula.price_cents, contribution.expires_at, total_days: 90)
-      when "annual"
-        prorated_credit(formula.price_cents, contribution.expires_at, total_days: 365)
-      else
-        0
-      end
-    end
-
-    # Jamais de crédit négatif : une cotisation déjà expirée au calendrier (mais dont
-    # le statut n'a pas encore basculé vers "expired") ne doit pas transformer le
-    # crédit en surcoût pour la personne qui upgrade.
-    def prorated_credit(price_cents, expires_at, total_days:)
-      days_remaining = (expires_at.to_date - Date.current).to_i
-      return 0 if days_remaining.negative?
-
-      (price_cents * days_remaining / total_days.to_f).round
-    end
-
     def person_identifier_present
       errors.add(:person_id, "must be provided") if person.blank? && person_id.blank?
     end
 
-    def success(old_contribution:, new_contribution:, payment:, credit_applied:, message:)
-      Result.new(success?: true, old_contribution: old_contribution, new_contribution: new_contribution, payment: payment, credit_applied: credit_applied, errors: [], message: message)
+    def success(old_contribution:, new_contribution:, payment:, message:)
+      Result.new(success?: true, old_contribution: old_contribution, new_contribution: new_contribution, payment: payment, errors: [], message: message)
     end
 
     def failure(message, errors = nil)
-      Result.new(success?: false, old_contribution: nil, new_contribution: nil, payment: nil, credit_applied: 0, errors: Array(errors || message), message: message)
+      Result.new(success?: false, old_contribution: nil, new_contribution: nil, payment: nil, errors: Array(errors || message), message: message)
     end
   end
 end
