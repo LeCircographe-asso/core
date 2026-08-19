@@ -112,7 +112,7 @@ Lot de petits bugs remontés par de vrais utilisateurs après la mise à jour de
   - Zones d'incertitude à lever avant de s'engager : (1) places restantes non exposées par l'endpoint public `forms/{type}/{slug}/public` (signalé sans réponse officielle sur leur forum) ; (2) paiement en invité vs création de compte HelloAsso obligatoire pour le payeur — non confirmé dans leur doc technique, à tester en sandbox (`helloasso-sandbox.com`).
   - Pas de SDK Ruby officiel — prévoir un client HTTP maison (Faraday) plutôt qu'un gem communautaire non audité.
 - [x] Détection/fusion de doublons `Person` *(fait, périmé — `Admin::DuplicatesController` existe : détection via `Admin::HealthReport`, fusion via `People::AccountMerger`, explicitement pensé comme préalable à l'import Sheet, voir section Import ci-dessous)*.
-- [ ] Ajouter les filtres reporting de dons par période et méthode de paiement.
+- [x] **Filtres reporting de dons par période et méthode de paiement** *(2026-08-19)* : la période était déjà filtrable (`start_date`/`end_date`) sur `admin/payments`. Ajouté : filtre `payment_method` + case "Dons uniquement" (`donations_only`, jointure `payment_lines` sur `item_type: "Donation"`), composables avec les filtres existants. `commit 71071a78`.
 - [ ] Construire le flux RGPD d’anonymisation `Person` / `User` avec raison et acteur.
 - [ ] Ajouter un dashboard admin minimal pour les feature flags existants.
 - [ ] Ouvrir une branche d’amorçage OAuth : cadrer le premier provider, le flux de rattachement `User`/`Person`, et les points d’entrée login / revendication de compte avant toute implémentation UI.
@@ -139,9 +139,8 @@ Lot de petits bugs remontés par de vrais utilisateurs après la mise à jour de
 - [ ] Colonnes cohérentes avec l'import ci-dessus pour permettre un cycle export → correction → réimport.
 
 ## Harmonisation backoffice — CMS vs CRM (2026-08-17)
-- [ ] Constat *(lié à l'item d'harmonisation UI/DRY)* : la sidebar mélange sans distinction contenu public (Blog, Galerie, CA, Partenaires, Horaires, FAQ = CMS) et gestion adhérents/argent (Membres, Paiements, Cotisations, Présence = CRM).
-- [ ] Séparer visuellement les deux dans la nav (sections nommées ou zones distinctes) pour réduire la charge de navigation.
-- [ ] Classer `duplicates` et le futur import côté CRM à cette occasion.
+- [x] Séparer visuellement CMS et CRM dans la sidebar admin *(revérifié 2026-08-19 : déjà fait entretemps — `_admin_lateral_navbar.html.erb` a 4 sections nommées : "Gestion" (CRM : membres, paiements, présence, hub adhésions/cotisations), "Événements & Actualités" + "Contenu Public" (CMS : events, blog, galerie, hub pages statiques), "Outils" (bloc-notes, import/export). Rien à faire.)*
+- [ ] Classer `duplicates` côté CRM dans la sidebar : pas de lien dédié dans `_admin_lateral_navbar.html.erb` ni les hubs, accessible seulement via `admin/health_reports` ("Fusionner des doublons →").
 
 ## Audit UX/UI admin (2026-08-17)
 Audit navigateur réel (Puppeteer headless, session admin, captures desktop 1440px + mobile 390px) sur les ~27 écrans de l'admin. Verdict : desktop cohérent (recherche/filtres/pagination sur les grosses listes, dashboard avec KPIs, bons états vides) ; mobile cassé sur 100% des écrans testés (cause unique, corrigée ci-dessous). Détail des 6 constats et suivi :
@@ -156,7 +155,7 @@ Audit navigateur réel (Puppeteer headless, session admin, captures desktop 1440
 ## To verify
 - [ ] **Redondance de nommage dans les namespaces de services** *(constat 2026-08-19)* : `OpeningHoursManagement::OpeningHoursUpdater`, `AttendanceListManagement::AttendanceListCreator`, `AttendanceListManagement::DailyListGenerator` répètent le nom du domaine déjà porté par le namespace — à comparer avec `People::PaymentRecorder`/`AttendanceManagement::CheckInService` qui n'ont pas ce travers. Convention réelle mais incohérente dans le repo. Pas traité (renommage touche routes/call-sites/specs, mérite une passe dédiée) — nouveau code (`ExceptionalClosure`) écrit sans reproduire le pattern.
 - [ ] Confirmer en production qu’aucune `PaymentLine` legacy de don (`item_type: "Payment"`) ne subsiste après la migration déjà appliquée.
-- [ ] Confirmer si le crédit prorata de `People::ContributionUpgrader` doit rester ou être remplacé par une remise / offre explicite.
+- [x] Confirmer si le crédit prorata de `People::ContributionUpgrader` doit rester ou être remplacé par une remise / offre explicite. *(Tranché 2026-08-19 : supprimé — chaque formule a son propre prix, sans crédit sur le temps restant de l'ancienne cotisation. `credit_applied` retiré du `Result` et de tous les appelants (instrumentation, notice admin, clé i18n). `commit 0c773c5a`.)*
 - [ ] Confirmer en base de production l’absence de `payments.user_id` et la présence de `payments.recorded_by_id`.
 - [ ] Confirmer qu’aucune donnée de production ne dépend encore de `people.newsletter_subscribed`. *(Côté code déjà migré 2026-08-10 : plus de colonne `people.newsletter_subscribed` en base — `Person#newsletter_subscribed?` délègue à `NewsletterSubscriber` via `PersonPaymentReporting`, writer no-op de compat legacy. Reste à vérifier : uniquement un éventuel usage résiduel côté données/exports en production.)*
 - [x] Confirmer que les scripts inline admin restants sont tous couverts par Stimulus. *(Confirmé 2026-08-10 : `grep -rl "<script" app/views/admin` ne remonte plus aucun fichier.)*
