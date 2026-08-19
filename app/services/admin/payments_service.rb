@@ -36,6 +36,14 @@ module Admin
       # Apply status filter
       query = query.where(status: params[:status]) if params[:status].present?
 
+      # Apply payment method filter
+      query = query.where(payment_method: params[:payment_method]) if params[:payment_method].present?
+
+      # Restrict to payments that include a donation line (reporting dons)
+      if ActiveModel::Type::Boolean.new.cast(params[:donations_only])
+        query = query.joins(:payment_lines).where(payment_lines: { item_type: "Donation" }).distinct
+      end
+
       # Apply date range filter
       if params[:start_date].present? && params[:end_date].present?
         start_date = Date.parse(params[:start_date])

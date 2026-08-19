@@ -41,6 +41,27 @@ RSpec.describe Admin::PaymentsService do
       expect(result[:payments]).to match_array([ payment_pending ])
     end
 
+    it 'filters by payment_method' do
+      card_payment = create(:payment, :success, :card, person: person_two, total_cents: 3_000, recorded_by: admin_user)
+
+      result = described_class.new(payment_method: 'card').call
+
+      expect(result[:payments]).to match_array([ card_payment ])
+    end
+
+    it 'restricts to payments with a donation line when donations_only is set' do
+      result = described_class.new(donations_only: 'true').call
+
+      expect(result[:payments]).to match_array([ donation_payment ])
+      expect(result[:total_donation]).to eq(5_000)
+    end
+
+    it 'combines donations_only with the date range' do
+      result = described_class.new(donations_only: 'true', start_date: '2025-02-09', end_date: '2025-02-11').call
+
+      expect(result[:payments]).to be_empty
+    end
+
     it 'filters by date range' do
       params = {
         start_date: '2025-02-09',

@@ -79,11 +79,38 @@
 
             <div class="md:w-48">
               <label for="end_date" class="block text-sm font-medium text-gray-700 mb-1">Date fin</label>
-              <%= form.date_field :end_date, 
-                  value: params[:end_date], 
+              <%= form.date_field :end_date,
+                  value: params[:end_date],
                   class: "block w-full rounded-md border-gray-300 shadow-sm focus:border-[#1F5C55] focus:ring-[#1F5C55] sm:text-sm" %>
             </div>
-            
+
+            <div class="md:w-48">
+              <label for="payment_method" class="block text-sm font-medium text-gray-700 mb-1">Méthode</label>
+              <%= form.select :payment_method,
+                  options_for_select([
+                    [ 'Toutes', '' ],
+                    [ 'Espèces', 'cash' ],
+                    [ 'Carte bancaire', 'card' ],
+                    [ 'Chèque', 'cheque' ],
+                    [ 'Virement', 'transfer' ],
+                    [ 'Offert', 'offered' ]
+                  ], params[:payment_method]),
+                  {},
+                  {
+                    class: "block w-full rounded-md border-gray-300 shadow-sm focus:border-[#1F5C55] focus:ring-[#1F5C55] sm:text-sm",
+                    onchange: "this.form.submit()"
+                  } %>
+            </div>
+
+            <div class="flex items-end pb-2">
+              <label class="flex items-center gap-2 text-sm font-medium text-gray-700">
+                <%= form.check_box :donations_only,
+                    { checked: ActiveModel::Type::Boolean.new.cast(params[:donations_only]), onchange: "this.form.submit()" },
+                    "true", "false" %>
+                Dons uniquement
+              </label>
+            </div>
+
             <!-- Bouton de recherche -->
             <div class="flex items-end">
               <%= form.submit "Filtrer", class: "admin-btn-primary" %>
@@ -127,7 +154,7 @@
                         </svg>
                         <p class="text-lg font-medium">Aucun paiement trouvé</p>
                         <p class="text-sm">
-                          <% if params[:search].present? || params[:status].present? || params[:start_date].present? %>
+                          <% if params[:search].present? || params[:status].present? || params[:start_date].present? || params[:payment_method].present? || params[:donations_only].present? %>
                             Essayez de modifier votre recherche ou vos filtres.
                           <% else %>
                             Commencez par créer votre premier paiement.
