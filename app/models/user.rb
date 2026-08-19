@@ -64,16 +64,6 @@ class User < ApplicationRecord
 
   # (can_edit_member_numbers? maintenant dans le module Roleable)
 
-  # Override destroy method from SoftDeletable to handle payments
-  # def destroy
-  #   if has_active_payments?
-  #     handle_deletion_with_payments
-  #   else
-  #     super # Call SoftDeletable's destroy method
-  #     anonymize_personal_data
-  #   end
-  # end
-
   # Anonymize personal data after soft deletion
   def anonymize_personal_data
     update!(
