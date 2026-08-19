@@ -69,11 +69,11 @@
       </div>
     </div>
   <% elsif can_purchase_contributions? %>
+    <!-- Pas de bouton ici : "Acheter une cotisation" est déjà dans la barre d'actions
+         persistante (Admin::Members::MemberActionsComponent#contribution_action). -->
     <div class="bg-white rounded-lg border border-gray-200 p-4">
       <div class="text-center">
-        <p class="text-gray-500 mb-3">Aucune cotisation active</p>
-        <%= link_to "Ajouter une cotisation", new_admin_contribution_path(person_id: person.id),
-            class: "inline-flex items-center px-3 py-1 text-sm font-medium text-white bg-[#1F5C55] hover:bg-[#194A45] rounded-md" %>
+        <p class="text-gray-500">Aucune cotisation active</p>
       </div>
     </div>
   <% else %>

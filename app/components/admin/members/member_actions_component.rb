@@ -48,10 +48,11 @@ module Admin
         elsif current_membership.membership_type.basic?
           link_to "Passer en adhésion Cirque", new_admin_membership_path(person_id: person.id, upgrade: true), class: btn_class
         elsif current_membership.membership_type.circus?
+          # Adhésion active et pas encore proche de l'expiration : rien à faire ici,
+          # l'onglet "Adhésion" juste au-dessus donne déjà accès aux détails — pas
+          # besoin d'un bouton qui ferait doublon avec ce clic.
           if current_membership.ended_at < 30.days.from_now
             link_to "Renouveler l'adhésion", new_admin_membership_path(person_id: person.id, renew: true), class: btn_class
-          else
-            link_to "Voir adhésion", "#{admin_member_path(person)}#membership", class: btn_class
           end
         else
           link_to "Renouveler l'adhésion", new_admin_membership_path(person_id: person.id, renew: true), class: btn_class

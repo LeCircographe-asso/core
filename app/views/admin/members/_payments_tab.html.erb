@@ -64,13 +64,6 @@
         </div>
       <% end %>
     </div>
-
-    <% if person.present? %>
-      <div class="mt-4 text-center">
-        <%= link_to "Voir les paiements", admin_payments_path(person_id: person.id),
-            class: "text-[#1F5C55] hover:underline text-sm font-medium" %>
-      </div>
-    <% end %>
   <% else %>
     <div class="bg-gray-50 p-4 rounded-lg text-center">
       <p class="text-gray-700 text-sm">Aucun paiement enregistré</p>
