@@ -176,6 +176,21 @@ module Imports
           member_number: member_number.presence
         )
 
+        # Sans ça, une personne importée a un member_number mais zéro trace dans
+        # member_number_histories — même écart que celui corrigé le 2026-08-19 sur
+        # les reprises (MemberManagementService.reissue_member_number!), mais ici
+        # à la source : jamais une seule entrée créée pour les imports.
+        if member_number.present?
+          parsed = MemberNumberManagement::Policy.parse(member_number)
+          person.member_number_histories.create!(
+            member_number: member_number,
+            membership_type: parsed&.dig(:type) || "Cirque",
+            year: parsed&.dig(:year)&.to_i || payment_date.year,
+            notes: "Numéro d'adhérent initial (import CSV)",
+            assigned_at: payment_date
+          )
+        end
+
         # Best-effort : un email malformé/dupliqué ne doit pas faire échouer tout l'import de la personne
         NewsletterSubscriber.create(email: email) if newsletter && email.present?
 
