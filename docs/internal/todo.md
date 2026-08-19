@@ -9,6 +9,7 @@
 
 ## Now
 - [x] **Nettoyage code mort `admin/payments_controller.rb`** *(2026-08-19)* : 3 blocs "OLD: logique directe (commentée pour rollback)" (create/update/destroy) + commentaire `before_action` mort supprimés — logique déjà remplacée par `People::PaymentRecorder`/`PaymentUpdater`/`PaymentCanceller`. Vérifié : invalidation cache (`total_successful_payments`/`total_donations`) déjà couverte par `Payment#log_status_change` sur tout changement de statut, aucune régression. `commit c01481ae`.
+- [x] **Nettoyage code mort `blogs_controller.rb` + `user.rb`** *(2026-08-19)* : stubs vides `#article`/`#newsletter` (aucune route) et override `#destroy` commenté (superseded par `SoftDeletable#archive!`) supprimés. `commit 2c5af351`. **À vérifier séparément** : `User#handle_deletion_with_payments` (`app/models/user.rb`) n'a aucun appelant vivant trouvé dans `app/` — candidat méthode morte, pas supprimé (changement plus risqué qu'un simple commentaire, à confirmer avant d'y toucher).
 - [x] **Paiements** : écrans admin passent par `People::PaymentCanceller` (annulation `status: cancel`, pas de suppression). `Payment#destroy` verrouillé par défaut ; hard delete résiduel via `Payment#hard_delete!` (usages techniques/tests).
 - [x] Métadonnées de reçu de don (numéro séquentiel/an, date, émetteur figé via `ENV["ASSOCIATION_RECEIPT_ISSUER"]`) : `DonationReceipt` + `People::DonationReceiptIssuer`, voir `docs/payments.md` §4.4. Couche données seule — action admin/PDF en item suivant.
 
