@@ -8,8 +8,6 @@ module AttendanceListManagement
     def call
       target_date = date || Date.current
 
-      return failure("Free training closed on Mondays") if target_date.monday?
-
       return failure("Attendance list already exists for #{target_date}") if attendance_list_exists_for?(target_date)
 
       start_datetime = build_start_datetime(target_date)

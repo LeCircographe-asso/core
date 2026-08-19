@@ -6,7 +6,7 @@ RSpec.describe AttendanceListManagement::DailyListGenerator do
   include ActiveSupport::Testing::TimeHelpers
 
   describe '#call' do
-    context 'on non-Monday' do
+    context 'on any day of the week' do
       it 'creates a training attendance list for the given day' do
         travel_to(Date.parse('2025-02-04')) do # Tuesday
           result = described_class.new.call
@@ -28,16 +28,13 @@ RSpec.describe AttendanceListManagement::DailyListGenerator do
           end.to instrument('attendance_list.daily_created')
         end
       end
-    end
 
-    context 'on Monday' do
-      it 'skips generation and returns failure' do
+      it 'creates a training attendance list on Monday too (exceptional/off-schedule openings must not be blocked)' do
         travel_to(Date.parse('2025-02-03')) do # Monday
           result = described_class.new.call
 
-          expect(result.success?).to be false
-          expect(result.message).to include('Mondays')
-          expect(AttendanceList.count).to eq(0)
+          expect(result.success?).to be true
+          expect(result.attendance_list).to be_persisted
         end
       end
     end
