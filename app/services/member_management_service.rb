@@ -94,8 +94,7 @@ class MemberManagementService
     old_number = person.member_number
     new_number = generate_member_number(membership_type)
 
-    old_history = person.member_number_histories.where(member_number: old_number, replaced_at: nil).first
-    old_history&.mark_as_replaced!
+    close_out_previous_number!(person, old_number) if old_number.present?
 
     type_label = MemberNumberManagement::Policy.type_label_for(membership_type)
     person.member_number_histories.create!(
@@ -110,6 +109,30 @@ class MemberManagementService
     person.update!(member_number: new_number)
 
     new_number
+  end
+
+  # Ferme l'entrée d'historique du numéro qu'on remplace. Beaucoup de personnes ont
+  # un member_number posé hors du suivi historique (import CSV, saisie initiale
+  # antérieure à member_number_histories) : #where(...).first renvoyait alors nil et
+  # #reissue_member_number! perdait silencieusement la trace du numéro d'avant la
+  # reprise. On reconstitue donc une entrée déjà close si aucune n'existe.
+  def self.close_out_previous_number!(person, old_number)
+    history = person.member_number_histories.where(member_number: old_number).order(:id).last
+
+    if history
+      history.mark_as_replaced! if history.current?
+      return
+    end
+
+    parsed = MemberNumberManagement::Policy.parse(old_number)
+    person.member_number_histories.create!(
+      member_number: old_number,
+      membership_type: parsed&.dig(:type) || "Basique",
+      year: parsed&.dig(:year)&.to_i || person.created_at.year,
+      notes: "Numéro antérieur non tracé (import ou saisie initiale) — reconstitué lors de la reprise",
+      assigned_at: person.created_at,
+      replaced_at: Time.current
+    )
   end
 
   # Fusionne deux Person en gardant la "principale" (celle avec User ou plus récente)

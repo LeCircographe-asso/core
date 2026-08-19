@@ -59,10 +59,30 @@ RSpec.describe People::MembershipCreator do
         expect(person.member_number).to eq(result.new_member_number)
         expect(MemberNumberManagement::Policy.valid_format?(person.member_number)).to be(true)
 
-        history = person.member_number_histories.sole
-        expect(history.member_number).to eq(person.member_number)
-        expect(history.membership_type).to eq("Basique")
-        expect(history.replaced_at).to be_nil
+        histories = person.member_number_histories.order(:id)
+        expect(histories.map(&:member_number)).to eq([ old_number, result.new_member_number ])
+        expect(histories.first.replaced_at).to be_present
+        expect(histories.last.replaced_at).to be_nil
+        expect(histories.last.membership_type).to eq("Basique")
+      end
+
+      it "backfills a closed history entry for a member number that predates history tracking" do
+        # :with_member_number pose le numéro directement (comme le fait l'import CSV),
+        # sans jamais créer d'entrée member_number_histories.
+        expect(person.member_number_histories).to be_empty
+        old_number = person.member_number
+
+        described_class.new(
+          person: person,
+          membership_type_id: membership_type.id,
+          payment_method: "cash",
+          recorded_by_id: admin_user.id
+        ).call
+
+        old_entry = person.member_number_histories.find_by(member_number: old_number)
+        expect(old_entry).to be_present
+        expect(old_entry.replaced_at).to be_present
+        expect(old_entry.assigned_at).to be_within(1.second).of(person.created_at)
       end
     end
 
