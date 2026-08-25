@@ -143,12 +143,27 @@ fr:
       table:
         date: Date
         author: Auteur
+        device: Appareil
         note: Note
         page: Page
         screenshot: Capture
         status: Statut
         anonymous: Visiteur non connecté
         view_screenshot: Voir
+        js_errors_toggle:
+          one: "%{count} erreur JS"
+          other: "%{count} erreurs JS"
+      device_types:
+        mobile: Mobile
+        desktop: Desktop
+      display_modes:
+        browser: Navigateur
+        standalone: PWA
+      roles:
+        super_admin: super admin
+        admin: admin
+        volunteer: bénévole
+        web_visitor: visiteur
       widget_toggle:
         label: Bouton "Signaler un problème" visible sur le site
         submit: Enregistrer

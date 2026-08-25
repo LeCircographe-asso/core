@@ -1,8 +1,9 @@
 <div data-controller="bug-report">
   <button type="button"
           data-action="bug-report#open"
+          data-bug-report-target="trigger"
           aria-haspopup="dialog"
-          class="fixed bottom-5 right-5 z-[100] inline-flex h-12 w-12 items-center justify-center rounded-full bg-[#1F5C55] text-white shadow-lg ring-1 ring-black/5 transition hover:bg-[#17433e] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1F5C55]"
+          class="fixed bottom-5 right-5 z-[100] inline-flex h-12 w-12 items-center justify-center rounded-full bg-[#1F5C55] text-white shadow-lg ring-1 ring-black/5 transition-[background-color,bottom] duration-300 hover:bg-[#17433e] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1F5C55]"
           title="<%= t("bug_reports.widget.button_title") %>"
           aria-label="<%= t("bug_reports.widget.button_title") %>">
     <i class="fas fa-bug" aria-hidden="true"></i>

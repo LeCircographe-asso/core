@@ -12,6 +12,12 @@ class BugReportsController < ApplicationController
       page_url: request.referer,
       user_agent: request.user_agent,
       person_id: current_user&.person_id,
+      reporter_role: current_user&.system_role,
+      device_type: params[:device_type],
+      display_mode: params[:display_mode],
+      viewport_width: params[:viewport_width],
+      viewport_height: params[:viewport_height],
+      js_errors_json: params[:js_errors],
       screenshot: params[:screenshot]
     ).call
 

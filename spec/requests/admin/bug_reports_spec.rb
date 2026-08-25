@@ -33,6 +33,24 @@ RSpec.describe "Admin::BugReports", type: :request do
 
       expect(response).to redirect_to(admin_dashboard_index_path)
     end
+
+    it "shows the device/display badge and reporter role" do
+      create(:bug_report, device_type: "mobile", display_mode: "standalone", reporter_role: "admin")
+
+      get admin_bug_reports_path
+
+      expect(response.body).to include(I18n.t("admin.bug_reports.device_types.mobile"))
+      expect(response.body).to include(I18n.t("admin.bug_reports.display_modes.standalone"))
+      expect(response.body).to include(I18n.t("admin.bug_reports.roles.admin"))
+    end
+
+    it "shows a collapsible JS error summary when present" do
+      create(:bug_report, js_errors: [ { "type" => "error", "message" => "Cannot read properties of undefined" } ])
+
+      get admin_bug_reports_path
+
+      expect(response.body).to include("Cannot read properties of undefined")
+    end
   end
 
   describe "PATCH /admin/bug_reports/:id" do
