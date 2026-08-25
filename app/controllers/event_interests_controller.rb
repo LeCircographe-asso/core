@@ -13,6 +13,7 @@ class EventInterestsController < ApplicationController
     @attendance = current_user.person.attendances.build(event: @event, date: Date.current)
 
     if @attendance.save
+      UserMailer.event_interest_confirmation(current_user, @event).deliver_later
       redirect_to @event, notice: t(".interest_added")
     else
       redirect_to @event, alert: t(".interest_error")

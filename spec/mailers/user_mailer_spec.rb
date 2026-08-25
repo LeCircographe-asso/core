@@ -64,6 +64,26 @@ RSpec.describe UserMailer, type: :mailer do
     end
   end
 
+  describe "#event_interest_confirmation" do
+    let(:event) { build_stubbed(:event, name: "Cabaret de printemps", location: "Le Circographe") }
+
+    subject(:mail) { described_class.event_interest_confirmation(user, event) }
+
+    it "est envoyé à l'utilisateur" do
+      expect(mail.to).to eq([ user.email_address ])
+    end
+
+    it "a le bon sujet" do
+      expect(mail.subject).to eq(I18n.t("mailers.user_mailer.event_interest_confirmation.subject", event_name: event.name))
+    end
+
+    it "inclut le nom et le lieu de l'événement dans le corps" do
+      expect(mail.html_part.body.decoded).to include("Cabaret de printemps")
+      expect(mail.html_part.body.decoded).to include("Le Circographe")
+      expect(mail.text_part.body.decoded).to include("Cabaret de printemps")
+    end
+  end
+
   describe "#membership_expiration_reminder" do
     it "est en attente de correction (membership.user et membership.end_date non définis)" do
       pending "mailer non branché — bugs membership.user / membership.end_date à corriger avant"

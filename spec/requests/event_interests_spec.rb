@@ -14,6 +14,12 @@ RSpec.describe "EventInterests", type: :request do
       post event_interests_path, params: { id: event.id }
       expect(response).to redirect_to(event)
     end
+
+    it "envoie un email de confirmation à l'utilisateur" do
+      expect do
+        post event_interests_path, params: { id: event.id }
+      end.to have_enqueued_mail(UserMailer, :event_interest_confirmation).with(user, event)
+    end
   end
 
   describe "DELETE /event_interests/:id" do

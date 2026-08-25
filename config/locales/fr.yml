@@ -601,6 +601,8 @@ fr:
         subject: "Code de verification d'adresse email"
       membership_expiration_reminder:
         subject: Votre adhésion arrive à expiration !
+      event_interest_confirmation:
+        subject: "Intérêt confirmé : %{event_name}"
       contact_email:
         subject: "Nouveau message : %{category_label}"
         category_labels:
