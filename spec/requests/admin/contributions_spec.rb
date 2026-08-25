@@ -185,19 +185,19 @@ RSpec.describe "Admin::Contributions", type: :request do
       expect(payment.payment_lines.sole.amount_cents).to eq(0)
     end
 
-    it "keeps the purchase but warns visibly when attendance cannot be recorded (training closed)" do
-      travel_to Date.current.next_occurring(:monday).beginning_of_day + 12.hours do
-        expect do
-          post admin_contributions_path, params: {
-            person_id: person.id,
-            contribution: { contribution_formula_id: formula.id, payment_method: "cash", record_attendance: "1" }
-          }
-        end.to change(Contribution, :count).by(1)
+    it "keeps the purchase but warns visibly when attendance cannot be recorded (already checked in today)" do
+      create(:attendance, person: person, date: Date.current, event: nil)
 
-        expect(response).to redirect_to(admin_member_path(person))
-        follow_redirect!
-        expect(response.body).to include("présence non enregistrée")
-      end
+      expect do
+        post admin_contributions_path, params: {
+          person_id: person.id,
+          contribution: { contribution_formula_id: formula.id, payment_method: "cash", record_attendance: "1" }
+        }
+      end.to change(Contribution, :count).by(1)
+
+      expect(response).to redirect_to(admin_member_path(person))
+      follow_redirect!
+      expect(response.body).to include("présence non enregistrée")
     end
 
     it "blocks a purchase when the person already has an active contribution (garde-fou anti-doublon)" do

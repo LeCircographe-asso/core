@@ -84,7 +84,7 @@ RSpec.describe People::ContributionCreator do
       end
     end
 
-    context 'when attendance recording fails (e.g. training closed that day)' do
+    context 'when attendance recording fails (e.g. already checked in today)' do
       let(:params) do
         {
           person: person,
@@ -96,15 +96,15 @@ RSpec.describe People::ContributionCreator do
       end
 
       it 'still succeeds but reports the attendance failure instead of hiding it' do
-        travel_to Date.current.next_occurring(:monday).beginning_of_day + 12.hours do
-          result = described_class.new(params).call
+        create(:attendance, person: person, date: Date.current, event: nil)
 
-          expect(result.success?).to be(true)
-          expect(result.contribution).to be_present
-          expect(result.attendance).to be_nil
-          expect(result.attendance_warnings).not_to be_empty
-          expect(result.attendance_warnings.first).to include(person.full_name)
-        end
+        result = described_class.new(params).call
+
+        expect(result.success?).to be(true)
+        expect(result.contribution).to be_present
+        expect(result.attendance).to be_nil
+        expect(result.attendance_warnings).not_to be_empty
+        expect(result.attendance_warnings.first).to include(person.full_name)
       end
     end
 
