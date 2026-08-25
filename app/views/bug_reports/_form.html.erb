@@ -1,7 +1,7 @@
 <%# Params : note (String, optionnel), error (String, optionnel) %>
 <%= form_with url: bug_reports_path, method: :post, data: { turbo_stream: true }, multipart: true, class: "space-y-4" do |form| %>
   <% if local_assigns[:error].present? %>
-    <p class="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700" role="alert"><%= error %></p>
+    <p class="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700 break-words" role="alert"><%= error %></p>
   <% end %>
 
   <div>
