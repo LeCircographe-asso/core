@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_08_19_045422) do
+ActiveRecord::Schema[8.1].define(version: 2026_08_25_114419) do
   create_table "account_claims", force: :cascade do |t|
     t.string "confirmation_token", null: false
     t.datetime "created_at", null: false
@@ -105,6 +105,26 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_19_045422) do
     t.string "role", null: false
     t.datetime "updated_at", null: false
     t.index ["display_order"], name: "index_board_members_on_display_order"
+  end
+
+  create_table "bug_report_widget_settings", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.boolean "enabled", default: false, null: false
+    t.datetime "updated_at", null: false
+    t.integer "updated_by_user_id"
+    t.index ["updated_by_user_id"], name: "index_bug_report_widget_settings_on_updated_by_user_id"
+  end
+
+  create_table "bug_reports", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.text "note", null: false
+    t.string "page_url"
+    t.integer "person_id"
+    t.integer "status", default: 0, null: false
+    t.datetime "updated_at", null: false
+    t.string "user_agent"
+    t.index ["person_id"], name: "index_bug_reports_on_person_id"
+    t.index ["status"], name: "index_bug_reports_on_status"
   end
 
   create_table "contribution_formulas", force: :cascade do |t|
@@ -468,6 +488,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_19_045422) do
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "attendances", "events"
   add_foreign_key "attendances", "people"
+  add_foreign_key "bug_report_widget_settings", "users", column: "updated_by_user_id"
+  add_foreign_key "bug_reports", "people"
   add_foreign_key "contribution_formulas", "membership_types"
   add_foreign_key "contribution_formulas", "users", column: "created_by_user_id"
   add_foreign_key "contributions", "contribution_formulas"
