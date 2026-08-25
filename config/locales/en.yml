@@ -423,6 +423,23 @@ en:
       success_title: Thank you!
       sent_notice: Your message was sent successfully. We'll get back to you soon.
       send_error: Something went wrong while sending. Please try again in a moment.
+  bug_reports:
+    widget:
+      button_title: Report a problem
+      title: Report a problem
+      intro: A note is enough. A screenshot helps, but isn't required.
+      close: Close
+    form:
+      note_label: What's going on?
+      note_placeholder: "Describe the problem you ran into…"
+      screenshot_label: Screenshot (optional)
+      screenshot_hint: "Image only, 10 MB max."
+      submit: Send
+    create:
+      success_title: Thank you!
+      success: Your report was sent successfully.
+      rate_limited: Too many reports sent recently. Please try again in a few minutes.
+      error: Something went wrong while sending. Please try again in a moment.
   event_interests:
     create:
       profile_incomplete: Votre profil n'est pas complet. Veuillez contacter l'administration.

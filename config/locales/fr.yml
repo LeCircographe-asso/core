@@ -318,6 +318,23 @@ fr:
       success_title: Merci !
       sent_notice: Votre message a été envoyé avec succès ! Nous revenons vers vous rapidement.
       send_error: Une erreur est survenue lors de l'envoi. Réessaie dans quelques instants.
+  bug_reports:
+    widget:
+      button_title: Signaler un problème
+      title: Signaler un problème
+      intro: Une note suffit. Une capture d'écran aide, mais n'est pas obligatoire.
+      close: Fermer
+    form:
+      note_label: Que se passe-t-il ?
+      note_placeholder: "Décrivez le problème rencontré…"
+      screenshot_label: Capture d'écran (facultatif)
+      screenshot_hint: "Image uniquement, 10 Mo max."
+      submit: Envoyer
+    create:
+      success_title: Merci !
+      success: Votre signalement a bien été envoyé.
+      rate_limited: Trop de signalements envoyés récemment. Réessayez dans quelques minutes.
+      error: Une erreur est survenue lors de l'envoi. Réessayez dans quelques instants.
   event_interests:
     create:
       profile_incomplete: Votre profil n'est pas complet. Veuillez contacter l'administration.

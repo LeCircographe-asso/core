@@ -124,6 +124,7 @@ Rails.application.routes.draw do
     end
   }
 
+  resources :bug_reports, only: %i[create]
   resource :session, only: %i[new create destroy]
   resources :passwords, only: %i[new create edit update], param: :token do
     get :request_reset, on: :collection
