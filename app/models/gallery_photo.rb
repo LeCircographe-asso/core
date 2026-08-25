@@ -9,7 +9,9 @@ class GalleryPhoto < ApplicationRecord
   validates :image, presence: true
   validate :validate_image
 
-  scope :ordered, -> { order(created_at: :desc) }
+  before_validation :set_position, on: :create
+
+  scope :ordered, -> { order(:position, :created_at) }
 
   # Toujours servi en WebP (mieux compressé que JPEG/PNG à qualité égale) quel
   # que soit le format d'origine — chargement rapide garanti côté public.
@@ -25,5 +27,9 @@ class GalleryPhoto < ApplicationRecord
 
   def validate_image
     validate_image_attachment(image)
+  end
+
+  def set_position
+    self.position ||= self.class.maximum(:position).to_i + 1
   end
 end

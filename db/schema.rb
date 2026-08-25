@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_08_25_232237) do
+ActiveRecord::Schema[8.1].define(version: 2026_08_25_234829) do
   create_table "account_claims", force: :cascade do |t|
     t.string "confirmation_token", null: false
     t.datetime "created_at", null: false
@@ -246,8 +246,10 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_25_232237) do
   create_table "gallery_photos", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.bigint "created_by_user_id"
+    t.integer "position", null: false
     t.datetime "updated_at", null: false
     t.index ["created_by_user_id"], name: "index_gallery_photos_on_created_by_user_id"
+    t.index ["position"], name: "index_gallery_photos_on_position"
   end
 
   create_table "member_number_histories", force: :cascade do |t|

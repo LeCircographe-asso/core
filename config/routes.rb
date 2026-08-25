@@ -20,7 +20,9 @@ Rails.application.routes.draw do
   namespace :admin do
     root to: "dashboard#index"
     resources :blogs
-    resources :gallery_photos, only: %i[index create destroy]
+    resources :gallery_photos, only: %i[index create destroy] do
+      collection { patch :reorder }
+    end
     resources :dashboard, only: %i[index], path: "dashboard"
     resources :imports, only: %i[index create]
     namespace :hubs do
