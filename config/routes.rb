@@ -29,6 +29,8 @@ Rails.application.routes.draw do
     end
     resource :opening_hours, only: %i[show edit update]
     resource :exceptional_closure, only: %i[update]
+    resources :bug_reports, only: %i[index update]
+    resource :bug_report_widget_setting, only: %i[update]
     # Legacy: "Faire un don" used GET /admin/donations?person_id=… before +new+ existed.
     get "donations", to: redirect { |_path_params, request|
       query = request.query_string

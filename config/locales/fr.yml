@@ -128,6 +128,36 @@ fr:
         save: Enregistrer
         create: Créer
         cancel: Annuler
+    bug_reports:
+      breadcrumb: Rapports de bug
+      title: Rapports de bug
+      subtitle: Retours envoyés par les utilisateurs via le bouton "Signaler un problème".
+      empty: Aucun rapport pour le moment.
+      filters:
+        all: Tous
+      statuses:
+        new_report: Nouveau
+        in_progress: En cours
+        resolved: Résolu
+        wont_fix: Ne sera pas corrigé
+      table:
+        date: Date
+        author: Auteur
+        note: Note
+        page: Page
+        screenshot: Capture
+        status: Statut
+        anonymous: Visiteur non connecté
+        view_screenshot: Voir
+      widget_toggle:
+        label: Bouton "Signaler un problème" visible sur le site
+        submit: Enregistrer
+        hint: Réservé aux super admins.
+      update:
+        success: Statut mis à jour.
+    bug_report_widget_settings:
+      update:
+        success: Préférence mise à jour.
     donations:
       new:
         title: Enregistrer un don

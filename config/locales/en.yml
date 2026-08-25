@@ -160,6 +160,36 @@ en:
         save: Save
         create: Create
         cancel: Cancel
+    bug_reports:
+      breadcrumb: Bug reports
+      title: Bug reports
+      subtitle: Feedback sent by users via the "Report a problem" button.
+      empty: No reports yet.
+      filters:
+        all: All
+      statuses:
+        new_report: New
+        in_progress: In progress
+        resolved: Resolved
+        wont_fix: Won't fix
+      table:
+        date: Date
+        author: Author
+        note: Note
+        page: Page
+        screenshot: Screenshot
+        status: Status
+        anonymous: Anonymous visitor
+        view_screenshot: View
+      widget_toggle:
+        label: '"Report a problem" button visible on the site'
+        submit: Save
+        hint: Super admins only.
+      update:
+        success: Status updated.
+    bug_report_widget_settings:
+      update:
+        success: Preference updated.
     donations:
       new:
         title: Record a donation

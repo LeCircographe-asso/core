@@ -1,0 +1,91 @@
+<% content_for :title, t("admin.bug_reports.title") %>
+
+<div class="min-h-screen py-6">
+  <div class="page-container">
+    <%= render 'shared/breadcrumbs' %>
+
+    <div class="admin-page-header">
+      <div class="px-6 py-4">
+        <h1 class="text-2xl font-bold text-white"><%= t("admin.bug_reports.title") %></h1>
+        <p class="text-white/80 mt-1"><%= t("admin.bug_reports.subtitle") %></p>
+      </div>
+    </div>
+
+    <% if current_user.super_admin? %>
+      <div class="admin-metric-card mb-6 p-6">
+        <%= form_with url: admin_bug_report_widget_setting_path, method: :patch, class: "flex flex-wrap items-center gap-4" do %>
+          <label class="inline-flex items-center gap-2 text-sm font-medium text-gray-700">
+            <%= check_box_tag :enabled, "1", @widget_setting.enabled? %>
+            <%= t("admin.bug_reports.widget_toggle.label") %>
+          </label>
+          <%= submit_tag t("admin.bug_reports.widget_toggle.submit"), class: "px-3 py-1.5 text-sm font-medium text-white bg-[#1F5C55] hover:bg-[#194A45] rounded-md cursor-pointer" %>
+          <span class="text-xs text-gray-500"><%= t("admin.bug_reports.widget_toggle.hint") %></span>
+        <% end %>
+      </div>
+    <% end %>
+
+    <div class="admin-metric-card p-6">
+      <div class="flex flex-wrap gap-2 mb-4">
+        <%= link_to t("admin.bug_reports.filters.all"), admin_bug_reports_path,
+            class: "px-3 py-1.5 rounded-full text-sm font-medium #{params[:status].blank? ? 'bg-[#1F5C55] text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}" %>
+        <% BugReport.statuses.each_key do |status| %>
+          <%= link_to t("admin.bug_reports.statuses.#{status}"), admin_bug_reports_path(status: status),
+              class: "px-3 py-1.5 rounded-full text-sm font-medium #{params[:status] == status ? 'bg-[#1F5C55] text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}" %>
+        <% end %>
+      </div>
+
+      <% if @bug_reports.any? %>
+        <div class="overflow-x-auto">
+          <table class="min-w-full divide-y divide-gray-200 text-sm">
+            <thead>
+              <tr class="text-left text-xs font-medium uppercase tracking-wide text-gray-500">
+                <th class="py-2 pr-4"><%= t("admin.bug_reports.table.date") %></th>
+                <th class="py-2 pr-4"><%= t("admin.bug_reports.table.author") %></th>
+                <th class="py-2 pr-4"><%= t("admin.bug_reports.table.note") %></th>
+                <th class="py-2 pr-4"><%= t("admin.bug_reports.table.page") %></th>
+                <th class="py-2 pr-4"><%= t("admin.bug_reports.table.screenshot") %></th>
+                <th class="py-2 pr-4"><%= t("admin.bug_reports.table.status") %></th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100">
+              <% @bug_reports.each do |bug_report| %>
+                <tr>
+                  <td class="py-2 pr-4 whitespace-nowrap text-gray-600"><%= l(bug_report.created_at.to_date, format: :short) %></td>
+                  <td class="py-2 pr-4 whitespace-nowrap">
+                    <% if bug_report.person %>
+                      <%= link_to bug_report.person.full_name, admin_member_path(bug_report.person), class: "text-[#1F5C55] hover:underline" %>
+                    <% else %>
+                      <span class="text-gray-400"><%= t("admin.bug_reports.table.anonymous") %></span>
+                    <% end %>
+                  </td>
+                  <td class="py-2 pr-4 max-w-sm"><p class="line-clamp-2 text-gray-800"><%= bug_report.note %></p></td>
+                  <td class="py-2 pr-4 max-w-xs truncate text-gray-500"><%= bug_report.page_url %></td>
+                  <td class="py-2 pr-4">
+                    <% if bug_report.screenshot.attached? %>
+                      <%= link_to t("admin.bug_reports.table.view_screenshot"), rails_blob_path(bug_report.screenshot, disposition: "attachment"), class: "text-[#1F5C55] hover:underline", target: "_blank", rel: "noopener" %>
+                    <% else %>
+                      <span class="text-gray-400">—</span>
+                    <% end %>
+                  </td>
+                  <td class="py-2 pr-4">
+                    <%= form_with url: admin_bug_report_path(bug_report, filter_status: params[:status]), method: :patch do |f| %>
+                      <%= f.select :status, BugReport.statuses.keys.map { |s| [ t("admin.bug_reports.statuses.#{s}"), s ] },
+                          { selected: bug_report.status },
+                          { onchange: "this.form.requestSubmit()", class: "text-sm border border-gray-200 rounded-md px-2 py-1" } %>
+                    <% end %>
+                  </td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="mt-4">
+          <%== pagy_nav(@pagy) %>
+        </div>
+      <% else %>
+        <p class="text-sm text-gray-600"><%= t("admin.bug_reports.empty") %></p>
+      <% end %>
+    </div>
+  </div>
+</div>
