@@ -51,6 +51,25 @@ RSpec.describe "Admin::BugReports", type: :request do
 
       expect(response.body).to include("Cannot read properties of undefined")
     end
+
+    it "filters by source" do
+      auto = BugReport.record_automatic!(error_class: "StandardError", message: "boom", kind: :error, path: "/x")
+      create(:bug_report)
+
+      get admin_bug_reports_path(source: "automatic")
+
+      expect(response.body).to include(auto.note)
+      expect(response.body).to include(I18n.t("admin.bug_reports.sources.automatic"))
+    end
+
+    it "shows the occurrence count for a report seen multiple times" do
+      BugReport.record_automatic!(error_class: "StandardError", message: "boom", kind: :error, path: "/x")
+      BugReport.record_automatic!(error_class: "StandardError", message: "boom", kind: :error, path: "/x")
+
+      get admin_bug_reports_path
+
+      expect(response.body).to include("×2")
+    end
   end
 
   describe "PATCH /admin/bug_reports/:id" do

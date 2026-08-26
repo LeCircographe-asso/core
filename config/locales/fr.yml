@@ -159,6 +159,9 @@ fr:
       display_modes:
         browser: Navigateur
         standalone: PWA
+      sources:
+        user_report: Manuel
+        automatic: Auto
       roles:
         super_admin: super admin
         admin: admin

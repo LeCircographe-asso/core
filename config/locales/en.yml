@@ -191,6 +191,9 @@ en:
       display_modes:
         browser: Browser
         standalone: PWA
+      sources:
+        user_report: Manual
+        automatic: Auto
       roles:
         super_admin: super admin
         admin: admin

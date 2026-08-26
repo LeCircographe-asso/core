@@ -29,8 +29,15 @@
         <%= link_to t("admin.bug_reports.filters.all"), admin_bug_reports_path,
             class: "px-3 py-1.5 rounded-full text-sm font-medium #{params[:status].blank? ? 'bg-[#1F5C55] text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}" %>
         <% BugReport.statuses.each_key do |status| %>
-          <%= link_to t("admin.bug_reports.statuses.#{status}"), admin_bug_reports_path(status: status),
+          <%= link_to t("admin.bug_reports.statuses.#{status}"), admin_bug_reports_path(status: status, source: params[:source]),
               class: "px-3 py-1.5 rounded-full text-sm font-medium #{params[:status] == status ? 'bg-[#1F5C55] text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}" %>
+        <% end %>
+      </div>
+
+      <div class="flex flex-wrap gap-2 mb-4">
+        <% BugReport.sources.each_key do |source| %>
+          <%= link_to t("admin.bug_reports.sources.#{source}"), admin_bug_reports_path(status: params[:status], source: params[:source] == source ? nil : source),
+              class: "px-3 py-1.5 rounded-full text-xs font-medium border #{params[:source] == source ? 'border-orange-400 bg-orange-50 text-orange-700' : 'border-gray-200 text-gray-500 hover:bg-gray-50'}" %>
         <% end %>
       </div>
 
@@ -51,7 +58,15 @@
             <tbody class="divide-y divide-gray-100">
               <% @bug_reports.each do |bug_report| %>
                 <tr>
-                  <td class="py-2 pr-4 whitespace-nowrap text-gray-600"><%= l(bug_report.created_at.to_date, format: :short) %></td>
+                  <td class="py-2 pr-4 whitespace-nowrap text-gray-600">
+                    <%= l(bug_report.created_at.to_date, format: :short) %>
+                    <% if bug_report.automatic? %>
+                      <span class="ml-1 inline-flex items-center rounded-full bg-orange-100 px-2 py-0.5 text-[11px] font-medium text-orange-700"><%= t("admin.bug_reports.sources.automatic") %></span>
+                      <% if bug_report.occurrence_count > 1 %>
+                        <span class="ml-1 text-[11px] text-gray-400">×<%= bug_report.occurrence_count %></span>
+                      <% end %>
+                    <% end %>
+                  </td>
                   <td class="py-2 pr-4 whitespace-nowrap">
                     <% if bug_report.person %>
                       <%= link_to bug_report.person.full_name, admin_member_path(bug_report.person), class: "text-[#1F5C55] hover:underline" %>
@@ -92,6 +107,9 @@
                               <%= err["message"] %>
                               <% if err["source"].present? %>— <%= err["source"] %><%= ":#{err['line']}" if err["line"].present? %><% end %>
                               <% if err["count"].to_i > 1 %><span class="text-amber-600">(×<%= err["count"] %>)</span><% end %>
+                              <% if err["stack"].present? %>
+                                <pre class="mt-1 max-h-40 overflow-y-auto rounded bg-white/60 p-1.5 text-[10px] leading-snug text-amber-800"><%= err["stack"] %></pre>
+                              <% end %>
                             </li>
                           <% end %>
                         </ul>
@@ -107,7 +125,7 @@
                     <% end %>
                   </td>
                   <td class="py-2 pr-4">
-                    <%= form_with url: admin_bug_report_path(bug_report, filter_status: params[:status]), method: :patch do |f| %>
+                    <%= form_with url: admin_bug_report_path(bug_report, filter_status: params[:status], filter_source: params[:source]), method: :patch do |f| %>
                       <%= f.select :status, BugReport.statuses.keys.map { |s| [ t("admin.bug_reports.statuses.#{s}"), s ] },
                           { selected: bug_report.status },
                           { onchange: "this.form.requestSubmit()", class: "text-sm border border-gray-200 rounded-md px-2 py-1" } %>

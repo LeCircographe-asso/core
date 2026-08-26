@@ -9,6 +9,7 @@ module Admin
       @bug_reports = BugReport.includes(:person).ordered
 
       @bug_reports = @bug_reports.where(status: params[:status]) if params[:status].present?
+      @bug_reports = @bug_reports.where(source: params[:source]) if params[:source].present?
 
       @pagy, @bug_reports = pagy(@bug_reports, items: 20)
 
@@ -20,7 +21,7 @@ module Admin
 
     def update
       @bug_report.update!(status: params[:status])
-      redirect_to admin_bug_reports_path(status: params[:filter_status]), notice: t(".success")
+      redirect_to admin_bug_reports_path(status: params[:filter_status], source: params[:filter_source]), notice: t(".success")
     end
 
     private
