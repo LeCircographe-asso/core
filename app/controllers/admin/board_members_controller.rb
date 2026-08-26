@@ -20,7 +20,7 @@ module Admin
       if @board_member.save
         redirect_to admin_board_members_path, notice: t(".created")
       else
-        render :new, status: :unprocessable_entity
+        render :new, status: :unprocessable_content
       end
     end
 
@@ -30,7 +30,7 @@ module Admin
       if @board_member.update(board_member_params)
         redirect_to admin_board_members_path, notice: t(".updated")
       else
-        render :edit, status: :unprocessable_entity
+        render :edit, status: :unprocessable_content
       end
     end
 

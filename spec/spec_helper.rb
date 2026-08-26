@@ -3,20 +3,20 @@
 # SimpleCov - Code coverage reporting
 require 'simplecov'
 SimpleCov.start 'rails' do
-  add_filter '/spec/'
-  add_filter '/config/'
-  add_filter '/vendor/'
-  add_filter '/lib/tasks/'
-  add_filter '/db/'
-  add_filter '/coverage/'
+  skip '/spec/'
+  skip '/config/'
+  skip '/vendor/'
+  skip '/lib/tasks/'
+  skip '/db/'
+  skip '/coverage/'
 
   # Group coverage by type
-  add_group 'Models', 'app/models'
-  add_group 'Controllers', 'app/controllers'
-  add_group 'Services', 'app/services'
-  add_group 'Helpers', 'app/helpers'
-  add_group 'Jobs', 'app/jobs'
-  add_group 'Mailers', 'app/mailers'
+  group 'Models', 'app/models'
+  group 'Controllers', 'app/controllers'
+  group 'Services', 'app/services'
+  group 'Helpers', 'app/helpers'
+  group 'Jobs', 'app/jobs'
+  group 'Mailers', 'app/mailers'
 
   minimum_coverage 58
 end

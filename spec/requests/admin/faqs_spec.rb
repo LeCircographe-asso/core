@@ -38,7 +38,7 @@ RSpec.describe "Admin::Faqs", type: :request do
         post admin_faqs_path, params: { faq: { question: "", answer: "", label: "adhesion" } }
       end.not_to change(Faq, :count)
 
-      expect(response).to have_http_status(:unprocessable_entity)
+      expect(response).to have_http_status(:unprocessable_content)
     end
   end
 

@@ -18,7 +18,7 @@ module Admin
       if @faq.save
         redirect_to admin_faqs_path, notice: t(".created")
       else
-        render :new, status: :unprocessable_entity
+        render :new, status: :unprocessable_content
       end
     end
 
@@ -28,7 +28,7 @@ module Admin
       if @faq.update(faq_params)
         redirect_to admin_faqs_path, notice: t(".updated")
       else
-        render :edit, status: :unprocessable_entity
+        render :edit, status: :unprocessable_content
       end
     end
 
