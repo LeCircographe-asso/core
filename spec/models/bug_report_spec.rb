@@ -3,6 +3,8 @@
 require "rails_helper"
 
 RSpec.describe BugReport, type: :model do
+  include ActiveSupport::Testing::TimeHelpers
+
   let(:image_path) { Rails.root.join("app/assets/images/lelieu1.webp") }
 
   it "is invalid without a note" do
@@ -75,6 +77,64 @@ RSpec.describe BugReport, type: :model do
 
     it "defaults js_errors to an empty array" do
       expect(create(:bug_report).js_errors).to eq([])
+    end
+  end
+
+  describe ".record_automatic!" do
+    it "creates an automatic report on the first occurrence" do
+      report = BugReport.record_automatic!(
+        error_class: "ActiveRecord::RecordNotFound",
+        message: "Couldn't find Event with 'id'=999",
+        kind: :error,
+        path: "/events/999",
+        backtrace: [ "app/controllers/events_controller.rb:11" ]
+      )
+
+      expect(report).to be_automatic
+      expect(report.occurrence_count).to eq(1)
+      expect(report.note).to eq("Erreur serveur (ActiveRecord::RecordNotFound) : /events/999")
+      expect(report.js_errors.first["type"]).to eq("server_error")
+      expect(report.js_errors.first["stack"]).to include("events_controller.rb")
+    end
+
+    it "labels a routing miss distinctly from a server error" do
+      report = BugReport.record_automatic!(error_class: "ActionController::RoutingError", message: "No route matches /bogus", kind: :not_found, path: "/bogus")
+
+      expect(report.note).to eq("Page introuvable (404) : /bogus")
+    end
+
+    it "increments occurrence_count instead of duplicating within the dedup window" do
+      first = BugReport.record_automatic!(error_class: "StandardError", message: "boom", kind: :error, path: "/x")
+      second = BugReport.record_automatic!(error_class: "StandardError", message: "boom (again)", kind: :error, path: "/x")
+
+      expect(second.id).to eq(first.id)
+      expect(second.occurrence_count).to eq(2)
+      expect(BugReport.count).to eq(1)
+    end
+
+    it "groups occurrences across different record ids at the same route" do
+      BugReport.record_automatic!(error_class: "ActiveRecord::RecordNotFound", message: "boom", kind: :error, path: "/events/111")
+      report = BugReport.record_automatic!(error_class: "ActiveRecord::RecordNotFound", message: "boom", kind: :error, path: "/events/222")
+
+      expect(BugReport.count).to eq(1)
+      expect(report.occurrence_count).to eq(2)
+    end
+
+    it "starts a new report once the dedup window has passed" do
+      travel_to 20.minutes.ago do
+        BugReport.record_automatic!(error_class: "StandardError", message: "boom", kind: :error, path: "/x")
+      end
+
+      BugReport.record_automatic!(error_class: "StandardError", message: "boom", kind: :error, path: "/x")
+
+      expect(BugReport.count).to eq(2)
+    end
+
+    it "ignores known-noise exceptions" do
+      report = BugReport.record_automatic!(error_class: "ActionController::InvalidAuthenticityToken", message: "boom", kind: :error, path: "/x")
+
+      expect(report).to be_nil
+      expect(BugReport.count).to eq(0)
     end
   end
 end
