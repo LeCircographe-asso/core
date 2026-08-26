@@ -160,9 +160,6 @@ Rails.application.routes.draw do
   get "fonts", to: "home#font_examples", as: "font_examples"
   get "/white-page", to: "pages#show", defaults: { id: "white_page" }, as: :white_page
 
-  # match "*unmatched", to: "application#url_not_found", via: :all
-  # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
-
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
   # Can be used by load balancers and uptime monitors to verify that the app is live.
   get "up" => "rails/health#show", as: :rails_health_check
@@ -180,4 +177,9 @@ Rails.application.routes.draw do
   mount LetterOpenerWeb::Engine, at: "/letter_opener" if Rails.env.development?
 
   resource :settings, only: %i[show update], controller: "settings"
+
+  # Doit rester la toute dernière route : capture tout ce qui ne matche rien au-dessus,
+  # pour faire remonter les 404 de routage dans le reporting automatique de bugs (sinon
+  # servi directement par Rails via public/404.html, sans jamais passer par un contrôleur).
+  match "*unmatched", to: "application#url_not_found", via: :all
 end
