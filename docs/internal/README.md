@@ -51,3 +51,4 @@ Voir le template global dans [`../README.md`](../README.md) section « Gouvernan
 - `refonte.md` — feuille de route refonte UX/UI (working document).
 - `css_migration.md` — plan de migration CSS.
 - `sqlite_deployment.md` — alternative bare-metal au flux Kamal (non testée en CI).
+- `ai_tooling_plan.md` — plan d'outillage IA local (index sémantique + serveur MCP, Ollama sur poste dev).
