@@ -51,7 +51,7 @@ module Admin
       @person_preview = Person.new
 
       if params[:person_id].present?
-        @person = PersonQuery.active.find(params[:person_id])
+        @person = PersonQuery.active.find(params.expect(:person_id))
         @member_creation_form.person_id = @person.id
         @member_creation_form.email_address = @person.email
         add_breadcrumb I18n.t("breadcrumbs.admin.members.members_list"), admin_members_path
@@ -145,7 +145,7 @@ module Admin
     end
 
     def restore
-      @person = Person.find(params[:id])
+      @person = Person.find(params.expect(:id))
       @user = User.unscoped.find_by!(person_id: @person.id)
 
       if @user.update(deleted: false, deleted_at: nil)
@@ -158,7 +158,7 @@ module Admin
     private
 
     def set_person
-      @person = Person.find(params[:id])
+      @person = Person.find(params.expect(:id))
     rescue ActiveRecord::RecordNotFound
       redirect_to admin_members_path, alert: t(".person_not_found_alert")
     end

@@ -18,7 +18,7 @@ module Admin
     end
 
     def edit
-      @event = Event.find params[:id]
+      @event = Event.find params.expect(:id)
       add_breadcrumb I18n.t("breadcrumbs.admin.events.events"), admin_events_path
       add_breadcrumb @event.title, event_path(@event)
       add_breadcrumb I18n.t("breadcrumbs.admin.common.edit"), nil
@@ -44,7 +44,7 @@ module Admin
     end
 
     def update
-      @event = Event.find params[:id]
+      @event = Event.find params.expect(:id)
       attrs = {
         title: event_params[:title],
         upper_description: event_params[:upper_description],

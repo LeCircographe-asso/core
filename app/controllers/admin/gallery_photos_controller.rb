@@ -29,7 +29,7 @@ module Admin
     end
 
     def destroy
-      GalleryPhoto.find(params[:id]).destroy
+      GalleryPhoto.find(params.expect(:id)).destroy
       redirect_to admin_gallery_photos_path, notice: t(".success")
     end
 

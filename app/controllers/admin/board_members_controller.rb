@@ -53,7 +53,7 @@ module Admin
     end
 
     def set_board_member
-      @board_member = BoardMember.find(params[:id])
+      @board_member = BoardMember.find(params.expect(:id))
     end
 
     def board_member_params

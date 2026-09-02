@@ -39,7 +39,7 @@ module Admin
     private
 
     def find_payment
-      Payment.find(params[:payment_id])
+      Payment.find(params.expect(:payment_id))
     end
 
     def find_donation_line(payment)
