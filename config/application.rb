@@ -58,4 +58,8 @@ end
 
 Rails.application.configure do
   config.hosts << "lecircographe.fr"
+
+  # Indexation Google désactivée tant que le site n'est pas prêt à être référencé.
+  # Bascule à true (via variable d'env SEO_INDEXABLE) le jour du lancement SEO.
+  config.x.seo_indexable = ActiveModel::Type::Boolean.new.cast(ENV["SEO_INDEXABLE"])
 end

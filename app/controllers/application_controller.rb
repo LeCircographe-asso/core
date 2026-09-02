@@ -10,6 +10,8 @@ class ApplicationController < ActionController::Base
 
   allow_unauthenticated_access only: :url_not_found
 
+  before_action :set_robots_header
+
   helper_method :bug_report_widget_enabled?
 
   # Catch-all cible de la route "*unmatched" (doit rester la dernière route de config/routes.rb).
@@ -32,6 +34,16 @@ class ApplicationController < ActionController::Base
   end
 
   private
+
+  # Tant que Rails.application.config.x.seo_indexable est false (défaut), on
+  # demande explicitement aux moteurs de recherche de ne pas indexer le site,
+  # y compris les pages déjà connues d'eux (contrairement à robots.txt, qui ne
+  # fait qu'empêcher un nouveau crawl sans désindexer l'existant).
+  def set_robots_header
+    return if Rails.application.config.x.seo_indexable
+
+    response.headers["X-Robots-Tag"] = "noindex, nofollow"
+  end
 
   def bug_report_widget_enabled?
     BugReportWidgetSetting.current.enabled?
