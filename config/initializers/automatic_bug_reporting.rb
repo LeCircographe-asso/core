@@ -18,11 +18,17 @@ Rails.application.config.after_initialize do
     next unless exception
 
     request = payload[:request]
+    # ActiveRecord::RecordNotFound (Model.find sur un id inexistant, etc.) mappe vers 404
+    # comme les erreurs de routage déjà taguées :not_found dans ApplicationController#url_not_found —
+    # sans ce statut, automatic_note les classait par défaut en "Erreur serveur", laissant croire
+    # à un vrai crash applicatif dans l'écran admin "Rapports de bug".
+    status_code = ActionDispatch::ExceptionWrapper.new(request&.env, exception).status_code
+    kind = status_code == 404 ? :not_found : :error
 
     Support::AutomaticBugReportJob.perform_later(
       error_class: exception.class.name,
       message: exception.message,
-      kind: :error,
+      kind: kind,
       path: payload[:path],
       backtrace: exception.backtrace,
       user_agent: request&.user_agent,

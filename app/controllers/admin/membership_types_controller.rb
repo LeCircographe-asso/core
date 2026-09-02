@@ -94,7 +94,7 @@ module Admin
     private
 
     def set_membership_type
-      @membership_type = MembershipType.find(params[:id])
+      @membership_type = MembershipType.find(params.expect(:id))
     end
 
     def set_breadcrumbs

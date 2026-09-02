@@ -53,7 +53,7 @@ module Admin
     end
 
     def set_partner
-      @partner = Partner.find(params[:id])
+      @partner = Partner.find(params.expect(:id))
     end
 
     def partner_params

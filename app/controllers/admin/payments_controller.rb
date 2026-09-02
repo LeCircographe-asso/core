@@ -21,14 +21,14 @@ module Admin
     end
 
     def show
-      payment = Payment.find(params[:id])
+      payment = Payment.find(params.expect(:id))
       redirect_to admin_payments_path(person_id: payment.person_id, anchor: "payment_row_#{payment.id}"),
                   notice: t(".use_inline_notice")
     end
 
 
     def edit
-      @payment = Payment.find(params[:id])
+      @payment = Payment.find(params.expect(:id))
       @list_filter_params = payments_index_filter_params.to_unsafe_h
 
       respond_to do |format|

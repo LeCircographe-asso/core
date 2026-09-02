@@ -121,16 +121,23 @@ volumes:
 
 ## 8. Mode maintenance (production)
 
-**Objectif** : maintenance activée par défaut, admin garde l'accès, healthcheck `/up` toujours OK.
+**Objectif** : tant que le site n'est pas lancé publiquement, tout est bloqué (`503`),
+sans aucune exception pour le login ou l'admin — accès uniquement via console/SSH
+tant que c'est actif.
 
-### Comportement attendu
+### Comportement réel
 
 - `/up` → OK (healthcheck Kamal).
-- `/sessions/new` → OK (login).
-- `/admin/*` → OK si admin connecté.
-- Autres → `503` (page maintenance).
+- `/assets/*`, `/icon.png`, `/icon.svg` → OK (assets statiques nécessaires au
+  rendu de la page de maintenance elle-même).
+- `/manifest*`, `/service-worker*` → OK (évite les 401/erreurs PWA parasites).
+- Tout le reste, **y compris `/session/new` et `/admin/*`** → `503` (page maintenance).
 
 ### Variables requises
+
+`MAINTENANCE_MODE=true` est positionné par défaut dans `config/deploy.production.yml`
+(`env.clear`), donc actif sur tout déploiement tant qu'il n'est pas explicitement
+repassé à `false` (jour du lancement, avec `SEO_INDEXABLE=true` en même temps).
 
 ```bash
 MAINTENANCE_MODE=true
@@ -143,9 +150,8 @@ RAILS_MASTER_KEY=<master_key>
 
 `app/middleware/maintenance_mode_middleware.rb`
 - Autoriser `/up`.
-- Autoriser `/sessions/new` et `/sessions`.
-- Autoriser `/admin/*` si session admin valide.
-- Sinon : page maintenance (`503`).
+- Autoriser les assets statiques et fichiers PWA (voir ci-dessus).
+- Sinon : page maintenance (`503`), sans exception pour login ou admin.
 
 ### Horaires sur la page de maintenance
 
@@ -188,7 +194,8 @@ git filter-repo --path config/master.key  # ou git-filter-branch (plus lent)
 - `STAGING_PASSWORD` (HTTP Basic)
 
 **Production** (`config/environments/production.rb`):
-- `MAINTENANCE_MODE=false` (ou omis = défaut false)
+- `MAINTENANCE_MODE=true` par défaut (`config/deploy.production.yml`) tant que le site
+  n'est pas lancé publiquement — voir section 8.
 - `RAILS_LOG_LEVEL=info`
 - Force SSL + HSTS
 
@@ -196,13 +203,12 @@ git filter-repo --path config/master.key  # ou git-filter-branch (plus lent)
 
 **Fonts** (2025-10-12 incident): Propshaft searches for `application.css`. If using DartSass, `application.scss` doesn't generate `.css` — rename to `application.css`. Use `@font-face` with `font-url()` (resolved by Rails to `/assets/` after compile). Formats: woff2, woff, otf. Add `font-display: swap` to avoid text flash.
 
-## 8. Maintenance Mode
+## 8bis. Maintenance Mode (rappel, voir section 8)
 
 **Middleware:** `app/middleware/maintenance_mode_middleware.rb`
 - Allow: `/up` (healthcheck)
-- Allow: `/sessions/*` (login)
-- Allow: `/admin/*` if admin session valid
-- Else: 503 maintenance page
+- Allow: static assets (`/assets/*`, `/icon.png`, `/icon.svg`) and PWA files
+- Else: 503 maintenance page — no exception for `/session/new` or `/admin/*`
 
 **Opening hours:** `Rails.cache.fetch("opening_hours")` with fallback.
 

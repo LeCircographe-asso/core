@@ -88,7 +88,7 @@ module Admin
     private
 
     def set_contribution_formula
-      @contribution_formula = ContributionFormula.find(params[:id])
+      @contribution_formula = ContributionFormula.find(params.expect(:id))
     end
 
     def set_breadcrumbs

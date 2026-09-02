@@ -84,11 +84,11 @@ module Admin
     private
 
     def set_person
-      @person = Person.find(params[:person_id])
+      @person = Person.find(params.expect(:person_id))
     end
 
     def set_person_for_new
-      @person = Person.find(params[:person_id]) if params[:person_id].present?
+      @person = Person.find(params.expect(:person_id)) if params[:person_id].present?
     end
 
     def set_breadcrumbs
