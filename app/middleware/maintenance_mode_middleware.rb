@@ -48,11 +48,13 @@ class MaintenanceModeMiddleware
   # Assets Propshaft (/assets/...) + favicon : la page de maintenance est
   # auto-suffisante (logo en data URI, icônes SVG inline), mais si
   # inline_asset_data échoue, son fallback asset_path pointe vers /assets/...
-  # — sans ça l'image serait cassée pendant toute la maintenance.
+  # — sans ça l'image serait cassée pendant toute la maintenance. /robots.txt
+  # est inclus pour que Google puisse toujours le lire (sinon 503 dessus aussi,
+  # ambigu pour Search Console — voir public/robots.txt).
   def static_asset_request?(request)
     return false unless get_or_head?(request)
 
-    request.path.start_with?("/assets/") || %w[/icon.png /icon.svg].include?(request.path)
+    request.path.start_with?("/assets/") || %w[/icon.png /icon.svg /robots.txt].include?(request.path)
   end
 
   def get_or_head?(request)
