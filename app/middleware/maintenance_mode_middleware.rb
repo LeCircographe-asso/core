@@ -24,7 +24,7 @@ class MaintenanceModeMiddleware
   end
 
   def allowlisted_request?(request)
-    healthcheck?(request) || pwa_request?(request)
+    healthcheck?(request) || pwa_request?(request) || static_asset_request?(request)
   end
 
   def healthcheck?(request)
@@ -32,9 +32,8 @@ class MaintenanceModeMiddleware
   end
 
   def pwa_request?(request)
-    return false unless %w[GET HEAD].include?(request.request_method)
+    return false unless get_or_head?(request)
 
-    path = request.path
     pwa_paths = [
       "/manifest",
       "/manifest.json",
@@ -43,7 +42,21 @@ class MaintenanceModeMiddleware
       "/service-worker.js"
     ]
 
-    pwa_paths.include?(path)
+    pwa_paths.include?(request.path)
+  end
+
+  # Assets Propshaft (/assets/...) + favicon : la page de maintenance est
+  # auto-suffisante (logo en data URI, icônes SVG inline), mais si
+  # inline_asset_data échoue, son fallback asset_path pointe vers /assets/...
+  # — sans ça l'image serait cassée pendant toute la maintenance.
+  def static_asset_request?(request)
+    return false unless get_or_head?(request)
+
+    request.path.start_with?("/assets/") || %w[/icon.png /icon.svg].include?(request.path)
+  end
+
+  def get_or_head?(request)
+    %w[GET HEAD].include?(request.request_method)
   end
 
   def maintenance_response
