@@ -26,13 +26,13 @@ gem "turbo-rails" # Hotwire's SPA accelerator
 gem "view_component" # Modular UI components
 
 # Server and Performance
-gem "puma", ">= 5.0" # Web server
+gem "puma", ">= 7.2.1" # Web server
 gem "thruster", require: false # HTTP asset caching for Puma
 
 # Background Jobs and Caching
-gem "solid_cable"  # Database-backed Action Cable
-gem "solid_cache"  # Database-backed cache
-gem "solid_queue"  # Database-backed job queue
+gem "solid_cable" # Database-backed Action Cable
+gem "solid_cache" # Database-backed cache
+gem "solid_queue" # Database-backed job queue
 
 # Pagination
 # Pagy 43+ supprime extras/bootstrap et Pagy::Backend — migration non triviale ; rester en 6.x jusqu’à refonte.
