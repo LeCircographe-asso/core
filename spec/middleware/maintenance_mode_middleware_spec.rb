@@ -54,6 +54,21 @@ RSpec.describe MaintenanceModeMiddleware do
       status, _headers, _body = call_with('/manifest.json', method: 'HEAD')
       expect(status).to eq(200)
     end
+
+    it 'allows fingerprinted asset requests' do
+      status, _headers, _body = call_with('/assets/application-abc123.css')
+      expect(status).to eq(200)
+    end
+
+    it 'allows the favicon icons' do
+      expect(call_with('/icon.png').first).to eq(200)
+      expect(call_with('/icon.svg').first).to eq(200)
+    end
+
+    it 'allows robots.txt so crawlers always get a clean response' do
+      status, _headers, _body = call_with('/robots.txt')
+      expect(status).to eq(200)
+    end
   end
 
   context 'when the maintenance flag file exists' do

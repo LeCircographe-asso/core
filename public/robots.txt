@@ -1,8 +1,12 @@
-# Robots.txt pour staging.lecircographe.fr
-# Empêche l'indexation par les moteurs de recherche
+# Le Circographe n'est pas encore ouvert au référencement.
+# L'indexation est bloquée par l'en-tête HTTP X-Robots-Tag: noindex
+# (voir ApplicationController#set_robots_header), pas par ce fichier :
+# un Disallow ici empêcherait Google de lire le noindex et de désindexer
+# les pages déjà connues (ex: /session/new), il resterait donc indéfiniment
+# indexé "à l'aveugle". Ce fichier autorise donc le crawl volontairement.
+#
+# S'applique à tous les environnements (même fichier statique pour prod et
+# staging) — staging est de toute façon protégé par Basic Auth.
 
 User-agent: *
-Disallow: /
-
-# Le site principal lecircographe.fr reste accessible
-# Ce robots.txt s'applique uniquement à staging.lecircographe.fr
+Allow: /
