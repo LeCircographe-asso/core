@@ -47,7 +47,7 @@ module Admin
     private
 
     def set_faq
-      @faq = Faq.find(params[:id])
+      @faq = Faq.find(params.expect(:id))
     end
 
     def faq_params

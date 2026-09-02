@@ -39,7 +39,7 @@ module Admin
     end
 
     def new
-      @attendance_list = AttendanceList.find(params[:attendance_list_id]) if params[:attendance_list_id]
+      @attendance_list = AttendanceList.find(params.expect(:attendance_list_id)) if params[:attendance_list_id]
 
       already_added_person_ids = @attendance_list ? @attendance_list.attendances.pluck(:person_id) : []
       @people_available = Person.order(:first_name, :last_name).where.not(id: already_added_person_ids)
@@ -94,7 +94,7 @@ module Admin
     end
 
     def set_attendance
-      @attendance = Attendance.find(params[:id])
+      @attendance = Attendance.find(params.expect(:id))
     end
 
     def set_breadcrumbs

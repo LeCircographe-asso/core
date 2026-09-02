@@ -115,7 +115,7 @@ module Admin
     private
 
     def set_attendance_list
-      @attendance_list = AttendanceList.find(params[:id])
+      @attendance_list = AttendanceList.find(params.expect(:id))
     end
 
     def attendance_list_params

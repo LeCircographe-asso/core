@@ -24,7 +24,7 @@ module Admin
         redirect_to admin_members_path, alert: t(".person_required_alert") and return
       end
 
-      @person = Person.find(params[:person_id])
+      @person = Person.find(params.expect(:person_id))
 
       if params[:upgrade] == "true" && @person&.current_membership&.basic?
         # Les deux tarifs (standard/réduit) sont toujours proposés : l'éligibilité au
@@ -98,7 +98,7 @@ module Admin
     private
 
     def set_person
-      @person = Person.find(params[:id])
+      @person = Person.find(params.expect(:id))
     end
 
     def set_person_for_create
