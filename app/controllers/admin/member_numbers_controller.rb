@@ -56,7 +56,7 @@ module Admin
     private
 
     def set_person
-      @person = Person.find(params[:id]) if params[:id]
+      @person = Person.find(params.expect(:id)) if params[:id]
     end
   end
 end

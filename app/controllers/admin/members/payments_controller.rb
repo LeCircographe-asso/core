@@ -42,7 +42,7 @@ module Admin
       end
 
       def update
-        @payment = @person.payments.find(params[:id])
+        @payment = @person.payments.find(params.expect(:id))
 
         total_cents = payment_params[:total_cents]
         total_cents = (total_cents.to_f * 100).to_i if total_cents.present?
@@ -64,7 +64,7 @@ module Admin
       end
 
       def destroy
-        @payment = @person.payments.find(params[:id])
+        @payment = @person.payments.find(params.expect(:id))
 
         result = People::PaymentCanceller.new(
           payment_id: @payment.id,
@@ -80,7 +80,7 @@ module Admin
       end
 
       def process_payment
-        @payment = @person.payments.find(params[:id])
+        @payment = @person.payments.find(params.expect(:id))
 
         if @payment.pending?
           result = People::PaymentUpdater.new(

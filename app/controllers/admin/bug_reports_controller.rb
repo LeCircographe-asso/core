@@ -27,7 +27,7 @@ module Admin
     private
 
     def set_bug_report
-      @bug_report = BugReport.find(params[:id])
+      @bug_report = BugReport.find(params.expect(:id))
     end
   end
 end
