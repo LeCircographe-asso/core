@@ -36,8 +36,12 @@ env:
     PRODUCTION_MODE: true
     # Site pas encore ouvert au public : tout est bloqué (503) sauf /up,
     # y compris /session/new et /admin (voir MaintenanceModeMiddleware).
-    # Repasser à false + redeploy le jour du lancement (avec SEO_INDEXABLE=true).
+    # Ouverture prévue le 18/09 : repasser à false + redeploy ce jour-là.
     MAINTENANCE_MODE: true
+    # Autorisation d'indexation Google (X-Robots-Tag, voir ApplicationController).
+    # Activée dès maintenant : sans effet tant que MAINTENANCE_MODE bloque tout
+    # (rien à indexer), mais évite d'avoir un 2e flag à changer le jour J.
+    SEO_INDEXABLE: true
     RAILS_SERVE_STATIC_FILES: true
     SOLID_QUEUE_IN_PUMA: true
     # Réplication continue SQLite → IONOS Object Storage (config/initializers/litestream.rb).
