@@ -31,11 +31,11 @@ module Admin
 
     def assign_person_context!
       if params[:person_id].present?
-        @person = Person.find(params[:person_id])
+        @person = Person.find(params.expect(:person_id))
         @user = @person.user
         true
       elsif params[:user_id].present?
-        @user = User.find(params[:user_id])
+        @user = User.find(params.expect(:user_id))
         @person = @user.person
         true
       else

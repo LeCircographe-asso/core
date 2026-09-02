@@ -7,22 +7,17 @@ class PagesController < ApplicationController
 
   layout "application"
 
-  # Matches app/views/pages/*.html.erb (slug must not be user-controlled for render path)
+  # Matches app/views/pages/*.html.erb (slug must not be user-controlled for render path).
+  # circus_details/graphic_arts_details n'y figurent plus : PUBLIC_PAGES (config/routes.rb)
+  # ne route jamais vers ces page_id, seul le legacy /pages/:id les redirige directement
+  # vers /association#le-cirque et /association#les-arts-graphiques sans jamais atteindre
+  # ce contrôleur.
   ALLOWED_PAGE_IDS = %w[
-    about association become_member blog_newsletter circus_details contact_us faq gallery
-    graphic_arts_details news newsletter_unsubscribe_success privacy_policy terms white_page
+    about association become_member blog_newsletter contact_us faq gallery
+    news newsletter_unsubscribe_success privacy_policy terms white_page
   ].freeze
 
   def show
-    redirect_mapping = {
-      "circus_details" => { page: "association", anchor: "le-cirque" },
-      "graphic_arts_details" => { page: "association", anchor: "les-arts-graphiques" }
-    }
-
-    if (target = redirect_mapping[params[:id]])
-      return redirect_to page_path(target[:page], anchor: target[:anchor]), status: :moved_permanently
-    end
-
     @opening_hours = current_opening_hours
     @exceptional_closure = current_exceptional_closure
     @notepad = Rails.cache.fetch("notepad") || default_notepad

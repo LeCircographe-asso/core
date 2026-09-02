@@ -33,6 +33,43 @@ RSpec.describe "Admin::BugReports", type: :request do
 
       expect(response).to redirect_to(admin_dashboard_index_path)
     end
+
+    it "shows the device/display badge and reporter role" do
+      create(:bug_report, device_type: "mobile", display_mode: "standalone", reporter_role: "admin")
+
+      get admin_bug_reports_path
+
+      expect(response.body).to include(I18n.t("admin.bug_reports.device_types.mobile"))
+      expect(response.body).to include(I18n.t("admin.bug_reports.display_modes.standalone"))
+      expect(response.body).to include(I18n.t("admin.bug_reports.roles.admin"))
+    end
+
+    it "shows a collapsible JS error summary when present" do
+      create(:bug_report, js_errors: [ { "type" => "error", "message" => "Cannot read properties of undefined" } ])
+
+      get admin_bug_reports_path
+
+      expect(response.body).to include("Cannot read properties of undefined")
+    end
+
+    it "filters by source" do
+      auto = BugReport.record_automatic!(error_class: "StandardError", message: "boom", kind: :error, path: "/x")
+      create(:bug_report)
+
+      get admin_bug_reports_path(source: "automatic")
+
+      expect(response.body).to include(auto.note)
+      expect(response.body).to include(I18n.t("admin.bug_reports.sources.automatic"))
+    end
+
+    it "shows the occurrence count for a report seen multiple times" do
+      BugReport.record_automatic!(error_class: "StandardError", message: "boom", kind: :error, path: "/x")
+      BugReport.record_automatic!(error_class: "StandardError", message: "boom", kind: :error, path: "/x")
+
+      get admin_bug_reports_path
+
+      expect(response.body).to include("×2")
+    end
   end
 
   describe "PATCH /admin/bug_reports/:id" do

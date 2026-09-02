@@ -175,12 +175,30 @@ en:
       table:
         date: Date
         author: Author
+        device: Device
         note: Note
         page: Page
         screenshot: Screenshot
         status: Status
         anonymous: Anonymous visitor
         view_screenshot: View
+        js_errors_toggle:
+          one: "%{count} JS error"
+          other: "%{count} JS errors"
+      device_types:
+        mobile: Mobile
+        desktop: Desktop
+      display_modes:
+        browser: Browser
+        standalone: PWA
+      sources:
+        user_report: Manual
+        automatic: Auto
+      roles:
+        super_admin: super admin
+        admin: admin
+        volunteer: volunteer
+        web_visitor: visitor
       widget_toggle:
         label: '"Report a problem" button visible on the site'
         submit: Save
@@ -642,6 +660,8 @@ en:
         subject: "Email change verification code"
       membership_expiration_reminder:
         subject: Votre adhésion arrive à expiration !
+      event_interest_confirmation:
+        subject: "Interest confirmed: %{event_name}"
       contact_email:
         subject: "New message: %{category_label}"
         category_labels:

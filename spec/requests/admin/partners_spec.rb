@@ -28,7 +28,7 @@ RSpec.describe "Admin::Partners", type: :request do
         post admin_partners_path, params: { partner: { name: "" } }
       end.not_to change(Partner, :count)
 
-      expect(response).to have_http_status(:unprocessable_entity)
+      expect(response).to have_http_status(:unprocessable_content)
     end
 
     it "is forbidden for a volunteer" do

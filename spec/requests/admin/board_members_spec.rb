@@ -28,7 +28,7 @@ RSpec.describe "Admin::BoardMembers", type: :request do
         post admin_board_members_path, params: { board_member: { name: "", role: "" } }
       end.not_to change(BoardMember, :count)
 
-      expect(response).to have_http_status(:unprocessable_entity)
+      expect(response).to have_http_status(:unprocessable_content)
     end
 
     it "is forbidden for a volunteer" do

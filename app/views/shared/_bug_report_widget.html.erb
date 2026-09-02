@@ -1,8 +1,9 @@
 <div data-controller="bug-report">
   <button type="button"
           data-action="bug-report#open"
+          data-bug-report-target="trigger"
           aria-haspopup="dialog"
-          class="fixed bottom-5 right-5 z-[100] inline-flex h-12 w-12 items-center justify-center rounded-full bg-[#1F5C55] text-white shadow-lg ring-1 ring-black/5 transition hover:bg-[#17433e] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1F5C55]"
+          class="fixed bottom-5 right-5 z-[100] inline-flex h-12 w-12 items-center justify-center rounded-full bg-[#1F5C55] text-white shadow-lg ring-1 ring-black/5 transition-[background-color,bottom] duration-300 hover:bg-[#17433e] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1F5C55]"
           title="<%= t("bug_reports.widget.button_title") %>"
           aria-label="<%= t("bug_reports.widget.button_title") %>">
     <i class="fas fa-bug" aria-hidden="true"></i>
@@ -16,16 +17,16 @@
        data-bug-report-target="panel">
     <div class="absolute inset-0 bg-gray-900/65" data-action="click->bug-report#close"></div>
 
-    <div class="relative w-full max-w-md rounded-2xl bg-white shadow-2xl ring-1 ring-gray-200 focus:outline-none"
+    <div class="relative flex w-full max-w-md max-h-[90vh] flex-col overflow-hidden rounded-2xl bg-white shadow-2xl ring-1 ring-gray-200 focus:outline-none"
          data-bug-report-target="dialog"
          tabindex="-1">
-      <div class="px-6 py-5 space-y-4">
-        <header class="flex items-start justify-between">
-          <div>
-            <p class="text-xs font-medium uppercase tracking-[0.35em] text-brand-primary/70" id="bug-report-modal-title">
+      <div class="min-h-0 overflow-y-auto px-6 py-5 space-y-4">
+        <header class="flex items-start justify-between gap-3">
+          <div class="min-w-0 flex-1">
+            <p class="text-xs font-medium uppercase tracking-[0.35em] text-brand-primary/70 break-words" id="bug-report-modal-title">
               <%= t("bug_reports.widget.title") %>
             </p>
-            <p class="mt-1 text-sm text-gray-600"><%= t("bug_reports.widget.intro") %></p>
+            <p class="mt-1 text-sm text-gray-600 break-words"><%= t("bug_reports.widget.intro") %></p>
           </div>
           <button type="button"
                   data-action="bug-report#close"

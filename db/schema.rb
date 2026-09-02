@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_08_25_114419) do
+ActiveRecord::Schema[8.1].define(version: 2026_08_26_092957) do
   create_table "account_claims", force: :cascade do |t|
     t.string "confirmation_token", null: false
     t.datetime "created_at", null: false
@@ -117,12 +117,22 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_25_114419) do
 
   create_table "bug_reports", force: :cascade do |t|
     t.datetime "created_at", null: false
+    t.string "device_type"
+    t.string "display_mode"
+    t.string "fingerprint"
+    t.json "js_errors", default: []
     t.text "note", null: false
+    t.integer "occurrence_count", default: 1, null: false
     t.string "page_url"
     t.integer "person_id"
+    t.string "reporter_role"
+    t.integer "source", default: 0, null: false
     t.integer "status", default: 0, null: false
     t.datetime "updated_at", null: false
     t.string "user_agent"
+    t.integer "viewport_height"
+    t.integer "viewport_width"
+    t.index ["fingerprint"], name: "index_bug_reports_on_fingerprint"
     t.index ["person_id"], name: "index_bug_reports_on_person_id"
     t.index ["status"], name: "index_bug_reports_on_status"
   end
@@ -240,8 +250,10 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_25_114419) do
   create_table "gallery_photos", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.bigint "created_by_user_id"
+    t.integer "position", null: false
     t.datetime "updated_at", null: false
     t.index ["created_by_user_id"], name: "index_gallery_photos_on_created_by_user_id"
+    t.index ["position"], name: "index_gallery_photos_on_position"
   end
 
   create_table "member_number_histories", force: :cascade do |t|

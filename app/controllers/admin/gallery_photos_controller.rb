@@ -3,12 +3,19 @@
 module Admin
   class GalleryPhotosController < BaseController
     before_action :set_breadcrumbs
-    before_action :require_admin_rights, only: %i[create destroy]
+    before_action :require_admin_rights, only: %i[create destroy reorder]
 
     def index
       @gallery_photos = GalleryPhoto.ordered
       @gallery_photo = GalleryPhoto.new
       add_breadcrumb I18n.t("breadcrumbs.admin.gallery_photos.gallery"), nil
+    end
+
+    def reorder
+      Array(params[:ids]).each_with_index do |id, index|
+        GalleryPhoto.find_by(id: id.to_i)&.update(position: index + 1)
+      end
+      head :ok
     end
 
     def create
@@ -22,7 +29,7 @@ module Admin
     end
 
     def destroy
-      GalleryPhoto.find(params[:id]).destroy
+      GalleryPhoto.find(params.expect(:id)).destroy
       redirect_to admin_gallery_photos_path, notice: t(".success")
     end
 

@@ -23,6 +23,16 @@ class UserMailer < ApplicationMailer
     mail(to: @user.email_address, subject: I18n.t("mailers.user_mailer.membership_expiration_reminder.subject"))
   end
 
+  def event_interest_confirmation(user, event)
+    @user = user
+    @event = event
+    @url = "https://lecircographe.fr/"
+    mail(
+      to: @user.email_address,
+      subject: I18n.t("mailers.user_mailer.event_interest_confirmation.subject", event_name: @event.name)
+    )
+  end
+
   def contact_email(name, email, message, category, recipient_email)
     @name = name
     @email = email

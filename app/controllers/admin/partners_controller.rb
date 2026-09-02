@@ -20,7 +20,7 @@ module Admin
       if @partner.save
         redirect_to admin_partners_path, notice: t(".created")
       else
-        render :new, status: :unprocessable_entity
+        render :new, status: :unprocessable_content
       end
     end
 
@@ -30,7 +30,7 @@ module Admin
       if @partner.update(partner_params)
         redirect_to admin_partners_path, notice: t(".updated")
       else
-        render :edit, status: :unprocessable_entity
+        render :edit, status: :unprocessable_content
       end
     end
 
@@ -53,7 +53,7 @@ module Admin
     end
 
     def set_partner
-      @partner = Partner.find(params[:id])
+      @partner = Partner.find(params.expect(:id))
     end
 
     def partner_params

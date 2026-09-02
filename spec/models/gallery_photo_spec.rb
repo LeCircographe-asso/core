@@ -17,11 +17,19 @@ RSpec.describe GalleryPhoto, type: :model do
     expect(photo).to be_valid
   end
 
-  it "orders by most recent first" do
-    older = GalleryPhoto.create!(image: { io: File.open(image_path), filename: "a.webp" }, created_at: 2.days.ago)
-    newer = GalleryPhoto.create!(image: { io: File.open(image_path), filename: "b.webp" }, created_at: 1.day.ago)
+  it "assigns the next position automatically" do
+    first = GalleryPhoto.create!(image: { io: File.open(image_path), filename: "a.webp" })
+    second = GalleryPhoto.create!(image: { io: File.open(image_path), filename: "b.webp" })
 
-    expect(GalleryPhoto.ordered).to eq([ newer, older ])
+    expect(second.position).to eq(first.position + 1)
+  end
+
+  it "orders by position" do
+    first = GalleryPhoto.create!(image: { io: File.open(image_path), filename: "a.webp" })
+    second = GalleryPhoto.create!(image: { io: File.open(image_path), filename: "b.webp" })
+    second.update!(position: 0)
+
+    expect(GalleryPhoto.ordered).to eq([ second, first ])
   end
 
   it "rejects a file larger than MAX_UPLOAD_SIZE" do
