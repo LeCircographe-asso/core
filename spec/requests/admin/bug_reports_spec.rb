@@ -93,5 +93,39 @@ RSpec.describe "Admin::BugReports", type: :request do
       expect(response.body).to match(/<select[^>]*name="status"/)
       expect(response.body).not_to include('name="bug_report[status]"')
     end
+
+    it "records who handled the ticket" do
+      bug_report = create(:bug_report, status: :new_report)
+
+      patch admin_bug_report_path(bug_report), params: { status: "in_progress" }
+
+      expect(bug_report.reload.updated_by_user).to eq(admin)
+    end
+
+    it "shows who last handled a ticket" do
+      bug_report = create(:bug_report, status: :resolved, updated_by_user: admin)
+
+      get admin_bug_reports_path
+
+      expect(response.body).to include(I18n.t("admin.bug_reports.table.handled_by", name: admin.full_name))
+    end
+
+    it "does not show a handled-by note for an untouched ticket" do
+      create(:bug_report, status: :new_report, updated_by_user: nil)
+
+      get admin_bug_reports_path
+
+      expect(response.body).not_to include(I18n.t("admin.bug_reports.table.handled_by", name: ""))
+    end
+
+    it "rejects an invalid status without a 500" do
+      bug_report = create(:bug_report, status: :new_report)
+
+      patch admin_bug_report_path(bug_report), params: { status: "not_a_real_status" }
+
+      expect(response).to redirect_to(admin_bug_reports_path)
+      expect(flash[:alert]).to eq(I18n.t("admin.bug_reports.update.invalid_status"))
+      expect(bug_report.reload).to be_new_report
+    end
   end
 end

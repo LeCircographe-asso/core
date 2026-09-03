@@ -10,6 +10,7 @@ class BugReport < ApplicationRecord
   enum :source, { user_report: 0, automatic: 1 }, default: :user_report
 
   belongs_to :person, optional: true
+  belongs_to :updated_by_user, class_name: "User", optional: true
   has_one_attached :screenshot
 
   validates :note, presence: true
