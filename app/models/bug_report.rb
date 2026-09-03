@@ -10,6 +10,7 @@ class BugReport < ApplicationRecord
   enum :source, { user_report: 0, automatic: 1 }, default: :user_report
 
   belongs_to :person, optional: true
+  belongs_to :updated_by_user, class_name: "User", optional: true
   has_one_attached :screenshot
 
   validates :note, presence: true
@@ -36,10 +37,18 @@ class BugReport < ApplicationRecord
     return if AUTO_REPORT_NOISE_EXCEPTIONS.include?(error_class)
 
     fingerprint = Digest::SHA256.hexdigest("#{error_class}:#{normalize_path_for_fingerprint(path)}")
-    existing = where(fingerprint: fingerprint).where(updated_at: AUTO_REPORT_DEDUP_WINDOW.ago..).order(updated_at: :desc).first
+    # last_occurred_at, jamais updated_at : updated_at bouge aussi quand un admin modifie
+    # juste le statut (Admin::BugReportsController#update), ce qui rendrait n'importe quel
+    # vieux ticket "récent" pour cette fenêtre sans rapport avec une occurrence réelle.
+    existing = where(fingerprint: fingerprint).where(last_occurred_at: AUTO_REPORT_DEDUP_WINDOW.ago..).order(last_occurred_at: :desc).first
 
     if existing
-      existing.update!(occurrence_count: existing.occurrence_count + 1, updated_at: Time.current)
+      # Une erreur qui revient sur un ticket classé "réglé" prouve que ça ne l'est pas —
+      # sans ça le statut n'a plus aucune valeur de signal pour l'admin (l'occurrence_count
+      # grimpe en silence pendant que le ticket reste marqué "Résolu"/"Ne sera pas corrigé").
+      attrs = { occurrence_count: existing.occurrence_count + 1, last_occurred_at: Time.current }
+      attrs[:status] = :new_report if existing.resolved? || existing.wont_fix?
+      existing.update!(attrs)
       return existing
     end
 
@@ -51,6 +60,7 @@ class BugReport < ApplicationRecord
       reporter_role: reporter_role,
       source: :automatic,
       fingerprint: fingerprint,
+      last_occurred_at: Time.current,
       js_errors: [ {
         "type" => "server_#{kind}",
         "message" => message.to_s.first(500),

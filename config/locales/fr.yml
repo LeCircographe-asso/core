@@ -148,6 +148,7 @@ fr:
         page: Page
         screenshot: Capture
         status: Statut
+        handled_by: "Traité par %{name}"
         anonymous: Visiteur non connecté
         view_screenshot: Voir
         js_errors_toggle:
@@ -173,6 +174,7 @@ fr:
         hint: Réservé aux super admins.
       update:
         success: Statut mis à jour.
+        invalid_status: Statut invalide.
     bug_report_widget_settings:
       update:
         success: Préférence mise à jour.

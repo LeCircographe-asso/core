@@ -9,7 +9,7 @@ class BugReportsController < ApplicationController
   def create
     result = Support::BugReportSubmitter.new(
       note: params[:note],
-      page_url: request.referer,
+      page_url: params[:page_url].presence || request.referer,
       user_agent: request.user_agent,
       person_id: current_user&.person_id,
       reporter_role: current_user&.system_role,
