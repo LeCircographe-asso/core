@@ -130,6 +130,35 @@ RSpec.describe BugReport, type: :model do
       expect(BugReport.count).to eq(2)
     end
 
+    it "reopens a report marked resolved when the same error recurs" do
+      first = BugReport.record_automatic!(error_class: "StandardError", message: "boom", kind: :error, path: "/x")
+      first.update!(status: :resolved)
+
+      recurred = BugReport.record_automatic!(error_class: "StandardError", message: "boom (again)", kind: :error, path: "/x")
+
+      expect(recurred.id).to eq(first.id)
+      expect(recurred).to be_new_report
+      expect(recurred.occurrence_count).to eq(2)
+    end
+
+    it "reopens a report marked wont_fix when the same error recurs" do
+      first = BugReport.record_automatic!(error_class: "StandardError", message: "boom", kind: :error, path: "/x")
+      first.update!(status: :wont_fix)
+
+      recurred = BugReport.record_automatic!(error_class: "StandardError", message: "boom (again)", kind: :error, path: "/x")
+
+      expect(recurred).to be_new_report
+    end
+
+    it "leaves an in_progress report untouched when the same error recurs" do
+      first = BugReport.record_automatic!(error_class: "StandardError", message: "boom", kind: :error, path: "/x")
+      first.update!(status: :in_progress)
+
+      recurred = BugReport.record_automatic!(error_class: "StandardError", message: "boom (again)", kind: :error, path: "/x")
+
+      expect(recurred).to be_in_progress
+    end
+
     it "ignores known-noise exceptions" do
       report = BugReport.record_automatic!(error_class: "ActionController::InvalidAuthenticityToken", message: "boom", kind: :error, path: "/x")
 

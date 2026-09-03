@@ -81,5 +81,17 @@ RSpec.describe "Admin::BugReports", type: :request do
       expect(bug_report.reload).to be_resolved
       expect(response).to redirect_to(admin_bug_reports_path)
     end
+
+    # form_with url: (sans model:/scope:) rend des champs non-scopés — regression guard :
+    # si ce select venait à être scopé (name="bug_report[status]"), le test ci-dessus
+    # continuerait de passer (il poste `status` directement) sans jamais le détecter.
+    it "renders the status select unscoped, matching what the controller reads" do
+      create(:bug_report, status: :new_report)
+
+      get admin_bug_reports_path
+
+      expect(response.body).to match(/<select[^>]*name="status"/)
+      expect(response.body).not_to include('name="bug_report[status]"')
+    end
   end
 end

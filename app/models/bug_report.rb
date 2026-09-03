@@ -39,7 +39,12 @@ class BugReport < ApplicationRecord
     existing = where(fingerprint: fingerprint).where(updated_at: AUTO_REPORT_DEDUP_WINDOW.ago..).order(updated_at: :desc).first
 
     if existing
-      existing.update!(occurrence_count: existing.occurrence_count + 1, updated_at: Time.current)
+      # Une erreur qui revient sur un ticket classé "réglé" prouve que ça ne l'est pas —
+      # sans ça le statut n'a plus aucune valeur de signal pour l'admin (l'occurrence_count
+      # grimpe en silence pendant que le ticket reste marqué "Résolu"/"Ne sera pas corrigé").
+      attrs = { occurrence_count: existing.occurrence_count + 1, updated_at: Time.current }
+      attrs[:status] = :new_report if existing.resolved? || existing.wont_fix?
+      existing.update!(attrs)
       return existing
     end
 
