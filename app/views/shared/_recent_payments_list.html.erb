@@ -1,9 +1,9 @@
 <% recent_payments = PaymentQuery.visible_to(person).includes(:person, payment_lines: :person).order(created_at: :desc).limit(4) %>
 <div id="recent-payments-<%= person.id %>">
   <% if recent_payments.any? %>
-    <div class="px-5 py-3 border-b border-gray-200">
-      <p class="text-xs font-semibold uppercase tracking-widest text-[#1F5C55]/70 mb-2">Derniers paiements</p>
-      <div class="space-y-2">
+    <details class="px-4 py-2 sm:px-5 sm:py-3 border-b border-gray-200">
+      <summary class="text-xs font-semibold uppercase tracking-widest text-[#1F5C55]/70 cursor-pointer select-none">Derniers paiements</summary>
+      <div class="space-y-2 mt-2">
         <% recent_payments.each do |payment| %>
           <% is_beneficiary_only = payment.person_id != person.id %>
           <%# Montant = ce que CETTE personne a payé ; 0 si quelqu'un d'autre a réglé pour elle. %>
@@ -25,6 +25,6 @@
           </div>
         <% end %>
       </div>
-    </div>
+    </details>
   <% end %>
 </div>
