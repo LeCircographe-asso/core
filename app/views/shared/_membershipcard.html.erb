@@ -30,7 +30,7 @@
   <%# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ %>
 
   <%# ── Identité ── %>
-  <div class="pt-16 px-5 pb-3 text-center border-b border-gray-200">
+  <div class="pt-14 px-4 pb-2 sm:pt-16 sm:px-5 sm:pb-3 text-center border-b border-gray-200">
     <h2 class="text-base font-bold text-gray-900 leading-tight"><%= membership_card_display_name(@user) %></h2>
     <p class="text-sm text-gray-400 mt-0.5 truncate"><%= @user.email_address %></p>
   </div>
@@ -45,7 +45,7 @@
   <% contact_error_fields = %i[phone address zip_code town country] %>
   <% contact_errors = @user.errors.attribute_names.any? { |n| contact_error_fields.include?(n) } %>
   <%= turbo_frame_tag ProfileSectionDomIds::CONTACT_SECTION do %>
-    <div id="contact" class="border-b border-gray-200 px-5 py-3 scroll-mt-28"
+    <div id="contact" class="border-b border-gray-200 px-4 py-2.5 sm:px-5 sm:py-3 scroll-mt-28"
          data-controller="section-edit"
          data-section-edit-editing-value="<%= contact_errors %>"
          data-section-edit-warning-message-value="<%= t("users.space.unsaved_changes_warning") %>"
@@ -58,7 +58,7 @@
          data-section-edit-yes-label-value="<%= t("users.space.yes") %>"
          data-section-edit-no-label-value="<%= t("users.space.no") %>">
 
-      <div class="flex items-center justify-between gap-3 mb-2.5">
+      <div class="flex items-center justify-between gap-3 mb-2 sm:mb-2.5">
         <p class="text-xs font-semibold uppercase tracking-widest text-[#1F5C55]/70"><%= t("users.space.contact_heading") %></p>
         <div class="flex items-center gap-3">
           <div data-section-edit-target="modifyWrap">
@@ -83,7 +83,7 @@
         </div>
       </div>
 
-      <div data-section-edit-target="read" class="grid grid-cols-2 gap-x-4 gap-y-2">
+      <div data-section-edit-target="read" class="grid grid-cols-2 gap-x-3 gap-y-1.5 sm:gap-x-4 sm:gap-y-2">
         <div>
           <p class="text-xs font-medium text-gray-500 uppercase tracking-wider"><%= t("users.space.field_phone") %></p>
           <p class="text-sm font-medium text-gray-700 mt-0.5"><%= @user.phone.presence || "—" %></p>
@@ -113,7 +113,7 @@
   <% end %>
 
   <%# ── Newsletter ── %>
-  <div class="border-b border-gray-200 px-5 py-2.5 flex justify-between items-center gap-3">
+  <div class="border-b border-gray-200 px-4 py-2 sm:px-5 sm:py-2.5 flex justify-between items-center gap-3">
     <span class="text-xs font-semibold uppercase tracking-widest text-[#1F5C55]/70"><%= t("users.space.newsletter_row_label") %></span>
     <span class="text-sm font-semibold <%= @user.newsletter_subscribed ? 'text-green-700' : 'text-gray-400' %>">
       <%= @user.newsletter_subscribed ? t("users.space.newsletter_subscribed_yes") : t("users.space.newsletter_subscribed_no") %>
@@ -121,7 +121,7 @@
   </div>
 
   <%# ── Actions ── %>
-  <div class="px-4 py-3 flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:gap-2">
+  <div class="px-3 py-2.5 sm:px-4 sm:py-3 flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:gap-2">
     <% if defined?(form) && form.present? %>
       <%= form.submit "Enregistrer", class: "flex-1 text-center py-2.5 px-4 rounded-lg text-sm font-medium text-white bg-[#1F5C55] hover:bg-[#1F5C55]/90 shadow-sm" %>
     <% else %>

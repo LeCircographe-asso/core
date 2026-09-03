@@ -7,7 +7,7 @@
   <div class="grid grid-cols-2 divide-x divide-gray-200 border-b border-gray-200">
 
     <%# ▌Adhésion %>
-    <div class="px-4 py-3 space-y-2">
+    <div class="px-3 py-2 space-y-1.5 sm:px-4 sm:py-3 sm:space-y-2">
       <p class="text-xs font-semibold uppercase tracking-widest text-[#1F5C55]/70">Adhésion</p>
 
       <% if current_membership.present? %>
@@ -39,7 +39,7 @@
     </div>
 
     <%# ▌Cotisation %>
-    <div class="px-4 py-3 space-y-2">
+    <div class="px-3 py-2 space-y-1.5 sm:px-4 sm:py-3 sm:space-y-2">
       <p class="text-xs font-semibold uppercase tracking-widest text-[#1F5C55]/70"><%= t("users.space.membership_card.section_contribution") %></p>
 
       <% if show_contributions_block %>
