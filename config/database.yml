@@ -51,23 +51,29 @@ test_cable:
   pool: 1
   database: <%= Rails.root.join("tmp", "test_cable.sqlite3") %>
 
-# Store production database in the storage/ directory, which by default
-# is mounted as a persistent Docker volume in config/deploy.yml.
+# Production : structure imbriquée (primary/cache/queue/cable), exigée par Solid Cache / Solid Queue /
+# Solid Cable (config/environments/production.rb, config/cache.yml, config/cable.yml). En structure
+# plate (production_cache: au premier niveau), Rails les prend pour des ENVIRONNEMENTS distincts :
+# `production` n'aurait alors que `primary` et l'app ne démarrerait pas (« The `queue` database is not
+# configured for the `production` environment »). Voir spec/config/database_layout_spec.rb.
+# Seule storage/production.sqlite3 (données membres/paiements/cotisations) est répliquée par
+# Litestream ; cache/queue/cable sont régénérables depuis db/*_schema.rb par db:prepare.
 production:
-  <<: *default
-  database: storage/production.sqlite3
-
-production_cache:
-  <<: *default
-  database: storage/production_cache.sqlite3
-
-production_queue:
-  <<: *default
-  database: storage/production_queue.sqlite3
-
-production_cable:
-  <<: *default
-  database: storage/production_cable.sqlite3
+  primary:
+    <<: *default
+    database: storage/production.sqlite3
+  cache:
+    <<: *default
+    database: storage/production_cache.sqlite3
+    migrations_paths: db/cache_migrate
+  queue:
+    <<: *default
+    database: storage/production_queue.sqlite3
+    migrations_paths: db/queue_migrate
+  cable:
+    <<: *default
+    database: storage/production_cable.sqlite3
+    migrations_paths: db/cable_migrate
 
 staging:
   <<: *default
