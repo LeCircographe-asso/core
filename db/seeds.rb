@@ -1,6 +1,14 @@
 # Seeds — données de référence + population aléatoire volumique.
 # Voir docs/glossary.md pour le vocabulaire canonique.
+#
+# Deux profils (voir Seeds::Profile) :
+#   - demo (development/test, ou SEED_DEMO=true hors production) : remise à zéro complète + jeu de démo.
+#   - contenu seul (staging/production par défaut) : FAQ, conseil d'administration, partenaires,
+#     seulement si leur table est vide. Ne supprime rien, ne crée aucun compte.
+# `db:prepare` lance ce fichier au premier boot d'une base fraîche : ne jamais y rendre la démo
+# accessible en production.
 
+SEED_DEMO = Seeds::Profile.demo?
 SEED_VERBOSE = ActiveModel::Type::Boolean.new.cast(ENV["SEED_VERBOSE"])
 SEED_FAST_TEST = ActiveModel::Type::Boolean.new.cast(ENV["SEED_FAST_TEST"])
 SEED_LEAN = ActiveModel::Type::Boolean.new.cast(ENV["SEED_LEAN"])
@@ -108,6 +116,24 @@ def seed_fast_tick(message)
   puts message
   $stdout.flush
   sleep(SEED_TICK_SECONDS)
+end
+
+unless SEED_DEMO
+  puts "Le Circographe — seeds de contenu (#{Rails.env}) : FAQ, conseil d'administration, partenaires"
+  puts "Aucune donnée existante n'est supprimée. Comptes et catalogue (types d'adhésion, formules de cotisation) : à créer via l'admin."
+
+  Seeds::Profile::CONTENT_SEEDS.each do |filename, model_name|
+    model = model_name.constantize
+
+    if model.exists?
+      puts "  = #{filename} ignoré : #{model.count} #{model_name} déjà présent(s)"
+    else
+      load_seed_file(filename)
+      puts "  + #{filename} : #{model.count} #{model_name} créé(s)"
+    end
+  end
+
+  return
 end
 
 print_seed_banner

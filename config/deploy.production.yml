@@ -53,6 +53,16 @@ env:
     JOB_CONCURRENCY: 1
     RAILS_LOG_LEVEL: info
 
+# Alias d'exploitation. Volontairement AUCUN alias de reset/seed en production : la base est
+# créée une seule fois (restaurée depuis Litestream si le volume est perdu), jamais reseedée.
+# Usage : bundle exec kamal <alias> -c config/deploy.production.yml
+aliases:
+  console: app exec --interactive --reuse "bin/rails console"
+  shell: app exec --interactive --reuse "bash"
+  logs: app logs -f
+  # Premier super-admin uniquement (refuse s'il en existe déjà un). Mot de passe saisi sans écho.
+  create_super_admin: app exec --interactive --reuse "bin/rails circographe:create_super_admin"
+
 # Volumes pour les logs et données (production)
 volumes:
   - "circographe_production_storage:/rails/storage"
