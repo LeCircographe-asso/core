@@ -43,11 +43,13 @@ La tâche `circographe:create_super_admin` demande email, prénom, nom, puis le 
 
 ## 4. Structure des bases
 
-`production` utilise la structure **imbriquée** (`primary`, `cache`, `queue`, `cable`) exigée par Solid Cache / Solid Queue / Solid Cable. Seule `storage/production.sqlite3` est répliquée par Litestream ; les trois autres se régénèrent depuis `db/cache_schema.rb`, `db/queue_schema.rb`, `db/cable_schema.rb` (les dossiers `db/*_migrate/` restent vides).
+`production` **et `staging`** utilisent la structure **imbriquée** (`primary`, `cache`, `queue`, `cable`) exigée par Solid Cache / Solid Queue / Solid Cable, avec `config.cache_store = :solid_cache_store` et `config.active_job.queue_adapter = :solid_queue` dans les deux environnements. Staging répète donc le vrai boot de la production, jobs récurrents compris. Seule `storage/production.sqlite3` est répliquée par Litestream ; les trois autres bases se régénèrent depuis `db/cache_schema.rb`, `db/queue_schema.rb`, `db/cable_schema.rb` (les dossiers `db/*_migrate/` restent vides).
 
-En structure plate (`production_cache:` au premier niveau), Rails prend ces clés pour des environnements distincts et l'app ne démarre pas : `spec/config/database_layout_spec.rb` protège ce point.
+En structure plate (`production_cache:` au premier niveau), Rails prend ces clés pour des environnements distincts et l'app ne démarre pas : `spec/config/database_layout_spec.rb` protège ce point pour les deux environnements.
 
-**Staging n'est pas encore aligné** : il reste en structure plate et n'utilise pas Solid Cache / Solid Queue en base. Il ne valide donc pas la couche Solid* de la production.
+**Volume existant** : la base principale garde son chemin (`storage/staging.sqlite3`, `storage/production.sqlite3`), donc ses données sont conservées ; `db:prepare` crée les trois autres au boot suivant, sans reseed. Si un volume contient déjà des `*_cache/queue/cable.sqlite3` d'une ancienne image (ex. octobre 2025), les supprimer : ils sont régénérables et leur schéma est incompatible avec solid_cache 1.0.
+
+Différences volontaires staging / production : Basic Auth (`StagingAuth`), Mailjet sandbox, pas de Litestream ni de snapshot nocturne (`Backups::NightlySnapshotService` ne tourne qu'en production).
 
 ## 5. Répétition sur staging
 

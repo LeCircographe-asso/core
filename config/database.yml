@@ -75,18 +75,23 @@ production:
     database: storage/production_cable.sqlite3
     migrations_paths: db/cable_migrate
 
+# Staging : même structure imbriquée que la production (primary/cache/queue/cable), pour que staging
+# exerce exactement la couche Solid* de la prod (voir le commentaire de `production`). Le chemin de la
+# base principale est inchangé : les données d'un volume staging existant sont conservées, les trois
+# autres bases sont créées au boot suivant par db:prepare.
 staging:
-  <<: *default
-  database: storage/staging.sqlite3
-
-staging_cache:
-  <<: *default
-  database: storage/staging_cache.sqlite3
-
-staging_queue:
-  <<: *default
-  database: storage/staging_queue.sqlite3
-
-staging_cable:
-  <<: *default
-  database: storage/staging_cable.sqlite3
+  primary:
+    <<: *default
+    database: storage/staging.sqlite3
+  cache:
+    <<: *default
+    database: storage/staging_cache.sqlite3
+    migrations_paths: db/cache_migrate
+  queue:
+    <<: *default
+    database: storage/staging_queue.sqlite3
+    migrations_paths: db/queue_migrate
+  cable:
+    <<: *default
+    database: storage/staging_cable.sqlite3
+    migrations_paths: db/cable_migrate
