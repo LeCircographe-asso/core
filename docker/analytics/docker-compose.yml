@@ -1,6 +1,13 @@
 # Umami analytics — standalone stack, independent from the Kamal-managed Rails app.
 # Runs alongside the app container on the same VPS but has no coupling with
-# the app's SQLite database. See docs/operations/analytics.md for setup.
+# the app's SQLite database. Joins Kamal's shared proxy network so
+# kamal-proxy can route analytics.<domain> to it with automatic SSL,
+# reusing the same proxy that already serves prod + staging.
+# See docs/operations/analytics.md for setup.
+
+networks:
+  kamal:
+    external: true
 
 services:
   umami-db:
@@ -27,7 +34,12 @@ services:
     depends_on:
       umami-db:
         condition: service_healthy
+    networks:
+      - default
+      - kamal
     ports:
+      # Local-only fallback for direct admin access / debugging.
+      # Public access goes through kamal-proxy (see docs/operations/analytics.md).
       - "127.0.0.1:3001:3000"
 
 volumes:
