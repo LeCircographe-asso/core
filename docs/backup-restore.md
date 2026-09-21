@@ -60,22 +60,43 @@ rclone config
 ```
 
 Une fois configuré, le fichier `~/.config/rclone/rclone.conf` contient un remote nommé
-`pcloud` avec un refresh token. Le service `Backups::NightlySnapshotService` s'attend à
-ce remote sous le nom `pcloud` et pousse vers `DevOps/circographe-backups/production`
-(voir `RCLONE_REMOTE` dans le service) — garder ce chemin ou adapter la constante.
+`pcloud` avec un refresh token OAuth.
 
 Créer l'arborescence sur pCloud avant le premier run :
 ```
 rclone mkdir "pcloud:DevOps/circographe-backups/production"
+rclone mkdir "pcloud:DevOps/circographe-backups/staging-test"
 ```
-Un dossier `DevOps/circographe-backups/staging-test` séparé est utilisé pour les tests
-manuels `rclone` sur staging (NightlySnapshotJob ne tourne jamais sur staging — voir
-la garde `production?` dans le service) — ne pas le confondre avec le dossier `production`
-ci-dessus, qui est géré automatiquement (upload + purge des fichiers > 14 jours).
+`staging-test` sert uniquement aux tests manuels `rclone` sur staging (NightlySnapshotJob
+ne tourne jamais sur staging — voir la garde `production?` dans le service) — à ne pas
+confondre avec `production`, géré automatiquement (upload + purge des fichiers > 14 jours).
 
-Ce fichier doit être déployé sur le serveur de prod à `/rails/.config/rclone/rclone.conf`
-côté container (hors dépôt git — à transmettre via un secret Kamal ou un montage de
-fichier, pas committé en clair).
+#### Chiffrement au repos (`crypt`)
+
+L'OAuth pCloud donne accès à tout le compte, sans scope par dossier (contrairement à
+Dropbox App Folder). Pour ne pas exposer les données membres/paiements en clair en cas de
+fuite des credentials, on chiffre côté client avant l'upload avec un remote `crypt`
+empilé sur `pcloud` :
+
+```
+rclone config
+# n) New remote → name: pcloud-crypt → Storage: crypt
+# remote> pcloud:DevOps/circographe-backups
+# filename encryption> standard
+# directory name encryption> true
+# password / password2 (salt)> laisser rclone générer les deux
+```
+
+Les deux mots de passe générés sont affichés **une seule fois** — à stocker immédiatement
+dans un gestionnaire de mots de passe. Sans eux, le contenu chiffré sur pCloud est
+définitivement irrécupérable (c'est le but). Le service `Backups::NightlySnapshotService`
+pousse vers `pcloud-crypt:production` (voir `RCLONE_REMOTE`) ; les noms de fichiers et
+dossiers réels sur pCloud sont illisibles sans passer par le remote `pcloud-crypt`.
+
+Le `rclone.conf` final contient donc deux sections (`[pcloud]` avec le token OAuth et
+`[pcloud-crypt]` avec les mots de passe chiffrés) — c'est ce fichier complet qui doit être
+déployé sur le serveur à `/rails/.config/rclone/rclone.conf` côté container (hors dépôt
+git — à transmettre via un secret Kamal ou un montage de fichier, pas committé en clair).
 
 ## Vérification (à faire avant de considérer le backup opérationnel)
 
