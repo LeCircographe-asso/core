@@ -1,5 +1,14 @@
 # Seeds — données de référence + population aléatoire volumique.
 # Voir docs/glossary.md pour le vocabulaire canonique.
+#
+# Bootstrap only : ce fichier sert à amorcer une base vide (dev/staging/premier
+# boot prod). Une fois la prod en service, FAQ/CA/Partenaires se gèrent via
+# /admin, jamais en relançant les seeds — d'où le garde-fou ci-dessous.
+if Rails.env.production? && Person.exists?
+  abort "db:seed refusé : la production contient déjà des données. " \
+        "Utilise l'admin (/admin/faqs, /admin/board_members, /admin/partners) " \
+        "pour éditer le contenu, pas les seeds."
+end
 
 SEED_VERBOSE = ActiveModel::Type::Boolean.new.cast(ENV["SEED_VERBOSE"])
 SEED_FAST_TEST = ActiveModel::Type::Boolean.new.cast(ENV["SEED_FAST_TEST"])

@@ -1,5 +1,3 @@
-BoardMember.destroy_all
-
 board_members_data = [
   {
     name: "Léa Martin",
@@ -44,5 +42,5 @@ board_members_data = [
   }
 ]
 
-board_members_data.each { |attrs| BoardMember.create!(attrs) }
+board_members_data.each { |attrs| BoardMember.find_or_create_by!(name: attrs[:name]) { |b| b.assign_attributes(attrs) } }
 puts "  #{BoardMember.count} membres du CA créés."

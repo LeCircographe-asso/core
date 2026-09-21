@@ -1,5 +1,3 @@
-Faq.destroy_all
-
 contact_url = "/contact#contact-form"
 become_member_url = "/adhesion#tarifs"
 map_url = "/contact#map"
@@ -33,5 +31,5 @@ faq_data = [
     answer: "Le plus simple : passer lors d'un créneau d'ouverture avec ton idée. Tu peux aussi utiliser le <a href=\"#{contact_url}\" class=\"text-[#5836A5] underline\">formulaire Contact</a> (Partenariat ou Question générale). Les bénévoles t'orientent." }
 ]
 
-faq_data.each { |attrs| Faq.create!(attrs) }
+faq_data.each { |attrs| Faq.find_or_create_by!(label: attrs[:label], question: attrs[:question]) { |f| f.assign_attributes(attrs) } }
 puts "  #{Faq.count} entrées FAQ créées (avant_visite: #{Faq.by_label('avant_visite').count}, adhesion: #{Faq.by_label('adhesion').count}, general: #{Faq.by_label('general').count}, contact: #{Faq.by_label('contact').count})"

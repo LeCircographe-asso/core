@@ -1,5 +1,3 @@
-Partner.destroy_all
-
 partners_data = [
   {
     name: "La Grainerie",
@@ -31,5 +29,5 @@ partners_data = [
   }
 ]
 
-partners_data.each { |attrs| Partner.create!(attrs) }
+partners_data.each { |attrs| Partner.find_or_create_by!(name: attrs[:name]) { |p| p.assign_attributes(attrs) } }
 puts "  #{Partner.count} partenaires créés."
