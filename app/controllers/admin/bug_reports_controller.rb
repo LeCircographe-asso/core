@@ -6,7 +6,7 @@ module Admin
     before_action :set_bug_report, only: :update
 
     def index
-      @bug_reports = BugReport.includes(:person).ordered
+      @bug_reports = BugReport.includes(:person, updated_by_user: :person).ordered
 
       @bug_reports = @bug_reports.where(status: params[:status]) if params[:status].present?
       @bug_reports = @bug_reports.where(source: params[:source]) if params[:source].present?
@@ -20,8 +20,14 @@ module Admin
     end
 
     def update
-      @bug_report.update!(status: params[:status])
+      @bug_report.update!(status: params[:status], updated_by_user: current_user)
       redirect_to admin_bug_reports_path(status: params[:filter_status], source: params[:filter_source]), notice: t(".success")
+    rescue ArgumentError
+      # enum lève ArgumentError (pas ActiveRecord::RecordInvalid) sur une valeur hors liste —
+      # le <select> n'en propose jamais, mais une requête PATCH forgée à la main ne doit pas
+      # planter en 500 pour autant.
+      redirect_to admin_bug_reports_path(status: params[:filter_status], source: params[:filter_source]),
+                  alert: t(".invalid_status")
     end
 
     private

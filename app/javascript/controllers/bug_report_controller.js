@@ -154,6 +154,7 @@ export default class extends Controller {
     const form = document.querySelector("#bug_report_modal_body form")
     if (!form) return
 
+    this.setHiddenField(form, "page_url", window.location.href)
     this.setHiddenField(form, "device_type", detectDeviceType())
     this.setHiddenField(form, "display_mode", detectDisplayMode())
     this.setHiddenField(form, "viewport_width", window.innerWidth)

@@ -44,6 +44,24 @@ RSpec.describe "BugReports", type: :request do
       expect(BugReport.last.reporter_role).to be_nil
     end
 
+    it "prefers the client-supplied page_url over the Referer header" do
+      post bug_reports_path,
+        params: { note: "Bug.", page_url: "https://lecircographe.fr/adhesion" },
+        headers: { "HTTP_REFERER" => "https://lecircographe.fr/association" },
+        as: :turbo_stream
+
+      expect(BugReport.last.page_url).to eq("https://lecircographe.fr/adhesion")
+    end
+
+    it "falls back to the Referer header when the widget sends no page_url" do
+      post bug_reports_path,
+        params: { note: "Bug." },
+        headers: { "HTTP_REFERER" => "https://lecircographe.fr/association" },
+        as: :turbo_stream
+
+      expect(BugReport.last.page_url).to eq("https://lecircographe.fr/association")
+    end
+
     it "stores the device context sent by the widget's JS" do
       post bug_reports_path, params: {
         note: "Bug.",

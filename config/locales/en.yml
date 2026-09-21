@@ -180,6 +180,7 @@ en:
         page: Page
         screenshot: Screenshot
         status: Status
+        handled_by: "Handled by %{name}"
         anonymous: Anonymous visitor
         view_screenshot: View
         js_errors_toggle:
@@ -205,6 +206,7 @@ en:
         hint: Super admins only.
       update:
         success: Status updated.
+        invalid_status: Invalid status.
     bug_report_widget_settings:
       update:
         success: Preference updated.

@@ -130,6 +130,9 @@
                           { selected: bug_report.status },
                           { onchange: "this.form.requestSubmit()", class: "text-sm border border-gray-200 rounded-md px-2 py-1" } %>
                     <% end %>
+                    <% if bug_report.updated_by_user.present? %>
+                      <p class="mt-1 text-[11px] text-gray-400"><%= t("admin.bug_reports.table.handled_by", name: bug_report.updated_by_user.full_name) %></p>
+                    <% end %>
                   </td>
                 </tr>
               <% end %>

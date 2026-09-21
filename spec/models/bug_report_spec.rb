@@ -130,6 +130,51 @@ RSpec.describe BugReport, type: :model do
       expect(BugReport.count).to eq(2)
     end
 
+    it "reopens a report marked resolved when the same error recurs" do
+      first = BugReport.record_automatic!(error_class: "StandardError", message: "boom", kind: :error, path: "/x")
+      first.update!(status: :resolved)
+
+      recurred = BugReport.record_automatic!(error_class: "StandardError", message: "boom (again)", kind: :error, path: "/x")
+
+      expect(recurred.id).to eq(first.id)
+      expect(recurred).to be_new_report
+      expect(recurred.occurrence_count).to eq(2)
+    end
+
+    it "reopens a report marked wont_fix when the same error recurs" do
+      first = BugReport.record_automatic!(error_class: "StandardError", message: "boom", kind: :error, path: "/x")
+      first.update!(status: :wont_fix)
+
+      recurred = BugReport.record_automatic!(error_class: "StandardError", message: "boom (again)", kind: :error, path: "/x")
+
+      expect(recurred).to be_new_report
+    end
+
+    it "leaves an in_progress report untouched when the same error recurs" do
+      first = BugReport.record_automatic!(error_class: "StandardError", message: "boom", kind: :error, path: "/x")
+      first.update!(status: :in_progress)
+
+      recurred = BugReport.record_automatic!(error_class: "StandardError", message: "boom (again)", kind: :error, path: "/x")
+
+      expect(recurred).to be_in_progress
+    end
+
+    # Codex review catch on PR #536: updated_at also moves when an admin merely
+    # changes a ticket's status (Admin::BugReportsController#update), which would make
+    # an old, unrelated report look "recent" to the dedup window if it were keyed off
+    # updated_at — a different error on the same route could then wrongly fold into it.
+    it "does not merge into an old report whose updated_at was bumped by an unrelated admin edit" do
+      old = travel_to(1.hour.ago) do
+        BugReport.record_automatic!(error_class: "StandardError", message: "boom", kind: :error, path: "/x")
+      end
+      old.update!(status: :in_progress)
+
+      recent = BugReport.record_automatic!(error_class: "StandardError", message: "boom (again)", kind: :error, path: "/x")
+
+      expect(recent.id).not_to eq(old.id)
+      expect(BugReport.count).to eq(2)
+    end
+
     it "ignores known-noise exceptions" do
       report = BugReport.record_automatic!(error_class: "ActionController::InvalidAuthenticityToken", message: "boom", kind: :error, path: "/x")
 
