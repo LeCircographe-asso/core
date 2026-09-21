@@ -393,6 +393,10 @@ fr:
     destroy:
       interest_removed: Vous n'êtes plus intéressé par cet événement
       interest_remove_error: Erreur lors de la suppression de votre intérêt
+  omniauth_callbacks:
+    failure_alert: La connexion avec Google a échoué. Merci de réessayer.
+    invalid_credentials: Impossible de vérifier votre compte Google.
+    registration_disabled: Les inscriptions sont temporairement fermées.
   passwords:
     create:
       reset_instructions_sent_generic: Instructions de réinitialisation du mot de passe envoyées (si un utilisateur avec cette adresse e-mail existe).

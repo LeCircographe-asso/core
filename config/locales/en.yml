@@ -498,6 +498,10 @@ en:
     destroy:
       interest_removed: Vous n'êtes plus intéressé par cet événement
       interest_remove_error: Erreur lors de la suppression de votre intérêt
+  omniauth_callbacks:
+    failure_alert: Google sign-in failed. Please try again.
+    invalid_credentials: We could not verify your Google account.
+    registration_disabled: Sign-up is temporarily disabled.
   passwords:
     create:
       reset_instructions_sent_generic: Instructions de réinitialisation du mot de passe envoyées (si un utilisateur avec cette adresse e-mail existe).

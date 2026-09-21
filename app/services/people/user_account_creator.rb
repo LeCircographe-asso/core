@@ -16,6 +16,8 @@ module People
     attribute :created_by_admin, :boolean, default: false
     attribute :cgu, :boolean, default: true
     attribute :privacy_policy, :boolean, default: true
+    attribute :provider, :string
+    attribute :uid, :string
 
     validates :person, presence: true
     validates :system_role, inclusion: { in: %w[super_admin admin volunteer web_visitor] }, allow_blank: true
@@ -70,7 +72,9 @@ module People
         password: generated_password,
         password_confirmation: generated_password,
         system_role: system_role.presence || "web_visitor",
-        created_by_admin: created_by_admin
+        created_by_admin: created_by_admin,
+        provider: provider,
+        uid: uid
       )
 
       user.cgu = cgu
