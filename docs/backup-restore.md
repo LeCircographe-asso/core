@@ -16,7 +16,7 @@ Deux mécanismes indépendants, pas redondants entre eux :
 | | Couvre | Fréquence | Destination |
 |---|---|---|---|
 | **Litestream** (gem `litestream`, plugin Puma) | `storage/production.sqlite3` uniquement | Continu (quasi temps réel) | IONOS Object Storage (S3-compatible) |
-| **`Backups::NightlySnapshotJob`** (SolidQueue recurring) | `production.sqlite3` (copie sûre) + tous les fichiers Active Storage | Nocturne (3h) | Google Drive (via `rclone`) |
+| **`Backups::NightlySnapshotJob`** (SolidQueue recurring) | `production.sqlite3` (copie sûre) + tous les fichiers Active Storage | Nocturne (3h) | pCloud (via `rclone`) |
 
 `production_cache.sqlite3`, `production_queue.sqlite3` et `production_cable.sqlite3` ne
 sont **pas** sauvegardés : cache régénérable, queue de jobs éphémère, pub/sub Action
@@ -48,18 +48,20 @@ Cable sans donnée persistante — aucune perte réelle, ça évite de réplique
      dashboard_password: <mot-de-passe-dashboard-litestream>
    ```
 
-### 2. Google Drive (rclone)
+### 2. pCloud (rclone)
 
 Le flow OAuth est interactif (navigateur) — à faire **en local**, pas sur le serveur.
 
 ```
 rclone config
-# n) New remote → name: gdrive → Storage: Google Drive → suivre le flow OAuth
+# n) New remote → name: pcloud → Storage: Pcloud → suivre le flow OAuth
+#   (choisir la région EU dans le compte pCloud avant de générer le token
+#   si vous voulez garder les données en Europe)
 ```
 
 Une fois configuré, le fichier `~/.config/rclone/rclone.conf` contient un remote nommé
-`gdrive` avec un refresh token. Le service `Backups::NightlySnapshotService` s'attend à
-ce remote sous le nom `gdrive` (voir `RCLONE_REMOTE` dans le service) — garder ce nom ou
+`pcloud` avec un refresh token. Le service `Backups::NightlySnapshotService` s'attend à
+ce remote sous le nom `pcloud` (voir `RCLONE_REMOTE` dans le service) — garder ce nom ou
 adapter la constante.
 
 Ce fichier doit être déployé sur le serveur de prod à `/rails/.config/rclone/rclone.conf`
@@ -88,7 +90,7 @@ fichier, pas committé en clair).
     "bin/rails runner 'puts Backups::NightlySnapshotJob.perform_now.inspect'"
   ```
 
-  Puis vérifier l'apparition du fichier daté dans le dossier Google Drive.
+  Puis vérifier l'apparition du fichier daté dans le dossier pCloud.
 
 ## Restauration réelle (disaster recovery)
 
