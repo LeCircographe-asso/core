@@ -27,6 +27,14 @@ module ApplicationHelper
   HERO_IMAGE_ASSIGNMENTS_REQUEST_KEY = "_circographe.hero_image_assignments"
   HERO_IMAGE_POOL_REQUEST_KEY = "_circographe.hero_image_pool"
 
+  # Ces deux cartes se retrouvent côte à côte (page Association) ou sur plusieurs pages
+  # (page Nos activités) : une photo fixe et cohérente évite de laisser penser que
+  # la page a changé à chaque navigation, contrairement au tirage aléatoire du pool.
+  FIXED_HERO_IMAGES = {
+    association_circus_card: "hero_01.webp",
+    association_graphics_card: "hero_02.webp"
+  }.freeze
+
   def current_user
     return unless authenticated?
 
@@ -91,7 +99,8 @@ module ApplicationHelper
 
     images = hero_image_pool
     fallback = fallback_hero_image(images)
-    assignments[identifier] = images.sample || fallback
+    fixed = FIXED_HERO_IMAGES[identifier]
+    assignments[identifier] = (fixed if fixed && images.include?(fixed)) || images.sample || fallback
   end
 
   def available_hero_images(except: [])

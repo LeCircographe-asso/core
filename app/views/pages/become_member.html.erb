@@ -125,13 +125,13 @@
             <span class="text-gray-600">Séance libre</span>
             <span class="font-semibold text-gray-800 tabular-nums"><%= day_formula ? number_to_currency(day_formula.price_euros, unit: "€", format: "%n %u", precision: 0) : "—" %></span>
           </li>
-          <li class="flex items-center justify-between px-3 py-2 rounded-xl border border-[#5836A5]/20 bg-[#5836A5]/5">
+          <li class="flex items-center justify-between px-3 py-2 rounded-xl border border-brand-primary/20 bg-brand-primary/5">
             <div class="min-w-0">
               <span class="font-semibold text-gray-900">Carnet 10 séances</span>
-              <span class="ml-2 text-xs font-medium px-1.5 py-0.5 rounded-full bg-[#5836A5]/10 text-[#5836A5]">Populaire</span>
+              <span class="ml-2 text-xs font-medium px-1.5 py-0.5 rounded-full bg-brand-primary/10 text-brand-primary">Populaire</span>
               <p class="text-xs text-gray-500 mt-0.5">Sans expiration.</p>
             </div>
-            <span class="font-bold text-[#5836A5] tabular-nums shrink-0 ml-3"><%= pack10_formula ? number_to_currency(pack10_formula.price_euros, unit: "€", format: "%n %u", precision: 0) : "—" %></span>
+            <span class="font-bold text-brand-primary tabular-nums shrink-0 ml-3"><%= pack10_formula ? number_to_currency(pack10_formula.price_euros, unit: "€", format: "%n %u", precision: 0) : "—" %></span>
           </li>
           <li class="flex items-center justify-between py-2 border-b border-gray-50">
             <span class="text-gray-600">Trimestre (3 mois)</span>

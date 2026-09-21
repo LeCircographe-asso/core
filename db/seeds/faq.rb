@@ -26,6 +26,12 @@ faq_data = [
     answer: "Les créneaux publics bougent selon la saison et les bénévoles. À jour sur l'accueil, la page Adhérer et la page Contact — jette un œil avant de venir." },
   { label: "general", position: 3, question: "Soutenir le lieu ou une question administrative",
     answer: "Adhérer, cotisation, don : <a href=\"#{become_member_url}\" class=\"text-[#5836A5] underline\">page Adhérer</a>. Pour un partenariat, un don hors cadre ou une demande administrative : <a href=\"#{contact_url}\" class=\"text-[#5836A5] underline\">formulaire Contact</a> (Question générale ou Partenariat)." },
+  { label: "general", position: 4, question: "Combien y a-t-il de points d'accroche dans la salle ?",
+    answer: "Renseigne-toi directement auprès des bénévoles présent·es sur le créneau : le nombre de points d'accroche peut varier selon la configuration de la salle." },
+  { label: "general", position: 5, question: "Quelle est la hauteur des points d'accroche dans la salle ?",
+    answer: "La hauteur est communiquée sur place par les bénévoles avant toute installation aérienne, pour t'assurer de pratiquer en sécurité." },
+  { label: "general", position: 6, question: "Quel est le matériel disponible sur place ?",
+    answer: "Cerceau, corde, trapèze, élingues, briques, quilles… Le matériel disponible varie selon les créneaux : demande aux bénévoles présent·es à ton arrivée." },
   # CONTACT — onglet "Écrire & proposer" sur /faq
   { label: "contact", position: 1, question: "Demander un temps d'accueil en création",
     answer: "Écris-nous avec le <a href=\"#{contact_url}\" class=\"text-[#5836A5] underline\">formulaire Contact</a>, catégorie « Temps d'accueil en création » — on te répond sur les dispo et le cadre." },
