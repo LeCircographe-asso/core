@@ -15,7 +15,7 @@ module Backups
     Result = Struct.new(:success?, :remote_path, :errors, :message, keyword_init: true)
 
     RETENTION_DAYS = 14
-    RCLONE_REMOTE = "pcloud:circographe-backups"
+    RCLONE_REMOTE = "pcloud:DevOps/circographe-backups/production"
 
     def call
       return failure("Only runs in production") unless Rails.env.production?

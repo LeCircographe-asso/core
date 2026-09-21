@@ -61,8 +61,17 @@ rclone config
 
 Une fois configuré, le fichier `~/.config/rclone/rclone.conf` contient un remote nommé
 `pcloud` avec un refresh token. Le service `Backups::NightlySnapshotService` s'attend à
-ce remote sous le nom `pcloud` (voir `RCLONE_REMOTE` dans le service) — garder ce nom ou
-adapter la constante.
+ce remote sous le nom `pcloud` et pousse vers `DevOps/circographe-backups/production`
+(voir `RCLONE_REMOTE` dans le service) — garder ce chemin ou adapter la constante.
+
+Créer l'arborescence sur pCloud avant le premier run :
+```
+rclone mkdir "pcloud:DevOps/circographe-backups/production"
+```
+Un dossier `DevOps/circographe-backups/staging-test` séparé est utilisé pour les tests
+manuels `rclone` sur staging (NightlySnapshotJob ne tourne jamais sur staging — voir
+la garde `production?` dans le service) — ne pas le confondre avec le dossier `production`
+ci-dessus, qui est géré automatiquement (upload + purge des fichiers > 14 jours).
 
 Ce fichier doit être déployé sur le serveur de prod à `/rails/.config/rclone/rclone.conf`
 côté container (hors dépôt git — à transmettre via un secret Kamal ou un montage de
