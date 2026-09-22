@@ -95,8 +95,10 @@ dossiers réels sur pCloud sont illisibles sans passer par le remote `pcloud-cry
 
 Le `rclone.conf` final contient donc deux sections (`[pcloud]` avec le token OAuth et
 `[pcloud-crypt]` avec les mots de passe chiffrés) — c'est ce fichier complet qui doit être
-déployé sur le serveur à `/rails/.config/rclone/rclone.conf` côté container (hors dépôt
-git — à transmettre via un secret Kamal ou un montage de fichier, pas committé en clair).
+déployé sur le serveur à `/home/rails/.config/rclone/rclone.conf` côté container — c'est
+le `$HOME` réel de l'utilisateur `rails` dans le container (pas `/rails`, qui est
+`Rails.root` mais pas le home de l'OS) — hors dépôt git, à transmettre via un secret
+Kamal ou un montage de fichier, pas committé en clair.
 
 ## Vérification (à faire avant de considérer le backup opérationnel)
 
