@@ -32,6 +32,7 @@ module Admin
         bottom_description: event_params[:bottom_description],
         date: event_params[:date],
         location: event_params[:location],
+        fictif: event_params[:fictif],
         category: "other"
       )
       @event.creator = current_user if @event.respond_to?(:creator=)
@@ -51,7 +52,8 @@ module Admin
         middle_description: event_params[:middle_description],
         bottom_description: event_params[:bottom_description],
         date: event_params[:date],
-        location: event_params[:location]
+        location: event_params[:location],
+        fictif: event_params[:fictif]
       }.compact_blank
       if @event.update(attrs)
         redirect_to event_path(@event), notice: t(".updated")
@@ -91,7 +93,7 @@ module Admin
     end
 
     def event_params
-      params.expect(event: %i[title upper_description middle_description bottom_description location date])
+      params.expect(event: %i[title upper_description middle_description bottom_description location date fictif])
     end
 
     def event_deletion_reason
