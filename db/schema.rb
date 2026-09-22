@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_09_03_140500) do
+ActiveRecord::Schema[8.1].define(version: 2026_09_21_003530) do
   create_table "account_claims", force: :cascade do |t|
     t.string "confirmation_token", null: false
     t.datetime "created_at", null: false
@@ -489,11 +489,14 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_03_140500) do
     t.string "password_salt"
     t.string "pending_email_address"
     t.bigint "person_id", null: false
+    t.string "provider"
     t.integer "system_role", default: 3, null: false
+    t.string "uid"
     t.datetime "updated_at", null: false
     t.index ["deleted"], name: "index_users_on_deleted"
     t.index ["email_address"], name: "index_users_on_email_address", unique: true
     t.index ["person_id"], name: "index_users_on_person_id"
+    t.index ["provider", "uid"], name: "index_users_on_provider_and_uid", unique: true
     t.index ["system_role"], name: "index_users_on_system_role"
   end
 

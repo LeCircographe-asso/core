@@ -134,6 +134,8 @@ Rails.application.routes.draw do
     get :request_reset, on: :collection
   end
   resource :registration, only: %i[new create]
+  get "/auth/:provider/callback", to: "omniauth_callbacks#create"
+  get "/auth/failure", to: "omniauth_callbacks#failure"
   resources :event_interests, only: %i[create destroy]
   resources :blogs, only: %i[show] do
     get :latest, on: :collection
