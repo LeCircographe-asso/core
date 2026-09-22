@@ -1,0 +1,11 @@
+<% events ||= [] %>
+
+<% if events.present? %>
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <% events.each do |event| %>
+      <%= render "shared/event_card", event: event %>
+    <% end %>
+  </div>
+<% else %>
+  <%= render "shared/events_empty_state" %>
+<% end %>
