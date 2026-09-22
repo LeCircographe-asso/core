@@ -121,16 +121,16 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_21_003530) do
     t.string "display_mode"
     t.string "fingerprint"
     t.json "js_errors", default: []
-    t.text "note", null: false
     t.datetime "last_occurred_at"
+    t.text "note", null: false
     t.integer "occurrence_count", default: 1, null: false
     t.string "page_url"
     t.integer "person_id"
     t.string "reporter_role"
     t.integer "source", default: 0, null: false
     t.integer "status", default: 0, null: false
-    t.bigint "updated_by_user_id"
     t.datetime "updated_at", null: false
+    t.integer "updated_by_user_id"
     t.string "user_agent"
     t.integer "viewport_height"
     t.integer "viewport_width"
