@@ -25,7 +25,7 @@ module Admin
     end
 
     def create
-      @event = Event.new(
+      attrs = {
         title: event_params[:title],
         upper_description: event_params[:upper_description],
         middle_description: event_params[:middle_description],
@@ -33,8 +33,12 @@ module Admin
         date: event_params[:date],
         location: event_params[:location],
         fictif: event_params[:fictif],
-        category: "other"
-      )
+        status: event_params[:status]
+      }.compact_blank
+      # fictif/status ont un défaut DB (draft/fictif=true) : on ne les passe
+      # que si le formulaire les a explicitement envoyés, sinon compact_blank
+      # les retire et Event.new laisse le défaut de colonne s'appliquer.
+      @event = Event.new(attrs.merge(category: "other"))
       @event.creator = current_user if @event.respond_to?(:creator=)
 
       if @event.save
@@ -53,7 +57,8 @@ module Admin
         bottom_description: event_params[:bottom_description],
         date: event_params[:date],
         location: event_params[:location],
-        fictif: event_params[:fictif]
+        fictif: event_params[:fictif],
+        status: event_params[:status]
       }.compact_blank
       if @event.update(attrs)
         redirect_to event_path(@event), notice: t(".updated")
@@ -93,7 +98,7 @@ module Admin
     end
 
     def event_params
-      params.expect(event: %i[title upper_description middle_description bottom_description location date fictif])
+      params.expect(event: %i[title upper_description middle_description bottom_description location date fictif status])
     end
 
     def event_deletion_reason
