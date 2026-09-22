@@ -1,4 +1,6 @@
 <% content_for :title, "Le Circographe – #{@event.title}" %>
+<% content_for :description, @event.full_description.presence&.truncate(160) || "Événement au Circographe : #{@event.title}." %>
+<% content_for :og_image, @event.picture_url if @event.picture_url.present? %>
 
 <div class="page-container mb-16 fade-in">
   <div class="mb-5">
