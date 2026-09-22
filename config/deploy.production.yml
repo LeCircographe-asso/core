@@ -67,6 +67,9 @@ aliases:
 volumes:
   - "circographe_production_storage:/rails/storage"
   - "/srv/www/lecircographe_production/log:/app/log"
+  # rclone.conf (remote pCloud pour Backups::NightlySnapshotService) — copié
+  # manuellement sur le host, jamais committé (voir docs/backup-restore.md).
+  - "/srv/www/lecircographe_production/rclone:/home/rails/.config/rclone:ro"
 
 # Bridge fingerprinted assets
 asset_path: /rails/public/assets

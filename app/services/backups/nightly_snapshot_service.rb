@@ -6,16 +6,17 @@ require "tmpdir"
 module Backups
   # Deuxième backup indépendant de Litestream (qui ne couvre que production.sqlite3
   # vers IONOS) : copie sûre de la base principale + fichiers Active Storage,
-  # poussée vers Google Drive via rclone. Couvre ce que Litestream ne couvre pas
-  # (fichiers uploadés) et sert de filet si IONOS/Litestream a un problème.
-  # Voir docs/backup-restore.md.
+  # poussée vers pCloud via rclone, chiffrée côté client (remote `pcloud-crypt`,
+  # cf. docs/backup-restore.md) — pCloud lui-même ne peut pas lire le contenu.
+  # Couvre ce que Litestream ne couvre pas (fichiers uploadés) et sert de filet
+  # si IONOS/Litestream a un problème.
   class NightlySnapshotService
     include ActiveModel::Model
 
     Result = Struct.new(:success?, :remote_path, :errors, :message, keyword_init: true)
 
     RETENTION_DAYS = 14
-    RCLONE_REMOTE = "gdrive:circographe-backups"
+    RCLONE_REMOTE = "pcloud-crypt:production"
 
     def call
       return failure("Only runs in production") unless Rails.env.production?
