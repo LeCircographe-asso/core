@@ -39,10 +39,20 @@ class ApplicationController < ActionController::Base
   # demande explicitement aux moteurs de recherche de ne pas indexer le site,
   # y compris les pages déjà connues d'eux (contrairement à robots.txt, qui ne
   # fait qu'empêcher un nouveau crawl sans désindexer l'existant).
+  #
+  # Une fois seo_indexable activé, seule seo_indexable_actions (config/application.rb)
+  # devient indexable : volontairement limité à la home pour éviter que Google
+  # affiche les pages publiques en Sitelinks sous le résultat principal.
   def set_robots_header
-    return if Rails.application.config.x.seo_indexable
+    return if seo_indexable_action?
 
     response.headers["X-Robots-Tag"] = "noindex, nofollow"
+  end
+
+  def seo_indexable_action?
+    return false unless Rails.application.config.x.seo_indexable
+
+    Rails.application.config.x.seo_indexable_actions.include?("#{controller_name}##{action_name}")
   end
 
   def bug_report_widget_enabled?

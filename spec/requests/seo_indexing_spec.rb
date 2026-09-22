@@ -12,10 +12,20 @@ RSpec.describe "SEO indexing", type: :request do
       expect(response.headers["X-Robots-Tag"]).to eq("noindex, nofollow")
     end
 
-    it "omits the header once seo_indexable is enabled" do
+    it "keeps blocking non-whitelisted pages even once seo_indexable is enabled" do
       Rails.application.config.x.seo_indexable = true
 
       get new_session_path
+
+      expect(response.headers["X-Robots-Tag"]).to eq("noindex, nofollow")
+    ensure
+      Rails.application.config.x.seo_indexable = false
+    end
+
+    it "omits the header on the home page once seo_indexable is enabled" do
+      Rails.application.config.x.seo_indexable = true
+
+      get root_path
 
       expect(response.headers["X-Robots-Tag"]).to be_nil
     ensure
