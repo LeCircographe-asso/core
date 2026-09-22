@@ -337,6 +337,7 @@ en:
   layouts:
     application:
       title: Le Circographe
+      description: Le Circographe, a living circus venue for training, meetups and workshops in Toulouse.
   views:
     shared:
       flash:

@@ -12,7 +12,7 @@ class ApplicationController < ActionController::Base
 
   before_action :set_robots_header
 
-  helper_method :bug_report_widget_enabled?
+  helper_method :bug_report_widget_enabled?, :robots_meta_content
 
   # Catch-all cible de la route "*unmatched" (doit rester la dernière route de config/routes.rb).
   # Rend la même page 404 statique que Rails sert déjà par défaut, mais en passant par un
@@ -53,6 +53,13 @@ class ApplicationController < ActionController::Base
     return false unless Rails.application.config.x.seo_indexable
 
     Rails.application.config.x.seo_indexable_actions.include?("#{controller_name}##{action_name}")
+  end
+
+  # Doublon du header X-Robots-Tag en balise <meta>, pour les cas où le header
+  # HTTP n'est pas fiable (page servie par un cache/CDN statique sans repasser
+  # par Rails). Les moteurs de recherche respectent les deux.
+  def robots_meta_content
+    seo_indexable_action? ? "index, follow" : "noindex, nofollow"
   end
 
   def bug_report_widget_enabled?

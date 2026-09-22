@@ -676,6 +676,7 @@ fr:
   layouts:
     application:
       title: Le Circographe
+      description: Le Circographe, lieu de cirque vivant, d'entraînement, de rencontres et d'ateliers à Toulouse.
   views:
     shared:
       flash:
