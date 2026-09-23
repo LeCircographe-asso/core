@@ -12,7 +12,7 @@ class ApplicationController < ActionController::Base
 
   before_action :set_robots_header
 
-  helper_method :bug_report_widget_enabled?
+  helper_method :bug_report_widget_enabled?, :robots_meta_content
 
   # Catch-all cible de la route "*unmatched" (doit rester la dernière route de config/routes.rb).
   # Rend la même page 404 statique que Rails sert déjà par défaut, mais en passant par un
@@ -39,10 +39,27 @@ class ApplicationController < ActionController::Base
   # demande explicitement aux moteurs de recherche de ne pas indexer le site,
   # y compris les pages déjà connues d'eux (contrairement à robots.txt, qui ne
   # fait qu'empêcher un nouveau crawl sans désindexer l'existant).
+  #
+  # Une fois seo_indexable activé, seule seo_indexable_actions (config/application.rb)
+  # devient indexable : volontairement limité à la home pour éviter que Google
+  # affiche les pages publiques en Sitelinks sous le résultat principal.
   def set_robots_header
-    return if Rails.application.config.x.seo_indexable
+    return if seo_indexable_action?
 
     response.headers["X-Robots-Tag"] = "noindex, nofollow"
+  end
+
+  def seo_indexable_action?
+    return false unless Rails.application.config.x.seo_indexable
+
+    Rails.application.config.x.seo_indexable_actions.include?("#{controller_name}##{action_name}")
+  end
+
+  # Doublon du header X-Robots-Tag en balise <meta>, pour les cas où le header
+  # HTTP n'est pas fiable (page servie par un cache/CDN statique sans repasser
+  # par Rails). Les moteurs de recherche respectent les deux.
+  def robots_meta_content
+    seo_indexable_action? ? "index, follow" : "noindex, nofollow"
   end
 
   def bug_report_widget_enabled?

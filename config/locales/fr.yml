@@ -212,6 +212,13 @@ fr:
         updated: Événement modifié avec succès
       destroy:
         destroyed_notice: Événement supprimé avec succès
+      publication:
+        status_label: Statut
+        statuses:
+          draft: Brouillon
+          published: Publié
+        status_hint: Un brouillon n'apparaît jamais sur les pages publiques.
+        is_demo_label: Événement de test (badge « démo » visible publiquement)
     membership_types:
       create:
         html_notice: Type d'adhésion créé avec succès !
@@ -677,6 +684,7 @@ fr:
   layouts:
     application:
       title: Le Circographe
+      description: Le Circographe, lieu de cirque vivant, d'entraînement, de rencontres et d'ateliers à Toulouse.
   views:
     shared:
       flash:

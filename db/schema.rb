@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_09_03_140500) do
+ActiveRecord::Schema[8.1].define(version: 2026_09_22_121500) do
   create_table "account_claims", force: :cascade do |t|
     t.string "confirmation_token", null: false
     t.datetime "created_at", null: false
@@ -218,15 +218,18 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_03_140500) do
     t.bigint "creator_id", null: false
     t.datetime "date", null: false
     t.text "description"
+    t.boolean "is_demo", default: true, null: false
     t.string "location"
     t.text "middle_description"
     t.string "name", null: false
     t.string "picture_url"
+    t.integer "status", default: 0, null: false
     t.datetime "updated_at", null: false
     t.text "upper_description"
     t.index ["category"], name: "index_events_on_category"
     t.index ["creator_id"], name: "index_events_on_creator_id"
     t.index ["date"], name: "index_events_on_date"
+    t.index ["status"], name: "index_events_on_status"
   end
 
   create_table "exceptional_closures", force: :cascade do |t|

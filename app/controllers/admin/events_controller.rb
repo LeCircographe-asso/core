@@ -25,15 +25,20 @@ module Admin
     end
 
     def create
-      @event = Event.new(
+      attrs = {
         title: event_params[:title],
         upper_description: event_params[:upper_description],
         middle_description: event_params[:middle_description],
         bottom_description: event_params[:bottom_description],
         date: event_params[:date],
         location: event_params[:location],
-        category: "other"
-      )
+        is_demo: event_params[:is_demo],
+        status: event_params[:status]
+      }.compact_blank
+      # is_demo/status ont un défaut DB (draft/is_demo=true) : on ne les passe
+      # que si le formulaire les a explicitement envoyés, sinon compact_blank
+      # les retire et Event.new laisse le défaut de colonne s'appliquer.
+      @event = Event.new(attrs.merge(category: "other"))
       @event.creator = current_user if @event.respond_to?(:creator=)
 
       if @event.save
@@ -51,7 +56,9 @@ module Admin
         middle_description: event_params[:middle_description],
         bottom_description: event_params[:bottom_description],
         date: event_params[:date],
-        location: event_params[:location]
+        location: event_params[:location],
+        is_demo: event_params[:is_demo],
+        status: event_params[:status]
       }.compact_blank
       if @event.update(attrs)
         redirect_to event_path(@event), notice: t(".updated")
@@ -91,7 +98,7 @@ module Admin
     end
 
     def event_params
-      params.expect(event: %i[title upper_description middle_description bottom_description location date])
+      params.expect(event: %i[title upper_description middle_description bottom_description location date is_demo status])
     end
 
     def event_deletion_reason

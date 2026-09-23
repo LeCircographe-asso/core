@@ -110,6 +110,14 @@ RSpec.describe 'Admin::Events', type: :request do
 
         expect(response).to redirect_to(admin_events_path)
       end
+
+      it 'creates a draft demo event by default' do
+        post admin_events_path, params: {
+          event: { title: 'Test Event', date: Date.tomorrow, location: 'Test Location' }
+        }
+
+        expect(Event.last).to have_attributes(status: 'draft', is_demo: true)
+      end
     end
   end
 
@@ -152,6 +160,14 @@ RSpec.describe 'Admin::Events', type: :request do
         }
 
         expect(response).to redirect_to(event_path(event))
+      end
+
+      it 'publishes the event and clears the demo flag' do
+        patch admin_event_path(event), params: {
+          event: { status: 'published', is_demo: '0' }
+        }
+
+        expect(event.reload).to have_attributes(status: 'published', is_demo: false)
       end
     end
   end

@@ -1,4 +1,6 @@
 <% content_for :title, "Le Circographe – #{@event.title}" %>
+<% content_for :description, @event.full_description.presence&.truncate(160) || "Événement au Circographe : #{@event.title}." %>
+<% content_for :og_image, @event.picture_url if @event.picture_url.present? %>
 
 <div class="page-container mb-16 fade-in">
   <div class="mb-5">
@@ -25,9 +27,11 @@
       <div class="flex flex-col gap-5 p-6 sm:p-8">
 
         <div class="space-y-2">
-          <span class="inline-flex items-center rounded-full border border-amber-300 bg-amber-50 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.16em] text-amber-800">
-            Démo UX/UI · événement fictif
-          </span>
+          <% if @event.is_demo? %>
+            <span class="inline-flex items-center rounded-full border border-amber-300 bg-amber-50 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.16em] text-amber-800">
+              Démo UX/UI · événement fictif
+            </span>
+          <% end %>
           <h1 class="text-2xl sm:text-3xl font-bold text-gray-900 leading-snug"><%= @event.title %></h1>
         </div>
 

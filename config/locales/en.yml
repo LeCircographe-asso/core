@@ -244,6 +244,13 @@ en:
         updated: Événement modifié avec succès
       destroy:
         destroyed_notice: Événement supprimé avec succès
+      publication:
+        status_label: Status
+        statuses:
+          draft: Draft
+          published: Published
+        status_hint: A draft never appears on public pages.
+        is_demo_label: Test event (public "demo" badge)
     membership_types:
       create:
         html_notice: Type d'adhésion créé avec succès !
@@ -337,6 +344,7 @@ en:
   layouts:
     application:
       title: Le Circographe
+      description: Le Circographe, a living circus venue for training, meetups and workshops in Toulouse.
   views:
     shared:
       flash:
