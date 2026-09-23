@@ -584,6 +584,7 @@ fr:
       newsletter_update_failed: "Erreur lors de la mise à jour newsletter : %{message}"
       user_not_found: "Utilisateur introuvable : %{message}"
       register_existing_web_account: "Cette personne a déjà un compte web."
+      super_admin_already_exists: "Un super-admin existe déjà : les autres comptes se créent depuis l'interface d'administration."
   mailers:
     account_claim_mailer:
       confirmation_email:

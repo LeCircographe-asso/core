@@ -457,6 +457,7 @@ en:
       newsletter_update_failed: "Error updating newsletter: %{message}"
       user_not_found: "User not found: %{message}"
       register_existing_web_account: "This person already has a web account."
+      super_admin_already_exists: "A super admin already exists: create other accounts from the admin interface."
     web:
       user_registration:
         accept_cgu: Vous devez accepter les CGU pour continuer.

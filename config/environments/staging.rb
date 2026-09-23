@@ -23,7 +23,10 @@ Rails.application.configure do
   config.log_tags = [ :request_id ]
 
   # Cache
-  config.cache_store = :memory_store
+  # Solid* comme en production (config/environments/production.rb) : staging répète le vrai boot prod.
+  config.cache_store = :solid_cache_store
+  config.active_job.queue_adapter = :solid_queue
+  config.solid_queue.connects_to = { database: { writing: :queue } }
   config.public_file_server.headers = {
     "Cache-Control" => "public, max-age=#{1.hour.to_i}"
   }
