@@ -1,39 +1,56 @@
 # Plan de réconciliation `main` ← arbre validé en staging
 
-> **Statut** : révisé | **Rédigé le** : 2026-09-03 | **Révisé le** : 2026-09-19 | **Cible** : aligner `main` (prod) sur l'arbre validé en staging, en gardant la prod en maintenance jusqu'à l'ouverture
+> **Statut** : révisé | **Rédigé le** : 2026-09-03 | **Révisé le** : 2026-09-23 | **Cible** : aligner `main` (prod) sur l'arbre validé en staging, en gardant la prod en maintenance jusqu'à l'ouverture
 > **Pré-requis de lecture** : [docs/operations/deployment.md](../operations/deployment.md), [docs/operations/cold_start.md](../operations/cold_start.md)
 
-## 0. Corrections du 2026-09-19 (à lire en premier)
+## 0. Corrections et mises à jour (à lire en premier)
 
-La première version de ce plan contenait des affirmations fausses. Elles sont corrigées ci-dessous ; les résumer évite qu'un relecteur s'y fie encore.
+Les versions précédentes de ce plan contenaient des affirmations fausses ou devenues obsolètes. Elles sont résumées ici pour qu'un relecteur ne s'y fie plus.
+
+### 0.1 — Mise à jour du 2026-09-23
+
+| Point | Situation au 2026-09-23 | Traité en |
+| --- | --- | --- |
+| Ce plan lui-même | Il n'avait **jamais été commité** : il est resté non suivi, puis rangé dans un stash le 22/09. Il est versionné depuis le 23/09 dans la PR #540 (`chore/cold-start-safe-seeds`). | — |
+| Correctifs du cold start « faits » | Ils sont **uniquement sur `chore/cold-start-safe-seeds`** (PR #540, *draft*, CI verte, mergeable). `dev` et `staging` ont toujours le `database.yml` **plat** : réconcilier `main` aujourd'hui produirait une prod qui ne démarre pas. **Premier blocage.** | §6.0 étape 1 |
+| `dev` a 6 commits jamais validés en staging | Résolu : les promotions des 21 et 22/09 ont amené la PR #536 (bug reports) et sa migration en staging. `staging` = `dev` moins `fecf389f` (régénération de `db/schema.rb`) + 4 commits de promotion (02/09 → 22/09). | §1 |
+| `staging` : `db/schema.rb` | Le fichier de `staging` annonce encore la version `2026_08_26_092957` alors que la migration `20260903140500` y est présente : schéma périmé, corrigé sur `dev` par `fecf389f`. Disparaît à la prochaine promotion. | §6.0 étape 2 |
+| Promotion `staging → main` automatisée | `deploy-promote-main.yml` pousse directement sur `main` avec le `GITHUB_TOKEN`. Or le push sur `main` est **restreint à l'équipe Maintainers** (aucune app autorisée) : le push du bot sera probablement refusé. Et sans réconciliation préalable, son `merge --no-ff origin/staging` produirait des centaines de conflits. | §6.0 étape 5 |
+| Modes de merge des PR | Au niveau du dépôt, seul « Create a merge commit » est autorisé (squash et rebase désactivés) : la PR de réconciliation ne peut pas être aplatie par erreur. | §6.1 |
+| Environnements GitHub | `production` et `staging` : toujours **0 règle de protection**. | §11.3 |
+| Simulation du flux complet | Rejouée le 23/09 dans un worktree jetable, sans rien pousser : PR #540 → `dev` → `staging` → réconciliation de `main` → cycle de promotion suivant. Arbres identiques à chaque étape, merge à 2 parents, promotion suivante **sans conflit**. | §6.0 |
+
+### 0.2 — Corrections du 2026-09-19
 
 | Affirmation d'origine | Réalité vérifiée le 2026-09-19 | Traité en |
 | --- | --- | --- |
-| `database.yml` plat = « standard Rails 8, ✅ tourne sur staging » | En `RAILS_ENV=production` seule la base `primary` existait : `production.rb` exige `queue`, `cache.yml` exige `cache`. **L'app ne démarrait pas en prod.** Staging ne le voyait pas : il tournait en `AsyncAdapter` + `MemoryStore`, sans Solid* (`shared.rb` ne définit plus rien). | R7, §4 — corrigé sur `chore/cold-start-safe-seeds`, staging aligné |
+| `database.yml` plat = « standard Rails 8, ✅ tourne sur staging » | En `RAILS_ENV=production` seule la base `primary` existait : `production.rb` exige `queue`, `cache.yml` exige `cache`. **L'app ne démarrait pas en prod.** Staging ne le voyait pas : il tournait en `AsyncAdapter` + `MemoryStore`, sans Solid* (`shared.rb` ne définit plus rien). | R7, §4 — corrigé sur `chore/cold-start-safe-seeds` (**pas encore mergé**, voir 0.1) |
 | « Chaque correctif d'octobre 2025 a été re-dérivé sur `dev`, en mieux » | Faux pour la structure de bases (`4819755e` sur `main` = structure imbriquée). La vérification fichier par fichier ne suffit pas : il faut **booter la prod** (§2, règle de vérification). | §2 |
 | `curl -sI https://lecircographe.fr` → `x-robots-tag: noindex, nofollow` | Faux : la page de maintenance est produite par le middleware, avant le controller, et `SEO_INDEXABLE` est déjà `true`. Attendu : **503 sans `x-robots-tag`**. | §7 |
-| Arbre cible = `origin/dev` | `dev` a 6 commits jamais validés en staging (PR #536 + migration). Cible = **`origin/staging`**. | §2, §6 |
+| Arbre cible = `origin/dev` | Cible = **`origin/staging`** (seul arbre déployé et validé), figée par son SHA au moment du merge. | §2, §6.1 |
 | `main` : « 1 review requise » | L'API ne renvoie ni review ni check requis sur `main` (push restreint, pas de force-push). `staging` : aucune protection. | §11.2 |
 | Ouverture le 18/09 | Date passée, maintenance toujours voulue : la date est à re-fixer. | §9 |
 | `db:prepare` seed « proprement » une base vide | `db/seeds.rb` faisait un `DELETE` sur toutes les tables et créait des comptes `123456` sur toute base fraîche. Corrigé (profil « contenu seul »). | R8, §5.2 |
-| Trailer `Co-Authored-By` / `Claude-Session` dans le message de merge | Interdit sur ce projet. Retiré. | §6 |
+| Trailer `Co-Authored-By` / `Claude-Session` dans le message de merge | Interdit sur ce projet. Retiré. | §6.1 |
 
-## 1. Constat
+## 1. Constat (au 2026-09-23)
 
-| | `origin/main` | `origin/staging` | `origin/dev` |
-| --- | --- | --- | --- |
-| Dernier commit | `b7a99d09` — **2025-10-13** | `84cbb91a` — 2026-09-03 | `2decfd2a` — 2026-09-09 |
-| Écart avec `dev` | 484 commits uniques (vs 1972) | 2 commits de promotion, 6 de retard | — |
-| Schéma DB | `2025_04_20_081208` (Rails 8.0) | idem `dev` moins la migration `20260903140500` | `2026_09_03_140500` (Rails 8.1) |
-| Ruby | `3.2.5` | `4.0.1` | `4.0.1` |
-| Structure DB | imbriquée (`primary/cache/queue/cable`) | plate → **alignée** sur la branche de travail | plate → **corrigée** (production + staging) |
-| Workflows CI/CD | `01..05-*.yml` (manuels, tests désactivés, `npm install`) | `ci-dev.yml` + `deploy-*.yml` | idem |
-| Node/Yarn | présent | supprimé (importmap only) | supprimé |
+| | `origin/main` | `origin/staging` | `origin/dev` | PR #540 |
+| --- | --- | --- | --- | --- |
+| Dernier commit | `b7a99d09` — **2025-10-13** | `db0185da` — 2026-09-22 | `fecf389f` — 2026-09-22 | `chore/cold-start-safe-seeds` |
+| Écart | 484 commits uniques, 1984 de retard sur `staging` | 4 commits de promotion d'avance sur `dev`, 1 de retard | — | d'avance sur `dev` : correctifs du cold start + ce plan ; 0 de retard |
+| Schéma DB (`db/schema.rb`) | `2025_04_20_081208` (Rails 8.0) | `2026_08_26_092957` annoncé, périmé (migration `20260903140500` présente) | `2026_09_03_140500` (Rails 8.1) | idem `dev` |
+| Ruby | `3.2.5` | `4.0.1` | `4.0.1` | `4.0.1` |
+| Structure DB (`database.yml`) | imbriquée (`primary/cache/queue/cable`) | **plate** (prod ne démarre pas) | **plate** (prod ne démarre pas) | **imbriquée** (production + staging) |
+| Seeds | — | destructifs + comptes `123456` | destructifs + comptes `123456` | contenu seul |
+| Workflows CI/CD | `01..05-*.yml` (manuels, tests désactivés, `npm install`) | `ci-dev.yml` + `deploy-*.yml` | idem | idem |
+| Node/Yarn | présent | supprimé (importmap only) | supprimé | supprimé |
 
-**Les histoires de `main` et `dev` sont parallèles.** Constats à retenir :
+**Les histoires de `main` et de `dev`/`staging` sont parallèles.** Constats à retenir :
 
-- `origin/main` n'a **jamais été réécrite** (`b7a99d09`). La branche `main` **locale** est un faux merge (`405e1886`, jamais poussé) issu d'un `filter-branch` du 18/08 puis d'un `git pull` du 09/09 : **ne jamais partir d'elle.**
-- 299 des 316 commits non-merge de `main` ont un patch identique dans `dev`, sous d'autres SHA : les deux histoires ont été réécrites l'une par rapport à l'autre, d'où 4 merge-bases (`git merge-base --all`) et des conflits partout avec un merge classique.
+- `origin/main` n'a **jamais été réécrite** (`b7a99d09`). La branche `main` **locale** est toujours un faux merge (`405e1886`, jamais poussé) issu d'un `filter-branch` du 18/08 puis d'un `git pull` du 09/09 : **ne jamais partir d'elle.**
+- `staging` et `dev` partagent leur histoire depuis la resynchronisation du 18/08 : chaque promotion est un merge `--no-ff` de `dev` dans `staging`, sans réécriture. Leur seule différence de contenu est `db/schema.rb`.
+- 299 des 316 commits non-merge de `main` ont un patch identique dans `dev`, sous d'autres SHA : les deux histoires ont été réécrites l'une par rapport à l'autre, d'où 4 merge-bases de décembre 2024 (`git merge-base --all`) et des conflits partout avec un merge classique.
 - Les 17 commits de `main` dont le patch est absent de `dev` : issue templates + suppression de `robots.txt`/noindex de mars 2025 (`cdd7593d`), et 16 correctifs d'infra d'octobre 2025 (maintenance, bases Solid*, `SECRET_KEY_BASE`, workflows).
 
 ## 2. Principe directeur
@@ -44,7 +61,7 @@ Les ~200 fichiers « présents sur `main`, absents de `dev` » sont du legacy su
 
 → La réconciliation n'est **pas un merge de contenu** mais un **remplacement d'arbre** : `main` adopte l'arbre exact de la cible, dans **un commit de merge à deux parents** pour que les promotions futures `dev → staging → main` redeviennent triviales.
 
-**Cible = `origin/staging`, pas `dev` brut.** `dev` porte 6 commits (PR #536 « bug reports » + une migration) jamais déployés en staging. Si on les veut en prod : promouvoir d'abord `dev → staging` (workflow `deploy-promote-staging`), valider, puis réconcilier.
+**Cible = `origin/staging`, pas `dev` brut.** Seul `staging` porte un arbre déployé et validé. Tout ce qu'on veut en prod (dont la PR #540) passe d'abord par `dev`, puis est promu en `staging` (workflow `deploy-promote-staging`) et validé avant la réconciliation : voir §6.0.
 
 **Règle de vérification (ajoutée le 2026-09-19).** Comparer des fichiers ne suffit pas : l'erreur `database.yml` est passée à travers. Avant toute PR, **rejouer le boot production en local** sur des fichiers jetables :
 
@@ -151,13 +168,40 @@ Après promotion, staging tourne sur l'arbre cible **avec la structure Solid\* d
 
 ## 6. Procédure de réconciliation (le merge)
 
-Objectif : `main` obtient **l'arbre exact de la cible**, via **un commit de merge à deux parents** (`main` + cible), sans réécrire l'historique. **Test à blanc réussi le 2026-09-19** (arbre bit-à-bit identique, 2 parents).
+### 6.0 — Amorçage : faire passer le flux `dev → staging → main` sans réécrire l'historique
 
-Utiliser un **worktree** (le checkout courant peut contenir des modifications non commitées) et **`origin/main`**, jamais la `main` locale :
+Règle : **chaque changement entre par `dev`**, monte en `staging` par le workflow `deploy-promote-staging` (merge `--no-ff`), puis en `main`. Aucun commit direct sur `staging` ni sur `main`, aucun `push --force`, aucun rebase de branche partagée. La réconciliation de `main` est le **seul** merge fait hors workflow, une seule fois.
+
+| # | Étape | Branche touchée | Mécanisme | Condition pour passer à la suite |
+| --- | --- | --- | --- | --- |
+| 1 | Sortir la PR #540 du draft, relire, merger dans `dev` | `dev` | PR, « Create a merge commit » | CI `dev` verte après le merge (`ci-dev` **et** `ci-docker-cache` : exigés par l'étape 2) |
+| 2 | Promouvoir `dev → staging` | `staging` | workflow `deploy-promote-staging` | `deploy-staging` vert ; `staging^{tree}` == `dev^{tree}` |
+| 3 | Répéter le cold start sur staging (§5.3) : 4 bases `staging*.sqlite3`, super-admin, saisie catalogue | — | `kamal reset_db` + `kamal create_super_admin` | Checklist §5.3 cochée |
+| 4 | **Geler** les promotions `dev → staging` jusqu'au merge de la réconciliation, puis réconcilier `main` avec le SHA de staging validé à l'étape 3 (§6.1) | `main` | PR de merge à 2 parents | Prérequis §5.0–5.2 levés ; *Required reviewers* posé sur `production` |
+| 5 | Rétablir la promotion automatique `staging → main` | — | Autoriser le bot à pousser sur `main` (ajouter l'app `github-actions` aux restrictions de push) **ou** faire ouvrir une PR par `deploy-promote-main.yml` au lieu de pousser | Premier `deploy-promote-main` réussi, merge sans conflit |
+
+Pourquoi geler à l'étape 4 : la PR de réconciliation fige l'arbre de `staging` à un SHA précis. Si une promotion arrive entre la validation et le merge, la PR ne correspond plus à ce qui a été validé ; il faudrait refaire la branche de réconciliation (jamais la modifier à la main).
+
+Pourquoi la promotion suivante est triviale : après le merge à 2 parents, tout l'historique de `staging` est ancêtre de `main`. Le `merge --no-ff origin/staging` de `deploy-promote-main.yml` n'a plus que les nouveaux commits à appliquer, et `main` ne portant aucun commit propre, il ne peut pas y avoir de conflit.
+
+**Simulation du 2026-09-23** (worktree jetable, rien de poussé) :
+
+| Étape simulée | Résultat |
+| --- | --- |
+| PR #540 mergée dans `dev` puis promue dans `staging` | arbre `staging` == arbre `dev` |
+| `origin/main` + `merge -s ours` + `read-tree -m -u` de ce `staging` | arbre `main` == arbre `staging`, 2 parents |
+| Nouveau commit sur `dev` → promotion `staging` → `merge --no-ff` dans `main` (comme `deploy-promote-main`) | aucun conflit ; arbre `main` == arbre `staging` ; diff limité au nouveau commit |
+| `origin/main` d'octobre 2025 | toujours ancêtre de `main` (historique conservé) |
+
+### 6.1 — Le merge de réconciliation
+
+Objectif : `main` obtient **l'arbre exact de la cible**, via **un commit de merge à deux parents** (`main` + cible), sans réécrire l'historique. **Tests à blanc réussis le 2026-09-19 et le 2026-09-23** (arbre bit-à-bit identique, 2 parents).
+
+Utiliser un **worktree** (le checkout courant peut contenir des modifications non commitées) et **`origin/main`**, jamais la `main` locale. La cible est **le SHA de `staging` validé à l'étape 3 de §6.0**, pas la référence mouvante `origin/staging` :
 
 ```bash
 git fetch origin
-CIBLE=origin/staging
+CIBLE=$(git rev-parse origin/staging)   # à comparer au SHA validé en §6.0 étape 3 ; différent => stop
 
 git worktree add ../circographe-reconcile -b chore/reconcile-main-with-staging origin/main
 cd ../circographe-reconcile
@@ -314,12 +358,15 @@ Le pipeline `dev → staging → main` fonctionne et la logique de garde est cor
 
 ### 11.6 — Ordre d'exécution recommandé
 
-1. Valider et pousser `chore/cold-start-safe-seeds` vers `dev` (PR, CI verte).
+Les étapes 1, 2 et 8 suivent la séquence d'amorçage de §6.0.
+
+1. Sortir la PR #540 (`chore/cold-start-safe-seeds`) du draft et la merger dans `dev` (CI verte).
 2. Promouvoir `dev → staging` ; **rejouer le cold start sur staging** (§5.3).
 3. Admin orga : secrets/variables (§5.1) ; bucket IONOS + credentials de production (§5.0).
 4. État de la base de prod (§5.2) — **bloquant**.
 5. Durcir `staging` + `main` (§11.2) et poser *Required reviewers* sur `production` (§11.3).
 6. Supprimer les branches mortes (§11.4).
 7. Trancher P1 (§9).
-8. PR de réconciliation (§6) + validation (§7).
-9. Plus tard : ouverture publique (§9).
+8. Geler les promotions `dev → staging`, PR de réconciliation (§6.1) + validation (§7).
+9. Rétablir la promotion automatique `staging → main` (§6.0 étape 5), puis dégeler.
+10. Plus tard : ouverture publique (§9).
