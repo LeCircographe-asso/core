@@ -44,7 +44,7 @@ env:
     SEO_INDEXABLE: true
     RAILS_SERVE_STATIC_FILES: true
     SOLID_QUEUE_IN_PUMA: true
-    # Réplication continue SQLite → IONOS Object Storage (config/initializers/litestream.rb).
+    # Réplication continue SQLite → Scaleway Object Storage (config/initializers/litestream.rb).
     # Credentials via config/credentials.yml.enc (litestream:), déchiffrées avec RAILS_MASTER_KEY
     # déjà présent ci-dessus — pas de nouveau secret Kamal à ajouter.
     LITESTREAM_REPLICATE_IN_PUMA: true

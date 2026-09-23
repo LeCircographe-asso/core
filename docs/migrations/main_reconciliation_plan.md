@@ -19,6 +19,7 @@ Les versions précédentes de ce plan contenaient des affirmations fausses ou de
 | Modes de merge des PR | Au niveau du dépôt, seul « Create a merge commit » est autorisé (squash et rebase désactivés) : la PR de réconciliation ne peut pas être aplatie par erreur. | §6.1 |
 | Environnements GitHub | `production` et `staging` : toujours **0 règle de protection**. | §11.3 |
 | Garde-fou staging → prod | `deploy-production` se déclenchait sur tout push vers `main` : le promote `staging → main` était contournable, et le merge de réconciliation aurait déployé la prod aussitôt. PR #544 : la prod ne se déploie plus que via `deploy-promote-to-main` (ou un dispatch manuel volontaire). Par ailleurs, *Required reviewers* sur l'environnement `production` n'aurait eu **aucun effet** : aucun job ne déclare `environment: production`. | §6.0, §11.3 |
+| Stockage des sauvegardes Litestream | Décision du 23/09 : **Scaleway Object Storage** (`fr-par`) au lieu d'IONOS Object Storage. Le VPS reste chez IONOS. Aucun changement de code : Litestream parle S3, seuls les credentials changent (endpoint `https://s3.fr-par.scw.cloud`). | §5.0 |
 | Simulation du flux complet | Rejouée le 23/09 dans un worktree jetable, sans rien pousser : PR #540 → `dev` → `staging` → réconciliation de `main` → cycle de promotion suivant. Arbres identiques à chaque étape, merge à 2 parents, promotion suivante **sans conflit**. | §6.0 |
 
 ### 0.2 — Corrections du 2026-09-19
@@ -119,7 +120,7 @@ Attendu : 4 fichiers `production*.sqlite3`, `User.count == 0`, `Faq.count > 0`, 
 
 ### 5.0 — Bucket Litestream et credentials par environnement — **bloquant (R9, R10)**
 
-1. Créer le bucket IONOS Object Storage et une clé d'accès **dédiée à la prod** (voir `docs/backup-restore.md`).
+1. Créer le bucket **Scaleway Object Storage** (`fr-par`, classe Standard) et une clé d'API d'application IAM **dédiée à la prod** (voir `docs/backup-restore.md` §1).
 2. Créer des credentials **séparés** :
    ```bash
    bin/rails credentials:edit --environment production   # config/credentials/production.yml.enc + production.key
@@ -368,7 +369,7 @@ Les étapes 1, 2 et 8 suivent la séquence d'amorçage de §6.0.
 
 1. Sortir la PR #540 (`chore/cold-start-safe-seeds`) du draft et la merger dans `dev` (CI verte) ; merger la PR #544 (prod déployée uniquement par le promote).
 2. Promouvoir `dev → staging` ; **rejouer le cold start sur staging** (§5.3).
-3. Admin orga : secrets/variables (§5.1) ; bucket IONOS + credentials de production (§5.0).
+3. Admin orga : secrets/variables (§5.1) ; bucket Scaleway + credentials de production (§5.0).
 4. État de la base de prod (§5.2) — **bloquant**.
 5. Durcir `staging` + `main` (§11.2) (§11.3 : le promote suffit comme garde-fou prod).
 6. Supprimer les branches mortes (§11.4).

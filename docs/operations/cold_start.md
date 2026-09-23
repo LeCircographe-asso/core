@@ -29,7 +29,7 @@ Types d'adhésion (`MembershipType`) et formules de cotisation (`ContributionFor
 2. `db:prepare` crée `primary` + `cache` + `queue` + `cable` depuis `db/*schema.rb` puis lance le seed de contenu.
 3. `bundle exec kamal create_super_admin -c config/deploy.production.yml` (voir §3).
 
-**Pré-requis** : un bucket IONOS et une section `litestream:` dans les credentials (`bin/rails credentials:edit`) avant le premier déploiement.
+**Pré-requis** : un bucket Scaleway Object Storage et une section `litestream:` dans les credentials (`bin/rails credentials:edit`) avant le premier déploiement.
 
 ## 3. Créer le premier super-admin (SSH)
 
