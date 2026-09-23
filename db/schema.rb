@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_08_26_092957) do
+ActiveRecord::Schema[8.1].define(version: 2026_09_22_121500) do
   create_table "account_claims", force: :cascade do |t|
     t.string "confirmation_token", null: false
     t.datetime "created_at", null: false
@@ -121,6 +121,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_26_092957) do
     t.string "display_mode"
     t.string "fingerprint"
     t.json "js_errors", default: []
+    t.datetime "last_occurred_at"
     t.text "note", null: false
     t.integer "occurrence_count", default: 1, null: false
     t.string "page_url"
@@ -129,12 +130,14 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_26_092957) do
     t.integer "source", default: 0, null: false
     t.integer "status", default: 0, null: false
     t.datetime "updated_at", null: false
+    t.integer "updated_by_user_id"
     t.string "user_agent"
     t.integer "viewport_height"
     t.integer "viewport_width"
-    t.index ["fingerprint"], name: "index_bug_reports_on_fingerprint"
+    t.index ["fingerprint", "last_occurred_at"], name: "index_bug_reports_on_fingerprint_and_last_occurred_at"
     t.index ["person_id"], name: "index_bug_reports_on_person_id"
     t.index ["status"], name: "index_bug_reports_on_status"
+    t.index ["updated_by_user_id"], name: "index_bug_reports_on_updated_by_user_id"
   end
 
   create_table "contribution_formulas", force: :cascade do |t|
@@ -215,15 +218,18 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_26_092957) do
     t.bigint "creator_id", null: false
     t.datetime "date", null: false
     t.text "description"
+    t.boolean "is_demo", default: true, null: false
     t.string "location"
     t.text "middle_description"
     t.string "name", null: false
     t.string "picture_url"
+    t.integer "status", default: 0, null: false
     t.datetime "updated_at", null: false
     t.text "upper_description"
     t.index ["category"], name: "index_events_on_category"
     t.index ["creator_id"], name: "index_events_on_creator_id"
     t.index ["date"], name: "index_events_on_date"
+    t.index ["status"], name: "index_events_on_status"
   end
 
   create_table "exceptional_closures", force: :cascade do |t|
@@ -502,6 +508,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_26_092957) do
   add_foreign_key "attendances", "people"
   add_foreign_key "bug_report_widget_settings", "users", column: "updated_by_user_id"
   add_foreign_key "bug_reports", "people"
+  add_foreign_key "bug_reports", "users", column: "updated_by_user_id"
   add_foreign_key "contribution_formulas", "membership_types"
   add_foreign_key "contribution_formulas", "users", column: "created_by_user_id"
   add_foreign_key "contributions", "contribution_formulas"

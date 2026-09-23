@@ -15,7 +15,7 @@ Deux mécanismes indépendants, pas redondants entre eux :
 
 | | Couvre | Fréquence | Destination |
 |---|---|---|---|
-| **Litestream** (gem `litestream`, plugin Puma) | `storage/production.sqlite3` uniquement | Continu (quasi temps réel) | IONOS Object Storage (S3-compatible) |
+| **Litestream** (gem `litestream`, plugin Puma) | `storage/production.sqlite3` uniquement | Continu (quasi temps réel) | Scaleway Object Storage (S3-compatible, région `fr-par`) |
 | **`Backups::NightlySnapshotJob`** (SolidQueue recurring) | `production.sqlite3` (copie sûre) + tous les fichiers Active Storage | Nocturne (3h) | pCloud (via `rclone`) |
 
 `production_cache.sqlite3`, `production_queue.sqlite3` et `production_cable.sqlite3` ne
@@ -24,29 +24,41 @@ Cable sans donnée persistante — aucune perte réelle, ça évite de réplique
 
 ## Setup initial (une fois)
 
-### 1. IONOS Object Storage
+### 1. Scaleway Object Storage
 
-1. Espace client IONOS Cloud → créer une ressource **Object Storage** + un bucket
-   (ex. `circographe-backups`).
-2. Générer une clé d'accès S3 (access key + secret key).
-3. Noter aussi l'**endpoint** et la **région** du bucket (visibles dans le panneau IONOS,
-   ex. `s3.eu-central-3.ionoscloud.com` / `eu-central-3`).
-4. Remplir les credentials Rails :
+Choisi le 2026-09-23 à la place d'IONOS Object Storage (le VPS, lui, reste chez IONOS).
+
+1. Console Scaleway → **Object Storage** → créer un bucket dans la région **Paris
+   (`fr-par`)**, ex. `circographe-litestream-prod` (nom unique dans la région), visibilité
+   **privée**, versioning désactivé (Litestream gère ses propres générations).
+   Garder la classe de stockage par défaut **Standard** : pas de **Glacier**, sinon la
+   restauration n'est pas immédiate.
+2. **IAM → Applications** → créer une application dédiée (ex. `circographe-litestream-prod`)
+   avec une politique limitée au projet du bucket et au jeu de permissions
+   `ObjectStorageFullAccess`. Ne pas utiliser la clé d'un compte humain.
+3. Sur cette application → **API keys** → générer une clé, en choisissant le projet du bucket
+   comme *Preferred Project for Object Storage*. Noter l'**access key** (`SCW…`) et la
+   **secret key**, affichée une seule fois.
+4. Remplir les credentials Rails **de production** (voir
+   `docs/migrations/main_reconciliation_plan.md` §5.0 : credentials séparés de staging) :
 
    ```
-   bin/rails credentials:edit
+   bin/rails credentials:edit --environment production
    ```
 
    ```yaml
    litestream:
-     replica_bucket: circographe-backups
-     replica_region: eu-central-3
-     replica_endpoint: s3.eu-central-3.ionoscloud.com
-     replica_key_id: <access-key>
+     replica_bucket: circographe-litestream-prod
+     replica_region: fr-par
+     replica_endpoint: https://s3.fr-par.scw.cloud
+     replica_key_id: <access-key SCW...>
      replica_access_key: <secret-key>
      dashboard_username: admin
      dashboard_password: <mot-de-passe-dashboard-litestream>
    ```
+
+   `config/litestream.yml` force le *path-style* (`force-path-style: true`), accepté par
+   Scaleway : pas d'autre réglage à faire.
 
 ### 2. pCloud (rclone)
 
@@ -104,7 +116,7 @@ Kamal ou un montage de fichier, pas committé en clair.
 
 - **Litestream réplique** : après déploiement, `bin/kamal app logs -c config/deploy.production.yml`
   et chercher les lignes de Litestream (pas d'erreur de credentials/endpoint). Le bucket
-  IONOS doit voir apparaître des objets peu après le premier boot.
+  Scaleway doit voir apparaître des objets peu après le premier boot.
 - **Restauration testée réellement** (todo historique : *« prod jamais testé = cassé »* —
   ne pas cocher tant que ce test n'a pas été fait pour de vrai) :
 

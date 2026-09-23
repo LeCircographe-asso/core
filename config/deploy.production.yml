@@ -44,7 +44,7 @@ env:
     SEO_INDEXABLE: true
     RAILS_SERVE_STATIC_FILES: true
     SOLID_QUEUE_IN_PUMA: true
-    # Réplication continue SQLite → IONOS Object Storage (config/initializers/litestream.rb).
+    # Réplication continue SQLite → Scaleway Object Storage (config/initializers/litestream.rb).
     # Credentials via config/credentials.yml.enc (litestream:), déchiffrées avec RAILS_MASTER_KEY
     # déjà présent ci-dessus — pas de nouveau secret Kamal à ajouter.
     LITESTREAM_REPLICATE_IN_PUMA: true
@@ -52,6 +52,16 @@ env:
     WEB_CONCURRENCY: 0  # ← Single mode (pas de workers)
     JOB_CONCURRENCY: 1
     RAILS_LOG_LEVEL: info
+
+# Alias d'exploitation. Volontairement AUCUN alias de reset/seed en production : la base est
+# créée une seule fois (restaurée depuis Litestream si le volume est perdu), jamais reseedée.
+# Usage : bundle exec kamal <alias> -c config/deploy.production.yml
+aliases:
+  console: app exec --interactive --reuse "bin/rails console"
+  shell: app exec --interactive --reuse "bash"
+  logs: app logs -f
+  # Premier super-admin uniquement (refuse s'il en existe déjà un). Mot de passe saisi sans écho.
+  create_super_admin: app exec --interactive --reuse "bin/rails circographe:create_super_admin"
 
 # Volumes pour les logs et données (production)
 volumes:

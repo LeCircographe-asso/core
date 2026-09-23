@@ -9,10 +9,11 @@ class EventsController < ApplicationController
 
   def show
     @event = Event.find params.expect(:id)
+    raise ActiveRecord::RecordNotFound if @event.draft? && !current_user&.can_access_admin_zone?
   end
 
   def upcoming
-    @events = Event.upcoming.by_date.limit(6)
+    @events = Event.published.upcoming.by_date.limit(6)
     frame_id = request.headers["Turbo-Frame"].presence
 
     respond_to do |format|
@@ -40,7 +41,7 @@ class EventsController < ApplicationController
   end
 
   def past
-    @events = Event.past.order(date: :desc).limit(9)
+    @events = Event.published.past.order(date: :desc).limit(9)
     frame_id = request.headers["Turbo-Frame"].presence
     respond_to do |format|
       format.html do

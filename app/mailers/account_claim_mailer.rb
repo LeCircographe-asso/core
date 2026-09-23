@@ -7,7 +7,7 @@ class AccountClaimMailer < ApplicationMailer
     @confirmation_url = confirm_account_claims_url(token: claim.confirmation_token)
 
     mail(
-      to: claim.user.email_address,
+      to: @person.email,
       subject: I18n.t("mailers.account_claim_mailer.confirmation_email.subject")
     )
   end
