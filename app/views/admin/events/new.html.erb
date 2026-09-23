@@ -47,15 +47,15 @@
 
           <!-- Status Field -->
           <div class="form-group">
-            <%= form.label :status, "Statut", class: "block text-sm font-medium text-gray-700 mb-1" %>
-            <%= form.select :status, [["Brouillon", "draft"], ["Publié", "published"]], { selected: "draft" }, class: "w-full p-3 border border-gray-300 rounded-md bg-gray-50 focus:ring-[#1F5C55] focus:border-[#1F5C55]" %>
-            <p class="mt-1 text-xs text-gray-500">Un brouillon n'apparaît jamais sur les pages publiques.</p>
+            <%= form.label :status, t("admin.events.publication.status_label"), class: "block text-sm font-medium text-gray-700 mb-1" %>
+            <%= form.select :status, Event.statuses.keys.map { |status| [t("admin.events.publication.statuses.#{status}"), status] }, { selected: "draft" }, class: "w-full p-3 border border-gray-300 rounded-md bg-gray-50 focus:ring-[#1F5C55] focus:border-[#1F5C55]" %>
+            <p class="mt-1 text-xs text-gray-500"><%= t("admin.events.publication.status_hint") %></p>
           </div>
 
-          <!-- Fictif Field -->
+          <!-- Demo Field -->
           <div class="form-group flex items-center gap-2">
-            <%= form.check_box :fictif, checked: true, class: "h-4 w-4 rounded border-gray-300 text-[#1F5C55] focus:ring-[#1F5C55]" %>
-            <%= form.label :fictif, "Événement de test (badge « démo » visible publiquement)", class: "text-sm font-medium text-gray-700" %>
+            <%= form.check_box :is_demo, checked: true, class: "h-4 w-4 rounded border-gray-300 text-[#1F5C55] focus:ring-[#1F5C55]" %>
+            <%= form.label :is_demo, t("admin.events.publication.is_demo_label"), class: "text-sm font-medium text-gray-700" %>
           </div>
 
           <!-- Submit button -->
