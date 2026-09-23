@@ -65,8 +65,7 @@ Utilisez `bin/rspec`, `bin/test`, `bin/test_fast` et `bin/test_watch` : ils sér
 Déploiement Kamal automatisé via GitHub Actions :
 
 - Push sur `staging` → déploiement staging.
-- Push sur `main` → déploiement production.
-- Workflow « 04 - Promote to Main » : staging → main.
+- Production : workflow `deploy-promote-to-main` (confirmation `PROMOTE`) → merge `staging` dans `main` puis déploiement. Un push sur `main` ne déploie pas.
 
 Scripts utilitaires :
 
