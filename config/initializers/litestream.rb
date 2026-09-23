@@ -5,14 +5,15 @@
 # or some other mechanism where the values are only available at runtime.
 
 Rails.application.configure do
-  # IONOS Object Storage (S3-compatible) — voir docs/backup-restore.md pour la procédure
-  # de création du bucket/clé côté IONOS. Credentials sous `bin/rails credentials:edit` :
+  # Scaleway Object Storage (S3-compatible) — voir docs/backup-restore.md pour la procédure
+  # de création du bucket/clé côté Scaleway. Credentials sous
+  # `bin/rails credentials:edit --environment production` :
   #
   #   litestream:
   #     replica_bucket: <nom-du-bucket>
-  #     replica_region: <region-ionos, ex: eu-central-3>
-  #     replica_endpoint: <endpoint-ionos, ex: s3.eu-central-3.ionoscloud.com>
-  #     replica_key_id: <access-key>
+  #     replica_region: fr-par
+  #     replica_endpoint: https://s3.fr-par.scw.cloud
+  #     replica_key_id: <access-key SCW...>
   #     replica_access_key: <secret-key>
   #     dashboard_username: ...
   #     dashboard_password: ...

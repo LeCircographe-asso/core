@@ -104,6 +104,7 @@ Chaque document Markdown déclare un statut dans son header :
 ## Operations
 
 - [`operations/deployment.md`](operations/deployment.md) — workflow Kamal dev → staging → prod + règles d'or et troubleshooting (source de vérité).
+- [`operations/cold_start.md`](operations/cold_start.md) — cold start dev/staging/prod, profils de seeds, premier super-admin, structure des bases Solid*.
 
 ## Migrations et legacy
 
