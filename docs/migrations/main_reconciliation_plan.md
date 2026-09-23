@@ -18,6 +18,7 @@ Les versions précédentes de ce plan contenaient des affirmations fausses ou de
 | Promotion `staging → main` automatisée | `deploy-promote-main.yml` pousse directement sur `main` avec le `GITHUB_TOKEN`. Or le push sur `main` est **restreint à l'équipe Maintainers** (aucune app autorisée) : le push du bot sera probablement refusé. Et sans réconciliation préalable, son `merge --no-ff origin/staging` produirait des centaines de conflits. | §6.0 étape 5 |
 | Modes de merge des PR | Au niveau du dépôt, seul « Create a merge commit » est autorisé (squash et rebase désactivés) : la PR de réconciliation ne peut pas être aplatie par erreur. | §6.1 |
 | Environnements GitHub | `production` et `staging` : toujours **0 règle de protection**. | §11.3 |
+| Garde-fou staging → prod | `deploy-production` se déclenchait sur tout push vers `main` : le promote `staging → main` était contournable, et le merge de réconciliation aurait déployé la prod aussitôt. PR #544 : la prod ne se déploie plus que via `deploy-promote-to-main` (ou un dispatch manuel volontaire). Par ailleurs, *Required reviewers* sur l'environnement `production` n'aurait eu **aucun effet** : aucun job ne déclare `environment: production`. | §6.0, §11.3 |
 | Simulation du flux complet | Rejouée le 23/09 dans un worktree jetable, sans rien pousser : PR #540 → `dev` → `staging` → réconciliation de `main` → cycle de promotion suivant. Arbres identiques à chaque étape, merge à 2 parents, promotion suivante **sans conflit**. | §6.0 |
 
 ### 0.2 — Corrections du 2026-09-19
@@ -138,7 +139,7 @@ gh api orgs/LeCircographe-asso/actions/variables --jq '.variables[].name'
 
 - **Secrets** : `RAILS_MASTER_KEY`, `KAMAL_REGISTRY_PASSWORD`, `SSH_PRIVATE_KEY`, `SECRET_KEY_BASE`, `STAGING_PASSWORD`
 - **Variables** : `STAGING_SERVER_IP`, `PRODUCTION_SERVER_IP`
-- **Environnement GitHub `production`** : 0 règle de protection au 2026-09-19 → ajouter *Required reviewers* (§11.3) **avant** le merge : pousser sur `main` déclenche `deploy-production`.
+- **Déploiement prod** : la PR #544 (promote seul) doit être en staging **avant** le merge de réconciliation, pour que ce merge ne déploie rien tout seul (§6.0).
 
 ### 5.2 — État de la base de production (R1) — **bloquant**
 
@@ -174,10 +175,10 @@ Règle : **chaque changement entre par `dev`**, monte en `staging` par le workfl
 
 | # | Étape | Branche touchée | Mécanisme | Condition pour passer à la suite |
 | --- | --- | --- | --- | --- |
-| 1 | Sortir la PR #540 du draft, relire, merger dans `dev` | `dev` | PR, « Create a merge commit » | CI `dev` verte après le merge (`ci-dev` **et** `ci-docker-cache` : exigés par l'étape 2) |
+| 1 | Sortir la PR #540 du draft, relire, merger dans `dev` ; merger la PR #544 (prod déployée uniquement par le promote) | `dev` | PR, « Create a merge commit » | CI `dev` verte après le merge (`ci-dev` **et** `ci-docker-cache` : exigés par l'étape 2) |
 | 2 | Promouvoir `dev → staging` | `staging` | workflow `deploy-promote-staging` | `deploy-staging` vert ; `staging^{tree}` == `dev^{tree}` |
 | 3 | Répéter le cold start sur staging (§5.3) : 4 bases `staging*.sqlite3`, super-admin, saisie catalogue | — | `kamal reset_db` + `kamal create_super_admin` | Checklist §5.3 cochée |
-| 4 | **Geler** les promotions `dev → staging` jusqu'au merge de la réconciliation, puis réconcilier `main` avec le SHA de staging validé à l'étape 3 (§6.1) | `main` | PR de merge à 2 parents | Prérequis §5.0–5.2 levés ; *Required reviewers* posé sur `production` |
+| 4 | **Geler** les promotions `dev → staging` jusqu'au merge de la réconciliation, puis réconcilier `main` avec le SHA de staging validé à l'étape 3 (§6.1) | `main` | PR de merge à 2 parents | Prérequis §5.0–5.2 levés ; PR #544 présente dans le SHA de staging validé |
 | 5 | Rétablir la promotion automatique `staging → main` | — | Autoriser le bot à pousser sur `main` (ajouter l'app `github-actions` aux restrictions de push) **ou** faire ouvrir une PR par `deploy-promote-main.yml` au lieu de pousser | Premier `deploy-promote-main` réussi, merge sans conflit |
 
 Pourquoi geler à l'étape 4 : la PR de réconciliation fige l'arbre de `staging` à un SHA précis. Si une promotion arrive entre la validation et le merge, la PR ne correspond plus à ce qui a été validé ; il faudrait refaire la branche de réconciliation (jamais la modifier à la main).
@@ -237,11 +238,17 @@ gh pr create --base main --head chore/reconcile-main-with-staging \
 
 **Merge de la PR** : « Create a merge commit » (pas squash, pas rebase).
 
-> ⚠️ Le push sur `main` **déclenche `deploy-production.yml`**. Poser d'abord *Required reviewers* sur l'environnement `production` (§11.3) et avoir traité §5.0 et §5.2 : sans bucket, le premier deploy échoue par conception.
+> ⚠️ Avec la PR #544, le merge sur `main` **ne déploie pas** la prod. Le déploiement est lancé à la main, une fois §5.0 et §5.2 traités (sans bucket, le premier deploy échoue par conception) :
+>
+> ```bash
+> gh workflow run deploy-production.yml --ref main
+> ```
+>
+> Sans la PR #544 dans l'arbre cible, le merge déclencherait `deploy-production.yml` immédiatement : **ne pas merger dans ce cas.**
 
 ## 7. Validation post-merge (avant que la prod parte)
 
-Avec *Required reviewers*, le deploy attend une approbation : c'est le moment de relire cette checklist. Sans cela, surveiller le run en direct, rollback prêt.
+Le merge ne déploie rien (PR #544) : relire cette checklist, lancer `deploy-production` à la main (§6.1), puis suivre le run en direct, rollback prêt.
 
 - [ ] Run `deploy-production` : `build-push` OK
 - [ ] `deploy` OK (Kamal : image démarrée, healthcheck interne vert)
@@ -335,10 +342,9 @@ Le pipeline `dev → staging → main` fonctionne et la logique de garde est cor
 
 ### 11.3 — Environnements GitHub
 
-`production` et `staging` : **0 règle de protection**. Recommandé **au moins jusqu'à l'ouverture** :
+`production` et `staging` : **0 règle de protection**, et aucun job ne déclare `environment:` : une règle *Required reviewers* n'aurait donc aucun effet en l'état.
 
-- `production` → **Required reviewers** (1 mainteneur) : un humain approuve chaque déploiement prod. C'est aussi ce qui laisse le temps de dérouler §5.2 et §7.
-- Optionnel : `wait timer` de quelques minutes.
+Décision du 2026-09-23 (rester simple) : le garde-fou entre staging et prod est le **promote** `deploy-promote-to-main` (confirmation `PROMOTE`, dernier `deploy-staging` vert), rendu obligatoire par la PR #544 (plus de déploiement sur push `main`). Une approbation par environnement reste possible plus tard : ajouter `environment: production` au job `deploy` de `deploy-production.yml`, puis la règle dans *Settings → Environments*.
 
 ### 11.4 — Nettoyage (dette du pipeline)
 
@@ -360,11 +366,11 @@ Le pipeline `dev → staging → main` fonctionne et la logique de garde est cor
 
 Les étapes 1, 2 et 8 suivent la séquence d'amorçage de §6.0.
 
-1. Sortir la PR #540 (`chore/cold-start-safe-seeds`) du draft et la merger dans `dev` (CI verte).
+1. Sortir la PR #540 (`chore/cold-start-safe-seeds`) du draft et la merger dans `dev` (CI verte) ; merger la PR #544 (prod déployée uniquement par le promote).
 2. Promouvoir `dev → staging` ; **rejouer le cold start sur staging** (§5.3).
 3. Admin orga : secrets/variables (§5.1) ; bucket IONOS + credentials de production (§5.0).
 4. État de la base de prod (§5.2) — **bloquant**.
-5. Durcir `staging` + `main` (§11.2) et poser *Required reviewers* sur `production` (§11.3).
+5. Durcir `staging` + `main` (§11.2) (§11.3 : le promote suffit comme garde-fou prod).
 6. Supprimer les branches mortes (§11.4).
 7. Trancher P1 (§9).
 8. Geler les promotions `dev → staging`, PR de réconciliation (§6.1) + validation (§7).
