@@ -49,7 +49,7 @@ En structure plate (`production_cache:` au premier niveau), Rails prend ces clé
 
 **Volume existant** : la base principale garde son chemin (`storage/staging.sqlite3`, `storage/production.sqlite3`), donc ses données sont conservées ; `db:prepare` crée les trois autres au boot suivant, sans reseed. Si un volume contient déjà des `*_cache/queue/cable.sqlite3` d'une ancienne image (ex. octobre 2025), les supprimer : ils sont régénérables et leur schéma est incompatible avec solid_cache 1.0.
 
-Différences volontaires staging / production : Basic Auth (`StagingAuth`), Mailjet sandbox, pas de Litestream ni de snapshot nocturne (`Backups::NightlySnapshotService` ne tourne qu'en production).
+Différences volontaires staging / production : Basic Auth (`StagingAuth`), mails (staging : Mailjet, clés `mailjet.sandbox` du compte perso ; production : Mailjet branché mais **éteint** tant que `MAILER_DELIVERIES_ENABLED` n'est pas `true`, voir [../mailers/mailjet.md](../mailers/mailjet.md)), pas de Litestream ni de snapshot nocturne (`Backups::NightlySnapshotService` ne tourne qu'en production).
 
 ## 5. Répétition sur staging
 

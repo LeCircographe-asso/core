@@ -40,15 +40,8 @@ Rails.application.configure do
   config.action_mailer.perform_caching = false
   config.action_mailer.perform_deliveries = true
 
-  config.action_mailer.delivery_method = :smtp
-  config.action_mailer.smtp_settings = {
-    address: "in-v3.mailjet.com",
-    port: 587,
-    user_name: Rails.application.credentials.dig(:mailjet, :sandbox, :api_key),
-    password: Rails.application.credentials.dig(:mailjet, :sandbox, :secret_key),
-    authentication: :plain,
-    enable_starttls_auto: true
-  }
+  # Aucun mail ne sort de la machine : consultation sur /letter_opener (LetterOpenerWeb).
+  config.action_mailer.delivery_method = :letter_opener_web
 
   # Set localhost to be used by links generated in mailer templates.
   config.action_mailer.default_url_options = { host: "localhost", port: 3000 }
