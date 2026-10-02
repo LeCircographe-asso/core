@@ -128,4 +128,19 @@ RSpec.describe User, type: :model do
       expect(user).to be_valid
     end
   end
+
+  # Régression : lancé hors requête (rake circographe:create_super_admin, console), l'URL de
+  # réinitialisation levait « Missing host to link to » et annulait toute la création du compte.
+  describe "#welcome_send for an admin-created account" do
+    it "builds the password URL with the mailer host, without any request" do
+      user = create(:user, system_role: "admin", created_by_admin: true)
+      mail = instance_double(ActionMailer::MessageDelivery, deliver_later: true)
+      allow(Rails).to receive(:env).and_return(ActiveSupport::StringInquirer.new("production"))
+      allow(UserMailer).to receive(:welcome_by_admin).and_return(mail)
+
+      expect { user.welcome_send }.not_to raise_error
+      expect(UserMailer).to have_received(:welcome_by_admin)
+        .with(user, %r{\Ahttps?://example\.com/passwords/.+/edit})
+    end
+  end
 end
