@@ -68,14 +68,19 @@ Rails.application.configure do
     protocol: "https"
   }
 
-  # Specify outgoing SMTP server. Remember to add smtp/* credentials via rails credentials:edit.
-  # config.action_mailer.smtp_settings = {
-  #   user_name: Rails.application.credentials.dig(:smtp, :user_name),
-  #   password: Rails.application.credentials.dig(:smtp, :password),
-  #   address: "smtp.example.com",
-  #   port: 587,
-  #   authentication: :plain
-  # }
+  # Mailjet (compte Circographe) : branché mais ÉTEINT. Tant que MAILER_DELIVERIES_ENABLED n'est pas
+  # "true" (config/deploy.production.yml), les mails sont construits et journalisés mais jamais envoyés.
+  # Allumer = changer ce flag + redéployer, après validation du parcours en staging.
+  config.action_mailer.delivery_method = :smtp
+  config.action_mailer.perform_deliveries = ENV.fetch("MAILER_DELIVERIES_ENABLED", "false") == "true"
+  config.action_mailer.smtp_settings = {
+    address: "in-v3.mailjet.com",
+    port: 587,
+    user_name: Rails.application.credentials.dig(:mailjet, :production, :api_key),
+    password: Rails.application.credentials.dig(:mailjet, :production, :secret_key),
+    authentication: :plain,
+    enable_starttls_auto: true
+  }
 
   # Enable locale fallbacks for I18n (makes lookups for any locale fall back to
   # the I18n.default_locale when a translation cannot be found).
