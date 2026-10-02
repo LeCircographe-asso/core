@@ -95,7 +95,10 @@ class User < ApplicationRecord
 
     if created_by_admin?
       # Generate password reset URL for admin-created users
-      reset_url = Rails.application.routes.url_helpers.edit_password_url(token: password_reset_token)
+      # Hors requête (rake, console, service), les url_helpers n'ont aucun hôte : on réutilise celui du mailer.
+      reset_url = Rails.application.routes.url_helpers.edit_password_url(
+        token: password_reset_token, **Rails.application.config.action_mailer.default_url_options.to_h
+      )
       UserMailer.welcome_by_admin(self, reset_url).deliver_later
     else
       UserMailer.welcome_email(self).deliver_later
