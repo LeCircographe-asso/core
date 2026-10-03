@@ -6,12 +6,10 @@ module Admin
     before_action :set_breadcrumbs, only: %i[index show new]
 
     def index
-      @attendances = Attendance.includes(:person, :event)
+      @attendances = Attendance.includes(:person)
 
       # Filtres
       @attendances = @attendances.where(person_id: params[:person_id]) if params[:person_id].present?
-
-      @attendances = @attendances.where(event_id: params[:event_id]) if params[:event_id].present?
 
       @attendances = @attendances.where(date: params[:date]) if params[:date].present?
 
@@ -53,7 +51,6 @@ module Admin
 
       creator = AttendanceManagement::AttendanceCreator.new(
         person_id: attendance_params[:person_id],
-        event_id: attendance_params[:event_id],
         attendance_list_id: attendance_list_id,
         contribution_id: attendance_params[:contribution_id],
         date: attendance_params[:date]
@@ -102,7 +99,7 @@ module Admin
     end
 
     def attendance_params
-      params.expect(attendance: %i[person_id event_id date contribution_id attendance_list_id notes])
+      params.expect(attendance: %i[person_id date contribution_id attendance_list_id notes])
     end
   end
 end

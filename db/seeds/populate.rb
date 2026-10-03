@@ -278,19 +278,14 @@ while created_pres < target_presences && attempts < max_attempts
   end
 end
 
-# --- Intérêt événements (présences liées aux Event seed) ---
-Event.find_each do |event|
-  sample_size = [ RNG.rand(8..35), person_ids.size ].min
-  person_ids.sample(sample_size, random: RNG).each do |pid|
-    next if Attendance.exists?(person_id: pid, event_id: event.id)
-
-    Attendance.create!(
-      person_id: pid,
-      event_id: event.id,
-      date: event.date&.to_date || Date.current
-    )
-  rescue ActiveRecord::RecordInvalid
-    next
+# --- Intérêt événements (likes) ---
+# Même règles que l'app : seul un compte web actif peut liker, et seulement un
+# événement publié (un brouillon n'est pas visible du public).
+liker_ids = User.where(deleted: [ false, nil ], deleted_at: nil).pluck(:id)
+Event.published.find_each do |event|
+  sample_size = [ RNG.rand(8..35), liker_ids.size ].min
+  liker_ids.sample(sample_size, random: RNG).each do |uid|
+    EventInterest.find_or_create_by!(user_id: uid, event_id: event.id)
   end
 end
 

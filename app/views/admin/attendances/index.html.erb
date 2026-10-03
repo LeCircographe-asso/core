@@ -49,20 +49,6 @@
           </div>
         </div>
 
-        <!-- Event filter -->
-        <div class="md:w-48">
-          <label for="event_id" class="block text-sm font-medium text-gray-700 mb-1">Événement</label>
-          <%= form.select :event_id,
-              options_for_select([
-                ['Tous', '']
-              ] + Event.order(:name).map { |e| [e.name, e.id] }, params[:event_id]),
-              {},
-              {
-                class: "block w-full rounded-md border-gray-300 shadow-sm focus:border-[#1F5C55] focus:ring-[#1F5C55] sm:text-sm",
-                onchange: "this.form.submit()"
-              } %>
-        </div>
-
         <!-- Date filter -->
         <div class="md:w-48">
           <label for="date" class="block text-sm font-medium text-gray-700 mb-1">Date</label>
@@ -104,9 +90,6 @@
                   <i class="far fa-clock mr-1"></i>
                   <%= attendance.date.strftime("%d/%m/%Y") %>
                 </span>
-                <% if attendance.event.present? %>
-                  <div class="text-xs text-gray-500 mt-1"><%= attendance.event.name %></div>
-                <% end %>
               </div>
             </li>
           <% end %>

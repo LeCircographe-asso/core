@@ -501,12 +501,18 @@ en:
       error: Something went wrong while sending. Please try again in a moment.
   event_interests:
     create:
-      profile_incomplete: Votre profil n'est pas complet. Veuillez contacter l'administration.
-      interest_added: Vous êtes maintenant intéressé par cet événement !
-      interest_error: Erreur lors de l'ajout de votre intérêt
+      interest_added: You are now interested in this event!
+      interest_error: Could not save your interest
     destroy:
-      interest_removed: Vous n'êtes plus intéressé par cet événement
-      interest_remove_error: Erreur lors de la suppression de votre intérêt
+      interest_removed: You are no longer interested in this event
+      interest_remove_error: Could not remove your interest
+    button:
+      add: I'm interested
+      remove: Not interested anymore
+    count:
+      zero: "%{count} interested"
+      one: "%{count} interested"
+      other: "%{count} interested"
   passwords:
     create:
       reset_instructions_sent_generic: Instructions de réinitialisation du mot de passe envoyées (si un utilisateur avec cette adresse e-mail existe).
@@ -671,8 +677,6 @@ en:
         subject: "Email change verification code"
       membership_expiration_reminder:
         subject: Votre adhésion arrive à expiration !
-      event_interest_confirmation:
-        subject: "Interest confirmed: %{event_name}"
       contact_email:
         subject: "New message: %{category_label}"
         category_labels:
@@ -687,7 +691,6 @@ en:
         attendance:
           attributes:
             person_id:
-              event_interest_taken: est déjà intéressé par cet événement
               daily_presence_taken: est déjà marqué présent aujourd'hui
         payment_line:
           attributes:
