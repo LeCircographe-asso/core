@@ -55,7 +55,7 @@ RSpec.describe UserMailer, type: :mailer do
       mail = described_class.contact_email("Ada", "ada@example.com", "Hello", "creative_hosting", "team@example.com")
 
       label = I18n.t("mailers.user_mailer.contact_email.category_labels.creative_hosting")
-      expect(mail.subject).to eq(I18n.t("mailers.user_mailer.contact_email.subject", category_label: label))
+      expect(mail.subject).to eq("[contact-creative_hosting] #{I18n.t("mailers.user_mailer.contact_email.subject", category_label: label)}")
       expect(mail.reply_to).to eq([ "ada@example.com" ])
 
       body = mail.html_part.body.decoded
@@ -64,30 +64,18 @@ RSpec.describe UserMailer, type: :mailer do
     end
   end
 
-  describe "#event_interest_confirmation" do
-    let(:event) { build_stubbed(:event, name: "Cabaret de printemps", location: "Le Circographe") }
-
-    subject(:mail) { described_class.event_interest_confirmation(user, event) }
-
-    it "est envoyé à l'utilisateur" do
-      expect(mail.to).to eq([ user.email_address ])
-    end
-
-    it "a le bon sujet" do
-      expect(mail.subject).to eq(I18n.t("mailers.user_mailer.event_interest_confirmation.subject", event_name: event.name))
-    end
-
-    it "inclut le nom et le lieu de l'événement dans le corps" do
-      expect(mail.html_part.body.decoded).to include("Cabaret de printemps")
-      expect(mail.html_part.body.decoded).to include("Le Circographe")
-      expect(mail.text_part.body.decoded).to include("Cabaret de printemps")
-    end
-  end
-
   describe "#membership_expiration_reminder" do
-    it "est en attente de correction (membership.user et membership.end_date non définis)" do
-      pending "mailer non branché — bugs membership.user / membership.end_date à corriger avant"
-      raise "not implemented"
+    # Pas de User : le rappel doit partir vers la Person, même sans compte web.
+    let(:person) { create(:person, first_name: "Ada", last_name: "Lovelace") }
+    let(:membership) { create(:membership, person: person, ended_at: Date.new(2026, 11, 2), status: :active) }
+
+    it "écrit à la personne avec la date de fin de l'adhésion" do
+      mail = described_class.membership_expiration_reminder(membership)
+
+      expect(mail.to).to eq([ person.email ])
+      expect(mail.subject).to eq(I18n.t("mailers.user_mailer.membership_expiration_reminder.subject"))
+      expect(mail.body.encoded).to include("Ada Lovelace")
+      expect(mail.body.encoded).to include("02/11/2026")
     end
   end
 end

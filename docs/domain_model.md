@@ -19,12 +19,12 @@ erDiagram
   Person ||--o{ Contribution : "achète"
   Person ||--o{ Attendance : "présence"
   Person ||--o{ Payment : "règle"
-  Person ||--o{ EventAttendee : "inscrit"
   Person ||--o| NewsletterSubscriber : "lié par email"
 
   MembershipType ||--o{ Membership : "type"
   ContributionFormula ||--o{ Contribution : "formule"
-  Event ||--o{ EventAttendee : "inscriptions"
+  User ||--o{ EventInterest : "s'intéresse"
+  Event ||--o{ EventInterest : "likes"
   AttendanceList ||--o{ Attendance : "regroupe"
 
   Payment ||--o{ PaymentLine : "contient"
@@ -127,17 +127,18 @@ erDiagram
 ### 2.5 Présences et événements
 
 #### `Attendance`
-- **Lien** : `belongs_to :person`, `belongs_to :attendance_list` (optionnel), `belongs_to :event` (optionnel), `belongs_to :contribution`.
-- **Règles d'unicité** : `person_id + date` (entraînement libre) ou `person_id + event_id` (événement).
+- **Lien** : `belongs_to :person`, `belongs_to :attendance_list` (optionnel), `belongs_to :contribution`.
+- **Règles d'unicité** : `person_id + date`. Pas de lien direct vers `Event`.
 - **Effet de bord** : décrémente la cotisation utilisée si applicable.
 
 #### `AttendanceList`
 - **Statuts** : `:open | :close | :archived`.
 - **Génération quotidienne** : `AttendanceListManagement::DailyListGenerator` (skip lundi).
 
-#### `Event` & `EventAttendee`
+#### `Event`, `EventInterest` & `EventAttendee`
 - **Event** : `name`, `event_date`, `category` (default: `:circus`).
-- **EventAttendee** : jointure `Person × Event` avec unicité `person_id + event_id`.
+- **EventInterest** : like `User × Event` (bouton « Je suis intéressé »), unicité `user_id + event_id` (index DB). Indépendant de toute autre logique métier.
+- **EventAttendee** : inscriptions à venir (via HelloAsso), non implémentées — table non utilisée.
 
 ---
 

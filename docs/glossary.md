@@ -130,16 +130,21 @@
 ### 1.5 Présences et événements
 
 #### Présence — `Attendance`
-- **Définition** : trace de présence d'une `Person`, soit pour l'entraînement libre quotidien, soit pour un événement.
+- **Définition** : trace de présence d'une `Person` (entraînement libre quotidien, listes de présence). Ne pas confondre avec l'**intérêt pour un événement** (`EventInterest`), qui n'est pas une présence.
 - **Règles** :
-  - Entraînement libre : unicité `person_id + date` (pas d'`event_id`). Décrémente la cotisation utilisée (`Contribution#use_session!`) si applicable.
-  - Événement : unicité `person_id + event_id`.
+  - Unicité `person_id + date`. Décrémente la cotisation utilisée (`Contribution#use_session!`) si applicable.
+  - Pas de lien direct vers `Event`.
 
 #### Liste de présence — `AttendanceList`
 - **Définition** : conteneur d'`Attendance` pour un jour ou un événement. Statuts : `:open`, `:close`, `:archived`. La liste « training » quotidienne est créée par `AttendanceListManagement::DailyListGenerator` (skip lundi).
 
 #### Événement — `Event`
-- **Définition** : événement organisé (cours, stage, performance), avec date, catégorie. Inscriptions via `EventAttendee` (`Person ↔ Event`).
+- **Définition** : événement organisé (cours, stage, performance), avec date, catégorie.
+- **Inscriptions** : à venir (via HelloAsso), non implémentées. La table `EventAttendee` existe mais n'est pas utilisée.
+
+#### Intérêt pour un événement — `EventInterest`
+- **Définition** : « like » posé par un compte web (`User`) via le bouton « Je suis intéressé ». Simple compteur affiché sur l'événement, unique par `user_id + event_id`.
+- **Indépendant** de toute autre logique métier : ni présence, ni inscription, ni cotisation.
 
 #### Temps d’accueil en création
 - **Définition** : accueil d’un projet créatif au sein du lieu (cirque, arts graphiques, etc.), à distinguer de l’adhésion ou de la cotisation cirque.
@@ -192,9 +197,10 @@
 | Don | `Donation` | **cible** (legacy : `item_type: "Payment"`) | reçu fiscal |
 | Présence | `Attendance` | canonique | entraînement / événement |
 | Liste de présence | `AttendanceList` | canonique | quotidienne ou événement |
-| Événement | `Event` | canonique | inscriptions via `EventAttendee` |
+| Événement | `Event` | canonique | likes via `EventInterest` |
 | Temps d’accueil en création | formulaire contact : `creative_hosting` (`residence` legacy) | canonique (UI FR) | env : `CONTACT_EMAIL_CREATIVE_HOSTING` (+ fallback `CONTACT_EMAIL_RESIDENCE`) |
-| Inscription événement | `EventAttendee` | canonique | jointure `Person × Event` |
+| Intérêt pour un événement | `EventInterest` | canonique | like d'un compte web, `User × Event` unique |
+| Inscription événement | `EventAttendee` | à venir | via HelloAsso, non implémenté |
 | Numéro d'adhérent | `member_number` | canonique | format `25U001` / `25C001` |
 | Newsletter | `NewsletterSubscriber` | canonique | table indépendante |
 

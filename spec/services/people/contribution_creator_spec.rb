@@ -73,7 +73,7 @@ RSpec.describe People::ContributionCreator do
 
       it 'still succeeds if the attendance cannot be recorded (e.g. already present today)' do
         travel_to Date.current.next_occurring(:tuesday).beginning_of_day + 12.hours do
-          create(:attendance, person: person, date: Date.current, event: nil)
+          create(:attendance, person: person, date: Date.current)
 
           result = described_class.new(params).call
 
@@ -96,7 +96,7 @@ RSpec.describe People::ContributionCreator do
       end
 
       it 'still succeeds but reports the attendance failure instead of hiding it' do
-        create(:attendance, person: person, date: Date.current, event: nil)
+        create(:attendance, person: person, date: Date.current)
 
         result = described_class.new(params).call
 

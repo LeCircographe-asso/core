@@ -17,7 +17,6 @@ fr:
         attendance:
           attributes:
             person_id:
-              event_interest_taken: est déjà intéressé par cet événement
               daily_presence_taken: est déjà marqué présent aujourd'hui
         payment_line:
           attributes:
@@ -394,12 +393,18 @@ fr:
       error: Une erreur est survenue lors de l'envoi. Réessayez dans quelques instants.
   event_interests:
     create:
-      profile_incomplete: Votre profil n'est pas complet. Veuillez contacter l'administration.
       interest_added: Vous êtes maintenant intéressé par cet événement !
       interest_error: Erreur lors de l'ajout de votre intérêt
     destroy:
       interest_removed: Vous n'êtes plus intéressé par cet événement
       interest_remove_error: Erreur lors de la suppression de votre intérêt
+    button:
+      add: Je suis intéressé
+      remove: Ne plus être intéressé
+    count:
+      zero: "%{count} intéressé"
+      one: "%{count} intéressé"
+      other: "%{count} intéressés"
   passwords:
     create:
       reset_instructions_sent_generic: Instructions de réinitialisation du mot de passe envoyées (si un utilisateur avec cette adresse e-mail existe).
@@ -605,6 +610,8 @@ fr:
     passwords_mailer:
       reset:
         subject: Réinitialisez votre mot de passe
+      changed:
+        subject: Votre mot de passe a été modifié
     user_mailer:
       welcome_by_admin:
         subject: 'Bienvenue au Circographe ! '
@@ -614,8 +621,6 @@ fr:
         subject: "Code de verification d'adresse email"
       membership_expiration_reminder:
         subject: Votre adhésion arrive à expiration !
-      event_interest_confirmation:
-        subject: "Intérêt confirmé : %{event_name}"
       contact_email:
         subject: "Nouveau message : %{category_label}"
         category_labels:

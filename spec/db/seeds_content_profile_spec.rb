@@ -29,6 +29,13 @@ RSpec.describe "db/seeds.rb content-only profile (staging / production)" do
         expect(Partner.count).to be_positive
       end
 
+      it "imports the static gallery photos with their image attached" do
+        run_seeds_as(env_name)
+
+        expect(GalleryPhoto.count).to be >= 6
+        expect(GalleryPhoto.all).to all(satisfy { |photo| photo.image.attached? })
+      end
+
       it "creates no account and no catalogue entry" do
         run_seeds_as(env_name)
 
@@ -61,6 +68,15 @@ RSpec.describe "db/seeds.rb content-only profile (staging / production)" do
 
         run_seeds_as(env_name)
         expect(BoardMember.count).to eq(board_count)
+      end
+
+      it "does not re-import the gallery once photos exist" do
+        run_seeds_as(env_name)
+        gallery_count = GalleryPhoto.count
+
+        run_seeds_as(env_name)
+
+        expect(GalleryPhoto.count).to eq(gallery_count)
       end
     end
   end

@@ -11,6 +11,7 @@ events = [
     date: 1.week.from_now,
     location: "Salle de spectacle",
     description: "Spectacle de fin d'année avec tous les élèves",
+    status: :published,
     creator: admin_user
   },
   {
@@ -19,6 +20,7 @@ events = [
     date: 3.days.from_now,
     location: "Salle de jonglage",
     description: "Atelier découverte du jonglage pour débutants",
+    status: :published,
     creator: admin_user
   },
   {
@@ -27,6 +29,7 @@ events = [
     date: 1.week.from_now + 1.day,
     location: "Salle d'équilibre",
     description: "Atelier équilibre sur boule et fil",
+    # Reste en brouillon : invisible du public, donc sans likes (cf. populate.rb).
     creator: admin_user
   }
 ]

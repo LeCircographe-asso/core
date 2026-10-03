@@ -5,7 +5,7 @@ module Seeds
   #
   # - demo (development/test par défaut) : comptes système, catalogue, événements, population
   #   aléatoire — et remise à zéro complète de la base au préalable.
-  # - contenu seul (staging/production par défaut) : FAQ, conseil d'administration, partenaires,
+  # - contenu seul (staging/production par défaut) : FAQ, conseil d'administration, partenaires, galerie,
   #   uniquement si leur table est vide. Aucun compte, aucun catalogue (types d'adhésion et
   #   formules de cotisation sont saisis via l'admin), aucune suppression.
   #
@@ -18,7 +18,8 @@ module Seeds
     CONTENT_SEEDS = {
       "faq.rb" => "Faq",
       "board_members.rb" => "BoardMember",
-      "partners.rb" => "Partner"
+      "partners.rb" => "Partner",
+      "gallery_photos.rb" => "GalleryPhoto"
     }.freeze
 
     def self.demo?(env: Rails.env, flag: ENV.fetch("SEED_DEMO", nil))

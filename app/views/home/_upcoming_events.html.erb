@@ -72,7 +72,7 @@
       <% end %>
 
       <div class="flex flex-wrap items-center justify-between gap-3 pt-2 border-t border-gray-100">
-        <%= render "events/interest_count", event: upcoming_event, count: upcoming_event.people.count %>
+        <%= render "events/interest_count", event: upcoming_event, count: upcoming_event.event_interests.size %>
         <%= link_to "Découvrir l'événement", event_path(upcoming_event),
                     class: "btn-primary shadow-sm",
                     data: { turbo_frame: "_top" } %>

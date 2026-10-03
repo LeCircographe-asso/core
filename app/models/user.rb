@@ -33,6 +33,7 @@ class User < ApplicationRecord
   has_many :sessions, dependent: :destroy
   has_many :event_attendees, dependent: :destroy
   has_many :events, through: :event_attendees
+  has_many :event_interests, dependent: :destroy
 
   # Relations via Person (nouvelles)
   has_many :memberships, through: :person
@@ -227,11 +228,8 @@ class User < ApplicationRecord
     errors.add(:email_address, "entre en conflit avec l'email d'une autre personne")
   end
 
-  # Check if user is interested in an event (Person-Based Architecture)
   def is_interested_in?(event_id)
-    return false unless person
-
-    person.attendances.exists?(event_id: event_id)
+    event_interests.exists?(event_id: event_id)
   end
 
   def store_email_change_request!(new_email:, code:)

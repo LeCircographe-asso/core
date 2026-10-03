@@ -7,7 +7,7 @@ module Admin
     before_action :set_breadcrumbs
 
     def index
-      @events = Event.all
+      @events = Event.includes(:event_interests)
       add_breadcrumb I18n.t("breadcrumbs.admin.events.events"), nil
     end
 

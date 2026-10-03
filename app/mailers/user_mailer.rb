@@ -16,21 +16,12 @@ class UserMailer < ApplicationMailer
     mail(to: @user.email_address, subject: I18n.t("mailers.user_mailer.welcome_email.subject"))
   end
 
-  def membership_expiration_reminder(user_membership)
-    @user = user_membership.user
-    @end_date = user_membership.end_date
+  # Adressé à la Person (pas au User) : un adhérent n'a pas forcément de compte web.
+  def membership_expiration_reminder(membership)
+    @person = membership.person
+    @end_date = membership.ended_at
     @url = "https://lecircographe.fr/"
-    mail(to: @user.email_address, subject: I18n.t("mailers.user_mailer.membership_expiration_reminder.subject"))
-  end
-
-  def event_interest_confirmation(user, event)
-    @user = user
-    @event = event
-    @url = "https://lecircographe.fr/"
-    mail(
-      to: @user.email_address,
-      subject: I18n.t("mailers.user_mailer.event_interest_confirmation.subject", event_name: @event.name)
-    )
+    mail(to: @person.email, subject: I18n.t("mailers.user_mailer.membership_expiration_reminder.subject"))
   end
 
   def contact_email(name, email, message, category, recipient_email)
@@ -42,7 +33,7 @@ class UserMailer < ApplicationMailer
     @submitted_at = Time.zone.now
     mail(
       to: recipient_email,
-      subject: I18n.t("mailers.user_mailer.contact_email.subject", category_label: @category_label),
+      subject: "#{contact_filter_tag(category)} #{I18n.t("mailers.user_mailer.contact_email.subject", category_label: @category_label)}",
       reply_to: email
     )
   end
@@ -60,6 +51,13 @@ class UserMailer < ApplicationMailer
   end
 
   private
+
+  # Tag stable et non traduit en tête d'objet : sert de critère aux filtres Gmail
+  # (tous les messages arrivent sur la même boîte, le libellé se fait sur ce tag).
+  # Ne pas le modifier sans mettre à jour les filtres de la boîte de réception.
+  def contact_filter_tag(category)
+    "[contact-#{category.to_s.parameterize}]"
+  end
 
   def contact_category_label(category)
     I18n.t(

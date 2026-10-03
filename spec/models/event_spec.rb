@@ -9,8 +9,7 @@ RSpec.describe Event, type: :model do
 
   describe 'associations' do
     it { should belong_to(:creator).class_name('User') }
-    it { should have_many(:attendances).dependent(:destroy) }
-    it { should have_many(:people).through(:attendances) }
+    it { should have_many(:event_interests).dependent(:destroy) }
   end
 
   describe 'validations' do
@@ -166,36 +165,6 @@ RSpec.describe Event, type: :model do
             expect(this_month).not_to include(last_week_event)
           end
         end
-      end
-    end
-  end
-
-  describe '#is_person_registered?' do
-    it 'returns false when person is not registered' do
-      expect(event.is_person_registered?(person)).to be false
-    end
-
-    it 'returns true when person is registered' do
-      create(:attendance, event: event, person: person)
-      expect(event.is_person_registered?(person)).to be true
-    end
-  end
-
-  describe '#is_user_registered?' do
-    context 'with user having person' do
-      let(:user_with_person) { create(:user, person: person) }
-
-      it 'uses person registration' do
-        create(:attendance, event: event, person: person)
-        expect(event.is_user_registered?(user_with_person)).to be true
-      end
-    end
-
-    context 'with user auto-linked to minimal person' do
-      let(:user_without_person) { create(:user, person: nil) }
-
-      it 'returns false when no attendance exists for linked person' do
-        expect(event.is_user_registered?(user_without_person)).to be false
       end
     end
   end

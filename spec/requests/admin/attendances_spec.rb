@@ -11,7 +11,7 @@ RSpec.describe 'Admin::Attendances', type: :request do
     it 'lists only people not already on the list' do
       attendance_list = create(:attendance_list)
       already_added = create(:person)
-      create(:attendance, person: already_added, event: nil, attendance_list: attendance_list)
+      create(:attendance, person: already_added, attendance_list: attendance_list)
       available = create(:person)
 
       get new_admin_attendance_list_attendance_path(attendance_list)
@@ -44,7 +44,7 @@ RSpec.describe 'Admin::Attendances', type: :request do
       person = create(:person)
       create(:membership, :circus_full, person: person)
       contribution = create(:contribution, person: person, sessions_remaining: 5)
-      attendance = create(:attendance, person: person, event: nil, attendance_list: attendance_list, contribution: contribution)
+      attendance = create(:attendance, person: person, attendance_list: attendance_list, contribution: contribution)
       expect(contribution.reload.sessions_remaining).to eq(4)
 
       delete admin_attendance_list_attendance_path(attendance_list, attendance)
@@ -57,7 +57,7 @@ RSpec.describe 'Admin::Attendances', type: :request do
 
   describe 'GET /admin/attendances' do
     it 'renders the paginated list without error' do
-      create(:attendance, person: create(:person), event: nil, date: Date.current)
+      create(:attendance, person: create(:person), date: Date.current)
 
       get admin_attendances_path
 
@@ -66,7 +66,7 @@ RSpec.describe 'Admin::Attendances', type: :request do
 
     it "links each participant's name to their member profile" do
       person = create(:person)
-      create(:attendance, person: person, event: nil, date: Date.current)
+      create(:attendance, person: person, date: Date.current)
 
       get admin_attendances_path
 
@@ -78,7 +78,7 @@ RSpec.describe 'Admin::Attendances', type: :request do
     it 'renders the participant table with a working remove button and no dead edit link' do
       attendance_list = create(:attendance_list)
       person = create(:person)
-      attendance = create(:attendance, person: person, event: nil, attendance_list: attendance_list)
+      attendance = create(:attendance, person: person, attendance_list: attendance_list)
 
       get admin_attendance_list_path(attendance_list)
 
@@ -90,7 +90,7 @@ RSpec.describe 'Admin::Attendances', type: :request do
     it "links the participant's name to their member profile" do
       attendance_list = create(:attendance_list)
       person = create(:person)
-      create(:attendance, person: person, event: nil, attendance_list: attendance_list)
+      create(:attendance, person: person, attendance_list: attendance_list)
 
       get admin_attendance_list_path(attendance_list)
 
@@ -102,7 +102,7 @@ RSpec.describe 'Admin::Attendances', type: :request do
       recipient = create(:person, :with_circus_membership)
       lender = create(:person, :with_circus_membership)
       pack10 = create(:contribution, person: lender, contribution_formula: create(:contribution_formula, :pack10), sessions_remaining: 3)
-      create(:attendance, person: recipient, event: nil, attendance_list: attendance_list, contribution: pack10)
+      create(:attendance, person: recipient, attendance_list: attendance_list, contribution: pack10)
 
       get admin_attendance_list_path(attendance_list)
 
