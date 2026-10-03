@@ -128,6 +128,18 @@ class User < ApplicationRecord
     assignable_roles.include?(target_role.to_s)
   end
 
+  # Peut modifier le rôle actuel de other_user : jamais le sien, et seulement sur
+  # un compte de rang strictement inférieur (un admin ne touche ni aux autres
+  # admins ni aux super_admins). Le nouveau rôle doit en plus passer can_assign_role?.
+  # Conséquence : un super_admin n'est jamais rétrogradable depuis l'interface,
+  # ce qui protège aussi contre la perte du dernier super_admin.
+  def can_change_role_of?(other_user)
+    return false if other_user.nil? || other_user == self
+    return false if assignable_roles.empty?
+
+    has_higher_permissions?(other_user)
+  end
+
   def created_by_admin?
     created_by_admin == true
   end

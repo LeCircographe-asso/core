@@ -80,9 +80,9 @@ module UserManagement
       updated_by.can_administer?
     end
 
-    # Un changement RÉEL de system_role doit rester dans les rôles que l'éditeur a
-    # le droit d'attribuer (User#assignable_roles) — y compris sur son propre compte :
-    # se promouvoir soi-même n'est pas plus légitime que promouvoir un tiers.
+    # Un changement RÉEL de system_role exige que l'éditeur soit de rang supérieur
+    # au compte visé (User#can_change_role_of? — jamais sur son propre compte) et
+    # que le nouveau rôle soit dans ses rôles attribuables (User#assignable_roles).
     # Ne s'applique que si la valeur change réellement : un formulaire qui
     # resoumet le rôle actuel sans le modifier ne doit pas être bloqué (ex: un
     # admin qui édite un autre admin sans toucher au rôle).
@@ -90,7 +90,7 @@ module UserManagement
       return true if system_role.blank?
       return true if system_role == user.system_role
 
-      updated_by.can_assign_role?(system_role)
+      updated_by.can_change_role_of?(user) && updated_by.can_assign_role?(system_role)
     end
 
     def update_newsletter(person)

@@ -48,6 +48,12 @@
         </li>
         <% end %>
         <% if current_user.can_administer? %>
+        <li><%= link_to admin_roles_path, class: "sidebar-link flex items-center" do %>
+              <i class="fas fa-user-shield mr-2 sidebar-icon"></i> <span class="sidebar-text" data-sidebar-target="text"><%= t("admin.roles.index.nav_label") %></span>
+            <% end %>
+        </li>
+        <% end %>
+        <% if current_user.can_administer? %>
         <li><%= link_to admin_duplicates_path, class: "sidebar-link flex items-center" do %>
               <i class="fas fa-clone mr-2 sidebar-icon"></i> <span class="sidebar-text" data-sidebar-target="text">Doublons</span>
             <% end %>

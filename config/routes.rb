@@ -47,7 +47,9 @@ Rails.application.routes.draw do
         post :process_payment, on: :member
       end
       resources :attendances, module: :members, only: %i[new create]
+      resource :role, module: :members, only: %i[update]
     end
+    resources :roles, only: %i[index]
     resources :events, only: %i[new create edit update destroy index]
     resource :session, only: %i[new create destroy]
     resource :notepad, only: %i[edit update]

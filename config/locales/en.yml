@@ -47,6 +47,33 @@ en:
       show:
         use_inline_notice: Utilisez l'édition inline pour modifier les paiements
       not_found_alert: Payment not found.
+    roles:
+      no_web_account: This person has no web account, there is no role to change.
+      labels:
+        super_admin: Super administrator
+        admin: Administrator
+        volunteer: Volunteer
+        web_visitor: Web visitor
+      assignment:
+        label: Role
+        submit: Change
+        confirm: "Change the role of %{name}?"
+      index:
+        nav_label: Roles
+        page_title: Roles
+        page_subtitle: Who can access the administration, and with which rights.
+        users_with_role_title: Accounts with a role
+        empty: No account has an administration role.
+        search_title: Assign a role
+        search_hint: Search for a web account (name, email or phone) to give it a role.
+        search_label: Search an account
+        search_placeholder: Name, email or phone
+        search_submit: Search
+        no_results: "No web account without a role matches \"%{search}\"."
+        columns:
+          name: Name
+          email: Email
+          role: Role
     members:
       attendances:
         already_present: "%{name} is already checked in for today."
@@ -290,6 +317,8 @@ en:
         administration: Administration
         dashboard: Dashboard
         edit: Edit
+      roles:
+        index: Roles
       members:
         members_list: Members list
         create_web_account: Create web account
@@ -438,6 +467,8 @@ en:
       invalid_data: Invalid data
       invalid_data_with_details: 'Invalid data: %{details}'
     success:
+      role_changed: "Role of %{name} updated: %{role}."
+      role_unchanged: "Role unchanged."
       user_updated: "User updated successfully"
       newsletter_update_skipped_no_email: "Newsletter update skipped (no email)"
       membership_already_active: "Person already has an active membership"
@@ -462,6 +493,7 @@ en:
         membership_update: "Insufficient permissions to update this membership"
         membership_deactivate: "Insufficient permissions to deactivate this membership"
         role_assignment: "You are not allowed to assign this role"
+        role_change: "You are not allowed to change the role of this account"
       newsletter_update_failed: "Error updating newsletter: %{message}"
       user_not_found: "User not found: %{message}"
       register_existing_web_account: "This person already has a web account."
