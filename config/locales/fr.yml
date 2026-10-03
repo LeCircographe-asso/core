@@ -393,7 +393,6 @@ fr:
       error: Une erreur est survenue lors de l'envoi. Réessayez dans quelques instants.
   event_interests:
     create:
-      profile_incomplete: Votre profil n'est pas complet. Veuillez contacter l'administration.
       interest_added: Vous êtes maintenant intéressé par cet événement !
       interest_error: Erreur lors de l'ajout de votre intérêt
     destroy:

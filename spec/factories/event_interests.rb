@@ -2,7 +2,7 @@
 
 FactoryBot.define do
   factory :event_interest do
-    association :person
+    association :user
     association :event
   end
 end

@@ -212,10 +212,10 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_03_120000) do
   create_table "event_interests", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.integer "event_id", null: false
-    t.integer "person_id", null: false
     t.datetime "updated_at", null: false
+    t.integer "user_id", null: false
     t.index ["event_id"], name: "index_event_interests_on_event_id"
-    t.index ["person_id", "event_id"], name: "index_event_interests_on_person_id_and_event_id", unique: true
+    t.index ["user_id", "event_id"], name: "index_event_interests_on_user_id_and_event_id", unique: true
   end
 
   create_table "events", force: :cascade do |t|
@@ -524,7 +524,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_03_120000) do
   add_foreign_key "event_attendees", "payments"
   add_foreign_key "event_attendees", "users"
   add_foreign_key "event_interests", "events"
-  add_foreign_key "event_interests", "people"
+  add_foreign_key "event_interests", "users"
   add_foreign_key "events", "users", column: "creator_id"
   add_foreign_key "exceptional_closures", "users", column: "updated_by_user_id"
   add_foreign_key "member_number_histories", "people"

@@ -19,11 +19,11 @@ erDiagram
   Person ||--o{ Contribution : "achète"
   Person ||--o{ Attendance : "présence"
   Person ||--o{ Payment : "règle"
-  Person ||--o{ EventInterest : "s'intéresse"
   Person ||--o| NewsletterSubscriber : "lié par email"
 
   MembershipType ||--o{ Membership : "type"
   ContributionFormula ||--o{ Contribution : "formule"
+  User ||--o{ EventInterest : "s'intéresse"
   Event ||--o{ EventInterest : "likes"
   AttendanceList ||--o{ Attendance : "regroupe"
 
@@ -128,7 +128,7 @@ erDiagram
 
 #### `Attendance`
 - **Lien** : `belongs_to :person`, `belongs_to :attendance_list` (optionnel), `belongs_to :contribution`.
-- **Règles d'unicité** : `person_id + date`. Pas d'`event_id` : la présence à un événement passe par une `AttendanceList` de type `event`.
+- **Règles d'unicité** : `person_id + date`. Pas de lien direct vers `Event`.
 - **Effet de bord** : décrémente la cotisation utilisée si applicable.
 
 #### `AttendanceList`
@@ -137,8 +137,8 @@ erDiagram
 
 #### `Event`, `EventInterest` & `EventAttendee`
 - **Event** : `name`, `event_date`, `category` (default: `:circus`).
-- **EventInterest** : like `Person × Event` (bouton « Je suis intéressé »), unicité `person_id + event_id` (index DB). Aucun lien avec `Attendance`.
-- **EventAttendee** : réservé à une future billetterie (code actuel : `user_id`, pas d'unicité) — non utilisé.
+- **EventInterest** : like `User × Event` (bouton « Je suis intéressé »), unicité `user_id + event_id` (index DB). Indépendant de toute autre logique métier.
+- **EventAttendee** : inscriptions à venir (via HelloAsso), non implémentées — table non utilisée.
 
 ---
 

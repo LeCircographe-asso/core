@@ -1,14 +1,14 @@
 # frozen_string_literal: true
 
 # L'intérêt pour un événement (le bouton « Je suis intéressé ») n'est qu'un
-# like par personne : il vivait jusqu'ici dans `attendances`, la table des
-# présences, avec une date sans signification. Le partage de table forçait à
+# like par compte web : il vivait jusqu'ici dans `attendances`, la table des
+# présences, rattaché à la Person, avec une date sans signification. Le partage de table forçait à
 # filtrer `event_id` partout et faisait collisionner like et présence
 # d'entraînement sur l'index unique (person_id, date).
 #
-# On le sort dans sa propre table `event_interests` (unicité person × event)
-# et on retire `attendances.event_id` : la présence à un événement passe par
-# une `AttendanceList` de type `event`, comme toute autre présence.
+# On le sort dans sa propre table `event_interests`, rattachée au compte web
+# (unicité user × event), et on retire `attendances.event_id`, qui ne servait
+# qu'à ces likes.
 #
 # Remplace la migration SplitAttendanceUniquenessForEventInterest (PR #552),
 # jamais déployée hors dev : selon la base, on part donc soit de l'index
@@ -21,23 +21,25 @@ class MoveEventInterestsOutOfAttendances < ActiveRecord::Migration[8.1]
 
   def up
     create_table :event_interests do |t|
-      t.references :person, null: false, foreign_key: true, index: false
+      t.references :user, null: false, foreign_key: true, index: false
       t.references :event, null: false, foreign_key: true
       t.timestamps
     end
-    add_index :event_interests, %i[person_id event_id], unique: true
+    add_index :event_interests, %i[user_id event_id], unique: true
 
     # Toute ligne `attendances` liée à un événement est un like (aucun écran
-    # n'en crée d'autre). GROUP BY dédoublonne les likes en double laissés par
-    # les fusions de comptes (update_all sans validation).
+    # n'en crée d'autre), posé depuis le compte web de la personne. Un like
+    # d'une personne sans compte (seeds) n'a pas d'auteur : il n'est pas repris.
+    # GROUP BY dédoublonne les likes en double laissés par les fusions de
+    # comptes (update_all sans validation).
     execute <<~SQL.squish
-      INSERT INTO event_interests (person_id, event_id, created_at, updated_at)
-      SELECT a.person_id, a.event_id, MIN(a.created_at), MAX(a.updated_at)
+      INSERT INTO event_interests (user_id, event_id, created_at, updated_at)
+      SELECT u.id, a.event_id, MIN(a.created_at), MAX(a.updated_at)
       FROM attendances a
-      INNER JOIN people p ON p.id = a.person_id
+      INNER JOIN users u ON u.person_id = a.person_id
       INNER JOIN events e ON e.id = a.event_id
       WHERE a.event_id IS NOT NULL
-      GROUP BY a.person_id, a.event_id
+      GROUP BY u.id, a.event_id
     SQL
     execute "DELETE FROM attendances WHERE event_id IS NOT NULL"
 
@@ -60,8 +62,9 @@ class MoveEventInterestsOutOfAttendances < ActiveRecord::Migration[8.1]
 
     execute <<~SQL.squish
       INSERT INTO attendances (person_id, event_id, date, created_at, updated_at)
-      SELECT person_id, event_id, DATE(created_at), created_at, updated_at
-      FROM event_interests
+      SELECT u.person_id, i.event_id, DATE(i.created_at), i.created_at, i.updated_at
+      FROM event_interests i
+      INNER JOIN users u ON u.id = i.user_id
     SQL
 
     drop_table :event_interests

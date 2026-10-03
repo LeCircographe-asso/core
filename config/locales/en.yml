@@ -501,7 +501,6 @@ en:
       error: Something went wrong while sending. Please try again in a moment.
   event_interests:
     create:
-      profile_incomplete: Your profile is incomplete. Please contact the team.
       interest_added: You are now interested in this event!
       interest_error: Could not save your interest
     destroy:

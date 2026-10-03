@@ -23,7 +23,6 @@ class Person < ApplicationRecord
   has_many :memberships, dependent: :restrict_with_error
   has_many :payments, dependent: :restrict_with_error
   has_many :attendances, dependent: :destroy
-  has_many :event_interests, dependent: :destroy
   has_many :contributions, dependent: :destroy
   has_many :member_number_histories, dependent: :destroy
   has_one :newsletter_subscriber, dependent: :destroy

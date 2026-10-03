@@ -1,13 +1,13 @@
 # frozen_string_literal: true
 
 # Intérêt pour un événement : le « like » posé par un compte web via le bouton
-# « Je suis intéressé ». Un simple compteur par personne, sans lien avec la
-# présence (`Attendance`) ni avec la billetterie (`EventAttendee`).
+# « Je suis intéressé ». Un simple compteur, indépendant de toute autre logique
+# métier (présences, inscriptions).
 class EventInterest < ApplicationRecord
-  belongs_to :person
+  belongs_to :user
   belongs_to :event
 
-  validates :person_id, uniqueness: { scope: :event_id }
+  validates :user_id, uniqueness: { scope: :event_id }
 
   after_create_commit :broadcast_count
   after_destroy_commit :broadcast_count

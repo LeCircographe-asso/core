@@ -5,7 +5,7 @@ require "rails_helper"
 RSpec.describe "EventInterests", type: :request do
   let(:person) { create(:person) }
   let(:user)   { create(:user, person: person) }
-  let(:event)  { create(:event) }
+  let(:event)  { create(:event, status: :published) }
 
   before { login_as(user) }
 
@@ -13,7 +13,7 @@ RSpec.describe "EventInterests", type: :request do
     it "enregistre un like et redirige vers l'événement" do
       expect do
         post event_interests_path, params: { id: event.id }
-      end.to change(person.event_interests, :count).by(1)
+      end.to change(user.event_interests, :count).by(1)
       expect(response).to redirect_to(event)
     end
 
@@ -32,6 +32,15 @@ RSpec.describe "EventInterests", type: :request do
       expect(user.is_interested_in?(event.id)).to be(true)
     end
 
+    it "refuse de liker un brouillon" do
+      draft = create(:event, status: :draft)
+
+      expect do
+        post event_interests_path, params: { id: draft.id }
+      end.not_to change(EventInterest, :count)
+      expect(response).to have_http_status(:not_found)
+    end
+
     it "n'envoie pas d'email (un like ne mérite pas un courrier)" do
       expect do
         post event_interests_path, params: { id: event.id }
@@ -41,7 +50,7 @@ RSpec.describe "EventInterests", type: :request do
 
   describe "DELETE /event_interests/:id" do
     context "avec un like existant" do
-      before { create(:event_interest, person: person, event: event) }
+      before { create(:event_interest, user: user, event: event) }
 
       it "supprime le like et redirige vers l'événement" do
         expect { delete event_interest_path(event.id) }.to change(EventInterest, :count).by(-1)
