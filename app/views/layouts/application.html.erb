@@ -39,6 +39,15 @@
     <!-- External services -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <%= javascript_include_tag "flowbite.turbo.min", "data-turbo-track": "reload" %>
+
+    <%# Umami analytics — public site only, not the admin backoffice. Self-hosted,
+        cookieless, no consent banner needed. See docs/operations/analytics.md. %>
+    <% if umami_website_id && !controller_path.start_with?("admin/") %>
+    <script defer src="https://analytics.lecircographe.fr/script.js" data-website-id="<%= umami_website_id %>"></script>
+    <% if umami_session_replay_enabled? %>
+    <script defer src="https://analytics.lecircographe.fr/recorder.js" data-website-id="<%= umami_website_id %>"></script>
+    <% end %>
+    <% end %>
 </head>
 
 <body class="<%= 'dyslexic-font-enabled' if current_user&.dyslexic_font %> <%= controller_name %>-<%= action_name %> flex flex-col min-h-[100dvh] leading-normal">

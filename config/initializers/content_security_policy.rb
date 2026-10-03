@@ -11,8 +11,8 @@ Rails.application.configure do
     # Default: only allow same-origin resources
     policy.default_src :self
 
-    # Scripts: self only (SweetAlert2/jsdelivr removed — no call site, unused)
-    policy.script_src :self, :unsafe_inline
+    # Scripts: self + Umami analytics (self-hosted, see docs/operations/analytics.md)
+    policy.script_src :self, :unsafe_inline, "analytics.lecircographe.fr"
 
     # Styles: self + CDN (FontAwesome, Leaflet)
     policy.style_src :self, :unsafe_inline, "cdn.jsdelivr.net", "cdnjs.cloudflare.com"
@@ -26,8 +26,8 @@ Rails.application.configure do
     # No flash/applets/plugins
     policy.object_src :none
 
-    # Allow WebSocket connections for Turbo Cable + external APIs (address autocomplete)
-    policy.connect_src :self, :wss, "api-adresse.data.gouv.fr"
+    # Allow WebSocket connections for Turbo Cable + external APIs (address autocomplete, Umami beacon)
+    policy.connect_src :self, :wss, "api-adresse.data.gouv.fr", "analytics.lecircographe.fr"
 
     # Frame ancestors: only allow same-origin (prevent clickjacking)
     policy.frame_ancestors :self
