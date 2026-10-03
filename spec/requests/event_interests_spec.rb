@@ -10,9 +10,26 @@ RSpec.describe "EventInterests", type: :request do
   before { login_as(user) }
 
   describe "POST /event_interests" do
-    it "crée une présence et redirige vers l'événement" do
-      post event_interests_path, params: { id: event.id }
+    it "enregistre un like et redirige vers l'événement" do
+      expect do
+        post event_interests_path, params: { id: event.id }
+      end.to change(person.event_interests, :count).by(1)
       expect(response).to redirect_to(event)
+    end
+
+    it "ne crée aucune présence" do
+      expect do
+        post event_interests_path, params: { id: event.id }
+      end.not_to change(Attendance, :count)
+    end
+
+    it "fonctionne même si la personne s'est entraînée le jour même" do
+      create(:attendance, person: person, event: nil, date: Date.current)
+
+      post event_interests_path, params: { id: event.id }
+
+      expect(flash[:notice]).to be_present
+      expect(user.is_interested_in?(event.id)).to be(true)
     end
 
     it "envoie un email de confirmation à l'utilisateur" do
@@ -23,20 +40,21 @@ RSpec.describe "EventInterests", type: :request do
   end
 
   describe "DELETE /event_interests/:id" do
-    context "avec une présence existante" do
-      before { create(:attendance, person: person, event: event, date: Date.current) }
+    context "avec un like existant" do
+      before { create(:event_interest, person: person, event: event) }
 
-      it "supprime la présence et redirige vers l'événement" do
-        delete event_interest_path(event.id)
+      it "supprime le like et redirige vers l'événement" do
+        expect { delete event_interest_path(event.id) }.to change(EventInterest, :count).by(-1)
         expect(response).to redirect_to(event)
         expect(flash[:notice]).to be_present
       end
     end
 
-    context "sans présence existante" do
-      it "redirige avec une alerte" do
-        delete event_interest_path(event.id)
-        expect(response).to redirect_to(event)
+    context "sans like mais avec une présence liée à l'événement" do
+      before { create(:attendance, person: person, event: event, date: Date.current) }
+
+      it "ne supprime pas la présence" do
+        expect { delete event_interest_path(event.id) }.not_to change(Attendance, :count)
         expect(flash[:alert]).to be_present
       end
     end

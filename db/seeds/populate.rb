@@ -278,17 +278,11 @@ while created_pres < target_presences && attempts < max_attempts
   end
 end
 
-# --- Intérêt événements (présences liées aux Event seed) ---
+# --- Intérêt événements (likes sur les Event seed) ---
 Event.find_each do |event|
   sample_size = [ RNG.rand(8..35), person_ids.size ].min
   person_ids.sample(sample_size, random: RNG).each do |pid|
-    next if Attendance.exists?(person_id: pid, event_id: event.id)
-
-    Attendance.create!(
-      person_id: pid,
-      event_id: event.id,
-      date: event.date&.to_date || Date.current
-    )
+    EventInterest.find_or_create_by!(person_id: pid, event_id: event.id)
   rescue ActiveRecord::RecordInvalid
     next
   end

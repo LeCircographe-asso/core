@@ -8,6 +8,7 @@ class Event < ApplicationRecord
   belongs_to :creator, class_name: "User"
   has_many :attendances, dependent: :destroy
   has_many :people, through: :attendances
+  has_many :event_interests, dependent: :destroy
   # `event_attendees` reste réservé à une future billetterie en ligne (non
   # implémentée) — voir docs/glossary.md. Les présences "registre" passent
   # par `attendances`.

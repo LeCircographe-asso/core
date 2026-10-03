@@ -130,7 +130,7 @@
 ### 1.5 Présences et événements
 
 #### Présence — `Attendance`
-- **Définition** : trace de présence d'une `Person`, soit pour l'entraînement libre quotidien, soit pour un événement.
+- **Définition** : trace de présence d'une `Person`, soit pour l'entraînement libre quotidien, soit pour un événement. Ne pas confondre avec l'**intérêt pour un événement** (`EventInterest`), qui n'est pas une présence.
 - **Règles** :
   - Entraînement libre : unicité `person_id + date` (pas d'`event_id`). Décrémente la cotisation utilisée (`Contribution#use_session!`) si applicable.
   - Événement : unicité `person_id + event_id`.
@@ -139,7 +139,13 @@
 - **Définition** : conteneur d'`Attendance` pour un jour ou un événement. Statuts : `:open`, `:close`, `:archived`. La liste « training » quotidienne est créée par `AttendanceListManagement::DailyListGenerator` (skip lundi).
 
 #### Événement — `Event`
-- **Définition** : événement organisé (cours, stage, performance), avec date, catégorie. Inscriptions via `EventAttendee` (`Person ↔ Event`).
+- **Définition** : événement organisé (cours, stage, performance), avec date, catégorie.
+- **Billetterie** : `EventAttendee` est réservé à une future billetterie en ligne, non implémentée (code actuel : lié à `User`, pas à `Person`, sans contrainte d'unicité).
+
+#### Intérêt pour un événement — `EventInterest`
+- **Définition** : « like » posé par un compte web via le bouton « Je suis intéressé ». Simple compteur affiché sur l'événement, unique par `person_id + event_id`.
+- **N'est pas** : une présence (`Attendance`, aucune séance consommée, aucune date), ni une inscription ou un billet (`EventAttendee`).
+- **Fusion de comptes** : un like en double sur le même événement est supprimé, pas transféré.
 
 #### Temps d’accueil en création
 - **Définition** : accueil d’un projet créatif au sein du lieu (cirque, arts graphiques, etc.), à distinguer de l’adhésion ou de la cotisation cirque.
@@ -192,9 +198,10 @@
 | Don | `Donation` | **cible** (legacy : `item_type: "Payment"`) | reçu fiscal |
 | Présence | `Attendance` | canonique | entraînement / événement |
 | Liste de présence | `AttendanceList` | canonique | quotidienne ou événement |
-| Événement | `Event` | canonique | inscriptions via `EventAttendee` |
+| Événement | `Event` | canonique | likes via `EventInterest` |
 | Temps d’accueil en création | formulaire contact : `creative_hosting` (`residence` legacy) | canonique (UI FR) | env : `CONTACT_EMAIL_CREATIVE_HOSTING` (+ fallback `CONTACT_EMAIL_RESIDENCE`) |
-| Inscription événement | `EventAttendee` | canonique | jointure `Person × Event` |
+| Intérêt pour un événement | `EventInterest` | canonique | like, jointure `Person × Event` unique |
+| Inscription événement (billetterie) | `EventAttendee` | réservé | future billetterie, code actuel lié à `User` |
 | Numéro d'adhérent | `member_number` | canonique | format `25U001` / `25C001` |
 | Newsletter | `NewsletterSubscriber` | canonique | table indépendante |
 

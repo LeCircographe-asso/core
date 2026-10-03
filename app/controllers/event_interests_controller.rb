@@ -10,9 +10,9 @@ class EventInterestsController < ApplicationController
       return
     end
 
-    @attendance = current_user.person.attendances.build(event: @event, date: Date.current)
+    @interest = current_user.person.event_interests.build(event: @event)
 
-    if @attendance.save
+    if @interest.save
       UserMailer.event_interest_confirmation(current_user, @event).deliver_later
       redirect_to @event, notice: t(".interest_added")
     else
@@ -21,9 +21,9 @@ class EventInterestsController < ApplicationController
   end
 
   def destroy
-    @attendance = current_user.person.attendances.find_by(event: @event)
+    @interest = current_user.person.event_interests.find_by(event: @event)
 
-    if @attendance&.destroy
+    if @interest&.destroy
       redirect_to @event, notice: t(".interest_removed")
     else
       redirect_to @event, alert: t(".interest_remove_error")

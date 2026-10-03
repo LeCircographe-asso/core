@@ -20,6 +20,15 @@ RSpec.describe AttendanceStatusComponent, type: :component do
     expect(rendered_content).to include("Absent")
   end
 
+  it "ignores presences tied to an event when reporting the daily status" do
+    person = create(:person)
+    create(:attendance, person: person, date: Date.current, event: create(:event))
+
+    render_inline(described_class.new(person: person, date: Date.current))
+
+    expect(rendered_content).to include("Absent")
+  end
+
   it "explains the absence in the tooltip rather than leaving it unqualified" do
     person = create(:person)
 

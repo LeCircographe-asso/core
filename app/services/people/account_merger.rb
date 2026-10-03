@@ -33,6 +33,7 @@ module People
         merge_payments(source, target)
         merge_contributions(source, target)
         merge_attendances(source, target)
+        merge_event_interests(source, target)
         merge_newsletter(source, target)
         merge_account_claims(source, target)
         merge_member_number_histories(source, target)
@@ -86,6 +87,12 @@ module People
 
     def merge_attendances(source, target)
       transfer_relation(source.attendances, target.id)
+    end
+
+    # Un like déjà posé par la cible sur le même événement : on garde le sien.
+    def merge_event_interests(source, target)
+      source.event_interests.where(event_id: target.event_interests.select(:event_id)).delete_all
+      transfer_relation(source.event_interests, target.id)
     end
 
     def merge_newsletter(source, target)

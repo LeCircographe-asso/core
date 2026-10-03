@@ -9,7 +9,7 @@ class AttendanceStatusComponent < ViewComponent::Base
   def attendance
     return @attendance if defined?(@attendance)
 
-    @attendance = @person.attendances.find_by(date: @date)
+    @attendance = @person.attendances.find_by(date: @date, event_id: nil)
   end
 
   delegate :present?, to: :attendance

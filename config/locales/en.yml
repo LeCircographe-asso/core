@@ -687,7 +687,7 @@ en:
         attendance:
           attributes:
             person_id:
-              event_interest_taken: est déjà intéressé par cet événement
+              event_presence_taken: est déjà marqué présent à cet événement
               daily_presence_taken: est déjà marqué présent aujourd'hui
         payment_line:
           attributes:

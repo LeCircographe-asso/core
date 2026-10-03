@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_03_010000) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_03_120000) do
   create_table "account_claims", force: :cascade do |t|
     t.string "confirmation_token", null: false
     t.datetime "created_at", null: false
@@ -84,7 +84,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_03_010000) do
     t.integer "user_id"
     t.index ["event_id"], name: "index_attendances_on_event_id"
     t.index ["person_id", "date"], name: "index_attendances_on_person_id_and_date_without_event", unique: true, where: "event_id IS NULL"
-    t.index ["person_id", "event_id"], name: "index_attendances_on_person_id_and_event_id", unique: true, where: "event_id IS NOT NULL"
     t.index ["person_id"], name: "index_attendances_on_person_id"
   end
 
@@ -210,6 +209,15 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_03_010000) do
     t.index ["event_id"], name: "index_event_attendees_on_event_id"
     t.index ["payment_id"], name: "index_event_attendees_on_payment_id"
     t.index ["user_id"], name: "index_event_attendees_on_user_id"
+  end
+
+  create_table "event_interests", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.integer "event_id", null: false
+    t.integer "person_id", null: false
+    t.datetime "updated_at", null: false
+    t.index ["event_id"], name: "index_event_interests_on_event_id"
+    t.index ["person_id", "event_id"], name: "index_event_interests_on_person_id_and_event_id", unique: true
   end
 
   create_table "events", force: :cascade do |t|
@@ -518,6 +526,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_03_010000) do
   add_foreign_key "event_attendees", "events"
   add_foreign_key "event_attendees", "payments"
   add_foreign_key "event_attendees", "users"
+  add_foreign_key "event_interests", "events"
+  add_foreign_key "event_interests", "people"
   add_foreign_key "events", "users", column: "creator_id"
   add_foreign_key "exceptional_closures", "users", column: "updated_by_user_id"
   add_foreign_key "member_number_histories", "people"

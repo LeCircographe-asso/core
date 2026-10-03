@@ -231,7 +231,7 @@ class User < ApplicationRecord
   def is_interested_in?(event_id)
     return false unless person
 
-    person.attendances.exists?(event_id: event_id)
+    person.event_interests.exists?(event_id: event_id)
   end
 
   def store_email_change_request!(new_email:, code:)

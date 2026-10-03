@@ -40,6 +40,23 @@ RSpec.describe People::AccountMerger do
         expect(Person.exists?(source_person.id)).to be false
       end
 
+      it 'transfers event likes and drops the ones the target already has' do
+        shared_event = create(:event)
+        other_event = create(:event)
+        create(:event_interest, person: target_person, event: shared_event)
+        create(:event_interest, person: source_person, event: shared_event)
+        moved = create(:event_interest, person: source_person, event: other_event)
+
+        result = described_class.new(
+          source_person: source_person,
+          target_person: target_person
+        ).call
+
+        expect(result.success?).to be(true)
+        expect(target_person.event_interests.pluck(:event_id)).to contain_exactly(shared_event.id, other_event.id)
+        expect(moved.reload.person_id).to eq(target_person.id)
+      end
+
       it 'destroys the source person by default' do
         result = described_class.new(
           source_person: source_person,

@@ -49,7 +49,7 @@
               <span><%= @event.location %></span>
             </div>
           <% end %>
-          <%= render "events/interest_count", event: @event, count: @event.people.count %>
+          <%= render "events/interest_count", event: @event, count: @event.event_interests.size %>
         </div>
 
         <% descriptions = [@event.upper_description, @event.middle_description, @event.bottom_description, @event.description].compact_blank %>
