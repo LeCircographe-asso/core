@@ -97,6 +97,40 @@ RSpec.describe User, type: :model do
       end
     end
 
+    describe '#can_change_role_of?' do
+      let(:super_admin) { create(:user, :super_admin) }
+      let(:admin) { create(:user, :admin) }
+      let(:volunteer) { create(:user, :volunteer) }
+      let(:web_visitor) { create(:user) }
+
+      it 'lets a super_admin change the role of admins, volunteers and web visitors' do
+        expect([ admin, volunteer, web_visitor ].map { |u| super_admin.can_change_role_of?(u) }).to all(be(true))
+      end
+
+      it 'never lets anyone change the role of a super_admin, including another super_admin' do
+        other_super_admin = create(:user, :super_admin)
+
+        expect(super_admin.can_change_role_of?(other_super_admin)).to be(false)
+        expect(admin.can_change_role_of?(super_admin)).to be(false)
+      end
+
+      it 'lets an admin change only strictly lower roles' do
+        expect(admin.can_change_role_of?(volunteer)).to be(true)
+        expect(admin.can_change_role_of?(web_visitor)).to be(true)
+        expect(admin.can_change_role_of?(create(:user, :admin))).to be(false)
+      end
+
+      it 'never allows changing your own role' do
+        expect(super_admin.can_change_role_of?(super_admin)).to be(false)
+        expect(admin.can_change_role_of?(admin)).to be(false)
+      end
+
+      it 'gives volunteers and web visitors no role management at all' do
+        expect(volunteer.can_change_role_of?(web_visitor)).to be(false)
+        expect(web_visitor.can_change_role_of?(create(:user))).to be(false)
+      end
+    end
+
     describe '#active_membership?' do
       it 'returns false when person has no active membership' do
         expect(user.active_membership?).to be false

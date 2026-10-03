@@ -166,7 +166,7 @@ fr:
         super_admin: super admin
         admin: admin
         volunteer: bénévole
-        web_visitor: visiteur
+        web_visitor: aucun rôle
       widget_toggle:
         label: Bouton "Signaler un problème" visible sur le site
         submit: Enregistrer
@@ -312,6 +312,33 @@ fr:
       upgrade:
         success_notice: Cotisation upgradée avec succès.
         failure_alert: 'Erreur lors de l''upgrade: %{message}'
+    roles:
+      no_web_account: Cette personne n'a pas de compte web, aucun rôle à modifier.
+      labels:
+        super_admin: Super administrateur
+        admin: Administrateur
+        volunteer: Bénévole
+        web_visitor: Aucun rôle
+      assignment:
+        label: Rôle
+        submit: Changer
+        confirm: "Changer le rôle de %{name} ?"
+      index:
+        nav_label: Rôles
+        page_title: Rôles
+        page_subtitle: Qui a accès à l'administration, et avec quels droits.
+        users_with_role_title: Comptes avec un rôle
+        empty: Aucun compte n'a de rôle d'administration.
+        search_title: Attribuer un rôle
+        search_hint: Recherchez un compte web (nom, email ou téléphone) pour lui donner un rôle.
+        search_label: Rechercher un compte
+        search_placeholder: Nom, email ou téléphone
+        search_submit: Rechercher
+        no_results: "Aucun compte web sans rôle ne correspond à « %{search} »."
+        columns:
+          name: Nom
+          email: Email
+          role: Rôle
     members:
       create:
         invalid_data_alert: 'Données invalides : %{details}'
@@ -569,6 +596,8 @@ fr:
       invalid_data: Données invalides
       invalid_data_with_details: 'Données invalides : %{details}'
     success:
+      role_changed: "Rôle de %{name} mis à jour : %{role}."
+      role_unchanged: "Rôle inchangé."
       user_updated: "Utilisateur mis à jour avec succès"
       newsletter_update_skipped_no_email: "Mise à jour newsletter ignorée (email absent)"
       membership_already_active: "Cette personne possède déjà une adhésion active"
@@ -593,6 +622,7 @@ fr:
         membership_update: "Permissions insuffisantes pour mettre à jour cette adhésion"
         membership_deactivate: "Permissions insuffisantes pour désactiver cette adhésion"
         role_assignment: "Vous n'avez pas le droit d'attribuer ce rôle"
+        role_change: "Vous n'avez pas le droit de modifier le rôle de ce compte"
       newsletter_update_failed: "Erreur lors de la mise à jour newsletter : %{message}"
       user_not_found: "Utilisateur introuvable : %{message}"
       register_existing_web_account: "Cette personne a déjà un compte web."
@@ -635,6 +665,8 @@ fr:
         administration: Administration
         dashboard: Tableau de bord
         edit: Modifier
+      roles:
+        index: Rôles
       members:
         members_list: Liste d'adhérents
         create_web_account: Créer un compte web
@@ -749,7 +781,7 @@ fr:
           create_web_account_help: Permettre à cette personne de se connecter et gérer son profil en ligne
           system_role: Rôle système
           roles:
-            web_visitor: Visiteur web
+            web_visitor: Aucun rôle
             volunteer: Bénévole
             admin: Administrateur
           temporary_password_notice: Un mot de passe temporaire sera généré et envoyé par email
@@ -773,7 +805,7 @@ fr:
           create_web_account_help: Permettre à cette personne de se connecter et gérer son profil en ligne
           system_role: Rôle système
           roles:
-            web_visitor: Visiteur web
+            web_visitor: Aucun rôle
             volunteer: Bénévole
             admin: Administrateur
           temporary_password_notice: Un mot de passe temporaire sera généré et envoyé par email

@@ -64,7 +64,7 @@ erDiagram
 #### `User` — Compte web
 - **Invariant** : `belongs_to :person` **obligatoire** en base (`users.person_id` NOT NULL). À la création sans `person` explicite, le modèle attache une `Person` minimale (prénom/nom stub + email aligné sur le compte).
 - **Authentification** : email, password, sessions, password_reset_token.
-- **Rôle** : `system_role` enum `:super_admin | :admin | :volunteer | :web_visitor`.
+- **Rôle** : fonction staff, `system_role` enum `:super_admin | :admin | :volunteer | :web_visitor`. « Aucun rôle » (code actuel : `web_visitor`) pour tous les comptes sans fonction.
 - **Délégation** : `delegate :full_name, :phone, ... to: :person`.
 - **Liaison / fusion** : rattachement nominal `People::AttachUserToPerson` ; orchestration admin/scripts `People::AccountLinker` ; fusion de fiches `People::AccountMerger`.
 - **Soft delete** : `User#archive!` (admin uniquement).

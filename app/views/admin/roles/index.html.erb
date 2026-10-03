@@ -1,0 +1,47 @@
+<% content_for :title, t("admin.roles.index.page_title") %>
+
+<div class="min-h-screen py-6">
+  <div class="page-container">
+    <%= render 'shared/breadcrumbs' %>
+
+    <div class="admin-page-header">
+      <div class="px-6 py-4">
+        <h1 class="text-2xl font-bold text-white"><%= t("admin.roles.index.page_title") %></h1>
+        <p class="text-white/80 mt-1"><%= t("admin.roles.index.page_subtitle") %></p>
+      </div>
+    </div>
+
+    <section class="admin-metric-card mb-6 p-6" aria-labelledby="users-with-role-title">
+      <h2 id="users-with-role-title" class="text-lg font-semibold text-gray-900 mb-3"><%= t("admin.roles.index.users_with_role_title") %></h2>
+      <% if @users_with_role.any? %>
+        <%= render "users_list", users: @users_with_role %>
+      <% else %>
+        <p class="text-sm text-gray-500"><%= t("admin.roles.index.empty") %></p>
+      <% end %>
+    </section>
+
+    <section class="admin-metric-card mb-6 p-6" aria-labelledby="assign-role-title">
+      <h2 id="assign-role-title" class="text-lg font-semibold text-gray-900 mb-1"><%= t("admin.roles.index.search_title") %></h2>
+      <p class="text-sm text-gray-600 mb-3"><%= t("admin.roles.index.search_hint") %></p>
+
+      <%= form_with url: admin_roles_path, method: :get, class: "flex flex-wrap items-center gap-2 mb-4" do |form| %>
+        <%= form.label :search, t("admin.roles.index.search_label"), class: "sr-only" %>
+        <%= form.search_field :search,
+                              value: @search,
+                              placeholder: t("admin.roles.index.search_placeholder"),
+                              class: "flex-1 min-w-0 rounded-md border-gray-300 text-sm shadow-sm focus:border-[#1F5C55] focus:ring-[#1F5C55]" %>
+        <%= form.submit t("admin.roles.index.search_submit"),
+                        name: nil,
+                        class: "rounded-md bg-[#1F5C55] px-4 py-2 text-sm font-medium text-white hover:bg-[#194A45]" %>
+      <% end %>
+
+      <% if @search.present? %>
+        <% if @search_results.any? %>
+          <%= render "users_list", users: @search_results %>
+        <% else %>
+          <p class="text-sm text-gray-500"><%= t("admin.roles.index.no_results", search: @search) %></p>
+        <% end %>
+      <% end %>
+    </section>
+  </div>
+</div>

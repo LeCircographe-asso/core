@@ -31,6 +31,7 @@
 ### ⚠️ Phase 4 — Cleanup legacy — à faire
 - [ ] Auditer puis supprimer `EventAttendee` si intégré à `Attendance`.
 - [ ] Supprimer les derniers termes legacy restants (hors « newsletter subscription »).
+- [ ] Renommer la clé d'enum `User.system_role` `web_visitor` → `no_role` (« Aucun rôle »). Le rôle est une fonction staff, `web_visitor` désigne en réalité l'absence de rôle. Valeur entière `3` inchangée en base : renommage code seul (app, specs, seeds, locales, docs), aucune migration de données. `none` exclu (conflit avec `User.none`), `nil` écarté (nullabilité à gérer partout). Libellé « Aucun rôle » déjà en place depuis 2026-10-03.
 - ✅ Champ `donation` de `payments` déjà supprimé.
 
 ---

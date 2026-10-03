@@ -9,19 +9,19 @@ module Roleable
     "super_admin" => [ "super_admin.webp", "Avatar Super administrateur" ],
     "admin" => [ "admin.webp", "Avatar Administrateur" ],
     "volunteer" => [ "volunteer.webp", "Avatar Bénévole" ],
-    "web_visitor" => [ "users.png", "Avatar Visiteur web" ]
+    "web_visitor" => [ "users.png", "Avatar" ]
   }.freeze
   DEFAULT_AVATAR = [ "users.png", "Avatar" ].freeze
 
-  # Humanization des rôles
+  # Libellé du rôle — source unique : config/locales (admin.roles.labels).
   def role_humanized
-    case system_role
-    when "super_admin" then "Super administrateur"
-    when "admin" then "Administrateur"
-    when "volunteer" then "Bénévole"
-    when "web_visitor" then "Visiteur web"
-    else system_role.humanize
-    end
+    I18n.t("admin.roles.labels.#{system_role}", default: system_role.to_s.humanize)
+  end
+
+  # Le rôle est une fonction staff. `web_visitor` signifie « aucun rôle »
+  # (code actuel : web_visitor, renommage prévu — cf. docs/migrations/vocabulary_migration.md).
+  def has_system_role?
+    system_role.present? && !web_visitor?
   end
 
   def avatar_filename

@@ -3,15 +3,16 @@
 module Admin
   module Members
     class MemberInfoComponent < ViewComponent::Base
-      def initialize(user:, person:, is_person_without_user: false)
+      def initialize(user:, person:, is_person_without_user: false, current_user: nil)
         @user = user
         @person = person
         @is_person_without_user = is_person_without_user
+        @current_user = current_user
       end
 
       private
 
-      attr_reader :user, :person, :is_person_without_user
+      attr_reader :user, :person, :is_person_without_user, :current_user
 
       def display_value(value)
         value.presence || content_tag(:span, "Non renseigné", class: "text-gray-400 italic")
@@ -51,14 +52,6 @@ module Admin
 
       def preference_status(enabled)
         enabled ? "bg-[#1F5C55]" : "bg-gray-200"
-      end
-
-      def display_role
-        if user&.system_role.present?
-          user.role_humanized
-        else
-          "Aucun compte"
-        end
       end
     end
   end
