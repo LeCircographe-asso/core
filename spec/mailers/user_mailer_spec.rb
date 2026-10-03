@@ -65,9 +65,17 @@ RSpec.describe UserMailer, type: :mailer do
   end
 
   describe "#membership_expiration_reminder" do
-    it "est en attente de correction (membership.user et membership.end_date non définis)" do
-      pending "mailer non branché — bugs membership.user / membership.end_date à corriger avant"
-      raise "not implemented"
+    # Pas de User : le rappel doit partir vers la Person, même sans compte web.
+    let(:person) { create(:person, first_name: "Ada", last_name: "Lovelace") }
+    let(:membership) { create(:membership, person: person, ended_at: Date.new(2026, 11, 2), status: :active) }
+
+    it "écrit à la personne avec la date de fin de l'adhésion" do
+      mail = described_class.membership_expiration_reminder(membership)
+
+      expect(mail.to).to eq([ person.email ])
+      expect(mail.subject).to eq(I18n.t("mailers.user_mailer.membership_expiration_reminder.subject"))
+      expect(mail.body.encoded).to include("Ada Lovelace")
+      expect(mail.body.encoded).to include("02/11/2026")
     end
   end
 end
