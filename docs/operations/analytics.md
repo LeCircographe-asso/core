@@ -1,6 +1,6 @@
 # Analytics — Umami
 
-> **Statut** : déployé sur le VPS, tag front branché, en attente de credential `website_id` staging
+> **Statut** : validé en staging de bout en bout (03/10/2026) — tracking actif, reste la prod
 > **Branche** : `feature/umami-analytics`
 
 ## Contexte
@@ -166,14 +166,31 @@ umami:
 une fois la branche déployée — l'édition écrit dans `config/credentials.yml.enc`,
 à committer et déployer ensuite.
 
+## Bug infra découvert en route : `.kamal/secrets`
+
+En validant le déploiement staging, `RAILS_MASTER_KEY` arrivait vide dans
+le conteneur malgré un secret GitHub Actions correctement configuré.
+Cause : `.kamal/secrets` contenait un bloc `if/fi` et une expansion
+`${VAR:-default}` — syntaxe que le résolveur de Kamal pour ce fichier
+(gem Dotenv + extension maison, pas un vrai shell) ne gère pas. Silencieux,
+sans erreur : le bloc `if` était ignoré, l'expansion laissait un `:-}`
+littéral collé à la valeur. Invisible jusqu'ici car la prod n'a toujours
+été déployée qu'à la main, dans un shell où la variable était déjà
+exportée — jamais testée via la CI. Fixé dans `.kamal/secrets` (affectations
+simples `KEY=$KEY` uniquement) ; **le fix doit encore être propagé vers
+`main` avant le prochain déploiement prod via CI**, sinon le même bug
+y referait surface.
+
 ## Reste à faire
 
 - [x] Déployer le stack sur le VPS (prod + staging partagés)
 - [x] Brancher la route `kamal-proxy` avec SSL
 - [x] Code front (helper + tag layout + CSP), tag recorder staging-only
-- [ ] Changer le mot de passe admin Umami par défaut
 - [x] Créer le site **staging** dans l'admin Umami, récupérer le `website_id`
-- [ ] Ajouter `umami.staging.website_id` aux credentials, déployer sur staging
+- [x] Ajouter `umami.staging.website_id` aux credentials, déployer sur staging
+- [x] Fixer `.kamal/secrets` (bug RAILS_MASTER_KEY vide en CI) — sur `dev`/`staging`
+- [ ] Propager le fix `.kamal/secrets` vers `main` avant le prochain déploiement prod CI
+- [ ] Changer le mot de passe admin Umami par défaut
 - [ ] Valider quelques jours de trafic staging dans le dashboard Umami
 - [ ] Revue vie privée avant d'envisager le recorder en prod
 - [ ] Créer le site **prod**, ajouter `umami.production.website_id`
