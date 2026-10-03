@@ -31,21 +31,19 @@ RSpec.describe Attendance, type: :model do
         expect(duplicate.errors[:person_id]).to include('est déjà intéressé par cet événement')
       end
 
-      it 'rejects a second attendance the same day, even for a different event (matches the person_id+date DB constraint)' do
+      it 'allows same person for different events the same day (interest is just a per-account like counter)' do
         event2 = create(:event)
         create(:attendance, person: person, event: event)
         duplicate = build(:attendance, person: person, event: event2)
 
-        expect(duplicate).not_to be_valid
-        expect(duplicate.errors[:person_id]).to include("est déjà marqué présent aujourd'hui")
+        expect(duplicate).to be_valid
       end
 
-      it 'allows same person for different events on different days' do
-        event2 = create(:event)
-        create(:attendance, person: person, event: event, date: Date.current)
-        duplicate = build(:attendance, person: person, event: event2, date: Date.tomorrow)
+      it 'allows event interest the same day as a training attendance' do
+        create(:attendance, person: person, event: nil, date: Date.current)
+        interest = build(:attendance, person: person, event: event, date: Date.current)
 
-        expect(duplicate).to be_valid
+        expect(interest).to be_valid
       end
     end
 
