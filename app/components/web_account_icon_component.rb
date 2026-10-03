@@ -15,7 +15,8 @@ class WebAccountIconComponent < ViewComponent::Base
 
   def icon_title
     if person.user
-      "Compte web actif (#{person.user.system_role.humanize})"
+      user = person.user
+      user.has_system_role? ? "Compte web actif (#{user.role_humanized})" : "Compte web actif"
     else
       "Pas de compte web"
     end

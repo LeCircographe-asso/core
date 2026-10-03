@@ -53,7 +53,7 @@ en:
         super_admin: Super administrator
         admin: Administrator
         volunteer: Volunteer
-        web_visitor: Web visitor
+        web_visitor: No role
       assignment:
         label: Role
         submit: Change
@@ -226,7 +226,7 @@ en:
         super_admin: super admin
         admin: admin
         volunteer: volunteer
-        web_visitor: visitor
+        web_visitor: no role
       widget_toggle:
         label: '"Report a problem" button visible on the site'
         submit: Save
@@ -433,7 +433,7 @@ en:
           create_web_account_help: Allow this person to sign in and manage their online profile
           system_role: System role
           roles:
-            web_visitor: Web visitor
+            web_visitor: No role
             volunteer: Volunteer
             admin: Administrator
           temporary_password_notice: A temporary password will be generated and sent by email

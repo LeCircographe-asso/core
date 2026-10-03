@@ -18,7 +18,7 @@ enum :system_role, { super_admin: 0, admin: 1, volunteer: 2, web_visitor: 3 }
 | `super_admin` | 0 | Accès total, y compris suppression et modification des formules |
 | `admin` | 1 | Gestion complète membres, paiements, cotisations (sauf actions super_admin) |
 | `volunteer` | 2 | Accès zone admin en lecture + enregistrement présences |
-| `web_visitor` | 3 | Accès public uniquement (son propre profil) |
+| `web_visitor` | 3 | **Aucun rôle** (code actuel : `web_visitor`) — compte sans fonction staff, accès à son seul profil. Affiché « Aucun rôle », pas de badge de rôle sur la carte d'adhérent. Renommage prévu (voir `docs/migrations/vocabulary_migration.md`). |
 
 ### Convention de nommage (depuis 2026-08-10)
 

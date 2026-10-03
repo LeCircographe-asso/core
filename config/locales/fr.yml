@@ -166,7 +166,7 @@ fr:
         super_admin: super admin
         admin: admin
         volunteer: bénévole
-        web_visitor: visiteur
+        web_visitor: aucun rôle
       widget_toggle:
         label: Bouton "Signaler un problème" visible sur le site
         submit: Enregistrer
@@ -318,7 +318,7 @@ fr:
         super_admin: Super administrateur
         admin: Administrateur
         volunteer: Bénévole
-        web_visitor: Visiteur web
+        web_visitor: Aucun rôle
       assignment:
         label: Rôle
         submit: Changer
@@ -779,7 +779,7 @@ fr:
           create_web_account_help: Permettre à cette personne de se connecter et gérer son profil en ligne
           system_role: Rôle système
           roles:
-            web_visitor: Visiteur web
+            web_visitor: Aucun rôle
             volunteer: Bénévole
             admin: Administrateur
           temporary_password_notice: Un mot de passe temporaire sera généré et envoyé par email
@@ -803,7 +803,7 @@ fr:
           create_web_account_help: Permettre à cette personne de se connecter et gérer son profil en ligne
           system_role: Rôle système
           roles:
-            web_visitor: Visiteur web
+            web_visitor: Aucun rôle
             volunteer: Bénévole
             admin: Administrateur
           temporary_password_notice: Un mot de passe temporaire sera généré et envoyé par email
