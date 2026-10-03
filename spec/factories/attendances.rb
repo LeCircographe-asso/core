@@ -3,7 +3,6 @@
 FactoryBot.define do
   factory :attendance do
     association :person
-    association :event
     date { Date.current }
 
     trait :with_contribution do

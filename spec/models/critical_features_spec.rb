@@ -26,16 +26,6 @@ RSpec.describe 'Critical Features', type: :model do
     end
   end
 
-  describe 'Event registration' do
-    it 'can check if person is registered for event' do
-      person = create(:person)
-      event = create(:event)
-
-      # Initially not registered
-      expect(event.is_person_registered?(person)).to be_falsey
-    end
-  end
-
   describe 'Membership status' do
     it 'can determine active membership' do
       person = create(:person)

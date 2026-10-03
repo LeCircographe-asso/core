@@ -186,7 +186,7 @@ RSpec.describe "Admin::Contributions", type: :request do
     end
 
     it "keeps the purchase but warns visibly when attendance cannot be recorded (already checked in today)" do
-      create(:attendance, person: person, date: Date.current, event: nil)
+      create(:attendance, person: person, date: Date.current)
 
       expect do
         post admin_contributions_path, params: {

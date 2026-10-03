@@ -4,13 +4,11 @@ require 'rails_helper'
 
 RSpec.describe Attendance, type: :model do
   let(:person) { create(:person) }
-  let(:event) { create(:event) }
   let(:circus_membership_type) { create(:membership_type, category: :circus) }
   let(:pack10_plan) { create(:contribution_formula, :pack10, membership_type: circus_membership_type) }
 
   describe 'associations' do
     it { should belong_to(:person) }
-    it { should belong_to(:event).optional }
     it { should belong_to(:attendance_list).optional }
     it { should belong_to(:contribution).optional }
   end
@@ -22,43 +20,18 @@ RSpec.describe Attendance, type: :model do
       expect(attendance.errors[:date]).to include(I18n.t('errors.messages.blank'))
     end
 
-    context 'with event' do
-      it 'validates uniqueness of person per event' do
-        create(:attendance, person: person, event: event)
-        duplicate = build(:attendance, person: person, event: event)
-
-        expect(duplicate).not_to be_valid
-        expect(duplicate.errors[:person_id]).to include('est déjà marqué présent à cet événement')
-      end
-
-      it 'allows same person for different events the same day' do
-        event2 = create(:event)
-        create(:attendance, person: person, event: event)
-        duplicate = build(:attendance, person: person, event: event2)
-
-        expect(duplicate).to be_valid
-      end
-
-      it 'allows an event presence the same day as a training attendance' do
-        create(:attendance, person: person, event: nil, date: Date.current)
-        event_presence = build(:attendance, person: person, event: event, date: Date.current)
-
-        expect(event_presence).to be_valid
-      end
-    end
-
-    context 'without event (attendance_list)' do
+    context 'uniqueness' do
       it 'validates uniqueness of person per date' do
-        create(:attendance, person: person, event: nil, date: Date.current)
-        duplicate = build(:attendance, person: person, event: nil, date: Date.current)
+        create(:attendance, person: person, date: Date.current)
+        duplicate = build(:attendance, person: person, date: Date.current)
 
         expect(duplicate).not_to be_valid
         expect(duplicate.errors[:person_id]).to include("est déjà marqué présent aujourd'hui")
       end
 
       it 'allows same person on different dates' do
-        create(:attendance, person: person, event: nil, date: Date.current)
-        different_date = build(:attendance, person: person, event: nil, date: Date.yesterday)
+        create(:attendance, person: person, date: Date.current)
+        different_date = build(:attendance, person: person, date: Date.yesterday)
 
         expect(different_date).to be_valid
       end
@@ -76,13 +49,9 @@ RSpec.describe Attendance, type: :model do
     let(:person1) { create(:person) }
     let(:person2) { create(:person) }
     let(:person3) { create(:person) }
-    let(:event1) { create(:event) }
-    let(:event2) { create(:event) }
-    let(:event3) { create(:event) }
-
-    let!(:today_attendance) { create(:attendance, person: person1, event: event1, date: Date.current) }
-    let!(:this_week_attendance) { create(:attendance, person: person2, event: event2, date: Date.current.beginning_of_week) }
-    let!(:last_week_attendance) { create(:attendance, person: person3, event: event3, date: Date.current.beginning_of_week - 1.day) }
+    let!(:today_attendance) { create(:attendance, person: person1, date: Date.current) }
+    let!(:this_week_attendance) { create(:attendance, person: person2, date: Date.current.beginning_of_week) }
+    let!(:last_week_attendance) { create(:attendance, person: person3, date: Date.current.beginning_of_week - 1.day) }
 
     describe '.today' do
       it "returns only today's attendances" do
@@ -116,16 +85,6 @@ RSpec.describe Attendance, type: :model do
         expect(attendances).to all(have_attributes(person: person))
       end
     end
-
-    describe '.by_event' do
-      it 'returns attendances for specific event' do
-        other_event = create(:event)
-        create(:attendance, event: other_event)
-
-        attendances = Attendance.by_event(event)
-        expect(attendances).to all(have_attributes(event: event))
-      end
-    end
   end
 
   describe 'callbacks' do
@@ -148,7 +107,7 @@ RSpec.describe Attendance, type: :model do
         let(:attendance_list) { create(:attendance_list) }
 
         it 'decrements contribution sessions when attendance created' do
-          create(:attendance, person: person, attendance_list: attendance_list, contribution: contribution, event: nil)
+          create(:attendance, person: person, attendance_list: attendance_list, contribution: contribution)
 
           contribution.reload
           expect(contribution.sessions_remaining).to eq(4)
@@ -157,7 +116,7 @@ RSpec.describe Attendance, type: :model do
         it 'calls use_session! method' do
           allow(contribution).to receive(:use_session!).and_return(true)
 
-          create(:attendance, person: person, attendance_list: attendance_list, contribution: contribution, event: nil)
+          create(:attendance, person: person, attendance_list: attendance_list, contribution: contribution)
 
           expect(contribution).to have_received(:use_session!)
         end
@@ -165,7 +124,7 @@ RSpec.describe Attendance, type: :model do
         it 'does not decrement if attendance_list is nil' do
           contribution = create(:contribution, person: person, contribution_formula: pack10_plan, sessions_remaining: 5)
 
-          create(:attendance, person: person, event: event, contribution: contribution)
+          create(:attendance, person: person, contribution: contribution)
 
           contribution.reload
           expect(contribution.sessions_remaining).to eq(5)
@@ -175,7 +134,7 @@ RSpec.describe Attendance, type: :model do
       context 'without contribution' do
         it 'creates attendance successfully' do
           attendance_list = create(:attendance_list)
-          attendance = build(:attendance, person: person, attendance_list: attendance_list, contribution: nil, event: nil)
+          attendance = build(:attendance, person: person, attendance_list: attendance_list, contribution: nil)
 
           expect { attendance.save! }.not_to raise_error
         end
@@ -184,16 +143,8 @@ RSpec.describe Attendance, type: :model do
   end
 
   describe 'edge cases' do
-    it 'handles attendance without event or attendance_list' do
-      attendance = build(:attendance, event: nil, attendance_list: nil)
-      expect(attendance).to be_valid
-    end
-
-    it 'handles attendance with both event and attendance_list' do
-      attendance_list = create(:attendance_list)
-      attendance = build(:attendance, event: event, attendance_list: attendance_list)
-
-      # Should be valid, uniqueness based on event_id
+    it 'handles attendance without attendance_list' do
+      attendance = build(:attendance, attendance_list: nil)
       expect(attendance).to be_valid
     end
   end

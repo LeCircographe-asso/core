@@ -127,8 +127,8 @@ erDiagram
 ### 2.5 Présences et événements
 
 #### `Attendance`
-- **Lien** : `belongs_to :person`, `belongs_to :attendance_list` (optionnel), `belongs_to :event` (optionnel), `belongs_to :contribution`.
-- **Règles d'unicité** : `person_id + date` (entraînement libre) ou `person_id + event_id` (événement).
+- **Lien** : `belongs_to :person`, `belongs_to :attendance_list` (optionnel), `belongs_to :contribution`.
+- **Règles d'unicité** : `person_id + date`. Pas d'`event_id` : la présence à un événement passe par une `AttendanceList` de type `event`.
 - **Effet de bord** : décrémente la cotisation utilisée si applicable.
 
 #### `AttendanceList`

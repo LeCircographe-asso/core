@@ -130,10 +130,10 @@
 ### 1.5 Présences et événements
 
 #### Présence — `Attendance`
-- **Définition** : trace de présence d'une `Person`, soit pour l'entraînement libre quotidien, soit pour un événement. Ne pas confondre avec l'**intérêt pour un événement** (`EventInterest`), qui n'est pas une présence.
+- **Définition** : trace de présence d'une `Person`, pour l'entraînement libre quotidien ou pour un événement (via une `AttendanceList` de type `event`). Ne pas confondre avec l'**intérêt pour un événement** (`EventInterest`), qui n'est pas une présence.
 - **Règles** :
-  - Entraînement libre : unicité `person_id + date` (pas d'`event_id`). Décrémente la cotisation utilisée (`Contribution#use_session!`) si applicable.
-  - Événement : unicité `person_id + event_id`.
+  - Unicité `person_id + date`. Décrémente la cotisation utilisée (`Contribution#use_session!`) si applicable.
+  - Pas de lien direct vers `Event` : une présence à un événement passe par sa liste de présence.
 
 #### Liste de présence — `AttendanceList`
 - **Définition** : conteneur d'`Attendance` pour un jour ou un événement. Statuts : `:open`, `:close`, `:archived`. La liste « training » quotidienne est créée par `AttendanceListManagement::DailyListGenerator` (skip lundi).

@@ -34,9 +34,8 @@ RSpec.describe EventInterest, type: :model do
   end
 
   it 'never touches the daily training presence' do
-    create(:attendance, person: person, event: nil, date: Date.current)
+    create(:attendance, person: person, date: Date.current)
 
     expect { create(:event_interest, person: person, event: event) }.not_to change(Attendance, :count)
-    expect(person.attendances.find_by(date: Date.current).event_id).to be_nil
   end
 end

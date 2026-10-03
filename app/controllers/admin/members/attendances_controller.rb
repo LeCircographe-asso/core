@@ -30,7 +30,7 @@ module Admin
       end
 
       def load_state
-        @already_present_today = @person.attendances.where(date: Date.current, event_id: nil).exists?
+        @already_present_today = @person.attendances.where(date: Date.current).exists?
         @needs_membership = !@person.can_buy_contribution_formulas?
         @usable_contribution = @person.contributions.usable.detect(&:can_use?)
         @lender_query = params[:q].to_s.strip

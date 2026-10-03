@@ -78,12 +78,10 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_03_120000) do
     t.integer "contribution_id"
     t.datetime "created_at", null: false
     t.date "date", null: false
-    t.bigint "event_id"
     t.bigint "person_id", null: false
     t.datetime "updated_at", null: false
     t.integer "user_id"
-    t.index ["event_id"], name: "index_attendances_on_event_id"
-    t.index ["person_id", "date"], name: "index_attendances_on_person_id_and_date_without_event", unique: true, where: "event_id IS NULL"
+    t.index ["person_id", "date"], name: "index_attendances_on_person_id_and_date", unique: true
     t.index ["person_id"], name: "index_attendances_on_person_id"
   end
 
@@ -513,7 +511,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_03_120000) do
   add_foreign_key "account_claims", "users"
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
-  add_foreign_key "attendances", "events"
   add_foreign_key "attendances", "people"
   add_foreign_key "bug_report_widget_settings", "users", column: "updated_by_user_id"
   add_foreign_key "bug_reports", "people"

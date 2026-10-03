@@ -5,7 +5,7 @@ require "rails_helper"
 RSpec.describe AttendanceStatusComponent, type: :component do
   it "shows 'Présent' when the person has an attendance for the given date" do
     person = create(:person)
-    create(:attendance, person: person, date: Date.current, event: nil)
+    create(:attendance, person: person, date: Date.current)
 
     render_inline(described_class.new(person: person, date: Date.current))
 
@@ -14,15 +14,6 @@ RSpec.describe AttendanceStatusComponent, type: :component do
 
   it "shows 'Absent' when the person has no attendance for the given date" do
     person = create(:person)
-
-    render_inline(described_class.new(person: person, date: Date.current))
-
-    expect(rendered_content).to include("Absent")
-  end
-
-  it "ignores presences tied to an event when reporting the daily status" do
-    person = create(:person)
-    create(:attendance, person: person, date: Date.current, event: create(:event))
 
     render_inline(described_class.new(person: person, date: Date.current))
 
@@ -40,7 +31,7 @@ RSpec.describe AttendanceStatusComponent, type: :component do
 
   it "shows the check-in time in the tooltip when present" do
     person = create(:person)
-    attendance = create(:attendance, person: person, date: Date.current, event: nil)
+    attendance = create(:attendance, person: person, date: Date.current)
 
     render_inline(described_class.new(person: person, date: Date.current))
 

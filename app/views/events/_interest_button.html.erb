@@ -2,24 +2,22 @@
   <% if current_user.is_interested_in?(@event.id) %>
     <!-- Bouton "Ne plus être intéressé" -->
     <%= link_to event_interest_path(@event), 
-        method: :delete,
         class: "public-cta block w-full cursor-pointer text-center !bg-white !text-[#1F5C55] hover:!bg-[#1F5C55] hover:!text-white",
         data: { 
           turbo_method: :delete
         } do %>
-      <i class="fas fa-heart-broken mr-2"></i>
-      Ne plus être intéressé
+      <i class="fas fa-heart-broken mr-2" aria-hidden="true"></i>
+      <%= t("event_interests.button.remove") %>
     <% end %>
   <% else %>
     <!-- Bouton "Je suis intéressé" -->
     <%= link_to event_interests_path(event_id: @event.id), 
-        method: :post,
         class: "public-cta block w-full cursor-pointer text-center",
         data: { 
           turbo_method: :post
         } do %>
-      <i class="fas fa-heart mr-2"></i>
-      Je suis intéressé
+      <i class="fas fa-heart mr-2" aria-hidden="true"></i>
+      <%= t("event_interests.button.add") %>
     <% end %>
   <% end %>
   

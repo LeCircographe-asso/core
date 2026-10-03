@@ -24,7 +24,7 @@ RSpec.describe "EventInterests", type: :request do
     end
 
     it "fonctionne même si la personne s'est entraînée le jour même" do
-      create(:attendance, person: person, event: nil, date: Date.current)
+      create(:attendance, person: person, date: Date.current)
 
       post event_interests_path, params: { id: event.id }
 
@@ -32,10 +32,10 @@ RSpec.describe "EventInterests", type: :request do
       expect(user.is_interested_in?(event.id)).to be(true)
     end
 
-    it "envoie un email de confirmation à l'utilisateur" do
+    it "n'envoie pas d'email (un like ne mérite pas un courrier)" do
       expect do
         post event_interests_path, params: { id: event.id }
-      end.to have_enqueued_mail(UserMailer, :event_interest_confirmation).with(user, event)
+      end.not_to have_enqueued_mail(UserMailer)
     end
   end
 
@@ -50,8 +50,8 @@ RSpec.describe "EventInterests", type: :request do
       end
     end
 
-    context "sans like mais avec une présence liée à l'événement" do
-      before { create(:attendance, person: person, event: event, date: Date.current) }
+    context "sans like mais avec une présence du jour" do
+      before { create(:attendance, person: person, date: Date.current) }
 
       it "ne supprime pas la présence" do
         expect { delete event_interest_path(event.id) }.not_to change(Attendance, :count)

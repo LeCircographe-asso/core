@@ -17,7 +17,6 @@ fr:
         attendance:
           attributes:
             person_id:
-              event_presence_taken: est déjà marqué présent à cet événement
               daily_presence_taken: est déjà marqué présent aujourd'hui
         payment_line:
           attributes:
@@ -400,6 +399,13 @@ fr:
     destroy:
       interest_removed: Vous n'êtes plus intéressé par cet événement
       interest_remove_error: Erreur lors de la suppression de votre intérêt
+    button:
+      add: Je suis intéressé
+      remove: Ne plus être intéressé
+    count:
+      zero: "%{count} intéressé"
+      one: "%{count} intéressé"
+      other: "%{count} intéressés"
   passwords:
     create:
       reset_instructions_sent_generic: Instructions de réinitialisation du mot de passe envoyées (si un utilisateur avec cette adresse e-mail existe).
@@ -614,8 +620,6 @@ fr:
         subject: "Code de verification d'adresse email"
       membership_expiration_reminder:
         subject: Votre adhésion arrive à expiration !
-      event_interest_confirmation:
-        subject: "Intérêt confirmé : %{event_name}"
       contact_email:
         subject: "Nouveau message : %{category_label}"
         category_labels:
