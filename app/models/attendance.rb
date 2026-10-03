@@ -9,14 +9,14 @@ class Attendance < ApplicationRecord
   belongs_to :contribution, optional: true
 
   validates :date, presence: true
-  validates :person_id, uniqueness: {
-    scope: :event_id,
-    message: :event_interest_taken
-  }, if: -> { event_id.present? }
-  validates :person_id, uniqueness: {
-    scope: :date,
-    message: :daily_presence_taken
-  }, if: -> { event_id.nil? }
+  # L'intérêt pour un événement (event_id présent) n'est qu'un compteur de
+  # "like" par compte web : une personne peut s'intéresser à plusieurs
+  # événements le même jour, et ça ne doit pas entrer en conflit avec sa
+  # présence d'entraînement du jour. Seule la présence d'entraînement
+  # (event_id nil) reste unique par jour — cf. index DB dédiés sur
+  # attendances (migration SplitAttendanceUniquenessForEventInterest).
+  validates :person_id, uniqueness: { scope: :event_id, message: :event_interest_taken }, if: -> { event_id.present? }
+  validates :person_id, uniqueness: { scope: :date, message: :daily_presence_taken }, if: -> { event_id.nil? }
 
   before_create :set_date_if_missing
   after_create :decrement_contribution, if: -> { attendance_list_id.present? }
