@@ -1,10 +1,20 @@
 # Seeds — données de référence + population aléatoire volumique.
 # Voir docs/glossary.md pour le vocabulaire canonique.
+#
+# Deux profils (voir Seeds::Profile) :
+#   - demo (development/test, ou SEED_DEMO=true hors production) : remise à zéro complète + jeu de démo.
+#   - contenu seul (staging/production par défaut) : FAQ, conseil d'administration, partenaires, galerie,
+#     seulement si leur table est vide. Ne supprime rien, ne crée aucun compte.
+# `db:prepare` lance ce fichier au premier boot d'une base fraîche : ne jamais y rendre la démo
+# accessible en production.
 
+SEED_DEMO = Seeds::Profile.demo?
 SEED_VERBOSE = ActiveModel::Type::Boolean.new.cast(ENV["SEED_VERBOSE"])
 SEED_FAST_TEST = ActiveModel::Type::Boolean.new.cast(ENV["SEED_FAST_TEST"])
 SEED_LEAN = ActiveModel::Type::Boolean.new.cast(ENV["SEED_LEAN"])
 SEED_TICK_SECONDS = ENV.fetch("SEED_TICK_SECONDS", "1.6").to_f.clamp(0.25, 5.0)
+# Sortie de la barre de progression : capturée avant que load_seed_file ne coupe $stdout.
+SEED_PROGRESS_IO = $stdout
 
 SYSTEM_ACCOUNTS = [
   ["Super Admin", "super-admin@rails.com", "123456"],
@@ -59,8 +69,9 @@ def render_progress(current, total, label, action:)
   bar = ("#" * filled).ljust(width, "-")
   percent = (current * 100 / total.to_f).round
 
-  print "\r\e[2K[#{bar}] #{percent.to_s.rjust(3)}%  #{action}: #{label}"
-  puts if current == total
+  SEED_PROGRESS_IO.print "\r\e[2K[#{bar}] #{percent.to_s.rjust(3)}%  #{action}: #{label}"
+  SEED_PROGRESS_IO.puts if current == total
+  SEED_PROGRESS_IO.flush
 end
 
 def render_step(current, total, label, started_at)
@@ -110,6 +121,28 @@ def seed_fast_tick(message)
   sleep(SEED_TICK_SECONDS)
 end
 
+unless SEED_DEMO
+  puts "Le Circographe — seeds de contenu (#{Rails.env}) : FAQ, conseil d'administration, partenaires, galerie"
+  puts "Aucune donnée existante n'est supprimée. Comptes et catalogue (types d'adhésion, formules de cotisation) : à créer via l'admin."
+
+  Seeds::Profile::CONTENT_SEEDS.each do |filename, model_name|
+    model = model_name.constantize
+
+    if model.exists?
+      puts "  = #{filename} ignoré : #{model.count} #{model_name} déjà présent(s)"
+    else
+      load_seed_file(filename)
+      puts "  + #{filename} : #{model.count} #{model_name} créé(s)"
+    end
+  end
+
+  return
+end
+
+# Données de démo uniquement (jamais en production, cf. `return` ci-dessus) : bcrypt au coût minimal
+# pour ne pas passer l'essentiel de la seed à hacher les mots de passe des comptes générés.
+BCrypt::Engine.cost = BCrypt::Engine::MIN_COST
+
 print_seed_banner
 total_started_at = Process.clock_gettime(Process::CLOCK_MONOTONIC)
 reset_started_at = Process.clock_gettime(Process::CLOCK_MONOTONIC)
@@ -133,7 +166,21 @@ else
     step_started_at = Process.clock_gettime(Process::CLOCK_MONOTONIC)
     render_step(index, SEED_STEPS.size, label, step_started_at)
     puts if SEED_VERBOSE
-    load_seed_file(filename)
+    # La sortie des fichiers est coupée : sans ce ticker, la barre resterait figée sur « 0.0s »
+    # pendant toute l'étape (populate.rb dure plusieurs secondes).
+    ticker = unless SEED_VERBOSE
+      Thread.new do
+        loop do
+          sleep 0.5
+          render_step(index, SEED_STEPS.size, label, step_started_at)
+        end
+      end
+    end
+    begin
+      load_seed_file(filename)
+    ensure
+      ticker&.kill&.join
+    end
     render_progress(index + 1, SEED_STEPS.size, "#{label} (#{format('%.1fs', Process.clock_gettime(Process::CLOCK_MONOTONIC) - step_started_at)})", action: "ok")
   end
 end

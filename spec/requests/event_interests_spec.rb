@@ -5,38 +5,65 @@ require "rails_helper"
 RSpec.describe "EventInterests", type: :request do
   let(:person) { create(:person) }
   let(:user)   { create(:user, person: person) }
-  let(:event)  { create(:event) }
+  let(:event)  { create(:event, status: :published) }
 
   before { login_as(user) }
 
   describe "POST /event_interests" do
-    it "crée une présence et redirige vers l'événement" do
-      post event_interests_path, params: { id: event.id }
+    it "enregistre un like et redirige vers l'événement" do
+      expect do
+        post event_interests_path, params: { id: event.id }
+      end.to change(user.event_interests, :count).by(1)
       expect(response).to redirect_to(event)
     end
 
-    it "envoie un email de confirmation à l'utilisateur" do
+    it "ne crée aucune présence" do
       expect do
         post event_interests_path, params: { id: event.id }
-      end.to have_enqueued_mail(UserMailer, :event_interest_confirmation).with(user, event)
+      end.not_to change(Attendance, :count)
+    end
+
+    it "fonctionne même si la personne s'est entraînée le jour même" do
+      create(:attendance, person: person, date: Date.current)
+
+      post event_interests_path, params: { id: event.id }
+
+      expect(flash[:notice]).to be_present
+      expect(user.is_interested_in?(event.id)).to be(true)
+    end
+
+    it "refuse de liker un brouillon" do
+      draft = create(:event, status: :draft)
+
+      expect do
+        post event_interests_path, params: { id: draft.id }
+      end.not_to change(EventInterest, :count)
+      expect(response).to have_http_status(:not_found)
+    end
+
+    it "n'envoie pas d'email (un like ne mérite pas un courrier)" do
+      expect do
+        post event_interests_path, params: { id: event.id }
+      end.not_to have_enqueued_mail(UserMailer)
     end
   end
 
   describe "DELETE /event_interests/:id" do
-    context "avec une présence existante" do
-      before { create(:attendance, person: person, event: event, date: Date.current) }
+    context "avec un like existant" do
+      before { create(:event_interest, user: user, event: event) }
 
-      it "supprime la présence et redirige vers l'événement" do
-        delete event_interest_path(event.id)
+      it "supprime le like et redirige vers l'événement" do
+        expect { delete event_interest_path(event.id) }.to change(EventInterest, :count).by(-1)
         expect(response).to redirect_to(event)
         expect(flash[:notice]).to be_present
       end
     end
 
-    context "sans présence existante" do
-      it "redirige avec une alerte" do
-        delete event_interest_path(event.id)
-        expect(response).to redirect_to(event)
+    context "sans like mais avec une présence du jour" do
+      before { create(:attendance, person: person, date: Date.current) }
+
+      it "ne supprime pas la présence" do
+        expect { delete event_interest_path(event.id) }.not_to change(Attendance, :count)
         expect(flash[:alert]).to be_present
       end
     end

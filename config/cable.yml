@@ -10,10 +10,18 @@ test:
 
 staging:
   adapter: solid_cable
+  connects_to:
+    database:
+      writing: cable
   polling_interval: 0.1.seconds
   message_retention: 1.day
 
 production:
   adapter: solid_cable
+  # Base `cable` de la structure imbriquée (config/database.yml) ; sans connects_to, Solid Cable
+  # chercherait solid_cable_messages dans la base principale, où la table n'existe pas.
+  connects_to:
+    database:
+      writing: cable
   polling_interval: 0.1.seconds
   message_retention: 1.day

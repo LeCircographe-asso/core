@@ -9,10 +9,21 @@ fi
 # If running the rails server then create or migrate existing database
 if [ "${@: -2:1}" == "./bin/rails" ] && [ "${@: -1:1}" == "server" ]; then
   # Disaster recovery : volume perdu/VPS recréé en prod (storage/production.sqlite3 absent).
-  # Restaure depuis IONOS via Litestream avant db:prepare plutôt que de repartir d'une base vide.
+  # Restaure depuis Scaleway Object Storage via Litestream avant db:prepare plutôt que de repartir d'une base vide.
+  # -if-replica-exists : tout premier déploiement (bucket joignable mais vide) = simple INFO
+  # « no matching backups found », db:prepare crée alors la base.
+  # La tâche litestream:restore sort TOUJOURS en code 0, même en erreur (bucket non configuré,
+  # injoignable, clés invalides) : on lit donc sa sortie et on arrête le conteneur sur toute erreur
+  # plutôt que de repartir d'une base neuve qui masquerait — puis répliquerait par-dessus — les
+  # vraies données.
   if [ "${RAILS_ENV:-}" == "production" ] && [ ! -f storage/production.sqlite3 ]; then
-    echo "[production] storage/production.sqlite3 absent — restauration Litestream depuis IONOS..."
-    ./bin/rails litestream:restore -- -database=storage/production.sqlite3
+    echo "[production] storage/production.sqlite3 absent — restauration Litestream depuis Scaleway (si une réplique existe)..."
+    restore_log=$(./bin/rails litestream:restore -- -database=storage/production.sqlite3 -if-replica-exists 2>&1) || true
+    echo "${restore_log}"
+    if grep -q "level=ERROR" <<< "${restore_log}"; then
+      echo "[production] restauration Litestream en erreur — arrêt pour ne pas créer une base vide à la place des données réelles." >&2
+      exit 1
+    fi
   fi
 
   echo "[${RAILS_ENV:-development}] Preparing database (db:prepare)..."

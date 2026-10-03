@@ -16,11 +16,14 @@ git merge dev
 git push origin staging
 # → .github/workflows/deploy-staging.yml se déclenche
 
-git checkout main
-git merge staging
-git push origin main
-# → .github/workflows/deploy-production.yml se déclenche
+# Production : jamais de merge ni de push manuel sur main.
+# GitHub → Actions → deploy-promote-to-main → Run workflow → saisir PROMOTE
+# → merge staging dans main, puis lance .github/workflows/deploy-production.yml
+# (refusé si le dernier deploy-staging n'a pas réussi)
 ```
+
+Un push sur `main` ne déploie **pas** la production : seul le promote (ou un
+`gh workflow run deploy-production.yml --ref main` volontaire) la déploie.
 
 **Règle d'or — Aucune modification directe sur `staging` ni `main`.**
 Toujours créer une branche dédiée :

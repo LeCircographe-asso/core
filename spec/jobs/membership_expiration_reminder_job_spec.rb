@@ -48,6 +48,28 @@ RSpec.describe MembershipExpirationReminderJob, type: :job do
       end
     end
 
+    context "avec un adhérent sans compte web" do
+      let(:member_without_account) { create(:person) }
+      let!(:membership) { create(:membership, person: member_without_account, ended_at: 30.days.from_now.to_date, status: :active) }
+
+      it "envoie quand même le rappel à la personne" do
+        perform_enqueued_jobs { described_class.perform_now }
+
+        expect(ActionMailer::Base.deliveries.map(&:to)).to include([ member_without_account.email ])
+      end
+    end
+
+    context "avec un adhérent sans email" do
+      let!(:membership) { create(:membership, person: person, ended_at: 30.days.from_now.to_date, status: :active) }
+
+      before { person.update!(email: nil) }
+
+      it "n'envoie pas d'email" do
+        expect { described_class.perform_now }
+          .not_to have_enqueued_mail(UserMailer, :membership_expiration_reminder)
+      end
+    end
+
     context "sans adhésion concernée" do
       it "n'envoie aucun email" do
         expect { described_class.perform_now }

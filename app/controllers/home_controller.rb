@@ -6,7 +6,7 @@ class HomeController < ApplicationController
   allow_unauthenticated_access only: %i[index font_examples]
 
   def index
-    @upcoming_events = Event.upcoming.by_date.limit(1)
+    @upcoming_events = Event.published.upcoming.by_date.limit(1)
     @opening_hours = current_opening_hours
     @exceptional_closure = current_exceptional_closure
   end

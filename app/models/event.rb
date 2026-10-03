@@ -6,8 +6,7 @@ class Event < ApplicationRecord
 
   # Relations — voir docs/domain_model.md.
   belongs_to :creator, class_name: "User"
-  has_many :attendances, dependent: :destroy
-  has_many :people, through: :attendances
+  has_many :event_interests, dependent: :destroy
   # `event_attendees` reste réservé à une future billetterie en ligne (non
   # implémentée) — voir docs/glossary.md. Les présences "registre" passent
   # par `attendances`.
@@ -22,6 +21,10 @@ class Event < ApplicationRecord
     volunteering: 2,
     other: 3
   }
+
+  # Brouillon tant qu'un admin ne l'a pas publié explicitement — voir
+  # events_controller#show et les scopes publics (home, /actualites).
+  enum :status, { draft: 0, published: 1 }
 
   # Scopes
   scope :shows, -> { where(category: :show) }
@@ -38,16 +41,6 @@ class Event < ApplicationRecord
   scope :by_date, -> { order(:date) }
 
   # Méthodes
-  def is_person_registered?(person)
-    attendances.exists?(person: person)
-  end
-
-  # Présence "registre" : ne consulte jamais `event_attendees` (billetterie).
-  def is_user_registered?(user)
-    return false unless user&.person
-
-    is_person_registered?(user.person)
-  end
 
   # Méthode pour obtenir le nom (compatibilité)
   def title

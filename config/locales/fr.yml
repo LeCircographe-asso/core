@@ -17,7 +17,6 @@ fr:
         attendance:
           attributes:
             person_id:
-              event_interest_taken: est déjà intéressé par cet événement
               daily_presence_taken: est déjà marqué présent aujourd'hui
         payment_line:
           attributes:
@@ -212,6 +211,13 @@ fr:
         updated: Événement modifié avec succès
       destroy:
         destroyed_notice: Événement supprimé avec succès
+      publication:
+        status_label: Statut
+        statuses:
+          draft: Brouillon
+          published: Publié
+        status_hint: Un brouillon n'apparaît jamais sur les pages publiques.
+        is_demo_label: Événement de test (badge « démo » visible publiquement)
     membership_types:
       create:
         html_notice: Type d'adhésion créé avec succès !
@@ -387,12 +393,18 @@ fr:
       error: Une erreur est survenue lors de l'envoi. Réessayez dans quelques instants.
   event_interests:
     create:
-      profile_incomplete: Votre profil n'est pas complet. Veuillez contacter l'administration.
       interest_added: Vous êtes maintenant intéressé par cet événement !
       interest_error: Erreur lors de l'ajout de votre intérêt
     destroy:
       interest_removed: Vous n'êtes plus intéressé par cet événement
       interest_remove_error: Erreur lors de la suppression de votre intérêt
+    button:
+      add: Je suis intéressé
+      remove: Ne plus être intéressé
+    count:
+      zero: "%{count} intéressé"
+      one: "%{count} intéressé"
+      other: "%{count} intéressés"
   omniauth_callbacks:
     failure_alert: La connexion avec Google a échoué. Merci de réessayer.
     invalid_credentials: Impossible de vérifier votre compte Google.
@@ -588,6 +600,7 @@ fr:
       newsletter_update_failed: "Erreur lors de la mise à jour newsletter : %{message}"
       user_not_found: "Utilisateur introuvable : %{message}"
       register_existing_web_account: "Cette personne a déjà un compte web."
+      super_admin_already_exists: "Un super-admin existe déjà : les autres comptes se créent depuis l'interface d'administration."
   mailers:
     account_claim_mailer:
       confirmation_email:
@@ -601,6 +614,8 @@ fr:
     passwords_mailer:
       reset:
         subject: Réinitialisez votre mot de passe
+      changed:
+        subject: Votre mot de passe a été modifié
     user_mailer:
       welcome_by_admin:
         subject: 'Bienvenue au Circographe ! '
@@ -610,8 +625,6 @@ fr:
         subject: "Code de verification d'adresse email"
       membership_expiration_reminder:
         subject: Votre adhésion arrive à expiration !
-      event_interest_confirmation:
-        subject: "Intérêt confirmé : %{event_name}"
       contact_email:
         subject: "Nouveau message : %{category_label}"
         category_labels:
@@ -680,6 +693,7 @@ fr:
   layouts:
     application:
       title: Le Circographe
+      description: Le Circographe, lieu de cirque vivant, d'entraînement, de rencontres et d'ateliers à Toulouse.
   views:
     shared:
       flash:

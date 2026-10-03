@@ -244,6 +244,13 @@ en:
         updated: Événement modifié avec succès
       destroy:
         destroyed_notice: Événement supprimé avec succès
+      publication:
+        status_label: Status
+        statuses:
+          draft: Draft
+          published: Published
+        status_hint: A draft never appears on public pages.
+        is_demo_label: Test event (public "demo" badge)
     membership_types:
       create:
         html_notice: Type d'adhésion créé avec succès !
@@ -337,6 +344,7 @@ en:
   layouts:
     application:
       title: Le Circographe
+      description: Le Circographe, a living circus venue for training, meetups and workshops in Toulouse.
   views:
     shared:
       flash:
@@ -457,6 +465,7 @@ en:
       newsletter_update_failed: "Error updating newsletter: %{message}"
       user_not_found: "User not found: %{message}"
       register_existing_web_account: "This person already has a web account."
+      super_admin_already_exists: "A super admin already exists: create other accounts from the admin interface."
     web:
       user_registration:
         accept_cgu: Vous devez accepter les CGU pour continuer.
@@ -492,12 +501,18 @@ en:
       error: Something went wrong while sending. Please try again in a moment.
   event_interests:
     create:
-      profile_incomplete: Votre profil n'est pas complet. Veuillez contacter l'administration.
-      interest_added: Vous êtes maintenant intéressé par cet événement !
-      interest_error: Erreur lors de l'ajout de votre intérêt
+      interest_added: You are now interested in this event!
+      interest_error: Could not save your interest
     destroy:
-      interest_removed: Vous n'êtes plus intéressé par cet événement
-      interest_remove_error: Erreur lors de la suppression de votre intérêt
+      interest_removed: You are no longer interested in this event
+      interest_remove_error: Could not remove your interest
+    button:
+      add: I'm interested
+      remove: Not interested anymore
+    count:
+      zero: "%{count} interested"
+      one: "%{count} interested"
+      other: "%{count} interested"
   omniauth_callbacks:
     failure_alert: Google sign-in failed. Please try again.
     invalid_credentials: We could not verify your Google account.
@@ -654,9 +669,9 @@ en:
         body: Please find attached your donation receipt #%{number}. Thank you for supporting the association!
     passwords_mailer:
       reset:
-        subject: Réinitialisez votre mot de passe
+        subject: Reset your password
       changed:
-        subject: Votre mot de passe a été modifié
+        subject: Your password has been changed
     user_mailer:
       welcome_by_admin:
         subject: 'Bienvenue au Circographe ! '
@@ -666,8 +681,6 @@ en:
         subject: "Email change verification code"
       membership_expiration_reminder:
         subject: Votre adhésion arrive à expiration !
-      event_interest_confirmation:
-        subject: "Interest confirmed: %{event_name}"
       contact_email:
         subject: "New message: %{category_label}"
         category_labels:
@@ -682,7 +695,6 @@ en:
         attendance:
           attributes:
             person_id:
-              event_interest_taken: est déjà intéressé par cet événement
               daily_presence_taken: est déjà marqué présent aujourd'hui
         payment_line:
           attributes:

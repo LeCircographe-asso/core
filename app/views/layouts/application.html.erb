@@ -4,7 +4,13 @@
 <head>
     <title><%= content_for(:title) || t("layouts.application.title") %></title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <meta name="description" content="Le Circographe, lieu de cirque vivant, d'entraînement, de rencontres et d'ateliers à Toulouse.">
+    <meta name="description" content="<%= content_for(:description) || t("layouts.application.description") %>">
+    <meta name="robots" content="<%= robots_meta_content %>">
+    <link rel="canonical" href="<%= request.original_url.split("?").first %>">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="<%= content_for(:title) || t("layouts.application.title") %>">
+    <meta property="og:description" content="<%= content_for(:description) || t("layouts.application.description") %>">
+    <meta property="og:image" content="<%= content_for(:og_image) || "#{request.base_url}/icon.png" %>">
     <meta name="theme-color" content="#1F5C55">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">

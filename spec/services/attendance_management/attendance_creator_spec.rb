@@ -4,14 +4,12 @@ require 'rails_helper'
 
 RSpec.describe AttendanceManagement::AttendanceCreator do
   let(:person) { create(:person) }
-  let(:event) { create(:event) }
 
   describe '#call' do
     context 'with valid attributes' do
       it 'creates attendance successfully' do
         creator = described_class.new(
-          person_id: person.id,
-          event_id: event.id
+          person_id: person.id
         )
 
         result = creator.call
@@ -19,13 +17,11 @@ RSpec.describe AttendanceManagement::AttendanceCreator do
         expect(result.success?).to be true
         expect(result.attendance).to be_present
         expect(result.attendance.person).to eq(person)
-        expect(result.attendance.event).to eq(event)
       end
 
       it 'sets date to current date if not provided' do
         creator = described_class.new(
-          person_id: person.id,
-          event_id: event.id
+          person_id: person.id
         )
 
         result = creator.call
@@ -38,7 +34,6 @@ RSpec.describe AttendanceManagement::AttendanceCreator do
 
         creator = described_class.new(
           person_id: person.id,
-          event_id: event.id,
           date: custom_date
         )
 
@@ -50,7 +45,7 @@ RSpec.describe AttendanceManagement::AttendanceCreator do
 
     context 'with invalid attributes' do
       it 'returns failure when person_id is missing' do
-        creator = described_class.new(event_id: event.id)
+        creator = described_class.new(date: Date.current)
 
         result = creator.call
         expect(result.success?).to be false
@@ -59,8 +54,7 @@ RSpec.describe AttendanceManagement::AttendanceCreator do
 
       it "returns failure when person doesn't exist" do
         creator = described_class.new(
-          person_id: 99_999,
-          event_id: event.id
+          person_id: 99_999
         )
 
         result = creator.call
@@ -71,11 +65,10 @@ RSpec.describe AttendanceManagement::AttendanceCreator do
 
     context 'with validation errors' do
       it 'returns failure when duplicate attendance exists' do
-        create(:attendance, person: person, event: event)
+        create(:attendance, person: person)
 
         creator = described_class.new(
-          person_id: person.id,
-          event_id: event.id
+          person_id: person.id
         )
 
         result = creator.call
@@ -221,8 +214,7 @@ RSpec.describe AttendanceManagement::AttendanceCreator do
       it 'fires attendance.created notification' do
         expect do
           creator = described_class.new(
-            person_id: person.id,
-            event_id: event.id
+            person_id: person.id
           )
           creator.call
         end.to instrument('attendance.created')

@@ -42,7 +42,9 @@ env:
     STAGING_AUTH: true
     STAGING_PASSWORD: <%= ENV.fetch("STAGING_PASSWORD", "") %>
     PUBLIC_REGISTRATION_ENABLED: false
-    # Seed : défaut SEED_LEAN + SEED_POPULATION_COUNT dans populate.rb (staging rapide)
+    # Cold start staging = cold start prod : db/seeds.rb ne charge que FAQ, conseil d'administration
+    # et partenaires (pas de comptes, pas de catalogue). Le jeu de démo est opt-in via l'alias
+    # reset_db_demo (SEED_DEMO=true) ; SEED_LEAN / SEED_POPULATION_COUNT ne servent alors qu'à lui.
     SEED_LEAN: true
     SEED_POPULATION_COUNT: "38"
     RAILS_SERVE_STATIC_FILES: true
@@ -58,7 +60,11 @@ aliases:
   shell: app exec --interactive --reuse "bash"
   logs: app logs -f
   prepare_db: app exec --reuse "bin/rails db:prepare"
-  reset_db: app exec --reuse "sh -lc 'bin/rails db:migrate:reset && bin/rails db:seed'"
+  # Répétition du premier boot prod : schema:load + seeds de contenu seuls. Ensuite : create_super_admin.
+  reset_db: app exec --reuse "bin/rails db:reset"
+  # Idem avec comptes système (mot de passe 123456) + catalogue + population aléatoire, pour tester l'UX.
+  reset_db_demo: app exec --reuse "sh -lc 'SEED_DEMO=true bin/rails db:reset'"
+  create_super_admin: app exec --interactive --reuse "bin/rails circographe:create_super_admin"
 
 # La BDD staging reste volatile, mais le reset/seed ne doit plus bloquer le boot du web.
 

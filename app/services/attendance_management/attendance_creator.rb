@@ -3,7 +3,6 @@
 module AttendanceManagement
   class AttendanceCreator < BaseService
     attribute :person_id, :integer
-    attribute :event_id, :integer
     attribute :attendance_list_id, :integer
     attribute :contribution_id, :integer
     attribute :date, :date
@@ -18,7 +17,6 @@ module AttendanceManagement
 
         attendance = Attendance.create!(
           person: person,
-          event_id: event_id,
           attendance_list_id: attendance_list_id,
           contribution_id: contribution_id,
           date: date || Date.current
@@ -28,7 +26,6 @@ module AttendanceManagement
           "attendance.created",
           attendance_id: attendance.id,
           person_id: person_id,
-          event_id: event_id,
           attendance_list_id: attendance_list_id,
           contribution_id: contribution_id
         )

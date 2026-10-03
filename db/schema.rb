@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_09_21_003530) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_03_120000) do
   create_table "account_claims", force: :cascade do |t|
     t.string "confirmation_token", null: false
     t.datetime "created_at", null: false
@@ -78,11 +78,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_21_003530) do
     t.integer "contribution_id"
     t.datetime "created_at", null: false
     t.date "date", null: false
-    t.bigint "event_id"
     t.bigint "person_id", null: false
     t.datetime "updated_at", null: false
     t.integer "user_id"
-    t.index ["event_id"], name: "index_attendances_on_event_id"
     t.index ["person_id", "date"], name: "index_attendances_on_person_id_and_date", unique: true
     t.index ["person_id"], name: "index_attendances_on_person_id"
   end
@@ -211,6 +209,15 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_21_003530) do
     t.index ["user_id"], name: "index_event_attendees_on_user_id"
   end
 
+  create_table "event_interests", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.integer "event_id", null: false
+    t.datetime "updated_at", null: false
+    t.integer "user_id", null: false
+    t.index ["event_id"], name: "index_event_interests_on_event_id"
+    t.index ["user_id", "event_id"], name: "index_event_interests_on_user_id_and_event_id", unique: true
+  end
+
   create_table "events", force: :cascade do |t|
     t.text "bottom_description"
     t.integer "category", default: 0
@@ -218,15 +225,18 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_21_003530) do
     t.bigint "creator_id", null: false
     t.datetime "date", null: false
     t.text "description"
+    t.boolean "is_demo", default: true, null: false
     t.string "location"
     t.text "middle_description"
     t.string "name", null: false
     t.string "picture_url"
+    t.integer "status", default: 0, null: false
     t.datetime "updated_at", null: false
     t.text "upper_description"
     t.index ["category"], name: "index_events_on_category"
     t.index ["creator_id"], name: "index_events_on_creator_id"
     t.index ["date"], name: "index_events_on_date"
+    t.index ["status"], name: "index_events_on_status"
   end
 
   create_table "exceptional_closures", force: :cascade do |t|
@@ -504,7 +514,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_21_003530) do
   add_foreign_key "account_claims", "users"
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
-  add_foreign_key "attendances", "events"
   add_foreign_key "attendances", "people"
   add_foreign_key "bug_report_widget_settings", "users", column: "updated_by_user_id"
   add_foreign_key "bug_reports", "people"
@@ -517,6 +526,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_21_003530) do
   add_foreign_key "event_attendees", "events"
   add_foreign_key "event_attendees", "payments"
   add_foreign_key "event_attendees", "users"
+  add_foreign_key "event_interests", "events"
+  add_foreign_key "event_interests", "users"
   add_foreign_key "events", "users", column: "creator_id"
   add_foreign_key "exceptional_closures", "users", column: "updated_by_user_id"
   add_foreign_key "member_number_histories", "people"

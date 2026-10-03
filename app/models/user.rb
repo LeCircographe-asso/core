@@ -33,6 +33,7 @@ class User < ApplicationRecord
   has_many :sessions, dependent: :destroy
   has_many :event_attendees, dependent: :destroy
   has_many :events, through: :event_attendees
+  has_many :event_interests, dependent: :destroy
 
   # Relations via Person (nouvelles)
   has_many :memberships, through: :person
@@ -95,7 +96,10 @@ class User < ApplicationRecord
 
     if created_by_admin?
       # Generate password reset URL for admin-created users
-      reset_url = Rails.application.routes.url_helpers.edit_password_url(token: password_reset_token)
+      # Hors requête (rake, console, service), les url_helpers n'ont aucun hôte : on réutilise celui du mailer.
+      reset_url = Rails.application.routes.url_helpers.edit_password_url(
+        token: password_reset_token, **Rails.application.config.action_mailer.default_url_options.to_h
+      )
       UserMailer.welcome_by_admin(self, reset_url).deliver_later
     else
       UserMailer.welcome_email(self).deliver_later
@@ -224,11 +228,8 @@ class User < ApplicationRecord
     errors.add(:email_address, "entre en conflit avec l'email d'une autre personne")
   end
 
-  # Check if user is interested in an event (Person-Based Architecture)
   def is_interested_in?(event_id)
-    return false unless person
-
-    person.attendances.exists?(event_id: event_id)
+    event_interests.exists?(event_id: event_id)
   end
 
   def store_email_change_request!(new_email:, code:)
