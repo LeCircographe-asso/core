@@ -12,7 +12,7 @@ class ApplicationController < ActionController::Base
 
   before_action :set_robots_header
 
-  helper_method :bug_report_widget_enabled?, :robots_meta_content, :umami_website_id
+  helper_method :bug_report_widget_enabled?, :robots_meta_content, :umami_website_id, :umami_session_replay_enabled?
 
   # Catch-all cible de la route "*unmatched" (doit rester la dernière route de config/routes.rb).
   # Rend la même page 404 statique que Rails sert déjà par défaut, mais en passant par un
@@ -73,6 +73,14 @@ class ApplicationController < ActionController::Base
     return nil unless Rails.env.staging? || Rails.env.production?
 
     Rails.application.credentials.dig(:umami, Rails.env.to_sym, :website_id)
+  end
+
+  # Session replay/heatmap captures on-screen interaction, not just page views —
+  # deliberately staging-only until a privacy review clears it for production
+  # (public forms can show personal data on screen). Not a credential: this is a
+  # scope restriction to revisit in code, not a toggle to flip per environment.
+  def umami_session_replay_enabled?
+    Rails.env.staging?
   end
 
   def navigation_streams

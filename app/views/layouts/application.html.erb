@@ -44,6 +44,9 @@
         cookieless, no consent banner needed. See docs/operations/analytics.md. %>
     <% if umami_website_id && !controller_path.start_with?("admin/") %>
     <script defer src="https://analytics.lecircographe.fr/script.js" data-website-id="<%= umami_website_id %>"></script>
+    <% if umami_session_replay_enabled? %>
+    <script defer src="https://analytics.lecircographe.fr/recorder.js" data-website-id="<%= umami_website_id %>"></script>
+    <% end %>
     <% end %>
 </head>
 

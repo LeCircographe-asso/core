@@ -122,26 +122,60 @@ backoffice (`controller_path.start_with?("admin/")`) :
 CSP (`config/initializers/content_security_policy.rb`) mise à jour :
 `analytics.lecircographe.fr` ajouté à `script-src` (chargement du script)
 et `connect-src` (beacon d'envoi des events) — sans ça le navigateur
-bloque silencieusement le tracking.
+bloque silencieusement le tracking. Même domaine pour `recorder.js`, pas
+d'ajout CSP supplémentaire nécessaire.
 
-Credentials à ajouter (`bin/rails credentials:edit`) :
+### Heatmap / session replay (`recorder.js`)
+
+Capture les interactions à l'écran (clics, scroll, potentiellement du
+texte visible), pas juste des pages vues — plus sensible RGPD qu'un
+compteur de trafic. Gardé **staging uniquement pour le moment**, en dur
+dans le code (`umami_session_replay_enabled?` → `Rails.env.staging?`),
+pas via credential : c'est une restriction de scope à lever après revue
+vie privée, pas un flag à bascule par environnement.
+
+```ruby
+def umami_session_replay_enabled?
+  Rails.env.staging?
+end
+```
+
+```erb
+<% if umami_session_replay_enabled? %>
+<script defer src="https://analytics.lecircographe.fr/recorder.js" data-website-id="<%= umami_website_id %>"></script>
+<% end %>
+```
+
+### Credentials
+
+Site staging créé (03/10/2026) : `website_id = 6a944fd7-3168-4fdc-b1a9-735479b90af5`.
+
+```bash
+bin/rails credentials:edit
+```
 ```yaml
 umami:
   staging:
-    website_id: <uuid du site staging créé dans l'admin Umami>
-  production:
-    website_id: <uuid du site prod, à créer après validation staging>
+    website_id: 6a944fd7-3168-4fdc-b1a9-735479b90af5
+  # production:
+  #   website_id: <uuid du site prod, à créer après validation staging>
 ```
+
+À lancer en local (si tu as `config/master.key`) ou sur le VPS via
+`bin/kamal app exec --interactive --reuse "bin/rails credentials:edit" -c config/deploy.staging.yml`
+une fois la branche déployée — l'édition écrit dans `config/credentials.yml.enc`,
+à committer et déployer ensuite.
 
 ## Reste à faire
 
 - [x] Déployer le stack sur le VPS (prod + staging partagés)
 - [x] Brancher la route `kamal-proxy` avec SSL
-- [x] Code front (helper + tag layout + CSP)
+- [x] Code front (helper + tag layout + CSP), tag recorder staging-only
 - [ ] Changer le mot de passe admin Umami par défaut
-- [ ] Créer le site **staging** dans l'admin Umami, récupérer le `website_id`
+- [x] Créer le site **staging** dans l'admin Umami, récupérer le `website_id`
 - [ ] Ajouter `umami.staging.website_id` aux credentials, déployer sur staging
 - [ ] Valider quelques jours de trafic staging dans le dashboard Umami
+- [ ] Revue vie privée avant d'envisager le recorder en prod
 - [ ] Créer le site **prod**, ajouter `umami.production.website_id`
 - [ ] Backup `pg_dump` cron séparé des backups SQLite existants (voir `docs/backup-restore.md`)
 - [ ] Définir une politique de rétention des pageviews dans l'admin Umami
