@@ -50,6 +50,14 @@ jobs:
       KAMAL_REGISTRY_PASSWORD: ${{ secrets.KAMAL_REGISTRY_PASSWORD }}
     steps:
       - uses: actions/checkout@v6
+      # TEMPORARY DEBUG — remove once RAILS_MASTER_KEY propagation is fixed.
+      # Logs lengths only, never the secret values themselves.
+      - name: Debug secret lengths (temporary)
+        run: |
+          echo "RAILS_MASTER_KEY length: ${#RAILS_MASTER_KEY}"
+          echo "SECRET_KEY_BASE length: ${#SECRET_KEY_BASE}"
+          echo ".kamal/secrets resolved RAILS_MASTER_KEY length:"
+          bash -c 'source .kamal/secrets >/dev/null 2>&1; echo "${#RAILS_MASTER_KEY}"'
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: "4.0.1"
