@@ -55,7 +55,7 @@ RSpec.describe UserMailer, type: :mailer do
       mail = described_class.contact_email("Ada", "ada@example.com", "Hello", "creative_hosting", "team@example.com")
 
       label = I18n.t("mailers.user_mailer.contact_email.category_labels.creative_hosting")
-      expect(mail.subject).to eq(I18n.t("mailers.user_mailer.contact_email.subject", category_label: label))
+      expect(mail.subject).to eq("[contact-creative_hosting] #{I18n.t("mailers.user_mailer.contact_email.subject", category_label: label)}")
       expect(mail.reply_to).to eq([ "ada@example.com" ])
 
       body = mail.html_part.body.decoded
