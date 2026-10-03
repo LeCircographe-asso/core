@@ -610,6 +610,8 @@ fr:
     passwords_mailer:
       reset:
         subject: Réinitialisez votre mot de passe
+      changed:
+        subject: Votre mot de passe a été modifié
     user_mailer:
       welcome_by_admin:
         subject: 'Bienvenue au Circographe ! '
