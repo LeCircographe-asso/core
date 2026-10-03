@@ -1,9 +1,9 @@
 name: deploy-production
 
 on:
-  push:
-    branches: [main]
-  # Same as staging: promote workflows push with GITHUB_TOKEN; dispatch explicitly to run this pipeline.
+  # No push trigger: production is deployed only through deploy-promote-main
+  # (staging -> main, "PROMOTE" confirmation), which dispatches this workflow.
+  # A manual dispatch stays possible for a redeploy or a rollback.
   workflow_dispatch:
 
 permissions:

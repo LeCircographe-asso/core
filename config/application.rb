@@ -62,4 +62,10 @@ Rails.application.configure do
   # Indexation Google désactivée tant que le site n'est pas prêt à être référencé.
   # Bascule à true (via variable d'env SEO_INDEXABLE) le jour du lancement SEO.
   config.x.seo_indexable = ActiveModel::Type::Boolean.new.cast(ENV["SEO_INDEXABLE"])
+
+  # Whitelist des actions indexables une fois seo_indexable activé. Volontairement
+  # restreinte à la home : indexer les 8 pages publiques ferait remonter Google
+  # Sitelinks (liste de sous-pages sous le résultat principal), ce qu'on ne veut
+  # pas tant que le contenu de ces pages n'est pas optimisé pour le SEO.
+  config.x.seo_indexable_actions = %w[home#index]
 end

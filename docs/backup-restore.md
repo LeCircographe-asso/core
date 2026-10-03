@@ -15,8 +15,8 @@ Deux mécanismes indépendants, pas redondants entre eux :
 
 | | Couvre | Fréquence | Destination |
 |---|---|---|---|
-| **Litestream** (gem `litestream`, plugin Puma) | `storage/production.sqlite3` uniquement | Continu (quasi temps réel) | IONOS Object Storage (S3-compatible) |
-| **`Backups::NightlySnapshotJob`** (SolidQueue recurring) | `production.sqlite3` (copie sûre) + tous les fichiers Active Storage | Nocturne (3h) | Google Drive (via `rclone`) |
+| **Litestream** (gem `litestream`, plugin Puma) | `storage/production.sqlite3` uniquement | Continu (quasi temps réel) | Scaleway Object Storage (S3-compatible, région `fr-par`) |
+| **`Backups::NightlySnapshotJob`** (SolidQueue recurring) | `production.sqlite3` (copie sûre) + tous les fichiers Active Storage | Nocturne (3h) | pCloud (via `rclone`) |
 
 `production_cache.sqlite3`, `production_queue.sqlite3` et `production_cable.sqlite3` ne
 sont **pas** sauvegardés : cache régénérable, queue de jobs éphémère, pub/sub Action
@@ -24,53 +24,99 @@ Cable sans donnée persistante — aucune perte réelle, ça évite de réplique
 
 ## Setup initial (une fois)
 
-### 1. IONOS Object Storage
+### 1. Scaleway Object Storage
 
-1. Espace client IONOS Cloud → créer une ressource **Object Storage** + un bucket
-   (ex. `circographe-backups`).
-2. Générer une clé d'accès S3 (access key + secret key).
-3. Noter aussi l'**endpoint** et la **région** du bucket (visibles dans le panneau IONOS,
-   ex. `s3.eu-central-3.ionoscloud.com` / `eu-central-3`).
-4. Remplir les credentials Rails :
+Choisi le 2026-09-23 à la place d'IONOS Object Storage (le VPS, lui, reste chez IONOS).
+
+1. Console Scaleway → **Object Storage** → créer un bucket dans la région **Paris
+   (`fr-par`)**, ex. `circographe-litestream-prod` (nom unique dans la région), visibilité
+   **privée**, versioning désactivé (Litestream gère ses propres générations).
+   Garder la classe de stockage par défaut **Standard** : pas de **Glacier**, sinon la
+   restauration n'est pas immédiate.
+2. **IAM → Applications** → créer une application dédiée (ex. `circographe-litestream-prod`)
+   avec une politique limitée au projet du bucket et au jeu de permissions
+   `ObjectStorageFullAccess`. Ne pas utiliser la clé d'un compte humain.
+3. Sur cette application → **API keys** → générer une clé, en choisissant le projet du bucket
+   comme *Preferred Project for Object Storage*. Noter l'**access key** (`SCW…`) et la
+   **secret key**, affichée une seule fois.
+4. Remplir les credentials Rails **de production** (voir
+   `docs/migrations/main_reconciliation_plan.md` §5.0 : credentials séparés de staging) :
 
    ```
-   bin/rails credentials:edit
+   bin/rails credentials:edit --environment production
    ```
 
    ```yaml
    litestream:
-     replica_bucket: circographe-backups
-     replica_region: eu-central-3
-     replica_endpoint: s3.eu-central-3.ionoscloud.com
-     replica_key_id: <access-key>
+     replica_bucket: circographe-litestream-prod
+     replica_region: fr-par
+     replica_endpoint: https://s3.fr-par.scw.cloud
+     replica_key_id: <access-key SCW...>
      replica_access_key: <secret-key>
      dashboard_username: admin
      dashboard_password: <mot-de-passe-dashboard-litestream>
    ```
 
-### 2. Google Drive (rclone)
+   `config/litestream.yml` force le *path-style* (`force-path-style: true`), accepté par
+   Scaleway : pas d'autre réglage à faire.
+
+### 2. pCloud (rclone)
 
 Le flow OAuth est interactif (navigateur) — à faire **en local**, pas sur le serveur.
 
 ```
 rclone config
-# n) New remote → name: gdrive → Storage: Google Drive → suivre le flow OAuth
+# n) New remote → name: pcloud → Storage: Pcloud → suivre le flow OAuth
+#   (choisir la région EU dans le compte pCloud avant de générer le token
+#   si vous voulez garder les données en Europe)
 ```
 
 Une fois configuré, le fichier `~/.config/rclone/rclone.conf` contient un remote nommé
-`gdrive` avec un refresh token. Le service `Backups::NightlySnapshotService` s'attend à
-ce remote sous le nom `gdrive` (voir `RCLONE_REMOTE` dans le service) — garder ce nom ou
-adapter la constante.
+`pcloud` avec un refresh token OAuth.
 
-Ce fichier doit être déployé sur le serveur de prod à `/rails/.config/rclone/rclone.conf`
-côté container (hors dépôt git — à transmettre via un secret Kamal ou un montage de
-fichier, pas committé en clair).
+Créer l'arborescence sur pCloud avant le premier run :
+```
+rclone mkdir "pcloud:DevOps/circographe-backups/production"
+rclone mkdir "pcloud:DevOps/circographe-backups/staging-test"
+```
+`staging-test` sert uniquement aux tests manuels `rclone` sur staging (NightlySnapshotJob
+ne tourne jamais sur staging — voir la garde `production?` dans le service) — à ne pas
+confondre avec `production`, géré automatiquement (upload + purge des fichiers > 14 jours).
+
+#### Chiffrement au repos (`crypt`)
+
+L'OAuth pCloud donne accès à tout le compte, sans scope par dossier (contrairement à
+Dropbox App Folder). Pour ne pas exposer les données membres/paiements en clair en cas de
+fuite des credentials, on chiffre côté client avant l'upload avec un remote `crypt`
+empilé sur `pcloud` :
+
+```
+rclone config
+# n) New remote → name: pcloud-crypt → Storage: crypt
+# remote> pcloud:DevOps/circographe-backups
+# filename encryption> standard
+# directory name encryption> true
+# password / password2 (salt)> laisser rclone générer les deux
+```
+
+Les deux mots de passe générés sont affichés **une seule fois** — à stocker immédiatement
+dans un gestionnaire de mots de passe. Sans eux, le contenu chiffré sur pCloud est
+définitivement irrécupérable (c'est le but). Le service `Backups::NightlySnapshotService`
+pousse vers `pcloud-crypt:production` (voir `RCLONE_REMOTE`) ; les noms de fichiers et
+dossiers réels sur pCloud sont illisibles sans passer par le remote `pcloud-crypt`.
+
+Le `rclone.conf` final contient donc deux sections (`[pcloud]` avec le token OAuth et
+`[pcloud-crypt]` avec les mots de passe chiffrés) — c'est ce fichier complet qui doit être
+déployé sur le serveur à `/home/rails/.config/rclone/rclone.conf` côté container — c'est
+le `$HOME` réel de l'utilisateur `rails` dans le container (pas `/rails`, qui est
+`Rails.root` mais pas le home de l'OS) — hors dépôt git, à transmettre via un secret
+Kamal ou un montage de fichier, pas committé en clair.
 
 ## Vérification (à faire avant de considérer le backup opérationnel)
 
 - **Litestream réplique** : après déploiement, `bin/kamal app logs -c config/deploy.production.yml`
   et chercher les lignes de Litestream (pas d'erreur de credentials/endpoint). Le bucket
-  IONOS doit voir apparaître des objets peu après le premier boot.
+  Scaleway doit voir apparaître des objets peu après le premier boot.
 - **Restauration testée réellement** (todo historique : *« prod jamais testé = cassé »* —
   ne pas cocher tant que ce test n'a pas été fait pour de vrai) :
 
@@ -88,7 +134,7 @@ fichier, pas committé en clair).
     "bin/rails runner 'puts Backups::NightlySnapshotJob.perform_now.inspect'"
   ```
 
-  Puis vérifier l'apparition du fichier daté dans le dossier Google Drive.
+  Puis vérifier l'apparition du fichier daté dans le dossier pCloud.
 
 ## Restauration réelle (disaster recovery)
 

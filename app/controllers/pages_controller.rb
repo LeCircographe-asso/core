@@ -24,8 +24,8 @@ class PagesController < ApplicationController
     @blogs = Blog.order(created_at: :desc).limit(3)
 
     if params[:id] == "news"
-      @upcoming_events = Event.upcoming.by_date.limit(6)
-      @past_events = Event.past.order(date: :desc).limit(6)
+      @upcoming_events = Event.published.upcoming.by_date.limit(6)
+      @past_events = Event.published.past.order(date: :desc).limit(6)
       @latest_posts = Blog.order(created_at: :desc).limit(6)
       # Même repli que la page galerie (voir plus bas) : vraies photos si la
       # galerie a été peuplée, sinon le pool d'images génériques existant.

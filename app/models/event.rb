@@ -23,6 +23,10 @@ class Event < ApplicationRecord
     other: 3
   }
 
+  # Brouillon tant qu'un admin ne l'a pas publié explicitement — voir
+  # events_controller#show et les scopes publics (home, /actualites).
+  enum :status, { draft: 0, published: 1 }
+
   # Scopes
   scope :shows, -> { where(category: :show) }
   scope :workshops, -> { where(category: :workshop) }

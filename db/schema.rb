@@ -219,15 +219,18 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_03_010000) do
     t.bigint "creator_id", null: false
     t.datetime "date", null: false
     t.text "description"
+    t.boolean "is_demo", default: true, null: false
     t.string "location"
     t.text "middle_description"
     t.string "name", null: false
     t.string "picture_url"
+    t.integer "status", default: 0, null: false
     t.datetime "updated_at", null: false
     t.text "upper_description"
     t.index ["category"], name: "index_events_on_category"
     t.index ["creator_id"], name: "index_events_on_creator_id"
     t.index ["date"], name: "index_events_on_date"
+    t.index ["status"], name: "index_events_on_status"
   end
 
   create_table "exceptional_closures", force: :cascade do |t|

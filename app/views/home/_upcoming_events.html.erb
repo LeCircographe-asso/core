@@ -34,16 +34,20 @@
           <i class="fas fa-calendar-alt mr-1"></i>
           Prochain événement
         </span>
-        <span class="inline-flex items-center rounded-full border border-amber-300 bg-amber-50 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.16em] text-amber-800">
-          Démo UX/UI
-        </span>
+        <% if upcoming_event.is_demo? %>
+          <span class="inline-flex items-center rounded-full border border-amber-300 bg-amber-50 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.16em] text-amber-800">
+            Démo UX/UI
+          </span>
+        <% end %>
       </div>
 
       <h3 class="text-xl font-semibold text-gray-900 leading-snug"><%= upcoming_event.title %></h3>
 
-      <p class="text-xs leading-normal font-medium uppercase tracking-[0.2em] text-amber-700">
-        Contenu fictif présenté pour la démonstration de l'interface.
-      </p>
+      <% if upcoming_event.is_demo? %>
+        <p class="text-xs leading-normal font-medium uppercase tracking-[0.2em] text-amber-700">
+          Contenu fictif présenté pour la démonstration de l'interface.
+        </p>
+      <% end %>
 
       <% description = upcoming_event.middle_description.presence || upcoming_event.upper_description.presence || upcoming_event.description.presence %>
       <% if description.present? %>

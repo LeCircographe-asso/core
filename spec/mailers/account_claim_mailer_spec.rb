@@ -10,8 +10,9 @@ RSpec.describe AccountClaimMailer, type: :mailer do
 
     subject(:mail) { described_class.confirmation_email(claim) }
 
-    it "est envoyé à l'utilisateur du claim" do
-      expect(mail.to).to eq([ claim.user.email_address ])
+    it "est envoyé à l'email de la personne réclamée, pas à celui du demandeur" do
+      expect(mail.to).to eq([ claim.person.email ])
+      expect(mail.to).not_to eq([ claim.user.email_address ])
     end
 
     it "a le bon sujet" do

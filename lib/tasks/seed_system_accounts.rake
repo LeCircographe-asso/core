@@ -3,6 +3,8 @@
 namespace :circographe do
   desc "Charge db/seeds/admin.rb seulement (comptes super-admin, admin, volunteer). Dev/test : réapplique les mots de passe seed si déjà présents."
   task seed_system_accounts: :environment do
+    abort "circographe:seed_system_accounts crée des comptes au mot de passe connu : interdit en production. Utiliser circographe:create_super_admin." if Rails.env.production?
+
     load Rails.root.join("db/seeds/admin.rb")
   end
 
