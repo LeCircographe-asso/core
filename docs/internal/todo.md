@@ -2,10 +2,10 @@
 
 > **Statut** : internal
 > **Public cible** : équipe dev
-> **Dernière vérification** : 2026-08-19 (lot de retours utilisateurs réels : validations, mailer staging, UX admin)
+> **Dernière vérification** : 2026-10-03 (analytics Umami staging + fix infra Kamal secrets)
 > **Sources de vérité** : `app/`, historique git, `docs/`.
 
-*Audit continu : revu 2026-05-06 (12 commits), complété 2026-08-10 (audit doc), SESSION 2026-08-18 (sécurité: rate limiting, CSP nonce fix, Permissions-Policy, Brakeman/bundler-audit, 4 HIGH gems; autocomplete: API BAN, Stimulus controller, DRY form consolidation), SESSION 2026-08-18 bis (reçu de don : PDF Prawn généré à la volée, UI admin ; fix régression CSP nonce vide + styles inline non noncés — carte Leaflet `/contact` cassée ; sidebar admin scrollable sur 1080p ; SweetAlert2 mort supprimé). Prochaine passe : Jetmail mailer + local env (Docker/Litestream), Turbo Streams audit.*
+*Audit continu : revu 2026-05-06 (12 commits), complété 2026-08-10 (audit doc), SESSION 2026-08-18 (sécurité: rate limiting, CSP nonce fix, Permissions-Policy, Brakeman/bundler-audit, 4 HIGH gems; autocomplete: API BAN, Stimulus controller, DRY form consolidation), SESSION 2026-08-18 bis (reçu de don : PDF Prawn généré à la volée, UI admin ; fix régression CSP nonce vide + styles inline non noncés — carte Leaflet `/contact` cassée ; sidebar admin scrollable sur 1080p ; SweetAlert2 mort supprimé), SESSION 2026-10-03 (analytics Umami self-hosted validé en staging ; bug infra `.kamal/secrets` trouvé et corrigé en route). Prochaine passe : réconciliation `staging` → `main`, bucket Litestream/Scaleway à provisionner, mailer transactionnel à finir — tout avant mise en prod.*
 
 ## Now
 - [x] **Import CSV ne créait jamais d'historique de numéro d'adhérent** *(2026-08-19, constaté en live juste après le cold-start + réimport ci-dessous)* : `Imports::MemberImportService` pose `member_number` directement sur `Person`, jamais d'entrée `member_number_histories` — donc même une base fraîchement réimportée partait déjà sans traçabilité. Corrigé à la source : une entrée initiale créée par personne importée avec un numéro, datée du vrai paiement du fichier. Aucun spec n'existait pour ce service, ajouté (focalisé sur ce comportement). `commit c32389a2`. **N'a pas rattrapé rétroactivement le lot déjà réimporté avant ce fix** — nécessite un nouveau cycle nettoyage+réimport pour en profiter.
@@ -92,6 +92,13 @@ Lot de petits bugs remontés par de vrais utilisateurs après la mise à jour de
   - [ ] **Manuel utilisateur** : créer le bucket/clé Scaleway, remplir `bin/rails credentials:edit` (bloc `litestream:`), lancer `rclone config` en local pour Google Drive, déployer le `rclone.conf` sur le serveur (hors dépôt git).
   - [ ] **Test restauration réel** : `litestream:restore` en prod vers un fichier temporaire + vérification du contenu (prod jamais testé = cassé — ne pas cocher l'item parent avant ce test).
   - [ ] Vérifier le déclenchement manuel du snapshot nocturne (`Backups::NightlySnapshotJob.perform_now`) et l'apparition du fichier sur Google Drive.
+
+## Analytics Umami + fix infra Kamal secrets (2026-10-03)
+- [x] **Umami self-hosted déployé et validé en staging** : stack standalone (`docker/analytics/`, Postgres dédiée, indépendante du SQLite app) routée via `kamal-proxy` sur `analytics.lecircographe.fr`. Tag de tracking + heatmap/session-replay (`recorder.js`, staging-only en dur dans le code — capture l'écran, pas juste des pages vues, attend une revue vie privée avant prod) branchés dans `app/views/layouts/application.html.erb`, exclus du backoffice admin. CSP mise à jour. Détail complet : `docs/operations/analytics.md`. Branche `feature/umami-analytics` (rebasée sur `dev`), pas encore mergée.
+  - [ ] Site prod Umami + `umami.production.website_id` en credentials — après quelques jours de validation staging.
+  - [ ] Revue vie privée avant d'activer le recorder en prod.
+- [x] **Bug infra trouvé en route : `.kamal/secrets` ne supportait pas `if/fi` ni `${VAR:-default}`** — ce fichier est parsé par la gem Dotenv + une extension Kamal (substitution `$(...)` seulement), pas un vrai shell ; le bloc conditionnel pour `RAILS_MASTER_KEY` était silencieusement ignoré. Cassait tout déploiement **staging/prod piloté par la CI** (`RAILS_MASTER_KEY` vide → tous les credentials invisibles, Mailjet inclus) ; invisible jusqu'ici car la prod n'avait jamais été déployée que manuellement (clé déjà exportée dans le shell du dev, CI jamais testée en pratique — 0 run historique de `deploy-production.yml`). Fixé (affectations simples `KEY=$VAR`) sur `dev` + `staging`.
+  - [ ] **Propager le fix vers `main`** avant tout prochain déploiement prod via CI — sinon même bug côté prod.
 
 ## Mailer transactionnel (2026-08-18)
 - [x] **Mailjet SMTP setup** : staging sur le compte perso (`mailjet.sandbox`) ; dev n'envoie plus rien (Letter Opener Web, depuis 2026-10-03). Mailers: welcome, password_reset, password_changed, account_claim_confirmation.
