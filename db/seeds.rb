@@ -3,7 +3,7 @@
 #
 # Deux profils (voir Seeds::Profile) :
 #   - demo (development/test, ou SEED_DEMO=true hors production) : remise à zéro complète + jeu de démo.
-#   - contenu seul (staging/production par défaut) : FAQ, conseil d'administration, partenaires,
+#   - contenu seul (staging/production par défaut) : FAQ, conseil d'administration, partenaires, galerie,
 #     seulement si leur table est vide. Ne supprime rien, ne crée aucun compte.
 # `db:prepare` lance ce fichier au premier boot d'une base fraîche : ne jamais y rendre la démo
 # accessible en production.
@@ -119,7 +119,7 @@ def seed_fast_tick(message)
 end
 
 unless SEED_DEMO
-  puts "Le Circographe — seeds de contenu (#{Rails.env}) : FAQ, conseil d'administration, partenaires"
+  puts "Le Circographe — seeds de contenu (#{Rails.env}) : FAQ, conseil d'administration, partenaires, galerie"
   puts "Aucune donnée existante n'est supprimée. Comptes et catalogue (types d'adhésion, formules de cotisation) : à créer via l'admin."
 
   Seeds::Profile::CONTENT_SEEDS.each do |filename, model_name|
