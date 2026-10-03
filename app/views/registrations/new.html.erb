@@ -90,7 +90,31 @@
             <div class="mt-4">
                 <%= form.submit "S'inscrire", class: "w-full btn-primary justify-center rounded-lg shadow-lg" %>
             </div>
-            
+            <% end %>
+
+            <div class="relative my-4 text-center">
+                <span class="bg-white px-2 text-xs text-gray-400 relative z-10">ou</span>
+                <div class="absolute inset-x-0 top-1/2 border-t border-gray-200"></div>
+            </div>
+
+            <div data-controller="google-consent">
+                <div class="flex items-start mb-3">
+                    <div class="flex items-center h-5">
+                        <input type="checkbox" id="google_cgu" data-google-consent-target="checkbox" data-action="change->google-consent#sync"
+                               class="h-4 w-4 text-[#5836A5] border-gray-300 rounded focus:ring-[#5836A5] focus:ring-offset-0">
+                    </div>
+                    <div class="ml-2 text-sm">
+                        <label for="google_cgu" class="text-sm text-gray-800">J'accepte les <a href="<%= page_path('terms') %>" class="text-brand-accent hover:underline focus:outline-brand-accent outline-offset-1" target="_blank">Conditions Générales d'Utilisation</a> et la <a href="<%= page_path('privacy_policy') %>" class="text-brand-accent hover:underline focus:outline-brand-accent outline-offset-1" target="_blank">Politique de Confidentialité</a></label>
+                    </div>
+                </div>
+
+                <%= button_to "/auth/google_oauth2", method: :post, data: { turbo: false, google_consent_target: "submit" }, disabled: true,
+                              class: "w-full flex items-center justify-center gap-2 rounded-lg border border-gray-300 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed" do %>
+                  <%= image_tag "google-logo.svg", alt: "", class: "h-4 w-4", loading: "lazy" %>
+                  S'inscrire avec Google
+                <% end %>
+            </div>
+
             <% if account_claim_enabled? %>
             <!-- Lien revendication de compte -->
             <div class="mt-3 text-center">
@@ -100,7 +124,6 @@
                                 class: "text-brand-primary hover:underline font-medium" %>
                   </p>
             </div>
-            <% end %>
             <% end %>
         </div>
     </div>
