@@ -31,12 +31,19 @@ RSpec.describe Attendance, type: :model do
         expect(duplicate.errors[:person_id]).to include('est déjà intéressé par cet événement')
       end
 
-      it 'allows same person for different events' do
+      it 'allows same person for different events the same day (interest is just a per-account like counter)' do
         event2 = create(:event)
         create(:attendance, person: person, event: event)
         duplicate = build(:attendance, person: person, event: event2)
 
         expect(duplicate).to be_valid
+      end
+
+      it 'allows event interest the same day as a training attendance' do
+        create(:attendance, person: person, event: nil, date: Date.current)
+        interest = build(:attendance, person: person, event: event, date: Date.current)
+
+        expect(interest).to be_valid
       end
     end
 
