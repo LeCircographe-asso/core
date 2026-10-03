@@ -40,7 +40,7 @@ RSpec.describe Seeds::Profile do
 
   describe "CONTENT_SEEDS" do
     it "only lists content seeds, never accounts or the catalogue" do
-      expect(described_class::CONTENT_SEEDS.keys).to eq(%w[faq.rb board_members.rb partners.rb])
+      expect(described_class::CONTENT_SEEDS.keys).to eq(%w[faq.rb board_members.rb partners.rb gallery_photos.rb])
     end
 
     it "points every seed file to an existing model and file" do
