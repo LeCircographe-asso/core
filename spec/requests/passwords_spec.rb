@@ -31,6 +31,20 @@ RSpec.describe "Passwords", type: :request do
     end
   end
 
+  describe "GET /passwords/:token/edit" do
+    # Régression : le formulaire pointait vers /passwords?token=… (aucune route PATCH → 404),
+    # invisible tant que les specs appelaient password_path directement.
+    it "submits the form to the token-scoped update route" do
+      user = create(:user)
+      token = user.generate_token_for(:password_reset)
+
+      get edit_password_path(token)
+
+      form_action = Nokogiri::HTML(response.body).at_css("form input[name='password']").ancestors("form").first["action"]
+      expect(form_action).to eq(password_path(token))
+    end
+  end
+
   describe "PATCH /passwords/:token" do
     it "updates the password with a valid token" do
       user = create(:user, password: "old-password", password_confirmation: "old-password")

@@ -697,9 +697,9 @@ en:
         body: Please find attached your donation receipt #%{number}. Thank you for supporting the association!
     passwords_mailer:
       reset:
-        subject: Réinitialisez votre mot de passe
+        subject: Reset your password
       changed:
-        subject: Votre mot de passe a été modifié
+        subject: Your password has been changed
     user_mailer:
       welcome_by_admin:
         subject: 'Bienvenue au Circographe ! '
