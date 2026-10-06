@@ -1,0 +1,13 @@
+<ul class="divide-y divide-gray-100 text-sm">
+  <% users.each do |user| %>
+    <li id="<%= dom_id(user, :role_row) %>" class="flex flex-col gap-2 py-3 sm:flex-row sm:items-center sm:justify-between">
+      <div class="min-w-0">
+        <%= link_to user.full_name, admin_member_path(user.person), class: "font-medium text-[#1F5C55] hover:underline" %>
+        <span class="block text-gray-500 break-all"><%= user.email_address %></span>
+      </div>
+      <div class="sm:shrink-0">
+        <%= render Admin::Members::RoleAssignmentComponent.new(user: user, current_user: current_user) %>
+      </div>
+    </li>
+  <% end %>
+</ul>

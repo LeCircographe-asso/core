@@ -17,9 +17,11 @@
         <span class="block text-xs uppercase tracking-wider text-white/80 font-medium leading-tight"><%= t("users.space.membership_card.member_number_label") %></span>
         <span class="block text-sm font-semibold text-white tabular-nums tracking-tight truncate" title="<%= person&.formatted_member_number %>"><%= person&.formatted_member_number %></span>
       </div>
-      <div class="absolute top-3 right-3 sm:right-4 px-3 py-1 text-sm font-semibold text-white rounded-full <%= membership_card_role_badge_classes(@user.system_role) %>">
-        <%= @user.role_humanized %>
-      </div>
+      <% if @user.has_system_role? %>
+        <div class="absolute top-3 right-3 sm:right-4 px-3 py-1 text-sm font-semibold text-white rounded-full <%= membership_card_role_badge_classes(@user.system_role) %>">
+          <%= @user.role_humanized %>
+        </div>
+      <% end %>
     </div>
     <div class="absolute -bottom-12 left-1/2 -translate-x-1/2">
       <div class="h-24 w-24 rounded-full border-4 border-white overflow-hidden bg-white">

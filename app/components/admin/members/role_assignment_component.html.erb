@@ -1,0 +1,18 @@
+<% if editable? %>
+  <%= form_with scope: :role,
+                url: admin_member_role_path(user.person),
+                method: :patch,
+                class: "flex flex-wrap items-center gap-2 sm:justify-end",
+                data: { turbo_confirm: t("admin.roles.assignment.confirm", name: user.full_name) } do |form| %>
+    <%= form.label :system_role, t("admin.roles.assignment.label"), for: select_id, class: "sr-only" %>
+    <%= form.select :system_role,
+                    options_for_select(role_options, user.system_role),
+                    {},
+                    id: select_id,
+                    class: "rounded-md border-gray-300 py-1 pl-2 pr-8 text-sm shadow-sm focus:border-[#1F5C55] focus:ring-[#1F5C55]" %>
+    <%= form.submit t("admin.roles.assignment.submit"),
+                    class: "rounded-md bg-[#1F5C55] px-3 py-1 text-sm font-medium text-white hover:bg-[#194A45] focus:outline-none focus:ring-2 focus:ring-[#1F5C55] focus:ring-offset-2" %>
+  <% end %>
+<% else %>
+  <%= role_label(user.system_role) %>
+<% end %>

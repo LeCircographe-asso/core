@@ -154,6 +154,25 @@ RSpec.describe UserManagement::UserUpdater do
       expect(admin_target.reload.email_address).to eq('still.admin@example.com')
     end
 
+    it 'prevents an admin from demoting another admin' do
+      admin_target = create(:user, :admin)
+
+      result = described_class.new(user_id: admin_target.id, system_role: 'volunteer', updated_by_id: admin.id).call
+
+      expect(result.success?).to be(false)
+      expect(result.message).to eq(I18n.t("services.errors.insufficient_permissions.role_assignment"))
+      expect(admin_target.reload.system_role).to eq('admin')
+    end
+
+    it 'prevents an admin from demoting a super_admin' do
+      super_admin = create(:user, :super_admin)
+
+      result = described_class.new(user_id: super_admin.id, system_role: 'web_visitor', updated_by_id: admin.id).call
+
+      expect(result.success?).to be(false)
+      expect(super_admin.reload.system_role).to eq('super_admin')
+    end
+
     it 'allows a super_admin to assign the admin role' do
       super_admin = create(:user, :super_admin)
 

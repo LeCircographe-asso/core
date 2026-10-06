@@ -5,8 +5,7 @@ module MembershipCardHelper
   MEMBERSHIP_CARD_ROLE_BADGE_CLASSES = {
     "super_admin" => "bg-[#1F5C55]",
     "admin" => "bg-[#1F5C55]/90",
-    "volunteer" => "bg-[#1F5C55]/80",
-    "web_visitor" => "bg-[#1F5C55]/70"
+    "volunteer" => "bg-[#1F5C55]/80"
   }.freeze
 
   def membership_card_role_badge_classes(system_role)
