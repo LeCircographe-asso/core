@@ -42,6 +42,17 @@
                 <%= form.submit "Se connecter", class: "w-full btn-primary justify-center rounded-lg shadow-lg" %>
             </div>
 
+            <div class="relative my-4 text-center">
+                <span class="bg-white px-2 text-xs text-gray-400 relative z-10">ou</span>
+                <div class="absolute inset-x-0 top-1/2 border-t border-gray-200"></div>
+            </div>
+
+            <%= button_to "/auth/google_oauth2", method: :post, data: { turbo: false },
+                          class: "w-full flex items-center justify-center gap-2 rounded-lg border border-gray-300 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50" do %>
+              <%= image_tag "google-logo.svg", alt: "", class: "h-4 w-4", loading: "lazy" %>
+              Continuer avec Google
+            <% end %>
+
             <!-- Register Link -->
             <div class="text-center">
                 <% if public_registration_enabled? %>
