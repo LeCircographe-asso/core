@@ -44,6 +44,10 @@ gem "json", ">= 2.19.2" # Pin patched version for security advisories
 gem "mailjet" # Email service
 gem "rack-cors" # Cross-Origin Resource Sharing
 
+# Authentication
+gem "omniauth-google-oauth2" # "Se connecter avec Google"
+gem "omniauth-rails_csrf_protection" # CSRF protection for the OmniAuth request phase
+
 # Development and Testing
 group :development, :test do
   gem "brakeman", require: false # Security scanner
