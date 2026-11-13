@@ -14,9 +14,12 @@ class SessionsController < ApplicationController
     # Même logique que #new : si une session cookie est valide, inutile de traiter un « second » login ici.
     return redirect_to(root_path, status: :see_other, notice: t("sessions.already_signed_in_notice")) if authenticated?
 
-    email_address, password = params.expect(:email_address, :password)
+    # Pas de params.expect : un champ vide lèverait ParameterMissing (page 400 brute) au lieu
+    # du message « identifiants invalides » attendu par un·e visiteur·se.
+    email_address = params[:email_address].to_s
+    password = params[:password].to_s
 
-    if (user = User.authenticate_by(email_address:, password:))
+    if email_address.present? && password.present? && (user = User.authenticate_by(email_address:, password:))
       start_new_session_for(user)
       # 303 + Turbo : évite les redirections POST ignorées ou sans cookie ; même comportement qu’un POST HTML classique.
       redirect_to after_authentication_url, notice: t(".login_success_notice"), status: :see_other
