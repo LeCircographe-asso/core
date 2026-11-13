@@ -12,7 +12,7 @@ class UsersController < ApplicationController
   # - RegistrationsController: Creating new accounts
   # - UsersController: Managing existing accounts
   # - SessionsController: Handling login/logout
-  before_action :require_authentication, except: %i[change_newsletter_status newsletter_signup unsubscribe_by_token]
+  before_action :require_authentication, except: %i[newsletter_signup unsubscribe_by_token]
   before_action :set_user, only: %i[show edit update change_newsletter_status destroy]
 
   # User profile view
@@ -77,13 +77,13 @@ class UsersController < ApplicationController
   def newsletter_signup
     # Extract from UsersHelper (anti-pattern: helpers shouldn't redirect)
     # Check honeypot - if filled, it's likely a bot
-    if params[:user][:website].present?
+    if params.dig(:user, :website).present?
       # Don't show an error, just silently redirect to avoid tipping off bots
       redirect_back_or_to(root_path, notice: t(".honeypot_thanks_notice"))
       return
     end
 
-    email = params[:user][:email_address]
+    email = params.dig(:user, :email_address)
 
     if email.blank?
       flash[:alert] = t(".email_blank_alert")
