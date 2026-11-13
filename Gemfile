@@ -7,7 +7,7 @@ ruby "4.0.1"
 # Core Rails gems
 gem "bootsnap", require: false # Reduces boot times through caching
 gem "csv" # Ruby 4+: stdlib gem, required for Admin::ExportsController and others
-gem "rails", "~> 8.1.3"
+gem "rails", "~> 8.1.4"
 gem "rails-i18n", "~> 8.1.0"
 gem "stringio", "~> 3.2.0"
 
@@ -17,11 +17,11 @@ gem "sqlite3", ">= 2.1"
 gem "tzinfo-data", platforms: %i[windows jruby] # Timezone data
 
 # Asset Pipeline and Frontend
-gem "image_processing", "~> 1.2" # For Active Storage image processing
+gem "image_processing", "~> 2.2" # For Active Storage image processing
 gem "importmap-rails" # JavaScript module imports
 gem "propshaft" # Modern asset pipeline
 gem "stimulus-rails" # Hotwire's JavaScript framework
-gem "tailwindcss-rails", "~> 4.2" # CSS framework
+gem "tailwindcss-rails", "~> 4.7" # CSS framework
 gem "turbo-rails" # Hotwire's SPA accelerator
 gem "view_component" # Modular UI components
 
@@ -36,7 +36,7 @@ gem "solid_queue" # Database-backed job queue
 
 # Pagination
 # Pagy 43+ supprime extras/bootstrap et Pagy::Backend — migration non triviale ; rester en 6.x jusqu’à refonte.
-gem "pagy", "~> 6.5"
+gem "pagy", "~> 9.4"
 
 # API and External Services
 gem "jbuilder" # JSON API builder
@@ -59,7 +59,7 @@ group :development, :test do
   gem "factory_bot_rails"
   gem "guard", require: false
   gem "guard-rspec", require: false
-  gem "rspec-rails", "~> 8.0.2"
+  gem "rspec-rails", "~> 8.1.0"
   gem "shoulda-matchers" # Pour tester les validations Rails
   # gem "database_cleaner-active_record"  # Nettoyage de DB entre tests
 end
@@ -80,7 +80,7 @@ end
 # Deployment
 gem "kamal", require: false # Docker deployment
 
-gem "litestream", "~> 0.14.0"
+gem "litestream", "~> 0.16.1"
 
 # PDF generation (reçus de don) - pur Ruby, aucune dépendance système/Node
 gem "prawn"
