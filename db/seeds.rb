@@ -23,6 +23,7 @@ SYSTEM_ACCOUNTS = [
 ].freeze
 
 SEED_STEPS_BASE = [
+  ["reglages du site", "site_settings.rb"],
   ["creation des comptes systeme", "admin.rb"],
   ["catalogue des types d'adhesion", "membership_types.rb"],
   ["catalogue des formules de cotisation", "contribution_formulas.rb"],
@@ -125,6 +126,9 @@ unless SEED_DEMO
   puts "Le Circographe — seeds de contenu (#{Rails.env}) : FAQ, conseil d'administration, partenaires, galerie"
   puts "Aucune donnée existante n'est supprimée. Comptes et catalogue (types d'adhésion, formules de cotisation) : à créer via l'admin."
 
+  load_seed_file("site_settings.rb")
+  puts "  + site_settings.rb : réglages singletons présents (fermeture exceptionnelle, widget bug)"
+
   Seeds::Profile::CONTENT_SEEDS.each do |filename, model_name|
     model = model_name.constantize
 
@@ -154,7 +158,7 @@ if SEED_FAST_TEST
 
   puts "\n--- Mode SEED_FAST_TEST (~1 message / #{SEED_TICK_SECONDS}s) ---\n"
 
-  %w[admin.rb membership_types.rb contribution_formulas.rb events.rb faq.rb board_members.rb partners.rb].each { |f| load_seed_file(f) }
+  %w[site_settings.rb admin.rb membership_types.rb contribution_formulas.rb events.rb faq.rb board_members.rb partners.rb].each { |f| load_seed_file(f) }
   seed_fast_tick("[1/3] OK — Comptes système + catalogue + événements.")
 
   load_seed_file("populate.rb")

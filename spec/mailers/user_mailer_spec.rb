@@ -79,7 +79,7 @@ RSpec.describe UserMailer, type: :mailer do
   describe "#membership_expiration_reminder" do
     # Pas de User : le rappel doit partir vers la Person, même sans compte web.
     let(:person) { create(:person, first_name: "Ada", last_name: "Lovelace") }
-    let(:membership) { create(:membership, person: person, ended_at: Date.new(2026, 11, 2), status: :active) }
+    let(:membership) { create(:membership, person: person, started_at: Date.new(2025, 11, 3), ended_at: Date.new(2026, 11, 2), status: :active) }
 
     it "écrit à la personne avec la date de fin de l'adhésion" do
       mail = described_class.membership_expiration_reminder(membership)
