@@ -1,12 +1,5 @@
 #!/usr/bin/env bash
 
-# Load RVM if available
-if [[ -s "$HOME/.rvm/scripts/rvm" ]]; then
-  source "$HOME/.rvm/scripts/rvm"
-elif [[ -s "/usr/local/rvm/scripts/rvm" ]]; then
-  source "/usr/local/rvm/scripts/rvm"
-fi
-
 # Check if foreman is available via PATH or bundle.
 FOREMAN_CMD=()
 if command -v foreman &> /dev/null; then
@@ -15,7 +8,7 @@ elif bundle exec which foreman &> /dev/null; then
   FOREMAN_CMD=(bundle exec foreman)
 else
   echo "Installing foreman..."
-  # Install into current Ruby/RVM context to avoid user-gem PATH/hook mismatches.
+  # Install into the current Ruby context to avoid user-gem PATH/hook mismatches.
   if gem install foreman 2>/dev/null; then
     if command -v foreman &> /dev/null; then
       FOREMAN_CMD=(foreman)
