@@ -29,8 +29,8 @@ git clone https://github.com/rbenv/ruby-build.git ~/.rbenv/plugins/ruby-build
 cd /var/www/app # or the chosen path
 git clone <YOUR_REPO_URL> core
 cd core
-rbenv install 4.0.1
-rbenv local 4.0.1
+rbenv install 4.0.10
+rbenv local 4.0.10
 ruby -v
 gem install bundler
 bundle install --without development test

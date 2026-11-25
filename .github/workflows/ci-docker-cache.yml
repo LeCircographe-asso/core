@@ -61,6 +61,6 @@ jobs:
         with:
           context: .
           push: false
-          build-args: RUBY_VERSION=4.0.1
+          build-args: RUBY_VERSION=4.0.10
           cache-from: type=gha,scope=docker-${{ hashFiles('Gemfile.lock') }}
           cache-to: type=gha,mode=max,scope=docker-${{ hashFiles('Gemfile.lock') }}
