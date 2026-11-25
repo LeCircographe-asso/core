@@ -39,7 +39,7 @@ jobs:
           cache-to: type=gha,mode=max,scope=docker-${{ hashFiles('Gemfile.lock') }}
 
   deploy:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04 # ubuntu-26.04 has no Ruby 4.0.1 build; unpin when bumping Ruby
     needs: build-push
     env:
       FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
@@ -63,7 +63,7 @@ jobs:
         run: bundle exec kamal deploy -c config/deploy.staging.yml --version="$GITHUB_SHA"
 
   health-check:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04 # ubuntu-26.04 has no Ruby 4.0.1 build; unpin when bumping Ruby
     needs: deploy
     env:
       FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
