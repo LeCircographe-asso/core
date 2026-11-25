@@ -8,7 +8,7 @@
 # For a containerized dev environment, see Dev Containers: https://guides.rubyonrails.org/getting_started_with_devcontainer.html
 
 # Make sure RUBY_VERSION matches the Ruby version in .ruby-version
-ARG RUBY_VERSION=4.0.1
+ARG RUBY_VERSION=4.0.10
 FROM docker.io/library/ruby:$RUBY_VERSION-slim AS base
 
 # Rails app lives here
@@ -35,7 +35,7 @@ ENV BUNDLE_DEPLOYMENT="1" \
 FROM base AS build
 
 # Layer 1: Install Bundler (changes rarely)
-RUN gem install bundler:4.0.10
+RUN gem install bundler:4.0.20
 
 # Layer 2: Install system dependencies (changes rarely)
 RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \

@@ -2,7 +2,7 @@
 
 source "https://rubygems.org"
 
-ruby "4.0.1"
+ruby "4.0.10"
 
 # Core Rails gems
 gem "bootsnap", require: false # Reduces boot times through caching
