@@ -4,7 +4,7 @@ Application Rails 8 de gestion associative pour Le Circographe (adhésions, coti
 
 [![Version](https://img.shields.io/badge/version-0.5.9.1-blue)](#)
 [![Rails](https://img.shields.io/badge/Rails-8.1.3-red)](#)
-[![Ruby](https://img.shields.io/badge/Ruby-4.0.1-red)](#)
+[![Ruby](https://img.shields.io/badge/Ruby-4.0.10-red)](#)
 [![License](https://img.shields.io/badge/license-MIT-green)](#)
 
 ---
@@ -25,7 +25,7 @@ Le projet utilise un vocabulaire DDD-light strict. **Avant toute contribution, l
 ## Démarrage
 
 ```bash
-# Pré-requis : Ruby 4.0.1 (RVM/asdf) + SQLite + Foreman
+# Pré-requis : Ruby 4.0.10 (mise/asdf) + SQLite + Foreman
 bundle install
 bin/rails db:prepare
 bin/dev
@@ -78,7 +78,7 @@ Scripts utilitaires :
 
 ## Pré-requis runtime
 
-- Ruby `4.0.1`
+- Ruby `4.0.10`
 - Rails `8.1.3`
 - SQLite (multi-base : main / cache / queue / cable)
 - Importmap + Propshaft (pas de Node.js)

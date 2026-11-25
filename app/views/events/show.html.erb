@@ -11,7 +11,8 @@
     <% end %>
   </div>
 
-  <%= turbo_stream_from @event %>
+  <%# ApplicationCable::Connection refuse les anonymes : on ne les abonne pas (évite un WebSocket rejeté). %>
+  <%= turbo_stream_from @event if authenticated? %>
 
   <article class="public-surface-bordered overflow-hidden">
     <div class="grid grid-cols-1 md:grid-cols-[2fr_3fr]">

@@ -3,7 +3,8 @@
 
 <div class="public-surface-bordered overflow-hidden">
   <% if upcoming_event.present? %>
-    <%= turbo_stream_from upcoming_event %>
+    <%# ApplicationCable::Connection refuse les anonymes : on ne les abonne pas (évite un WebSocket rejeté). %>
+    <%= turbo_stream_from upcoming_event if authenticated? %>
     <% event_time = upcoming_event.date&.in_time_zone(Time.zone) %>
 
     <div class="relative aspect-[16/7] overflow-hidden bg-gray-100">
