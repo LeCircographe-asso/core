@@ -1,0 +1,24 @@
+#!/bin/sh
+# Print the data report (ops/data_report.rb, JSON) of the running app on this host.
+# Read-only. Not installed on the VPS: the deploy workflows pipe it over ssh:
+#
+#   ssh deploy@<host> sh -s -- <staging|production> < ops/vps/data-report > report.json
+#
+# Exit 3 when the running image predates ops/data_report.rb.
+set -eu
+
+env="${1:-}"
+case "$env" in staging|production) ;; *) echo "usage: data-report <staging|production>" >&2; exit 2 ;; esac
+
+cid="$(docker ps -q --filter "label=service=circographe-$env" --filter label=role=web | head -n 1)"
+[ -n "$cid" ] || { echo "[data-report] no running circographe-$env container" >&2; exit 1; }
+docker exec "$cid" test -f ops/data_report.rb || { echo "[data-report] ops/data_report.rb is not in the running image" >&2; exit 3; }
+
+out="/tmp/data_report-$$.json"
+# The report goes to a file: the app's logger shares stdout.
+if ! docker exec -e DATA_REPORT_OUTPUT="$out" "$cid" bin/rails runner ops/data_report.rb > /dev/null; then
+  echo "[data-report] ops/data_report.rb failed" >&2
+  exit 1
+fi
+docker exec "$cid" cat "$out"
+docker exec "$cid" rm -f "$out"

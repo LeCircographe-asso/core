@@ -1,0 +1,61 @@
+#!/bin/sh
+# Copy the running app's main SQLite database on this host, before a deploy migrates it.
+# Not installed on the VPS: .kamal/hooks/pre-deploy pipes it over ssh as the deploy user:
+#
+#   ssh deploy@<host> sh -s -- <staging|production> <label> < ops/vps/db-snapshot
+#
+# Copy: ~/backups/pre-deploy/<env>/<env>-<UTC stamp>-<label>.sqlite3.gz (mode 600, last
+# $KEEP kept, default 5). Outside the app's storage volume on purpose: the nightly
+# snapshot archives that volume. `.backup` makes a consistent copy of a live database
+# (WAL included), checked with PRAGMA integrity_check before it is kept.
+# No running container (first deploy): nothing to save, exit 0. Any other failure:
+# exit 1, which stops the deploy. Restore: docs/operations/deployment.md.
+set -eu
+
+env="${1:-}"
+label="${2:-manual}"
+keep="${KEEP:-5}"
+
+case "$env" in staging|production) ;; *) echo "usage: db-snapshot <staging|production> [label]" >&2; exit 2 ;; esac
+printf '%s' "$label" | grep -Eq '^[A-Za-z0-9._@-]{1,80}$' || { echo "[db-snapshot] invalid label" >&2; exit 2; }
+printf '%s' "$keep" | grep -Eq '^[1-9][0-9]?$' || { echo "[db-snapshot] invalid KEEP" >&2; exit 2; }
+
+say() { echo "[db-snapshot] $*"; }
+
+cid="$(docker ps -q --filter "label=service=circographe-$env" --filter label=role=web | head -n 1)"
+if [ -z "$cid" ]; then
+  say "no running circographe-$env container: nothing to save (first deploy?)"
+  exit 0
+fi
+
+db="storage/$env.sqlite3"
+if ! docker exec "$cid" test -s "$db"; then
+  say "$db missing or empty in the running container: nothing to save"
+  exit 0
+fi
+
+name="$env-$(date -u +%Y%m%dT%H%M%SZ)-$label.sqlite3"
+tmp="/tmp/$name"
+dir="$HOME/backups/pre-deploy/$env"
+
+docker exec "$cid" sqlite3 "$db" ".backup '$tmp'"
+check="$(docker exec "$cid" sqlite3 "$tmp" "PRAGMA integrity_check;")" || check="integrity_check failed to run"
+
+umask 077
+mkdir -p "$dir"
+docker cp "$cid:$tmp" "$dir/$name"
+docker exec "$cid" rm -f "$tmp"
+
+if [ "$check" != "ok" ]; then
+  mv "$dir/$name" "$dir/$name.corrupt"
+  say "the copy fails PRAGMA integrity_check ($check): deploy stopped, kept as $dir/$name.corrupt" >&2
+  exit 1
+fi
+
+gzip -9 "$dir/$name"
+chmod 600 "$dir/$name.gz"
+
+# Keep the newest $keep copies (names sort by UTC stamp).
+ls -1 "$dir"/"$env"-*.sqlite3.gz | sort -r | tail -n +"$((keep + 1))" | while read -r old; do rm -f -- "$old"; done
+
+say "saved $dir/$name.gz ($(du -h "$dir/$name.gz" | cut -f1)); $(ls -1 "$dir"/"$env"-*.sqlite3.gz | wc -l) kept"

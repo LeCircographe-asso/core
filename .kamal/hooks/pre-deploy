@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+# Kamal pre-deploy hook (kamal deploy, redeploy and rollback, staging and production):
+# copy the running app's database on each host before the new image migrates it, so a
+# migration that damages data can be undone without waiting for the nightly backup.
+# Runs on the machine that runs kamal (GitHub Actions or a laptop), reaches the hosts with
+# the same ssh agent as kamal. A failed copy stops the deploy; to deploy anyway (incident,
+# disk full), `kamal deploy --skip-hooks` and say so in the incident notes.
+# Script and restore procedure: ops/vps/db-snapshot, docs/operations/deployment.md.
+set -euo pipefail
+
+env="${KAMAL_SERVICE:-}"
+env="${env#circographe-}"
+case "$env" in
+  staging|production) ;;
+  *) echo "pre-deploy: unknown service '${KAMAL_SERVICE:-}', no database snapshot" >&2; exit 0 ;;
+esac
+
+label="${KAMAL_COMMAND:-deploy}-${KAMAL_VERSION:-unknown}"
+label="${label:0:60}"
+script="ops/vps/db-snapshot"
+user="deploy" # ssh.user in config/deploy.{staging,production}.yml
+
+IFS=, read -r -a hosts <<< "${KAMAL_HOSTS:-}"
+for host in "${hosts[@]}"; do
+  echo "pre-deploy: snapshot of the $env database on $host"
+  ssh -o BatchMode=yes -o ConnectTimeout=20 -o StrictHostKeyChecking=accept-new \
+    "$user@$host" sh -s -- "$env" "$label" < "$script"
+done
