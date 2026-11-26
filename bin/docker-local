@@ -24,8 +24,8 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 DIR="$ROOT/docker/local"
 ENV_FILE="$DIR/.env.local"
-STAGING_URL="http://127.0.0.1:8081"
-PRODUCTION_URL="http://127.0.0.1:8082"
+STAGING_URL="https://127.0.0.1:8081"
+PRODUCTION_URL="https://127.0.0.1:8082"
 
 usage() { sed -n '5,22p' "$0" | sed 's/^# \{0,1\}//'; exit "${1:-2}"; }
 
@@ -195,7 +195,7 @@ case "$cmd" in
     url="$(url_for "$env")"
     printf "Waiting for %s/up " "$url"
     for _ in $(seq 1 60); do
-      if curl -fsS -o /dev/null "$url/up" 2>/dev/null; then
+      if curl -kfsS -o /dev/null "$url/up" 2>/dev/null; then
         echo "OK"
         echo "$env: $url"
         [ "$env" = staging ] && echo "  basic auth: staging / $(grep '^STAGING_PASSWORD=' "$ENV_FILE" | cut -d= -f2-)"
