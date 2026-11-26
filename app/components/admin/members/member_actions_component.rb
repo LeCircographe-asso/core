@@ -41,7 +41,7 @@ module Admin
       def membership_action
         current_membership = person.current_membership
 
-        btn_class = "inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#1F5C55] hover:bg-[#194A45] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-accent"
+        btn_class = "inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-brand-primary hover:bg-brand-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-accent"
 
         if current_membership.nil?
           link_to "Ajouter une adhésion", new_admin_membership_path(person_id: person.id), class: btn_class
@@ -61,7 +61,7 @@ module Admin
 
       def contribution_action
         current_membership = person.current_membership
-        btn_class = "inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#1F5C55] hover:bg-[#194A45] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-accent"
+        btn_class = "inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-brand-primary hover:bg-brand-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-accent"
         disabled_class = "inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-500 bg-gray-100"
 
         if current_membership.nil?
@@ -103,7 +103,7 @@ module Admin
             helpers.create_web_account_admin_member_path(person),
             method: :post,
             form: { data: { turbo_confirm: "Créer un compte web dormant pour #{person.full_name} (#{person.email}) ?" } },
-            class: "inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#5836a5] hover:bg-[#4c2d8a] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#5836a5]"
+            class: "inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-brand-accent hover:bg-[#4c2d8a] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-accent"
           )
         else
           content_tag :span,
@@ -116,19 +116,19 @@ module Admin
       def edit_information_action
         link_to "Modifier les informations",
                 edit_person_admin_member_path(person),
-                class: "text-[#1F5C55] hover:text-[#194A45] hover:underline"
+                class: "text-brand-primary hover:text-brand-primary-dark hover:underline"
       end
 
       def payment_history_action
         link_to "Voir les paiements",
                 admin_payments_path(person_id: person.id),
-                class: "text-[#1F5C55] hover:text-[#194A45] hover:underline"
+                class: "text-brand-primary hover:text-brand-primary-dark hover:underline"
       end
 
       def make_donation_action
         link_to "Enregistrer un don",
                 new_admin_donation_path(person_id: person.id),
-                class: "text-[#1F5C55] hover:text-[#194A45] hover:underline"
+                class: "text-brand-primary hover:text-brand-primary-dark hover:underline"
       end
 
       def restore_user_form

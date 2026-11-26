@@ -51,7 +51,7 @@ module Admin
       end
 
       def preference_status(enabled)
-        enabled ? "bg-[#1F5C55]" : "bg-gray-200"
+        enabled ? "bg-brand-primary" : "bg-gray-200"
       end
     end
   end
