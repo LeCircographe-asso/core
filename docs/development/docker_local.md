@@ -34,7 +34,15 @@ Cold start de ta branche, avant tout push : `bin/docker-local build`, `bin/docke
 
 Production : `https://127.0.0.1:8082`, mode maintenance désactivé. Le tag choisi est mémorisé dans `docker/local/.env.local` (généré au premier lancement, permissions 600, git-ignoré : il contient la master key).
 
-**HTTPS local.** Le proxy sert en HTTPS avec un certificat de l'autorité locale de Caddy : au premier accès, le navigateur avertit (« Paramètres avancés → Continuer vers 127.0.0.1 »), une seule fois tant que le volume `circographe-local_proxy_data` existe. Indispensable : l'app force le SSL, construit ses formulaires et redirections en `https://` et vérifie l'en-tête `Origin` ; en HTTP simple, la connexion échouait (422). Sans risque pour HSTS : les navigateurs ne l'appliquent jamais à une adresse IP.
+**HTTPS local.** Le proxy sert en HTTPS avec un certificat émis par l'autorité locale de Caddy. Sans plus, le navigateur avertit (« Paramètres avancés → Continuer vers 127.0.0.1 ») au premier accès, puis **à nouveau toutes les 12 h environ** : Caddy renouvelle ce certificat, et l'exception acceptée ne valait que pour l'ancien. Pour ne plus jamais être averti, faire confiance une fois à l'autorité locale (elle est gardée dans le volume `circographe-local_proxy_data`) :
+
+```bash
+cd docker/local && docker compose cp proxy:/data/caddy/pki/authorities/local/root.crt ./caddy-local-root.crt
+# Windows : double-clic sur le fichier → Installer le certificat → Utilisateur actuel →
+# « Autorités de certification racines de confiance ». Puis redémarrer le navigateur.
+```
+
+Ce certificat n'authentifie que ce proxy local (sa clé ne quitte pas le volume) ; le supprimer du magasin Windows si on supprime le volume. Indispensable : l'app force le SSL, construit ses formulaires et redirections en `https://` et vérifie l'en-tête `Origin` ; en HTTP simple, la connexion échouait (422). Sans risque pour HSTS : les navigateurs ne l'appliquent jamais à une adresse IP.
 
 ## Données
 

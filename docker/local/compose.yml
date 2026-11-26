@@ -69,15 +69,16 @@ services:
       - source: caddyfile
         target: /etc/caddy/Caddyfile
     volumes:
-      - proxy_data:/data   # keeps the local CA: the browser accepts the certificate once, not at every `up`
+      - proxy_data:/data   # keeps the local CA, so trusting its root once is enough (docs/development/docker_local.md)
 
 configs:
   caddyfile:
     content: |
       # Real HTTPS with Caddy's local CA (`tls internal`): the app forces SSL and builds
       # absolute https:// URLs (form actions, redirects) and checks the Origin header, so a
-      # plain-HTTP proxy broke every login. The browser warns once about the local
-      # certificate. default_sni: browsers send no SNI for an IP address.
+      # plain-HTTP proxy broke every login. The browser warns about the local certificate
+      # (again at each ~12h leaf renewal) unless the local root is trusted (see the docs).
+      # default_sni: browsers send no SNI for an IP address.
       # (127.0.0.1 because browsers never apply HSTS to an IP: the app's HSTS header cannot
       # leak onto the dev server on localhost:3000.)
       {

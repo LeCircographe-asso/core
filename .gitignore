@@ -105,3 +105,4 @@ SCRATCH.md
 .mcp.json
 bin/*.bak
 /CLAUDE.md
+/docker/local/caddy-local-root.crt
