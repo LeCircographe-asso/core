@@ -33,9 +33,13 @@
          data-faq-search-target="chips"
          class="sticky top-[var(--faq-sticky-top,0px)] z-30 -mx-4 mb-4 rounded-t-[28px] bg-white/95 px-4 py-3 backdrop-blur sm:-mx-8 sm:px-8">
       <ul class="flex gap-2 overflow-x-auto [scrollbar-width:none] sm:flex-wrap sm:justify-center">
-        <% @faq_groups.each do |label, _faqs| %>
+        <%# .faq-tab = style des anciens onglets (contour vert ; violet quand data-active) :
+            le premier est actif d'emblée, le contrôleur suit ensuite la section lue. %>
+        <% @faq_groups.each_with_index do |(label, _faqs), index| %>
           <li class="shrink-0" data-faq-search-target="chip" data-group="faq-<%= label.dasherize %>">
-            <a href="#faq-<%= label.dasherize %>" class="faq-tab inline-flex min-h-11 items-center whitespace-nowrap">
+            <a href="#faq-<%= label.dasherize %>" class="faq-tab inline-flex min-h-11 items-center whitespace-nowrap"
+               data-action="click->faq-search#activate"
+               <%= "data-active aria-current=true" if index.zero? %>>
               <%= Faq::LABEL_NAMES.fetch(label) %>
             </a>
           </li>

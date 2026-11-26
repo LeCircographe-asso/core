@@ -14,11 +14,19 @@ export default class extends Controller {
     this.onHashChange = () => this.#openFromHash()
     window.addEventListener("hashchange", this.onHashChange)
     this.#openFromHash()
+    this.#observeGroups()
   }
 
   disconnect () {
     window.removeEventListener("resize", this.onResize)
     window.removeEventListener("hashchange", this.onHashChange)
+    this.observer?.disconnect()
+  }
+
+  // Shortcut click: highlight it right away (the observer follows while scrolling).
+  activate (event) {
+    const li = event.currentTarget.closest("[data-group]")
+    if (li) this.#setActive(li.dataset.group)
   }
 
   filter () {
@@ -59,6 +67,35 @@ export default class extends Controller {
     if (this.inputTarget.value !== "") this.clear()
     item.open = true
     item.scrollIntoView({ block: "start" })
+  }
+
+  // The shortcut of the group being read takes the site's active tab style (.faq-tab[data-active]:
+  // violet, the others green outline), as the former FAQ tabs did.
+  #observeGroups () {
+    if (!("IntersectionObserver" in window)) return
+    this.inView = new Map()
+    this.observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => this.inView.set(entry.target.id, entry.isIntersecting))
+      const current = this.groupTargets.find(group => !group.hidden && this.inView.get(group.id))
+      if (current) this.#setActive(current.id)
+    }, { rootMargin: "-30% 0px -55% 0px" })
+    this.groupTargets.forEach(group => this.observer.observe(group))
+  }
+
+  #setActive (groupId) {
+    this.chipTargets.forEach((li) => {
+      const link = li.querySelector("a")
+      const active = li.dataset.group === groupId
+      link.toggleAttribute("data-active", active)
+      if (active) {
+        link.setAttribute("aria-current", "true")
+        // Keep the active shortcut visible in the horizontally scrolling row (phones).
+        const row = li.parentElement
+        row.scrollTo({ left: li.offsetLeft - row.offsetLeft - 16, behavior: "smooth" })
+      } else {
+        link.removeAttribute("aria-current")
+      }
+    })
   }
 
   // Stack the shortcuts under the navbar only if the navbar really sticks: it is declared
