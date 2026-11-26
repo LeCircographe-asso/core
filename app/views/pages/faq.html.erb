@@ -49,12 +49,18 @@
 
     <p class="sr-only" aria-live="polite" data-faq-search-target="status"></p>
 
+    <%# Ancre = question en slug (/faq#horaires) ; en cas de doublon (questions identiques ou
+        qui ne diffèrent que par la ponctuation), on ajoute l'id pour garder chaque lien unique. %>
+    <% anchors = Set.new %>
     <% @faq_groups.each do |label, faqs| %>
       <section id="faq-<%= label.dasherize %>" class="mb-8 scroll-mt-24" data-faq-search-target="group" aria-labelledby="faq-<%= label.dasherize %>-title">
         <h2 id="faq-<%= label.dasherize %>-title" class="mb-1 text-xl font-semibold text-[#1F5C55] sm:text-2xl"><%= Faq::LABEL_NAMES.fetch(label) %></h2>
         <div class="divide-y divide-gray-200 border-b border-gray-200">
           <% faqs.each do |faq| %>
-            <details id="<%= faq.question.parameterize.presence || "question-#{faq.id}" %>" class="group scroll-mt-24" data-faq-search-target="item">
+            <% slug = faq.question.parameterize.presence || "question" %>
+            <% anchor = anchors.include?(slug) ? "#{slug}-#{faq.id}" : slug %>
+            <% anchors << anchor %>
+            <details id="<%= anchor %>" class="group scroll-mt-24" data-faq-search-target="item">
               <summary class="flex min-h-12 cursor-pointer list-none items-center justify-between gap-4 py-3 text-left font-semibold text-gray-900 hover:text-[#1F5C55] focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[#5836A5] [&::-webkit-details-marker]:hidden">
                 <span><%= faq.question %></span>
                 <svg class="h-4 w-4 shrink-0 text-gray-500 transition-transform group-open:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">

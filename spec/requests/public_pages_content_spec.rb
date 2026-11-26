@@ -71,6 +71,15 @@ RSpec.describe 'Public pages content', type: :request do
       expect(body).to include('<a href="/contact">Contact</a>')
       expect(body).not_to include("<script>alert(1)</script>")
     end
+
+    it "garde une ancre unique quand deux questions donnent le même slug" do
+      Faq.create!(label: "general", question: "Horaires", answer: "En semaine.")
+      twin = Faq.create!(label: "general", question: "Horaires ?", answer: "Et le week-end.")
+
+      get faq_path
+
+      expect(response.body).to include('<details id="horaires"', %(<details id="horaires-#{twin.id}"))
+    end
   end
 
   describe 'GET /pages/news' do
