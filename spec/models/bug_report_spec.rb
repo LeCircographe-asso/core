@@ -103,6 +103,13 @@ RSpec.describe BugReport, type: :model do
       expect(report.note).to eq("Page introuvable (404) : /bogus")
     end
 
+    it "labels a failed job with its job class" do
+      report = BugReport.record_automatic!(error_class: "Net::ReadTimeout", message: "timeout", kind: :job_error, path: "job:ActionMailer::MailDeliveryJob")
+
+      expect(report.note).to eq("Erreur de job (Net::ReadTimeout) : ActionMailer::MailDeliveryJob")
+      expect(report.js_errors.first["type"]).to eq("server_job_error")
+    end
+
     it "increments occurrence_count instead of duplicating within the dedup window" do
       first = BugReport.record_automatic!(error_class: "StandardError", message: "boom", kind: :error, path: "/x")
       second = BugReport.record_automatic!(error_class: "StandardError", message: "boom (again)", kind: :error, path: "/x")

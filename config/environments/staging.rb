@@ -45,6 +45,10 @@ Rails.application.configure do
   # unblocks testing the actual email workflow on staging instead of every
   # delivery silently failing against localhost:25 (no smtp_settings at all).
   config.action_mailer.perform_caching = false
+  # Comme en production : MAILER_DELIVERIES_ENABLED=false coupe l'envoi (utilisé par
+  # docker/local/compose.yml pour qu'une image staging lancée en local n'envoie aucun mail).
+  # Défaut true : le staging du VPS continue d'envoyer via Mailjet sandbox.
+  config.action_mailer.perform_deliveries = ENV.fetch("MAILER_DELIVERIES_ENABLED", "true") == "true"
   config.action_mailer.delivery_method = :smtp
   config.action_mailer.smtp_settings = {
     address: "in-v3.mailjet.com",
@@ -74,9 +78,8 @@ Rails.application.configure do
   # Note: Custom configs comme staging_mode doivent être définies dans application.rb
   # ou via des initializers si nécessaire
 
-  # Logs spécifiques
-  config.logger = ActiveSupport::Logger.new($stdout)
-  config.logger.formatter = proc do |severity, datetime, _progname, msg|
-    "[STAGING] #{datetime.strftime('%Y-%m-%d %H:%M:%S')} #{severity}: #{msg}\n"
-  end
+  # Même logger que la production : STDOUT taggé, pour que le request_id (log_tags
+  # ci-dessus) apparaisse sur chaque ligne et permette de suivre une requête de bout
+  # en bout. L'horodatage vient du journal du VPS (driver journald, voir deploy.staging.yml).
+  config.logger = ActiveSupport::TaggedLogging.logger($stdout)
 end

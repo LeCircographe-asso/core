@@ -38,4 +38,26 @@ Rails.application.config.after_initialize do
   rescue StandardError => e
     Rails.logger.error("[AutomaticBugReporting] failed to enqueue: #{e.message}")
   end
+
+  # Même principe pour les jobs (SolidQueue, mails deliver_later…) : `perform.active_job`
+  # n'expose `exception_object` que pour une exception que ni `retry_on` ni `discard_on`
+  # n'a absorbée, donc un job réellement en échec (retries épuisés compris). Le fingerprint
+  # regroupe par classe d'exception + classe de job (path "job:<Classe>").
+  ActiveSupport::Notifications.subscribe("perform.active_job") do |*, payload|
+    exception = payload[:exception_object]
+    job = payload[:job]
+    next unless exception && job
+    # Jamais le job de reporting lui-même : un échec là-dedans boucherait la file en boucle.
+    next if job.is_a?(Support::AutomaticBugReportJob)
+
+    Support::AutomaticBugReportJob.perform_later(
+      error_class: exception.class.name,
+      message: exception.message,
+      kind: :job_error,
+      path: "job:#{job.class.name}",
+      backtrace: exception.backtrace
+    )
+  rescue StandardError => e
+    Rails.logger.error("[AutomaticBugReporting] failed to enqueue job error: #{e.message}")
+  end
 end

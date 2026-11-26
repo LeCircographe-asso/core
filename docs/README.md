@@ -93,6 +93,7 @@ Chaque document Markdown déclare un statut dans son header :
 ## Tests
 
 - [`development/testing.md`](development/testing.md) — guide TDD unifié (philosophie, setup, couverture, gaps, CI).
+- [`development/docker_local.md`](development/docker_local.md) — lancer en local l'image exacte du staging ou de la prod (`bin/docker-local`), avec mails, sauvegardes et analytics coupés.
 - [`development/refactor-admin-members-namespace.md`](development/refactor-admin-members-namespace.md) — trace de la migration `admin/users` → `admin/members` (terminée).
 
 ## Frontend, UX et design
@@ -104,6 +105,7 @@ Chaque document Markdown déclare un statut dans son header :
 ## Operations
 
 - [`operations/deployment.md`](operations/deployment.md) — workflow Kamal dev → staging → prod + règles d'or et troubleshooting (source de vérité).
+- [`operations/logs.md`](operations/logs.md) — diagnostic staging/prod : Rapports de bug (requêtes + jobs), compte SSH `logs` en lecture seule, logs persistants dans journald.
 - [`operations/cold_start.md`](operations/cold_start.md) — cold start dev/staging/prod, profils de seeds, premier super-admin, structure des bases Solid*.
 
 ## Migrations et legacy

@@ -26,3 +26,19 @@ updates:
       github-actions:
         patterns: ["*"]
 
+  # Umami stack (docker/analytics). One PR per image, never grouped: each bump is
+  # an upgrade to apply by hand on the VPS (docs/operations/analytics.md).
+  - package-ecosystem: docker-compose
+    directory: "/docker/analytics"
+    target-branch: "dev"
+    schedule:
+      interval: weekly
+      day: friday
+      time: "09:00"
+    open-pull-requests-limit: 2
+    rebase-strategy: auto
+    ignore:
+      # A Postgres major upgrade needs a dump/restore of the volume, not a tag bump.
+      - dependency-name: "postgres"
+        update-types: ["version-update:semver-major"]
+

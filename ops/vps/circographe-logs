@@ -1,0 +1,99 @@
+#!/bin/sh
+# Read-only access to Le Circographe logs on the VPS (SSH forced command of the `logs` user).
+# Installed as /usr/local/bin/circographe-logs (root:root 755), see docs/operations/logs.md.
+#
+#   <staging|production> [lines]            last lines of the running web container (default 200)
+#   <staging|production> errors [since]     ERROR/FATAL/exceptions/5xx (default since 1h)
+#   <staging|production> since <since>      everything since <since>, across deploys
+#   <staging|production> grep <text> [since]  case-insensitive fixed-string search (default 24h)
+#   <staging|production> request <id>       every line of one request (request_id, last 24h)
+#   analytics [lines]                       Umami logs
+#   proxy [lines]                           kamal-proxy logs (all sites)
+#   help
+#
+# <since> = <number><m|h|d>, e.g. 30m, 2h, 1d. Output is capped at 5000 lines.
+# Nothing here writes anything: only journalctl and docker logs.
+set -euf
+
+# The forced command passes the client's command as one string; split it without globbing.
+input="${SSH_ORIGINAL_COMMAND:-$*}"
+# shellcheck disable=SC2086
+set -- $input
+
+usage() {
+  sed -n '5,14p' "$0" | sed 's/^# \{0,1\}//' >&2
+  exit 2
+}
+
+valid_since() { echo "$1" | grep -Eq '^[1-9][0-9]{0,2}[mhd]$'; } # no leading 0: $(( )) would read it as octal
+valid_lines() { echo "$1" | grep -Eq '^[0-9]{1,4}$' && [ "$1" -le 5000 ]; }
+
+# journal_or_docker <journal tag> <container id> <since or empty>
+# Reads the host journal (driver journald, survives deploys); falls back to `docker logs`
+# for a container still on the json-file driver (before the first deploy with journald).
+journal_or_docker() {
+  tag="$1" cid="$2" since="$3"
+  if [ -n "$(journalctl -q -t "$tag" -n 1 --no-pager 2>/dev/null)" ]; then
+    journalctl -q -t "$tag" -o short-iso --no-pager ${since:+--since=-$since}
+  elif [ -n "$cid" ]; then
+    # docker logs --since knows h/m/s but not days: 2d -> 48h.
+    case "$since" in *d) since="$(( ${since%d} * 24 ))h" ;; esac
+    docker logs --timestamps ${since:+--since=$since} "$cid" 2>&1
+  else
+    echo "No logs found for $tag" >&2
+    exit 1
+  fi
+}
+
+container_for() { # container_for <kamal service>
+  docker ps -q --filter "label=service=$1" --filter label=role=web | head -n1
+}
+
+target="${1:-}"
+case "$target" in
+  staging|production)
+    service="circographe-$target"
+    cmd="${2:-}"
+    cid="$(container_for "$service")"
+    case "$cmd" in
+      ''|[0-9]*)
+        lines=200
+        if [ -n "$cmd" ]; then valid_lines "$cmd" || usage; lines="$cmd"; fi
+        [ -n "$cid" ] || { echo "No running $target web container" >&2; exit 1; }
+        exec docker logs --timestamps --tail "$lines" "$cid" 2>&1
+        ;;
+      errors)
+        since="${3:-1h}"; valid_since "$since" || usage
+        journal_or_docker "$service" "$cid" "$since" \
+          | grep -E ' (ERROR|FATAL)[ :]|Error|Exception|Completed 5[0-9]{2}|"status":5[0-9]{2}' \
+          | tail -n 5000 || true
+        ;;
+      since)
+        since="${3:-}"; valid_since "$since" || usage
+        journal_or_docker "$service" "$cid" "$since" | tail -n 5000
+        ;;
+      grep)
+        text="${3:-}"; since="${4:-24h}"
+        echo "$text" | grep -Eq '^[A-Za-z0-9._:/@=-]{2,100}$' || usage
+        valid_since "$since" || usage
+        journal_or_docker "$service" "$cid" "$since" | grep -iF -- "$text" | tail -n 5000 || true
+        ;;
+      request)
+        rid="${3:-}"
+        echo "$rid" | grep -Eq '^[0-9a-f-]{36}$' || usage
+        journal_or_docker "$service" "$cid" "24h" | grep -F -- "$rid" | tail -n 5000 || true
+        ;;
+      *) usage ;;
+    esac
+    ;;
+  analytics)
+    lines="${2:-200}"; valid_lines "$lines" || usage
+    cid="$(docker ps -q --filter label=com.docker.compose.service=umami | head -n1)"
+    journal_or_docker umami "$cid" "" | tail -n "$lines"
+    ;;
+  proxy)
+    lines="${2:-200}"; valid_lines "$lines" || usage
+    exec docker logs --timestamps --tail "$lines" kamal-proxy 2>&1
+    ;;
+  *) usage ;;
+esac

@@ -32,22 +32,47 @@ et session replay existent nativement dans l'édition récente (tables
 
 Fichiers : `docker/analytics/docker-compose.yml` + `docker/analytics/.env.example`
 
-- `umami-db` : Postgres 16, dédiée à Umami, volume nommé `umami_db_data`
-- `umami` : image officielle `postgresql-latest`, migrations auto au démarrage
+- `umami-db` : Postgres 16, dédiée à Umami, volume `umami_db_data` dans le compose (`analytics_umami_db_data` côté Docker, préfixe du projet compose)
+- `umami` : image officielle épinglée (`3.4.0`), migrations auto au démarrage : monter de version volontairement, voir « Monter de version Umami » ci-dessous
 - Port `127.0.0.1:3001` : accès admin local uniquement (debug/setup), pas
   exposé publiquement par ce biais
 
 Ce stack tourne **à côté** du déploiement Kamal de l'app, pas dedans :
 Kamal ne gère que `circographe` et `circographe-staging` (voir
-`config/deploy.yml` / `deploy.staging.yml`). Sur le VPS, pas de plugin
-`docker compose` (v2) installé — seulement le binaire legacy
-`docker-compose` (v1.29.2). Syntaxe avec tiret, flags avant le nom du
-service (`docker-compose logs --tail=50 umami`, pas l'inverse).
+`config/deploy.yml` / `deploy.staging.yml`). Sur le VPS, il est piloté
+avec le plugin `docker compose` (v2, paquet Ubuntu `docker-compose-v2`),
+depuis `~/circographe-tools/docker/analytics` (clone du dépôt sur `dev`) ;
+conteneurs `analytics-umami-1` et `analytics-umami-db-1`. Ne plus utiliser
+l'ancien binaire `docker-compose` (v1.29.2) : sur ce Docker il plante en
+recréant un conteneur (`KeyError: 'ContainerConfig'`) et laisse Umami
+arrêté (incident du 26/11/2026, stack basculée sur v2 le même jour).
 
 **Prod et staging tournent sur le même VPS Ionos (82.165.63.129) → une
 seule instance Umami pour les deux**, pas de duplication d'infra. Umami
 gère plusieurs sites depuis une seule instance : un site "staging" pour
 tester, un site "prod" créé seulement une fois validé.
+
+### Monter de version Umami
+
+Umami applique ses migrations au démarrage et ne sait pas revenir en
+arrière : on ne change le tag qu'avec une sauvegarde cohérente (un
+`pg_dump`, pas une copie du volume pendant que Postgres écrit). Sur le
+VPS, depuis le dossier du compose :
+
+```bash
+docker compose exec -T umami-db pg_dump -U umami umami | gzip > ~/backups/umami/umami-$(date +%F-%H%M).sql.gz
+# changer le tag `image:` du service umami (PR sur dev, puis git pull sur le VPS)
+docker compose pull umami
+docker compose up -d umami
+docker compose logs --tail=50 umami   # migrations OK, puis curl -I https://analytics.lecircographe.fr
+```
+
+Dependabot (écosystème `docker-compose`) ouvre une PR sur `dev` quand une
+nouvelle version d'Umami ou de Postgres 16 sort (pas les montées majeures de
+Postgres, qui demandent un dump/restore). Merger cette PR ne déploie rien :
+la mise à jour se fait ensuite à la main sur le VPS avec les commandes
+ci-dessus. La CI (`ci-dev`, job `compose`) vérifie le fichier compose avec
+`docker compose config` à chaque PR qui touche `docker/`.
 
 ## Réseau : Umami branché sur kamal-proxy
 
@@ -88,8 +113,8 @@ cp .env.example .env
 # du template qui dupliquent les clés — repartir d'un .env propre si besoin) :
 openssl rand -hex 32   # -> UMAMI_APP_SECRET
 openssl rand -hex 24   # -> UMAMI_DB_PASSWORD
-docker-compose up -d
-docker-compose ps            # umami-db healthy, umami up
+docker compose up -d
+docker compose ps            # umami-db healthy, umami up
 ```
 
 Login initial Umami : `admin` / `umami` — **à changer immédiatement**
@@ -157,9 +182,23 @@ bin/rails credentials:edit
 umami:
   staging:
     website_id: 6a944fd7-3168-4fdc-b1a9-735479b90af5
-  # production:
-  #   website_id: <uuid du site prod, à créer après validation staging>
+  production:
+    website_id: <uuid du site prod>   # site "production" / lecircographe.fr dans l'admin Umami
 ```
+
+Le `website_id` n'est pas un secret (il figure en clair dans le HTML de chaque page) :
+le garder dans `credentials.yml.enc` ne pose pas de problème d'exposition au conteneur
+staging. Quand `config/credentials/production.yml.enc` sera créé (réconciliation, §5.0),
+y recopier `umami.production.website_id` : la production ne lira plus que ce fichier.
+
+### Une instance, deux sites, domaines verrouillés
+
+Une seule instance Umami sert la production et le staging, avec **un site par environnement**
+(`staging` → `staging.lecircographe.fr`, `production` → `lecircographe.fr`). Le tag du layout
+passe `data-domains` (helper `umami_domain`, qui reprend l'hôte public de l'environnement
+défini dans `action_mailer.default_url_options`) : le script ne compte une visite que sur
+cet hôte. Une image staging ou prod lancée ailleurs (Docker en local, conteneur de test) avec
+les mêmes credentials n'envoie donc rien dans les vraies statistiques.
 
 À lancer en local (si tu as `config/master.key`) ou sur le VPS via
 `bin/kamal app exec --interactive --reuse "bin/rails credentials:edit" -c config/deploy.staging.yml`
@@ -193,6 +232,7 @@ y referait surface.
 - [ ] Changer le mot de passe admin Umami par défaut
 - [ ] Valider quelques jours de trafic staging dans le dashboard Umami
 - [ ] Revue vie privée avant d'envisager le recorder en prod
-- [ ] Créer le site **prod**, ajouter `umami.production.website_id`
+- [x] Verrouiller le comptage au domaine de chaque environnement (`data-domains`)
+- [ ] Créer le site **prod** (`lecircographe.fr`) dans l'admin Umami, ajouter `umami.production.website_id` aux credentials (puis à `production.yml.enc`, §5.0 de la réconciliation)
 - [ ] Backup `pg_dump` cron séparé des backups SQLite existants (voir `docs/backup-restore.md`)
 - [ ] Définir une politique de rétention des pageviews dans l'admin Umami
