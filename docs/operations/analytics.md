@@ -32,8 +32,8 @@ et session replay existent nativement dans l'édition récente (tables
 
 Fichiers : `docker/analytics/docker-compose.yml` + `docker/analytics/.env.example`
 
-- `umami-db` : Postgres 16, dédiée à Umami, volume nommé `umami_db_data`
-- `umami` : image officielle épinglée (`3.4.0`), migrations auto au démarrage ; monter de version volontairement (changer le tag, sauvegarder `umami_db_data`, puis `docker compose pull && docker compose up -d`)
+- `umami-db` : Postgres 16, dédiée à Umami, volume `umami_db_data` dans le compose (`analytics_umami_db_data` côté Docker, préfixe du projet compose)
+- `umami` : image officielle épinglée (`3.4.0`), migrations auto au démarrage : monter de version volontairement, voir « Monter de version Umami » ci-dessous
 - Port `127.0.0.1:3001` : accès admin local uniquement (debug/setup), pas
   exposé publiquement par ce biais
 
@@ -48,6 +48,21 @@ service (`docker-compose logs --tail=50 umami`, pas l'inverse).
 seule instance Umami pour les deux**, pas de duplication d'infra. Umami
 gère plusieurs sites depuis une seule instance : un site "staging" pour
 tester, un site "prod" créé seulement une fois validé.
+
+### Monter de version Umami
+
+Umami applique ses migrations au démarrage et ne sait pas revenir en
+arrière : on ne change le tag qu'avec une sauvegarde cohérente (un
+`pg_dump`, pas une copie du volume pendant que Postgres écrit). Sur le
+VPS, depuis le dossier du compose :
+
+```bash
+docker-compose exec -T umami-db pg_dump -U umami umami > ~/umami-$(date +%F).sql
+# changer le tag `image:` du service umami (PR sur dev, puis git pull sur le VPS)
+docker-compose pull umami
+docker-compose up -d umami
+docker-compose logs --tail=50 umami   # migrations OK, puis curl -I https://analytics.lecircographe.fr
+```
 
 ## Réseau : Umami branché sur kamal-proxy
 
