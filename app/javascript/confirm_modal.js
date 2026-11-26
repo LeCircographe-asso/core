@@ -1,6 +1,10 @@
 import { Turbo } from "@hotwired/turbo-rails"
 
 const HIDDEN_CLASS = "hidden"
+// `flex` is only present while open: a closed modal carrying both `hidden` and `flex` relies on
+// `.hidden` winning the cascade, which some browser extensions (dark-mode ones that re-inject
+// stylesheets) break, leaving every modal visible with dead buttons.
+const OPEN_CLASS = "flex"
 const DEFAULT_CONFIRM_MESSAGE = "Es-tu sûr·e de vouloir continuer ?"
 const DEFAULT_CONFIRM_BODY_FALLBACK = "Êtes-vous sûr de vouloir poursuivre cette action ?"
 const DEFAULT_CONFIRM_TITLE = "Confirmation"
@@ -50,6 +54,7 @@ function resetConfirmModalChrome() {
 function closeModal(result) {
   if (!modalElement) return
 
+  modalElement.classList.remove(OPEN_CLASS)
   modalElement.classList.add(HIDDEN_CLASS)
   modalElement.setAttribute("aria-hidden", "true")
 
@@ -86,7 +91,7 @@ function showModal(message, element) {
     activeResolve = resolve
     previousFocus = document.activeElement
 
-    modalElement.classList.remove(HIDDEN_CLASS)
+    modalElement.classList.replace(HIDDEN_CLASS, OPEN_CLASS)
     modalElement.removeAttribute("aria-hidden")
 
     requestAnimationFrame(() => {
@@ -171,7 +176,7 @@ export function openRichConfirmModal(options = {}) {
     activeResolve = resolve
     previousFocus = document.activeElement
 
-    modalElement.classList.remove(HIDDEN_CLASS)
+    modalElement.classList.replace(HIDDEN_CLASS, OPEN_CLASS)
     modalElement.removeAttribute("aria-hidden")
 
     requestAnimationFrame(() => {

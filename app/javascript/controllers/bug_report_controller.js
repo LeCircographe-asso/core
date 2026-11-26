@@ -117,7 +117,7 @@ export default class extends Controller {
     if (!this.hasPanelTarget) return
 
     this.previousFocus = document.activeElement
-    this.panelTarget.classList.remove("hidden")
+    this.panelTarget.classList.replace("hidden", "flex")
     document.body.style.overflow = "hidden"
     document.addEventListener("keydown", this.keydownHandler)
     this.refreshContextFields()
@@ -131,7 +131,7 @@ export default class extends Controller {
     event?.preventDefault()
     if (!this.hasPanelTarget) return
 
-    this.panelTarget.classList.add("hidden")
+    this.panelTarget.classList.replace("flex", "hidden")
     document.body.style.overflow = ""
     document.removeEventListener("keydown", this.keydownHandler)
 
