@@ -7,6 +7,12 @@
     <p class="public-hero-eyebrow">Rejoindre la communauté</p>
     <h1 class="public-hero-title">Adhérer au Circographe</h1>
     <p class="public-hero-body">Une rencontre sur place pour rejoindre la communauté, découvrir le lieu et la vie associative.</p>
+    <%# On adhère sur place : le rendez-vous (créneaux + adresse) est la première chose utile. %>
+    <div class="pt-2">
+      <%= link_to "Voir les créneaux d’accueil", "#horaires",
+            class: "btn-primary inline-flex min-h-11 items-center",
+            data: { controller: "smooth-scroll", action: "smooth-scroll#go" } %>
+    </div>
   </div>
 </section>
 
@@ -62,7 +68,7 @@
                 <span class="text-sm font-semibold text-gray-800">Adhésion visiteur</span>
                 <span class="text-xs font-medium px-2 py-0.5 rounded-full bg-amber-50 border border-amber-200 text-amber-700">don libre</span>
               </div>
-              <p class="text-xs text-gray-500 mt-0.5 leading-normal">Temps ouverts · sans pratique.</p>
+              <p class="text-sm text-gray-500 mt-0.5 leading-normal">Temps ouverts · sans pratique.</p>
             </div>
             <span class="shrink-0 text-sm font-semibold text-gray-400 tabular-nums">
               <% if @visitor_membership_min_price_cents %>
@@ -77,7 +83,7 @@
           <li class="flex items-center justify-between gap-4 px-1 py-3">
             <div class="min-w-0">
               <span class="text-sm font-semibold text-gray-800">Adhésion cirque</span>
-              <p class="text-xs text-gray-500 mt-0.5 leading-normal">Entraînements libres · date à date.</p>
+              <p class="text-sm text-gray-500 mt-0.5 leading-normal">Entraînements libres · date à date.</p>
               <% if (reduced = @circus_membership_types["reduced"]) %>
                 <span class="inline-block mt-1 text-xs px-2 py-0.5 rounded-full border border-gray-200 text-gray-500">Tarif réduit — <%= number_to_currency(reduced.price_euros, unit: "€", format: "%n %u", precision: 0) %></span>
               <% end %>
@@ -98,13 +104,13 @@
                 <span class="text-sm font-semibold text-gray-800">Adhésion événement</span>
                 <span class="text-xs font-medium px-2 py-0.5 rounded-full bg-gray-100 border border-gray-200 text-gray-500">bientôt</span>
               </div>
-              <p class="text-xs text-gray-400 mt-0.5 leading-normal">Accès aux événements publics du lieu.</p>
+              <p class="text-sm text-gray-400 mt-0.5 leading-normal">Accès aux événements publics du lieu.</p>
             </div>
             <span class="shrink-0 text-xs text-gray-400">—</span>
           </li>
         </ul>
 
-        <p class="text-xs text-gray-500 bg-brand-primary/5 border border-brand-primary/20 rounded-lg px-3 py-2 leading-normal">
+        <p class="text-sm text-gray-600 bg-brand-primary/5 border border-brand-primary/20 rounded-lg px-3 py-2 leading-normal">
           Paiement sur place — CB ou espèces. Reçu fiscal sur demande.
         </p>
       </div>
@@ -114,7 +120,7 @@
         <div class="w-6 h-[3px] rounded-full mb-1 bg-brand-accent"></div>
         <p class="text-xs font-medium uppercase tracking-[0.32em] text-brand-primary/70">Cotisations</p>
         <h2 class="text-xl font-semibold text-gray-900">Autogestion du lieu</h2>
-        <p class="text-xs text-gray-500">Choisis la formule qui colle à ta pratique.</p>
+        <p class="text-sm text-gray-500">Choisis la formule qui colle à ta pratique.</p>
 
         <% day_formula = @contribution_formulas["day"]
            pack10_formula = @contribution_formulas["pack10"]
@@ -129,7 +135,7 @@
             <div class="min-w-0">
               <span class="font-semibold text-gray-900">Carnet 10 séances</span>
               <span class="ml-2 text-xs font-medium px-1.5 py-0.5 rounded-full bg-[#5836A5]/10 text-[#5836A5]">Populaire</span>
-              <p class="text-xs text-gray-500 mt-0.5">Sans expiration.</p>
+              <p class="text-sm text-gray-500 mt-0.5">Sans expiration.</p>
             </div>
             <span class="font-bold text-[#5836A5] tabular-nums shrink-0 ml-3"><%= pack10_formula ? number_to_currency(pack10_formula.price_euros, unit: "€", format: "%n %u", precision: 0) : "—" %></span>
           </li>
@@ -140,7 +146,7 @@
           <li class="flex items-center justify-between px-3 py-2 rounded-xl border border-brand-primary/20 bg-brand-primary/5">
             <div class="min-w-0">
               <span class="font-semibold text-gray-900">Cotisation annuelle</span>
-              <p class="text-xs text-gray-500 mt-0.5">Date à date.</p>
+              <p class="text-sm text-gray-500 mt-0.5">Date à date.</p>
             </div>
             <span class="font-bold text-brand-primary tabular-nums shrink-0 ml-3"><%= annual_formula ? number_to_currency(annual_formula.price_euros, unit: "€", format: "%n %u", precision: 0) : "—" %></span>
           </li>
@@ -151,7 +157,7 @@
 
     <%# Bande "À retenir" %>
     <div class="tarif-note border-t border-gray-200 px-6 sm:px-8 py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-      <p class="text-xs text-gray-600 leading-relaxed max-w-prose">
+      <p class="text-sm text-gray-600 leading-relaxed max-w-prose">
         <strong class="text-gray-800">À retenir :</strong> l’adhésion et la cotisation cirque sont deux paiements distincts. Les formules ci-dessus supposent une <strong>adhésion cirque</strong> active.
       </p>
       <%= link_to "Bénévolat & autogestion →", page_path("association", anchor: "fonctionnement"),
@@ -195,7 +201,7 @@
 
     <%# Panneau latéral : Horaires + Accès dans une seule carte %>
     <% schedule = @opening_hours %>
-    <div class="relative rounded-2xl border border-gray-100 bg-white shadow-sm overflow-hidden">
+    <div class="relative rounded-2xl border border-gray-100 bg-white shadow-sm overflow-hidden max-lg:order-first">
       <%= render "shared/exceptional_closure_ribbon" if @exceptional_closure&.in_effect? %>
 
       <%# ── En-tête horaires ── %>
@@ -230,7 +236,7 @@
         <div>
           <p class="text-sm font-semibold text-gray-900">97 bis bd de Suisse</p>
           <p class="text-sm text-gray-600">31200 Toulouse</p>
-          <p class="text-xs text-gray-500 mt-0.5">Bus 15 Tisséo · boulevard de Suisse</p>
+          <p class="text-sm text-gray-500 mt-0.5">Bus 15 Tisséo · boulevard de Suisse</p>
         </div>
         <div class="flex gap-2">
           <%= link_to "Carte & contact", page_path("contact_us", anchor: "map"),

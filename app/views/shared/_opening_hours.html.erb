@@ -25,11 +25,11 @@
   end
 
   freshness_badge = capture do
-    if !closed_now && show_freshness
+    if !closed_now && show_freshness && updated_at.present?
       concat content_tag(:div, class: "flex justify-center #{compact ? 'mt-1.5' : 'mt-2.5'}") {
         content_tag(:span, class: "inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-brand-primary/10 text-brand-primary") do
           concat content_tag(:i, nil, class: "far fa-clock", "aria-hidden": true)
-          concat "Mis à jour #{updated_at.present? ? l(updated_at.in_time_zone(Time.zone), format: '%-d/%m %H:%M') : '—'}"
+          concat "Mis à jour #{l(updated_at.in_time_zone(Time.zone), format: '%-d/%m %H:%M')}"
         end
       }
     end
