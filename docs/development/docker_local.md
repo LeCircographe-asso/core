@@ -26,13 +26,36 @@ bin/docker-local logs staging
 bin/docker-local console staging
 bin/docker-local down staging --reset        # arrêter et repartir d'une base neuve au prochain up
 bin/docker-local status
+bin/docker-local build                       # image staging construite depuis ta copie de travail (tag local)
+bin/docker-local upgrade                     # répétition de montée de version (voir plus bas)
 ```
+
+Cold start de ta branche, avant tout push : `bin/docker-local build`, `bin/docker-local down staging --reset`, puis `bin/docker-local up staging`.
 
 Production : `http://127.0.0.1:8082`, mode maintenance désactivé. Le tag choisi est mémorisé dans `docker/local/.env.local` (généré au premier lancement, permissions 600, git-ignoré : il contient la master key).
 
 ## Données
 
 Chaque environnement démarre sur **sa propre base SQLite neuve** (volume Docker `circographe-local_<env>_storage`) : l'entrypoint de l'image lance `db:prepare` et donc les seeds du profil (`SEED_LEAN` en staging, contenu seul en production). **Rien n'est copié depuis le VPS**, et la base de production ne doit jamais l'être (données personnelles des adhérents).
+
+## Répéter une montée de version (`upgrade`)
+
+Sur le VPS, Kamal ne fait jamais de cold start : il démarre l'image N+1 **sur la base de l'image N**, et c'est là que les données cassent (migration qui échoue ou détruit des lignes, code qui suppose un état que la base n'a pas). Les images staging étant construites au moment du déploiement, il faut répéter **avant** de pousser sur `staging` :
+
+```bash
+bin/docker-local upgrade                     # image du VPS (running) → ta copie de travail (local)
+bin/docker-local upgrade <sha> local         # depuis une image précise
+bin/docker-local upgrade running latest      # après coup : ce qui vient d'être déployé
+```
+
+1. Base neuve + **données de démo riches** (`SEED_DEMO=true` : environ 140 personnes, 180 paiements, adhésions, cotisations, présences) sur l'image de départ.
+2. Rapport de données (`ops/data_report.rb`) : lignes par table, `PRAGMA integrity_check` / `foreign_key_check`, règles de [`domain/data_integrity_rules.md`](../domain/data_integrity_rules.md) (comptes sans personne, paiements dont les lignes ne font pas le total, dons legacy `item_type: "Payment"`, cotisations pack10 sans séances…).
+3. Image d'arrivée sur **le même volume** : son entrypoint lance les migrations, comme un `kamal deploy`.
+4. Nouveau rapport, comparé : **échec** si une table perd des lignes ou disparaît avec des données, si une anomalie apparaît ou augmente, ou si SQLite signale une corruption. Nouvelles tables et nouvelles lignes sont normales.
+
+Projet Docker séparé (`circographe-upgrade`, sans proxy) : ton staging local n'est pas touché. En cas de succès tout est supprimé ; en cas d'échec le conteneur est gardé pour inspection (`bin/docker-local upgrade-clean` ensuite). Rapports et logs : `tmp/docker-local/upgrade-<date>/`. Le script de rapport est copié dans le conteneur : il marche aussi sur une image qui ne le contient pas encore. Il est écrit en SQL pur : si une table ou une colonne qu'il lit est renommée, `spec/ops/data_report_spec.rb` échoue jusqu'à ce qu'on l'adapte.
+
+Ce que ça ne couvre pas : les données réelles (on ne copie jamais la prod en local). Les démos couvrent les cas nominaux. Un cas tordu de la prod passera, d'où les règles de migration de [`operations/deployment.md`](../operations/deployment.md#migrations-et-donnees).
 
 ## Ce qui est coupé, et pourquoi
 

@@ -35,6 +35,18 @@ git push origin fix/nom-du-probleme
 # Merger ensuite vers dev → staging → main
 ```
 
+<a id="migrations-et-donnees"></a>
+### Migrations et données
+
+Avant de pousser sur `staging` une branche qui contient une migration : `bin/docker-local upgrade` (image du VPS → ta copie de travail, données de démo, rapport comparé ; voir [`development/docker_local.md`](../development/docker_local.md#répéter-une-montée-de-version-upgrade)).
+
+Écrire les migrations pour qu'un retour à l'image précédente reste possible **sans restaurer la base** :
+
+- **En deux temps (expand / contract).** Version N : ajouter (colonne, table), copier les données, faire lire le nouveau champ par le code. Version N+1, une fois N en production : retirer l'ancien. Jamais de `remove_column`, `drop_table` ou renommage dans la même version que le code qui cesse de s'en servir : l'image N-1 doit pouvoir tourner sur la base migrée.
+- **Pas de migration de données irréversible sans copie** : une migration qui réécrit ou supprime des lignes garde l'ancienne valeur (colonne ou table d'archive) jusqu'à la version suivante.
+- **Colonne `null: false`** : avec une valeur par défaut, ou après un backfill dans une migration précédente.
+- **Migrations de données : SQL, pas de modèles.** Un modèle peut changer plus tard et casser l'ancienne migration (`execute`/`update_all` plutôt que `Model.find_each { save }`).
+
 ## 2. Tests de validation post-déploiement
 
 ```bash

@@ -26,7 +26,8 @@ services:
       RAILS_ENV: staging
       STAGING_MODE: "true"
       PUBLIC_REGISTRATION_ENABLED: "false"
-      SEED_LEAN: "true"
+      SEED_LEAN: ${SEED_LEAN:-true}
+      SEED_DEMO: ${SEED_DEMO:-false}   # `bin/docker-local upgrade` sets true: rich fake data (refused in production)
       MAILER_DELIVERIES_ENABLED: "false"
       SOLID_QUEUE_IN_PUMA: "true"
       SOLID_QUEUE_SKIP_RECURRING: "true"
