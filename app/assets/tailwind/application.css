@@ -5,6 +5,18 @@
 @import "tailwindcss";
 
 /*
+ * Charte : le vert et le violet du site, déclarés au thème Tailwind pour que toutes leurs
+ * utilitaires existent (bordures, anneaux, dégradés, opacités /25, /30…). Sans cette
+ * déclaration, seule la liste écrite à la main plus bas (@layer utilities) était générée :
+ * une variante absente (border-brand-primary/25, ring-brand-primary…) retombait sur la
+ * couleur par défaut, d'où des bordures noires.
+ */
+@theme {
+  --color-brand-primary: #1F5C55;
+  --color-brand-accent: #5836A5;
+}
+
+/*
  * Leaflet CSS is loaded via <link> in layouts/application.html.erb (before tailwind.css).
  * Embedding @import url(leaflet) here breaks Tailwind v4 output: "@import must precede @layer".
  *

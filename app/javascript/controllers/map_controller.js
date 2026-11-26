@@ -54,11 +54,13 @@ export default class extends Controller {
 
     this.map = this.L.map(this.element).setView([this.latValue, this.lngValue], this.zoomValue)
 
-    // Tuiles raster via CARTO (cartocdn.com) ; rendu 100 % Leaflet côté navigateur (pas d’iframe ni SDK tiers).
-    this.L.tileLayer("https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png", {
+    // Tuiles OpenStreetMap ; rendu 100 % Leaflet côté navigateur (pas d’iframe ni SDK tiers).
+    // CARTO (cartocdn.com) exige désormais une clé : ses tuiles ne montraient plus que
+    // « API KEY REQUIRED ». Usage modéré (une carte, un point) conforme à la politique
+    // d'usage des tuiles OSM ; l'attribution est obligatoire (licence ODbL).
+    this.L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
       attribution:
-        '&copy; <a href="https://wiki.osmfoundation.org/wiki/Licence" rel="nofollow noopener">Sources des données</a> · <a href="https://carto.com/attributions" rel="nofollow noopener">CARTO</a>',
-      subdomains: "abcd",
+        '&copy; <a href="https://www.openstreetmap.org/copyright" rel="nofollow noopener">contributeurs d’OpenStreetMap</a>',
       maxZoom: 19
     }).addTo(this.map)
 
