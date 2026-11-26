@@ -32,7 +32,7 @@ services:
 
   umami:
     # Pinned: Umami runs its DB migrations on boot, so upgrades must be deliberate.
-    image: ghcr.io/umami-software/umami:3.4.0
+    image: ghcr.io/umami-software/umami:3.5.0
     restart: unless-stopped
     logging:
       driver: journald
