@@ -137,46 +137,6 @@
     font-size: 1.2rem;
   }
 
-  .toggle-indicator {
-    position: absolute;
-    top: 50%;
-    right: -20px;
-    width: 24px;
-    height: 24px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #4a5568;
-    font-size: 0.9rem;
-    border-radius: 50%;
-    border: 1px solid #e2e8f0;
-    background-color: #fff;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-    cursor: pointer;
-    transition: all 0.3s cubic-bezier(0.3, 0.7, 0.4, 1);
-    transform: translateY(-50%);
-  }
-
-  .toggle-indicator:hover {
-    transform: translateY(-50%) scale(1.15);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-    color: #1F5C55;
-    background-color: #f0fffe;
-  }
-
-  .toggle-indicator:active {
-    transform: translateY(-50%) scale(0.95);
-  }
-
-  .admin-sidebar.collapsed .toggle-indicator {
-    right: -20px;
-  }
-
-  .toggle-icon {
-    transition: transform 0.35s cubic-bezier(0.3, 0.7, 0.4, 1);
-    display: inline-block;
-  }
-
   /* Section headers — improved visual separation */
   .sidebar-section {
     margin-top: 0.6rem;
