@@ -39,10 +39,13 @@ Fichiers : `docker/analytics/docker-compose.yml` + `docker/analytics/.env.exampl
 
 Ce stack tourne **à côté** du déploiement Kamal de l'app, pas dedans :
 Kamal ne gère que `circographe` et `circographe-staging` (voir
-`config/deploy.yml` / `deploy.staging.yml`). Sur le VPS, pas de plugin
-`docker compose` (v2) installé — seulement le binaire legacy
-`docker-compose` (v1.29.2). Syntaxe avec tiret, flags avant le nom du
-service (`docker-compose logs --tail=50 umami`, pas l'inverse).
+`config/deploy.yml` / `deploy.staging.yml`). Sur le VPS, il est piloté
+avec le plugin `docker compose` (v2, paquet Ubuntu `docker-compose-v2`),
+depuis `~/circographe-tools/docker/analytics` (clone du dépôt sur `dev`) ;
+conteneurs `analytics-umami-1` et `analytics-umami-db-1`. Ne plus utiliser
+l'ancien binaire `docker-compose` (v1.29.2) : sur ce Docker il plante en
+recréant un conteneur (`KeyError: 'ContainerConfig'`) et laisse Umami
+arrêté (incident du 26/11/2026, stack basculée sur v2 le même jour).
 
 **Prod et staging tournent sur le même VPS Ionos (82.165.63.129) → une
 seule instance Umami pour les deux**, pas de duplication d'infra. Umami
@@ -57,11 +60,11 @@ arrière : on ne change le tag qu'avec une sauvegarde cohérente (un
 VPS, depuis le dossier du compose :
 
 ```bash
-docker-compose exec -T umami-db pg_dump -U umami umami > ~/umami-$(date +%F).sql
+docker compose exec -T umami-db pg_dump -U umami umami | gzip > ~/backups/umami/umami-$(date +%F-%H%M).sql.gz
 # changer le tag `image:` du service umami (PR sur dev, puis git pull sur le VPS)
-docker-compose pull umami
-docker-compose up -d umami
-docker-compose logs --tail=50 umami   # migrations OK, puis curl -I https://analytics.lecircographe.fr
+docker compose pull umami
+docker compose up -d umami
+docker compose logs --tail=50 umami   # migrations OK, puis curl -I https://analytics.lecircographe.fr
 ```
 
 ## Réseau : Umami branché sur kamal-proxy
@@ -103,8 +106,8 @@ cp .env.example .env
 # du template qui dupliquent les clés — repartir d'un .env propre si besoin) :
 openssl rand -hex 32   # -> UMAMI_APP_SECRET
 openssl rand -hex 24   # -> UMAMI_DB_PASSWORD
-docker-compose up -d
-docker-compose ps            # umami-db healthy, umami up
+docker compose up -d
+docker compose ps            # umami-db healthy, umami up
 ```
 
 Login initial Umami : `admin` / `umami` — **à changer immédiatement**
