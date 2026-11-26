@@ -18,7 +18,7 @@
             <%= check_box_tag :enabled, "1", @widget_setting.enabled? %>
             <%= t("admin.bug_reports.widget_toggle.label") %>
           </label>
-          <%= submit_tag t("admin.bug_reports.widget_toggle.submit"), class: "px-3 py-1.5 text-sm font-medium text-white bg-[#1F5C55] hover:bg-[#194A45] rounded-md cursor-pointer" %>
+          <%= submit_tag t("admin.bug_reports.widget_toggle.submit"), class: "px-3 py-1.5 text-sm font-medium text-white bg-brand-primary hover:bg-brand-primary-dark rounded-md cursor-pointer" %>
           <span class="text-xs text-gray-500"><%= t("admin.bug_reports.widget_toggle.hint") %></span>
         <% end %>
       </div>
@@ -27,10 +27,10 @@
     <div class="admin-metric-card p-6">
       <div class="flex flex-wrap gap-2 mb-4">
         <%= link_to t("admin.bug_reports.filters.all"), admin_bug_reports_path,
-            class: "px-3 py-1.5 rounded-full text-sm font-medium #{params[:status].blank? ? 'bg-[#1F5C55] text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}" %>
+            class: "px-3 py-1.5 rounded-full text-sm font-medium #{params[:status].blank? ? 'bg-brand-primary text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}" %>
         <% BugReport.statuses.each_key do |status| %>
           <%= link_to t("admin.bug_reports.statuses.#{status}"), admin_bug_reports_path(status: status, source: params[:source]),
-              class: "px-3 py-1.5 rounded-full text-sm font-medium #{params[:status] == status ? 'bg-[#1F5C55] text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}" %>
+              class: "px-3 py-1.5 rounded-full text-sm font-medium #{params[:status] == status ? 'bg-brand-primary text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}" %>
         <% end %>
       </div>
 
@@ -69,7 +69,7 @@
                   </td>
                   <td class="py-2 pr-4 whitespace-nowrap">
                     <% if bug_report.person %>
-                      <%= link_to bug_report.person.full_name, admin_member_path(bug_report.person), class: "text-[#1F5C55] hover:underline" %>
+                      <%= link_to bug_report.person.full_name, admin_member_path(bug_report.person), class: "text-brand-primary hover:underline" %>
                     <% else %>
                       <span class="text-gray-400"><%= t("admin.bug_reports.table.anonymous") %></span>
                     <% end %>
@@ -119,7 +119,7 @@
                   <td class="py-2 pr-4 max-w-xs truncate text-gray-500"><%= bug_report.page_url %></td>
                   <td class="py-2 pr-4">
                     <% if bug_report.screenshot.attached? %>
-                      <%= link_to t("admin.bug_reports.table.view_screenshot"), rails_blob_path(bug_report.screenshot, disposition: "attachment"), class: "text-[#1F5C55] hover:underline", target: "_blank", rel: "noopener" %>
+                      <%= link_to t("admin.bug_reports.table.view_screenshot"), rails_blob_path(bug_report.screenshot, disposition: "attachment"), class: "text-brand-primary hover:underline", target: "_blank", rel: "noopener" %>
                     <% else %>
                       <span class="text-gray-400">—</span>
                     <% end %>

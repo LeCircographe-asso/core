@@ -3,7 +3,7 @@
   <%= render 'shared/breadcrumbs' %>
   
   <div class="form-container surface-card p-6">
-    <h1 class="text-2xl font-bold text-[#1F5C55] mb-4">Modifier l'événement</h1>
+    <h1 class="text-2xl font-bold text-brand-primary mb-4">Modifier l'événement</h1>
 
     <%= form_with model: @event, url: admin_event_path(@event), method: "put" do |form| %>
       <div class="space-y-4">
@@ -46,13 +46,13 @@
 
         <!-- Demo Field -->
         <div class="form-group flex items-center gap-2">
-          <%= form.check_box :is_demo, checked: @event.is_demo, class: "h-4 w-4 rounded border-gray-300 text-[#1F5C55] focus:ring-brand-accent" %>
+          <%= form.check_box :is_demo, checked: @event.is_demo, class: "h-4 w-4 rounded border-gray-300 text-brand-primary focus:ring-brand-accent" %>
           <%= form.label :is_demo, t("admin.events.publication.is_demo_label"), class: "text-sm font-medium text-gray-700" %>
         </div>
 
         <!-- Submit button -->
         <div class="mt-6">
-          <%= form.submit "Modifier l'événement", class: "inline-flex items-center px-6 py-3 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#1F5C55] hover:bg-[#194A45] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-accent" %>
+          <%= form.submit "Modifier l'événement", class: "inline-flex items-center px-6 py-3 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-brand-primary hover:bg-brand-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-accent" %>
         </div>
       </div>
     <% end %>

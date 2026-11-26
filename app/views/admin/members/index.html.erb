@@ -7,7 +7,7 @@
     
     <!-- Header avec gradient -->
     <div class="surface-card mb-6">
-      <div class="bg-gradient-to-r from-[#1F5C55] to-[#194A45] px-6 py-4">
+      <div class="bg-gradient-to-r from-brand-primary to-brand-primary-dark px-6 py-4">
         <h1 class="text-2xl font-bold text-white"><%= t("views.admin.users.index.page_title") %></h1>
         <p class="text-white/80 mt-1">
           <%= t("views.admin.users.index.page_subtitle") %>
@@ -292,7 +292,7 @@
                     <% @pagy.series.each do |item| %>
                       <% if item.is_a?(Integer) %>
                         <%= link_to item, admin_members_path(page: item, search: params[:search], filter: params[:filter]), 
-                            class: "relative inline-flex items-center px-4 py-2 border text-sm font-medium #{item == @pagy.page ? 'z-10 bg-[#1F5C55] border-[#1F5C55] text-white' : 'bg-white border-gray-300 text-gray-500 hover:bg-gray-50'}" %>
+                            class: "relative inline-flex items-center px-4 py-2 border text-sm font-medium #{item == @pagy.page ? 'z-10 bg-brand-primary border-brand-primary text-white' : 'bg-white border-gray-300 text-gray-500 hover:bg-gray-50'}" %>
                       <% elsif item == :gap %>
                         <span class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700">
                           ...
