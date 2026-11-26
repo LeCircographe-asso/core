@@ -1,0 +1,88 @@
+# Run the exact staging / production images from ghcr.io on a developer machine.
+# Driven by bin/docker-local (see docs/development/docker_local.md); do not run it on the VPS.
+#
+# Safety: these images carry the real app, so everything that reaches outside is switched
+# off: mail delivery, recurring jobs (nightly rclone backup, reminders), Litestream restore
+# and replication, analytics (Umami only counts the real public hosts). Each environment
+# starts on its own fresh SQLite volume with the seeds; nothing is copied from the VPS.
+
+name: circographe-local
+
+x-app: &app
+  env_file: .env.local   # RAILS_MASTER_KEY, SECRET_KEY_BASE, STAGING_PASSWORD, *_TAG (bin/docker-local writes it)
+  restart: "no"
+
+services:
+  staging:
+    <<: *app
+    image: ghcr.io/lecircographe-asso/circographe-staging:${STAGING_TAG:-latest}
+    profiles: [staging]
+    environment:
+      RAILS_ENV: staging
+      STAGING_MODE: "true"
+      PUBLIC_REGISTRATION_ENABLED: "false"
+      SEED_LEAN: "true"
+      MAILER_DELIVERIES_ENABLED: "false"
+      SOLID_QUEUE_IN_PUMA: "true"
+      SOLID_QUEUE_SKIP_RECURRING: "true"
+      WEB_CONCURRENCY: "0"
+      JOB_CONCURRENCY: "1"
+      RAILS_LOG_LEVEL: info
+    volumes:
+      - staging_storage:/rails/storage
+
+  production:
+    <<: *app
+    image: ghcr.io/lecircographe-asso/circographe:${PRODUCTION_TAG:-latest}
+    profiles: [production]
+    environment:
+      RAILS_ENV: production
+      PRODUCTION_MODE: "true"
+      MAINTENANCE_MODE: "false"
+      SEO_INDEXABLE: "false"
+      MAILER_DELIVERIES_ENABLED: "false"
+      LITESTREAM_RESTORE_ON_BOOT: "false"   # LITESTREAM_REPLICATE_IN_PUMA left unset on purpose
+      SOLID_QUEUE_IN_PUMA: "true"
+      SOLID_QUEUE_SKIP_RECURRING: "true"
+      WEB_CONCURRENCY: "0"
+      JOB_CONCURRENCY: "1"
+      RAILS_LOG_LEVEL: info
+    volumes:
+      - production_storage:/rails/storage
+
+  # Plays kamal-proxy's part: plain HTTP on 127.0.0.1 with X-Forwarded-Proto: https, so
+  # force_ssl does not redirect. 127.0.0.1 (not "localhost") because browsers never apply
+  # HSTS to an IP: the app's HSTS header cannot leak onto the dev server on localhost:3000.
+  proxy:
+    image: caddy:2-alpine
+    profiles: [staging, production]
+    ports:
+      - "127.0.0.1:8081:8081"   # staging
+      - "127.0.0.1:8082:8082"   # production
+    # Inline config rather than a bind mount: works the same whether `docker` is the WSL
+    # integration binary or Docker Desktop's docker.exe reached through WSL interop.
+    configs:
+      - source: caddyfile
+        target: /etc/caddy/Caddyfile
+
+configs:
+  caddyfile:
+    content: |
+      {
+        auto_https off
+        admin off
+      }
+      :8081 {
+        reverse_proxy staging:80 {
+          header_up X-Forwarded-Proto https
+        }
+      }
+      :8082 {
+        reverse_proxy production:80 {
+          header_up X-Forwarded-Proto https
+        }
+      }
+
+volumes:
+  staging_storage:
+  production_storage:

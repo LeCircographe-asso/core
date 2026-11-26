@@ -16,7 +16,9 @@ if [ "${@: -2:1}" == "./bin/rails" ] && [ "${@: -1:1}" == "server" ]; then
   # injoignable, clés invalides) : on lit donc sa sortie et on arrête le conteneur sur toute erreur
   # plutôt que de repartir d'une base neuve qui masquerait — puis répliquerait par-dessus — les
   # vraies données.
-  if [ "${RAILS_ENV:-}" == "production" ] && [ ! -f storage/production.sqlite3 ]; then
+  # LITESTREAM_RESTORE_ON_BOOT=false (docker/local/compose.yml) : une image prod lancée hors du
+  # VPS ne doit jamais aller lire la réplique de production. Défaut true : rien ne change sur le VPS.
+  if [ "${RAILS_ENV:-}" == "production" ] && [ "${LITESTREAM_RESTORE_ON_BOOT:-true}" == "true" ] && [ ! -f storage/production.sqlite3 ]; then
     echo "[production] storage/production.sqlite3 absent — restauration Litestream depuis Scaleway (si une réplique existe)..."
     restore_log=$(./bin/rails litestream:restore -- -database=storage/production.sqlite3 -if-replica-exists 2>&1) || true
     echo "${restore_log}"
