@@ -724,6 +724,38 @@ fr:
       description: Le Circographe, lieu de cirque vivant, d'entraînement, de rencontres et d'ateliers à Toulouse.
   views:
     shared:
+      pwa_install_banner:
+        label: Proposition d'installation
+        close: Fermer
+        tagline: Horaires · Accès · Infos de l'asso
+        add: Ajouter à l'écran d'accueil
+        later: Installer plus tard
+        android:
+          heading: 'Dans Chrome Android :'
+          step1_before: Touche
+          step1_after_html: <strong>⋮</strong> en haut à droite de Chrome
+          step2_html: Choisis <strong>Ajouter à l'écran d'accueil</strong>
+          step3_html: Touche <strong>Ajouter</strong> pour confirmer
+        ios:
+          button: Installer sur iPhone / iPad
+          heading: 'Comment faire dans Safari :'
+          step1_before: Touche l'icône
+          step1_after_html: <strong>Partager</strong> en bas de l'écran
+          step2_html: Choisis <strong>Sur l'écran d'accueil</strong>
+          step3_html: Touche <strong>Ajouter</strong> en haut à droite
+      whatsapp_qr_modal:
+        heading: Rejoindre la communauté
+        close: Fermer
+        qr_alt: QR code — WhatsApp communautaire Le Circographe
+        body: Scanne le code avec ton téléphone ou clique sur le lien pour rejoindre la communauté WhatsApp du Circographe.
+        button: Rejoindre sur WhatsApp
+      confirm_modal:
+        title: Confirmation
+        body: Êtes-vous sûr de vouloir poursuivre cette action ?
+        body_html: Êtes-vous sûr de vouloir poursuivre cette action&nbsp;?
+        message: Es-tu sûr·e de vouloir continuer ?
+        confirm: Confirmer
+        cancel: Annuler
       opening_hours:
         week: Semaine du %{from} au %{to}
         caption: Horaires d'ouverture de la semaine

@@ -374,6 +374,38 @@ en:
       description: Le Circographe, a living circus venue for training, meetups and workshops in Toulouse.
   views:
     shared:
+      pwa_install_banner:
+        label: Install suggestion
+        close: Close
+        tagline: Opening hours · Directions · Association info
+        add: Add to home screen
+        later: Install later
+        android:
+          heading: 'In Chrome on Android:'
+          step1_before: Tap
+          step1_after_html: <strong>⋮</strong> at the top right of Chrome
+          step2_html: Choose <strong>Add to Home screen</strong>
+          step3_html: Tap <strong>Add</strong> to confirm
+        ios:
+          button: Install on iPhone / iPad
+          heading: 'How to do it in Safari:'
+          step1_before: Tap the
+          step1_after_html: <strong>Share</strong> icon at the bottom of the screen
+          step2_html: Choose <strong>Add to Home Screen</strong>
+          step3_html: Tap <strong>Add</strong> at the top right
+      whatsapp_qr_modal:
+        heading: Join the community
+        close: Close
+        qr_alt: QR code — Le Circographe community WhatsApp
+        body: Scan the code with your phone or click the link to join Le Circographe's WhatsApp community.
+        button: Join on WhatsApp
+      confirm_modal:
+        title: Confirmation
+        body: Are you sure you want to go ahead with this action?
+        body_html: Are you sure you want to go ahead with this action?
+        message: Are you sure you want to continue?
+        confirm: Confirm
+        cancel: Cancel
       opening_hours:
         week: Week of %{from} to %{to}
         caption: This week's opening hours
