@@ -26,6 +26,6 @@
     <% if footer.present? %>
       <p class="text-sm text-gray-500"><%= footer %></p>
     <% end %>
-    <%= link_to "Toute la FAQ →", page_path("faq"), class: "inline-flex min-h-11 items-center text-sm font-semibold text-brand-primary hover:underline" %>
+    <%= link_to t("views.shared.faq_section.all_faq"), page_path("faq"), class: "inline-flex min-h-11 items-center text-sm font-semibold text-brand-primary hover:underline" %>
   </div>
 </section>

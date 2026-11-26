@@ -374,6 +374,8 @@ en:
       description: Le Circographe, a living circus venue for training, meetups and workshops in Toulouse.
   views:
     shared:
+      faq_section:
+        all_faq: The whole FAQ →
       flash:
         close: Close
       navbar:
@@ -475,6 +477,55 @@ en:
         heading: You have unsubscribed from the newsletter
         thanks: Thank you for letting us keep you informed about our news and special offers.
         back: You can now go back to our website and keep browsing.
+      faq:
+        page_title: Le Circographe - FAQ
+        heading: Frequently asked questions
+        intro: No fluff — just the useful info, in the voice of the place.
+        search_label: Search a question
+        search_placeholder: Search (price, opening hours…)
+        categories_label: FAQ categories
+        no_result: No question matches this search.
+        try_examples: 'Try for instance:'
+        not_found_title: Didn't find your answer?
+        not_found_body: Write to us, we'll be happy to answer.
+        write_us: Write to us
+      contact:
+        page_title: Le Circographe - Contact
+        eyebrow: Write to us
+        heading: Contact
+        intro: 'Membership, contribution (circus access), creative residencies or premises: drop by during opening hours or write via the form below.'
+        practical_eyebrow: Practical info
+        practical_heading: Opening hours, directions and form
+        practical_body_html: "We answer messages within a few working days;<br class=\"hidden sm:block\"> advice on site during opening hours."
+        facebook_label: Circographe on Facebook (opens in a new tab)
+        instagram_label: Circographe on Instagram (opens in a new tab)
+        whatsapp_label: WhatsApp contact
+        access: Directions
+        address: 97 bis boulevard de Suisse — 31200 Toulouse
+        bus: Bus 15 (Tisséo) · get off at the stop closest to your direction
+        hours_heading: Opening hours
+        hours_detail: Tuesday to Sunday · depending on volunteers' availability
+        quick_question: A quick question?
+        quick_question_body: 'During opening hours: quick guidance (membership, creation, technical).'
+        faq_link: Frequently asked questions
+        faq_contact_link: Contact & projects
+        form:
+          heading: Write to us
+          intro: A question, a creative residency project or a partnership? We answer within a few working days.
+          name_label: Full name
+          name_placeholder: First and last name
+          email_label: Email address
+          email_placeholder: address@example.com
+          category_label: Category
+          category_prompt: Choose a category
+          categories:
+            general: General question
+            technical: Technical / access
+            creative_hosting: Creative residency
+            partnership: Partnership
+          message_label: Message
+          message_placeholder: Tell us about your project, your question or what you need…
+          submit: Send the message
     home:
       index:
         page_title: Le Circographe - Home
