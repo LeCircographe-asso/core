@@ -2,7 +2,7 @@
     <div id="newsletter-footer" class="mx-auto w-full px-4 sm:px-6 py-5 lg:py-6 max-w-screen-xl">
         <div class="flex flex-col gap-6 md:gap-8 lg:flex-row lg:justify-between lg:gap-10 lg:items-start">
             <div class="w-full lg:max-w-sm lg:shrink-0 pb-6 border-b border-gray-100 lg:pb-0 lg:border-0">
-                <span class="text-base font-semibold text-gray-900"><%= t("views.shared.footer.newsletter_cta") %></span>
+                <span class="block text-base font-semibold text-gray-900 text-balance max-lg:text-center"><%= t("views.shared.footer.newsletter_cta") %></span>
                 <div class="mt-3">
                     <%= form_with url: newsletter_signup_path, model: User.new, method: :post, class: "flex flex-col min-[480px]:flex-row min-[480px]:flex-wrap items-stretch min-[480px]:items-center gap-2" do |f| %>
                     <label for="user_email_address" class="sr-only"><%= t("views.shared.footer.email_placeholder") %></label>
