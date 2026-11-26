@@ -48,6 +48,14 @@
   outline-offset: 2px;
 }
 
+/*
+ * Plan OpenStreetMap adouci (désaturé, éclairci) pour s'accorder aux photos noir et blanc
+ * du site. Seul le fond est filtré : le point violet et les contrôles restent en couleur.
+ */
+.leaflet-map-shell .leaflet-tile-pane {
+  filter: grayscale(0.85) brightness(1.06) contrast(0.92);
+}
+
 /* Zone tactile Leaflet par défaut (~30px) sous le minimum recommandé (44px). */
 .leaflet-control-zoom-in,
 .leaflet-control-zoom-out {
