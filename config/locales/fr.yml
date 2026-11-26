@@ -942,6 +942,59 @@ fr:
         cta:
           body: Envie de rejoindre le lieu ? L’adhésion se fait sur place avec les bénévoles.
           button: Adhérer au Circographe
+      news:
+        page_title: Le Circographe - Nos activités
+        eyebrow: Programmation
+        heading: Nos activités
+        intro: 'Cours, accueils de compagnies, expos, événements : la programmation du lieu.'
+        circus:
+          eyebrow: Pratiques régulières
+          heading: Le Cirque
+          intro: 'Les entraînements libres sont ouverts sur adhésion et accompagnent les pratiquant·es confirmé·es dans le développement de leur discipline : aérien, jonglage, équilibre, acrobatie, roue cyr, contorsion et bien plus encore.'
+          autonomy:
+            title: Autonomie accompagnée
+            body: Chaque créneau dispose d’une équipe référente qui rappelle les règles de sécurité, facilite les duos et partage les astuces techniques. On progresse à son rythme, ensemble.
+          companies:
+            title: Accueils de compagnies
+            body: Des compagnies circassiennes locales viennent peaufiner leurs numéros grâce à la mise à disposition ponctuelle de la salle. C’est l’occasion de tester des propositions devant la communauté.
+        graphics:
+          image_alt: Pratique graphique au Circographe
+          eyebrow: Pratiques visuelles
+          heading: Les Arts Graphiques
+          body_1: 'L’espace graphique accueille des temps de pratique autonome, des ateliers collaboratifs et des laboratoires d’impression. Illustrateur·ices, sérigraphes, collectifs de dessin : chacun trouve le bon format pour explorer et combiner ses techniques.'
+          body_2: 'Nous organisons aussi des mises à disposition ponctuelles pour des projets collectifs : création d’affiches, fanzines, ateliers participatifs ou expositions éclair partagées avec le cirque.'
+        events:
+          eyebrow: Moments partagés
+          heading: Événements et actualités
+          intro: Tout au long de l’année, le Circographe propose des expositions, des plateaux partagés, des soirées d’ouverture de piste et des rendez-vous associatifs ouverts au quartier. Filtre les actualités pour préparer ta prochaine venue.
+          filter_eyebrow: Programmation
+          filter_heading: Filtre les activités qui t'intéressent
+          filter_label: Filtres des activités
+          tabs:
+            upcoming: À venir
+            past: Passés
+            news: Actualités
+        projects:
+          eyebrow: Autres projets
+          heading: Ateliers, médiation et projets hybrides
+          intro: 'En plus des créneaux réguliers, on imagine des formats qui croisent disciplines et publics : ateliers de transmission, médiations scolaires, projections, scènes ouvertes graphiques et rencontres avec les artistes de passage.'
+          workshops:
+            title: Ateliers sur mesure
+            body: Pour les structures culturelles, associations de quartier ou établissements scolaires, on crée des ateliers mêlant pratique circassienne et exploration graphique.
+          meetings:
+            title: Rencontres publiques
+            body: Des temps d’échanges avec les artistes accueilli·es, des restitutions conviviales et des formats participatifs qui ouvrent la salle à toutes et tous.
+          capsules:
+            title: Capsules visuelles
+            body: 'On documente les projets hybrides du lieu pour nourrir la mémoire collective : carnets photo, vidéos courtes, focus bénévoles et cartes postales illustrées.'
+        photos:
+          alt: Photo du Circographe %{position}
+          previous: Photo précédente
+          next: Photo suivante
+          all: Voir toutes les photos
+        cta:
+          body: Envie de tester un créneau ou de venir en spectateur·rice ?
+          button: Consulter les prochains créneaux
     home:
       index:
         page_title: Le Circographe - Accueil

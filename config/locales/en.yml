@@ -568,6 +568,59 @@ en:
         cta:
           body: Want to join the place? Membership is done on site with the volunteers.
           button: Join Le Circographe
+      news:
+        page_title: Le Circographe - Our activities
+        eyebrow: Programme
+        heading: Our activities
+        intro: 'Classes, company residencies, exhibitions, events: what happens at the place.'
+        circus:
+          eyebrow: Regular practice
+          heading: Circus
+          intro: 'Open training is available with a membership and supports experienced practitioners in developing their discipline: aerial, juggling, balance, acrobatics, Cyr wheel, contortion and much more.'
+          autonomy:
+            title: Supported autonomy
+            body: Each slot has a lead team that reminds everyone of the safety rules, helps duos get together and shares technical tips. Everyone progresses at their own pace, together.
+          companies:
+            title: Company residencies
+            body: Local circus companies come to polish their acts thanks to occasional use of the hall. It's a chance to try new ideas in front of the community.
+        graphics:
+          image_alt: Graphic practice at Le Circographe
+          eyebrow: Visual practice
+          heading: Graphic arts
+          body_1: 'The graphic space hosts independent practice time, collaborative workshops and printing labs. Illustrators, screen printers, drawing collectives: everyone finds the right format to explore and combine their techniques.'
+          body_2: 'We also make the space available for collective projects: posters, fanzines, participatory workshops or pop-up exhibitions shared with the circus.'
+        events:
+          eyebrow: Shared moments
+          heading: Events and news
+          intro: All year round, Le Circographe hosts exhibitions, shared stages, open ring nights and community gatherings open to the neighbourhood. Filter the news to plan your next visit.
+          filter_eyebrow: Programme
+          filter_heading: Filter the activities you're interested in
+          filter_label: Activity filters
+          tabs:
+            upcoming: Upcoming
+            past: Past
+            news: News
+        projects:
+          eyebrow: Other projects
+          heading: Workshops, outreach and hybrid projects
+          intro: 'Beyond the regular slots, we come up with formats that mix disciplines and audiences: teaching workshops, school outreach, screenings, open graphic stages and meetings with visiting artists.'
+          workshops:
+            title: Tailor-made workshops
+            body: For cultural organisations, neighbourhood associations or schools, we create workshops combining circus practice and graphic exploration.
+          meetings:
+            title: Public meetings
+            body: Discussions with the artists in residence, friendly showings and participatory formats that open the hall to everyone.
+          capsules:
+            title: Visual capsules
+            body: 'We document the hybrid projects of the place to build our collective memory: photo books, short videos, volunteer spotlights and illustrated postcards.'
+        photos:
+          alt: Photo of Le Circographe %{position}
+          previous: Previous photo
+          next: Next photo
+          all: See all the photos
+        cta:
+          body: Want to try a slot or come and watch?
+          button: See the next slots
     home:
       index:
         page_title: Le Circographe - Home
