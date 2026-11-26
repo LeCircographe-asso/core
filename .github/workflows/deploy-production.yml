@@ -91,3 +91,18 @@ jobs:
       - name: Rollback production on failure
         if: failure()
         run: bundle exec kamal rollback -c config/deploy.production.yml
+      # Read-only report of the real data (ops/data_report.rb): run summary + warnings,
+      # never a failure: the deploy is done, and a failure must not trigger the rollback above.
+      - name: Data report
+        if: success()
+        continue-on-error: true
+        run: |
+          rc=0
+          ssh -o BatchMode=yes -o ConnectTimeout=20 -o StrictHostKeyChecking=accept-new \
+            "deploy@$PRODUCTION_SERVER_IP" sh -s -- production < ops/vps/data-report > data-report.json || rc=$?
+          if [ "$rc" -eq 0 ]; then
+            ruby ops/data_report_summary.rb data-report.json production
+          else
+            echo "::warning title=Data report (production)::could not run (exit $rc)"
+            echo "Data report: could not run (exit $rc; 3 = image without ops/data_report.rb)" >> "$GITHUB_STEP_SUMMARY"
+          fi

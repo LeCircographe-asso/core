@@ -104,6 +104,52 @@ SECRET_KEY_BASE=${SECRET_KEY_BASE:-}              # optionnel locally
 | `Exit 255` / no healthy container | App crashed during startup | Check logs in `.github/workflows/deploy-*.yml` |
 | `Missing secret_key_base` | Credentials not loaded | Verify GitHub Secrets set |
 
+<a id="donnees-au-deploiement"></a>
+## 5bis. Données au déploiement : copie avant, rapport après
+
+Trois filets, du moins cher au plus tardif : répétition locale avant de pousser (`bin/docker-local upgrade`, voir [`development/docker_local.md`](../development/docker_local.md)), copie de la base avant chaque déploiement, rapport des données réelles après.
+
+### Copie de la base avant chaque déploiement
+
+`.kamal/hooks/pre-deploy` tourne avant **chaque** `kamal deploy`, `redeploy` et `rollback` (staging et production, depuis GitHub Actions ou un poste). Il envoie [`ops/vps/db-snapshot`](../../ops/vps/db-snapshot) au VPS par `ssh deploy@<hôte> sh -s` (rien à installer sur le serveur), qui :
+
+- fait un `sqlite3 .backup` de `storage/<env>.sqlite3` **dans le conteneur qui tourne** (copie cohérente même pendant des écritures) ;
+- vérifie la copie (`PRAGMA integrity_check`), la compresse et la range dans `~deploy/backups/pre-deploy/<env>/<env>-<horodatage UTC>-<commande>-<version>.sqlite3.gz` (droits 600, **5 dernières gardées**) ;
+- **arrête le déploiement** si la copie échoue. Premier déploiement (aucun conteneur) : rien à copier, le déploiement continue.
+
+Hors du volume de l'app, exprès : le snapshot de nuit (`Backups::NightlySnapshotService`) archive ce volume, il ne doit pas embarquer ces copies. Elles ne couvrent que la base principale : Active Storage n'est pas touché par les migrations, et le snapshot de nuit le couvre.
+
+Déployer malgré une copie impossible (incident, disque plein) : `kamal deploy --skip-hooks -c …`, à noter dans le compte rendu d'incident.
+
+### Restaurer une copie (migration qui a abîmé les données)
+
+Procédure répétée en local sur un volume jetable ; à faire calmement, une étape à la fois.
+
+```bash
+# 1. Choisir la copie prise juste avant le déploiement fautif
+ssh circographe-deploy 'ls -lt ~/backups/pre-deploy/production'
+
+# 2. Revenir à l'image précédente (le hook copie aussi l'état actuel avant : rien n'est perdu)
+bin/kamal rollback <version_précédente> -c config/deploy.production.yml
+
+# 3. Arrêter l'app, remettre la base, redémarrer
+bin/kamal app stop -c config/deploy.production.yml
+ssh circographe-deploy
+  f=~/backups/pre-deploy/production/<fichier>.sqlite3.gz
+  gunzip -c "$f" > /tmp/restore.sqlite3 && chmod 644 /tmp/restore.sqlite3
+  img=$(docker ps -a --filter label=service=circographe-production --filter label=role=web --format '{{.Image}}' | head -n 1)
+  docker run --rm -v circographe_production_storage:/rails/storage -v /tmp/restore.sqlite3:/restore.sqlite3:ro \
+    --entrypoint sh "$img" -c 'cp /restore.sqlite3 storage/production.sqlite3 && rm -f storage/production.sqlite3-wal storage/production.sqlite3-shm'
+  rm /tmp/restore.sqlite3; exit
+bin/kamal app start -c config/deploy.production.yml
+```
+
+Staging : même chose avec `staging`. En production, Litestream repart sur une nouvelle génération de réplique après le remplacement du fichier : vérifier ses logs (`pro-applogs production grep litestream`). Les écritures faites entre la copie et la restauration (inscriptions, paiements) sont perdues : les relever d'abord dans la base abîmée si besoin.
+
+### Rapport des données après chaque déploiement
+
+Dernière étape des workflows `deploy-staging` / `deploy-production` : [`ops/vps/data-report`](../../ops/vps/data-report) lance [`ops/data_report.rb`](../../ops/data_report.rb) dans le conteneur déployé (lecture seule) et le résumé du run affiche lignes par table et règles d'intégrité ([`domain/data_integrity_rules.md`](../domain/data_integrity_rules.md)). Chaque anomalie devient une annotation ⚠️ du run ; l'étape n'échoue jamais (le déploiement est fait, et un échec déclencherait le rollback). Une anomalie en production : regarder la donnée réelle avant tout correctif, en se demandant si `bin/docker-local upgrade` aurait pu l'attraper (et enrichir les seeds de démo si oui).
+
 ## 6. Architecture Kamal
 
 **One image → build once, run everywhere:**
