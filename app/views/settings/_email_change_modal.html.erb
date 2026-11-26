@@ -15,7 +15,7 @@
         <%= t("settings.show.email_change_modal_title") %>
       </h2>
       <button type="button"
-              class="shrink-0 rounded-full p-1.5 text-gray-500 hover:bg-gray-100 hover:text-gray-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1F5C55]"
+              class="shrink-0 rounded-full p-1.5 text-gray-500 hover:bg-gray-100 hover:text-gray-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary"
               data-action="click->email-change-modal#close"
               aria-label="<%= t("settings.show.email_change_close") %>">
         <span class="text-xl leading-none" aria-hidden="true">&times;</span>
@@ -94,7 +94,7 @@
             <%= t("settings.show.email_change_send_code") %>
           </button>
           <button type="submit"
-                  class="inline-flex justify-center rounded-lg border border-transparent bg-[#1F5C55] px-4 py-2 text-sm font-medium text-white hover:bg-[#1F5C55]/90 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[#1F5C55]"
+                  class="inline-flex justify-center rounded-lg border border-transparent bg-brand-primary px-4 py-2 text-sm font-medium text-white hover:bg-brand-primary/90 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-brand-primary"
                   name="email_change_intent"
                   value="confirm_code">
             <%= t("settings.show.email_change_confirm_code") %>

@@ -46,7 +46,7 @@
           <div data-section-edit-target="acceptWrap" class="hidden">
             <button type="button" data-section-edit-target="acceptButton" data-action="section-edit#handleAcceptClick"
                     data-loading-text="<%= t("users.space.saving") %>"
-                    class="inline-flex items-center rounded-md border border-transparent px-3 py-1.5 text-sm font-medium text-white bg-[#1F5C55] hover:bg-[#1F5C55]/90 shadow-sm">
+                    class="inline-flex items-center rounded-md border border-transparent px-3 py-1.5 text-sm font-medium text-white bg-brand-primary hover:bg-brand-primary/90 shadow-sm">
               <%= t("users.space.accept") %>
             </button>
           </div>
@@ -54,7 +54,7 @@
       </div>
     </header>
   <% else %>
-    <header class="h-16 w-full bg-gradient-to-r from-[#1F5C55] to-[#194A45] flex items-center justify-between px-4 sm:px-5">
+    <header class="h-16 w-full bg-gradient-to-r from-brand-primary to-brand-primary-dark flex items-center justify-between px-4 sm:px-5">
       <div>
         <p class="text-[10px] uppercase tracking-widest text-white/70 font-medium">Compte</p>
         <h2 class="text-base font-bold text-white leading-tight"><%= t("settings.show.page_title") %></h2>
@@ -75,7 +75,7 @@
         <div data-section-edit-target="acceptWrap" class="hidden">
           <button type="button" data-section-edit-target="acceptButton" data-action="section-edit#handleAcceptClick"
                   data-loading-text="<%= t("users.space.saving") %>"
-                  class="inline-flex items-center rounded-md border border-transparent px-3 py-1.5 text-sm font-medium text-[#1F5C55] bg-white hover:bg-white/90 shadow-sm">
+                  class="inline-flex items-center rounded-md border border-transparent px-3 py-1.5 text-sm font-medium text-brand-primary bg-white hover:bg-white/90 shadow-sm">
             <%= t("users.space.accept") %>
           </button>
         </div>
@@ -111,16 +111,16 @@
         <h3 id="settings-static-account-heading" class="text-base font-semibold text-gray-900">
           <%= t("settings.show.section_account") %>
         </h3>
-        <span class="inline-flex items-center rounded-full bg-teal-50 px-2.5 py-0.5 text-xs font-medium text-[#1F5C55] ring-1 ring-inset ring-[#1F5C55]/20">
+        <span class="inline-flex items-center rounded-full bg-teal-50 px-2.5 py-0.5 text-xs font-medium text-brand-primary ring-1 ring-inset ring-brand-primary/20">
           <%= t("settings.show.email_shared_badge") %>
         </span>
       </div>
-      <p class="text-xs font-semibold tracking-widest text-[#1F5C55]/70 uppercase mb-1"><%= t("settings.show.field_email") %></p>
+      <p class="text-xs font-semibold tracking-widest text-brand-primary/70 uppercase mb-1"><%= t("settings.show.field_email") %></p>
       <p class="text-sm font-semibold text-gray-900 break-all"><%= user.email_address %></p>
       <p class="mt-2 text-xs text-gray-500 leading-relaxed max-w-prose"><%= t("settings.show.email_hint") %></p>
       <button type="button"
               data-action="click->email-change-modal#open"
-              class="mt-4 inline-flex items-center rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-800 hover:bg-gray-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1F5C55] focus-visible:ring-offset-2">
+              class="mt-4 inline-flex items-center rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-800 hover:bg-gray-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2">
         <%= t("settings.show.email_change_cta") %>
       </button>
     </section>
@@ -168,20 +168,20 @@
           <%= t("settings.show.section_preferences_edit_hint") %>
         </p>
         <div class="grid gap-3 sm:grid-cols-2">
-          <label class="flex items-start gap-3 rounded-xl border border-gray-200 bg-white p-4 cursor-pointer hover:border-[#1F5C55]/35 hover:bg-teal-50/20 transition-colors shadow-sm">
-            <%= f.check_box :image_rights, data: { section_edit_target: "field" }, class: "mt-0.5 h-4 w-4 shrink-0 rounded border-gray-300 text-[#1F5C55] focus:ring-brand-accent" %>
+          <label class="flex items-start gap-3 rounded-xl border border-gray-200 bg-white p-4 cursor-pointer hover:border-brand-primary/35 hover:bg-teal-50/20 transition-colors shadow-sm">
+            <%= f.check_box :image_rights, data: { section_edit_target: "field" }, class: "mt-0.5 h-4 w-4 shrink-0 rounded border-gray-300 text-brand-primary focus:ring-brand-accent" %>
             <span class="text-sm font-medium text-gray-800 leading-snug"><%= t("settings.show.field_image_rights") %></span>
           </label>
-          <label class="flex items-start gap-3 rounded-xl border border-gray-200 bg-white p-4 cursor-pointer hover:border-[#1F5C55]/35 hover:bg-teal-50/20 transition-colors shadow-sm">
-            <%= f.check_box :newsletter_subscribed, data: { section_edit_target: "field" }, class: "mt-0.5 h-4 w-4 shrink-0 rounded border-gray-300 text-[#1F5C55] focus:ring-brand-accent" %>
+          <label class="flex items-start gap-3 rounded-xl border border-gray-200 bg-white p-4 cursor-pointer hover:border-brand-primary/35 hover:bg-teal-50/20 transition-colors shadow-sm">
+            <%= f.check_box :newsletter_subscribed, data: { section_edit_target: "field" }, class: "mt-0.5 h-4 w-4 shrink-0 rounded border-gray-300 text-brand-primary focus:ring-brand-accent" %>
             <span class="text-sm font-medium text-gray-800 leading-snug"><%= t("settings.show.field_newsletter") %></span>
           </label>
-          <label class="flex items-start gap-3 rounded-xl border border-gray-200 bg-white p-4 cursor-pointer hover:border-[#1F5C55]/35 hover:bg-teal-50/20 transition-colors shadow-sm">
-            <%= f.check_box :get_involved, data: { section_edit_target: "field" }, class: "mt-0.5 h-4 w-4 shrink-0 rounded border-gray-300 text-[#1F5C55] focus:ring-brand-accent" %>
+          <label class="flex items-start gap-3 rounded-xl border border-gray-200 bg-white p-4 cursor-pointer hover:border-brand-primary/35 hover:bg-teal-50/20 transition-colors shadow-sm">
+            <%= f.check_box :get_involved, data: { section_edit_target: "field" }, class: "mt-0.5 h-4 w-4 shrink-0 rounded border-gray-300 text-brand-primary focus:ring-brand-accent" %>
             <span class="text-sm font-medium text-gray-800 leading-snug"><%= t("settings.show.field_get_involved") %></span>
           </label>
-          <label class="flex items-start gap-3 rounded-xl border border-gray-200 bg-white p-4 cursor-pointer hover:border-[#1F5C55]/35 hover:bg-teal-50/20 transition-colors shadow-sm">
-            <%= f.check_box :dyslexic_font, data: { section_edit_target: "field" }, class: "mt-0.5 h-4 w-4 shrink-0 rounded border-gray-300 text-[#1F5C55] focus:ring-brand-accent" %>
+          <label class="flex items-start gap-3 rounded-xl border border-gray-200 bg-white p-4 cursor-pointer hover:border-brand-primary/35 hover:bg-teal-50/20 transition-colors shadow-sm">
+            <%= f.check_box :dyslexic_font, data: { section_edit_target: "field" }, class: "mt-0.5 h-4 w-4 shrink-0 rounded border-gray-300 text-brand-primary focus:ring-brand-accent" %>
             <span class="text-sm font-medium text-gray-800 leading-snug"><%= t("settings.show.field_dyslexic_font") %></span>
           </label>
         </div>

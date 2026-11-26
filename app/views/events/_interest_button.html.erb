@@ -2,7 +2,7 @@
   <% if current_user.is_interested_in?(@event.id) %>
     <!-- Bouton "Ne plus être intéressé" -->
     <%= link_to event_interest_path(@event), 
-        class: "public-cta block w-full cursor-pointer text-center !bg-white !text-[#1F5C55] hover:!bg-[#1F5C55] hover:!text-white",
+        class: "public-cta block w-full cursor-pointer text-center !bg-white !text-brand-primary hover:!bg-brand-primary hover:!text-white",
         data: { 
           turbo_method: :delete
         } do %>
