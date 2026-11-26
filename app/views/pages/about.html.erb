@@ -199,7 +199,7 @@
             <p class="text-xs sm:text-sm text-gray-600 leading-normal sm:leading-relaxed flex-1"><%= partner.bio.presence || "Partenaire du Circographe." %></p>
             <% if partner.url.present? %>
               <div class="flex items-center justify-center gap-3 text-gray-400 pt-0.5">
-                <%= link_to partner.url, target: "_blank", rel: "noopener", class: "hover:text-brand-primary transition", aria: { label: "Site web de #{partner.name}" } do %>
+                <%= link_to partner.url, target: "_blank", rel: "noopener", class: "inline-flex items-center justify-center min-w-11 min-h-11 hover:text-brand-primary transition", aria: { label: "Site web de #{partner.name}" } do %>
                   <%= partner_link_icon %>
                 <% end %>
               </div>
