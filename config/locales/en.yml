@@ -621,6 +621,71 @@ en:
         cta:
           body: Want to try a slot or come and watch?
           button: See the next slots
+      become_member:
+        page_title: Le Circographe - Join
+        eyebrow: Join the community
+        heading: Join Le Circographe
+        intro: An on-site meeting to join the community, discover the place and community life.
+        see_slots: See the welcome slots
+        why:
+          eyebrow: Why join?
+          heading: Practise, create, help each other
+          body: Access to open circus training, graphic creation, creative residencies and collective programming. The volunteers explain self-management and help you choose your slots.
+        summary:
+          eyebrow: In short
+          items:
+            - Open circus training
+            - Workshops & creative residencies (graphic arts)
+            - Community life & volunteering
+            - Community & shared equipment
+        memberships:
+          eyebrow: Annual membership
+          heading: Types & prices
+          from: from %{price}
+          per_year: / year
+          payment: Payment on site — card or cash. Tax receipt on request.
+          visitor:
+            name: Visitor membership
+            badge: pay what you want
+            detail: Open sessions · no practice.
+          circus:
+            name: Circus membership
+            detail: Open training · 12 months from the date of joining.
+            reduced: Reduced price — %{price}
+          event:
+            name: Event membership
+            badge: coming soon
+            detail: Access to the place's public events.
+        contributions:
+          eyebrow: Contributions
+          heading: Self-management of the place
+          intro: Pick the formula that suits your practice.
+          day: Single session
+          pack10: 10-session pass
+          popular: Popular
+          pack10_detail: Never expires.
+          trimester: Quarter (3 months)
+          annual: Annual contribution
+          annual_detail: 12 months from the start date.
+        note_html: '<strong class="text-gray-800">Good to know:</strong> the membership and the circus contribution are two separate payments. The formulas above require an active <strong>circus membership</strong>.'
+        volunteering_link: Volunteering & self-management →
+        faq:
+          label: Frequently asked questions
+          title: Before you come
+          subtitle: A few pointers to prepare your membership.
+          footer: Need a hand? Write to us or drop by during an opening slot.
+        slots:
+          heading: Welcome slots
+          tooltip: Slots run by volunteers, which may change every week (usually updated on Monday evening). Check before you come.
+          volunteers: Volunteers
+          volunteers_sr: — slots may change
+        access:
+          heading: Directions
+          street: 97 bis bd de Suisse
+          city: 31200 Toulouse
+          bus: Bus 15 Tisséo · boulevard de Suisse
+          map: Map & contact
+          write: Write
     home:
       index:
         page_title: Le Circographe - Home
