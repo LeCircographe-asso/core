@@ -25,7 +25,7 @@ usage() {
   exit 2
 }
 
-valid_since() { echo "$1" | grep -Eq '^[0-9]{1,3}[mhd]$'; }
+valid_since() { echo "$1" | grep -Eq '^[1-9][0-9]{0,2}[mhd]$'; } # no leading 0: $(( )) would read it as octal
 valid_lines() { echo "$1" | grep -Eq '^[0-9]{1,4}$' && [ "$1" -le 5000 ]; }
 
 # journal_or_docker <journal tag> <container id> <since or empty>
@@ -36,6 +36,8 @@ journal_or_docker() {
   if [ -n "$(journalctl -q -t "$tag" -n 1 --no-pager 2>/dev/null)" ]; then
     journalctl -q -t "$tag" -o short-iso --no-pager ${since:+--since=-$since}
   elif [ -n "$cid" ]; then
+    # docker logs --since knows h/m/s but not days: 2d -> 48h.
+    case "$since" in *d) since="$(( ${since%d} * 24 ))h" ;; esac
     docker logs --timestamps ${since:+--since=$since} "$cid" 2>&1
   else
     echo "No logs found for $tag" >&2
