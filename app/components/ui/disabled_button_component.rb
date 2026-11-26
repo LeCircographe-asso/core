@@ -63,7 +63,7 @@ module Ui
     def button_classes
       base_classes = "inline-flex items-center justify-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium"
       default_enabled_theme =
-        "text-white bg-[#1F5C55] hover:bg-[#194A45] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1F5C55]"
+        "text-white bg-[#1F5C55] hover:bg-[#194A45] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-accent"
 
       if disabled
         # No pointer-events-none: keeps native title tooltip and hover feedback usable.

@@ -41,7 +41,7 @@ module Admin
       def membership_action
         current_membership = person.current_membership
 
-        btn_class = "inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#1F5C55] hover:bg-[#194A45] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1F5C55]"
+        btn_class = "inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#1F5C55] hover:bg-[#194A45] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-accent"
 
         if current_membership.nil?
           link_to "Ajouter une adhésion", new_admin_membership_path(person_id: person.id), class: btn_class
@@ -61,7 +61,7 @@ module Admin
 
       def contribution_action
         current_membership = person.current_membership
-        btn_class = "inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#1F5C55] hover:bg-[#194A45] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1F5C55]"
+        btn_class = "inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#1F5C55] hover:bg-[#194A45] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-accent"
         disabled_class = "inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-500 bg-gray-100"
 
         if current_membership.nil?
@@ -134,7 +134,7 @@ module Admin
       def restore_user_form
         form_tag restore_admin_member_path(person), method: :post, class: "flex items-center" do
           email_field_tag(:email_address, "", placeholder: "Nouvel email", required: true,
-                                              class: "border border-gray-300 rounded-md px-3 py-2 shadow-sm focus:outline-none focus:ring-[#1F5C55] focus:border-[#1F5C55] sm:text-sm mr-2") +
+                                              class: "border border-gray-300 rounded-md px-3 py-2 shadow-sm focus:outline-none focus:ring-brand-accent focus:border-brand-accent sm:text-sm mr-2") +
             submit_tag("Restaurer l'utilisateur",
                        class: "inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500")
         end

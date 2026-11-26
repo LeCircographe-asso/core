@@ -1,4 +1,4 @@
-<% btn_class = "inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#1F5C55] hover:bg-[#194A45] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1F5C55]" %>
+<% btn_class = "inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#1F5C55] hover:bg-[#194A45] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-accent" %>
 
 <div class="bg-white rounded-lg border border-gray-200 p-4">
   <% if already_present_today %>
@@ -43,7 +43,7 @@
         <%= form_with url: new_admin_member_attendance_path(person), method: :get, class: "flex gap-2" do |form| %>
           <%= form.text_field :q, value: lender_query,
                 placeholder: t("admin.members.attendances.search_placeholder"),
-                class: "flex-1 border-gray-300 rounded-md shadow-sm text-sm focus:ring-[#1F5C55] focus:border-[#1F5C55]" %>
+                class: "flex-1 border-gray-300 rounded-md shadow-sm text-sm focus:ring-brand-accent focus:border-brand-accent" %>
           <%= form.submit t("admin.members.attendances.search_submit"),
                 class: "px-3 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50" %>
         <% end %>

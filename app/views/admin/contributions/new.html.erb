@@ -204,7 +204,7 @@
                   <%= form.select :payment_method,
                       options_for_select(payment_method_options),
                       { selected: "cash" },
-                      { class: "w-full rounded-md border-gray-300 text-sm focus:border-[#1F5C55] focus:ring-[#1F5C55]",
+                      { class: "w-full rounded-md border-gray-300 text-sm focus:border-brand-accent focus:ring-brand-accent",
                         data: { offer_fields_target: "paymentMethod", action: "change->offer-fields#refresh" } } %>
                 </div>
 
@@ -214,7 +214,7 @@
                       step: 0.01,
                       min: 0,
                       placeholder: "0.00",
-                      class: "w-full rounded-md border-gray-300 text-sm focus:border-[#1F5C55] focus:ring-[#1F5C55]" %>
+                      class: "w-full rounded-md border-gray-300 text-sm focus:border-brand-accent focus:ring-brand-accent" %>
                 </div>
               </div>
 
@@ -224,7 +224,7 @@
                     step: 0.01,
                     min: 0,
                     placeholder: "0.00",
-                    class: "w-full rounded-md border-gray-300 text-sm focus:border-[#1F5C55] focus:ring-[#1F5C55]" %>
+                    class: "w-full rounded-md border-gray-300 text-sm focus:border-brand-accent focus:ring-brand-accent" %>
               </div>
 
                 <div class="hidden" data-offer-fields-target="offerReason">
@@ -232,7 +232,7 @@
                   <%= form.text_area :offer_reason,
                     rows: 2,
                     placeholder: "Ex : bénévolat, geste commercial, partenariat...",
-                    class: "w-full rounded-md border-gray-300 text-sm focus:border-[#1F5C55] focus:ring-[#1F5C55]",
+                    class: "w-full rounded-md border-gray-300 text-sm focus:border-brand-accent focus:ring-brand-accent",
                     data: { offer_fields_target: "offerReasonInput" } %>
                 </div>
 
@@ -241,14 +241,14 @@
               </div>
 
               <div class="flex items-center gap-2">
-                <%= form.check_box :record_attendance, { checked: true, class: "rounded border-gray-300 text-[#1F5C55] focus:ring-[#1F5C55]" }, "1", "0" %>
+                <%= form.check_box :record_attendance, { checked: true, class: "rounded border-gray-300 text-[#1F5C55] focus:ring-brand-accent" }, "1", "0" %>
                 <%= form.label :record_attendance, "Enregistrer la présence aujourd'hui", class: "text-sm text-gray-700" %>
               </div>
 
               <div class="flex flex-col gap-3 border-t border-gray-200 pt-4 sm:flex-row sm:items-center sm:justify-between">
                 <p class="text-sm text-gray-500">Retour ensuite sur la fiche personne.</p>
                 <%= form.submit "Acheter la cotisation",
-                    class: "inline-flex items-center justify-center rounded-md border border-transparent bg-[#1F5C55] px-4 py-2 text-sm font-medium text-white hover:bg-[#194A45] focus:outline-none focus:ring-2 focus:ring-[#1F5C55] focus:ring-offset-2" %>
+                    class: "inline-flex items-center justify-center rounded-md border border-transparent bg-[#1F5C55] px-4 py-2 text-sm font-medium text-white hover:bg-[#194A45] focus:outline-none focus:ring-2 focus:ring-brand-accent focus:ring-offset-2" %>
               </div>
             </section>
             <% end %>

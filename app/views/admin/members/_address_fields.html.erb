@@ -3,7 +3,7 @@
     <%= form.label :address, "Adresse", class: "block text-sm font-medium text-gray-700" %>
     <div class="relative">
       <%= form.text_area :address, rows: 2,
-          class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#1F5C55] focus:ring-[#1F5C55] sm:text-sm",
+          class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-brand-accent focus:ring-brand-accent sm:text-sm",
           data: { "address-autocomplete-target": "query", action: "input->address-autocomplete#search" } %>
       <div class="absolute z-10 w-full bg-white border border-gray-300 rounded-md shadow-lg"
            data-address-autocomplete-target="results"
@@ -16,21 +16,21 @@
     <div>
       <%= form.label :zip_code, "Code postal", class: "block text-sm font-medium text-gray-700" %>
       <%= form.text_field :zip_code,
-          class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#1F5C55] focus:ring-[#1F5C55] sm:text-sm",
+          class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-brand-accent focus:ring-brand-accent sm:text-sm",
           data: { "address-autocomplete-target": "zip" } %>
     </div>
 
     <div>
       <%= form.label :town, "Ville", class: "block text-sm font-medium text-gray-700" %>
       <%= form.text_field :town,
-          class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#1F5C55] focus:ring-[#1F5C55] sm:text-sm",
+          class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-brand-accent focus:ring-brand-accent sm:text-sm",
           data: { "address-autocomplete-target": "town" } %>
     </div>
 
     <div>
       <%= form.label :country, "Pays", class: "block text-sm font-medium text-gray-700" %>
       <%= form.text_field :country,
-          class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#1F5C55] focus:ring-[#1F5C55] sm:text-sm" %>
+          class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-brand-accent focus:ring-brand-accent sm:text-sm" %>
     </div>
   </div>
 </div>
