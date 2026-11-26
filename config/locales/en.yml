@@ -116,8 +116,6 @@ en:
       upgrade:
         success_notice: Contribution upgraded successfully.
         failure_alert: 'Error during upgrade: %{message}'
-    base:
-      unauthorized_alert: Vous n'avez pas accès à cette page.
     attendances:
       create:
         success: Présence enregistrée avec succès
