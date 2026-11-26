@@ -46,7 +46,13 @@ Le journal est persistant (`/var/log/journal`) : les logs survivent aux déploie
 
 ## 4. Mise en place sur le VPS (root, une fois)
 
-À faire par un humain avec `circographe-root`, après le merge sur `dev` et un `git pull` dans `~deploy/circographe-tools` :
+D'abord, avec le compte deploy, mettre à jour la copie des outils (sinon `install` ne trouve pas le script) :
+
+```bash
+ssh -n circographe-deploy 'cd ~/circographe-tools && git pull --ff-only'
+```
+
+Puis, par un humain avec `circographe-root`. Après chaque modification de `ops/vps/circographe-logs`, refaire ce `git pull` puis la seule ligne `install` :
 
 ```bash
 # script de lecture des logs (remplace l'ancienne version)

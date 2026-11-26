@@ -36,6 +36,8 @@ journal_or_docker() {
   if [ -n "$(journalctl -q -t "$tag" -n 1 --no-pager 2>/dev/null)" ]; then
     journalctl -q -t "$tag" -o short-iso --no-pager ${since:+--since=-$since}
   elif [ -n "$cid" ]; then
+    # docker logs --since knows h/m/s but not days: 2d -> 48h.
+    case "$since" in *d) since="$(( ${since%d} * 24 ))h" ;; esac
     docker logs --timestamps ${since:+--since=$since} "$cid" 2>&1
   else
     echo "No logs found for $tag" >&2
