@@ -995,6 +995,71 @@ fr:
         cta:
           body: Envie de tester un créneau ou de venir en spectateur·rice ?
           button: Consulter les prochains créneaux
+      become_member:
+        page_title: Le Circographe - Adhérer
+        eyebrow: Rejoindre la communauté
+        heading: Adhérer au Circographe
+        intro: Une rencontre sur place pour rejoindre la communauté, découvrir le lieu et la vie associative.
+        see_slots: Voir les créneaux d’accueil
+        why:
+          eyebrow: Pourquoi adhérer ?
+          heading: Pratiquer, créer, s’entraider
+          body: Accès aux entraînements libres cirque, création graphique, temps d’accueil en création et programmation collective. Les bénévoles t’expliquent l’autogestion et t’aident à choisir tes créneaux.
+        summary:
+          eyebrow: En résumé
+          items:
+            - Entraînements libres cirque
+            - Ateliers & temps d’accueil en création (arts graphiques)
+            - Vie associative & bénévolat
+            - Communauté & partage de matériel
+        memberships:
+          eyebrow: Adhésion annuelle
+          heading: Types & tarifs
+          from: dès %{price}
+          per_year: / an
+          payment: Paiement sur place — CB ou espèces. Reçu fiscal sur demande.
+          visitor:
+            name: Adhésion visiteur
+            badge: don libre
+            detail: Temps ouverts · sans pratique.
+          circus:
+            name: Adhésion cirque
+            detail: Entraînements libres · date à date.
+            reduced: Tarif réduit — %{price}
+          event:
+            name: Adhésion événement
+            badge: bientôt
+            detail: Accès aux événements publics du lieu.
+        contributions:
+          eyebrow: Cotisations
+          heading: Autogestion du lieu
+          intro: Choisis la formule qui colle à ta pratique.
+          day: Séance libre
+          pack10: Carnet 10 séances
+          popular: Populaire
+          pack10_detail: Sans expiration.
+          trimester: Trimestre (3 mois)
+          annual: Cotisation annuelle
+          annual_detail: Date à date.
+        note_html: '<strong class="text-gray-800">À retenir :</strong> l’adhésion et la cotisation cirque sont deux paiements distincts. Les formules ci-dessus supposent une <strong>adhésion cirque</strong> active.'
+        volunteering_link: Bénévolat & autogestion →
+        faq:
+          label: Questions fréquentes
+          title: Avant de te déplacer
+          subtitle: Quelques repères pour préparer ton adhésion.
+          footer: Besoin d’un coup de main ? Écris-nous ou passe pendant un créneau d’ouverture.
+        slots:
+          heading: Créneaux d’accueil
+          tooltip: Créneaux assurés par des bénévoles, susceptibles d’évoluer chaque semaine (généralement mis à jour le lundi soir). Vérifiez avant de vous déplacer.
+          volunteers: Bénévoles
+          volunteers_sr: — créneaux volatils
+        access:
+          heading: Accès
+          street: 97 bis bd de Suisse
+          city: 31200 Toulouse
+          bus: Bus 15 Tisséo · boulevard de Suisse
+          map: Carte & contact
+          write: Écrire
     home:
       index:
         page_title: Le Circographe - Accueil
