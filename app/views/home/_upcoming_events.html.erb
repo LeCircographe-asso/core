@@ -19,12 +19,12 @@
       <% if event_time.present? %>
         <div class="absolute top-3 left-3 flex flex-col items-center justify-center w-14 h-14 rounded-2xl bg-white/92 backdrop-blur-sm text-brand-primary font-semibold uppercase tracking-wider shadow-sm">
           <span class="text-base leading-none"><%= event_time.strftime("%d") %></span>
-          <span class="text-[10px] leading-none mt-0.5"><%= event_time.strftime("%b") %></span>
+          <span class="text-xs leading-none mt-0.5"><%= event_time.strftime("%b") %></span>
         </div>
       <% else %>
         <div class="absolute top-3 left-3 flex flex-col items-center justify-center w-14 h-14 rounded-2xl bg-white/92 backdrop-blur-sm text-brand-primary font-semibold uppercase tracking-wider shadow-sm">
-          <span class="text-[10px] leading-none">Date</span>
-          <span class="text-[10px] leading-none mt-0.5">à venir</span>
+          <span class="text-xs leading-none">Date</span>
+          <span class="text-xs leading-none mt-0.5">à venir</span>
         </div>
       <% end %>
     </div>
@@ -36,7 +36,7 @@
           Prochain événement
         </span>
         <% if upcoming_event.is_demo? %>
-          <span class="inline-flex items-center rounded-full border border-amber-300 bg-amber-50 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.16em] text-amber-800">
+          <span class="inline-flex items-center rounded-full border border-amber-300 bg-amber-50 px-2.5 py-1 text-xs font-semibold uppercase tracking-[0.16em] text-amber-800">
             Démo UX/UI
           </span>
         <% end %>

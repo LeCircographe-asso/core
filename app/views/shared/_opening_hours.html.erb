@@ -79,7 +79,7 @@
                     <%= day.to_s.capitalize %>
                   </span>
                   <% if is_today %>
-                    <span class="ml-0.5 text-[10px] font-bold uppercase tracking-[0.12em] text-white bg-brand-primary px-1.5 py-0.5 rounded-full">Aujourd'hui</span>
+                    <span class="ml-0.5 text-xs font-bold uppercase tracking-[0.12em] text-white bg-brand-primary px-1.5 py-0.5 rounded-full">Aujourd'hui</span>
                   <% end %>
                 </div>
               </td>
@@ -133,7 +133,7 @@
             <span class="text-sm tabular-nums <%= time_cls %>"><%= hours %></span>
           <% end %>
           <% if is_today %>
-            <span class="ml-auto text-[10px] font-semibold uppercase tracking-wider text-brand-primary bg-brand-primary/[0.08] border border-brand-primary/20 px-2 py-0.5 rounded-md">Aujourd'hui</span>
+            <span class="ml-auto text-xs font-semibold uppercase tracking-wider text-brand-primary bg-brand-primary/[0.08] border border-brand-primary/20 px-2 py-0.5 rounded-md">Aujourd'hui</span>
           <% end %>
         </div>
       <% end %>
