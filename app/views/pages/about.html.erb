@@ -17,13 +17,13 @@
 <section class="public-surface-bordered p-6 sm:p-10" data-gsap-reveal>
   <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
     <div class="lg:col-span-2 space-y-4" data-gsap-reveal-item>
-      <p class="text-sm font-medium uppercase tracking-[0.3em] text-brand-primary/70"><%= t("views.pages.about.our_mission") %></p>
+      <p class="section-eyebrow"><%= t("views.pages.about.our_mission") %></p>
       <h2 class="text-2xl sm:text-3xl font-semibold text-gray-900 text-balance"><%= t("views.pages.about.mission_heading") %></h2>
       <p class="text-gray-700 leading-relaxed"><%= t("views.pages.about.mission_text_1") %></p>
       <p class="text-gray-700 leading-relaxed"><%= t("views.pages.about.mission_text_2") %></p>
     </div>
     <div class="bg-brand-primary/5 border border-brand-primary/20 rounded-3xl p-6 space-y-4" data-gsap-reveal-item>
-      <p class="text-sm font-medium uppercase tracking-[0.3em] text-brand-primary/70">Nos valeurs</p>
+      <p class="section-eyebrow">Nos valeurs</p>
       <ul class="flex flex-wrap gap-x-5 gap-y-2 text-gray-900">
         <li class="font-semibold">Accessibilité</li>
         <li class="font-semibold">Transmission</li>
@@ -37,7 +37,7 @@
 <% if @board_members.present? %>
 <section class="public-surface p-6 sm:p-10 mt-12 fade-in">
   <header class="text-center mb-10 space-y-3">
-    <p class="text-sm font-medium uppercase tracking-[0.3em] text-brand-primary/70 text-balance">Le Conseil d'administration</p>
+    <p class="section-eyebrow text-balance">Le Conseil d'administration</p>
     <h2 class="text-2xl sm:text-3xl font-semibold text-gray-900 text-balance">Celles et ceux qui font tourner le Circographe</h2>
     <p class="text-gray-600 max-w-2xl mx-auto leading-relaxed">Le conseil d’administration coordonne l’autogestion et accompagne les bénévoles au quotidien.</p>
   </header>
@@ -97,25 +97,14 @@
         </div>
       <% end %>
     </div>
-    <div class="swiper-nav-below absolute flex justify-between items-center w-full -translate-x-1/2 left-1/2 top-1/2 -translate-y-1/2 z-50">
-      <button class="swiper-button-prev swiper-arrow" aria-label="Précédent">
-        <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-          <path d="M10 12L6 8L10 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
-        </svg>
-      </button>
-      <button class="swiper-button-next swiper-arrow" aria-label="Suivant">
-        <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-          <path d="M6 12L10 8L6 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
-        </svg>
-      </button>
-    </div>
+    <%= render "shared/carousel_arrows", wrapper_class: "swiper-nav-below absolute flex justify-between items-center w-full -translate-x-1/2 left-1/2 top-1/2 -translate-y-1/2 z-50" %>
   </div>
 </section>
 <% end %>
 
 <section class="public-surface-bordered p-6 sm:p-10 mt-12">
   <header class="text-center mb-8 space-y-2">
-    <p class="text-sm font-medium uppercase tracking-[0.3em] text-brand-primary/70">Notre histoire</p>
+    <p class="section-eyebrow">Notre histoire</p>
     <h2 class="text-2xl sm:text-3xl font-semibold text-gray-800">Points de repère</h2>
   </header>
   <%#
@@ -169,7 +158,7 @@
 <% if @partners.present? %>
 <section class="public-surface-bordered p-4 sm:p-10 mt-8 sm:mt-12 fade-in">
   <header class="text-center mb-5 sm:mb-10 space-y-2 sm:space-y-3">
-    <p class="text-xs sm:text-sm font-medium uppercase tracking-[0.3em] text-brand-primary/70">Partenaires & soutiens</p>
+    <p class="section-eyebrow max-sm:text-xs">Partenaires & soutiens</p>
     <h2 class="text-2xl sm:text-3xl font-semibold text-gray-900 leading-tight">Ils rendent l'aventure possible</h2>
     <p class="text-sm sm:text-base text-gray-600 max-w-2xl mx-auto leading-normal sm:leading-relaxed">Quelques partenaires mis en avant — la liste complète évolue avec les projets du lieu.</p>
   </header>
@@ -213,18 +202,7 @@
         </div>
       <% end %>
     </div>
-    <div class="swiper-nav-below absolute flex justify-between items-center w-full -translate-x-1/2 left-1/2 top-1/2 -translate-y-1/2 z-50">
-      <button type="button" class="swiper-button-prev swiper-arrow" aria-label="Partenaire précédent">
-        <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-          <path d="M10 12L6 8L10 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
-        </svg>
-      </button>
-      <button type="button" class="swiper-button-next swiper-arrow" aria-label="Partenaire suivant">
-        <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-          <path d="M6 12L10 8L6 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
-        </svg>
-      </button>
-    </div>
+    <%= render "shared/carousel_arrows", wrapper_class: "swiper-nav-below absolute flex justify-between items-center w-full -translate-x-1/2 left-1/2 top-1/2 -translate-y-1/2 z-50", prev_label: "Partenaire précédent", next_label: "Partenaire suivant" %>
   </div>
 </section>
 <% end %>

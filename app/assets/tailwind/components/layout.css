@@ -69,9 +69,9 @@
   }
 
   /* Typography primitives */
+  /* Petite ligne en majuscules au-dessus des titres de section (pages publiques). */
   .section-eyebrow {
-    @apply text-sm font-medium uppercase tracking-[0.3em];
-    color: rgba(31, 92, 85, 0.7);
+    @apply text-sm font-medium uppercase tracking-[0.3em] text-brand-primary/70;
   }
 
   .hero-title {
