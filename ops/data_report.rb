@@ -16,7 +16,8 @@
 require "json"
 
 module DataReport
-  ALLOWED_LINE_ITEM_TYPES = %w[Membership MembershipType ContributionFormula Contribution Donation].freeze
+  # Fallback when the image's PaymentLine has no ALLOWED_ITEM_TYPES (see allowed_line_item_types).
+  ALLOWED_LINE_ITEM_TYPES = %w[Membership MembershipType MembershipUpgrade ContributionFormula Contribution Donation].freeze
   INTERNAL_TABLES = %w[schema_migrations ar_internal_metadata].freeze
 
   # name => [sql returning one count, { table => [columns] } it needs]
@@ -55,10 +56,6 @@ module DataReport
       "SELECT COUNT(*) FROM payment_lines WHERE item_type = 'Payment'",
       { "payment_lines" => %w[item_type] }
     ],
-    "unknown_line_item_types" => [
-      "SELECT COUNT(*) FROM payment_lines WHERE item_type NOT IN (#{ALLOWED_LINE_ITEM_TYPES.map { |t| "'#{t}'" }.join(', ')})",
-      { "payment_lines" => %w[item_type] }
-    ],
     "attendances_without_person" => [
       "SELECT COUNT(*) FROM attendances LEFT JOIN people ON people.id = attendances.person_id WHERE people.id IS NULL",
       { "attendances" => %w[person_id], "people" => [] }
@@ -89,21 +86,43 @@ module DataReport
     end
   end
 
+  # Session invariants per formula duration, as in Admin::HealthReport: pack10 and day
+  # passes count sessions (day: 1 then 0), trimester/annual are unlimited (nil).
+  # name => [durations, SQL condition on contributions.sessions_remaining that is invalid]
+  CONTRIBUTION_SESSION_CHECKS = {
+    "pack10_without_sessions_remaining" => [ %w[pack10], "contributions.sessions_remaining IS NULL" ],
+    "day_pass_invalid_sessions" => [ %w[day], "(contributions.sessions_remaining IS NULL OR contributions.sessions_remaining NOT IN (0, 1))" ],
+    "unlimited_with_sessions_remaining" => [ %w[trimester annual], "contributions.sessions_remaining IS NOT NULL" ]
+  }.freeze
+  CONTRIBUTION_NEEDS = { "contributions" => %w[contribution_formula_id sessions_remaining], "contribution_formulas" => %w[duration] }.freeze
+
   def checks
     results = CHECKS.transform_values { |(sql, needs)| available?(needs) ? count(sql) : "skipped" }
-    results["pack10_without_sessions_remaining"] = pack10_check
+    results["unknown_line_item_types"] = unknown_line_item_types
+    CONTRIBUTION_SESSION_CHECKS.each { |name, (durations, condition)| results[name] = contribution_session_check(durations, condition) }
     results
   end
 
-  # duration is an integer enum: ask the model for pack10's value, skip if the model differs.
-  def pack10_check
-    value = ContributionFormula.durations["pack10"]
-    needs = { "contributions" => %w[contribution_formula_id sessions_remaining], "contribution_formulas" => %w[duration] }
-    return "skipped" if value.nil? || !available?(needs)
+  # The image's own whitelist is the right one for the data it writes; fallback for images without it.
+  def allowed_line_item_types
+    defined?(PaymentLine::ALLOWED_ITEM_TYPES) ? PaymentLine::ALLOWED_ITEM_TYPES : ALLOWED_LINE_ITEM_TYPES
+  end
 
-    count("SELECT COUNT(*) FROM contributions JOIN contribution_formulas ON contribution_formulas.id = contributions.contribution_formula_id " \
-          "WHERE contribution_formulas.duration = ? AND contributions.sessions_remaining IS NULL", Integer(value))
-  rescue NameError, NoMethodError
+  def unknown_line_item_types
+    return "skipped" unless available?("payment_lines" => %w[item_type])
+
+    count("SELECT COUNT(*) FROM payment_lines WHERE item_type NOT IN (?)", allowed_line_item_types)
+  end
+
+  # duration is an integer enum: ask the model for the values, skip if the model differs.
+  def contribution_session_check(durations, condition)
+    values = durations.map { |duration| ContributionFormula.durations.fetch(duration) }
+    return "skipped" unless available?(CONTRIBUTION_NEEDS)
+
+    count("SELECT COUNT(*) FROM contributions JOIN contribution_formulas " \
+          "ON contribution_formulas.id = contributions.contribution_formula_id " \
+          "WHERE contribution_formulas.duration IN (?) AND #{condition}", values.map { |value| Integer(value) })
+  rescue NameError, NoMethodError, KeyError
     "skipped"
   end
 

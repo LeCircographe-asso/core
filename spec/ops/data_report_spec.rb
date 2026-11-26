@@ -26,6 +26,29 @@ RSpec.describe DataReport do
 
       expect(described_class.report["checks"]["payments_without_lines"]).to eq(1)
     end
+
+    it "accepts every line type PaymentLine allows and counts the others" do
+      payment = create(:payment, :with_membership_line)
+      PaymentLine.where(payment: payment).update_all(item_type: "MembershipUpgrade") # rubocop:disable Rails/SkipsModelValidations -- raw data
+      expect(described_class.report["checks"]["unknown_line_item_types"]).to eq(0)
+
+      PaymentLine.where(payment: payment).update_all(item_type: "Order") # rubocop:disable Rails/SkipsModelValidations -- raw data
+      expect(described_class.report["checks"]["unknown_line_item_types"]).to eq(1)
+    end
+
+    it "checks session counters per formula duration, like Admin::HealthReport" do
+      create(:contribution, contribution_formula: create(:contribution_formula, :annual))
+      create(:contribution, contribution_formula: create(:contribution_formula, :day))
+      expect(described_class.report["checks"]).to include(
+        "unlimited_with_sessions_remaining" => 0, "day_pass_invalid_sessions" => 0, "pack10_without_sessions_remaining" => 0
+      )
+
+      Contribution.joins(:contribution_formula).where(contribution_formulas: { duration: :annual })
+                  .update_all(sessions_remaining: 3) # rubocop:disable Rails/SkipsModelValidations -- raw data
+      Contribution.joins(:contribution_formula).where(contribution_formulas: { duration: :day })
+                  .update_all(sessions_remaining: 4) # rubocop:disable Rails/SkipsModelValidations -- raw data
+      expect(described_class.report["checks"]).to include("unlimited_with_sessions_remaining" => 1, "day_pass_invalid_sessions" => 1)
+    end
   end
 
   describe ".problems" do
