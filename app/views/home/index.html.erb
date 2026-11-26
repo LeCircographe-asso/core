@@ -7,7 +7,7 @@
     <div aria-hidden="true" class="pointer-events-none absolute inset-0 bg-gradient-to-b from-black/60 via-black/35 to-black/10"></div>
 
     <div class="relative flex w-full max-w-full min-w-0 flex-col items-center gap-5 -translate-y-3 sm:gap-7 sm:-translate-y-8 md:gap-8">
-      <p class="hero-kicker w-full max-w-full px-2 opacity-0 text-xs font-semibold uppercase leading-normal tracking-[0.2em] text-white/75 text-shadow-hero [overflow-wrap:anywhere] sm:px-0 sm:text-sm sm:tracking-[0.38em]">
+      <p class="hero-kicker w-full max-w-full px-2 opacity-0 text-xs font-semibold uppercase leading-normal tracking-[0.2em] text-white/75 text-shadow-hero text-balance [overflow-wrap:anywhere] sm:px-0 sm:text-sm sm:tracking-[0.38em]">
         Toulouse · Cirque · Atelier · Vie associative
       </p>
       <h1 id="title" class="home-hero-title font-circographe w-full max-w-[min(100%,52rem)] min-w-0 whitespace-normal break-words text-[clamp(2.75rem,9vw+1rem,6rem)] font-bold text-white max-sm:tracking-[0.02em] tracking-[0.05em] md:tracking-[0.07em] leading-[1.05] sm:leading-[1.06] opacity-0 transition-opacity duration-500 text-shadow-hero">
@@ -55,14 +55,14 @@
                      data-pwa-install-target="container"
                      hidden>
               <button type="button"
-                      class="absolute top-3 right-3 text-white/40 hover:text-white/70 transition-colors rounded p-0.5 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-white"
+                      class="absolute top-1 right-1 inline-flex size-11 items-center justify-center rounded-full text-white/60 hover:bg-white/10 hover:text-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
                       data-action="pwa-install#dismiss"
                       aria-label="Fermer la suggestion">
                 <svg class="w-4 h-4" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
                   <path d="M3.72 3.72a.75.75 0 0 1 1.06 0L8 6.94l3.22-3.22a.75.75 0 1 1 1.06 1.06L9.06 8l3.22 3.22a.75.75 0 1 1-1.06 1.06L8 9.06l-3.22 3.22a.75.75 0 0 1-1.06-1.06L6.94 8 3.72 4.78a.75.75 0 0 1 0-1.06Z"/>
                 </svg>
               </button>
-              <p class="text-xs leading-normal uppercase tracking-[0.32em] text-white/70">Accès rapide</p>
+              <p class="pr-10 text-xs leading-normal uppercase tracking-[0.32em] text-white/70">Accès rapide</p>
               <h3 class="mt-2 text-lg font-semibold text-white">Ajoute Le Circographe à ton écran d'accueil</h3>
               <p class="mt-2 text-sm leading-6 text-white/85">
                 Pratique pour retrouver les horaires, l'accès et les infos utiles en un tap.
@@ -101,7 +101,7 @@
       </section>
       <section class="public-surface p-6 sm:p-8 space-y-4 text-center" aria-labelledby="find-us">
         <h2 id="find-us" class="text-sm font-medium leading-normal uppercase tracking-[0.3em] text-brand-primary/70">Nous trouver</h2>
-        <address class="not-italic text-2xl font-semibold text-gray-800">97 bis Boulevard de Suisse, 31200 Toulouse</address>
+        <address class="not-italic text-xl sm:text-2xl font-semibold text-gray-800 text-balance">97 bis Boulevard de Suisse, 31200 Toulouse</address>
         <p class="text-gray-600 max-w-2xl mx-auto">Entraînements libres, murs illustrés par les artistes du lieu et une ambiance chaleureuse : passe quand tu veux, on t’accueille avec plaisir.</p>
         <%= link_to "Voir la carte et l'accès", page_path("contact_us", anchor: "map"),
                     class: "public-cta-pill" %>

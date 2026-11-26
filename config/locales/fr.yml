@@ -736,7 +736,7 @@ fr:
         join: Adhérer
         about: À Propos
         contact: Nous contacter
-        faq: F.A.Q
+        faq: FAQ
         my_space: Mon Espace
         user: Utilisateur
         profile: Profil
@@ -754,8 +754,8 @@ fr:
       scroll_hint:
         down_to_main: Descendre au contenu principal
       footer:
-        newsletter_cta: Restez informé en souscrivant à notre newsletter
-        email_placeholder: Votre Adresse Email
+        newsletter_cta: Reçois les prochaines dates par la newsletter
+        email_placeholder: Ton adresse e-mail
         sign_up: S'inscrire
         discover: Découvrir
         about: À propos
@@ -766,7 +766,7 @@ fr:
         contact: Nous contacter
         map: Plan d’accès
         resources: Ressources
-        faq: F.A.Q
+        faq: FAQ
         terms: Mentions légales
         privacy: Politique de confidentialité
         brand: Le Circographe

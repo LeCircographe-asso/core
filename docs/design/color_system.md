@@ -197,7 +197,19 @@ Exemple :
 - Respecter `text-white` + `text-shadow-hero` si besoin sur backgrounds sombres.  
 - Garder `#FF9119` uniquement pour notifications/accents, pas pour CTA principaux.  
 
-## 11. Contrast Checklist
+## 11. Fond figé et encarts translucides (charte)
+
+Les pages publiques ont une **photo de fond fixe** : elle ne défile pas, ce sont les encarts qui glissent par-dessus.
+
+- Le fond est posé une seule fois par `layouts/application.html.erb` : `div.fixed.inset-0.-z-10.public-bg-image`. Chaque page choisit sa photo avec `content_for :background_image`.
+- Les encarts sont **blancs à 95 %** pour que la photo transparaisse : `.public-surface` / `.public-surface-bordered` (`bg-white/95`, voir `components/layout.css`). Pour un nouvel encart public, réutiliser ces classes plutôt qu'un `bg-white` opaque.
+- **À ne jamais faire** :
+  - remplacer ou faire défiler ce fond ;
+  - rendre les encarts opaques sur tout le site ;
+  - mettre un `overflow`, un `transform` ou un `filter` sur `html`/`body` (ça casse le `position: fixed`/`sticky`, cf. l'ancien `overflow-x: auto` de `admin_table.css`).
+- L'espace membre (`users#show`, réglages) garde un fond blanc uni : c'est voulu.
+
+## 12. Contrast Checklist
 
 1. **Automatique** : `bin/rails tailwindcss:build` échoue si une classe inconnue est ajoutée. 
 2. **Audit manuel** : utiliser Lighthouse ou `npx @axe-core/cli http://127.0.0.1:3001/` pour vérifier les ratios.
