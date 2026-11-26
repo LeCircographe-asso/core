@@ -298,6 +298,15 @@ document.addEventListener("turbo:load", () => {
   }
 })
 
+// Turbo snapshots the page when leaving it and shows that snapshot on Back/preview. A modal
+// still open at that moment would come back visible with dead buttons: close it first
+// (as a cancel, so a pending confirmation resolves to false).
+document.addEventListener("turbo:before-cache", () => {
+  if (modalElement && !modalElement.classList.contains(HIDDEN_CLASS)) {
+    closeModal(false)
+  }
+})
+
 Turbo.config.forms.confirm = (message, element) => {
   return showModal(message, element)
 }

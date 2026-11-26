@@ -10,6 +10,9 @@ class Faq < ApplicationRecord
     "contact"      => "Écrire & proposer"
   }.freeze
 
+  # Ordre des groupes sur la page /faq : avant de venir, adhérer, sur place, écrire.
+  PAGE_ORDER = %w[avant_visite adhesion general contact].freeze
+
   LABEL_PAGES = {
     "avant_visite" => "/adhesion",
     "adhesion"     => "/faq",

@@ -1,7 +1,10 @@
 @layer components {
+  /* No overflow on body/html here: any overflow other than visible on <body> makes it the
+     scroll container of every position: sticky element of the site, which then never
+     sticks (the viewport scrolls, not the body). Wide admin tables scroll inside their own
+     containers below; admin pages keep their rule (.admin-layout-active). */
   body,
   html {
-    overflow-x: auto;
     max-width: 100%;
   }
 
