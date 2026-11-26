@@ -120,6 +120,14 @@ volumes:
 
 **Kamal proxy:** SSL via Let’s Encrypt, forwards to app port 80.
 
+Un seul `kamal-proxy` est partagé par la production, le staging et Umami (`analytics`) : le redémarrer coupe les trois. Les workflows ne lancent donc **pas** `kamal proxy reboot` ; `kamal deploy` démarre le proxy s'il est absent et échoue avec un message explicite si sa version est inférieure au minimum de la gem Kamal. Pour monter de version, à faire à la main dans une fenêtre de maintenance :
+
+```bash
+bundle exec kamal proxy reboot -c config/deploy.production.yml   # coupure de quelques secondes sur tous les services
+bundle exec kamal proxy details -c config/deploy.production.yml  # vérifier la version
+# vérifier ensuite que la route `analytics` existe toujours (docs/operations/analytics.md)
+```
+
 **Secrets:** Only via `.kamal/secrets` (Kamal exports to container, never hardcoded).
 
 ## 8. Mode maintenance (production)

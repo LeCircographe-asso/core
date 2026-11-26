@@ -33,7 +33,7 @@ et session replay existent nativement dans l'édition récente (tables
 Fichiers : `docker/analytics/docker-compose.yml` + `docker/analytics/.env.example`
 
 - `umami-db` : Postgres 16, dédiée à Umami, volume nommé `umami_db_data`
-- `umami` : image officielle `postgresql-latest`, migrations auto au démarrage
+- `umami` : image officielle épinglée (`3.4.0`), migrations auto au démarrage ; monter de version volontairement (changer le tag, sauvegarder `umami_db_data`, puis `docker compose pull && docker compose up -d`)
 - Port `127.0.0.1:3001` : accès admin local uniquement (debug/setup), pas
   exposé publiquement par ce biais
 
