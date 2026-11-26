@@ -399,6 +399,20 @@ RSpec.describe 'Admin::Memberships', type: :request do
           expect(response).to redirect_to(admin_member_path(person))
         end
       end
+
+      context 'with invalid params' do
+        it 'redirects back to the edit page of the same person' do
+          # The route :id is the person id (see set_person). Give the target
+          # person a second, newer membership so its id cannot match the person id.
+          membership.update!(status: :expired)
+          current = create(:membership, person: person, membership_type: membership_type, status: :active)
+          expect(current.id).not_to eq(person.id)
+
+          patch admin_membership_path(person), params: { membership: { membership_type_id: '' } }
+
+          expect(response).to redirect_to(edit_admin_membership_path(person))
+        end
+      end
     end
   end
 
