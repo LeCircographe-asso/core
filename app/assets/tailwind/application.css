@@ -3,6 +3,7 @@
 @tailwind utilities;
 
 @import "tailwindcss";
+@plugin "@tailwindcss/forms";
 
 /*
  * Charte : le vert et le violet du site, déclarés au thème Tailwind pour que toutes leurs
@@ -12,6 +13,9 @@
  * couleur par défaut, d'où des bordures noires.
  */
 @theme {
+  /* Pile de polices du site (reprise de l'ancien flowbite.css) */
+  --font-sans: "Inter", "ui-sans-serif", "system-ui", "-apple-system", "system-ui", "Segoe UI", "Roboto", "Helvetica Neue", "Arial", "Noto Sans", "sans-serif", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  --font-mono: "ui-monospace", "SFMono-Regular", "Menlo", "Monaco", "Consolas", "Liberation Mono", "Courier New", "monospace";
   --color-brand-primary: #1F5C55;
   --color-brand-accent: #5836A5;
   --color-brand-primary-dark: #194A45; /* survol des boutons verts */
@@ -84,6 +88,40 @@
 @import "./components/swiper_overrides.css";
 
 @layer base {
+  /*
+   * Champs de formulaire : le style de base vient de @tailwindcss/forms (plugin en haut du
+   * fichier). Ces deux règles reprennent à l'identique ce que faisait l'ancien flowbite.css :
+   * la flèche des listes déroulantes, et la bordure au focus des champs qui ne précisent pas
+   * leur propre couleur de focus (les vues de la charte écrivent focus:border-brand-accent).
+   */
+  select:not([size]) {
+    background-image: url("data:image/svg+xml,%3csvg aria-hidden='true' xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 10 6'%3e %3cpath stroke='oklch(0.551 0.027 264.364)' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m1 1 4 4 4-4'/%3e %3c/svg%3e");
+    background-position: right 0.75rem center;
+    background-repeat: no-repeat;
+    background-size: 0.75em 0.75em;
+    padding-right: 2.5rem;
+  }
+
+  input:focus {
+    border-color: var(--color-blue-600);
+  }
+
+  /* Bouton « Choisir un fichier » (admin : galerie, imports…) */
+  input[type="file"]::file-selector-button {
+    color: #fff;
+    background: var(--color-gray-800);
+    cursor: pointer;
+    border: 0;
+    margin-inline: -1rem 1rem;
+    padding: 0.625rem 1rem 0.625rem 2rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+  }
+
+  input[type="file"]::file-selector-button:hover {
+    background: var(--color-gray-700);
+  }
+
   /* Local fonts first (Propshaft rewrites /fonts/... to fingerprinted assets) */
   @font-face {
     font-family: "Circographe";

@@ -4,6 +4,5 @@
 //= link_directory ../stylesheets .css
 //= link_directory ../javascripts .js
 //= link_tree ../builds
-//= link flowbite.css
 //= link app.css
 //= link font.scss
