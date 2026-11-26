@@ -1,0 +1,26 @@
+<%# Liste de questions FAQ, même rendu partout (page /faq, bloc « Avant de te déplacer » de /adhesion) :
+    <details> natifs (sans JS), séparateurs, une ancre par question.
+    locals : faqs ; anchors (Set partagé sur la page, pour des ancres uniques) ;
+    searchable (cible du contrôleur faq-search, page /faq). %>
+<% anchors = local_assigns.fetch(:anchors) { Set.new } %>
+<% searchable = local_assigns.fetch(:searchable, false) %>
+<div class="divide-y divide-gray-200 border-b border-gray-200">
+  <% faqs.each do |faq| %>
+    <%# Ancre = question en slug (/faq#horaires) ; en cas de doublon (questions identiques ou qui ne
+        diffèrent que par la ponctuation), on ajoute l'id pour garder chaque lien unique. %>
+    <% slug = faq.question.parameterize.presence || "question" %>
+    <% anchor = anchors.include?(slug) ? "#{slug}-#{faq.id}" : slug %>
+    <% anchors << anchor %>
+    <details id="<%= anchor %>" class="group scroll-mt-24" <%= 'data-faq-search-target="item"'.html_safe if searchable %>>
+      <summary class="flex min-h-12 cursor-pointer list-none items-center justify-between gap-4 py-3 text-left font-semibold text-gray-900 hover:text-[#1F5C55] focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[#5836A5] [&::-webkit-details-marker]:hidden">
+        <span><%= faq.question %></span>
+        <svg class="h-4 w-4 shrink-0 text-gray-500 transition-transform group-open:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
+          <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4" />
+        </svg>
+      </summary>
+      <div class="pb-4 text-gray-700 leading-relaxed [&_a]:text-[#1F5C55] [&_a]:underline">
+        <%= sanitize(faq.answer) %>
+      </div>
+    </details>
+  <% end %>
+</div>
