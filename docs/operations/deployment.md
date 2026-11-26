@@ -120,6 +120,18 @@ volumes:
 
 **Kamal proxy:** SSL via Let’s Encrypt, forwards to app port 80.
 
+Un seul `kamal-proxy` est partagé par la production, le staging et Umami (`analytics`) : le redémarrer coupe les trois. Les workflows ne lancent donc **pas** `kamal proxy reboot` ; `kamal deploy` démarre le proxy s'il est absent et échoue avec un message explicite si sa version est inférieure au minimum de la gem Kamal. Pour monter de version, à faire à la main dans une fenêtre de maintenance :
+
+```bash
+bundle exec kamal proxy reboot -c config/deploy.production.yml   # coupure de quelques secondes sur tous les services
+bundle exec kamal proxy details -c config/deploy.production.yml  # vérifier la version
+ssh circographe-vps 'docker exec kamal-proxy kamal-proxy list'   # les 3 routes doivent être là
+```
+
+`kamal proxy reboot -c config/deploy.production.yml` ne réenregistre que la production : les routes `circographe-staging-web` et `analytics` ne reviennent que grâce à l'état sauvegardé de kamal-proxy (volume `kamal-proxy-config`). Si l'une manque après le reboot : `bundle exec kamal deploy -c config/deploy.staging.yml` pour le staging, la commande `kamal-proxy deploy analytics` de `docs/operations/analytics.md` pour Umami.
+
+Ce qui déclenche cette fenêtre de maintenance : Dependabot monte la gem `kamal` et la nouvelle version exige un kamal-proxy plus récent. Le prochain `kamal deploy` (staging ou production) échoue alors avec un message « kamal-proxy version … is too old » ; il ne repassera qu'après le reboot manuel ci-dessus.
+
 **Secrets:** Only via `.kamal/secrets` (Kamal exports to container, never hardcoded).
 
 ## 8. Mode maintenance (production)

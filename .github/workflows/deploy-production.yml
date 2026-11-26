@@ -53,8 +53,10 @@ jobs:
       - uses: webfactory/ssh-agent@v0.10.0
         with:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
-      - name: Update kamal-proxy on host
-        run: bundle exec kamal proxy reboot --confirmed -c config/deploy.production.yml
+      # No `kamal proxy reboot` here: it restarts the shared kamal-proxy and cuts
+      # production, staging and analytics at once. `kamal deploy` already boots the
+      # proxy if it is missing and fails loudly if its version is too old; upgrade
+      # it by hand in a maintenance window (docs/operations/deployment.md).
       - name: Deploy production with Kamal
         run: bundle exec kamal deploy -c config/deploy.production.yml --version="$GITHUB_SHA"
 
