@@ -180,8 +180,11 @@ export default class extends Controller {
   // "prix" stays known as "prix"), synonyms: the rest of its SYNONYMS group }. Words under
   // 3 letters ("ou") would match almost any text: they only count through their synonyms.
   #variants (word) {
-    const singular = word.length > 3 ? word.replace(/[sx]$/, "") : word
-    const group = SYNONYMS.find(list => list.includes(word) || list.includes(singular)) || []
+    // A word already in SYNONYMS keeps its own spelling: "prix" must not become "pri", whose
+    // matches ("prise", "priorité") would hide the price synonyms.
+    const known = SYNONYMS.find(list => list.includes(word))
+    const singular = !known && word.length > 3 ? word.replace(/[sx]$/, "") : word
+    const group = known || SYNONYMS.find(list => list.includes(singular)) || []
     const long = term => term.length >= 3 || term === "€"
     const literal = [...new Set([word, singular])].filter(long)
     const synonyms = group.filter(term => !literal.includes(term) && long(term))
