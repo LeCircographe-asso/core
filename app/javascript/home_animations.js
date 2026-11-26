@@ -100,8 +100,6 @@ function initAnimations () {
       if (heroIntro) heroIntro.classList.add("opacity-0")
     }
   }, scopeEl)
-
-  initSmoothScroll()
 }
 
 function buildLetterSpans (element) {
@@ -131,26 +129,4 @@ function buildLetterSpans (element) {
   })
 
   return letters
-}
-
-function initSmoothScroll () {
-  document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
-    anchor.addEventListener("click", function (e) {
-      e.preventDefault()
-
-      const targetId = this.getAttribute("href")
-      const targetElement = document.querySelector(targetId)
-
-      if (targetElement) {
-        const header = document.querySelector("header")
-        const offset = header ? header.offsetHeight + 24 : 0
-        const targetPosition = targetElement.getBoundingClientRect().top + window.pageYOffset - offset
-
-        window.scrollTo({
-          top: Math.max(targetPosition, 0),
-          behavior: "smooth"
-        })
-      }
-    })
-  })
 }
