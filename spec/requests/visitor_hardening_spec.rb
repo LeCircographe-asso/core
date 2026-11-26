@@ -50,5 +50,15 @@ RSpec.describe "Visitor hardening", type: :request do
       expect(response).to have_http_status(:ok)
       expect(response.media_type).to eq("text/javascript")
     end
+
+    it "caches no page and serves an offline page instead (no stale or personal pages in the browser)" do
+      get "/service-worker"
+
+      body = response.body
+      expect(body).not_to include("cache.put")
+      expect(body).to include('const CACHE_NAME = "circographe-v2"')
+      expect(body).to include("Vous êtes hors ligne")
+      expect(body).to include("if (!isPageRequest(event.request)) return", 'request.mode === "navigate"', 'includes("text/html")')
+    end
   end
 end
