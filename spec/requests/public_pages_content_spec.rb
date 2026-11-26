@@ -55,6 +55,22 @@ RSpec.describe 'Public pages content', type: :request do
       expect(response.body).to include('/contact#contact-form')
       expect(response.body).not_to include('contact@lecircographe.fr')
     end
+
+    it "montre toutes les catégories sur une page, chaque question liable, sans catégorie vide", :aggregate_failures do
+      Faq.create!(label: "avant_visite", question: "Faut-il réserver ?", answer: "Non, viens aux heures d'ouverture.")
+      Faq.create!(label: "general", question: "Horaires", answer: "Voir la page <a href=\"/contact\">Contact</a>.<script>alert(1)</script>")
+
+      get faq_path
+
+      body = response.body
+      expect(body).to include("Avant de te déplacer", "Lieu &amp; horaires")
+      expect(body).not_to include("Écrire &amp; proposer") # aucune question « contact » : groupe masqué
+      expect(body).to include('href="#faq-avant-visite"', 'id="faq-avant-visite"')
+      expect(body).to include('<details id="faut-il-reserver"', '<details id="horaires"')
+      expect(body).to include('data-controller="faq-search"', 'type="search"')
+      expect(body).to include('<a href="/contact">Contact</a>')
+      expect(body).not_to include("<script>alert(1)</script>")
+    end
   end
 
   describe 'GET /pages/news' do
