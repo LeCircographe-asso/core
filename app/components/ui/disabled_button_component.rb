@@ -37,7 +37,7 @@ module Ui
     end
 
     def effective_hint_classes
-      hint_classes.presence || "text-[11px] text-gray-500 leading-none max-w-fit whitespace-nowrap shrink-0"
+      hint_classes.presence || "text-xs text-gray-500 leading-none max-w-fit whitespace-nowrap shrink-0"
     end
 
     def effective_wrapper_classes
