@@ -79,7 +79,9 @@ module DataReport
     needs.all? { |table, columns| tables.include?(table) && (columns - columns_of(table)).empty? }
   end
 
-  def count(sql) = connection.select_value(sql).to_i
+  def count(sql, *binds)
+    connection.select_value(binds.empty? ? sql : ActiveRecord::Base.sanitize_sql_array([ sql, *binds ])).to_i
+  end
 
   def tables
     (connection.tables - INTERNAL_TABLES).sort.to_h do |table|
@@ -100,7 +102,7 @@ module DataReport
     return "skipped" if value.nil? || !available?(needs)
 
     count("SELECT COUNT(*) FROM contributions JOIN contribution_formulas ON contribution_formulas.id = contributions.contribution_formula_id " \
-          "WHERE contribution_formulas.duration = #{Integer(value)} AND contributions.sessions_remaining IS NULL")
+          "WHERE contribution_formulas.duration = ? AND contributions.sessions_remaining IS NULL", Integer(value))
   rescue NameError, NoMethodError
     "skipped"
   end
