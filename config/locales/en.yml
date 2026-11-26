@@ -449,6 +449,7 @@ en:
     pages:
       about:
         page_title: Le Circographe - About
+        eyebrow: Learning together
         heading: About Le Circographe
         hero_description: A laboratory of shared artistic practices where circus and graphic arts meet — self-management and solidarity.
         join: Join us
@@ -457,6 +458,48 @@ en:
         mission_heading: A shared and accessible creative space
         mission_text_1: Provide a space for practice, creation and transmission that is accessible to everyone.
         mission_text_2: 'Self-managed governance: members volunteer, share responsibilities, and co-program the life of the venue.'
+      gallery:
+        page_title: Le Circographe - Gallery
+        eyebrow: The place in pictures
+        heading: Photo gallery
+        intro: Circus, graphic arts, community life — snapshots of Le Circographe.
+        photo_alt: Photo of Le Circographe
+        enlarged_alt: Enlarged photo of Le Circographe
+        enlarge: Enlarge photo %{position} of %{total}
+        lightbox_label: Enlarged photo
+        close_lightbox: Close the enlarged photo
+        previous: Previous photo
+        next: Next photo
+        close: Close
+      newsletter_unsubscribe_success:
+        heading: You have unsubscribed from the newsletter
+        thanks: Thank you for letting us keep you informed about our news and special offers.
+        back: You can now go back to our website and keep browsing.
+    home:
+      index:
+        page_title: Le Circographe - Home
+        meta_description: 'Le Circographe: a living circus venue in Toulouse. Training, workshops, encounters and community life for every level.'
+        kicker: Toulouse · Circus · Workshop · Community life
+        intro: A living place to train and meet.
+        discover_association: Discover the association
+        see_opening_hours: See opening hours
+        key_information: Key information
+        hours_eyebrow: Opening hours
+        hours_heading: When can you drop by?
+        hours_intro: Check this week's opening slots and plan your next visit to Le Circographe.
+        self_management_cta: Discover self-management & volunteering
+        find_us: Find us
+        address: 97 bis Boulevard de Suisse, 31200 Toulouse
+        find_us_body: 'Open training, walls painted by the artists of the place and a warm atmosphere: drop by whenever you like, you are welcome.'
+        map_and_access: See the map and directions
+        install:
+          dismiss: Dismiss the suggestion
+          eyebrow: Quick access
+          heading: Add Le Circographe to your home screen
+          body: Handy to find opening hours, directions and useful info in one tap.
+          button: Install the app
+          status: Available when your browser allows installation.
+          ios_help_html: 'On iPhone: open the Share menu, then choose <strong>Add to Home Screen</strong>.'
   services:
     base:
       success_default: "Operation completed successfully"

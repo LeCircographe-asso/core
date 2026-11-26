@@ -1,5 +1,5 @@
-<% content_for :title, "Le Circographe - Accueil" %>
-<% content_for :description, "Le Circographe : lieu de cirque vivant à Toulouse. Entraînement, ateliers, rencontres et vie associative pour tous les niveaux." %>
+<% content_for :title, t("views.home.index.page_title") %>
+<% content_for :description, t("views.home.index.meta_description") %>
 <% content_for :background_image, "background.webp" %>
 
 <div class="relative w-full" data-home-animations-scope>
@@ -8,21 +8,21 @@
 
     <div class="relative flex w-full max-w-full min-w-0 flex-col items-center gap-5 -translate-y-3 sm:gap-7 sm:-translate-y-8 md:gap-8">
       <p class="hero-kicker w-full max-w-full px-2 opacity-0 text-xs font-semibold uppercase leading-normal tracking-[0.2em] text-white/75 text-shadow-hero text-balance [overflow-wrap:anywhere] sm:px-0 sm:text-sm sm:tracking-[0.38em]">
-        Toulouse · Cirque · Atelier · Vie associative
+        <%= t("views.home.index.kicker") %>
       </p>
       <h1 id="title" class="home-hero-title font-circographe w-full max-w-[min(100%,52rem)] min-w-0 whitespace-normal break-words text-[clamp(2.75rem,9vw+1rem,6rem)] font-bold text-white max-sm:tracking-[0.02em] tracking-[0.05em] md:tracking-[0.07em] leading-[1.05] sm:leading-[1.06] opacity-0 transition-opacity duration-500 text-shadow-hero">
         <span class="home-hero-title-word">Le</span>
         <span class="home-hero-title-word">Circographe</span>
       </h1>
       <p class="hero-intro max-w-[min(100%,30rem)] px-2 text-sm leading-normal text-white/90 opacity-0 sm:px-0 sm:text-base md:text-lg">
-        Un lieu vivant pour s'entraîner et se rencontrer.
+        <%= t("views.home.index.intro") %>
       </p>
     </div>
 
     <div class="main-button relative mt-8 flex w-full max-w-sm flex-col items-stretch gap-3 opacity-0 transition-opacity duration-500 sm:mt-10 sm:max-w-none sm:flex-row sm:items-center sm:justify-center">
-      <%= link_to "Découvrir l'association", page_path('association'),
+      <%= link_to t("views.home.index.discover_association"), page_path('association'),
                   class: "inline-flex w-full min-w-0 items-center justify-center rounded-full border-2 border-white/60 bg-white/18 px-5 py-3 text-base font-medium text-white shadow-md backdrop-blur-sm transition-colors duration-300 hover:border-brand-primary hover:bg-brand-primary hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-primary sm:w-auto sm:min-w-[15rem] sm:px-8 sm:py-4 sm:text-lg" %>
-      <%= link_to "Voir les horaires", "#opening-hours",
+      <%= link_to t("views.home.index.see_opening_hours"), "#opening-hours",
                   data: { controller: "smooth-scroll", action: "smooth-scroll#go" },
                   class: "inline-flex w-full min-w-0 items-center justify-center rounded-full border-2 border-white/60 bg-white/10 px-5 py-3 text-base font-medium text-white backdrop-blur-sm transition-colors duration-300 hover:border-brand-accent hover:bg-brand-accent focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-accent sm:w-auto sm:min-w-[15rem] sm:px-8 sm:py-4 sm:text-lg" %>
     </div>
@@ -34,16 +34,16 @@
   <section class="w-full px-4 sm:px-6 lg:px-8 flex justify-center">
     <div id="main-content" class="w-full max-w-5xl space-y-12 mt-12 sm:mt-16 transition-opacity duration-500">
       <section class="relative bg-transparent" aria-labelledby="community-highlights">
-        <h2 id="community-highlights" class="sr-only">Informations clés</h2>
+        <h2 id="community-highlights" class="sr-only"><%= t("views.home.index.key_information") %></h2>
 
         <div class="grid gap-8 lg:gap-10 lg:grid-cols-[minmax(0,1.7fr)_minmax(0,1fr)] items-start" data-gsap-reveal>
           <article class="relative overflow-hidden rounded-[32px] bg-gradient-to-br from-[#0C2F2B] via-brand-primary-dark to-brand-primary text-white shadow-2xl p-5 sm:p-8 lg:p-10" data-gsap-reveal-item>
             <%= render "shared/exceptional_closure_ribbon" if @exceptional_closure&.in_effect? %>
             <header class="space-y-2 sm:space-y-3 text-center lg:text-left">
-              <p class="text-sm leading-normal uppercase tracking-[0.35em] text-white/75">Horaires</p>
-              <h2 id="opening-hours" class="text-xl sm:text-3xl font-semibold leading-normal">Quand passer nous voir ?</h2>
+              <p class="text-sm leading-normal uppercase tracking-[0.35em] text-white/75"><%= t("views.home.index.hours_eyebrow") %></p>
+              <h2 id="opening-hours" class="text-xl sm:text-3xl font-semibold leading-normal"><%= t("views.home.index.hours_heading") %></h2>
               <p class="text-sm sm:text-base text-white/80 max-w-2xl mx-auto lg:mx-0 leading-normal">
-                Retrouve les créneaux d'accueil de la semaine et prépare ta prochaine visite au Circographe.
+                <%= t("views.home.index.hours_intro") %>
               </p>
             </header>
 
@@ -58,31 +58,31 @@
               <button type="button"
                       class="absolute top-1 right-1 inline-flex size-11 items-center justify-center rounded-full text-white/60 hover:bg-white/10 hover:text-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
                       data-action="pwa-install#dismiss"
-                      aria-label="Fermer la suggestion">
+                      aria-label="<%= t("views.home.index.install.dismiss") %>">
                 <svg class="w-4 h-4" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
                   <path d="M3.72 3.72a.75.75 0 0 1 1.06 0L8 6.94l3.22-3.22a.75.75 0 1 1 1.06 1.06L9.06 8l3.22 3.22a.75.75 0 1 1-1.06 1.06L8 9.06l-3.22 3.22a.75.75 0 0 1-1.06-1.06L6.94 8 3.72 4.78a.75.75 0 0 1 0-1.06Z"/>
                 </svg>
               </button>
-              <p class="pr-10 text-xs leading-normal uppercase tracking-[0.32em] text-white/70">Accès rapide</p>
-              <h3 class="mt-2 text-lg font-semibold text-white">Ajoute Le Circographe à ton écran d'accueil</h3>
+              <p class="pr-10 text-xs leading-normal uppercase tracking-[0.32em] text-white/70"><%= t("views.home.index.install.eyebrow") %></p>
+              <h3 class="mt-2 text-lg font-semibold text-white"><%= t("views.home.index.install.heading") %></h3>
               <p class="mt-2 text-sm leading-6 text-white/85">
-                Pratique pour retrouver les horaires, l'accès et les infos utiles en un tap.
+                <%= t("views.home.index.install.body") %>
               </p>
               <div class="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center">
                 <button type="button"
                         class="inline-flex items-center justify-center rounded-full bg-white px-5 py-3 text-sm font-semibold text-brand-primary-dark transition-colors duration-300 hover:bg-[#F7F4EE]"
                         data-action="pwa-install#install"
                         data-pwa-install-target="button">
-                  Installer l'application
+                  <%= t("views.home.index.install.button") %>
                 </button>
                 <p class="text-xs leading-5 text-white/70" data-pwa-install-target="status">
-                  Disponible quand ton navigateur autorise l'installation.
+                  <%= t("views.home.index.install.status") %>
                 </p>
               </div>
               <div class="mt-4 rounded-2xl bg-white/12 p-3 text-sm leading-6 text-white/90"
                    data-pwa-install-target="iosHelp"
                    hidden>
-                Sur iPhone : ouvre le menu Partager puis choisis <strong>Sur l'écran d'accueil</strong>.
+                <%= t("views.home.index.install.ios_help_html") %>
               </div>
             </section>
           </article>
@@ -94,17 +94,17 @@
             <div class="text-center">
               <%= link_to page_path("association", anchor: "fonctionnement"),
                           class: "public-cta-pill" do %>
-                Découvrir l'autogestion & le bénévolat
+                <%= t("views.home.index.self_management_cta") %>
               <% end %>
             </div>
           </div>
         </div>
       </section>
       <section class="public-surface p-6 sm:p-8 space-y-4 text-center" aria-labelledby="find-us">
-        <h2 id="find-us" class="section-eyebrow leading-normal">Nous trouver</h2>
-        <address class="not-italic text-xl sm:text-2xl font-semibold text-gray-800 text-balance">97 bis Boulevard de Suisse, 31200 Toulouse</address>
-        <p class="text-gray-600 max-w-2xl mx-auto">Entraînements libres, murs illustrés par les artistes du lieu et une ambiance chaleureuse : passe quand tu veux, on t’accueille avec plaisir.</p>
-        <%= link_to "Voir la carte et l'accès", page_path("contact_us", anchor: "map"),
+        <h2 id="find-us" class="section-eyebrow leading-normal"><%= t("views.home.index.find_us") %></h2>
+        <address class="not-italic text-xl sm:text-2xl font-semibold text-gray-800 text-balance"><%= t("views.home.index.address") %></address>
+        <p class="text-gray-600 max-w-2xl mx-auto"><%= t("views.home.index.find_us_body") %></p>
+        <%= link_to t("views.home.index.map_and_access"), page_path("contact_us", anchor: "map"),
                     class: "public-cta-pill" %>
       </section>
     </div>
