@@ -77,3 +77,29 @@
     background: var(--brand-primary);
   }
 }
+
+/*
+ * Téléphone : sur les carrousels de cartes avec du texte (CA, partenaires), les flèches
+ * passent sous les cartes au lieu de recouvrir le texte. Hors @layer pour primer sur les
+ * utilitaires de position du conteneur (absolute, translate…).
+ */
+@media (max-width: 639px) {
+  .swiper .swiper-nav-below {
+    position: static;
+    /* Annule -translate-x/y-1/2 (Tailwind v4 passe par ces variables ; « translate: none » est retiré à la minification). */
+    --tw-translate-x: 0;
+    --tw-translate-y: 0;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 0.75rem;
+  }
+
+  .swiper .swiper-nav-below .swiper-arrow {
+    position: static;
+    transform: none;
+  }
+
+  .swiper:has(> .swiper-nav-below) > .swiper-wrapper {
+    margin-bottom: 0;
+  }
+}

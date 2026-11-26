@@ -208,6 +208,7 @@ Les pages publiques ont une **photo de fond fixe** : elle ne défile pas, ce son
   - rendre les encarts opaques sur tout le site ;
   - mettre un `overflow`, un `transform` ou un `filter` sur `html`/`body` (ça casse le `position: fixed`/`sticky`, cf. l'ancien `overflow-x: auto` de `admin_table.css`).
 - L'espace membre (`users#show`, réglages) garde un fond blanc uni : c'est voulu.
+- **Le pied de page est blanc opaque**, jamais transparent : la transparence est réservée aux encarts au-dessus de lui. Sur téléphone, il forme une seule tuile de la hauteur de l'écran (`min-h-[100svh]`) : le dernier scroll montre tout le pied de page et rien d'autre.
 
 ## 12. Contrast Checklist
 

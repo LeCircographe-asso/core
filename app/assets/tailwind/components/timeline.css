@@ -140,3 +140,127 @@
     outline-offset: 2px;
   }
 }
+
+/*
+ * Ruban d'années (téléphone, shared/_timeline_ribbon) : les années glissent horizontalement
+ * et s'aimantent au centre ; l'année choisie reprend le violet des filtres (.faq-tab[data-active]).
+ */
+@layer components {
+  .tl-ribbon-track {
+    position: relative; /* offsetLeft des années mesuré depuis le ruban */
+    display: flex;
+    flex: 1 1 auto;
+    min-width: 0;
+    gap: 0.5rem;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    /* Marges pour que la première et la dernière année puissent venir au centre */
+    padding: 0.25rem calc(50% - 2.25rem);
+    -webkit-mask-image: linear-gradient(to right, transparent, #000 18%, #000 82%, transparent);
+    mask-image: linear-gradient(to right, transparent, #000 18%, #000 82%, transparent);
+  }
+
+  .tl-ribbon-track::-webkit-scrollbar {
+    display: none;
+  }
+
+  .tl-ribbon-year {
+    flex: 0 0 auto;
+    justify-content: center;
+    min-width: 4.5rem;
+    min-height: 2.75rem;
+    scroll-snap-align: center;
+  }
+
+  .tl-ribbon-year--future:not([data-active]) {
+    border-style: dashed;
+  }
+
+  .tl-ribbon-arrow {
+    display: inline-flex;
+    flex: 0 0 auto;
+    align-items: center;
+    justify-content: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    border-radius: 9999px;
+    color: var(--brand-primary);
+    transition: color 0.2s, background-color 0.2s, opacity 0.2s;
+  }
+
+  .tl-ribbon-arrow:hover {
+    background-color: rgba(31, 92, 85, 0.08);
+  }
+
+  .tl-ribbon-arrow:disabled {
+    opacity: 0.25;
+    cursor: default;
+  }
+
+  .tl-ribbon-panel {
+    min-height: 9rem;
+  }
+
+  .tl-ribbon-panel--enter {
+    animation: tl-ribbon-enter 0.35s ease-out;
+  }
+
+  @keyframes tl-ribbon-enter {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: none; }
+  }
+}
+
+/*
+ * Tambour d'années (ordinateur, shared/_timeline_drum) : les années sont posées sur un
+ * cylindre vu de face ; le contrôleur règle --tl-angle (rotation) et --tl-fade (opacité).
+ */
+@layer components {
+  .tl-drum {
+    --tl-radius: 9.5rem;
+    position: relative;
+    width: 100%;
+    height: 17rem;
+    perspective: 1100px;
+    touch-action: none;
+    user-select: none;
+    cursor: grab;
+    -webkit-mask-image: linear-gradient(to bottom, transparent, #000 22%, #000 78%, transparent);
+    mask-image: linear-gradient(to bottom, transparent, #000 22%, #000 78%, transparent);
+  }
+
+  .tl-drum:active {
+    cursor: grabbing;
+  }
+
+  .tl-drum__cylinder {
+    position: absolute;
+    inset: 0;
+    transform-style: preserve-3d;
+    transform: translateZ(calc(var(--tl-radius) * -1));
+  }
+
+  .tl-drum .tl-drum__year {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    justify-content: center;
+    min-width: 6rem;
+    min-height: 2.75rem;
+    font-size: 1rem;
+    backface-visibility: hidden;
+    opacity: var(--tl-fade, 1);
+    transform: translate(-50%, -50%) rotateX(var(--tl-angle, 0deg)) translateZ(var(--tl-radius));
+    transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.45s ease, background-color 0.2s, color 0.2s, border-color 0.2s;
+  }
+
+  .tl-drum--still .tl-drum__year {
+    transition: none;
+  }
+
+  .tl-drum-panel {
+    min-height: 12rem;
+    padding: 1.75rem 2rem;
+  }
+}
