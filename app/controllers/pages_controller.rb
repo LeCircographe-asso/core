@@ -46,9 +46,10 @@ class PagesController < ApplicationController
     end
 
     if params[:id] == "faq"
-      @contact_faqs  = Faq.by_label("contact")
-      @adhesion_faqs = Faq.by_label("adhesion")
-      @general_faqs  = Faq.by_label("general")
+      # Toutes les catégories sur une seule page (avant_visite y compris, en plus de /adhesion),
+      # dans l'ordre d'un parcours de visiteur ; les catégories vides ne sont pas affichées.
+      faqs = Faq.ordered.group_by(&:label)
+      @faq_groups = Faq::PAGE_ORDER.filter_map { |label| [ label, faqs[label] ] if faqs[label].present? }
     end
 
     if params[:id] == "about"
