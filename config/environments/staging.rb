@@ -49,6 +49,10 @@ Rails.application.configure do
   # docker/local/compose.yml pour qu'une image staging lancée en local n'envoie aucun mail).
   # Défaut true : le staging du VPS continue d'envoyer via Mailjet sandbox.
   config.action_mailer.perform_deliveries = ENV.fetch("MAILER_DELIVERIES_ENABLED", "true") == "true"
+  # Aucun mail ne sort du staging vers quelqu'un hors de l'équipe : liste autorisée
+  # (MAIL_ALLOWLIST) ou redirection vers une boîte de test (MAIL_REDIRECT_TO), sinon rien.
+  # Les rappels d'expiration passent par le même filtre. Voir app/mailers/staging_mail_guard.rb.
+  config.action_mailer.interceptors = %w[StagingMailGuard]
   config.action_mailer.delivery_method = :smtp
   config.action_mailer.smtp_settings = {
     address: "in-v3.mailjet.com",
