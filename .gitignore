@@ -10,6 +10,8 @@
 
 # Ignore all environment files.
 /.env*
+# Umami secrets on the VPS (only .env.example is tracked).
+/docker/analytics/.env
 
 # Ignore all logfiles and tempfiles.
 /log/*
