@@ -832,3 +832,45 @@ fr:
         mission_heading: Un espace de création partagé et accessible
         mission_text_1: Offrir un espace de pratique, de création et de transmission accessible à toutes et tous.
         mission_text_2: 'Gouvernance autogérée : les membres s’engagent bénévolement, partagent les clés et co-programment la vie du lieu.'
+      gallery:
+        page_title: Le Circographe - Galerie
+        eyebrow: Le lieu en images
+        heading: Galerie photos
+        intro: Cirque, arts graphiques, vie associative — snapshots du Circographe.
+        photo_alt: Photo du Circographe
+        enlarged_alt: Photo du Circographe agrandie
+        enlarge: Agrandir la photo %{position} sur %{total}
+        lightbox_label: Photo agrandie
+        close_lightbox: Fermer la photo agrandie
+        previous: Photo précédente
+        next: Photo suivante
+        close: Fermer
+      newsletter_unsubscribe_success:
+        heading: Merci de vous être désinscrit de la newsletter
+        thanks: Nous vous remercions de nous avoir donné la possibilité de vous tenir informé de nos actualités et de nos offres spéciales.
+        back: Vous pouvez maintenant revenir sur notre site pour continuer à naviguer.
+    home:
+      index:
+        page_title: Le Circographe - Accueil
+        meta_description: 'Le Circographe : lieu de cirque vivant à Toulouse. Entraînement, ateliers, rencontres et vie associative pour tous les niveaux.'
+        kicker: Toulouse · Cirque · Atelier · Vie associative
+        intro: Un lieu vivant pour s'entraîner et se rencontrer.
+        discover_association: Découvrir l'association
+        see_opening_hours: Voir les horaires
+        key_information: Informations clés
+        hours_eyebrow: Horaires
+        hours_heading: Quand passer nous voir ?
+        hours_intro: Retrouve les créneaux d'accueil de la semaine et prépare ta prochaine visite au Circographe.
+        self_management_cta: Découvrir l'autogestion & le bénévolat
+        find_us: Nous trouver
+        address: 97 bis Boulevard de Suisse, 31200 Toulouse
+        find_us_body: 'Entraînements libres, murs illustrés par les artistes du lieu et une ambiance chaleureuse : passe quand tu veux, on t’accueille avec plaisir.'
+        map_and_access: Voir la carte et l'accès
+        install:
+          dismiss: Fermer la suggestion
+          eyebrow: Accès rapide
+          heading: Ajoute Le Circographe à ton écran d'accueil
+          body: Pratique pour retrouver les horaires, l'accès et les infos utiles en un tap.
+          button: Installer l'application
+          status: Disponible quand ton navigateur autorise l'installation.
+          ios_help_html: 'Sur iPhone : ouvre le menu Partager puis choisis <strong>Sur l''écran d''accueil</strong>.'

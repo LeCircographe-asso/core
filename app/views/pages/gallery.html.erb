@@ -1,12 +1,12 @@
-<% content_for :title, "Le Circographe - Galerie" %>
+<% content_for :title, t("views.pages.gallery.page_title") %>
 
 <section class="public-hero-shell mb-10">
   <%= image_tag hero_image(:gallery_hero), class: "absolute inset-0 w-full h-full object-cover hero-img-filter", alt: "" %>
   <div class="hero-overlay"></div>
   <div class="hero-panel public-hero-panel-centered space-y-3 sm:space-y-4">
-    <p class="public-hero-eyebrow">Le lieu en images</p>
-    <h1 class="public-hero-title">Galerie photos</h1>
-    <p class="public-hero-body">Cirque, arts graphiques, vie associative — snapshots du Circographe.</p>
+    <p class="public-hero-eyebrow"><%= t("views.pages.gallery.eyebrow") %></p>
+    <h1 class="public-hero-title"><%= t("views.pages.gallery.heading") %></h1>
+    <p class="public-hero-body"><%= t("views.pages.gallery.intro") %></p>
   </div>
 </section>
 
@@ -41,10 +41,10 @@
          data-action="lightbox#open"
          data-lightbox-index-param="<%= index %>"
          data-lightbox-src-param="<%= item[:full] %>"
-         data-lightbox-alt-param="Photo du Circographe agrandie"
-         aria-label="Agrandir la photo <%= index + 1 %> sur <%= gallery_items.size %>">
+         data-lightbox-alt-param="<%= t("views.pages.gallery.enlarged_alt") %>"
+         aria-label="<%= t("views.pages.gallery.enlarge", position: index + 1, total: gallery_items.size) %>">
         <%= image_tag item[:thumb],
-                      alt: "Photo du Circographe",
+                      alt: t("views.pages.gallery.photo_alt"),
                       class: "w-full h-auto block object-cover transition-transform duration-500 group-hover:scale-[1.025]",
                       loading: (index < 6 ? "eager" : "lazy"),
                       decoding: "async" %>
@@ -66,10 +66,10 @@
        class="hidden fixed inset-0 z-[200] transition-opacity duration-200 lightbox-backdrop"
        role="dialog"
        aria-modal="true"
-       aria-label="Photo agrandie">
+       aria-label="<%= t("views.pages.gallery.lightbox_label") %>">
 
     <%# Fond — clic partout ferme la lightbox %>
-    <button type="button" class="absolute inset-0 cursor-default" data-action="lightbox#close" aria-label="Fermer la photo agrandie"></button>
+    <button type="button" class="absolute inset-0 cursor-default" data-action="lightbox#close" aria-label="<%= t("views.pages.gallery.close_lightbox") %>"></button>
 
     <%# Image centrée — pointer-events-none sur wrapper pour que les clics autour de l'image atteignent le fond %>
     <div class="absolute inset-0 flex items-center justify-center p-4 sm:p-12 pointer-events-none">
@@ -82,7 +82,7 @@
     <button type="button"
        data-action="lightbox#prev"
        class="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 z-10 w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center rounded-full bg-white/15 hover:bg-white/30 text-white transition-colors"
-       aria-label="Photo précédente">
+       aria-label="<%= t("views.pages.gallery.previous") %>">
       <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
         <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/>
       </svg>
@@ -90,7 +90,7 @@
     <button type="button"
        data-action="lightbox#next"
        class="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 z-10 w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center rounded-full bg-white/15 hover:bg-white/30 text-white transition-colors"
-       aria-label="Photo suivante">
+       aria-label="<%= t("views.pages.gallery.next") %>">
       <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
         <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/>
       </svg>
@@ -100,7 +100,7 @@
     <button type="button"
        data-action="lightbox#close"
        class="absolute top-4 right-4 z-10 w-10 h-10 flex items-center justify-center rounded-full bg-white/15 hover:bg-white/30 text-white transition-colors"
-       aria-label="Fermer">
+       aria-label="<%= t("views.pages.gallery.close") %>">
       <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
         <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
       </svg>
