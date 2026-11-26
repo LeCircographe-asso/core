@@ -50,5 +50,16 @@ RSpec.describe "Admin::OpeningHours", type: :request do
       expect(response).to redirect_to(admin_opening_hours_path)
       expect(OpeningHour.find_by(day: :lundi)).to be_closed
     end
+
+    it "re-renders the form with a 422 when a day closes before it opens" do
+      patch admin_opening_hours_path, params: {
+        open_hour_lundi: "18", open_minute_lundi: "0", close_hour_lundi: "9", close_minute_lundi: "0",
+        closed_mardi: "1", closed_mercredi: "1", closed_jeudi: "1",
+        closed_vendredi: "1", closed_samedi: "1", closed_dimanche: "1"
+      }
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(OpeningHour.count).to eq(0)
+    end
   end
 end
