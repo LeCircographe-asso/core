@@ -17,6 +17,10 @@
     <meta name="apple-mobile-web-app-title" content="Circographe">
     <meta name="mobile-web-app-capable" content="yes">
     <%= csrf_meta_tags %>
+    <%# Pas d'aperçu Turbo : sinon, en revenant sur une page déjà vue, Turbo affiche sa copie en
+        cache puis la vraie page, et les animations d'apparition se jouent deux fois (effet de
+        va-et-vient). Le retour arrière du navigateur utilise toujours le cache. %>
+    <meta name="turbo-cache-control" content="no-preview">
     <%= csp_meta_tag %>
     <%= yield :head %>
 
