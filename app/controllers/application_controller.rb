@@ -12,7 +12,7 @@ class ApplicationController < ActionController::Base
 
   before_action :set_robots_header
 
-  helper_method :bug_report_widget_enabled?, :robots_meta_content, :umami_website_id, :umami_session_replay_enabled?
+  helper_method :bug_report_widget_enabled?, :robots_meta_content, :umami_website_id, :umami_domain, :umami_session_replay_enabled?
 
   # Catch-all cible de la route "*unmatched" (doit rester la dernière route de config/routes.rb).
   # Rend la même page 404 statique que Rails sert déjà par défaut, mais en passant par un
@@ -73,6 +73,14 @@ class ApplicationController < ActionController::Base
     return nil unless Rails.env.staging? || Rails.env.production?
 
     Rails.application.credentials.dig(:umami, Rails.env.to_sym, :website_id)
+  end
+
+  # Public host of the environment (staging.lecircographe.fr / lecircographe.fr), passed
+  # to Umami's `data-domains`: the script then only counts visits on that host, so a copy
+  # of the image running elsewhere (docker on a laptop, a test container) with the same
+  # credentials never pollutes the real stats.
+  def umami_domain
+    Rails.application.config.action_mailer.default_url_options&.dig(:host)
   end
 
   # Session replay/heatmap captures on-screen interaction, not just page views —
