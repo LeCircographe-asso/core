@@ -49,6 +49,10 @@ env:
     # Guillemets explicites : "KEY: " sans rien après devient `nil` en YAML (pas ""),
     # et Kamal rejette un nil là où il attend une string — cassé en l'absence du secret.
     MAILER_FROM: "<%= ENV.fetch("MAILER_FROM", "") %>"
+    # Filtre des mails du staging (app/mailers/staging_mail_guard.rb), depuis les variables
+    # GitHub STAGING_MAIL_ALLOWLIST / STAGING_MAIL_REDIRECT_TO. Vides : aucun mail ne part.
+    MAIL_ALLOWLIST: "<%= ENV.fetch("STAGING_MAIL_ALLOWLIST", "") %>"
+    MAIL_REDIRECT_TO: "<%= ENV.fetch("STAGING_MAIL_REDIRECT_TO", "") %>"
     # Cold start staging = cold start prod : db/seeds.rb ne charge que FAQ, conseil d'administration
     # et partenaires (pas de comptes, pas de catalogue). Le jeu de démo est opt-in via l'alias
     # reset_db_demo (SEED_DEMO=true) ; SEED_LEAN / SEED_POPULATION_COUNT ne servent alors qu'à lui.
