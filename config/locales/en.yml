@@ -374,6 +374,18 @@ en:
       description: Le Circographe, a living circus venue for training, meetups and workshops in Toulouse.
   views:
     shared:
+      timeline:
+        label: Timeline of the association
+        years: Years
+        previous_year: Previous year
+        next_year: Next year
+        newer_year: More recent year
+        older_year: Earlier year
+        present: Ongoing
+        future: Coming next
+      carousel_arrows:
+        previous: Previous
+        next: Next
       faq_section:
         all_faq: The whole FAQ →
       flash:
@@ -460,6 +472,48 @@ en:
         mission_heading: A shared and accessible creative space
         mission_text_1: Provide a space for practice, creation and transmission that is accessible to everyone.
         mission_text_2: 'Self-managed governance: members volunteer, share responsibilities, and co-program the life of the venue.'
+        values_eyebrow: Our values
+        values:
+          - Accessibility
+          - Transmission
+          - Experimentation
+          - Solidarity
+        board:
+          eyebrow: The board
+          heading: The people who keep Le Circographe going
+          intro: The board coordinates self-management and supports the volunteers day to day.
+          social_label: "%{name}'s %{platform} profile"
+          volunteer: Dedicated volunteer
+        history:
+          eyebrow: Our story
+          heading: Milestones
+          y2027:
+            title: Coming next
+            body: Projects to be defined with the community — to be updated here.
+          y2026:
+            title: Ongoing
+            body: 'Active season: new collaborations, company residencies and ongoing projects.'
+          y2025:
+            title: New partnerships & beyond our walls
+            body: Outdoor actions, collaborations and touring projects.
+          y2024:
+            title: Self-management strengthened
+            body: A wider board and structured volunteer teams.
+          y2023:
+            title: First public events
+            body: Shared stages, exhibitions and workshops open to the neighbourhood.
+          y2022:
+            title: The hangar opens
+            body: First training slots and the graphic workshops set up.
+        partners:
+          eyebrow: Partners & supporters
+          heading: They make the adventure possible
+          intro: A few featured partners — the full list changes with the projects of the place.
+          default_bio: Partner of Le Circographe.
+          website_label: "%{name} website"
+          label: Partner
+          previous: Previous partner
+          next: Next partner
       gallery:
         page_title: Le Circographe - Gallery
         eyebrow: The place in pictures

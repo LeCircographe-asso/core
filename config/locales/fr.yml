@@ -724,6 +724,18 @@ fr:
       description: Le Circographe, lieu de cirque vivant, d'entraînement, de rencontres et d'ateliers à Toulouse.
   views:
     shared:
+      timeline:
+        label: Chronologie de l'association
+        years: Années
+        previous_year: Année précédente
+        next_year: Année suivante
+        newer_year: Année plus récente
+        older_year: Année plus ancienne
+        present: En cours
+        future: À venir
+      carousel_arrows:
+        previous: Précédent
+        next: Suivant
       faq_section:
         all_faq: Toute la FAQ →
       flash:
@@ -834,6 +846,48 @@ fr:
         mission_heading: Un espace de création partagé et accessible
         mission_text_1: Offrir un espace de pratique, de création et de transmission accessible à toutes et tous.
         mission_text_2: 'Gouvernance autogérée : les membres s’engagent bénévolement, partagent les clés et co-programment la vie du lieu.'
+        values_eyebrow: Nos valeurs
+        values:
+          - Accessibilité
+          - Transmission
+          - Expérimentation
+          - Solidarité
+        board:
+          eyebrow: Le Conseil d'administration
+          heading: Celles et ceux qui font tourner le Circographe
+          intro: Le conseil d’administration coordonne l’autogestion et accompagne les bénévoles au quotidien.
+          social_label: Profil %{platform} de %{name}
+          volunteer: Bénévole engagé·e
+        history:
+          eyebrow: Notre histoire
+          heading: Points de repère
+          y2027:
+            title: À venir
+            body: Projets à définir avec la communauté — à mettre à jour ici.
+          y2026:
+            title: En cours
+            body: 'Saison active : nouvelles collaborations, accueil de compagnies et projets en cours.'
+          y2025:
+            title: Nouveaux partenariats & hors les murs
+            body: Actions extérieures, collaborations et projets itinérants.
+          y2024:
+            title: Autogestion consolidée
+            body: Conseil d'administration élargi et équipes bénévoles structurées.
+          y2023:
+            title: Premiers événements publics
+            body: Plateaux partagés, expositions et ateliers ouverts au quartier.
+          y2022:
+            title: Ouverture du hangar
+            body: Lancement des créneaux d'entraînement et installation des ateliers graphiques.
+        partners:
+          eyebrow: Partenaires & soutiens
+          heading: Ils rendent l'aventure possible
+          intro: Quelques partenaires mis en avant — la liste complète évolue avec les projets du lieu.
+          default_bio: Partenaire du Circographe.
+          website_label: Site web de %{name}
+          label: Partenaire
+          previous: Partenaire précédent
+          next: Partenaire suivant
       gallery:
         page_title: Le Circographe - Galerie
         eyebrow: Le lieu en images
