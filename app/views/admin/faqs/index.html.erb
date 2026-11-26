@@ -24,17 +24,17 @@
       <div class="bg-white rounded-xl border border-gray-200 overflow-hidden shadow-sm">
 
         <%# Section header %>
-        <div class="flex items-center justify-between px-4 py-2.5 bg-gray-50 border-b border-gray-100">
+        <div class="flex flex-wrap items-center justify-between gap-x-3 gap-y-1 px-4 py-2.5 bg-gray-50 border-b border-gray-100">
           <div class="flex items-center gap-2 min-w-0">
-            <span class="shrink-0 text-[10px] font-bold uppercase tracking-widest text-gray-400 bg-gray-100 px-1.5 py-0.5 rounded"><%= label %></span>
+            <span class="shrink-0 text-[10px] font-bold uppercase tracking-widest text-gray-400 bg-gray-100 px-1.5 py-0.5 rounded max-sm:hidden"><%= label %></span>
             <span class="text-sm font-semibold text-gray-800 truncate"><%= name %></span>
-            <span class="shrink-0 text-xs text-gray-400"><%= page_url %></span>
+            <span class="shrink-0 text-xs text-gray-400 max-sm:hidden"><%= page_url %></span>
           </div>
-          <div class="flex items-center gap-3 shrink-0 ml-3">
+          <div class="flex items-center gap-3 shrink-0">
             <span class="text-xs text-gray-400 tabular-nums"><%= entries.count %></span>
             <%= link_to "+ #{t('admin.faqs.index.add_to_label', label: name)}", new_admin_faq_path(label: label),
                   data: { turbo_frame: "modal" },
-                  class: "text-xs font-medium text-brand-primary hover:underline whitespace-nowrap" %>
+                  class: "inline-flex items-center max-sm:min-h-11 text-xs font-medium text-brand-primary hover:underline whitespace-nowrap" %>
           </div>
         </div>
 
