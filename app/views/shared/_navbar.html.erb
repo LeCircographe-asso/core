@@ -9,7 +9,7 @@
             <!-- Elements grouped on the right for mobile -->
             <div class="flex items-center min-[844px]:hidden">
                 <% if authenticated? && Current.user %>
-                <%= link_to user_path(Current.user), class: "flex mr-3 select-none", data: { turbo_preload: "false" } do %><%= image_tag("users.png", alt: "photo de profil", class: "w-8 h-8 rounded-full hover:ring-2 hover:ring-indigo-300") %><% end %>
+                <%= link_to user_path(Current.user), class: "flex mr-3 select-none", data: { turbo_preload: "false" } do %><%= image_tag("users.png", alt: "photo de profil", class: "w-8 h-8 rounded-full hover:ring-2 hover:ring-brand-accent/40") %><% end %>
                 <% end %>
 
                 <!-- Hamburger button (mobile and tablet) -->
@@ -28,7 +28,7 @@
                 <!-- The association -->
                 <li class="group relative">
                     <%= link_to page_path('association'),
-                                class: "block py-2 text-gray-900 hover:text-indigo-700 group-hover:text-indigo-700",
+                                class: "block py-2 text-gray-900 hover:text-brand-accent group-hover:text-brand-accent",
                                 data: { 'nav-active-target': 'link', 'nav-active-path': page_path('association'), 'nav-active-active-classes': 'nav-active-link', 'nav-active-starts-with': 'true' } do %>
                     <%= t("views.shared.navbar.place") %>
                     <% end %>
@@ -48,16 +48,16 @@
                 </li>
 
                 <li>
-                    <%= link_to t("views.shared.navbar.activities"), page_path('news'), class: "block py-2 text-gray-900 hover:text-indigo-700", data: { 'nav-active-target': 'link', 'nav-active-path': page_path('news'), 'nav-active-active-classes': 'nav-active-link' } %>
+                    <%= link_to t("views.shared.navbar.activities"), page_path('news'), class: "block py-2 text-gray-900 hover:text-brand-accent", data: { 'nav-active-target': 'link', 'nav-active-path': page_path('news'), 'nav-active-active-classes': 'nav-active-link' } %>
                 </li>
 
                 <li>
-                    <%= link_to t("views.shared.navbar.join"), page_path('become_member'), class: "block py-2 text-gray-900 hover:text-indigo-700", data: { 'nav-active-target': 'link', 'nav-active-path': page_path('become_member'), 'nav-active-active-classes': 'nav-active-link' } %>
+                    <%= link_to t("views.shared.navbar.join"), page_path('become_member'), class: "block py-2 text-gray-900 hover:text-brand-accent", data: { 'nav-active-target': 'link', 'nav-active-path': page_path('become_member'), 'nav-active-active-classes': 'nav-active-link' } %>
                 </li>
 
                 <!-- About -->
                 <li class="group relative">
-                    <%= link_to page_path('about'), class: "block py-2 text-gray-900 hover:text-indigo-700 group-hover:text-indigo-700", data: { 'nav-active-target': 'link', 'nav-active-path': page_path('about'), 'nav-active-active-classes': 'nav-active-link', 'nav-active-starts-with': 'true' } do %>
+                    <%= link_to page_path('about'), class: "block py-2 text-gray-900 hover:text-brand-accent group-hover:text-brand-accent", data: { 'nav-active-target': 'link', 'nav-active-path': page_path('about'), 'nav-active-active-classes': 'nav-active-link', 'nav-active-starts-with': 'true' } do %>
                     <%= t("views.shared.navbar.about") %>
                     <% end %>
                     <div class="hidden group-hover:block absolute left-0 top-full z-10 w-48 bg-white rounded-lg shadow-lg">
@@ -71,7 +71,7 @@
 
                 <!-- F.A.Q -->
                 <li>
-                    <%= link_to t("views.shared.navbar.faq"), page_path("faq"), class: "block py-2 text-gray-900 hover:text-indigo-700" %>
+                    <%= link_to t("views.shared.navbar.faq"), page_path("faq"), class: "block py-2 text-gray-900 hover:text-brand-accent" %>
                 </li>
             </ul>
         </div>
@@ -80,7 +80,7 @@
         <div class="hidden min-[844px]:flex shrink-0 items-center min-[844px]:space-x-3 min-[844px]:pl-1 xl:pr-3 2xl:pr-5">
             <% if authenticated? && Current.user %>
             <!-- Clickable profile picture -->
-            <%= link_to user_path(Current.user), class: "flex mr-3 select-none" do %><%= image_tag("users.png", alt: "photo de profil", class: "w-8 h-8 rounded-full hover:ring-2 hover:ring-indigo-300") %><% end %>
+            <%= link_to user_path(Current.user), class: "flex mr-3 select-none" do %><%= image_tag("users.png", alt: "photo de profil", class: "w-8 h-8 rounded-full hover:ring-2 hover:ring-brand-accent/40") %><% end %>
 
             <!-- My Space button with dropdown -->
             <div class="relative">
