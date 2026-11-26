@@ -123,7 +123,7 @@
     Ordre : de la plus récente à la plus ancienne (à venir, en cours, puis le passé).
     Passer show_future: false pour masquer les étapes à venir.
   %>
-  <%= render "shared/timeline", entries: [
+  <% history = [
     {
       year:   "2027",
       title:  "À venir",
@@ -161,6 +161,9 @@
       status: :past
     }
   ] %>
+  <%# Téléphone et tablette : ruban d'années qui glisse ; ordinateur (lg) : tambour qui tourne. %>
+  <div class="lg:hidden"><%= render "shared/timeline_ribbon", entries: history %></div>
+  <div class="max-lg:hidden max-w-3xl mx-auto"><%= render "shared/timeline_drum", entries: history %></div>
 </section>
 
 <% if @partners.present? %>
