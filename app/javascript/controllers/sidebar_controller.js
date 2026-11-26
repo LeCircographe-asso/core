@@ -1,21 +1,74 @@
 import { Controller } from "@hotwired/stimulus"
 
+// Same breakpoint as the @media block of admin_sidebar.css.
+const MOBILE_MAX_WIDTH = 768
+
 export default class extends Controller {
-  static targets = ["sidebar", "content", "text"]
+  static targets = ["sidebar", "content", "text", "backdrop", "mobileToggle"]
   static outlets = ["submenu"]
 
   connect() {
     this.isAnimating = false
     this.checkInitialState()
     this.addResizeListener()
+    this.handleKeydown = (event) => { if (event.key === "Escape") this.closeMobile() }
+    // On a phone, choosing a link closes the drawer (Turbo then renders the new page).
+    this.handleSidebarClick = (event) => { if (this.isMobile() && event.target.closest("a")) this.closeMobile() }
+    this.sidebarTarget.addEventListener("click", this.handleSidebarClick)
+    this.syncInert()
+  }
+
+  // On a phone the closed drawer is only translated off-screen: make it inert (no keyboard
+  // focus) and hidden from assistive technology until it opens. Never on desktop.
+  syncInert() {
+    const hidden = this.isMobile() && !this.sidebarTarget.classList.contains("mobile-open")
+    this.sidebarTarget.inert = hidden
+    if (hidden) this.sidebarTarget.setAttribute("aria-hidden", "true")
+    else this.sidebarTarget.removeAttribute("aria-hidden")
   }
 
   disconnect() {
     window.removeEventListener('resize', this.handleResize)
+    document.removeEventListener("keydown", this.handleKeydown)
+    this.sidebarTarget.removeEventListener("click", this.handleSidebarClick)
+  }
+
+  isMobile() {
+    return window.innerWidth <= MOBILE_MAX_WIDTH
+  }
+
+  // Mobile drawer: full sidebar (with labels) over the page, behind a backdrop.
+  openMobile(event) {
+    event?.preventDefault()
+    this.sidebarTarget.classList.remove("collapsed")
+    this.sidebarTarget.classList.add("mobile-open")
+    this.syncInert()
+    this.textTargets.forEach(text => text.classList.remove("hidden"))
+    if (this.hasBackdropTarget) this.backdropTarget.hidden = false
+    if (this.hasMobileToggleTarget) this.mobileToggleTarget.setAttribute("aria-expanded", "true")
+    document.addEventListener("keydown", this.handleKeydown)
+    this.sidebarTarget.querySelector("a, button")?.focus()
+  }
+
+  closeMobile(event) {
+    event?.preventDefault()
+    if (!this.sidebarTarget.classList.contains("mobile-open")) return
+    this.sidebarTarget.classList.remove("mobile-open")
+    this.sidebarTarget.classList.add("collapsed")
+    this.syncInert()
+    this.textTargets.forEach(text => text.classList.add("hidden"))
+    if (this.hasBackdropTarget) this.backdropTarget.hidden = true
+    if (this.hasMobileToggleTarget) {
+      this.mobileToggleTarget.setAttribute("aria-expanded", "false")
+      this.mobileToggleTarget.focus()
+    }
+    document.removeEventListener("keydown", this.handleKeydown)
   }
 
   toggle(event) {
     event.preventDefault()
+    // On a phone the "Menu" button inside the drawer closes it.
+    if (this.isMobile()) return this.closeMobile()
     if (this.isAnimating) return
 
     this.isAnimating = true
@@ -68,12 +121,16 @@ export default class extends Controller {
   }
 
   handleWindowResize() {
-    if (window.innerWidth <= 768 && !this.sidebarTarget.classList.contains('collapsed')) {
+    if (!this.isMobile() && this.sidebarTarget.classList.contains("mobile-open")) {
+      this.closeMobile()
+    }
+    if (this.isMobile() && !this.sidebarTarget.classList.contains('collapsed') && !this.sidebarTarget.classList.contains("mobile-open")) {
       this.sidebarTarget.classList.add('collapsed')
       if (this.hasContentTarget) {
         this.contentTarget.classList.add('expanded')
       }
       this.textTargets.forEach(text => text.classList.add('hidden'))
     }
+    this.syncInert()
   }
 }

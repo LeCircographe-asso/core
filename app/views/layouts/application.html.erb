@@ -57,11 +57,18 @@
     <% if controller_path.start_with?('admin/') %>
     <div class="admin-layout" data-controller="sidebar">
         <%= render 'admin/dashboard/admin_lateral_navbar' %>
+        <%# Mobile only (admin_sidebar.css): the sidebar is a drawer opened by this button. %>
+        <div class="admin-sidebar-backdrop" data-sidebar-target="backdrop" data-action="click->sidebar#closeMobile" hidden></div>
         <div class="admin-content" data-sidebar-target="content">
+            <button type="button" class="admin-mobile-toggle" data-sidebar-target="mobileToggle" data-action="click->sidebar#openMobile"
+                    aria-controls="admin-sidebar" aria-expanded="false">
+                <i class="fas fa-bars text-lg" aria-hidden="true"></i>
+                <span class="sr-only">Ouvrir le menu d'administration</span>
+            </button>
             <%= turbo_frame_tag ProfileSectionDomIds::FLASH_FRAME do %>
             <%= render 'shared/flash' %>
             <% end %>
-            <main class="admin-main">
+            <main id="main-content" tabindex="-1" class="admin-main">
                 <%= yield %>
             </main>
         </div>
