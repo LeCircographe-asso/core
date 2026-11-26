@@ -20,7 +20,7 @@ function openModal(event) {
   if (!modalEl && !cacheElements()) return
 
   previousFocus = document.activeElement
-  modalEl.classList.remove("hidden")
+  modalEl.classList.replace("hidden", "flex")
 
   requestAnimationFrame(() => {
     requestAnimationFrame(() => {
@@ -48,7 +48,7 @@ function closeModal() {
   keydownHandler = null
 
   setTimeout(() => {
-    modalEl.classList.add("hidden")
+    modalEl.classList.replace("flex", "hidden")
     previousFocus?.focus()
     previousFocus = null
   }, 200)

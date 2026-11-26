@@ -33,7 +33,7 @@ export default class extends Controller {
     event?.preventDefault()
     if (!this.hasPanelTarget) return
     this.clearError()
-    this.panelTarget.classList.remove("hidden")
+    this.panelTarget.classList.replace("hidden", "flex")
     document.body.style.overflow = "hidden"
     requestAnimationFrame(() => {
       if (this.hasEmailTarget) this.emailTarget.focus()
@@ -43,7 +43,7 @@ export default class extends Controller {
   close(event) {
     event?.preventDefault()
     if (!this.hasPanelTarget) return
-    this.panelTarget.classList.add("hidden")
+    this.panelTarget.classList.replace("flex", "hidden")
     document.body.style.overflow = ""
     this.clearError()
     if (this.hasFormTarget) this.formTarget.reset()
