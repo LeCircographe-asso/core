@@ -16,10 +16,10 @@
   # plus fort (bannière pleine largeur) que la pastille fraîcheur : c'est l'info qui prime sur tout.
   closure_banner = capture do
     if closed_now
-      label_part = [ closure.label.presence, closure.ends_on.present? ? "jusqu'au #{l(closure.ends_on, format: '%d/%m')}" : nil ].compact.join(" — ")
+      label_part = [ closure.label.presence, closure.ends_on.present? ? t("views.shared.opening_hours.until", date: l(closure.ends_on, format: '%d/%m')) : nil ].compact.join(" — ")
       concat content_tag(:div, class: "flex items-center justify-center gap-2 rounded-lg bg-red-600 text-white px-3 py-2 sm:px-4 sm:py-2.5 shadow-sm text-center") {
         concat content_tag(:i, nil, class: "fas fa-umbrella-beach", "aria-hidden": true)
-        concat content_tag(:span, [ "Fermeture exceptionnelle", label_part.presence ].compact.join(" · "), class: "text-xs sm:text-sm font-bold uppercase tracking-wide")
+        concat content_tag(:span, [ t("views.shared.opening_hours.exceptional_closure"), label_part.presence ].compact.join(" · "), class: "text-xs sm:text-sm font-bold uppercase tracking-wide")
       }
     end
   end
@@ -29,7 +29,7 @@
       concat content_tag(:div, class: "flex justify-center #{compact ? 'mt-1.5' : 'mt-2.5'}") {
         content_tag(:span, class: "inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-brand-primary/10 text-brand-primary") do
           concat content_tag(:i, nil, class: "far fa-clock", "aria-hidden": true)
-          concat "Mis à jour #{l(updated_at.in_time_zone(Time.zone), format: '%-d/%m %H:%M')}"
+          concat t("views.shared.opening_hours.updated", time: l(updated_at.in_time_zone(Time.zone), format: '%-d/%m %H:%M'))
         end
       }
     end
@@ -47,7 +47,7 @@
     <div class="text-center <%= badge_margin %>">
       <span class="inline-flex items-center px-2 py-0.5 sm:px-3 sm:py-1 rounded-full text-xs sm:text-sm font-medium bg-brand-primary/10 text-brand-primary">
         <i class="fas fa-calendar-week mr-1.5 sm:mr-2 text-[0.85em]" aria-hidden="true"></i>
-        Semaine du <%= Date.current.beginning_of_week.strftime("%d/%m") %> au <%= Date.current.end_of_week.strftime("%d/%m/%Y") %>
+        <%= t("views.shared.opening_hours.week", from: Date.current.beginning_of_week.strftime("%d/%m"), to: Date.current.end_of_week.strftime("%d/%m/%Y")) %>
       </span>
     </div>
 
@@ -55,11 +55,11 @@
 
     <% if schedule.present? %>
       <table class="w-full border-collapse <%= grid_dim_class %>">
-        <caption class="sr-only">Horaires d'ouverture de la semaine</caption>
+        <caption class="sr-only"><%= t("views.shared.opening_hours.caption") %></caption>
         <thead>
           <tr>
-            <th scope="col" class="border-b-2 border-brand-primary/20 <%= head_py %> text-center text-sm font-medium text-gray-600">Jour</th>
-            <th scope="col" class="border-b-2 border-brand-primary/20 <%= head_py %> text-center text-sm font-medium text-gray-600">Horaires</th>
+            <th scope="col" class="border-b-2 border-brand-primary/20 <%= head_py %> text-center text-sm font-medium text-gray-600"><%= t("views.shared.opening_hours.day") %></th>
+            <th scope="col" class="border-b-2 border-brand-primary/20 <%= head_py %> text-center text-sm font-medium text-gray-600"><%= t("views.shared.opening_hours.hours") %></th>
           </tr>
         </thead>
         <tbody>
@@ -79,7 +79,7 @@
                     <%= day.to_s.capitalize %>
                   </span>
                   <% if is_today %>
-                    <span class="ml-0.5 text-xs font-bold uppercase tracking-[0.12em] text-white bg-brand-primary px-1.5 py-0.5 rounded-full">Aujourd'hui</span>
+                    <span class="ml-0.5 text-xs font-bold uppercase tracking-[0.12em] text-white bg-brand-primary px-1.5 py-0.5 rounded-full"><%= t("views.shared.opening_hours.today") %></span>
                   <% end %>
                 </div>
               </td>
@@ -87,7 +87,7 @@
                 <% if is_closed %>
                   <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-700">
                     <i class="fas fa-times-circle" aria-hidden="true"></i>
-                    Fermé
+                    <%= t("views.shared.opening_hours.closed") %>
                   </span>
                 <% else %>
                   <span class="text-sm text-gray-800 tabular-nums">
@@ -103,7 +103,7 @@
     <% else %>
       <div class="text-center py-4 text-gray-500">
         <i class="fas fa-clock text-brand-primary text-3xl mb-2" aria-hidden="true"></i>
-        <p class="text-sm">Aucun horaire disponible pour le moment.</p>
+        <p class="text-sm"><%= t("views.shared.opening_hours.none_yet") %></p>
       </div>
     <% end %>
 
@@ -128,18 +128,18 @@
         <div class="flex items-center gap-3 <%= px %> <%= py %> <%= row_bg %>">
           <span class="w-24 shrink-0 text-sm <%= name_cls %>"><%= day.to_s.capitalize %></span>
           <% if is_closed %>
-            <span class="text-sm font-medium text-gray-400">Fermé</span>
+            <span class="text-sm font-medium text-gray-400"><%= t("views.shared.opening_hours.closed") %></span>
           <% else %>
             <span class="text-sm tabular-nums <%= time_cls %>"><%= hours %></span>
           <% end %>
           <% if is_today %>
-            <span class="ml-auto text-xs font-semibold uppercase tracking-wider text-brand-primary bg-brand-primary/[0.08] border border-brand-primary/20 px-2 py-0.5 rounded-md">Aujourd'hui</span>
+            <span class="ml-auto text-xs font-semibold uppercase tracking-wider text-brand-primary bg-brand-primary/[0.08] border border-brand-primary/20 px-2 py-0.5 rounded-md"><%= t("views.shared.opening_hours.today") %></span>
           <% end %>
         </div>
       <% end %>
     </div>
   <% else %>
-    <p class="<%= px %> py-6 text-sm text-gray-500 text-center">Aucun horaire disponible.</p>
+    <p class="<%= px %> py-6 text-sm text-gray-500 text-center"><%= t("views.shared.opening_hours.none") %></p>
   <% end %>
 
   <%= freshness_badge %>

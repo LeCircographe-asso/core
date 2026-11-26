@@ -724,6 +724,21 @@ fr:
       description: Le Circographe, lieu de cirque vivant, d'entraînement, de rencontres et d'ateliers à Toulouse.
   views:
     shared:
+      opening_hours:
+        week: Semaine du %{from} au %{to}
+        caption: Horaires d'ouverture de la semaine
+        day: Jour
+        hours: Horaires
+        today: Aujourd'hui
+        closed: Fermé
+        none_yet: Aucun horaire disponible pour le moment.
+        none: Aucun horaire disponible.
+        exceptional_closure: Fermeture exceptionnelle
+        until: jusqu'au %{date}
+        updated: Mis à jour %{time}
+      events:
+        see: Voir l'événement
+        empty: C'est calme pour le moment. Aucun événement n'est planifié dans l'immédiat, mais nous préparons la suite. Reviens bientôt ou inscris-toi à la newsletter pour être averti·e des prochaines dates.
       timeline:
         label: Chronologie de l'association
         years: Années
@@ -1115,6 +1130,16 @@ fr:
           map: Carte & contact
           write: Écrire
     home:
+      upcoming_events:
+        heading: Prochains événements
+        badge: Prochain événement
+        demo_badge: Démo UX/UI
+        demo_notice: Contenu fictif présenté pour la démonstration de l'interface.
+        discover: Découvrir l'événement
+        date_tbd_line_1: Date
+        date_tbd_line_2: à venir
+        empty_html: "C'est calme pour le moment. Aucun événement n'est planifié dans l'immédiat. Inscris-toi à %{link} pour être averti·e des prochaines dates."
+        newsletter_link: la newsletter
       index:
         page_title: Le Circographe - Accueil
         meta_description: 'Le Circographe : lieu de cirque vivant à Toulouse. Entraînement, ateliers, rencontres et vie associative pour tous les niveaux.'
