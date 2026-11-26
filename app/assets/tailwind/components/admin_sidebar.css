@@ -293,5 +293,58 @@
   .sidebar-menu button[data-action*="toggleSubmenu"]:hover .submenu-chevron {
     color: #fff;
   }
+
+  /* Mobile (≤ 768px, same breakpoint as sidebar_controller.js): the sidebar is a drawer.
+     The 70px rail used to stay on screen, ate a fifth of the width and covered modals. */
+  .admin-mobile-toggle,
+  .admin-sidebar-backdrop {
+    display: none;
+  }
+
+  @media (max-width: 768px) {
+    .admin-sidebar,
+    .admin-sidebar.collapsed {
+      width: 280px;
+      max-width: 85vw;
+      overflow-y: auto;
+      transform: translateX(-100%);
+      transition: transform 0.3s cubic-bezier(0.3, 0.7, 0.4, 1);
+      box-shadow: none;
+    }
+
+    .admin-sidebar.mobile-open {
+      transform: translateX(0);
+      box-shadow: 0 0 40px rgba(0, 0, 0, 0.25);
+    }
+
+    .admin-sidebar-backdrop:not([hidden]) {
+      display: block;
+      position: fixed;
+      inset: 0;
+      z-index: 99;
+      background: rgba(17, 24, 39, 0.45);
+    }
+
+    .admin-mobile-toggle {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      position: fixed;
+      top: 0.75rem;
+      left: 0.75rem;
+      z-index: 50;
+      width: 2.75rem;
+      height: 2.75rem;
+      border-radius: 0.75rem;
+      background: #fff;
+      color: #1F5C55;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.12);
+    }
+
+    .admin-main,
+    .admin-content.expanded .admin-main {
+      padding: 4.25rem 1rem 1.5rem;
+    }
+  }
 }
 
