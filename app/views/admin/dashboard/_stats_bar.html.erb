@@ -1,6 +1,6 @@
 <div class="bg-white rounded-lg border border-gray-200 shadow-sm mb-4 overflow-hidden">
   <div class="px-4 py-2 border-b border-gray-100 bg-gray-50/80 flex items-center justify-between">
-    <span class="text-xs font-semibold uppercase tracking-widest text-[#1F5C55]/70">Vue d'ensemble</span>
+    <span class="text-xs font-semibold uppercase tracking-widest text-brand-primary/70">Vue d'ensemble</span>
     <span class="text-xs text-gray-400 tabular-nums"><%= l(Date.current, format: "%-d %B %Y") %></span>
   </div>
 
@@ -9,8 +9,8 @@
     <%# Groupe — Adhésions %>
     <div class="flex items-stretch divide-x divide-gray-100 flex-1 min-w-0 max-sm:grid max-sm:w-full max-sm:flex-none max-sm:grid-cols-3">
       <%= link_to admin_members_path, class: "group flex flex-col justify-center px-4 py-3 hover:bg-gray-50 transition-colors min-w-[5.5rem]" do %>
-        <span class="text-xs font-semibold uppercase tracking-widest text-[#1F5C55]/70 whitespace-nowrap">Actives</span>
-        <span class="text-2xl font-bold text-gray-900 group-hover:text-[#1F5C55] tabular-nums leading-tight"><%= stats[:memberships_active] %></span>
+        <span class="text-xs font-semibold uppercase tracking-widest text-brand-primary/70 whitespace-nowrap">Actives</span>
+        <span class="text-2xl font-bold text-gray-900 group-hover:text-brand-primary tabular-nums leading-tight"><%= stats[:memberships_active] %></span>
       <% end %>
       <div class="flex flex-col justify-center px-4 py-3 min-w-[4.5rem]">
         <span class="text-xs font-semibold uppercase tracking-widest text-gray-400 whitespace-nowrap">Basique</span>
@@ -41,7 +41,7 @@
     <div class="flex items-stretch divide-x divide-gray-100">
       <%= link_to admin_members_path, class: "group flex flex-col justify-center px-4 py-3 hover:bg-gray-50 transition-colors min-w-[4.5rem]" do %>
         <span class="text-xs font-semibold uppercase tracking-widest text-gray-400 whitespace-nowrap">Personnes</span>
-        <span class="text-xl font-bold text-gray-800 group-hover:text-[#1F5C55] tabular-nums leading-tight"><%= stats[:persons] %></span>
+        <span class="text-xl font-bold text-gray-800 group-hover:text-brand-primary tabular-nums leading-tight"><%= stats[:persons] %></span>
       <% end %>
       <div class="flex flex-col justify-center px-4 py-3 min-w-[4.5rem]">
         <span class="text-xs font-semibold uppercase tracking-widest text-gray-400 whitespace-nowrap">Comptes</span>
@@ -58,8 +58,8 @@
 
     <%# Aujourd'hui %>
     <div class="flex flex-col justify-center px-4 py-3 min-w-[5rem]">
-      <span class="text-xs font-semibold uppercase tracking-widest <%= stats[:new_members_today] > 0 ? 'text-[#1F5C55]/70' : 'text-gray-400' %> whitespace-nowrap" title="Nouveaux adhérents créés aujourd'hui">Auj.</span>
-      <span class="text-xl font-bold <%= stats[:new_members_today] > 0 ? 'text-[#1F5C55]' : 'text-gray-800' %> tabular-nums leading-tight"><%= stats[:new_members_today] %></span>
+      <span class="text-xs font-semibold uppercase tracking-widest <%= stats[:new_members_today] > 0 ? 'text-brand-primary/70' : 'text-gray-400' %> whitespace-nowrap" title="Nouveaux adhérents créés aujourd'hui">Auj.</span>
+      <span class="text-xl font-bold <%= stats[:new_members_today] > 0 ? 'text-brand-primary' : 'text-gray-800' %> tabular-nums leading-tight"><%= stats[:new_members_today] %></span>
       <span class="text-xs text-gray-400 whitespace-nowrap">nouveaux</span>
     </div>
 

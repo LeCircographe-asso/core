@@ -33,13 +33,13 @@
           <%= most_recent_membership.started_at.strftime("%d/%m/%Y") %> - <%= most_recent_membership.ended_at.strftime("%d/%m/%Y") %>
         </p>
         <%= link_to "Renouveler l'adhésion", new_admin_membership_path(person_id: person.id),
-            class: "inline-flex items-center px-3 py-1 text-sm font-medium text-white bg-[#1F5C55] hover:bg-[#194A45] rounded-md" %>
+            class: "inline-flex items-center px-3 py-1 text-sm font-medium text-white bg-brand-primary hover:bg-brand-primary-dark rounded-md" %>
       </div>
     <% else %>
       <div class="text-center py-3">
         <p class="text-gray-500 mb-3">Aucune adhésion active</p>
         <%= link_to "Créer une adhésion", new_admin_membership_path(person_id: person.id),
-            class: "inline-flex items-center px-3 py-1 text-sm font-medium text-white bg-[#1F5C55] hover:bg-[#194A45] rounded-md" %>
+            class: "inline-flex items-center px-3 py-1 text-sm font-medium text-white bg-brand-primary hover:bg-brand-primary-dark rounded-md" %>
       </div>
     <% end %>
   </div>

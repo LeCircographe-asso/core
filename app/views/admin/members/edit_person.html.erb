@@ -101,17 +101,17 @@
             <h3 class="text-sm font-medium text-gray-700">Préférences</h3>
             
             <div class="flex items-center">
-              <%= form.check_box :newsletter_subscribed, { class: "h-4 w-4 text-[#1F5C55] focus:ring-brand-accent border-gray-300 rounded", checked: @person.newsletter_subscribed? }, "1", "0" %>
+              <%= form.check_box :newsletter_subscribed, { class: "h-4 w-4 text-brand-primary focus:ring-brand-accent border-gray-300 rounded", checked: @person.newsletter_subscribed? }, "1", "0" %>
               <%= form.label :newsletter_subscribed, "S'abonner à la newsletter", class: "ml-2 block text-sm text-gray-700" %>
             </div>
 
             <div class="flex items-center">
-              <%= form.check_box :get_involved, class: "h-4 w-4 text-[#1F5C55] focus:ring-brand-accent border-gray-300 rounded" %>
+              <%= form.check_box :get_involved, class: "h-4 w-4 text-brand-primary focus:ring-brand-accent border-gray-300 rounded" %>
               <%= form.label :get_involved, "Souhaite s'impliquer", class: "ml-2 block text-sm text-gray-700" %>
             </div>
 
             <div class="flex items-center">
-              <%= form.check_box :image_rights, class: "h-4 w-4 text-[#1F5C55] focus:ring-brand-accent border-gray-300 rounded" %>
+              <%= form.check_box :image_rights, class: "h-4 w-4 text-brand-primary focus:ring-brand-accent border-gray-300 rounded" %>
               <%= form.label :image_rights, "Droits à l'image", class: "ml-2 block text-sm text-gray-700" %>
             </div>
 
@@ -121,7 +121,7 @@
           <!-- Reduced Rate Section -->
           <div class="pt-4 border-t border-gray-200" data-controller="reduced-rate">
             <div class="flex items-center">
-              <%= form.check_box :reduced_rate_eligible, class: "h-4 w-4 text-[#1F5C55] focus:ring-brand-accent border-gray-300 rounded", data: { reduced_rate_target: "checkbox", action: "change->reduced-rate#checkboxChanged" } %>
+              <%= form.check_box :reduced_rate_eligible, class: "h-4 w-4 text-brand-primary focus:ring-brand-accent border-gray-300 rounded", data: { reduced_rate_target: "checkbox", action: "change->reduced-rate#checkboxChanged" } %>
               <%= form.label :reduced_rate_eligible, "Tarif réduit éligible", class: "ml-2 block text-sm text-gray-700" %>
             </div>
             
@@ -146,7 +146,7 @@
             <%= link_to "Annuler", admin_member_path(@person),
                 class: "inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-accent" %>
             <%= form.submit "Mettre à jour",
-                class: "inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#1F5C55] hover:bg-[#194A45] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-accent" %>
+                class: "inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-brand-primary hover:bg-brand-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-accent" %>
           </div>
         <% end %>
       </div>

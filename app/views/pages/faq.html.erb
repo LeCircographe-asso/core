@@ -18,7 +18,7 @@
                autocomplete="off"
                data-faq-search-target="input"
                data-action="input->faq-search#filter keydown.esc->faq-search#clear"
-               class="w-full min-h-12 rounded-full border-0 bg-white/95 px-5 text-base text-gray-900 shadow-lg placeholder:text-gray-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#5836A5]">
+               class="w-full min-h-12 rounded-full border-0 bg-white/95 px-5 text-base text-gray-900 shadow-lg placeholder:text-gray-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-accent">
       </div>
     </div>
   </section>
@@ -55,7 +55,7 @@
     <% anchors = Set.new %>
     <% @faq_groups.each do |label, faqs| %>
       <section id="faq-<%= label.dasherize %>" class="mb-8 scroll-mt-24" data-faq-search-target="group" aria-labelledby="faq-<%= label.dasherize %>-title">
-        <h2 id="faq-<%= label.dasherize %>-title" class="mb-1 text-xl font-semibold text-[#1F5C55] sm:text-2xl"><%= Faq::LABEL_NAMES.fetch(label) %></h2>
+        <h2 id="faq-<%= label.dasherize %>-title" class="mb-1 text-xl font-semibold text-brand-primary sm:text-2xl"><%= Faq::LABEL_NAMES.fetch(label) %></h2>
         <%= render "shared/faq_list", faqs: faqs, anchors: anchors, searchable: true %>
       </section>
     <% end %>
@@ -70,10 +70,10 @@
       </div>
     </div>
 
-    <div class="mt-2 rounded-2xl bg-[#1F5C55] px-6 py-6 text-center text-white">
+    <div class="mt-2 rounded-2xl bg-brand-primary px-6 py-6 text-center text-white">
       <p class="text-lg font-semibold">Pas trouvé ta réponse ?</p>
       <p class="mt-1 text-white/85">Écris-nous, on te répond avec plaisir.</p>
-      <%= link_to "Nous écrire", page_path("contact_us", anchor: "contact-form"), class: "mt-4 inline-flex min-h-11 items-center rounded-full bg-white px-6 font-semibold text-[#1F5C55] hover:bg-gray-100" %>
+      <%= link_to "Nous écrire", page_path("contact_us", anchor: "contact-form"), class: "mt-4 inline-flex min-h-11 items-center rounded-full bg-white px-6 font-semibold text-brand-primary hover:bg-gray-100" %>
     </div>
    </div>
   </div>

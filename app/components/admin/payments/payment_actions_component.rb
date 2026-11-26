@@ -25,7 +25,7 @@ module Admin
         # Rediriger vers la personne si elle a un user, sinon vers la liste
         if payment.person&.user
           link_to admin_member_path(payment.person),
-                  class: "#{ACTION_CHIP_CLASSES} border-[#1F5C55]/20 bg-[#1F5C55]/5 text-[#1F5C55] hover:bg-[#1F5C55]/10 hover:border-[#1F5C55]/30",
+                  class: "#{ACTION_CHIP_CLASSES} border-brand-primary/20 bg-brand-primary/5 text-brand-primary hover:bg-brand-primary/10 hover:border-brand-primary/30",
                   title: "Voir la personne" do
             content_tag :svg,
                         class: "h-4 w-4",
@@ -123,7 +123,7 @@ module Admin
         if donation_line.donation_receipt.present?
           safe_join([
             link_to(helpers.admin_payment_donation_receipt_path(payment),
-                    class: "#{ACTION_CHIP_CLASSES} border-[#1F5C55]/20 bg-[#1F5C55]/5 text-[#1F5C55] hover:bg-[#1F5C55]/10 hover:border-[#1F5C55]/30",
+                    class: "#{ACTION_CHIP_CLASSES} border-brand-primary/20 bg-brand-primary/5 text-brand-primary hover:bg-brand-primary/10 hover:border-brand-primary/30",
                     title: "Télécharger le reçu",
                     target: "_blank",
                     rel: "noopener") do

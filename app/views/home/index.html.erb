@@ -21,10 +21,10 @@
 
     <div class="main-button relative mt-8 flex w-full max-w-sm flex-col items-stretch gap-3 opacity-0 transition-opacity duration-500 sm:mt-10 sm:max-w-none sm:flex-row sm:items-center sm:justify-center">
       <%= link_to "Découvrir l'association", page_path('association'),
-                  class: "inline-flex w-full min-w-0 items-center justify-center rounded-full border-2 border-white/60 bg-white/18 px-5 py-3 text-base font-medium text-white shadow-md backdrop-blur-sm transition-colors duration-300 hover:border-[#1F5C55] hover:bg-[#1F5C55] hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1F5C55] sm:w-auto sm:min-w-[15rem] sm:px-8 sm:py-4 sm:text-lg" %>
+                  class: "inline-flex w-full min-w-0 items-center justify-center rounded-full border-2 border-white/60 bg-white/18 px-5 py-3 text-base font-medium text-white shadow-md backdrop-blur-sm transition-colors duration-300 hover:border-brand-primary hover:bg-brand-primary hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-primary sm:w-auto sm:min-w-[15rem] sm:px-8 sm:py-4 sm:text-lg" %>
       <%= link_to "Voir les horaires", "#opening-hours",
                   data: { controller: "smooth-scroll", action: "smooth-scroll#go" },
-                  class: "inline-flex w-full min-w-0 items-center justify-center rounded-full border-2 border-white/60 bg-white/10 px-5 py-3 text-base font-medium text-white backdrop-blur-sm transition-colors duration-300 hover:border-[#5836A5] hover:bg-[#5836A5] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#5836A5] sm:w-auto sm:min-w-[15rem] sm:px-8 sm:py-4 sm:text-lg" %>
+                  class: "inline-flex w-full min-w-0 items-center justify-center rounded-full border-2 border-white/60 bg-white/10 px-5 py-3 text-base font-medium text-white backdrop-blur-sm transition-colors duration-300 hover:border-brand-accent hover:bg-brand-accent focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-accent sm:w-auto sm:min-w-[15rem] sm:px-8 sm:py-4 sm:text-lg" %>
     </div>
 
     <%= render "shared/scroll_hint_arrow", section_id: "opening-hours", position_class: "absolute bottom-6 left-1/2 -translate-x-1/2 sm:bottom-28 md:bottom-32" %>
@@ -37,7 +37,7 @@
         <h2 id="community-highlights" class="sr-only">Informations clés</h2>
 
         <div class="grid gap-8 lg:gap-10 lg:grid-cols-[minmax(0,1.7fr)_minmax(0,1fr)] items-start" data-gsap-reveal>
-          <article class="relative overflow-hidden rounded-[32px] bg-gradient-to-br from-[#0C2F2B] via-[#194A45] to-brand-primary text-white shadow-2xl p-5 sm:p-8 lg:p-10" data-gsap-reveal-item>
+          <article class="relative overflow-hidden rounded-[32px] bg-gradient-to-br from-[#0C2F2B] via-brand-primary-dark to-brand-primary text-white shadow-2xl p-5 sm:p-8 lg:p-10" data-gsap-reveal-item>
             <%= render "shared/exceptional_closure_ribbon" if @exceptional_closure&.in_effect? %>
             <header class="space-y-2 sm:space-y-3 text-center lg:text-left">
               <p class="text-sm leading-normal uppercase tracking-[0.35em] text-white/75">Horaires</p>
@@ -70,7 +70,7 @@
               </p>
               <div class="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center">
                 <button type="button"
-                        class="inline-flex items-center justify-center rounded-full bg-white px-5 py-3 text-sm font-semibold text-[#194A45] transition-colors duration-300 hover:bg-[#F7F4EE]"
+                        class="inline-flex items-center justify-center rounded-full bg-white px-5 py-3 text-sm font-semibold text-brand-primary-dark transition-colors duration-300 hover:bg-[#F7F4EE]"
                         data-action="pwa-install#install"
                         data-pwa-install-target="button">
                   Installer l'application

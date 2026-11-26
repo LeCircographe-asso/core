@@ -12,7 +12,7 @@
         </div>
         <div class="flex flex-wrap gap-3">
           <%= link_to "Modifier", edit_admin_membership_type_path(@membership_type),
-              class: "inline-flex items-center px-4 py-2 border border-white rounded-md shadow-sm text-sm font-medium text-[#1F5C55] bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-white" %>
+              class: "inline-flex items-center px-4 py-2 border border-white rounded-md shadow-sm text-sm font-medium text-brand-primary bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-white" %>
           <%= link_to "Retour à la liste", admin_membership_types_path,
               class: "inline-flex items-center px-4 py-2 border border-white border-opacity-40 rounded-md text-sm font-medium text-white hover:bg-white hover:bg-opacity-10" %>
         </div>
@@ -55,7 +55,7 @@
         <div>
           <span class="text-sm font-medium text-gray-500">Prix</span>
           <p class="mt-1 flex items-center gap-2">
-            <span class="text-2xl font-bold text-[#1F5C55]"><%= @membership_type.price_euros %>€</span>
+            <span class="text-2xl font-bold text-brand-primary"><%= @membership_type.price_euros %>€</span>
             <% unless @membership_type.current_version? %>
               <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-200 text-gray-700">
                 Archivée (jusqu'au <%= @membership_type.effective_until.strftime("%d/%m/%Y") %>)
@@ -111,7 +111,7 @@
                   <td class="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-900">
                     <%= link_to membership.person.full_name,
                         admin_member_path(membership.person),
-                        class: "text-[#1F5C55] hover:underline" %>
+                        class: "text-brand-primary hover:underline" %>
                   </td>
                   <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-600">
                     <%= membership.status&.humanize %>
@@ -121,7 +121,7 @@
                   </td>
                   <td class="px-4 py-3 whitespace-nowrap text-sm text-right">
                     <%= link_to "Voir l'adhésion", admin_membership_path(membership),
-                        class: "text-[#1F5C55] hover:underline font-medium" %>
+                        class: "text-brand-primary hover:underline font-medium" %>
                   </td>
                 </tr>
               <% end %>

@@ -64,7 +64,7 @@
                 <!--Combined Checkbox Terms of Service and Privacy Policy -->
                 <div class="flex items-start">
                     <div class="flex items-center h-5">
-                        <%= form.check_box :cgu, id: "cgu", class: "h-4 w-4 text-[#5836A5] border-gray-300 rounded focus:ring-[#5836A5] focus:ring-offset-0" %>
+                        <%= form.check_box :cgu, id: "cgu", class: "h-4 w-4 text-brand-accent border-gray-300 rounded focus:ring-brand-accent focus:ring-offset-0" %>
                         <%= form.hidden_field :privacy_policy, value: '1' %>
                     </div>
                     <div class="ml-2 text-sm">
@@ -78,7 +78,7 @@
                 <!-- Newsletter -->
                 <div class="flex items-start">
                     <div class="flex items-center h-5">
-                        <%= form.check_box :newsletter_subscribed, class: "h-4 w-4 text-[#5836A5] border-gray-300 rounded focus:ring-[#5836A5] focus:ring-offset-0" %>
+                        <%= form.check_box :newsletter_subscribed, class: "h-4 w-4 text-brand-accent border-gray-300 rounded focus:ring-brand-accent focus:ring-offset-0" %>
                     </div>
                     <div class="ml-2 text-sm">
                         <%= form.label :newsletter_subscribed, "S'inscrire à la newsletter", class: "text-sm text-gray-800" %>

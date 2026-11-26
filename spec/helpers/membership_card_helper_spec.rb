@@ -5,11 +5,11 @@ require "rails_helper"
 RSpec.describe MembershipCardHelper, type: :helper do
   describe "#membership_card_role_badge_classes" do
     it "returns a class for known roles" do
-      expect(helper.membership_card_role_badge_classes("admin")).to eq("bg-[#1F5C55]/90")
+      expect(helper.membership_card_role_badge_classes("admin")).to eq("bg-brand-primary/90")
     end
 
     it "falls back for unknown roles" do
-      expect(helper.membership_card_role_badge_classes(:unknown)).to eq("bg-[#1F5C55]/70")
+      expect(helper.membership_card_role_badge_classes(:unknown)).to eq("bg-brand-primary/70")
     end
   end
 

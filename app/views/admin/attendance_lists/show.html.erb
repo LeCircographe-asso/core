@@ -10,7 +10,7 @@
       <div class="flex justify-between items-center">
         <h1 class="text-2xl font-bold text-gray-900"><%= @attendance_list.name %></h1>
         <div class="flex space-x-2">
-          <%= link_to edit_admin_attendance_list_path(@attendance_list), class: "px-4 py-2 bg-[#1F5C55] hover:bg-[#194A45] text-white text-sm font-medium rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-accent flex items-center" do %>
+          <%= link_to edit_admin_attendance_list_path(@attendance_list), class: "px-4 py-2 bg-brand-primary hover:bg-brand-primary-dark text-white text-sm font-medium rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-accent flex items-center" do %>
             <i class="fas fa-edit mr-2"></i> Modifier le registre
           <% end %>
           <%= link_to new_admin_attendance_list_attendance_path(@attendance_list), class: "px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 flex items-center" do %>
@@ -108,7 +108,7 @@
     <div class="surface-card">
       <div class="border-b border-gray-200 px-6 py-4 flex justify-between items-center">
         <h2 class="text-lg font-medium text-gray-900">Participants</h2>
-        <%= link_to new_admin_attendance_list_attendance_path(@attendance_list), class: "text-[#1F5C55] hover:text-[#194A45] flex items-center text-sm" do %>
+        <%= link_to new_admin_attendance_list_attendance_path(@attendance_list), class: "text-brand-primary hover:text-brand-primary-dark flex items-center text-sm" do %>
           <i class="fas fa-plus-circle mr-1"></i> Ajouter
         <% end %>
       </div>
@@ -129,7 +129,7 @@
               <% @attendance_list.attendances.each do |attendance| %>
                 <tr class="hover:bg-gray-50">
                   <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                    <%= link_to attendance.person.full_name, admin_member_path(attendance.person), class: "hover:text-[#1F5C55] hover:underline" %>
+                    <%= link_to attendance.person.full_name, admin_member_path(attendance.person), class: "hover:text-brand-primary hover:underline" %>
                   </td>
                   <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                     <%= attendance.person.email.presence || 'Non renseigné' %>
@@ -172,7 +172,7 @@
             <i class="fas fa-users text-gray-300 text-5xl mb-3"></i>
             <p class="text-gray-500">Aucun participant n'a encore été ajouté à cette liste.</p>
             <div class="mt-4">
-              <%= link_to new_admin_attendance_list_attendance_path(@attendance_list), class: "inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-[#1F5C55] hover:bg-[#194A45]" do %>
+              <%= link_to new_admin_attendance_list_attendance_path(@attendance_list), class: "inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-brand-primary hover:bg-brand-primary-dark" do %>
                 <i class="fas fa-user-plus mr-2"></i> Ajouter un participant
               <% end %>
             </div>

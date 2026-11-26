@@ -80,7 +80,7 @@ export default class extends Controller {
       } else {
         hourCell.innerHTML = `
           <span class="text-gray-800">
-            <i class="far fa-clock text-[#1F5C55] mr-1 hidden sm:inline"></i>
+            <i class="far fa-clock text-brand-primary mr-1 hidden sm:inline"></i>
             ${value}
           </span>
         `

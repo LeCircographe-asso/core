@@ -6,7 +6,7 @@
           <%= image_tag partner.logo.variant(resize_to_limit: [ 256, 256 ]), alt: partner.name, class: "object-contain w-full h-full" %>
         </div>
       <% else %>
-        <div class="w-32 h-32 rounded-xl bg-[#1F5C55]/10 border border-[#1F5C55]/20 flex items-center justify-center text-sm font-semibold text-[#1F5C55]">
+        <div class="w-32 h-32 rounded-xl bg-brand-primary/10 border border-brand-primary/20 flex items-center justify-center text-sm font-semibold text-brand-primary">
           <%= partner.initials_label %>
         </div>
       <% end %>
@@ -17,7 +17,7 @@
         <% end %>
       </div>
       <% if partner.url.present? %>
-        <%= link_to "Voir le site", partner.url, target: "_blank", rel: "noopener", class: "text-sm text-[#1F5C55] underline" %>
+        <%= link_to "Voir le site", partner.url, target: "_blank", rel: "noopener", class: "text-sm text-brand-primary underline" %>
       <% end %>
     </article>
   <% end %>

@@ -12,7 +12,7 @@
                         required: true,
                         autocomplete: "email",
                         aria: { required: "true" },
-                        class: "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-md focus:border-[#5836A5] focus:ring-[#5836A5] focus:ring-1 focus:outline-none block p-2 min-h-11 flex-1 min-w-[10rem] min-[480px]:min-w-[12rem] min-[480px]:max-w-xs" %>
+                        class: "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-md focus:border-brand-accent focus:ring-brand-accent focus:ring-1 focus:outline-none block p-2 min-h-11 flex-1 min-w-[10rem] min-[480px]:min-w-[12rem] min-[480px]:max-w-xs" %>
 
                     <%# Honeypot field - hidden from humans but bots will fill it %>
                     <div class="hidden" aria-hidden="true">
@@ -23,13 +23,13 @@
                     </div>
 
                     <%= f.submit t("views.shared.footer.sign_up"),
-                        class: "px-6 py-2 min-h-11 tracking-wide text-white font-bold bg-[#1F5C55] border-2 border-[#1F5C55] rounded-md shadow-lg hover:bg-white hover:text-[#1F5C55] hover:border-[#1F5C55] transition-colors duration-300 text-sm w-auto shrink-0 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#1F5C55] cursor-pointer" %>
+                        class: "px-6 py-2 min-h-11 tracking-wide text-white font-bold bg-brand-primary border-2 border-brand-primary rounded-md shadow-lg hover:bg-white hover:text-brand-primary hover:border-brand-primary transition-colors duration-300 text-sm w-auto shrink-0 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-brand-primary cursor-pointer" %>
                     <% end %>
                     <%# Mobile : icônes à taille normale (24px) dans des zones tactiles de 44px %>
                     <%= render "shared/footer_social_icons",
                                wrapper_class: "flex md:hidden w-full justify-center items-center gap-6 mt-4",
                                icon_class: "w-6 h-6",
-                               link_class: "flex size-11 shrink-0 items-center justify-center rounded-full text-gray-500 hover:text-[#1F5C55] hover:bg-[#1F5C55]/10 active:bg-[#1F5C55]/15 transition-colors touch-manipulation" %>
+                               link_class: "flex size-11 shrink-0 items-center justify-center rounded-full text-gray-500 hover:text-brand-primary hover:bg-brand-primary/10 active:bg-brand-primary/15 transition-colors touch-manipulation" %>
                 </div>
             </div>
             <%# 3 colonnes dès le mobile : le pied de page tient sur un écran %>

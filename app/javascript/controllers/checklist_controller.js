@@ -8,12 +8,12 @@ export default class extends Controller {
     const item = event.currentTarget
     const indicator = item.querySelector(".checklist-indicator")
 
-    item.classList.toggle("bg-[#1F5C55]/10")
-    item.classList.toggle("border-[#1F5C55]")
+    item.classList.toggle("bg-brand-primary/10")
+    item.classList.toggle("border-brand-primary")
     item.classList.toggle("shadow-lg")
 
     if (indicator) {
-      indicator.classList.toggle("bg-[#1F5C55]")
+      indicator.classList.toggle("bg-brand-primary")
       indicator.classList.toggle("text-white")
       indicator.textContent = indicator.textContent.trim() === "" ? "✓" : ""
     }

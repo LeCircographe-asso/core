@@ -3,13 +3,13 @@
 # Shared presentation for `shared/_membershipcard` (role badge, avatar).
 module MembershipCardHelper
   MEMBERSHIP_CARD_ROLE_BADGE_CLASSES = {
-    "super_admin" => "bg-[#1F5C55]",
-    "admin" => "bg-[#1F5C55]/90",
-    "volunteer" => "bg-[#1F5C55]/80"
+    "super_admin" => "bg-brand-primary",
+    "admin" => "bg-brand-primary/90",
+    "volunteer" => "bg-brand-primary/80"
   }.freeze
 
   def membership_card_role_badge_classes(system_role)
-    MEMBERSHIP_CARD_ROLE_BADGE_CLASSES[system_role.to_s] || "bg-[#1F5C55]/70"
+    MEMBERSHIP_CARD_ROLE_BADGE_CLASSES[system_role.to_s] || "bg-brand-primary/70"
   end
 
   # @return [Array(String, String)] image filename under app/assets/images, alt text

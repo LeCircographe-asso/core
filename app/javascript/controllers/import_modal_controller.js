@@ -39,17 +39,17 @@ export default class extends Controller {
 
   dragOver(event) {
     event.preventDefault()
-    this.dropzoneTarget.classList.add("border-[#1F5C55]", "bg-[#1F5C55]/5")
+    this.dropzoneTarget.classList.add("border-brand-primary", "bg-brand-primary/5")
   }
 
   dragLeave(event) {
     event.preventDefault()
-    this.dropzoneTarget.classList.remove("border-[#1F5C55]", "bg-[#1F5C55]/5")
+    this.dropzoneTarget.classList.remove("border-brand-primary", "bg-brand-primary/5")
   }
 
   drop(event) {
     event.preventDefault()
-    this.dropzoneTarget.classList.remove("border-[#1F5C55]", "bg-[#1F5C55]/5")
+    this.dropzoneTarget.classList.remove("border-brand-primary", "bg-brand-primary/5")
 
     const file = event.dataTransfer.files[0]
     if (file) this.uploadFile(file)
