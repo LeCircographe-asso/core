@@ -724,6 +724,8 @@ fr:
       description: Le Circographe, lieu de cirque vivant, d'entraînement, de rencontres et d'ateliers à Toulouse.
   views:
     shared:
+      faq_section:
+        all_faq: Toute la FAQ →
       flash:
         close: Fermer
       navbar:
@@ -849,6 +851,55 @@ fr:
         heading: Merci de vous être désinscrit de la newsletter
         thanks: Nous vous remercions de nous avoir donné la possibilité de vous tenir informé de nos actualités et de nos offres spéciales.
         back: Vous pouvez maintenant revenir sur notre site pour continuer à naviguer.
+      faq:
+        page_title: Le Circographe - FAQ
+        heading: Questions fréquentes
+        intro: Peu de blabla — les infos utiles, avec le ton du lieu.
+        search_label: Rechercher une question
+        search_placeholder: Rechercher (tarif, horaires…)
+        categories_label: Catégories de la FAQ
+        no_result: Aucune question ne correspond à cette recherche.
+        try_examples: 'Essaie par exemple :'
+        not_found_title: Pas trouvé ta réponse ?
+        not_found_body: Écris-nous, on te répond avec plaisir.
+        write_us: Nous écrire
+      contact:
+        page_title: Le Circographe - Contact
+        eyebrow: Écris-nous
+        heading: Contact
+        intro: "Adhésion, cotisation (accès cirque), temps d'accueil en création ou locaux : passe aux créneaux ou écris via le formulaire ci-dessous."
+        practical_eyebrow: Infos pratiques
+        practical_heading: Horaires, accès et formulaire
+        practical_body_html: "Réponse sous quelques jours ouvrés par message ;<br class=\"hidden sm:block\"> conseils sur place aux créneaux d'ouverture."
+        facebook_label: Circographe sur Facebook (ouvre dans un nouvel onglet)
+        instagram_label: Circographe sur Instagram (ouvre dans un nouvel onglet)
+        whatsapp_label: Contact WhatsApp
+        access: Accès
+        address: 97 bis boulevard de Suisse — 31200 Toulouse
+        bus: Bus 15 (Tisséo) · descends à l'arrêt le plus proche de ton sens de marche
+        hours_heading: Horaires d'accueil
+        hours_detail: Du mardi au dimanche · selon disponibilité bénévoles
+        quick_question: Un doute rapide ?
+        quick_question_body: 'Aux créneaux : orientation rapide (adhésion, création, technique).'
+        faq_link: Questions fréquentes
+        faq_contact_link: Contact & projets
+        form:
+          heading: Écris-nous
+          intro: Une question, un projet de temps d’accueil en création ou un partenariat ? On te répond sous quelques jours ouvrés.
+          name_label: Nom complet
+          name_placeholder: Nom Prénom
+          email_label: Adresse email
+          email_placeholder: adresse@example.com
+          category_label: Catégorie
+          category_prompt: Sélectionne une catégorie
+          categories:
+            general: Question générale
+            technical: Technique / accès
+            creative_hosting: Temps d’accueil en création
+            partnership: Partenariat
+          message_label: Message
+          message_placeholder: Parle-nous de ton projet, de ta question ou de ton besoin…
+          submit: Envoyer le message
     home:
       index:
         page_title: Le Circographe - Accueil
