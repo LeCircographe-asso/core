@@ -43,9 +43,9 @@
     <%# Umami analytics — public site only, not the admin backoffice. Self-hosted,
         cookieless, no consent banner needed. See docs/operations/analytics.md. %>
     <% if umami_website_id && !controller_path.start_with?("admin/") %>
-    <script defer src="https://analytics.lecircographe.fr/script.js" data-website-id="<%= umami_website_id %>"></script>
+    <%= tag.script(defer: true, src: "https://analytics.lecircographe.fr/script.js", data: { website_id: umami_website_id, domains: umami_domain }) %>
     <% if umami_session_replay_enabled? %>
-    <script defer src="https://analytics.lecircographe.fr/recorder.js" data-website-id="<%= umami_website_id %>"></script>
+    <%= tag.script(defer: true, src: "https://analytics.lecircographe.fr/recorder.js", data: { website_id: umami_website_id, domains: umami_domain }) %>
     <% end %>
     <% end %>
 </head>
