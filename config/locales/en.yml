@@ -374,6 +374,21 @@ en:
       description: Le Circographe, a living circus venue for training, meetups and workshops in Toulouse.
   views:
     shared:
+      opening_hours:
+        week: Week of %{from} to %{to}
+        caption: This week's opening hours
+        day: Day
+        hours: Hours
+        today: Today
+        closed: Closed
+        none_yet: No opening hours available yet.
+        none: No opening hours available.
+        exceptional_closure: Exceptional closure
+        until: until %{date}
+        updated: Updated %{time}
+      events:
+        see: See the event
+        empty: It's quiet for now. No event is planned in the near future, but we're preparing what comes next. Come back soon or sign up for the newsletter to hear about the next dates.
       timeline:
         label: Timeline of the association
         years: Years
@@ -741,6 +756,16 @@ en:
           map: Map & contact
           write: Write
     home:
+      upcoming_events:
+        heading: Upcoming events
+        badge: Next event
+        demo_badge: UX/UI demo
+        demo_notice: Fictional content shown to demonstrate the interface.
+        discover: Discover the event
+        date_tbd_line_1: Date
+        date_tbd_line_2: to come
+        empty_html: "It's quiet for now. No event is planned in the near future. Sign up for %{link} to hear about the next dates."
+        newsletter_link: the newsletter
       index:
         page_title: Le Circographe - Home
         meta_description: 'Le Circographe: a living circus venue in Toulouse. Training, workshops, encounters and community life for every level.'
