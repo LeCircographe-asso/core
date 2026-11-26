@@ -78,7 +78,6 @@ aliases:
 # Volumes pour les logs et données (staging)
 volumes:
   - "circographe_staging_storage:/rails/storage"
-  - "/srv/www/lecircographe_staging/log:/app/log"
   # rclone.conf temporaire — pour tester en conditions réelles le remote pCloud
   # avant de le brancher en prod (voir docs/backup-restore.md). NightlySnapshotJob
   # ne tourne pas sur staging (garde production? dans le service) : ce montage sert
@@ -87,6 +86,13 @@ volumes:
 
 # Bridge fingerprinted assets
 asset_path: /rails/public/assets
+# Container logs go to the host journal (persistent, size-capped) instead of a
+# json-file deleted with the container on every deploy. `docker logs` still
+# works; history across deploys: journalctl -t circographe-staging (docs/operations/logs.md).
+logging:
+  driver: journald
+  options:
+    tag: circographe-staging
 
 # Configure the image builder
 builder:

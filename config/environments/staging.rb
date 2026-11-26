@@ -78,9 +78,8 @@ Rails.application.configure do
   # Note: Custom configs comme staging_mode doivent être définies dans application.rb
   # ou via des initializers si nécessaire
 
-  # Logs spécifiques
-  config.logger = ActiveSupport::Logger.new($stdout)
-  config.logger.formatter = proc do |severity, datetime, _progname, msg|
-    "[STAGING] #{datetime.strftime('%Y-%m-%d %H:%M:%S')} #{severity}: #{msg}\n"
-  end
+  # Même logger que la production : STDOUT taggé, pour que le request_id (log_tags
+  # ci-dessus) apparaisse sur chaque ligne et permette de suivre une requête de bout
+  # en bout. L'horodatage vient du journal du VPS (driver journald, voir deploy.staging.yml).
+  config.logger = ActiveSupport::TaggedLogging.logger($stdout)
 end
