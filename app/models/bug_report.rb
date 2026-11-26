@@ -78,6 +78,8 @@ class BugReport < ApplicationRecord
     case kind.to_sym
     when :not_found
       "Page introuvable (404) : #{path}"
+    when :job_error
+      "Erreur de job (#{error_class}) : #{path.to_s.delete_prefix('job:')}"
     else
       "Erreur serveur (#{error_class}) : #{path}"
     end
