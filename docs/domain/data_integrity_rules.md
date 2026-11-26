@@ -103,4 +103,4 @@ PaymentLine.where(item_type: "Payment")
 Payment.where(person_id: nil)
 ```
 
-> Ces requêtes sont candidates pour une tâche Rake de rapport d'intégrité (voir [`../internal/todo.md`](../internal/todo.md)).
+> Ces règles sont vérifiées en SQL par [`ops/data_report.rb`](../../ops/data_report.rb) (`bin/rails runner ops/data_report.rb`), avec en plus `PRAGMA integrity_check` / `foreign_key_check` et le nombre de lignes par table. `bin/docker-local upgrade` l'exécute avant et après une montée de version et échoue si une anomalie apparaît (voir [`../development/docker_local.md`](../development/docker_local.md)). Une nouvelle règle s'ajoute dans `DataReport::CHECKS`.

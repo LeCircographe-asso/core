@@ -11,8 +11,14 @@
 #   bin/docker-local console <env>                 rails console inside the container
 #   bin/docker-local admin <env>                   create the first super admin (interactive)
 #   bin/docker-local status                        containers, images and URLs
+#   bin/docker-local build                         build the staging image from the working tree (tag "local")
+#   bin/docker-local upgrade [from] [to]           staging upgrade rehearsal: demo data on image <from>
+#                                                  (default: running), then image <to> (default: local)
+#                                                  on the same database, data report compared
+#   bin/docker-local upgrade-clean                 remove a rehearsal kept after a failure
 #
-# <env> = staging | production
+# <env> = staging | production. Tags: a git sha, latest, running (what the VPS runs),
+# local (built from your working tree, uncommitted changes included).
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
@@ -21,7 +27,7 @@ ENV_FILE="$DIR/.env.local"
 STAGING_URL="http://127.0.0.1:8081"
 PRODUCTION_URL="http://127.0.0.1:8082"
 
-usage() { sed -n '5,15p' "$0" | sed 's/^# \{0,1\}//'; exit "${1:-2}"; }
+usage() { sed -n '5,22p' "$0" | sed 's/^# \{0,1\}//'; exit "${1:-2}"; }
 
 # Everything compose needs (container env + image tags) lives in .env.local, passed both as
 # env_file and --env-file: no reliance on exported variables, which Docker Desktop's
@@ -81,6 +87,83 @@ image_repo() { [ "$1" = staging ] && echo "ghcr.io/lecircographe-asso/circograph
 tag_var() { [ "$1" = staging ] && echo STAGING_TAG || echo PRODUCTION_TAG; }
 url_for() { [ "$1" = staging ] && echo "$STAGING_URL" || echo "$PRODUCTION_URL"; }
 
+# resolve_tag <env> <tag|running>: "running" = the tag of the image the VPS runs right now.
+resolve_tag() {
+  local tag="$2"
+  if [ "$tag" = local ] && [ "$1" != staging ]; then
+    echo "Tag local is staging only (production images need production credentials)" >&2; exit 1
+  fi
+  if [ "$tag" = running ]; then
+    tag="$(ssh -n circographe-deploy "docker ps --filter label=service=circographe-$1 --filter label=role=web --format '{{.Image}}'" | head -n1 | sed 's/.*://')"
+    [ -n "$tag" ] || { echo "No running $1 container found on the VPS" >&2; exit 1; }
+  fi
+  echo "$tag" | grep -Eq '^[A-Za-z0-9._-]+$' || { echo "Invalid tag: $tag" >&2; exit 1; }
+  echo "$tag"
+}
+
+# build_local <log file>: the staging image of the working tree, as deploy-staging builds it
+# (same Dockerfile, amd64). config/master.key is excluded by .dockerignore.
+build_local() {
+  echo "Building $(image_repo staging):local from the working tree (first build: a few minutes)..."
+  if ! docker build --platform linux/amd64 -t "$(image_repo staging):local" "$ROOT" > "$1" 2>&1; then
+    tail -n 30 "$1" >&2
+    echo "Build failed, full log: $1" >&2
+    exit 1
+  fi
+}
+
+# fetch_image <env> <tag>: build "local", pull anything else.
+fetch_image() {
+  if [ "$2" = local ]; then
+    build_local "$ROOT/tmp/docker-local/build.log"
+  else
+    docker pull -q "$(image_repo "$1"):$2" >/dev/null
+  fi
+}
+
+# --- Upgrade rehearsal: its own compose project and volume, no proxy, never touches the
+# --- local staging database. Same guards as `up` (mounted mail initializer, no recurring jobs).
+UPGRADE_PROJECT="circographe-upgrade"
+UPGRADE_CONTAINER="$UPGRADE_PROJECT-staging-1"
+upgrade_compose() { (cd "$DIR" && docker compose -p "$UPGRADE_PROJECT" --env-file .env.local --profile staging "$@"); }
+
+# wait_up <container>: poll /up from inside the container; fail fast if it stops.
+wait_up() {
+  local state
+  for _ in $(seq 1 150); do
+    state="$(docker inspect -f '{{.State.Status}}' "$1" 2>/dev/null || echo missing)"
+    [ "$state" = running ] || { echo; echo "Container $1 is $state" >&2; return 1; }
+    if docker exec "$1" ruby -rnet/http -e 'exit Net::HTTP.get_response(URI("http://127.0.0.1/up")).is_a?(Net::HTTPSuccess)' 2>/dev/null; then
+      echo " up"; return 0
+    fi
+    printf "."; sleep 2
+  done
+  echo; echo "Container $1 not healthy after 5 min" >&2; return 1
+}
+
+# data_report <container> <host output> [host before.json]: run ops/data_report.rb inside the
+# container (copied in, so it also works on images that predate it). Exit 1 = problems found.
+data_report() {
+  local rc=0 env_args=(-e DATA_REPORT_OUTPUT=/tmp/data_report.json)
+  docker cp -q "$ROOT/ops/data_report.rb" "$1:/tmp/data_report.rb"
+  if [ -n "${3:-}" ]; then
+    docker cp -q "$3" "$1:/tmp/data_report_before.json"
+    env_args+=(-e DATA_REPORT_BEFORE=/tmp/data_report_before.json)
+  fi
+  docker exec "${env_args[@]}" "$1" bin/rails runner /tmp/data_report.rb >/dev/null || rc=$?
+  docker cp -q "$1:/tmp/data_report.json" "$2" 2>/dev/null || { echo "Data report failed to run (exit $rc)" >&2; return 2; }
+  return "$rc"
+}
+
+upgrade_failed() { # upgrade_failed <out dir> <reason>
+  upgrade_compose logs --no-color --no-log-prefix staging > "$1/new-image.log" 2>&1 || true
+  echo "UPGRADE FAILED: $2" >&2
+  echo "  reports and logs: $1" >&2
+  echo "  kept for inspection: docker logs $UPGRADE_CONTAINER | docker exec -it $UPGRADE_CONTAINER bin/rails console" >&2
+  echo "  then: bin/docker-local upgrade-clean" >&2
+  exit 1
+}
+
 cmd="${1:-}"; shift || true
 case "$cmd" in
   login)
@@ -93,15 +176,11 @@ case "$cmd" in
     gh auth token | docker login ghcr.io -u "$(gh api user --jq .login)" --password-stdin
     ;;
   pull)
-    env="${1:-}"; check_env "$env"; tag="${2:-latest}"
+    env="${1:-}"; check_env "$env"
     require_docker
     ensure_env_file
-    if [ "$tag" = running ]; then
-      tag="$(ssh -n circographe-deploy "docker ps --filter label=service=circographe-$env --filter label=role=web --format '{{.Image}}'" | head -n1 | sed 's/.*://')"
-      [ -n "$tag" ] || { echo "No running $env container found on the VPS" >&2; exit 1; }
-      echo "VPS runs $env image tag $tag"
-    fi
-    echo "$tag" | grep -Eq '^[A-Za-z0-9._-]+$' || { echo "Invalid tag: $tag" >&2; exit 1; }
+    tag="$(resolve_tag "$env" "${2:-latest}")"
+    [ "${2:-}" = running ] && echo "VPS runs $env image tag $tag"
     docker pull "$(image_repo "$env"):$tag"
     set_tag "$(tag_var "$env")" "$tag"
     ;;
@@ -159,6 +238,60 @@ case "$cmd" in
     [ -f "$ENV_FILE" ] && grep -E '^(STAGING|PRODUCTION)_TAG=' "$ENV_FILE"
     echo "staging:    $STAGING_URL"
     echo "production: $PRODUCTION_URL"
+    ;;
+  build)
+    require_docker
+    ensure_env_file
+    mkdir -p "$ROOT/tmp/docker-local"
+    build_local "$ROOT/tmp/docker-local/build.log"
+    set_tag STAGING_TAG local
+    echo "Done. bin/docker-local up staging now runs this image."
+    ;;
+  upgrade)
+    require_docker
+    ensure_env_file
+    from="$(resolve_tag staging "${1:-running}")"
+    to="$(resolve_tag staging "${2:-local}")"
+    out="$ROOT/tmp/docker-local/upgrade-$(date +%Y%m%d-%H%M%S)"
+    mkdir -p "$out"
+    echo "Upgrade rehearsal (staging): $from -> $to"
+    [ "$from" != "$to" ] || echo "  note: both tags are the same image, this only checks a restart"
+    fetch_image staging "$from"
+    fetch_image staging "$to"
+    upgrade_compose down -v --remove-orphans >/dev/null 2>&1 || true
+
+    printf "1/4 fresh database + demo data on %s " "${from:0:12}"
+    STAGING_TAG="$from" SEED_DEMO=true SEED_LEAN=false upgrade_compose up -d staging >/dev/null 2>&1
+    wait_up "$UPGRADE_CONTAINER" || upgrade_failed "$out" "the old image did not boot"
+    upgrade_compose logs --no-color --no-log-prefix staging > "$out/old-image.log" 2>&1
+
+    echo "2/4 data report before"
+    data_report "$UPGRADE_CONTAINER" "$out/before.json" || upgrade_failed "$out" "data report on the old image"
+    docker exec "$UPGRADE_CONTAINER" ruby -rjson -e '
+      r = JSON.parse(File.read("/tmp/data_report.json")); t = r["tables"]
+      puts "    schema #{r["schema_version"]}, #{t.values.sum} rows, #{t["people"].to_i} people, #{t["payments"].to_i} payments"
+      warn "    WARNING: little data, the old image may not support SEED_DEMO" if t["people"].to_i < 10'
+
+    printf "3/4 image %s on the same database (what kamal deploy does) " "${to:0:12}"
+    STAGING_TAG="$to" SEED_DEMO=true SEED_LEAN=false upgrade_compose up -d staging >/dev/null 2>&1
+    wait_up "$UPGRADE_CONTAINER" || upgrade_failed "$out" "the new image did not boot (migration error? see new-image.log)"
+    upgrade_compose logs --no-color --no-log-prefix staging > "$out/new-image.log" 2>&1
+    grep -E "^== [0-9]+ .*: migrated" "$out/new-image.log" | sed -E 's/ =+$//; s/^/    migration /' || echo "    no migration to run"
+
+    echo "4/4 data report after, compared"
+    rc=0; data_report "$UPGRADE_CONTAINER" "$out/after.json" "$out/before.json" || rc=$?
+    [ "$rc" -le 1 ] || upgrade_failed "$out" "data report on the new image"
+    docker exec "$UPGRADE_CONTAINER" ruby -rjson -e '
+      r = JSON.parse(File.read("/tmp/data_report.json")); b = JSON.parse(File.read("/tmp/data_report_before.json"))
+      puts "    schema #{b["schema_version"]} -> #{r["schema_version"]}, rows #{b["tables"].values.sum} -> #{r["tables"].values.sum}"
+      r["problems"].each { |p| puts "    PROBLEM #{p}" }'
+    [ "$rc" -eq 0 ] || upgrade_failed "$out" "data lost or broken by the upgrade"
+    upgrade_compose down -v --remove-orphans >/dev/null 2>&1
+    echo "UPGRADE OK ($from -> $to). Reports: $out"
+    ;;
+  upgrade-clean)
+    require_docker
+    upgrade_compose down -v --remove-orphans
     ;;
   ''|-h|--help|help) usage 0 ;;
   *) usage ;;
