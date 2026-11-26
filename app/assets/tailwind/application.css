@@ -49,11 +49,12 @@
 }
 
 /*
- * Plan OpenStreetMap adouci (désaturé, éclairci) pour s'accorder aux photos noir et blanc
- * du site. Seul le fond est filtré : le point violet et les contrôles restent en couleur.
+ * Plan OpenStreetMap adouci (couleurs atténuées, éclairci) pour ne pas voler la vedette aux
+ * photos noir et blanc du site, en gardant les repères (rues, parcs). Seul le fond est
+ * filtré : le point violet et les contrôles restent en couleur.
  */
 .leaflet-map-shell .leaflet-tile-pane {
-  filter: grayscale(0.85) brightness(1.06) contrast(0.92);
+  filter: saturate(0.55) brightness(1.04) contrast(0.95);
 }
 
 /* Zone tactile Leaflet par défaut (~30px) sous le minimum recommandé (44px). */
