@@ -4,5 +4,6 @@
   <span class="shrink-0 text-gray-300 hover:text-gray-500 cursor-grab active:cursor-grabbing select-none text-base leading-none [@media(hover:none)]:hidden">⠿</span>
   <span class="shrink-0 text-xs font-mono text-gray-300 w-4 text-right select-none tabular-nums" data-sortable-number><%= index + 1 %></span>
   <%= yield %>
-  <%= render "admin/shared/row_actions", edit_path:, delete_path:, edit_text:, delete_text: "✕", confirm_delete_text:, extra_class: local_assigns[:extra_class] || "transition-opacity [@media(hover:hover)]:opacity-0 [@media(hover:hover)]:group-hover:opacity-100 group-focus-within:opacity-100" %>
+  <%# Les formulaires des listes réordonnables (CA, partenaires, FAQ) s'ouvrent dans la modale (turbo_frame "modal") : leurs « Annuler » / « ✕ » ne savent fermer que cette modale. %>
+  <%= render "admin/shared/row_actions", edit_path:, delete_path:, edit_text:, edit_data: local_assigns.fetch(:edit_data, { turbo_frame: "modal" }), delete_text: "✕", confirm_delete_text:, extra_class: local_assigns[:extra_class] || "transition-opacity [@media(hover:hover)]:opacity-0 [@media(hover:hover)]:group-hover:opacity-100 group-focus-within:opacity-100" %>
 </div>

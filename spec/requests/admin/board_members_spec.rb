@@ -12,6 +12,13 @@ RSpec.describe "Admin::BoardMembers", type: :request do
       get admin_board_members_path
       expect(response).to have_http_status(:success)
     end
+
+    it "opens the edit form in the modal, the only place its Cancel can close" do
+      member = create(:board_member)
+      get admin_board_members_path
+      link = Nokogiri::HTML(response.body).at_css(%(a[href="#{edit_admin_board_member_path(member)}"]))
+      expect(link["data-turbo-frame"]).to eq("modal")
+    end
   end
 
   describe "POST /admin/board_members" do
