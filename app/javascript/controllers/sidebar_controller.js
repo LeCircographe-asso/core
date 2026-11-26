@@ -15,6 +15,16 @@ export default class extends Controller {
     // On a phone, choosing a link closes the drawer (Turbo then renders the new page).
     this.handleSidebarClick = (event) => { if (this.isMobile() && event.target.closest("a")) this.closeMobile() }
     this.sidebarTarget.addEventListener("click", this.handleSidebarClick)
+    this.syncInert()
+  }
+
+  // On a phone the closed drawer is only translated off-screen: make it inert (no keyboard
+  // focus) and hidden from assistive technology until it opens. Never on desktop.
+  syncInert() {
+    const hidden = this.isMobile() && !this.sidebarTarget.classList.contains("mobile-open")
+    this.sidebarTarget.inert = hidden
+    if (hidden) this.sidebarTarget.setAttribute("aria-hidden", "true")
+    else this.sidebarTarget.removeAttribute("aria-hidden")
   }
 
   disconnect() {
@@ -32,6 +42,7 @@ export default class extends Controller {
     event?.preventDefault()
     this.sidebarTarget.classList.remove("collapsed")
     this.sidebarTarget.classList.add("mobile-open")
+    this.syncInert()
     this.textTargets.forEach(text => text.classList.remove("hidden"))
     if (this.hasBackdropTarget) this.backdropTarget.hidden = false
     if (this.hasMobileToggleTarget) this.mobileToggleTarget.setAttribute("aria-expanded", "true")
@@ -44,6 +55,7 @@ export default class extends Controller {
     if (!this.sidebarTarget.classList.contains("mobile-open")) return
     this.sidebarTarget.classList.remove("mobile-open")
     this.sidebarTarget.classList.add("collapsed")
+    this.syncInert()
     this.textTargets.forEach(text => text.classList.add("hidden"))
     if (this.hasBackdropTarget) this.backdropTarget.hidden = true
     if (this.hasMobileToggleTarget) {
@@ -119,5 +131,6 @@ export default class extends Controller {
       }
       this.textTargets.forEach(text => text.classList.add('hidden'))
     }
+    this.syncInert()
   }
 }
