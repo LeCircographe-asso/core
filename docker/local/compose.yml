@@ -3,14 +3,19 @@
 #
 # Safety: these images carry the real app, so everything that reaches outside is switched
 # off: mail delivery, recurring jobs (nightly rclone backup, reminders), Litestream restore
-# and replication, analytics (Umami only counts the real public hosts). Each environment
-# starts on its own fresh SQLite volume with the seeds; nothing is copied from the VPS.
+# and replication, analytics. Mail and analytics are blocked from outside the image (mounted
+# initializer, proxy CSP) so that images built before the in-app switches existed are safe
+# too. Each environment starts on its own fresh SQLite volume with the seeds; nothing is
+# copied from the VPS.
 
 name: circographe-local
 
 x-app: &app
   env_file: .env.local   # RAILS_MASTER_KEY, SECRET_KEY_BASE, STAGING_PASSWORD, *_TAG (bin/docker-local writes it)
   restart: "no"
+  configs:
+    - source: local_guards
+      target: /rails/config/initializers/zz_docker_local_guards.rb
 
 services:
   staging:
@@ -72,16 +77,31 @@ configs:
         auto_https off
         admin off
       }
+      # header_down +Content-Security-Policy adds a second CSP next to the app's own; the
+      # browser enforces both. It only lets the page connect back to this server (and the
+      # address autocomplete API): Umami's script.js / recorder.js cannot send a single
+      # event, whatever the image's tag attributes.
       :8081 {
         reverse_proxy staging:80 {
           header_up X-Forwarded-Proto https
+          header_down +Content-Security-Policy "connect-src 'self' ws: wss: https://api-adresse.data.gouv.fr"
         }
       }
       :8082 {
         reverse_proxy production:80 {
           header_up X-Forwarded-Proto https
+          header_down +Content-Security-Policy "connect-src 'self' ws: wss: https://api-adresse.data.gouv.fr"
         }
       }
+  local_guards:
+    content: |
+      # Mounted by docker/local/compose.yml, never part of the app: an image run on a
+      # developer machine must not send mail, even one built before
+      # MAILER_DELIVERIES_ENABLED existed. Registered last, so it wins over the environment.
+      ActiveSupport.on_load(:action_mailer) do
+        self.perform_deliveries = false
+        self.delivery_method = :test
+      end
 
 volumes:
   staging_storage:

@@ -58,6 +58,21 @@ set_tag() { # set_tag <VAR> <value>
   sed -i "s/^$1=.*/$1=$2/" "$ENV_FILE"
 }
 
+# A production image whose entrypoint restores Litestream but predates the
+# LITESTREAM_RESTORE_ON_BOOT switch would download the production replica on first boot
+# (personal data on a laptop): refuse to start it.
+check_litestream_guard() {
+  local image entrypoint
+  image="$(image_repo production):$(grep '^PRODUCTION_TAG=' "$ENV_FILE" | cut -d= -f2-)"
+  entrypoint="$(docker run --rm --pull never --entrypoint cat "$image" bin/docker-entrypoint)" ||
+    { echo "Cannot read $image: bin/docker-local pull production first" >&2; exit 1; }
+  if grep -q 'litestream:restore' <<<"$entrypoint" && ! grep -q 'LITESTREAM_RESTORE_ON_BOOT' <<<"$entrypoint"; then
+    echo "Refusing to start $image: it restores the production Litestream replica on boot" >&2
+    echo "and has no LITESTREAM_RESTORE_ON_BOOT switch. Pick a newer tag." >&2
+    exit 1
+  fi
+}
+
 check_env() {
   case "${1:-}" in staging|production) ;; *) usage ;; esac
 }
@@ -92,8 +107,12 @@ case "$cmd" in
     ;;
   up)
     env="${1:-}"; check_env "$env"
+    require_docker
     ensure_env_file
-    compose --profile "$env" up -d "$env" proxy
+    [ "$env" = production ] && check_litestream_guard
+    compose --profile "$env" up -d "$env"
+    # Compose does not notice edits to the proxy's inline Caddyfile: always recreate it (1 s).
+    compose --profile "$env" up -d --force-recreate proxy
     url="$(url_for "$env")"
     printf "Waiting for %s/up " "$url"
     for _ in $(seq 1 60); do
