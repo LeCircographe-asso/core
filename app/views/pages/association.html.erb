@@ -1,39 +1,39 @@
-<% content_for :title, "Le Circographe - L'association" %>
+<% content_for :title, t("views.pages.association.page_title") %>
 
 <section class="public-hero-shell mb-8 sm:mb-10 lg:mb-12">
   <%= image_tag hero_image(:association_hero), class: "absolute inset-0 w-full h-full object-cover hero-img-filter", alt: "" %>
   <div class="hero-overlay"></div>
   <div class="hero-panel public-hero-panel-centered py-6 sm:py-8 sm:space-y-6">
-    <p class="public-hero-eyebrow">Créer, pratiquer, partager — en autogestion</p>
-    <h1 class="public-hero-title">Bienvenue au Circographe</h1>
-    <p class="public-hero-body">Association loi 1901 : cirque, arts graphiques et projets artistiques, portés par les bénévoles et les adhérent·es.</p>
+    <p class="public-hero-eyebrow"><%= t("views.pages.association.eyebrow") %></p>
+    <h1 class="public-hero-title"><%= t("views.pages.association.heading") %></h1>
+    <p class="public-hero-body"><%= t("views.pages.association.intro") %></p>
     <div class="flex flex-col sm:flex-row items-center justify-center gap-3">
-      <%= link_to "Adhérer", page_path("become_member"), class: "btn-primary shadow-lg" %>
+      <%= link_to t("views.pages.association.join"), page_path("become_member"), class: "btn-primary shadow-lg" %>
     </div>
   </div>
 </section>
 
 <section class="public-section-shell space-y-6 sm:space-y-8 !py-8 sm:!py-12 lg:!py-14" data-gsap-reveal>
   <header id="le-cirque" class="public-anchor-section max-w-3xl mx-auto text-center space-y-3" data-gsap-reveal-item>
-    <p class="section-eyebrow">Deux pôles, un même lieu</p>
-    <h2 class="text-2xl sm:text-3xl font-bold text-gray-900">Cirque & arts graphiques</h2>
-    <p class="text-sm sm:text-base text-gray-700 leading-relaxed">Un même hangar pour entraînements, ateliers et créations — espace partagé, savoirs qui circulent.</p>
+    <p class="section-eyebrow"><%= t("views.pages.association.poles.eyebrow") %></p>
+    <h2 class="text-2xl sm:text-3xl font-bold text-gray-900"><%= t("views.pages.association.poles.heading") %></h2>
+    <p class="text-sm sm:text-base text-gray-700 leading-relaxed"><%= t("views.pages.association.poles.intro") %></p>
   </header>
 
   <div class="grid grid-cols-1 gap-6 lg:grid-cols-2 lg:gap-8">
     <article class="overflow-hidden rounded-3xl bg-gradient-to-br from-brand-primary/10 via-white to-white border border-brand-primary/20 shadow-md" data-gsap-reveal-item>
       <div class="relative h-44 sm:h-56 lg:h-64">
-        <%= image_tag hero_image(:association_circus_card), class: "w-full h-full object-cover", alt: "Entraînement de cirque au Circographe" %>
+        <%= image_tag hero_image(:association_circus_card), class: "w-full h-full object-cover", alt: t("views.pages.association.poles.circus.image_alt") %>
       </div>
       <div class="mt-3 flex justify-center">
-        <span class="inline-flex items-center bg-brand-primary text-white text-xs font-semibold tracking-widest uppercase px-3 py-1 rounded-full shadow-md">Les Arts du Cirque</span>
+        <span class="inline-flex items-center bg-brand-primary text-white text-xs font-semibold tracking-widest uppercase px-3 py-1 rounded-full shadow-md"><%= t("views.pages.association.poles.circus.badge") %></span>
       </div>
       <div class="p-5 sm:p-7 space-y-2.5">
-        <p class="text-lg font-semibold text-gray-900">Entraînements libres & accueils de compagnies</p>
-        <p class="text-gray-700 text-sm sm:text-base leading-relaxed">Tous niveaux : entraînements libres, échanges ; accueils ponctuels pour les compagnies.</p>
+        <p class="text-lg font-semibold text-gray-900"><%= t("views.pages.association.poles.circus.title") %></p>
+        <p class="text-gray-700 text-sm sm:text-base leading-relaxed"><%= t("views.pages.association.poles.circus.body") %></p>
         <div class="pt-1">
           <%= link_to page_path("news", anchor: "pratiques-regulieres"), class: "inline-flex min-h-11 items-center gap-2 text-sm font-semibold text-brand-primary hover:text-brand-primary-dark transition-colors" do %>
-            Explorer l’univers cirque
+            <%= t("views.pages.association.poles.circus.link") %>
             <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14m-7-7l7 7-7 7"/></svg>
           <% end %>
         </div>
@@ -42,17 +42,17 @@
 
     <article id="les-arts-graphiques" class="public-anchor-section overflow-hidden rounded-3xl bg-slate-50 border border-slate-200 shadow-sm" data-gsap-reveal-item>
       <div class="relative h-44 sm:h-56 lg:h-64">
-        <%= image_tag hero_image(:association_graphics_card), class: "w-full h-full object-cover", alt: "Atelier graphique au Circographe" %>
+        <%= image_tag hero_image(:association_graphics_card), class: "w-full h-full object-cover", alt: t("views.pages.association.poles.graphics.image_alt") %>
       </div>
       <div class="mt-3 flex justify-center">
-        <span class="inline-flex items-center bg-slate-700 text-white text-xs font-semibold tracking-widest uppercase px-3 py-1 rounded-full shadow-md">Les Arts Graphiques</span>
+        <span class="inline-flex items-center bg-slate-700 text-white text-xs font-semibold tracking-widest uppercase px-3 py-1 rounded-full shadow-md"><%= t("views.pages.association.poles.graphics.badge") %></span>
       </div>
       <div class="p-5 sm:p-7 space-y-2.5">
-        <p class="text-lg font-semibold text-gray-900">Arts graphiques & ateliers</p>
-        <p class="text-gray-700 text-sm sm:text-base leading-relaxed">Street art, œuvres collectives et ateliers : la communauté anime les murs et les projets visuels.</p>
+        <p class="text-lg font-semibold text-gray-900"><%= t("views.pages.association.poles.graphics.title") %></p>
+        <p class="text-gray-700 text-sm sm:text-base leading-relaxed"><%= t("views.pages.association.poles.graphics.body") %></p>
         <div class="pt-1">
           <%= link_to page_path("news", anchor: "pratiques-visuelles"), class: "inline-flex min-h-11 items-center gap-2 text-sm font-semibold text-slate-700 hover:text-slate-900 transition-colors" do %>
-            Plonger dans l’atelier graphique
+            <%= t("views.pages.association.poles.graphics.link") %>
             <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14m-7-7l7 7-7 7"/></svg>
           <% end %>
         </div>
@@ -61,38 +61,38 @@
   </div>
 
   <footer class="bg-brand-primary/5 border border-brand-primary/10 rounded-2xl px-5 sm:px-7 py-3.5 text-center text-sm text-gray-700" data-gsap-reveal-item>
-    <%= link_to "Nos activités", page_path("news"), class: "inline-flex min-h-11 items-center font-semibold text-brand-primary hover:text-brand-primary-dark underline-offset-2 hover:underline" %>
+    <%= link_to t("views.pages.association.activities_link"), page_path("news"), class: "inline-flex min-h-11 items-center font-semibold text-brand-primary hover:text-brand-primary-dark underline-offset-2 hover:underline" %>
     <span class="text-gray-400 mx-2">·</span>
-    <%= link_to "Voir les photos", page_path("gallery"), class: "inline-flex min-h-11 items-center font-semibold text-brand-primary hover:text-brand-primary-dark underline-offset-2 hover:underline" %>
+    <%= link_to t("views.pages.association.photos_link"), page_path("gallery"), class: "inline-flex min-h-11 items-center font-semibold text-brand-primary hover:text-brand-primary-dark underline-offset-2 hover:underline" %>
   </footer>
 </section>
 
 <section id="fonctionnement" class="public-card-shell public-anchor-section mt-8 mb-8 md:mt-10 md:mb-12" data-gsap-reveal>
   <header class="text-center mb-5 sm:mb-6 space-y-2" data-gsap-reveal-item>
-    <p class="section-eyebrow">Autogestion & bénévolat</p>
-    <h2 class="text-2xl sm:text-3xl font-bold text-black">Le lieu tient par l’engagement</h2>
-    <p class="max-w-2xl mx-auto text-gray-700 text-sm sm:text-base">Créneaux, technique, expo, accueil : chaque adhérent·e peut contribuer à sa manière.</p>
+    <p class="section-eyebrow"><%= t("views.pages.association.engagement.eyebrow") %></p>
+    <h2 class="text-2xl sm:text-3xl font-bold text-black"><%= t("views.pages.association.engagement.heading") %></h2>
+    <p class="max-w-2xl mx-auto text-gray-700 text-sm sm:text-base"><%= t("views.pages.association.engagement.intro") %></p>
   </header>
   <div class="grid grid-cols-1 gap-4 md:grid-cols-3 md:gap-6">
     <article class="p-5 rounded-lg bg-white shadow-sm border border-gray-100 hover:shadow-lg transition-all duration-300" data-gsap-reveal-item>
-      <h3 class="text-xl font-semibold text-gray-800 mb-3">Décider ensemble</h3>
-      <p class="text-gray-600 text-sm leading-relaxed">AG annuelle et réunions : usages de la salle, programmation, décisions collectives.</p>
+      <h3 class="text-xl font-semibold text-gray-800 mb-3"><%= t("views.pages.association.engagement.decide.title") %></h3>
+      <p class="text-gray-600 text-sm leading-relaxed"><%= t("views.pages.association.engagement.decide.body") %></p>
     </article>
     <article class="p-5 rounded-lg bg-white shadow-sm border border-gray-100 hover:shadow-lg transition-all duration-300" data-gsap-reveal-item>
-      <h3 class="text-xl font-semibold text-gray-800 mb-3">Bénévolat en action</h3>
-      <p class="text-gray-600 text-sm leading-relaxed">Accueil, maintenance, ateliers, communication… des missions variées selon les envies et les compétences.</p>
+      <h3 class="text-xl font-semibold text-gray-800 mb-3"><%= t("views.pages.association.engagement.volunteer.title") %></h3>
+      <p class="text-gray-600 text-sm leading-relaxed"><%= t("views.pages.association.engagement.volunteer.body") %></p>
     </article>
     <article class="p-5 rounded-lg bg-white shadow-sm border border-gray-100 hover:shadow-lg transition-all duration-300" data-gsap-reveal-item>
-      <h3 class="text-xl font-semibold text-gray-800 mb-3">Adhérer sur place</h3>
-      <p class="text-gray-600 text-sm leading-relaxed">Adhésion lors d’une venue : visite du lieu, sécurité, questions — mise en lien avec la communauté.</p>
+      <h3 class="text-xl font-semibold text-gray-800 mb-3"><%= t("views.pages.association.engagement.join.title") %></h3>
+      <p class="text-gray-600 text-sm leading-relaxed"><%= t("views.pages.association.engagement.join.body") %></p>
     </article>
   </div>
   <div class="mt-6 bg-brand-primary/5 border border-brand-primary/10 rounded-2xl px-5 py-3.5 text-center text-sm text-gray-600" data-gsap-reveal-item>
-    Projet dans la salle ou bénévolat : <%= link_to "passe en créneau d’ouverture", page_path("contact_us", anchor: "horaires"), class: "font-semibold text-brand-primary hover:text-brand-primary-dark underline-offset-2 hover:underline" %> — on construit ça avec toi.
+    <%= t("views.pages.association.engagement.project_html", link: link_to(t("views.pages.association.engagement.project_link"), page_path("contact_us", anchor: "horaires"), class: "font-semibold text-brand-primary hover:text-brand-primary-dark underline-offset-2 hover:underline")) %>
   </div>
 </section>
 
 <section class="public-surface p-6 sm:p-7 text-center mt-10 md:mt-14 mb-10 md:mb-14 space-y-3 fade-in border border-gray-200 max-w-4xl mx-auto w-full">
-  <p class="text-base sm:text-lg text-gray-700 font-medium">Envie de rejoindre le lieu ? L’adhésion se fait sur place avec les bénévoles.</p>
-  <%= link_to "Adhérer au Circographe", page_path('become_member'), class: "public-cta" %>
+  <p class="text-base sm:text-lg text-gray-700 font-medium"><%= t("views.pages.association.cta.body") %></p>
+  <%= link_to t("views.pages.association.cta.button"), page_path('become_member'), class: "public-cta" %>
 </section>

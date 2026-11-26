@@ -900,6 +900,48 @@ fr:
           message_label: Message
           message_placeholder: Parle-nous de ton projet, de ta question ou de ton besoin…
           submit: Envoyer le message
+      association:
+        page_title: Le Circographe - L'association
+        eyebrow: Créer, pratiquer, partager — en autogestion
+        heading: Bienvenue au Circographe
+        intro: 'Association loi 1901 : cirque, arts graphiques et projets artistiques, portés par les bénévoles et les adhérent·es.'
+        join: Adhérer
+        activities_link: Nos activités
+        photos_link: Voir les photos
+        poles:
+          eyebrow: Deux pôles, un même lieu
+          heading: Cirque & arts graphiques
+          intro: Un même hangar pour entraînements, ateliers et créations — espace partagé, savoirs qui circulent.
+          circus:
+            image_alt: Entraînement de cirque au Circographe
+            badge: Les Arts du Cirque
+            title: Entraînements libres & accueils de compagnies
+            body: 'Tous niveaux : entraînements libres, échanges ; accueils ponctuels pour les compagnies.'
+            link: Explorer l’univers cirque
+          graphics:
+            image_alt: Atelier graphique au Circographe
+            badge: Les Arts Graphiques
+            title: Arts graphiques & ateliers
+            body: 'Street art, œuvres collectives et ateliers : la communauté anime les murs et les projets visuels.'
+            link: Plonger dans l’atelier graphique
+        engagement:
+          eyebrow: Autogestion & bénévolat
+          heading: Le lieu tient par l’engagement
+          intro: 'Créneaux, technique, expo, accueil : chaque adhérent·e peut contribuer à sa manière.'
+          decide:
+            title: Décider ensemble
+            body: 'AG annuelle et réunions : usages de la salle, programmation, décisions collectives.'
+          volunteer:
+            title: Bénévolat en action
+            body: Accueil, maintenance, ateliers, communication… des missions variées selon les envies et les compétences.
+          join:
+            title: Adhérer sur place
+            body: 'Adhésion lors d’une venue : visite du lieu, sécurité, questions — mise en lien avec la communauté.'
+          project_html: 'Projet dans la salle ou bénévolat : %{link} — on construit ça avec toi.'
+          project_link: passe en créneau d’ouverture
+        cta:
+          body: Envie de rejoindre le lieu ? L’adhésion se fait sur place avec les bénévoles.
+          button: Adhérer au Circographe
     home:
       index:
         page_title: Le Circographe - Accueil
