@@ -133,6 +133,11 @@ case "$cmd" in
     env="${1:-}"; check_env "$env"
     compose --profile "$env" stop "$env"
     compose --profile "$env" rm -f "$env"
+    # The proxy serves both ports: keep it while the other environment runs, drop it otherwise.
+    if [ -z "$(compose --profile staging --profile production ps -q staging production)" ]; then
+      compose --profile "$env" stop proxy
+      compose --profile "$env" rm -f proxy
+    fi
     if [ "${2:-}" = "--reset" ]; then
       docker volume rm "circographe-local_${env}_storage" && echo "Local $env database deleted"
     fi
