@@ -53,10 +53,14 @@ Le journal est persistant (`/var/log/journal`) : les logs survivent aux déploie
 install -o root -g root -m 755 /home/deploy/circographe-tools/ops/vps/circographe-logs /usr/local/bin/circographe-logs
 # le compte logs doit pouvoir lire le journal
 usermod -aG systemd-journal logs
-# plafond et durée de rétention du journal (les logs contiennent des chemins et des IP : pas plus d'un mois)
+# journal sur disque (Storage=persistent : sinon, sans /var/log/journal, journald garde tout en RAM
+# et perd les logs au redémarrage), plafond et durée de rétention (les logs contiennent des chemins
+# et des IP : pas plus d'un mois)
 mkdir -p /etc/systemd/journald.conf.d
-printf '[Journal]\nSystemMaxUse=2G\nMaxRetentionSec=1month\n' > /etc/systemd/journald.conf.d/circographe.conf
+printf '[Journal]\nStorage=persistent\nSystemMaxUse=2G\nMaxRetentionSec=1month\n' > /etc/systemd/journald.conf.d/circographe.conf
 systemctl restart systemd-journald
+# doit afficher /var/log/journal/<machine-id> et sa taille
+journalctl --disk-usage
 ```
 
 Puis :
