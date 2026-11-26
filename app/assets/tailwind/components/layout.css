@@ -1,9 +1,4 @@
 @layer components {
-  .footer-divider {
-    margin-top: 2rem !important;
-    margin-bottom: 2rem !important;
-  }
-
   .page-container {
     @apply mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8;
   }
