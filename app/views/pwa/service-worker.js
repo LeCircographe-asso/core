@@ -10,6 +10,7 @@ const OFFLINE_HTML = `<!doctype html>
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="turbo-visit-control" content="reload">
 <title>Hors ligne · Le Circographe</title>
 <style>
   body { margin: 0; min-height: 100vh; display: grid; place-items: center; background: #f6f4ef;
@@ -50,16 +51,29 @@ self.addEventListener("activate", (event) => {
   )
 })
 
-// Fetch: page navigations always go to the network; offline, the page above.
-// Everything else (assets, Turbo fetches) is left to the browser and its HTTP cache.
-// A fetch handler is also what Chrome needs to offer installing the app.
-self.addEventListener("fetch", (event) => {
-  if (event.request.mode !== "navigate") return
+// A page request: a browser navigation, or a Turbo Drive visit (a same-origin GET fetch
+// asking for HTML, not a "navigate" request), which is how most in-app links load.
+function isPageRequest (request) {
+  if (request.mode === "navigate") return true
+  if (request.method !== "GET" || new URL(request.url).origin !== self.location.origin) return false
+  return (request.headers.get("Accept") || "").includes("text/html")
+}
 
+// Fetch: page requests always go to the network; offline, the page above. On a Turbo visit
+// its turbo-visit-control meta makes Turbo reload as a real navigation, so the page is its
+// own document (inline style and button allowed) instead of being merged into the app's
+// page under the app's CSP. Everything else (assets, JSON, Turbo Streams) is left to the
+// browser and its HTTP cache. A fetch handler is also what Chrome needs to offer installing.
+self.addEventListener("fetch", (event) => {
+  if (!isPageRequest(event.request)) return
+
+  // 200 for a Turbo visit: Turbo renders 4xx/5xx with its error renderer, which ignores
+  // turbo-visit-control; a 200 makes it honour the meta and reload. A real navigation keeps 503.
+  const status = event.request.mode === "navigate" ? 503 : 200
   event.respondWith(
     fetch(event.request).catch(() =>
       new Response(OFFLINE_HTML, {
-        status: 503,
+        status,
         headers: { "Content-Type": "text/html; charset=utf-8", "Cache-Control": "no-store" }
       })
     )

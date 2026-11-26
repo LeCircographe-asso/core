@@ -58,7 +58,7 @@ RSpec.describe "Visitor hardening", type: :request do
       expect(body).not_to include("cache.put")
       expect(body).to include('const CACHE_NAME = "circographe-v2"')
       expect(body).to include("Vous êtes hors ligne")
-      expect(body).to include('event.request.mode !== "navigate"')
+      expect(body).to include("if (!isPageRequest(event.request)) return", 'request.mode === "navigate"', 'includes("text/html")')
     end
   end
 end
