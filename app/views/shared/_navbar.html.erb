@@ -1,5 +1,5 @@
 <%= turbo_frame_tag "navigation", target: "_top" do %>
-<nav class="bg-white border-gray-200 sticky top-0 z-50 py-2 sm:py-2.5" data-controller="nav-active">
+<nav class="bg-white border-gray-200 sticky top-0 z-50 py-2 sm:py-2.5" data-controller="nav-active disclosure">
     <div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto px-4 sm:px-6 lg:px-8 xl:px-10 2xl:px-12 min-[844px]:flex-nowrap min-[844px]:gap-x-3">
         <!-- Logo and profile combined for mobile -->
         <div class="flex shrink-0 items-center justify-between w-full min-[844px]:w-auto min-[844px]:justify-start">
@@ -13,7 +13,7 @@
                 <% end %>
 
                 <!-- Hamburger button (mobile and tablet) -->
-                <button data-collapse-toggle="navbar-mobile" type="button" class="inline-flex items-center p-2 w-11 h-11 justify-center text-sm text-gray-500 rounded-lg min-[844px]:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200" aria-controls="navbar-mobile" aria-expanded="false">
+                <button data-disclosure-target="button" data-action="disclosure#toggle" type="button" class="inline-flex items-center p-2 w-11 h-11 justify-center text-sm text-gray-500 rounded-lg min-[844px]:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200" aria-controls="navbar-mobile" aria-expanded="false">
                     <span class="sr-only"><%= t("views.shared.navbar.open_menu") %></span>
                     <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 17 14">
                         <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 1h15M1 7h15M1 13h15" />
@@ -83,8 +83,8 @@
             <%= link_to user_path(Current.user), class: "flex mr-3 select-none" do %><%= image_tag("users.png", alt: "photo de profil", class: "w-8 h-8 rounded-full hover:ring-2 hover:ring-brand-accent/40") %><% end %>
 
             <!-- My Space button with dropdown -->
-            <div class="relative">
-                <button id="dropdownUserButton" data-dropdown-toggle="dropdownUser" class="btn-navbar">
+            <div class="relative" data-controller="disclosure" data-disclosure-close-outside-value="true">
+                <button id="dropdownUserButton" type="button" class="btn-navbar" data-disclosure-target="button" data-action="disclosure#toggle" aria-expanded="false" aria-controls="dropdownUser">
                     <%= t("views.shared.navbar.my_space") %>
                     <svg class="w-2.5 h-2.5 ms-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
                         <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4" />
@@ -95,7 +95,7 @@
                 </button>
 
                 <!-- Dropdown menu -->
-                <div id="dropdownUser" class="z-40 hidden absolute right-0 bg-white divide-y divide-gray-100 rounded-lg shadow w-44">
+                <div id="dropdownUser" data-disclosure-target="panel" class="z-40 hidden absolute right-0 bg-white divide-y divide-gray-100 rounded-lg shadow w-44">
                     <div class="px-4 py-3 text-sm text-gray-900">
                         <div>
                             <% if Current.user.first_name.present? || Current.user.last_name.present? %>
@@ -146,7 +146,7 @@
     </div>
 
     <!-- Mobile menu -->
-    <div class="hidden w-full min-[844px]:hidden" id="navbar-mobile" data-controller="accordion">
+    <div class="hidden w-full min-[844px]:hidden" id="navbar-mobile" data-controller="accordion" data-disclosure-target="panel">
         <div class="flex flex-col items-start w-full p-4 bg-white">
             <!-- Accordions for mobile -->
             <div id="accordion-menu" class="w-full">
