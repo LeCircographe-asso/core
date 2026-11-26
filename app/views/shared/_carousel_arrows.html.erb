@@ -1,0 +1,25 @@
+<%#
+  Flèches précédent / suivant des carrousels Swiper (.swiper-arrow, swiper_overrides.css).
+  Locals (tous optionnels) :
+    wrapper_class — classes du conteneur des deux flèches (position)
+    button_class  — classes ajoutées aux deux boutons
+    icon_class    — classes de l'icône (défaut : h-5 w-5)
+    prev_label / next_label — nom accessible des boutons
+%>
+<% wrapper_class = local_assigns.fetch(:wrapper_class, "absolute flex justify-between items-center w-full -translate-x-1/2 left-1/2 top-1/2 -translate-y-1/2 z-50") %>
+<% icon_class = local_assigns.fetch(:icon_class, "h-5 w-5") %>
+<% arrows = [
+     { side: "prev", label: local_assigns.fetch(:prev_label, "Précédent"), path: "M10 12L6 8L10 4" },
+     { side: "next", label: local_assigns.fetch(:next_label, "Suivant"), path: "M6 12L10 8L6 4" }
+   ] %>
+<div class="<%= wrapper_class %>">
+  <% arrows.each do |arrow| %>
+    <%= tag.button type: "button",
+                   class: [ "swiper-button-#{arrow[:side]} swiper-arrow", local_assigns[:button_class] ].compact.join(" "),
+                   aria: { label: arrow[:label] } do %>
+      <svg class="<%= icon_class %>" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+        <path d="<%= arrow[:path] %>" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
+      </svg>
+    <% end %>
+  <% end %>
+</div>
