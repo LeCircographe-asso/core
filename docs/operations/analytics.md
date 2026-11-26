@@ -67,6 +67,13 @@ docker compose up -d umami
 docker compose logs --tail=50 umami   # migrations OK, puis curl -I https://analytics.lecircographe.fr
 ```
 
+Dependabot (écosystème `docker-compose`) ouvre une PR sur `dev` quand une
+nouvelle version d'Umami ou de Postgres 16 sort (pas les montées majeures de
+Postgres, qui demandent un dump/restore). Merger cette PR ne déploie rien :
+la mise à jour se fait ensuite à la main sur le VPS avec les commandes
+ci-dessus. La CI (`ci-dev`, job `compose`) vérifie le fichier compose avec
+`docker compose config` à chaque PR qui touche `docker/`.
+
 ## Réseau : Umami branché sur kamal-proxy
 
 Kamal occupe déjà les ports 80/443 du VPS via `kamal-proxy` (SSL auto

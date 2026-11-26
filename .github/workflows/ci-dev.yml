@@ -20,6 +20,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       code: ${{ steps.filter.outputs.code }}
+      compose: ${{ steps.filter.outputs.compose }}
     steps:
       - uses: actions/checkout@v7
       - uses: dorny/paths-filter@v4
@@ -47,6 +48,9 @@ jobs:
               - 'config.ru'
               - 'Rakefile'
               - '.github/workflows/**'
+            compose:
+              - 'docker/**'
+              - '.github/workflows/ci-dev.yml'
 
   lint:
     needs: changes
@@ -63,6 +67,20 @@ jobs:
           node-version: "22"
       - name: RuboCop
         run: bin/rubocop --format github --force-exclusion
+
+  # Umami stack (docker/analytics): catches YAML or interpolation errors before
+  # the file is pulled on the VPS. Dummy values only satisfy the `:?` guards.
+  compose:
+    needs: changes
+    if: needs.changes.outputs.compose == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Validate analytics compose file
+        env:
+          UMAMI_DB_PASSWORD: ci-dummy
+          UMAMI_APP_SECRET: ci-dummy
+        run: docker compose -f docker/analytics/docker-compose.yml config --quiet
 
   security:
     needs: changes
