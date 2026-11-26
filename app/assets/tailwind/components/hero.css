@@ -12,9 +12,16 @@
     @apply relative text-center space-y-4;
   }
 
+  /* Espacement réduit sur téléphone + lignes équilibrées : évite un mot seul sur sa ligne. */
   .public-hero-eyebrow {
-    @apply text-sm font-medium uppercase text-white/70;
-    letter-spacing: 0.35em;
+    @apply text-sm font-medium uppercase text-white/70 text-balance;
+    letter-spacing: 0.22em;
+  }
+
+  @media (min-width: 640px) {
+    .public-hero-eyebrow {
+      letter-spacing: 0.35em;
+    }
   }
 
   .public-hero-title {

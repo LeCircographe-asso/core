@@ -32,7 +32,7 @@
         <p class="text-lg font-semibold text-gray-900">Entraînements libres & accueils de compagnies</p>
         <p class="text-gray-700 text-sm sm:text-base leading-relaxed">Tous niveaux : entraînements libres, échanges ; accueils ponctuels pour les compagnies.</p>
         <div class="pt-1">
-          <%= link_to page_path("news", anchor: "pratiques-regulieres"), class: "inline-flex items-center gap-2 text-sm font-semibold text-[#1F5C55] hover:text-[#15403c] transition-colors" do %>
+          <%= link_to page_path("news", anchor: "pratiques-regulieres"), class: "inline-flex min-h-11 items-center gap-2 text-sm font-semibold text-[#1F5C55] hover:text-[#15403c] transition-colors" do %>
             Explorer l’univers cirque
             <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14m-7-7l7 7-7 7"/></svg>
           <% end %>
@@ -51,7 +51,7 @@
         <p class="text-lg font-semibold text-gray-900">Arts graphiques & ateliers</p>
         <p class="text-gray-700 text-sm sm:text-base leading-relaxed">Street art, œuvres collectives et ateliers : la communauté anime les murs et les projets visuels.</p>
         <div class="pt-1">
-          <%= link_to page_path("news", anchor: "pratiques-visuelles"), class: "inline-flex items-center gap-2 text-sm font-semibold text-slate-700 hover:text-slate-900 transition-colors" do %>
+          <%= link_to page_path("news", anchor: "pratiques-visuelles"), class: "inline-flex min-h-11 items-center gap-2 text-sm font-semibold text-slate-700 hover:text-slate-900 transition-colors" do %>
             Plonger dans l’atelier graphique
             <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14m-7-7l7 7-7 7"/></svg>
           <% end %>
@@ -61,9 +61,9 @@
   </div>
 
   <footer class="bg-[#1F5C55]/5 border border-[#1F5C55]/10 rounded-2xl px-5 sm:px-7 py-3.5 text-center text-sm text-gray-700" data-gsap-reveal-item>
-    <%= link_to "Nos activités", page_path("news"), class: "font-semibold text-[#1F5C55] hover:text-[#15403c] underline-offset-2 hover:underline" %>
+    <%= link_to "Nos activités", page_path("news"), class: "inline-flex min-h-11 items-center font-semibold text-[#1F5C55] hover:text-[#15403c] underline-offset-2 hover:underline" %>
     <span class="text-gray-400 mx-2">·</span>
-    <%= link_to "Voir les photos", page_path("gallery"), class: "font-semibold text-[#1F5C55] hover:text-[#15403c] underline-offset-2 hover:underline" %>
+    <%= link_to "Voir les photos", page_path("gallery"), class: "inline-flex min-h-11 items-center font-semibold text-[#1F5C55] hover:text-[#15403c] underline-offset-2 hover:underline" %>
   </footer>
 </section>
 
