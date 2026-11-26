@@ -120,19 +120,26 @@
   </header>
   <%#
     Éditer les entrées ici — status: :past | :present | :future
+    Ordre : de la plus récente à la plus ancienne (à venir, en cours, puis le passé).
     Passer show_future: false pour masquer les étapes à venir.
   %>
   <%= render "shared/timeline", entries: [
     {
-      year:   "2022",
-      title:  "Ouverture du hangar",
-      body:   "Lancement des créneaux d'entraînement et installation des ateliers graphiques.",
-      status: :past
+      year:   "2027",
+      title:  "À venir",
+      body:   "Projets à définir avec la communauté — à mettre à jour ici.",
+      status: :future
     },
     {
-      year:   "2023",
-      title:  "Premiers événements publics",
-      body:   "Plateaux partagés, expositions et ateliers ouverts au quartier.",
+      year:   "2026",
+      title:  "En cours",
+      body:   "Saison active : nouvelles collaborations, accueil de compagnies et projets en cours.",
+      status: :present
+    },
+    {
+      year:   "2025",
+      title:  "Nouveaux partenariats & hors les murs",
+      body:   "Actions extérieures, collaborations et projets itinérants.",
       status: :past
     },
     {
@@ -142,22 +149,16 @@
       status: :past
     },
     {
-      year:   "2025",
-      title:  "Nouveaux partenariats & hors les murs",
-      body:   "Actions extérieures, collaborations et projets itinérants.",
+      year:   "2023",
+      title:  "Premiers événements publics",
+      body:   "Plateaux partagés, expositions et ateliers ouverts au quartier.",
       status: :past
     },
     {
-      year:   "2026",
-      title:  "En cours",
-      body:   "Saison active : nouvelles collaborations, accueil de compagnies et projets en cours.",
-      status: :present
-    },
-    {
-      year:   "2027",
-      title:  "À venir",
-      body:   "Projets à définir avec la communauté — à mettre à jour ici.",
-      status: :future
+      year:   "2022",
+      title:  "Ouverture du hangar",
+      body:   "Lancement des créneaux d'entraînement et installation des ateliers graphiques.",
+      status: :past
     }
   ] %>
 </section>
