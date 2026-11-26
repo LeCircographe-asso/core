@@ -5,6 +5,18 @@
 @import "tailwindcss";
 
 /*
+ * Charte : le vert et le violet du site, déclarés au thème Tailwind pour que toutes leurs
+ * utilitaires existent (bordures, anneaux, dégradés, opacités /25, /30…). Sans cette
+ * déclaration, seule la liste écrite à la main plus bas (@layer utilities) était générée :
+ * une variante absente (border-brand-primary/25, ring-brand-primary…) retombait sur la
+ * couleur par défaut, d'où des bordures noires.
+ */
+@theme {
+  --color-brand-primary: #1F5C55;
+  --color-brand-accent: #5836A5;
+}
+
+/*
  * Leaflet CSS is loaded via <link> in layouts/application.html.erb (before tailwind.css).
  * Embedding @import url(leaflet) here breaks Tailwind v4 output: "@import must precede @layer".
  *
@@ -34,6 +46,15 @@
 .leaflet-map-shell-inner.leaflet-container:focus-visible {
   outline: 3px solid #1F5C55;
   outline-offset: 2px;
+}
+
+/*
+ * Plan OpenStreetMap adouci (couleurs atténuées, éclairci) pour ne pas voler la vedette aux
+ * photos noir et blanc du site, en gardant les repères (rues, parcs). Seul le fond est
+ * filtré : le point violet et les contrôles restent en couleur.
+ */
+.leaflet-map-shell .leaflet-tile-pane {
+  filter: saturate(0.55) brightness(1.04) contrast(0.95);
 }
 
 /* Zone tactile Leaflet par défaut (~30px) sous le minimum recommandé (44px). */
