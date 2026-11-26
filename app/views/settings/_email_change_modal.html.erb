@@ -48,7 +48,7 @@
                 value: "",
                 autocomplete: "email",
                 data: { email_change_modal_target: "email" },
-                class: "block w-full rounded-lg border-gray-300 shadow-sm text-sm focus:border-[#1F5C55] focus:ring-[#1F5C55]",
+                class: "block w-full rounded-lg border-gray-300 shadow-sm text-sm focus:border-brand-accent focus:ring-brand-accent",
                 placeholder: t("settings.show.email_change_placeholder") %>
           </div>
           <div>
@@ -57,7 +57,7 @@
                 id: "email_change_confirm",
                 autocomplete: "off",
                 data: { email_change_modal_target: "emailConfirm" },
-                class: "block w-full rounded-lg border-gray-300 shadow-sm text-sm focus:border-[#1F5C55] focus:ring-[#1F5C55]",
+                class: "block w-full rounded-lg border-gray-300 shadow-sm text-sm focus:border-brand-accent focus:ring-brand-accent",
                 placeholder: t("settings.show.email_change_placeholder") %>
           </div>
           <div class="rounded-lg border border-dashed border-gray-200 bg-gray-50 px-3 py-3 space-y-2">
@@ -68,7 +68,7 @@
                 maxlength: 6,
                 autocomplete: "one-time-code",
                 data: { email_change_modal_target: "code" },
-                class: "block w-full rounded-md border-gray-300 bg-white text-sm text-gray-900 uppercase tracking-[0.25em] focus:border-[#1F5C55] focus:ring-[#1F5C55]",
+                class: "block w-full rounded-md border-gray-300 bg-white text-sm text-gray-900 uppercase tracking-[0.25em] focus:border-brand-accent focus:ring-brand-accent",
                 placeholder: "123456" %>
             <p class="text-xs text-gray-500 leading-snug">
               <%= t("settings.show.email_change_code_hint") %>

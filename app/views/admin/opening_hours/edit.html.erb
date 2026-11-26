@@ -132,14 +132,14 @@
                             <div class="flex items-center space-x-2 text-sm">
                               <!-- Ouverture -->
                               <div class="flex items-center space-x-1">
-                                <select name="open_hour_<%= day %>" class="hour-select bg-white border border-gray-300 rounded px-2 py-1 text-sm focus:border-[#1F5C55] focus:ring-1 focus:ring-[#1F5C55] appearance-none cursor-pointer" data-day="<%= day %>" data-action="change->opening-hours-editor#updateFromSelectors">
+                                <select name="open_hour_<%= day %>" class="hour-select bg-white border border-gray-300 rounded px-2 py-1 text-sm focus:border-brand-accent focus:ring-1 focus:ring-brand-accent appearance-none cursor-pointer" data-day="<%= day %>" data-action="change->opening-hours-editor#updateFromSelectors">
                                   <% (0..23).each do |h| %>
                                     <% selected = hours.to_s.downcase != "fermé" && hours.split(' - ').first&.split(':')&.first&.to_i == h %>
                                     <option value="<%= h %>" <%= 'selected' if selected %>><%= h.to_s.rjust(2, '0') %></option>
                                   <% end %>
                                 </select>
                                 <span class="text-gray-500">:</span>
-                                <select name="open_minute_<%= day %>" class="minute-select bg-white border border-gray-300 rounded px-2 py-1 text-sm focus:border-[#1F5C55] focus:ring-1 focus:ring-[#1F5C55] appearance-none cursor-pointer" data-day="<%= day %>" data-action="change->opening-hours-editor#updateFromSelectors">
+                                <select name="open_minute_<%= day %>" class="minute-select bg-white border border-gray-300 rounded px-2 py-1 text-sm focus:border-brand-accent focus:ring-1 focus:ring-brand-accent appearance-none cursor-pointer" data-day="<%= day %>" data-action="change->opening-hours-editor#updateFromSelectors">
                                   <% [0, 15, 30, 45].each do |m| %>
                                     <% selected = hours.to_s.downcase != "fermé" && hours.split(' - ').first&.split(':')&.last&.to_i == m %>
                                     <option value="<%= m %>" <%= 'selected' if selected %>><%= m.to_s.rjust(2, '0') %></option>
@@ -151,14 +151,14 @@
                               
                               <!-- Fermeture -->
                               <div class="flex items-center space-x-1">
-                                <select name="close_hour_<%= day %>" class="hour-select bg-white border border-gray-300 rounded px-2 py-1 text-sm focus:border-[#1F5C55] focus:ring-1 focus:ring-[#1F5C55] appearance-none cursor-pointer" data-day="<%= day %>" data-action="change->opening-hours-editor#updateFromSelectors">
+                                <select name="close_hour_<%= day %>" class="hour-select bg-white border border-gray-300 rounded px-2 py-1 text-sm focus:border-brand-accent focus:ring-1 focus:ring-brand-accent appearance-none cursor-pointer" data-day="<%= day %>" data-action="change->opening-hours-editor#updateFromSelectors">
                                   <% (0..23).each do |h| %>
                                     <% selected = hours.to_s.downcase != "fermé" && hours.split(' - ').last&.split(':')&.first&.to_i == h %>
                                     <option value="<%= h %>" <%= 'selected' if selected %>><%= h.to_s.rjust(2, '0') %></option>
                                   <% end %>
                                 </select>
                                 <span class="text-gray-500">:</span>
-                                <select name="close_minute_<%= day %>" class="minute-select bg-white border border-gray-300 rounded px-2 py-1 text-sm focus:border-[#1F5C55] focus:ring-1 focus:ring-[#1F5C55] appearance-none cursor-pointer" data-day="<%= day %>" data-action="change->opening-hours-editor#updateFromSelectors">
+                                <select name="close_minute_<%= day %>" class="minute-select bg-white border border-gray-300 rounded px-2 py-1 text-sm focus:border-brand-accent focus:ring-1 focus:ring-brand-accent appearance-none cursor-pointer" data-day="<%= day %>" data-action="change->opening-hours-editor#updateFromSelectors">
                                   <% [0, 15, 30, 45].each do |m| %>
                                     <% selected = hours.to_s.downcase != "fermé" && hours.split(' - ').last&.split(':')&.last&.to_i == m %>
                                     <option value="<%= m %>" <%= 'selected' if selected %>><%= m.to_s.rjust(2, '0') %></option>
@@ -183,7 +183,7 @@
             </div>
 
             <div class="flex justify-end gap-2 mt-3">
-              <%= form.submit "Enregistrer", class: "px-4 py-1.5 text-sm font-medium text-white bg-[#1F5C55] rounded-md hover:bg-[#194A45] focus:outline-none focus:ring-2 focus:ring-offset-0 focus:ring-[#1F5C55]" %>
+              <%= form.submit "Enregistrer", class: "px-4 py-1.5 text-sm font-medium text-white bg-[#1F5C55] rounded-md hover:bg-[#194A45] focus:outline-none focus:ring-2 focus:ring-offset-0 focus:ring-brand-accent" %>
             </div>
           <% end %>
         </div>

@@ -169,19 +169,19 @@
         </p>
         <div class="grid gap-3 sm:grid-cols-2">
           <label class="flex items-start gap-3 rounded-xl border border-gray-200 bg-white p-4 cursor-pointer hover:border-[#1F5C55]/35 hover:bg-teal-50/20 transition-colors shadow-sm">
-            <%= f.check_box :image_rights, data: { section_edit_target: "field" }, class: "mt-0.5 h-4 w-4 shrink-0 rounded border-gray-300 text-[#1F5C55] focus:ring-[#1F5C55]" %>
+            <%= f.check_box :image_rights, data: { section_edit_target: "field" }, class: "mt-0.5 h-4 w-4 shrink-0 rounded border-gray-300 text-[#1F5C55] focus:ring-brand-accent" %>
             <span class="text-sm font-medium text-gray-800 leading-snug"><%= t("settings.show.field_image_rights") %></span>
           </label>
           <label class="flex items-start gap-3 rounded-xl border border-gray-200 bg-white p-4 cursor-pointer hover:border-[#1F5C55]/35 hover:bg-teal-50/20 transition-colors shadow-sm">
-            <%= f.check_box :newsletter_subscribed, data: { section_edit_target: "field" }, class: "mt-0.5 h-4 w-4 shrink-0 rounded border-gray-300 text-[#1F5C55] focus:ring-[#1F5C55]" %>
+            <%= f.check_box :newsletter_subscribed, data: { section_edit_target: "field" }, class: "mt-0.5 h-4 w-4 shrink-0 rounded border-gray-300 text-[#1F5C55] focus:ring-brand-accent" %>
             <span class="text-sm font-medium text-gray-800 leading-snug"><%= t("settings.show.field_newsletter") %></span>
           </label>
           <label class="flex items-start gap-3 rounded-xl border border-gray-200 bg-white p-4 cursor-pointer hover:border-[#1F5C55]/35 hover:bg-teal-50/20 transition-colors shadow-sm">
-            <%= f.check_box :get_involved, data: { section_edit_target: "field" }, class: "mt-0.5 h-4 w-4 shrink-0 rounded border-gray-300 text-[#1F5C55] focus:ring-[#1F5C55]" %>
+            <%= f.check_box :get_involved, data: { section_edit_target: "field" }, class: "mt-0.5 h-4 w-4 shrink-0 rounded border-gray-300 text-[#1F5C55] focus:ring-brand-accent" %>
             <span class="text-sm font-medium text-gray-800 leading-snug"><%= t("settings.show.field_get_involved") %></span>
           </label>
           <label class="flex items-start gap-3 rounded-xl border border-gray-200 bg-white p-4 cursor-pointer hover:border-[#1F5C55]/35 hover:bg-teal-50/20 transition-colors shadow-sm">
-            <%= f.check_box :dyslexic_font, data: { section_edit_target: "field" }, class: "mt-0.5 h-4 w-4 shrink-0 rounded border-gray-300 text-[#1F5C55] focus:ring-[#1F5C55]" %>
+            <%= f.check_box :dyslexic_font, data: { section_edit_target: "field" }, class: "mt-0.5 h-4 w-4 shrink-0 rounded border-gray-300 text-[#1F5C55] focus:ring-brand-accent" %>
             <span class="text-sm font-medium text-gray-800 leading-snug"><%= t("settings.show.field_dyslexic_font") %></span>
           </label>
         </div>
@@ -199,7 +199,7 @@
       <%= button_to t("settings.show.password_reset_cta"), request_reset_passwords_path,
           method: :get,
           form: { data: { turbo_confirm: t("settings.show.password_reset_confirm", email: user.email_address), section_edit_target: "protectedAction" } },
-          class: "w-full flex justify-center py-2.5 px-4 border border-gray-300 rounded-lg shadow-sm text-sm font-medium text-gray-800 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1F5C55] transition-colors" %>
+          class: "w-full flex justify-center py-2.5 px-4 border border-gray-300 rounded-lg shadow-sm text-sm font-medium text-gray-800 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-accent transition-colors" %>
     </div>
 
     <div class="mt-6 pt-6 border-t border-gray-200 space-y-2.5">

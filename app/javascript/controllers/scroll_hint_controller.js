@@ -47,7 +47,7 @@ export default class extends Controller {
     this.arrowTarget.classList.remove("opacity-0", "pointer-events-none")
   }
 
-  // ── Idle bounce (remplace le CSS animation-bounce) ────────────────────
+  // ── Idle bounce ────────────────────────────────────
   _startIdleBounce () {
     if (prefersReducedMotion()) return
     this._bounceTween = gsap.to(this._arrowEl, {

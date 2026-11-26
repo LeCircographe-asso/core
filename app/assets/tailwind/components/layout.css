@@ -1,9 +1,4 @@
 @layer components {
-  .footer-divider {
-    margin-top: 2rem !important;
-    margin-bottom: 2rem !important;
-  }
-
   .page-container {
     @apply mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8;
   }
@@ -38,10 +33,6 @@
 
   .public-surface-bordered {
     @apply rounded-[28px] border border-white/80 bg-white/95 shadow-lg;
-  }
-
-  .public-soft-card {
-    @apply rounded-2xl border border-gray-100 bg-white shadow-md;
   }
 
   .public-section-shell {
@@ -102,10 +93,6 @@
 
   .body-text-lg {
     @apply text-base text-gray-700 leading-relaxed sm:text-lg;
-  }
-
-  .outline-contrast-primary {
-    outline-color: rgba(31, 92, 85, 0.85);
   }
 
   .nav-active-link {

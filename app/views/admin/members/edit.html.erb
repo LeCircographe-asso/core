@@ -96,19 +96,19 @@
             <!-- Email -->
             <div class="form-group">
               <%= form.label :email_address, "Email", class: "block text-sm font-medium text-gray-700" %>
-              <%= form.email_field :email_address, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#1F5C55] focus:ring-[#1F5C55] sm:text-sm" %>
+              <%= form.email_field :email_address, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-brand-accent focus:ring-brand-accent sm:text-sm" %>
             </div>
 
             <!-- First Name -->
             <div class="form-group">
               <%= form.label :first_name, "Prénom", class: "block text-sm font-medium text-gray-700" %>
-              <%= form.text_field :first_name, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#1F5C55] focus:ring-[#1F5C55] sm:text-sm" %>
+              <%= form.text_field :first_name, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-brand-accent focus:ring-brand-accent sm:text-sm" %>
             </div>
 
             <!-- Last Name -->
             <div class="form-group">
               <%= form.label :last_name, "Nom", class: "block text-sm font-medium text-gray-700" %>
-              <%= form.text_field :last_name, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#1F5C55] focus:ring-[#1F5C55] sm:text-sm" %>
+              <%= form.text_field :last_name, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-brand-accent focus:ring-brand-accent sm:text-sm" %>
             </div>
 
             <!-- System Role -->
@@ -117,20 +117,20 @@
               <%= form.select :system_role, 
                   options_for_select(@array_right.map { |role| [role.humanize, role] }, @user.system_role),
                   {}, 
-                  { class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#1F5C55] focus:ring-[#1F5C55] sm:text-sm" } 
+                  { class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-brand-accent focus:ring-brand-accent sm:text-sm" } 
               %>
             </div>
 
             <!-- Occupation -->
             <div class="form-group">
               <%= form.label :occupation, "Profession", class: "block text-sm font-medium text-gray-700" %>
-              <%= form.text_field :occupation, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#1F5C55] focus:ring-[#1F5C55] sm:text-sm" %>
+              <%= form.text_field :occupation, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-brand-accent focus:ring-brand-accent sm:text-sm" %>
             </div>
 
             <!-- Specialty -->
             <div class="form-group">
               <%= form.label :specialty, "Spécialité", class: "block text-sm font-medium text-gray-700" %>
-              <%= form.text_field :specialty, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#1F5C55] focus:ring-[#1F5C55] sm:text-sm" %>
+              <%= form.text_field :specialty, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-brand-accent focus:ring-brand-accent sm:text-sm" %>
             </div>
           </div>
         </div>
@@ -140,13 +140,13 @@
             <!-- Birth Date -->
             <div class="form-group">
               <%= form.label :birth_date, "Date de naissance", class: "block text-sm font-medium text-gray-700" %>
-              <%= form.date_field :birth_date, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#1F5C55] focus:ring-[#1F5C55] sm:text-sm" %>
+              <%= form.date_field :birth_date, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-brand-accent focus:ring-brand-accent sm:text-sm" %>
             </div>
 
             <!-- Phone -->
             <div class="form-group">
               <%= form.label :phone, "Téléphone", class: "block text-sm font-medium text-gray-700" %>
-              <%= form.telephone_field :phone, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#1F5C55] focus:ring-[#1F5C55] sm:text-sm" %>
+              <%= form.telephone_field :phone, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-brand-accent focus:ring-brand-accent sm:text-sm" %>
             </div>
 
             <!-- Address -->
@@ -175,7 +175,7 @@
               <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div class="flex items-start">
                   <div class="flex items-center h-5">
-                    <%= form.check_box :image_rights, class: "h-4 w-4 text-[#1F5C55] focus:ring-[#1F5C55] border-gray-300 rounded" %>
+                    <%= form.check_box :image_rights, class: "h-4 w-4 text-[#1F5C55] focus:ring-brand-accent border-gray-300 rounded" %>
                   </div>
                   <div class="ml-3 text-sm">
                     <%= form.label :image_rights, "Droits à l'image", class: "font-medium text-gray-700" %>
@@ -185,7 +185,7 @@
 
                 <div class="flex items-start">
                   <div class="flex items-center h-5">
-                    <%= form.check_box :get_involved, class: "h-4 w-4 text-[#1F5C55] focus:ring-[#1F5C55] border-gray-300 rounded" %>
+                    <%= form.check_box :get_involved, class: "h-4 w-4 text-[#1F5C55] focus:ring-brand-accent border-gray-300 rounded" %>
                   </div>
                   <div class="ml-3 text-sm">
                     <%= form.label :get_involved, "Souhaite s'impliquer", class: "font-medium text-gray-700" %>
@@ -195,7 +195,7 @@
 
                 <div class="flex items-start">
                   <div class="flex items-center h-5">
-                    <%= form.check_box :dyslexic_font, class: "h-4 w-4 text-[#1F5C55] focus:ring-[#1F5C55] border-gray-300 rounded" %>
+                    <%= form.check_box :dyslexic_font, class: "h-4 w-4 text-[#1F5C55] focus:ring-brand-accent border-gray-300 rounded" %>
                   </div>
                   <div class="ml-3 text-sm">
                     <%= form.label :dyslexic_font, "Police dyslexique", class: "font-medium text-gray-700" %>
@@ -210,8 +210,8 @@
         
         <!-- Action Buttons -->
         <div class="mt-6 flex items-center justify-end gap-3 border-t pt-6">
-          <%= link_to "Annuler", admin_member_path(@person), class: "px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1F5C55]" %>
-          <%= form.submit "Enregistrer les modifications", class: "px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#1F5C55] hover:bg-[#194A45] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1F5C55]" %>
+          <%= link_to "Annuler", admin_member_path(@person), class: "px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-accent" %>
+          <%= form.submit "Enregistrer les modifications", class: "px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#1F5C55] hover:bg-[#194A45] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-accent" %>
         </div>
       <% end %>
     </div>

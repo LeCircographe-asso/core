@@ -23,7 +23,7 @@
               <%= form.hidden_field :contribution_formula_id, value: contribution_formula.id %>
               <%= form.hidden_field :payment_method, value: 'cash' %>
               <%= form.submit "Acheter", 
-                  class: "w-full inline-flex justify-center items-center px-3 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-[#1F5C55] hover:bg-[#194A45] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1F5C55]",
+                  class: "w-full inline-flex justify-center items-center px-3 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-[#1F5C55] hover:bg-[#194A45] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-accent",
                   name: "create_contribution" %>
             <% end %>
           </div>
