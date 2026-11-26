@@ -45,6 +45,10 @@ Rails.application.configure do
   # unblocks testing the actual email workflow on staging instead of every
   # delivery silently failing against localhost:25 (no smtp_settings at all).
   config.action_mailer.perform_caching = false
+  # Comme en production : MAILER_DELIVERIES_ENABLED=false coupe l'envoi (utilisé par
+  # docker/local/compose.yml pour qu'une image staging lancée en local n'envoie aucun mail).
+  # Défaut true : le staging du VPS continue d'envoyer via Mailjet sandbox.
+  config.action_mailer.perform_deliveries = ENV.fetch("MAILER_DELIVERIES_ENABLED", "true") == "true"
   config.action_mailer.delivery_method = :smtp
   config.action_mailer.smtp_settings = {
     address: "in-v3.mailjet.com",

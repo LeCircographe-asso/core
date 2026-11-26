@@ -93,6 +93,7 @@ Chaque document Markdown déclare un statut dans son header :
 ## Tests
 
 - [`development/testing.md`](development/testing.md) — guide TDD unifié (philosophie, setup, couverture, gaps, CI).
+- [`development/docker_local.md`](development/docker_local.md) — lancer en local l'image exacte du staging ou de la prod (`bin/docker-local`), avec mails, sauvegardes et analytics coupés.
 - [`development/refactor-admin-members-namespace.md`](development/refactor-admin-members-namespace.md) — trace de la migration `admin/users` → `admin/members` (terminée).
 
 ## Frontend, UX et design
