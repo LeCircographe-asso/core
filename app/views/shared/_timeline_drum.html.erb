@@ -16,16 +16,16 @@
 <div class="grid grid-cols-[13rem_minmax(0,1fr)] items-center gap-10"
      data-controller="timeline-drum"
      data-timeline-drum-index-value="<%= start_index %>"
-     aria-label="Chronologie de l'association">
+     aria-label="<%= t("views.shared.timeline.label") %>">
   <div class="flex flex-col items-center gap-1">
-    <button type="button" class="tl-ribbon-arrow" data-timeline-drum-target="prev" data-action="timeline-drum#previous" aria-label="Année plus récente">
+    <button type="button" class="tl-ribbon-arrow" data-timeline-drum-target="prev" data-action="timeline-drum#previous" aria-label="<%= t("views.shared.timeline.newer_year") %>">
       <svg class="h-5 w-5" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 10L8 6L12 10" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" /></svg>
     </button>
 
     <div class="tl-drum"
          role="tablist"
          aria-orientation="vertical"
-         aria-label="Années"
+         aria-label="<%= t("views.shared.timeline.years") %>"
          data-timeline-drum-target="drum"
          data-action="wheel->timeline-drum#wheel:!passive keydown->timeline-drum#key pointerdown->timeline-drum#grab pointermove->timeline-drum#drag pointerup->timeline-drum#release pointercancel->timeline-drum#release">
       <div class="tl-drum__cylinder">
@@ -45,7 +45,7 @@
       </div>
     </div>
 
-    <button type="button" class="tl-ribbon-arrow" data-timeline-drum-target="next" data-action="timeline-drum#next" aria-label="Année plus ancienne">
+    <button type="button" class="tl-ribbon-arrow" data-timeline-drum-target="next" data-action="timeline-drum#next" aria-label="<%= t("views.shared.timeline.older_year") %>">
       <svg class="h-5 w-5" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6L8 10L12 6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" /></svg>
     </button>
   </div>
@@ -61,9 +61,9 @@
            <%= "hidden" unless i == start_index %>>
         <p class="text-sm font-semibold tracking-[0.2em] text-brand-primary/70"><%= entry[:year] %></p>
         <% if status == :present %>
-          <span class="tl-badge tl-badge--present mt-2">En cours</span>
+          <span class="tl-badge tl-badge--present mt-2"><%= t("views.shared.timeline.present") %></span>
         <% elsif status == :future %>
-          <span class="tl-badge tl-badge--future mt-2">À venir</span>
+          <span class="tl-badge tl-badge--future mt-2"><%= t("views.shared.timeline.future") %></span>
         <% end %>
         <h3 class="mt-1 text-xl font-semibold text-gray-800 leading-snug mb-2"><%= entry[:title] %></h3>
         <p class="text-base text-gray-600 leading-relaxed"><%= entry[:body] %></p>
