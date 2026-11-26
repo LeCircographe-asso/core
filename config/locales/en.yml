@@ -526,6 +526,48 @@ en:
           message_label: Message
           message_placeholder: Tell us about your project, your question or what you need…
           submit: Send the message
+      association:
+        page_title: Le Circographe - The association
+        eyebrow: Create, practise, share — self-managed
+        heading: Welcome to Le Circographe
+        intro: 'Non-profit association: circus, graphic arts and artistic projects, run by volunteers and members.'
+        join: Join
+        activities_link: Our activities
+        photos_link: See the photos
+        poles:
+          eyebrow: Two hubs, one place
+          heading: Circus & graphic arts
+          intro: One hangar for training, workshops and creation — a shared space where know-how circulates.
+          circus:
+            image_alt: Circus training at Le Circographe
+            badge: Circus arts
+            title: Open training & company residencies
+            body: 'All levels: open training and exchanges; occasional residencies for companies.'
+            link: Explore the circus side
+          graphics:
+            image_alt: Graphic workshop at Le Circographe
+            badge: Graphic arts
+            title: Graphic arts & workshops
+            body: 'Street art, collective works and workshops: the community brings the walls and visual projects to life.'
+            link: Dive into the graphic workshop
+        engagement:
+          eyebrow: Self-management & volunteering
+          heading: The place runs on commitment
+          intro: 'Opening slots, technical work, exhibitions, welcome desk: every member can contribute in their own way.'
+          decide:
+            title: Deciding together
+            body: 'Annual general meeting and meetings: use of the hall, programming, collective decisions.'
+          volunteer:
+            title: Volunteering in action
+            body: Welcome desk, maintenance, workshops, communication… a variety of tasks depending on what you like and what you know.
+          join:
+            title: Join on site
+            body: 'Membership during a visit: tour of the place, safety, questions — and an introduction to the community.'
+          project_html: 'A project in the hall or volunteering: %{link} — we build it with you.'
+          project_link: drop by during opening hours
+        cta:
+          body: Want to join the place? Membership is done on site with the volunteers.
+          button: Join Le Circographe
     home:
       index:
         page_title: Le Circographe - Home
