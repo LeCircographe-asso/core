@@ -1,29 +1,29 @@
-<% content_for :title, "Le Circographe - Nos activités" %>
+<% content_for :title, t("views.pages.news.page_title") %>
 
 <section class="public-hero-shell mb-14">
   <%= image_tag hero_image(:news_hero), class: "absolute inset-0 w-full h-full object-cover hero-img-filter", alt: "" %>
   <div class="hero-overlay"></div>
   <div class="hero-panel public-hero-panel-centered">
-    <p class="public-hero-eyebrow">Programmation</p>
-    <h1 class="public-hero-title">Nos activités</h1>
-    <p class="public-hero-body-wide">Cours, accueils de compagnies, expos, événements : la programmation du lieu.</p>
+    <p class="public-hero-eyebrow"><%= t("views.pages.news.eyebrow") %></p>
+    <h1 class="public-hero-title"><%= t("views.pages.news.heading") %></h1>
+    <p class="public-hero-body-wide"><%= t("views.pages.news.intro") %></p>
   </div>
 </section>
 
 <section id="pratiques-regulieres" class="public-section-shell public-anchor-section fade-in">
   <header class="max-w-4xl mx-auto text-center space-y-4">
-    <p class="section-eyebrow">Pratiques régulières</p>
-    <h2 class="text-2xl sm:text-3xl font-bold text-gray-900">Le Cirque</h2>
-    <p class="text-base sm:text-lg text-gray-700 leading-relaxed">Les entraînements libres sont ouverts sur adhésion et accompagnent les pratiquant·es confirmé·es dans le développement de leur discipline : aérien, jonglage, équilibre, acrobatie, roue cyr, contorsion et bien plus encore.</p>
+    <p class="section-eyebrow"><%= t("views.pages.news.circus.eyebrow") %></p>
+    <h2 class="text-2xl sm:text-3xl font-bold text-gray-900"><%= t("views.pages.news.circus.heading") %></h2>
+    <p class="text-base sm:text-lg text-gray-700 leading-relaxed"><%= t("views.pages.news.circus.intro") %></p>
   </header>
   <div class="max-w-5xl mx-auto mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
     <article class="p-6 sm:p-8 rounded-3xl bg-white border border-gray-100 shadow-sm space-y-4">
-      <h3 class="text-xl font-semibold text-gray-900">Autonomie accompagnée</h3>
-      <p class="text-gray-700 leading-relaxed">Chaque créneau dispose d’une équipe référente qui rappelle les règles de sécurité, facilite les duos et partage les astuces techniques. On progresse à son rythme, ensemble.</p>
+      <h3 class="text-xl font-semibold text-gray-900"><%= t("views.pages.news.circus.autonomy.title") %></h3>
+      <p class="text-gray-700 leading-relaxed"><%= t("views.pages.news.circus.autonomy.body") %></p>
     </article>
     <article class="p-6 sm:p-8 rounded-3xl bg-white border border-gray-100 shadow-sm space-y-4">
-      <h3 class="text-xl font-semibold text-gray-900">Accueils de compagnies</h3>
-      <p class="text-gray-700 leading-relaxed">Des compagnies circassiennes locales viennent peaufiner leurs numéros grâce à la mise à disposition ponctuelle de la salle. C’est l’occasion de tester des propositions devant la communauté.</p>
+      <h3 class="text-xl font-semibold text-gray-900"><%= t("views.pages.news.circus.companies.title") %></h3>
+      <p class="text-gray-700 leading-relaxed"><%= t("views.pages.news.circus.companies.body") %></p>
     </article>
   </div>
 </section>
@@ -32,13 +32,13 @@
   <div class="public-surface max-w-5xl mx-auto overflow-hidden">
     <div class="flex flex-col lg:flex-row">
       <div class="lg:w-2/5 h-60 lg:h-auto">
-        <%= image_tag hero_image(:association_graphics_card), class: "w-full h-full object-cover", alt: "Pratique graphique au Circographe" %>
+        <%= image_tag hero_image(:association_graphics_card), class: "w-full h-full object-cover", alt: t("views.pages.news.graphics.image_alt") %>
       </div>
       <div class="lg:w-3/5 p-6 sm:p-8 space-y-4">
-        <p id="pratiques-visuelles" class="section-eyebrow">Pratiques visuelles</p>
-        <h2 class="text-2xl sm:text-3xl font-bold text-gray-900">Les Arts Graphiques</h2>
-        <p class="text-base sm:text-lg text-gray-700 leading-relaxed">L’espace graphique accueille des temps de pratique autonome, des ateliers collaboratifs et des laboratoires d’impression. Illustrateur·ices, sérigraphes, collectifs de dessin : chacun trouve le bon format pour explorer et combiner ses techniques.</p>
-        <p class="text-gray-700 leading-relaxed">Nous organisons aussi des mises à disposition ponctuelles pour des projets collectifs : création d’affiches, fanzines, ateliers participatifs ou expositions éclair partagées avec le cirque.</p>
+        <p id="pratiques-visuelles" class="section-eyebrow"><%= t("views.pages.news.graphics.eyebrow") %></p>
+        <h2 class="text-2xl sm:text-3xl font-bold text-gray-900"><%= t("views.pages.news.graphics.heading") %></h2>
+        <p class="text-base sm:text-lg text-gray-700 leading-relaxed"><%= t("views.pages.news.graphics.body_1") %></p>
+        <p class="text-gray-700 leading-relaxed"><%= t("views.pages.news.graphics.body_2") %></p>
       </div>
     </div>
   </div>
@@ -46,9 +46,9 @@
 
 <section id="evenements" class="public-section-shell fade-in space-y-10">
   <header class="max-w-4xl mx-auto text-center space-y-4">
-    <p class="section-eyebrow">Moments partagés</p>
-    <h2 class="text-2xl sm:text-3xl font-bold text-gray-900">Événements et actualités</h2>
-    <p class="text-base sm:text-lg text-gray-700 leading-relaxed">Tout au long de l’année, le Circographe propose des expositions, des plateaux partagés, des soirées d’ouverture de piste et des rendez-vous associatifs ouverts au quartier. Filtre les actualités pour préparer ta prochaine venue.</p>
+    <p class="section-eyebrow"><%= t("views.pages.news.events.eyebrow") %></p>
+    <h2 class="text-2xl sm:text-3xl font-bold text-gray-900"><%= t("views.pages.news.events.heading") %></h2>
+    <p class="text-base sm:text-lg text-gray-700 leading-relaxed"><%= t("views.pages.news.events.intro") %></p>
   </header>
 
   <section class="public-card-shell space-y-8"
@@ -57,24 +57,24 @@
            data-tabs-active-class="activities-tab--active">
     <header class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
       <div class="text-left">
-        <p class="section-eyebrow">Programmation</p>
-        <h3 class="text-xl sm:text-2xl font-semibold text-gray-800">Filtre les activités qui t'intéressent</h3>
+        <p class="section-eyebrow"><%= t("views.pages.news.events.filter_eyebrow") %></p>
+        <h3 class="text-xl sm:text-2xl font-semibold text-gray-800"><%= t("views.pages.news.events.filter_heading") %></h3>
       </div>
-      <div role="tablist" class="flex flex-wrap gap-2" aria-label="Filtres des activités">
+      <div role="tablist" class="flex flex-wrap gap-2" aria-label="<%= t("views.pages.news.events.filter_label") %>">
         <button type="button" role="tab" data-tabs-target="trigger" data-tabs-name-value="avenir"
                 class="activities-tab tab-filter"
                 data-action="tabs#select">
-          À venir
+          <%= t("views.pages.news.events.tabs.upcoming") %>
         </button>
         <button type="button" role="tab" data-tabs-target="trigger" data-tabs-name-value="passes"
                 class="activities-tab tab-filter"
                 data-action="tabs#select">
-          Passés
+          <%= t("views.pages.news.events.tabs.past") %>
         </button>
         <button type="button" role="tab" data-tabs-target="trigger" data-tabs-name-value="actus"
                 class="activities-tab tab-filter"
                 data-action="tabs#select">
-          Actualités
+          <%= t("views.pages.news.events.tabs.news") %>
         </button>
       </div>
     </header>
@@ -107,9 +107,9 @@
        data-accordion-animate-value="true">
 
     <div class="p-8 sm:p-10 text-center space-y-3 border-b border-gray-100">
-      <p class="section-eyebrow">Autres projets</p>
-      <h2 class="text-2xl sm:text-3xl font-bold text-gray-900">Ateliers, médiation et projets hybrides</h2>
-      <p class="text-base sm:text-lg text-gray-700 leading-relaxed">En plus des créneaux réguliers, on imagine des formats qui croisent disciplines et publics : ateliers de transmission, médiations scolaires, projections, scènes ouvertes graphiques et rencontres avec les artistes de passage.</p>
+      <p class="section-eyebrow"><%= t("views.pages.news.projects.eyebrow") %></p>
+      <h2 class="text-2xl sm:text-3xl font-bold text-gray-900"><%= t("views.pages.news.projects.heading") %></h2>
+      <p class="text-base sm:text-lg text-gray-700 leading-relaxed"><%= t("views.pages.news.projects.intro") %></p>
     </div>
 
     <article>
@@ -118,13 +118,13 @@
               aria-expanded="true"
               aria-controls="projet-ateliers"
               data-accordion-target="#projet-ateliers">
-        <h3 class="text-lg font-semibold text-gray-900 transition-colors duration-200 group-hover:text-brand-accent">Ateliers sur mesure</h3>
+        <h3 class="text-lg font-semibold text-gray-900 transition-colors duration-200 group-hover:text-brand-accent"><%= t("views.pages.news.projects.workshops.title") %></h3>
         <svg data-accordion-icon class="shrink-0 w-5 h-5 text-brand-primary/70 transition-transform duration-300" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
           <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
         </svg>
       </button>
       <div id="projet-ateliers" class="px-6 sm:px-8 pb-6">
-        <p class="text-gray-700 leading-relaxed">Pour les structures culturelles, associations de quartier ou établissements scolaires, on crée des ateliers mêlant pratique circassienne et exploration graphique.</p>
+        <p class="text-gray-700 leading-relaxed"><%= t("views.pages.news.projects.workshops.body") %></p>
       </div>
     </article>
 
@@ -136,13 +136,13 @@
               aria-expanded="false"
               aria-controls="projet-rencontres"
               data-accordion-target="#projet-rencontres">
-        <h3 class="text-lg font-semibold text-gray-900 transition-colors duration-200 group-hover:text-brand-accent">Rencontres publiques</h3>
+        <h3 class="text-lg font-semibold text-gray-900 transition-colors duration-200 group-hover:text-brand-accent"><%= t("views.pages.news.projects.meetings.title") %></h3>
         <svg data-accordion-icon class="shrink-0 w-5 h-5 text-brand-primary/70 rotate-180 transition-transform duration-300" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
           <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
         </svg>
       </button>
       <div id="projet-rencontres" class="px-6 sm:px-8 pb-6 hidden" hidden>
-        <p class="text-gray-700 leading-relaxed">Des temps d’échanges avec les artistes accueilli·es, des restitutions conviviales et des formats participatifs qui ouvrent la salle à toutes et tous.</p>
+        <p class="text-gray-700 leading-relaxed"><%= t("views.pages.news.projects.meetings.body") %></p>
       </div>
     </article>
 
@@ -154,13 +154,13 @@
               aria-expanded="false"
               aria-controls="projet-capsules"
               data-accordion-target="#projet-capsules">
-        <h3 class="text-lg font-semibold text-gray-900 transition-colors duration-200 group-hover:text-brand-accent">Capsules visuelles</h3>
+        <h3 class="text-lg font-semibold text-gray-900 transition-colors duration-200 group-hover:text-brand-accent"><%= t("views.pages.news.projects.capsules.title") %></h3>
         <svg data-accordion-icon class="shrink-0 w-5 h-5 text-brand-primary/70 rotate-180 transition-transform duration-300" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
           <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
         </svg>
       </button>
       <div id="projet-capsules" class="px-6 sm:px-8 pb-6 hidden" hidden>
-        <p class="text-gray-700 leading-relaxed">On documente les projets hybrides du lieu pour nourrir la mémoire collective : carnets photo, vidéos courtes, focus bénévoles et cartes postales illustrées.</p>
+        <p class="text-gray-700 leading-relaxed"><%= t("views.pages.news.projects.capsules.body") %></p>
       </div>
     </article>
 
@@ -206,7 +206,7 @@
             <div class="swiper-slide">
               <div class="public-carousel-media rounded-2xl flex justify-center items-center overflow-hidden bg-gray-100 select-none">
                 <%= image_tag url_for(photo.full),
-                              alt: "Photo du Circographe #{index + 1}",
+                              alt: t("views.pages.news.photos.alt", position: index + 1),
                               draggable: false,
                               class: "object-cover w-full h-full",
                               loading: (index.zero? ? "eager" : "lazy"),
@@ -219,7 +219,7 @@
             <div class="swiper-slide">
               <div class="public-carousel-media rounded-2xl flex justify-center items-center overflow-hidden bg-gray-100 select-none">
                 <%= image_tag filename,
-                              alt: "Photo du Circographe #{index + 1}",
+                              alt: t("views.pages.news.photos.alt", position: index + 1),
                               draggable: false,
                               class: "object-cover w-full h-full",
                               loading: (index.zero? ? "eager" : "lazy"),
@@ -230,18 +230,18 @@
         <% end %>
       </div>
       <div class="news-photos-pagination swiper-pagination !static !relative flex justify-center gap-1.5 py-3 min-h-[2rem]"></div>
-      <%= render "shared/carousel_arrows", wrapper_class: "absolute inset-y-0 left-0 right-0 flex justify-between items-center pointer-events-none z-20 px-1 sm:px-2", button_class: "pointer-events-auto touch-manipulation", prev_label: "Photo précédente", next_label: "Photo suivante" %>
+      <%= render "shared/carousel_arrows", wrapper_class: "absolute inset-y-0 left-0 right-0 flex justify-between items-center pointer-events-none z-20 px-1 sm:px-2", button_class: "pointer-events-auto touch-manipulation", prev_label: t("views.pages.news.photos.previous"), next_label: t("views.pages.news.photos.next") %>
     </div>
   </div>
 
   <div class="mt-6 text-center fade-in">
-    <%= link_to "Voir toutes les photos", page_path("gallery"), class: "public-cta-pill" %>
+    <%= link_to t("views.pages.news.photos.all"), page_path("gallery"), class: "public-cta-pill" %>
   </div>
 </section>
 
 <section class="text-center mt-12 mb-20 space-y-4 fade-in">
   <div class="public-surface max-w-3xl mx-auto px-6 sm:px-10 py-8 space-y-4">
-    <p class="text-lg text-gray-700 font-medium">Envie de tester un créneau ou de venir en spectateur·rice ?</p>
-    <%= link_to "Consulter les prochains créneaux", page_path("news", anchor: "evenements"), class: "public-cta" %>
+    <p class="text-lg text-gray-700 font-medium"><%= t("views.pages.news.cta.body") %></p>
+    <%= link_to t("views.pages.news.cta.button"), page_path("news", anchor: "evenements"), class: "public-cta" %>
   </div>
 </section>
