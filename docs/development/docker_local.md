@@ -20,7 +20,7 @@ Fichiers : `docker/local/compose.yml` (deux services à profils `staging` / `pro
 bin/docker-local pull staging                # dernière image staging (tag latest)
 bin/docker-local pull staging running        # l'image que le VPS fait tourner en ce moment (via ssh circographe-deploy)
 bin/docker-local pull production <sha>       # une image précise
-bin/docker-local up staging                  # http://127.0.0.1:8081 (basic auth staging / local)
+bin/docker-local up staging                  # https://127.0.0.1:8081 (basic auth staging / local)
 bin/docker-local admin staging               # créer le premier super-admin
 bin/docker-local logs staging
 bin/docker-local console staging
@@ -32,7 +32,9 @@ bin/docker-local upgrade                     # répétition de montée de versio
 
 Cold start de ta branche, avant tout push : `bin/docker-local build`, `bin/docker-local down staging --reset`, puis `bin/docker-local up staging`.
 
-Production : `http://127.0.0.1:8082`, mode maintenance désactivé. Le tag choisi est mémorisé dans `docker/local/.env.local` (généré au premier lancement, permissions 600, git-ignoré : il contient la master key).
+Production : `https://127.0.0.1:8082`, mode maintenance désactivé. Le tag choisi est mémorisé dans `docker/local/.env.local` (généré au premier lancement, permissions 600, git-ignoré : il contient la master key).
+
+**HTTPS local.** Le proxy sert en HTTPS avec un certificat de l'autorité locale de Caddy : au premier accès, le navigateur avertit (« Paramètres avancés → Continuer vers 127.0.0.1 »), une seule fois tant que le volume `circographe-local_proxy_data` existe. Indispensable : l'app force le SSL, construit ses formulaires et redirections en `https://` et vérifie l'en-tête `Origin` ; en HTTP simple, la connexion échouait (422). Sans risque pour HSTS : les navigateurs ne l'appliquent jamais à une adresse IP.
 
 ## Données
 
@@ -72,7 +74,7 @@ L'image embarque la vraie app et les vrais credentials. Tout ce qui sort vers l'
 
 Le proxy Caddy joue le rôle de `kamal-proxy` : HTTP simple, avec `X-Forwarded-Proto: https`, pour que `force_ssl` ne redirige pas. `bin/docker-local up` le recrée à chaque fois (Compose ne détecte pas les modifications de son Caddyfile inline).
 
-Vérifier soi-même : `bin/docker-local console staging` puis `ActionMailer::Base.delivery_method` (doit répondre `:test`) ; `curl -sI -u staging:local http://127.0.0.1:8081/ | grep -i content-security` (deux lignes).
+Vérifier soi-même : `bin/docker-local console staging` puis `ActionMailer::Base.delivery_method` (doit répondre `:test`) ; `curl -ksI -u staging:local https://127.0.0.1:8081/ | grep -i content-security` (deux lignes).
 
 ## Limites connues
 
