@@ -70,6 +70,22 @@ RSpec.describe Exports::Catalog do
       expect(row["anonymized"]).to eq("false")
     end
 
+    it "exports legacy MembershipUpgrade lines, which have no model class" do
+      create(:payment_line, payment:, item: nil, item_type: "MembershipUpgrade", item_id: 0, description: "Upgrade")
+
+      expect(rows(described_class.new).first["line_type"]).to eq("MembershipUpgrade")
+    end
+
+    it "batch-loads line items instead of one query per line" do
+      create_list(:payment_line, 3, payment: create(:payment, :success)) # MembershipType items
+      queries = []
+      counter = ->(*, payload) { queries << payload[:sql] if payload[:sql].include?(%("membership_types")) }
+
+      ActiveSupport::Notifications.subscribed(counter, "sql.active_record") { described_class.new.to_csv }
+
+      expect(queries.size).to eq(1)
+    end
+
     it "falls back to the payer when the line has no beneficiary" do
       create(:payment_line, payment:, person: nil)
 

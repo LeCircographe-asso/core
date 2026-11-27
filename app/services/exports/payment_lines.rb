@@ -25,7 +25,15 @@ module Exports
     private
 
     def scope
-      PaymentLine.joins(:payment).includes(:person, :item, payment: :person)
+      PaymentLine.joins(:payment).includes(:person, payment: :person)
+    end
+
+    # Legacy "MembershipUpgrade" lines have no model class: `includes(:item)`
+    # would raise NameError for the whole export, so items are batch-loaded
+    # for resolvable types only.
+    def preload(batch)
+      resolvable = batch.reject { |line| line.item_type == "MembershipUpgrade" }
+      ActiveRecord::Associations::Preloader.new(records: resolvable, associations: :item).call
     end
   end
 end

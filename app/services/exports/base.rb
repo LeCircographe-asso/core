@@ -72,9 +72,12 @@ module Exports
     def to_csv
       BOM + CSV.generate do |csv|
         csv << self.class.headers
-        relation.find_each do |record|
-          csv << self.class.columns.map { |column| cell(instance_exec(record, &column.value)) }
-          @row_count += 1
+        relation.find_in_batches do |batch|
+          preload(batch)
+          batch.each do |record|
+            csv << self.class.columns.map { |column| cell(instance_exec(record, &column.value)) }
+            @row_count += 1
+          end
         end
       end
     end
@@ -84,6 +87,9 @@ module Exports
     def scope
       raise NotImplementedError
     end
+
+    # Hook for associations that cannot be preloaded through the scope.
+    def preload(_batch); end
 
     def relation
       return scope if from.nil? && to.nil?

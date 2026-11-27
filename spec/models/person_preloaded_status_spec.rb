@@ -41,6 +41,13 @@ RSpec.describe Person, "status with preloaded associations" do
     expect(person.reload.currently_active_contributions).to match_array(kept)
   end
 
+  it "orders currently active contributions by id on both paths" do
+    contributions = Array.new(3) { create(:contribution, person:) }
+
+    expect(preloaded.currently_active_contributions).to eq(contributions)
+    expect(person.reload.currently_active_contributions).to eq(contributions)
+  end
+
   it "does not query when associations are preloaded" do
     create(:membership, person:)
     create(:contribution, person:)
