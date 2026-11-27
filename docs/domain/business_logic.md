@@ -88,7 +88,7 @@ Membership#basic?
 Membership#circus?
 People::MembershipCreator.call(...) # Crée + paiement + numéro
 People::MembershipUpgrader.call(...) # Full price du nouveau type
-Person#renew_membership!(membership_type, ...) # Nouveau numéro chaque année
+MemberManagementService.reissue_member_number!(...) # Nouveau numéro à chaque reprise
 ```
 
 ### Zone 2: En Cours de Validation
@@ -542,7 +542,7 @@ NewsletterSubscriber#link_to_person!(person)
 ## Modèles Zone 1 (Testés)
 
 ✅ `Person#create_membership!` - Création adhésion + paiement + numéro  
-✅ `Person#renew_membership!` - Renouvellement avec nouveau numéro  
+✅ `People::MembershipCreator` + `MemberManagementService.reissue_member_number!` - Renouvellement avec nouveau numéro  
 ✅ `Person#create_contribution!` - Création cotisation + paiement  
 ✅ `People::MembershipUpgrader` - Upgrade membership plein tarif
 ✅ `People::ContributionUpgrader` - Upgrade cotisation avec prorata
@@ -724,7 +724,7 @@ Admin::UserCreationForm
 - **Méthode:** `People::MembershipUpgrader` - Facture `new_type.price_cents`
 
 **Renouvellements:**
-- **Nouveau:** `Person#renew_membership!` - Crée nouvelle adhésion + **nouveau numéro d'adhérent**
+- **Méthode:** `People::MembershipCreator` + `MemberManagementService.reissue_member_number!` - Crée nouvelle adhésion + **nouveau numéro d'adhérent**
 - **Impact:** Chaque année, incrémente numéro (25U001 → 25U002 → ...)
 - **Historique:** Tous changements tracés dans MemberNumberHistory
 
