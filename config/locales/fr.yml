@@ -718,6 +718,23 @@ fr:
           page_subtitle: Exporter les données de l'association aux formats CSV
           newsletter_subscribers: Liste des utilisateurs inscrits à la newsletter
           all_users: Tous les utilisateurs
+          crm_exports_title: Exports CRM
+          crm_exports_hint: "Colonnes stables et versionnées (la version figure dans le nom du fichier). Période optionnelle : laisser vide pour tout exporter."
+          period_from: Du
+          period_to: Au
+          crm_exports:
+            payment_lines:
+              title: Paiements (détail par ligne)
+              description: Une ligne par élément payé (adhésion, cotisation, don), avec payeur et bénéficiaire. Filtré sur la date du paiement.
+            memberships:
+              title: Adhésions
+              description: Historique des adhésions. Filtré sur la date de début.
+            contributions:
+              title: Cotisations
+              description: Cartes, trimestres, annuels, avec séances restantes. Filtré sur la date d'achat.
+            attendances:
+              title: Présences
+              description: Une ligne par présence, avec la cotisation utilisée. Filtré sur la date de séance.
   layouts:
     application:
       title: Le Circographe

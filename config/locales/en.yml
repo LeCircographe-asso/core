@@ -368,6 +368,23 @@ en:
           page_subtitle: Export association data in CSV format
           newsletter_subscribers: List of newsletter subscribers
           all_users: All users
+          crm_exports_title: CRM exports
+          crm_exports_hint: "Stable, versioned columns (the version is part of the filename). Optional period: leave empty to export everything."
+          period_from: From
+          period_to: To
+          crm_exports:
+            payment_lines:
+              title: Payments (line detail)
+              description: One row per paid item (membership, contribution, donation), with payer and beneficiary. Filtered on payment date.
+            memberships:
+              title: Memberships
+              description: Membership history. Filtered on start date.
+            contributions:
+              title: Contributions
+              description: Packs, trimesters, annual plans, with remaining sessions. Filtered on purchase date.
+            attendances:
+              title: Attendances
+              description: One row per attendance, with the contribution used. Filtered on session date.
   layouts:
     application:
       title: Le Circographe
