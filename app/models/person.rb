@@ -106,8 +106,19 @@ class Person < ApplicationRecord
     user.present?
   end
 
+  # Uses preloaded memberships when available (list pages) instead of one
+  # query per call; same rules as Membership.active.current.
   def current_membership
-    memberships.active.current.first
+    return memberships.active.current.first unless memberships.loaded?
+
+    memberships.select(&:currently_valid?).min_by(&:id)
+  end
+
+  # Same as contributions.currently_active, without a query when preloaded.
+  def currently_active_contributions
+    return contributions.currently_active.to_a unless contributions.loaded?
+
+    contributions.select(&:currently_active?)
   end
 
   # Dernière adhésion la plus récente par date de fin (profil : distinguer « jamais adhéré » / « adhésion terminée »).
