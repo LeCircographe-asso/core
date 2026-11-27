@@ -9,8 +9,8 @@ RSpec.describe "Admin::Members::Attendances", type: :request do
   let(:pack10_plan) { create(:contribution_formula, :pack10) }
 
   before do
-    login_as(admin)
     travel_to Date.current.next_occurring(:tuesday).beginning_of_day + 12.hours
+    login_as(admin)
   end
 
   after { travel_back }

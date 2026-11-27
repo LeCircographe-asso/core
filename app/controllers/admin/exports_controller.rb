@@ -7,6 +7,14 @@ module Admin
     before_action :require_admin_rights
 
     def index
+      @exports = Exports::Catalog::ALL
+    end
+
+    def show
+      export = Exports::Catalog.fetch(params[:id]).new(from: params[:from], to: params[:to])
+      csv_data = export.to_csv
+      audit_export(export)
+      send_data csv_data, filename: export.filename, type: "text/csv; charset=utf-8", disposition: "attachment"
     end
 
     def newsletter_subscribed
@@ -19,6 +27,17 @@ module Admin
       people = Person.active.includes(:newsletter_subscriber, :user).order(:last_name, :first_name)
       csv_data = users_to_csv(people)
       send_data csv_data, filename: "tous_les_utilisateurs.csv", type: "text/csv", disposition: "attachment"
+    end
+
+    private
+
+    def audit_export(export)
+      payload = {
+        user_id: Current.user.id, export: export.class.key, version: export.class.version,
+        from: export.from, to: export.to, rows: export.row_count
+      }
+      ActiveSupport::Notifications.instrument("export.admin", payload)
+      Rails.logger.info("[export.audit] #{payload.map { |key, value| "#{key}=#{value}" }.join(' ')}")
     end
 
     def users_to_csv(people)

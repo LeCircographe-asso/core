@@ -36,6 +36,11 @@ class Membership < ApplicationRecord
   # expired? checks status == "expired"
   # expired_by_date? checks if ended_at is in the past
 
+  # In-memory counterpart of `active.current`.
+  def currently_valid?(today = Date.current)
+    active? && started_at <= today && ended_at >= today
+  end
+
   def expired_by_date?
     Date.current > ended_at
   end

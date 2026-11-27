@@ -1,0 +1,15 @@
+<%= t("mailers.user_mailer.welcome_email.title") %>
+
+<%= t("mailers.user_mailer.welcome_email.greeting", name: @user.full_name.presence || t("mailers.user_mailer.welcome_email.fallback_name")) %>
+
+<%= t("mailers.user_mailer.welcome_by_admin.intro") %>
+
+<%= t("mailers.user_mailer.welcome_by_admin.cta") %> : <%= @reset_password_url %>
+
+<%= render "membership_info", membership: @membership, member_number: @user.person&.member_number %>
+<% if @user.newsletter_subscribed && @unsubscribe_url %>
+
+<%= t("mailers.user_mailer.newsletter.subscribed") %> <%= t("mailers.user_mailer.newsletter.unsubscribe") %> : <%= @unsubscribe_url %>
+<% end %>
+
+<%= t("mailers.user_mailer.signature") %>

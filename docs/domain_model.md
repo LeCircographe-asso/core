@@ -55,7 +55,7 @@ erDiagram
 - **Méthodes métier** :
   - `People::MembershipCreator` — adhésion + paiement + numéro d'adhérent.
   - `People::MembershipUpgrader` — plein tarif du nouveau type.
-  - `Person#renew_membership!(...)` — nouvelle adhésion + nouveau numéro annuel.
+  - `MemberManagementService.reissue_member_number!` — nouveau numéro annuel à la reprise (appelé par `People::MembershipCreator`).
   - `People::ContributionCreator` — création cotisation + paiement.
   - `People::ContributionUpgrader` — upgrade cotisation + paiement.
   - `Person#archive!` / `Person#restore!`.
@@ -169,7 +169,7 @@ stateDiagram-v2
   active --> inactive : upgrade vers nouveau type
   inactive --> [*] : remplacée
   active --> expired : ended_at < today
-  expired --> [*] : renew_membership crée nouvelle
+  expired --> [*] : MembershipCreator crée nouvelle
 ```
 
 ### 3.2 Cotisation (`Contribution`)

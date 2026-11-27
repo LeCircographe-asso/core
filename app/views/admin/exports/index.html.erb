@@ -22,12 +22,12 @@
             <div class="flex items-start justify-between mb-4">
               <div>
                 <h3 class="text-lg font-semibold text-gray-900"><%= t(".newsletter_subscribers") %></h3>
-                <p class="text-sm text-gray-600 mt-1">CSV format</p>
+                <p class="text-sm text-gray-600 mt-1"><%= t(".csv_format") %></p>
               </div>
               <i class="fas fa-envelope text-2xl text-brand-primary/30"></i>
             </div>
             <div class="mt-4">
-              <%= link_to "Exporter", newsletter_subscribed_admin_exports_path(format: :csv),
+              <%= link_to t(".export_button"), newsletter_subscribed_admin_exports_path(format: :csv),
                   class: "admin-btn-primary" %>
             </div>
           </div>
@@ -37,15 +37,49 @@
             <div class="flex items-start justify-between mb-4">
               <div>
                 <h3 class="text-lg font-semibold text-gray-900"><%= t(".all_users") %></h3>
-                <p class="text-sm text-gray-600 mt-1">CSV format</p>
+                <p class="text-sm text-gray-600 mt-1"><%= t(".csv_format") %></p>
               </div>
               <i class="fas fa-users text-2xl text-brand-primary/30"></i>
             </div>
             <div class="mt-4">
-              <%= link_to "Exporter", all_users_admin_exports_path(format: :csv),
+              <%= link_to t(".export_button"), all_users_admin_exports_path(format: :csv),
                   class: "admin-btn-primary" %>
             </div>
           </div>
+        </div>
+
+        <!-- CRM exports (versioned, optional period) -->
+        <div class="mt-8">
+          <h2 class="text-lg font-semibold text-gray-900"><%= t(".crm_exports_title") %></h2>
+          <p class="text-sm text-gray-600 mt-1"><%= t(".crm_exports_hint") %></p>
+
+          <%= form_with url: admin_exports_path, method: :get, data: { turbo: false }, class: "mt-4" do |form| %>
+            <div class="flex flex-wrap gap-4 mb-6">
+              <div>
+                <%= form.label :from, t(".period_from"), class: "block text-sm text-gray-700 mb-1" %>
+                <%= form.date_field :from, class: "admin-input" %>
+              </div>
+              <div>
+                <%= form.label :to, t(".period_to"), class: "block text-sm text-gray-700 mb-1" %>
+                <%= form.date_field :to, class: "admin-input" %>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <% @exports.each do |export| %>
+                <div class="admin-metric-card p-6">
+                  <h3 class="text-lg font-semibold text-gray-900"><%= t(".crm_exports.#{export.key}.title") %></h3>
+                  <p class="text-sm text-gray-600 mt-1"><%= t(".crm_exports.#{export.key}.description") %></p>
+                  <p class="text-xs text-gray-400 mt-1">CSV · v<%= export.version %></p>
+                  <div class="mt-4">
+                    <%= form.button t(".export_button"), type: :submit, name: nil,
+                        formaction: admin_export_path(export.key, format: :csv),
+                        class: "admin-btn-primary" %>
+                  </div>
+                </div>
+              <% end %>
+            </div>
+          <% end %>
         </div>
       </div>
     </div>

@@ -11,7 +11,7 @@ module Imports
       keyword_init: true
     )
 
-    attr_accessor :csv_content
+    attr_accessor :csv_content, :on_progress
 
     def call
       return failure("CSV vide") if csv_content.blank?
@@ -57,6 +57,7 @@ module Imports
         end
 
         details << detail
+        on_progress&.call(index + 1, rows.size)
       end
 
       Rails.logger.debug "[Import] Résultat final: #{created} créés, #{duplicates} doublons, #{errors_list.count} erreurs"

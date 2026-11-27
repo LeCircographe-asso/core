@@ -1,7 +1,8 @@
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
-  static targets = ["modal", "dropzone", "fileInput", "loading", "result", "resultContent", "fileName"]
+  static targets = ["modal", "dropzone", "fileInput", "loading", "result", "resultContent", "fileName", "progress"]
+  static values = { progressUrl: String, progressTemplate: String }
 
   open() {
     this.modalTarget.classList.remove("hidden")
@@ -58,15 +59,18 @@ export default class extends Controller {
   async uploadFile(file) {
     this.showLoading(file.name)
 
+    const token = crypto.randomUUID()
     const formData = new FormData()
     formData.append("csv_file", file)
+    formData.append("import_token", token)
 
-    const token = document.querySelector('meta[name="csrf-token"]')?.content
+    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content
+    this.startProgress(token)
 
     try {
       const response = await fetch(this.element.dataset.importModalUrlValue, {
         method: "POST",
-        headers: { "X-CSRF-Token": token, "Accept": "text/html" },
+        headers: { "X-CSRF-Token": csrfToken, "Accept": "text/html" },
         body: formData
       })
 
@@ -74,7 +78,33 @@ export default class extends Controller {
       this.showResult(html)
     } catch (error) {
       this.showResult(`<div class="px-6 py-8 text-center text-red-600">Erreur réseau : ${error.message}</div>`)
+    } finally {
+      this.stopProgress()
     }
+  }
+
+  startProgress(token) {
+    if (!this.hasProgressUrlValue || !this.hasProgressTarget) return
+
+    const url = `${this.progressUrlValue}?token=${encodeURIComponent(token)}`
+    this.progressTimer = setInterval(async () => {
+      try {
+        const response = await fetch(url, { headers: { "Accept": "application/json" } })
+        const { processed, total } = await response.json()
+        if (total) this.progressTarget.textContent = this.progressTemplateValue.replace("%{processed}", processed).replace("%{total}", total)
+      } catch {
+        // Progress is best effort: the import result still arrives on its own.
+      }
+    }, 700)
+  }
+
+  stopProgress() {
+    clearInterval(this.progressTimer)
+    if (this.hasProgressTarget) this.progressTarget.textContent = ""
+  }
+
+  disconnect() {
+    this.stopProgress()
   }
 
   showDropzone() {

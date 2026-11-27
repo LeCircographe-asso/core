@@ -14,6 +14,115 @@ en:
       success: "✅ Compte revendiqué ! Votre historique est maintenant disponible."
       rate_limited_alert: Trop de tentatives de confirmation. Veuillez réessayer dans 24 heures.
   admin:
+    imports:
+      access_denied: Administrators only.
+      file_required: Choose a CSV file.
+      failed: 'Error: %{message}'
+      index:
+        title: Import/Export
+        subtitle: Manage data in bulk
+        import:
+          title: Member import
+          description: Import a CSV file (comma or tab separated) with circus members, their memberships and payments.
+          columns_title: 'Expected columns:'
+          columns:
+          - 'Member number: optional (traceability)'
+          - 'Last name, First name: required'
+          - 'Email, Phone: used for duplicate detection'
+          - 'Birth date: DD/MM/YYYY'
+          - Address, Zip code, Town, Country
+          - Occupation, Specialty
+          - 'Image rights: Yes/No'
+          - 'Newsletter: Yes/No'
+          - 'Get involved in the project: Yes/No'
+          - Amount paid, Payment method, Date
+          button: Import a file
+        export:
+          title: Data export
+          description: Payments, memberships, contributions, attendances and donations as versioned CSV, for accounting, backups or external analysis.
+          button: Open exports
+        notes:
+          title: Notes
+          items:
+          - Duplicates (existing email/phone) are skipped automatically
+          - Each member gets a Circus membership dated on the payment
+          - A detailed report is shown after the import
+          - Try on staging before production
+        modal:
+          title: Member import
+          drop: Drag and drop your CSV file here
+          pick: or click to choose a file
+          format: Comma or tab separated — Google Sheets format accepted
+          loading: Importing...
+          progress: '%{processed} / %{total} rows processed'
+      result_panel:
+        created: Created
+        duplicates: Duplicates
+        errors: Errors
+        line: Line %{number}
+        view_members: View members
+        ok: OK
+      error_panel:
+        retry: Try again
+    feature_flags:
+      index:
+        title: Features
+        subtitle: Live state of the application switches in this environment (read-only).
+        enabled: Enabled
+        disabled: Disabled
+        open_toggle: Change
+        columns:
+          flag: Feature
+          state: State
+          how_to_change: How to change it
+        sources:
+          env: Environment variable %{setting}, applied on next deploy.
+          database: Database setting (%{setting}), changes apply immediately.
+          environment: Set by the environment (enabled only in %{setting}).
+        flags:
+          public_registration:
+            name: Public sign-up
+            description: Account creation from the website.
+          account_claim:
+            name: Account claim
+            description: Link an existing member record to a web account.
+          mailer_deliveries:
+            name: Email delivery
+            description: Emails are actually sent (otherwise only built and logged).
+          bug_report_widget:
+            name: Bug report widget
+            description: Report button shown to users.
+          umami_session_replay:
+            name: Umami session replay
+            description: Browsing session replay (analytics).
+    exports:
+      index:
+        export_button: Export
+        csv_format: CSV format
+        page_title: Export data
+        page_subtitle: Export association data in CSV format
+        newsletter_subscribers: List of newsletter subscribers
+        all_users: All users
+        crm_exports_title: CRM exports
+        crm_exports_hint: "Stable, versioned columns (the version is part of the filename). Optional period: leave empty to export everything."
+        period_from: From
+        period_to: To
+        crm_exports:
+          payment_lines:
+            title: Payments (line detail)
+            description: One row per paid item (membership, contribution, donation), with payer and beneficiary. Filtered on payment date.
+          memberships:
+            title: Memberships
+            description: Membership history. Filtered on start date.
+          contributions:
+            title: Contributions
+            description: Packs, trimesters, annual plans, with remaining sessions. Filtered on purchase date.
+          attendances:
+            title: Attendances
+            description: One row per attendance, with the contribution used. Filtered on session date.
+          donations:
+            title: Donations
+            description: One row per donation, with the donor and the donation receipt number when issued. Filtered on donation date.
     base:
       unauthorized_alert: You do not have access to this page.
       sign_in_required_alert: Sign in with an authorized account to access the administration area.
@@ -362,12 +471,6 @@ en:
         new_list: New list
       health_reports:
         integrity_report: Integrity report
-      exports:
-        index:
-          page_title: Export data
-          page_subtitle: Export association data in CSV format
-          newsletter_subscribers: List of newsletter subscribers
-          all_users: All users
   layouts:
     application:
       title: Le Circographe
@@ -925,6 +1028,7 @@ en:
       success_notice: Inscription réussie !
       rate_limited_alert: Trop d'inscriptions. Veuillez réessayer dans 1 heure.
   sessions:
+    idle_expired_alert: "Your session expired after a period of inactivity. Sign in again to pick up where you left off."
     already_signed_in_notice: You are already signed in. Sign out first to switch accounts.
     new:
       sign_up_prompt: No account yet? Sign up
@@ -1066,8 +1170,24 @@ en:
     user_mailer:
       welcome_by_admin:
         subject: 'Bienvenue au Circographe ! '
+        intro: "Our team created an account for you. Choose your password to sign in:"
+        cta: Choose my password
       welcome_email:
         subject: 'Bienvenue au Circographe ! '
+        title: Welcome to Le Circographe!
+        greeting: Hello %{name},
+        fallback_name: new member
+        intro: Thank you for joining the association, we are glad to have you with us.
+        cta: Visit the website
+      membership_info:
+        active_html: Your <strong>%{type}</strong> membership is valid until <strong>%{ended_at}</strong>.
+        member_number: "Member number: %{number}"
+        none: A membership is required to join training sessions.
+        none_link: See memberships
+      newsletter:
+        subscribed: You are subscribed to our newsletter.
+        unsubscribe: Unsubscribe
+      signature: See you soon, the Circographe team
       email_change_verification:
         subject: "Email change verification code"
       membership_expiration_reminder:

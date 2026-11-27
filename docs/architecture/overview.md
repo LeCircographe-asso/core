@@ -45,7 +45,7 @@ Ce document consolide les bonnes pratiques et l'architecture mise en place lors 
 
 > Les contrôleurs doivent rester minces : valider les params, appeler un service, render/redirect.
 >
-> Exception notable encore présente côté modèle : `Person#renew_membership!`. C'est le dernier gros workflow métier conservé sur `Person` avant extraction éventuelle vers un service dédié.
+> Le renouvellement d'adhésion est passé par `People::MembershipCreator` + `MemberManagementService.reissue_member_number!` ; l'ancien `Person#renew_membership!` (sans appelant) a été supprimé.
 
 ---
 
