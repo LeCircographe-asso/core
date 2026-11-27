@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_03_120000) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_27_120000) do
   create_table "account_claims", force: :cascade do |t|
     t.string "confirmation_token", null: false
     t.datetime "created_at", null: false
@@ -71,6 +71,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_03_120000) do
     t.datetime "start_date"
     t.integer "status"
     t.datetime "updated_at", null: false
+    t.index ["list_type", "start_date"], name: "index_attendance_lists_on_list_type_and_start_date"
+    t.index ["start_date"], name: "index_attendance_lists_on_start_date"
   end
 
   create_table "attendances", force: :cascade do |t|
@@ -81,6 +83,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_03_120000) do
     t.bigint "person_id", null: false
     t.datetime "updated_at", null: false
     t.integer "user_id"
+    t.index ["attendance_list_id"], name: "index_attendances_on_attendance_list_id"
+    t.index ["contribution_id"], name: "index_attendances_on_contribution_id"
     t.index ["person_id", "date"], name: "index_attendances_on_person_id_and_date", unique: true
     t.index ["person_id"], name: "index_attendances_on_person_id"
   end
