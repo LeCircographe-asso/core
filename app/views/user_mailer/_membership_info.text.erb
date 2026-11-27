@@ -1,0 +1,7 @@
+<% if membership -%>
+<%= strip_tags(t("mailers.user_mailer.membership_info.active_html", type: membership.membership_type.name, ended_at: l(membership.ended_at, format: :long))) %>
+<% if member_number.present? %><%= t("mailers.user_mailer.membership_info.member_number", number: member_number) %>
+<% end -%>
+<% else -%>
+<%= t("mailers.user_mailer.membership_info.none") %> <%= t("mailers.user_mailer.membership_info.none_link") %> : <%= adhesion_url %>
+<% end -%>

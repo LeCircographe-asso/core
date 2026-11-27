@@ -1087,8 +1087,24 @@ en:
     user_mailer:
       welcome_by_admin:
         subject: 'Bienvenue au Circographe ! '
+        intro: "Our team created an account for you. Choose your password to sign in:"
+        cta: Choose my password
       welcome_email:
         subject: 'Bienvenue au Circographe ! '
+        title: Welcome to Le Circographe!
+        greeting: Hello %{name},
+        fallback_name: new member
+        intro: Thank you for joining the association, we are glad to have you with us.
+        cta: Visit the website
+      membership_info:
+        active_html: Your <strong>%{type}</strong> membership is valid until <strong>%{ended_at}</strong>.
+        member_number: "Member number: %{number}"
+        none: A membership is required to join training sessions.
+        none_link: See memberships
+      newsletter:
+        subscribed: You are subscribed to our newsletter.
+        unsubscribe: Unsubscribe
+      signature: See you soon, the Circographe team
       email_change_verification:
         subject: "Email change verification code"
       membership_expiration_reminder:

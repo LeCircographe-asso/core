@@ -20,6 +20,31 @@ RSpec.describe UserMailer, type: :mailer do
     it "répond vers contact@lecircographe.fr" do
       expect(mail.reply_to).to eq([ "contact@lecircographe.fr" ])
     end
+
+    it "renders translated html and text parts without missing keys" do
+      [ mail.html_part, mail.text_part ].each do |part|
+        body = part.body.decoded
+        expect(body).to include(I18n.t("mailers.user_mailer.welcome_email.title"))
+        expect(body).not_to match(/translation missing|class="translation_missing"/i)
+      end
+    end
+
+    it "points to the membership page when the person has no membership" do
+      expect(mail.html_part.body.decoded).to include(Rails.application.routes.url_helpers.adhesion_url(host: "example.com"))
+    end
+
+    context "when the person has an active membership" do
+      let(:person) { create(:person, member_number: "26C042") }
+      let(:user) { create(:user, person: person) }
+
+      before { create(:membership, person: person, membership_type: create(:membership_type, name: "Cirque")) }
+
+      it "summarizes the membership and member number" do
+        body = mail.text_part.body.decoded
+        expect(body).to include("Cirque")
+        expect(body).to include("26C042")
+      end
+    end
   end
 
   describe "#welcome_by_admin" do
@@ -34,7 +59,8 @@ RSpec.describe UserMailer, type: :mailer do
     end
 
     it "inclut l'url de reset dans le corps" do
-      expect(mail.body.decoded).to include("https://example.com/reset")
+      expect(mail.html_part.body.decoded).to include("https://example.com/reset")
+      expect(mail.text_part.body.decoded).to include("https://example.com/reset")
     end
 
     it "répond vers contact@lecircographe.fr" do

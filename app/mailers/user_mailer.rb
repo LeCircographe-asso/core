@@ -5,6 +5,7 @@ class UserMailer < ApplicationMailer
     @user = user
     @reset_password_url = reset_password_url
     @url = root_url
+    @membership = user.person&.current_membership
     set_unsubscribe_url
     mail(
       to: @user.email_address,
@@ -16,6 +17,7 @@ class UserMailer < ApplicationMailer
   def welcome_email(user)
     @user = user
     @url = root_url
+    @membership = user.person&.current_membership
     set_unsubscribe_url
     mail(
       to: @user.email_address,

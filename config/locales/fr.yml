@@ -672,8 +672,24 @@ fr:
     user_mailer:
       welcome_by_admin:
         subject: 'Bienvenue au Circographe ! '
+        intro: "Notre équipe vous a créé un compte. Choisissez votre mot de passe pour vous connecter :"
+        cta: Choisir mon mot de passe
       welcome_email:
         subject: 'Bienvenue au Circographe ! '
+        title: Bienvenue au Circographe !
+        greeting: Bonjour %{name},
+        fallback_name: nouveau membre
+        intro: Merci d'avoir rejoint l'association, nous sommes ravis de vous compter parmi nous.
+        cta: Découvrir le site
+      membership_info:
+        active_html: Votre adhésion <strong>%{type}</strong> est valable jusqu'au <strong>%{ended_at}</strong>.
+        member_number: "Numéro d'adhérent : %{number}"
+        none: Pour profiter des entraînements, une adhésion est nécessaire.
+        none_link: Voir les adhésions
+      newsletter:
+        subscribed: Vous êtes inscrit·e à notre newsletter.
+        unsubscribe: Se désinscrire
+      signature: À bientôt, l'équipe du Circographe
       email_change_verification:
         subject: "Code de verification d'adresse email"
       membership_expiration_reminder:
