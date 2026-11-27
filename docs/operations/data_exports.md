@@ -12,6 +12,7 @@
 | `memberships` | une adhésion | `started_at` |
 | `contributions` | une cotisation | `purchased_at` |
 | `attendances` | une présence | `date` |
+| `donations` | un don (donateur + n° de reçu de don, non fiscal) | `payments.created_at` |
 
 URL : `/admin/exports/<clé>.csv?from=AAAA-MM-JJ&to=AAAA-MM-JJ` (bornes optionnelles, incluses).
 Fichier : `<clé>_v<version>[_<from>_<to>]_<date du jour>.csv`, UTF-8 avec BOM (Excel), séparateur virgule.
