@@ -736,6 +736,9 @@ fr:
             attendances:
               title: Présences
               description: Une ligne par présence, avec la cotisation utilisée. Filtré sur la date de séance.
+            donations:
+              title: Dons
+              description: Une ligne par don, avec le donateur et le numéro de reçu fiscal s'il a été émis. Filtré sur la date du don.
   layouts:
     application:
       title: Le Circographe

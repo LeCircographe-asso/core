@@ -385,6 +385,9 @@ en:
             attendances:
               title: Attendances
               description: One row per attendance, with the contribution used. Filtered on session date.
+            donations:
+              title: Donations
+              description: One row per donation, with the donor and the tax receipt number when issued. Filtered on donation date.
   layouts:
     application:
       title: Le Circographe
