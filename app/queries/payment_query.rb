@@ -32,7 +32,7 @@ module PaymentQuery
   end
 
   def self.with_person_and_recorded_by
-    Payment.includes(:person, :recorded_by, payment_lines: :person)
+    Payment.includes(:recorded_by, person: :user, payment_lines: :person)
   end
 
   def self.ordered_by_date(direction = :desc)

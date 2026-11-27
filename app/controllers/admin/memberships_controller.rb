@@ -7,7 +7,7 @@ module Admin
     before_action :set_breadcrumbs
 
     def index
-      @people = Person.includes(:memberships, :user).all
+      @people = Person.includes(:user, memberships: :membership_type).all
       add_breadcrumb I18n.t("breadcrumbs.admin.memberships.management"), nil
     end
 

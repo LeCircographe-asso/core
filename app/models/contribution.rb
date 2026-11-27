@@ -73,6 +73,12 @@ class Contribution < ApplicationRecord
     save!
   end
 
+  # In-memory counterpart of the `currently_active` scope. The scope compares
+  # the stored UTC timestamp with today's date, i.e. midnight UTC: mirror it.
+  def currently_active?(today = Date.current)
+    active? && (expires_at.nil? || expires_at.utc.to_date >= today)
+  end
+
   def expired?
     return false if is_pack10?
 
