@@ -60,6 +60,32 @@ fr:
           umami_session_replay:
             name: Enregistrement de sessions Umami
             description: Replay des sessions de navigation (analytics).
+    exports:
+      index:
+        page_title: Exporter les données
+        page_subtitle: Exporter les données de l'association aux formats CSV
+        newsletter_subscribers: Liste des utilisateurs inscrits à la newsletter
+        all_users: Tous les utilisateurs
+        crm_exports_title: Exports CRM
+        crm_exports_hint: "Colonnes stables et versionnées (la version figure dans le nom du fichier). Période optionnelle : laisser vide pour tout exporter."
+        period_from: Du
+        period_to: Au
+        crm_exports:
+          payment_lines:
+            title: Paiements (détail par ligne)
+            description: Une ligne par élément payé (adhésion, cotisation, don), avec payeur et bénéficiaire. Filtré sur la date du paiement.
+          memberships:
+            title: Adhésions
+            description: Historique des adhésions. Filtré sur la date de début.
+          contributions:
+            title: Cotisations
+            description: Cartes, trimestres, annuels, avec séances restantes. Filtré sur la date d'achat.
+          attendances:
+            title: Présences
+            description: Une ligne par présence, avec la cotisation utilisée. Filtré sur la date de séance.
+          donations:
+            title: Dons
+            description: Une ligne par don, avec le donateur et le numéro de reçu de don s'il a été émis. Filtré sur la date du don.
     base:
       unauthorized_alert: Vous n'avez pas accès à cette page.
       sign_in_required_alert: Connecte-toi avec un compte autorisé pour accéder à l’administration.
@@ -677,8 +703,24 @@ fr:
     user_mailer:
       welcome_by_admin:
         subject: 'Bienvenue au Circographe ! '
+        intro: "Notre équipe vous a créé un compte. Choisissez votre mot de passe pour vous connecter :"
+        cta: Choisir mon mot de passe
       welcome_email:
         subject: 'Bienvenue au Circographe ! '
+        title: Bienvenue au Circographe !
+        greeting: Bonjour %{name},
+        fallback_name: nouveau membre
+        intro: Merci d'avoir rejoint l'association, nous sommes ravis de vous compter parmi nous.
+        cta: Découvrir le site
+      membership_info:
+        active_html: Votre adhésion <strong>%{type}</strong> est valable jusqu'au <strong>%{ended_at}</strong>.
+        member_number: "Numéro d'adhérent : %{number}"
+        none: Pour profiter des entraînements, une adhésion est nécessaire.
+        none_link: Voir les adhésions
+      newsletter:
+        subscribed: Vous êtes inscrit·e à notre newsletter.
+        unsubscribe: Se désinscrire
+      signature: À bientôt, l'équipe du Circographe
       email_change_verification:
         subject: "Code de verification d'adresse email"
       membership_expiration_reminder:
@@ -744,29 +786,6 @@ fr:
         new_list: Nouveau registre
       health_reports:
         integrity_report: Rapport d'intégrité
-      exports:
-        index:
-          page_title: Exporter les données
-          page_subtitle: Exporter les données de l'association aux formats CSV
-          newsletter_subscribers: Liste des utilisateurs inscrits à la newsletter
-          all_users: Tous les utilisateurs
-          crm_exports_title: Exports CRM
-          crm_exports_hint: "Colonnes stables et versionnées (la version figure dans le nom du fichier). Période optionnelle : laisser vide pour tout exporter."
-          period_from: Du
-          period_to: Au
-          crm_exports:
-            payment_lines:
-              title: Paiements (détail par ligne)
-              description: Une ligne par élément payé (adhésion, cotisation, don), avec payeur et bénéficiaire. Filtré sur la date du paiement.
-            memberships:
-              title: Adhésions
-              description: Historique des adhésions. Filtré sur la date de début.
-            contributions:
-              title: Cotisations
-              description: Cartes, trimestres, annuels, avec séances restantes. Filtré sur la date d'achat.
-            attendances:
-              title: Présences
-              description: Une ligne par présence, avec la cotisation utilisée. Filtré sur la date de séance.
   layouts:
     application:
       title: Le Circographe

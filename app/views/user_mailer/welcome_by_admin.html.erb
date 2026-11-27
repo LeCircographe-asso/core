@@ -1,25 +1,17 @@
-<!DOCTYPE html>
-<html>
+<h1 style="font-size: 22px; color: #1F5C55; margin: 0 0 16px;"><%= t("mailers.user_mailer.welcome_email.title") %></h1>
+<p><%= t("mailers.user_mailer.welcome_email.greeting", name: @user.full_name.presence || t("mailers.user_mailer.welcome_email.fallback_name")) %></p>
+<p><%= t("mailers.user_mailer.welcome_by_admin.intro") %></p>
+<p>
+  <a href="<%= @reset_password_url %>" style="display: inline-block; background: #1F5C55; color: #ffffff; padding: 10px 18px; border-radius: 6px; text-decoration: none;"><%= t("mailers.user_mailer.welcome_by_admin.cta") %></a>
+</p>
 
-<body>
-    <h1>Bienvenue au Circographe, <%= @user.full_name.present? ? @user.full_name : "nouveau membre" %></h1>
-    <p>
-        Un compte a été créé pour vous par notre équipe. Vous devez réinitialiser
-        votre mot de passe avant de pouvoir vous connecter :
-    </p>
-    <p>
-        <a href="<%= @reset_password_url %>" class="button">Réinitialiser mon mot de passe</a>
-    </p>
+<%= render "membership_info", membership: @membership, member_number: @user.person&.member_number %>
 
-    <% if @user.newsletter_subscribed && @unsubscribe_url %>
-    <p>
-        Vous vous êtes également inscrit à notre newsletter ! 🎉 Vous recevrez toutes nos dernières actualités et recommandations directement dans votre boîte mail.
-    </p>
-    <a href="<%= @unsubscribe_url %>">Se désinscrire de la newsletter</a>
-    <% end %>
+<% if @user.newsletter_subscribed && @unsubscribe_url %>
+  <p style="font-size: 13px; color: #6b7280;">
+    <%= t("mailers.user_mailer.newsletter.subscribed") %>
+    <a href="<%= @unsubscribe_url %>" style="color: #6b7280;"><%= t("mailers.user_mailer.newsletter.unsubscribe") %></a>
+  </p>
+<% end %>
 
-    <p>À bientôt,</p>
-    <p>L'équipe du Circographe</p>
-</body>
-
-</html>
+<p><%= t("mailers.user_mailer.signature") %></p>

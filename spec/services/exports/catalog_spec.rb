@@ -29,6 +29,11 @@ RSpec.describe Exports::Catalog do
       Exports::Attendances => [ 1, %w[
         attendance_id date person_id member_number last_name first_name
         attendance_list_id list_name list_type contribution_id formula
+      ] ],
+      Exports::Donations => [ 1, %w[
+        payment_line_id payment_uuid donated_at payment_status payment_method amount_euros description
+        donor_person_id donor_member_number donor_last_name donor_first_name
+        receipt_number receipt_issued_at anonymized
       ] ]
     }.each do |export, (version, headers)|
       it "locks #{export.key} v#{version} headers" do
@@ -38,7 +43,7 @@ RSpec.describe Exports::Catalog do
     end
 
     it "registers every export" do
-      expect(described_class::ALL.map(&:key)).to eq(%w[payment_lines memberships contributions attendances])
+      expect(described_class::ALL.map(&:key)).to eq(%w[payment_lines memberships contributions attendances donations])
     end
   end
 
@@ -69,6 +74,21 @@ RSpec.describe Exports::Catalog do
       create(:payment_line, payment:, person: nil)
 
       expect(rows(described_class.new).first["beneficiary_person_id"]).to eq(payer.id.to_s)
+    end
+  end
+
+  describe Exports::Donations do
+    it "exports donation lines only, with the receipt number" do
+      payment = create(:payment, :success, total_cents: 5000)
+      donation = create(:payment_line, payment:, item: nil, item_type: "Donation", item_id: payment.id, amount_cents: 5000, description: "Don")
+      create(:payment_line, payment:, amount_cents: 1000)
+      DonationReceipt.create!(payment_line: donation, number: "2026-001", issued_at: Time.current, issuer: "Le Circographe", donor_name: "Donor")
+
+      exported = rows(described_class.new)
+
+      expect(exported.size).to eq(1)
+      expect(exported.first["amount_euros"]).to eq("50.00")
+      expect(exported.first["receipt_number"]).to eq("2026-001")
     end
   end
 
