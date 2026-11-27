@@ -8,6 +8,27 @@ RSpec.describe "Admin::Imports", type: :request do
 
   before { Rails.cache.clear }
 
+  describe "GET /admin/imports" do
+    it "links to the exports page" do
+      login_as(admin)
+
+      get admin_imports_path
+
+      expect(response.body).to include(%(href="#{admin_exports_path}"))
+    end
+  end
+
+  describe "POST /admin/imports without a file" do
+    it "shows a translated error" do
+      login_as(admin)
+
+      post admin_imports_path
+
+      expect(response).to have_http_status(:bad_request)
+      expect(response.body).to include(I18n.t("admin.imports.file_required"))
+    end
+  end
+
   describe "GET /admin/imports/progress" do
     it "returns the progress of the admin's own import" do
       login_as(admin)

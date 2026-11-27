@@ -22,12 +22,12 @@
             <div class="flex items-start justify-between mb-4">
               <div>
                 <h3 class="text-lg font-semibold text-gray-900"><%= t(".newsletter_subscribers") %></h3>
-                <p class="text-sm text-gray-600 mt-1">CSV format</p>
+                <p class="text-sm text-gray-600 mt-1"><%= t(".csv_format") %></p>
               </div>
               <i class="fas fa-envelope text-2xl text-brand-primary/30"></i>
             </div>
             <div class="mt-4">
-              <%= link_to "Exporter", newsletter_subscribed_admin_exports_path(format: :csv),
+              <%= link_to t(".export_button"), newsletter_subscribed_admin_exports_path(format: :csv),
                   class: "admin-btn-primary" %>
             </div>
           </div>
@@ -37,12 +37,12 @@
             <div class="flex items-start justify-between mb-4">
               <div>
                 <h3 class="text-lg font-semibold text-gray-900"><%= t(".all_users") %></h3>
-                <p class="text-sm text-gray-600 mt-1">CSV format</p>
+                <p class="text-sm text-gray-600 mt-1"><%= t(".csv_format") %></p>
               </div>
               <i class="fas fa-users text-2xl text-brand-primary/30"></i>
             </div>
             <div class="mt-4">
-              <%= link_to "Exporter", all_users_admin_exports_path(format: :csv),
+              <%= link_to t(".export_button"), all_users_admin_exports_path(format: :csv),
                   class: "admin-btn-primary" %>
             </div>
           </div>
@@ -72,7 +72,7 @@
                   <p class="text-sm text-gray-600 mt-1"><%= t(".crm_exports.#{export.key}.description") %></p>
                   <p class="text-xs text-gray-400 mt-1">CSV · v<%= export.version %></p>
                   <div class="mt-4">
-                    <%= form.button "Exporter", type: :submit, name: nil,
+                    <%= form.button t(".export_button"), type: :submit, name: nil,
                         formaction: admin_export_path(export.key, format: :csv),
                         class: "admin-btn-primary" %>
                   </div>

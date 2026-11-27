@@ -14,8 +14,60 @@ en:
       success: "✅ Compte revendiqué ! Votre historique est maintenant disponible."
       rate_limited_alert: Trop de tentatives de confirmation. Veuillez réessayer dans 24 heures.
   admin:
+    imports:
+      access_denied: Administrators only.
+      file_required: Choose a CSV file.
+      failed: 'Error: %{message}'
+      index:
+        title: Import/Export
+        subtitle: Manage data in bulk
+        import:
+          title: Member import
+          description: Import a CSV file (comma or tab separated) with circus members, their memberships and payments.
+          columns_title: 'Expected columns:'
+          columns:
+          - 'Member number: optional (traceability)'
+          - 'Last name, First name: required'
+          - 'Email, Phone: used for duplicate detection'
+          - 'Birth date: DD/MM/YYYY'
+          - Address, Zip code, Town, Country
+          - Occupation, Specialty
+          - 'Image rights: Yes/No'
+          - 'Newsletter: Yes/No'
+          - 'Get involved in the project: Yes/No'
+          - Amount paid, Payment method, Date
+          button: Import a file
+        export:
+          title: Data export
+          description: Payments, memberships, contributions, attendances and donations as versioned CSV, for accounting, backups or external analysis.
+          button: Open exports
+        notes:
+          title: Notes
+          items:
+          - Duplicates (existing email/phone) are skipped automatically
+          - Each member gets a Circus membership dated on the payment
+          - A detailed report is shown after the import
+          - Try on staging before production
+        modal:
+          title: Member import
+          drop: Drag and drop your CSV file here
+          pick: or click to choose a file
+          format: Comma or tab separated — Google Sheets format accepted
+          loading: Importing...
+          progress: '%{processed} / %{total} rows processed'
+      result_panel:
+        created: Created
+        duplicates: Duplicates
+        errors: Errors
+        line: Line %{number}
+        view_members: View members
+        ok: OK
+      error_panel:
+        retry: Try again
     exports:
       index:
+        export_button: Export
+        csv_format: CSV format
         page_title: Export data
         page_subtitle: Export association data in CSV format
         newsletter_subscribers: List of newsletter subscribers

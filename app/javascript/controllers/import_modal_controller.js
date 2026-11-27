@@ -2,7 +2,7 @@ import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
   static targets = ["modal", "dropzone", "fileInput", "loading", "result", "resultContent", "fileName", "progress"]
-  static values = { progressUrl: String }
+  static values = { progressUrl: String, progressTemplate: String }
 
   open() {
     this.modalTarget.classList.remove("hidden")
@@ -91,7 +91,7 @@ export default class extends Controller {
       try {
         const response = await fetch(url, { headers: { "Accept": "application/json" } })
         const { processed, total } = await response.json()
-        if (total) this.progressTarget.textContent = `${processed} / ${total} lignes traitées`
+        if (total) this.progressTarget.textContent = this.progressTemplateValue.replace("%{processed}", processed).replace("%{total}", total)
       } catch {
         // Progress is best effort: the import result still arrives on its own.
       }
