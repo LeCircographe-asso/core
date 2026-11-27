@@ -1,6 +1,6 @@
 <% content_for :title, "Import/Export" %>
 
-<div class="min-h-screen py-4" data-controller="import-modal" data-import-modal-url-value="<%= admin_imports_path %>">
+<div class="min-h-screen py-4" data-controller="import-modal" data-import-modal-url-value="<%= admin_imports_path %>" data-import-modal-progress-url-value="<%= progress_admin_imports_path %>">
   <div class="page-container">
     <%= render 'shared/breadcrumbs' %>
 
@@ -126,6 +126,7 @@
         <i class="fas fa-circle-notch fa-spin text-4xl text-brand-primary mb-4"></i>
         <p class="text-gray-700 font-medium">Import en cours...</p>
         <p class="text-gray-500 text-sm mt-1" data-import-modal-target="fileName"></p>
+        <p class="text-brand-primary text-sm font-medium mt-3 tabular-nums" data-import-modal-target="progress" aria-live="polite"></p>
       </div>
 
       <!-- Result state -->

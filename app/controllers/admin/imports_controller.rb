@@ -2,7 +2,7 @@
 
 module Admin
   class ImportsController < BaseController
-    before_action :authorize_administer!, only: %i[index create]
+    before_action :authorize_administer!, only: %i[index create progress]
 
     def index
       add_breadcrumb I18n.t("breadcrumbs.admin.common.dashboard"), admin_dashboard_index_path
@@ -20,13 +20,18 @@ module Admin
       end
 
       csv_content = file.read.force_encoding("UTF-8")
-      result = Imports::MemberImportService.new(csv_content: csv_content).call
+      tracker = Imports::Progress.new(user: current_user, token: params[:import_token])
+      result = Imports::MemberImportService.new(csv_content:, on_progress: tracker.method(:update)).call
 
       render partial: "admin/imports/result_panel", locals: { result: result }, layout: false
     rescue StandardError => e
       Rails.logger.error("[ImportsController] Error: #{e.message}\n#{e.backtrace.take(5).join("\n")}")
       render partial: "admin/imports/error_panel", locals: { message: "Erreur : #{e.message}" },
              layout: false, status: :internal_server_error
+    end
+
+    def progress
+      render json: Imports::Progress.new(user: current_user, token: params[:token]).read
     end
 
     private

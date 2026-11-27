@@ -24,7 +24,9 @@ Rails.application.routes.draw do
       collection { patch :reorder }
     end
     resources :dashboard, only: %i[index], path: "dashboard"
-    resources :imports, only: %i[index create]
+    resources :imports, only: %i[index create] do
+      get :progress, on: :collection
+    end
     namespace :hubs do
       get :memberships
       get :pages
