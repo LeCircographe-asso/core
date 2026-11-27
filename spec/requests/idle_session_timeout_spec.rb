@@ -8,7 +8,7 @@ RSpec.describe "Idle session timeout", type: :request do
   before { login_as(admin) }
 
   it "lets an active admin through and records activity" do
-    @current_session.update_column(:updated_at, 5.minutes.ago)
+    @current_session.update!(updated_at: 5.minutes.ago)
 
     get admin_exports_path
 
@@ -17,7 +17,7 @@ RSpec.describe "Idle session timeout", type: :request do
   end
 
   context "when the admin has been idle past the timeout" do
-    before { @current_session.update_column(:updated_at, 16.minutes.ago) }
+    before { @current_session.update!(updated_at: 16.minutes.ago) }
 
     it "destroys the session and asks to sign in again" do
       expect { get admin_exports_path }.to change(Session, :count).by(-1)
@@ -49,7 +49,7 @@ RSpec.describe "Idle session timeout", type: :request do
   it "does not expire a web visitor" do
     logout
     login_as(create(:user))
-    @current_session.update_column(:updated_at, 30.days.ago)
+    @current_session.update!(updated_at: 30.days.ago)
 
     get settings_path
 

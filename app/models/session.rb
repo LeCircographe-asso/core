@@ -13,6 +13,6 @@ class Session < ApplicationRecord
   end
 
   def track_activity!(now = Time.current)
-    touch if updated_at < now - ACTIVITY_THROTTLE
+    update!(updated_at: now) if updated_at < now - ACTIVITY_THROTTLE
   end
 end

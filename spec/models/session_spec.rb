@@ -20,7 +20,7 @@ RSpec.describe Session, type: :model do
   def session_for(role, idle_for:)
     user = create(:user, system_role: role)
     user.sessions.create!(user_agent: "rspec", ip_address: "127.0.0.1").tap do |session|
-      session.update_column(:updated_at, idle_for.ago)
+      session.update!(updated_at: idle_for.ago)
     end
   end
 

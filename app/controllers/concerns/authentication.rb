@@ -94,13 +94,13 @@ module Authentication
   # A non-GET request (form submitted after the session expired) cannot be
   # replayed: send the user back to the page the form was on instead.
   def store_return_location
-    return_url = request.get? ? request.url : request.referer
+    return_url = request.get? || request.head? ? request.url : request.referer
     return if return_url.blank?
 
     path = URI.parse(return_url).path.to_s.presence || "/"
     session[:return_to_after_authenticating] = return_url unless non_gettable_redirect_path?(path)
   rescue URI::InvalidURIError
-    session[:return_to_after_authenticating] = request.url if request.get?
+    nil
   end
 
   # Cible après login : ne jamais rediriger vers une URL en GET qui n'existe pas
