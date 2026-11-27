@@ -24,8 +24,10 @@ module Exports
 
     private
 
+    # No polymorphic `item` preload: legacy "MembershipUpgrade" lines have no
+    # model class, so `includes(:item)` would raise NameError for the whole export.
     def scope
-      PaymentLine.joins(:payment).includes(:person, :item, payment: :person)
+      PaymentLine.joins(:payment).includes(:person, payment: :person)
     end
   end
 end

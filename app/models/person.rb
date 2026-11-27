@@ -114,11 +114,12 @@ class Person < ApplicationRecord
     memberships.select(&:currently_valid?).min_by(&:id)
   end
 
-  # Same as contributions.currently_active, without a query when preloaded.
+  # Same as contributions.currently_active (ordered by id, like the former
+  # `.first` callers relied on), without a query when preloaded.
   def currently_active_contributions
-    return contributions.currently_active.to_a unless contributions.loaded?
+    return contributions.currently_active.order(:id).to_a unless contributions.loaded?
 
-    contributions.select(&:currently_active?)
+    contributions.select(&:currently_active?).sort_by(&:id)
   end
 
   # Dernière adhésion la plus récente par date de fin (profil : distinguer « jamais adhéré » / « adhésion terminée »).

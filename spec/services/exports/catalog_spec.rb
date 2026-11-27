@@ -65,6 +65,12 @@ RSpec.describe Exports::Catalog do
       expect(row["anonymized"]).to eq("false")
     end
 
+    it "exports legacy MembershipUpgrade lines, which have no model class" do
+      create(:payment_line, payment:, item: nil, item_type: "MembershipUpgrade", item_id: 0, description: "Upgrade")
+
+      expect(rows(described_class.new).first["line_type"]).to eq("MembershipUpgrade")
+    end
+
     it "falls back to the payer when the line has no beneficiary" do
       create(:payment_line, payment:, person: nil)
 
