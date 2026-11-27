@@ -7,7 +7,9 @@ class SessionsController < ApplicationController
 
   def new
     # Déjà connecté·e : ne pas afficher le formulaire (évite la confusion après un POST échoué avec cookie valide).
-    redirect_to(root_path, status: :see_other) if authenticated?
+    return redirect_to(root_path, status: :see_other) if authenticated?
+
+    @email_address = params[:email_address].presence || session.delete(:reauth_email)
   end
 
   def create

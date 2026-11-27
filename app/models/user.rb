@@ -108,6 +108,14 @@ class User < ApplicationRecord
 
   # Accès à la zone /admin (super_admin, admin, volunteer). Pour "peut administrer"
   # (super_admin/admin uniquement), voir Roleable#can_administer?.
+  # Forced re-authentication after inactivity on shared front-desk computers.
+  # nil means no idle timeout (public visitors).
+  IDLE_TIMEOUTS = { "super_admin" => 15.minutes, "admin" => 15.minutes, "volunteer" => 30.minutes }.freeze
+
+  def idle_timeout
+    IDLE_TIMEOUTS[system_role]
+  end
+
   def can_access_admin_zone?
     %w[admin super_admin volunteer].include?(system_role)
   end

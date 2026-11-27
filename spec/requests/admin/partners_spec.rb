@@ -12,6 +12,13 @@ RSpec.describe "Admin::Partners", type: :request do
       get admin_partners_path
       expect(response).to have_http_status(:success)
     end
+
+    it "opens the edit form in the modal" do
+      partner = create(:partner)
+      get admin_partners_path
+      link = Nokogiri::HTML(response.body).at_css(%(a[href="#{edit_admin_partner_path(partner)}"]))
+      expect(link["data-turbo-frame"]).to eq("modal")
+    end
   end
 
   describe "POST /admin/partners" do

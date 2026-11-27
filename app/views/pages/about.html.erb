@@ -23,12 +23,11 @@
       <p class="text-gray-700 leading-relaxed"><%= t("views.pages.about.mission_text_2") %></p>
     </div>
     <div class="bg-brand-primary/5 border border-brand-primary/20 rounded-3xl p-6 space-y-4" data-gsap-reveal-item>
-      <p class="section-eyebrow">Nos valeurs</p>
+      <p class="section-eyebrow"><%= t("views.pages.about.values_eyebrow") %></p>
       <ul class="flex flex-wrap gap-x-5 gap-y-2 text-gray-900">
-        <li class="font-semibold">Accessibilité</li>
-        <li class="font-semibold">Transmission</li>
-        <li class="font-semibold">Expérimentation</li>
-        <li class="font-semibold">Solidarité</li>
+        <% t("views.pages.about.values").each do |value| %>
+          <li class="font-semibold"><%= value %></li>
+        <% end %>
       </ul>
     </div>
   </div>
@@ -37,9 +36,9 @@
 <% if @board_members.present? %>
 <section class="public-surface p-6 sm:p-10 mt-12 fade-in">
   <header class="text-center mb-10 space-y-3">
-    <p class="section-eyebrow text-balance">Le Conseil d'administration</p>
-    <h2 class="text-2xl sm:text-3xl font-semibold text-gray-900 text-balance">Celles et ceux qui font tourner le Circographe</h2>
-    <p class="text-gray-600 max-w-2xl mx-auto leading-relaxed">Le conseil d’administration coordonne l’autogestion et accompagne les bénévoles au quotidien.</p>
+    <p class="section-eyebrow text-balance"><%= t("views.pages.about.board.eyebrow") %></p>
+    <h2 class="text-2xl sm:text-3xl font-semibold text-gray-900 text-balance"><%= t("views.pages.about.board.heading") %></h2>
+    <p class="text-gray-600 max-w-2xl mx-auto leading-relaxed"><%= t("views.pages.about.board.intro") %></p>
   </header>
 
   <% social_icons = {
@@ -86,13 +85,13 @@
               <div class="flex items-center justify-center gap-1 -my-2 text-gray-400">
                 <% member.socials.each do |platform, url| %>
                   <% icon = social_icons[platform.to_sym] %>
-                  <%= link_to url, target: "_blank", rel: "noopener", class: "p-3 rounded-full hover:text-brand-primary hover:bg-brand-primary/5 transition", aria: { label: "Profil #{platform} de #{member.name}" } do %>
+                  <%= link_to url, target: "_blank", rel: "noopener", class: "p-3 rounded-full hover:text-brand-primary hover:bg-brand-primary/5 transition", aria: { label: t("views.pages.about.board.social_label", platform: platform, name: member.name) } do %>
                     <%= icon || tag.svg(xmlns: "http://www.w3.org/2000/svg", viewBox: "0 0 24 24", fill: "currentColor", class: "w-5 h-5") { tag.circle(cx: 12, cy: 12, r: 10) } %>
                   <% end %>
                 <% end %>
               </div>
             <% end %>
-            <span class="text-xs text-gray-400">Bénévole engagé·e</span>
+            <span class="text-xs text-gray-400"><%= t("views.pages.about.board.volunteer") %></span>
           </article>
         </div>
       <% end %>
@@ -104,8 +103,8 @@
 
 <section class="public-surface-bordered p-6 sm:p-10 mt-12">
   <header class="text-center mb-8 space-y-2">
-    <p class="section-eyebrow">Notre histoire</p>
-    <h2 class="text-2xl sm:text-3xl font-semibold text-gray-800">Points de repère</h2>
+    <p class="section-eyebrow"><%= t("views.pages.about.history.eyebrow") %></p>
+    <h2 class="text-2xl sm:text-3xl font-semibold text-gray-800"><%= t("views.pages.about.history.heading") %></h2>
   </header>
   <%#
     Éditer les entrées ici — status: :past | :present | :future
@@ -115,38 +114,38 @@
   <% history = [
     {
       year:   "2027",
-      title:  "À venir",
-      body:   "Projets à définir avec la communauté — à mettre à jour ici.",
+      title:  t("views.pages.about.history.y2027.title"),
+      body:   t("views.pages.about.history.y2027.body"),
       status: :future
     },
     {
       year:   "2026",
-      title:  "En cours",
-      body:   "Saison active : nouvelles collaborations, accueil de compagnies et projets en cours.",
+      title:  t("views.pages.about.history.y2026.title"),
+      body:   t("views.pages.about.history.y2026.body"),
       status: :present
     },
     {
       year:   "2025",
-      title:  "Nouveaux partenariats & hors les murs",
-      body:   "Actions extérieures, collaborations et projets itinérants.",
+      title:  t("views.pages.about.history.y2025.title"),
+      body:   t("views.pages.about.history.y2025.body"),
       status: :past
     },
     {
       year:   "2024",
-      title:  "Autogestion consolidée",
-      body:   "Conseil d'administration élargi et équipes bénévoles structurées.",
+      title:  t("views.pages.about.history.y2024.title"),
+      body:   t("views.pages.about.history.y2024.body"),
       status: :past
     },
     {
       year:   "2023",
-      title:  "Premiers événements publics",
-      body:   "Plateaux partagés, expositions et ateliers ouverts au quartier.",
+      title:  t("views.pages.about.history.y2023.title"),
+      body:   t("views.pages.about.history.y2023.body"),
       status: :past
     },
     {
       year:   "2022",
-      title:  "Ouverture du hangar",
-      body:   "Lancement des créneaux d'entraînement et installation des ateliers graphiques.",
+      title:  t("views.pages.about.history.y2022.title"),
+      body:   t("views.pages.about.history.y2022.body"),
       status: :past
     }
   ] %>
@@ -158,9 +157,9 @@
 <% if @partners.present? %>
 <section class="public-surface-bordered p-4 sm:p-10 mt-8 sm:mt-12 fade-in">
   <header class="text-center mb-5 sm:mb-10 space-y-2 sm:space-y-3">
-    <p class="section-eyebrow max-sm:text-xs">Partenaires & soutiens</p>
-    <h2 class="text-2xl sm:text-3xl font-semibold text-gray-900 leading-tight">Ils rendent l'aventure possible</h2>
-    <p class="text-sm sm:text-base text-gray-600 max-w-2xl mx-auto leading-normal sm:leading-relaxed">Quelques partenaires mis en avant — la liste complète évolue avec les projets du lieu.</p>
+    <p class="section-eyebrow max-sm:text-xs"><%= t("views.pages.about.partners.eyebrow") %></p>
+    <h2 class="text-2xl sm:text-3xl font-semibold text-gray-900 leading-tight"><%= t("views.pages.about.partners.heading") %></h2>
+    <p class="text-sm sm:text-base text-gray-600 max-w-2xl mx-auto leading-normal sm:leading-relaxed"><%= t("views.pages.about.partners.intro") %></p>
   </header>
 
   <% partner_link_icon = tag.svg(xmlns: "http://www.w3.org/2000/svg", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", stroke_width: "1.75", class: "w-5 h-5") do
@@ -189,20 +188,20 @@
               <h3 class="text-base sm:text-lg font-semibold text-gray-900 leading-snug"><%= partner.name %></h3>
               <p class="text-xs sm:text-sm uppercase tracking-[0.2em] text-brand-primary"><%= partner.category %></p>
             </div>
-            <p class="text-sm text-gray-600 leading-normal sm:leading-relaxed flex-1"><%= partner.bio.presence || "Partenaire du Circographe." %></p>
+            <p class="text-sm text-gray-600 leading-normal sm:leading-relaxed flex-1"><%= partner.bio.presence || t("views.pages.about.partners.default_bio") %></p>
             <% if partner.url.present? %>
               <div class="flex items-center justify-center gap-3 text-gray-400 pt-0.5">
-                <%= link_to partner.url, target: "_blank", rel: "noopener", class: "inline-flex items-center justify-center min-w-11 min-h-11 hover:text-brand-primary transition", aria: { label: "Site web de #{partner.name}" } do %>
+                <%= link_to partner.url, target: "_blank", rel: "noopener", class: "inline-flex items-center justify-center min-w-11 min-h-11 hover:text-brand-primary transition", aria: { label: t("views.pages.about.partners.website_label", name: partner.name) } do %>
                   <%= partner_link_icon %>
                 <% end %>
               </div>
             <% end %>
-            <span class="text-xs text-gray-400 max-sm:hidden">Partenaire</span>
+            <span class="text-xs text-gray-400 max-sm:hidden"><%= t("views.pages.about.partners.label") %></span>
           </article>
         </div>
       <% end %>
     </div>
-    <%= render "shared/carousel_arrows", wrapper_class: "swiper-nav-below absolute flex justify-between items-center w-full -translate-x-1/2 left-1/2 top-1/2 -translate-y-1/2 z-50", prev_label: "Partenaire précédent", next_label: "Partenaire suivant" %>
+    <%= render "shared/carousel_arrows", wrapper_class: "swiper-nav-below absolute flex justify-between items-center w-full -translate-x-1/2 left-1/2 top-1/2 -translate-y-1/2 z-50", prev_label: t("views.pages.about.partners.previous"), next_label: t("views.pages.about.partners.next") %>
   </div>
 </section>
 <% end %>

@@ -29,7 +29,7 @@ module Authentication
   end
 
   def resume_session
-    Current.session ||= find_session_by_cookie
+    Current.session ||= check_idle_timeout(find_session_by_cookie)
   end
 
   def find_session_by_cookie
@@ -62,16 +62,45 @@ module Authentication
     found
   end
 
-  def request_authentication
-    begin
-      uri = URI.parse(request.url)
-      path = uri.path.to_s.presence || "/"
-      session[:return_to_after_authenticating] = request.url unless non_gettable_redirect_path?(path)
-    rescue URI::InvalidURIError
-      session[:return_to_after_authenticating] = request.url
-    end
+  def check_idle_timeout(found)
+    return if found.nil?
+    return expire_idle_session(found) if found.idle_expired?
 
-    redirect_to new_session_path
+    found.track_activity!
+    found
+  end
+
+  def expire_idle_session(found)
+    Rails.logger.info(
+      "[auth.audit] idle_session_expired user_id=#{found.user_id} db_session_id=#{found.id} " \
+      "idle_since=#{found.updated_at.iso8601} path=#{request.path}"
+    )
+    session[:reauth_email] = found.user.email_address
+    @session_expired_for_inactivity = true
+    found.destroy
+    cookies.delete(:session_id, **SESSION_COOKIE_OPTS)
+    nil
+  end
+
+  def request_authentication(alert: nil)
+    store_return_location
+    redirect_to new_session_path, alert: sign_in_alert(alert)
+  end
+
+  def sign_in_alert(default = nil)
+    @session_expired_for_inactivity ? I18n.t("sessions.idle_expired_alert") : default
+  end
+
+  # A non-GET request (form submitted after the session expired) cannot be
+  # replayed: send the user back to the page the form was on instead.
+  def store_return_location
+    return_url = request.get? || request.head? ? request.url : request.referer
+    return if return_url.blank?
+
+    path = URI.parse(return_url).path.to_s.presence || "/"
+    session[:return_to_after_authenticating] = return_url unless non_gettable_redirect_path?(path)
+  rescue URI::InvalidURIError
+    nil
   end
 
   # Cible après login : ne jamais rediriger vers une URL en GET qui n'existe pas

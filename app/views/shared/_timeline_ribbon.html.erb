@@ -15,19 +15,19 @@
 
 <div data-controller="timeline-ribbon"
      data-timeline-ribbon-index-value="<%= start_index %>"
-     aria-label="Chronologie de l'association">
+     aria-label="<%= t("views.shared.timeline.label") %>">
   <div class="relative flex items-center gap-1">
     <button type="button"
             class="tl-ribbon-arrow"
             data-timeline-ribbon-target="prev"
             data-action="timeline-ribbon#previous"
-            aria-label="Année précédente">
+            aria-label="<%= t("views.shared.timeline.previous_year") %>">
       <svg class="h-5 w-5" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M10 12L6 8L10 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" /></svg>
     </button>
 
     <div class="tl-ribbon-track"
          role="tablist"
-         aria-label="Années"
+         aria-label="<%= t("views.shared.timeline.years") %>"
          data-timeline-ribbon-target="track"
          data-action="scroll->timeline-ribbon#scrolled keydown->timeline-ribbon#key">
       <% visible.each_with_index do |entry, i| %>
@@ -49,7 +49,7 @@
             class="tl-ribbon-arrow"
             data-timeline-ribbon-target="next"
             data-action="timeline-ribbon#next"
-            aria-label="Année suivante">
+            aria-label="<%= t("views.shared.timeline.next_year") %>">
       <svg class="h-5 w-5" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M6 12L10 8L6 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" /></svg>
     </button>
   </div>
@@ -65,9 +65,9 @@
            data-timeline-ribbon-target="panel"
            <%= "hidden" unless i == start_index %>>
         <% if status == :present %>
-          <span class="tl-badge tl-badge--present">En cours</span>
+          <span class="tl-badge tl-badge--present"><%= t("views.shared.timeline.present") %></span>
         <% elsif status == :future %>
-          <span class="tl-badge tl-badge--future">À venir</span>
+          <span class="tl-badge tl-badge--future"><%= t("views.shared.timeline.future") %></span>
         <% end %>
         <h3 class="text-base font-semibold text-gray-800 leading-snug mb-1.5"><%= entry[:title] %></h3>
         <p class="text-sm text-gray-600 leading-relaxed"><%= entry[:body] %></p>

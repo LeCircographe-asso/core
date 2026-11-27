@@ -22,6 +22,13 @@ let keydownHandler
 
 const DELETE_FORM_SELECTOR = "form"
 
+// Default texts come from the modal's data attributes (translated by shared/_confirm_modal via
+// config/locales); the French constants above are only a fallback when they are missing.
+function label(name, fallback) {
+  const modal = modalElement || document.getElementById("confirm-modal")
+  return modal?.dataset?.[name] || fallback
+}
+
 function cacheElements() {
   modalElement = document.getElementById("confirm-modal")
   if (!modalElement) return false
@@ -38,17 +45,17 @@ function cacheElements() {
 
 function resetConfirmModalChrome() {
   if (titleElement) {
-    titleElement.textContent = DEFAULT_CONFIRM_TITLE
+    titleElement.textContent = label("defaultTitle", DEFAULT_CONFIRM_TITLE)
   }
   if (messageElement) {
     messageElement.replaceChildren()
     const p = document.createElement("p")
     p.className = "text-base leading-relaxed"
-    p.textContent = DEFAULT_CONFIRM_BODY_FALLBACK
+    p.textContent = label("defaultBody", DEFAULT_CONFIRM_BODY_FALLBACK)
     messageElement.appendChild(p)
   }
-  if (confirmButton) confirmButton.textContent = "Confirmer"
-  if (cancelButton) cancelButton.textContent = "Annuler"
+  if (confirmButton) confirmButton.textContent = label("confirmText", "Confirmer")
+  if (cancelButton) cancelButton.textContent = label("cancelText", "Annuler")
 }
 
 function closeModal(result) {
@@ -84,7 +91,7 @@ function showModal(message, element) {
   messageElement.replaceChildren()
   const p = document.createElement("p")
   p.className = "text-base leading-relaxed"
-  p.textContent = message || DEFAULT_CONFIRM_MESSAGE
+  p.textContent = message || label("defaultMessage", DEFAULT_CONFIRM_MESSAGE)
   messageElement.appendChild(p)
 
   return new Promise((resolve) => {
@@ -141,17 +148,15 @@ function showModal(message, element) {
 }
 
 export function openRichConfirmModal(options = {}) {
-  const {
-    title = DEFAULT_CONFIRM_TITLE,
-    introText = "",
-    htmlBody = "",
-    confirmText = "Confirmer",
-    cancelText = "Annuler"
-  } = options
+  const { introText = "", htmlBody = "" } = options
 
   if (!modalElement && !cacheElements()) {
     return Promise.resolve(window.confirm(introText || DEFAULT_CONFIRM_MESSAGE))
   }
+
+  const title = options.title ?? label("defaultTitle", DEFAULT_CONFIRM_TITLE)
+  const confirmText = options.confirmText ?? label("confirmText", "Confirmer")
+  const cancelText = options.cancelText ?? label("cancelText", "Annuler")
 
   if (titleElement) titleElement.textContent = title
   confirmButton.textContent = confirmText
@@ -268,7 +273,7 @@ function applyDefaultConfirmMessages(root = document) {
       }
 
       if (!form.dataset.turboConfirm) {
-        form.dataset.turboConfirm = DEFAULT_CONFIRM_MESSAGE
+        form.dataset.turboConfirm = label("defaultMessage", DEFAULT_CONFIRM_MESSAGE)
       }
     }
 

@@ -52,4 +52,13 @@ RSpec.describe Imports::MemberImportService do
     expect(person.member_number).to be_blank
     expect(person.member_number_histories).to be_empty
   end
+
+  it "reports progress after each row" do
+    csv = "#{header}\n#{csv_row}\n#{csv_row(member_number: '25C002', last_name: 'Martin', first_name: 'Bob').sub('alice@', 'bob@')}"
+    calls = []
+
+    described_class.new(csv_content: csv, on_progress: ->(processed, total) { calls << [ processed, total ] }).call
+
+    expect(calls).to eq([ [ 1, 2 ], [ 2, 2 ] ])
+  end
 end

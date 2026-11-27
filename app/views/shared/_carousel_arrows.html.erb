@@ -9,8 +9,8 @@
 <% wrapper_class = local_assigns.fetch(:wrapper_class, "absolute flex justify-between items-center w-full -translate-x-1/2 left-1/2 top-1/2 -translate-y-1/2 z-50") %>
 <% icon_class = local_assigns.fetch(:icon_class, "h-5 w-5") %>
 <% arrows = [
-     { side: "prev", label: local_assigns.fetch(:prev_label, "Précédent"), path: "M10 12L6 8L10 4" },
-     { side: "next", label: local_assigns.fetch(:next_label, "Suivant"), path: "M6 12L10 8L6 4" }
+     { side: "prev", label: local_assigns.fetch(:prev_label) { t("views.shared.carousel_arrows.previous") }, path: "M10 12L6 8L10 4" },
+     { side: "next", label: local_assigns.fetch(:next_label) { t("views.shared.carousel_arrows.next") }, path: "M6 12L10 8L6 4" }
    ] %>
 <div class="<%= wrapper_class %>">
   <% arrows.each do |arrow| %>

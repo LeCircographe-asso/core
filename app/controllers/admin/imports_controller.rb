@@ -2,7 +2,7 @@
 
 module Admin
   class ImportsController < BaseController
-    before_action :authorize_administer!, only: %i[index create]
+    before_action :authorize_administer!, only: %i[index create progress]
 
     def index
       add_breadcrumb I18n.t("breadcrumbs.admin.common.dashboard"), admin_dashboard_index_path
@@ -14,25 +14,30 @@ module Admin
     def create
       file = params[:csv_file]
       if file.blank?
-        render partial: "admin/imports/error_panel", locals: { message: t(".file_required") },
+        render partial: "admin/imports/error_panel", locals: { message: t("admin.imports.file_required") },
                layout: false, status: :bad_request
         return
       end
 
       csv_content = file.read.force_encoding("UTF-8")
-      result = Imports::MemberImportService.new(csv_content: csv_content).call
+      tracker = Imports::Progress.new(user: current_user, token: params[:import_token])
+      result = Imports::MemberImportService.new(csv_content:, on_progress: tracker.method(:update)).call
 
       render partial: "admin/imports/result_panel", locals: { result: result }, layout: false
     rescue StandardError => e
       Rails.logger.error("[ImportsController] Error: #{e.message}\n#{e.backtrace.take(5).join("\n")}")
-      render partial: "admin/imports/error_panel", locals: { message: "Erreur : #{e.message}" },
+      render partial: "admin/imports/error_panel", locals: { message: t("admin.imports.failed", message: e.message) },
              layout: false, status: :internal_server_error
+    end
+
+    def progress
+      render json: Imports::Progress.new(user: current_user, token: params[:token]).read
     end
 
     private
 
     def authorize_administer!
-      redirect_to admin_dashboard_index_path, alert: t(".access_denied") unless current_user.can_administer?
+      redirect_to admin_dashboard_index_path, alert: t("admin.imports.access_denied") unless current_user.can_administer?
     end
   end
 end

@@ -8,6 +8,8 @@ let deferredPrompt = null
 
 export default class extends Controller {
   static targets = ["installBtn", "iosHint", "iosInstructions", "androidHint", "androidInstructions"]
+  // Translated by shared/_pwa_install_banner (config/locales); French fallback.
+  static values = { laterText: { type: String, default: "Installer plus tard" } }
 
   connect() {
     if (this.isStandalone() || this.isDismissed() || !this.isTouchDevice()) return
@@ -57,7 +59,7 @@ export default class extends Controller {
     if (outcome === "accepted") {
       this.hideBanner()
     } else {
-      this.installBtnTarget.textContent = "Installer plus tard"
+      this.installBtnTarget.textContent = this.laterTextValue
       setTimeout(() => this.hideBanner(), 2000)
     }
   }
