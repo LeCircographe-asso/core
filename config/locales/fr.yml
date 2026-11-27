@@ -79,6 +79,37 @@ fr:
         ok: OK
       error_panel:
         retry: Réessayer
+    feature_flags:
+      index:
+        title: Fonctionnalités
+        subtitle: État réel des interrupteurs de l'application dans cet environnement (lecture seule).
+        enabled: Activé
+        disabled: Désactivé
+        open_toggle: Modifier
+        columns:
+          flag: Fonctionnalité
+          state: État
+          how_to_change: Comment le changer
+        sources:
+          env: Variable d'environnement %{setting}, prise en compte au prochain déploiement.
+          database: Réglage en base (%{setting}), modifiable immédiatement.
+          environment: Fixé par l'environnement (actif uniquement en %{setting}).
+        flags:
+          public_registration:
+            name: Inscriptions publiques
+            description: Création de compte depuis le site.
+          account_claim:
+            name: Revendication de compte
+            description: Lier une fiche adhérent existante à un compte web.
+          mailer_deliveries:
+            name: Envoi des emails
+            description: Les emails partent réellement (sinon construits et journalisés uniquement).
+          bug_report_widget:
+            name: Widget de rapport de bug
+            description: Bouton de signalement affiché aux utilisateurs.
+          umami_session_replay:
+            name: Enregistrement de sessions Umami
+            description: Replay des sessions de navigation (analytics).
     exports:
       index:
         export_button: Exporter

@@ -1,0 +1,47 @@
+<% content_for :title, t(".title") %>
+
+<div class="min-h-screen py-6">
+  <div class="page-container">
+    <%= render 'shared/breadcrumbs' %>
+
+    <div class="admin-page-header">
+      <div class="px-6 py-4">
+        <h1 class="text-2xl font-bold text-white"><%= t(".title") %></h1>
+        <p class="text-white/80 mt-1"><%= t(".subtitle") %></p>
+      </div>
+    </div>
+
+    <div class="admin-metric-card overflow-x-auto">
+      <table class="min-w-full divide-y divide-gray-200 text-sm">
+        <thead class="bg-gray-50">
+          <tr>
+            <th class="px-4 py-3 text-left font-medium text-gray-600"><%= t(".columns.flag") %></th>
+            <th class="px-4 py-3 text-left font-medium text-gray-600"><%= t(".columns.state") %></th>
+            <th class="px-4 py-3 text-left font-medium text-gray-600"><%= t(".columns.how_to_change") %></th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-100">
+          <% @flags.each do |flag| %>
+            <tr id="feature_flag_<%= flag.key %>">
+              <td class="px-4 py-3">
+                <div class="font-medium text-gray-900"><%= t(".flags.#{flag.key}.name") %></div>
+                <div class="text-gray-500"><%= t(".flags.#{flag.key}.description") %></div>
+              </td>
+              <td class="px-4 py-3 whitespace-nowrap">
+                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full <%= flag.enabled ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-700' %>">
+                  <%= t(flag.enabled ? ".enabled" : ".disabled") %>
+                </span>
+              </td>
+              <td class="px-4 py-3 text-gray-600">
+                <%= t(".sources.#{flag.source}", setting: flag.setting) %>
+                <% if flag.key == :bug_report_widget %>
+                  · <%= link_to t(".open_toggle"), admin_bug_reports_path, class: "text-brand-primary hover:underline" %>
+                <% end %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
