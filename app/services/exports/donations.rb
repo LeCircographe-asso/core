@@ -1,7 +1,8 @@
 # frozen_string_literal: true
 
 module Exports
-  # One row per donation line, with its tax receipt when issued.
+  # One row per donation line, with its donation receipt when issued (not a
+  # tax receipt: see docs/payments.md §4.4).
   class Donations < Base
     export_version 1
     period_on Payment, :created_at
