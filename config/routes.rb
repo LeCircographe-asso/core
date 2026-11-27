@@ -97,7 +97,7 @@ Rails.application.routes.draw do
     resources :duplicates, only: %i[index] do
       post :merge, on: :collection
     end
-    resources :exports, only: %i[index] do
+    resources :exports, only: %i[index show] do
       get :newsletter_subscribed, on: :collection
       get :all_users, on: :collection
     end

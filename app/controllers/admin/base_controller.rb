@@ -23,11 +23,7 @@ module Admin
     def require_admin_zone_access
       resume_session
 
-      unless Current.session
-        store_return_location_for_admin_request
-        redirect_to new_session_path, alert: I18n.t("admin.base.sign_in_required_alert")
-        return
-      end
+      return request_authentication(alert: I18n.t("admin.base.sign_in_required_alert")) unless Current.session
 
       return if Current.user&.can_access_admin_zone?
 
@@ -49,14 +45,6 @@ module Admin
       return if Current.user&.can_administer?
 
       redirect_to admin_dashboard_index_path, alert: I18n.t("admin.base.unauthorized_alert")
-    end
-
-    def store_return_location_for_admin_request
-      uri = URI.parse(request.url)
-      path = uri.path.to_s.presence || "/"
-      session[:return_to_after_authenticating] = request.url unless non_gettable_redirect_path?(path)
-    rescue URI::InvalidURIError
-      session[:return_to_after_authenticating] = request.url
     end
   end
 end

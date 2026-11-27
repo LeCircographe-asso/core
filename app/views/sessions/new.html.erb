@@ -1,3 +1,7 @@
+<%# Reached from a Turbo Frame after an expired session: render as a full page, not a missing frame. %>
+<% content_for :head do %>
+  <meta name="turbo-visit-control" content="reload">
+<% end %>
 <div class="relative h-full overflow-hidden bg-white lg:flex">
     <!-- Background image in mobile version -->
     <div class="lg:hidden absolute inset-0 z-0 opacity-20">
@@ -22,7 +26,7 @@
             <!-- Email field -->
             <div>
                 <label for="email_address" class="block mb-2 text-sm text-gray-800">Adresse Email</label>
-                <%= form.email_field :email_address, required: true, autofocus: true, autocomplete: "username", placeholder: "jean@example.com", value: params[:email_address], id: "email_address", class: "auth-field" %>
+                <%= form.email_field :email_address, required: true, autofocus: true, autocomplete: "username", placeholder: "jean@example.com", value: @email_address, id: "email_address", class: "auth-field" %>
             </div>
 
             <!-- Password Field -->
