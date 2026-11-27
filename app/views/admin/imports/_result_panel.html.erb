@@ -3,15 +3,15 @@
   <div class="grid grid-cols-3 gap-4 text-center">
     <div>
       <div class="text-2xl font-bold text-green-600"><%= result.created_count %></div>
-      <div class="text-xs text-gray-600">Créés</div>
+      <div class="text-xs text-gray-600"><%= t(".created") %></div>
     </div>
     <div>
       <div class="text-2xl font-bold text-yellow-600"><%= result.duplicate_count %></div>
-      <div class="text-xs text-gray-600">Doublons</div>
+      <div class="text-xs text-gray-600"><%= t(".duplicates") %></div>
     </div>
     <div>
       <div class="text-2xl font-bold text-red-600"><%= result.error_count %></div>
-      <div class="text-xs text-gray-600">Erreurs</div>
+      <div class="text-xs text-gray-600"><%= t(".errors") %></div>
     </div>
   </div>
 </div>
@@ -44,7 +44,7 @@
               </p>
               <p class="text-xs text-gray-600 mt-1"><%= detail[:message] %></p>
             </div>
-            <span class="text-xs text-gray-500 ml-2">Ligne <%= detail[:line] %></span>
+            <span class="text-xs text-gray-500 ml-2"><%= t(".line", number: detail[:line]) %></span>
           </div>
         </li>
       <% end %>
@@ -56,10 +56,10 @@
 <div class="bg-gray-50 px-6 py-4 border-t border-gray-200 flex justify-end gap-2">
   <% if result.created_count.positive? %>
     <%= link_to admin_members_path, class: "px-4 py-2 bg-brand-primary hover:bg-brand-primary-dark text-white rounded-lg transition-colors" do %>
-      <i class="fas fa-eye mr-2"></i> Voir les adhérents
+      <i class="fas fa-eye mr-2"></i> <%= t(".view_members") %>
     <% end %>
   <% end %>
   <button type="button" class="px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-800 rounded-lg transition-colors" data-action="click->import-modal#close">
-    OK
+    <%= t(".ok") %>
   </button>
 </div>

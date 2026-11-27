@@ -29,6 +29,56 @@ fr:
             privacy_policy:
               must_accept: Vous devez accepter la politique de confidentialité pour continuer.
   admin:
+    imports:
+      access_denied: Accès réservé aux administrateurs.
+      file_required: Choisissez un fichier CSV.
+      failed: 'Erreur : %{message}'
+      index:
+        title: Import/Export
+        subtitle: Gérer les données en masse
+        import:
+          title: Import adhérents
+          description: Importez un fichier CSV (virgules ou tabulations) avec les adhérents cirque, leurs adhésions et paiements.
+          columns_title: 'Colonnes attendues :'
+          columns:
+          - 'N° adhérent : optionnel (pour traçabilité)'
+          - 'Nom, Prénom : obligatoires'
+          - 'Email, Téléphone : pour détection doublons'
+          - 'Date de naissance : format JJ/MM/AAAA'
+          - Adresse, Code postal, Ville, Pays
+          - Profession, Spécialité
+          - 'Autorisation droit à l''image : Oui/Non'
+          - 'Newsletter : Oui/Non'
+          - 'S''investir dans le projet : Oui/Non'
+          - Montant payé, Type de paiement, Date
+          button: Importer un fichier
+        export:
+          title: Export données
+          description: Paiements, adhésions, cotisations, présences et dons en CSV versionné, pour la compta, une sauvegarde ou une analyse externe.
+          button: Ouvrir les exports
+        notes:
+          title: Notes
+          items:
+          - Les doublons (email/téléphone existants) sont automatiquement ignorés
+          - Chaque adhérent crée une adhésion Cirque avec la date du paiement
+          - Un rapport détaillé s'affiche après l'import
+          - Tester d'abord en staging avant la production
+        modal:
+          title: Import adhérents
+          drop: Glissez-déposez votre fichier CSV ici
+          pick: ou cliquez pour choisir un fichier
+          format: Virgules ou tabulations — format Google Sheets accepté
+          loading: Import en cours...
+          progress: '%{processed} / %{total} lignes traitées'
+      result_panel:
+        created: Créés
+        duplicates: Doublons
+        errors: Erreurs
+        line: Ligne %{number}
+        view_members: Voir les adhérents
+        ok: OK
+      error_panel:
+        retry: Réessayer
     feature_flags:
       index:
         title: Fonctionnalités
@@ -62,6 +112,8 @@ fr:
             description: Replay des sessions de navigation (analytics).
     exports:
       index:
+        export_button: Exporter
+        csv_format: Format CSV
         page_title: Exporter les données
         page_subtitle: Exporter les données de l'association aux formats CSV
         newsletter_subscribers: Liste des utilisateurs inscrits à la newsletter
