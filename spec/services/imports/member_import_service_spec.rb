@@ -34,6 +34,14 @@ RSpec.describe Imports::MemberImportService do
     expect(history.replaced_at).to be_nil
   end
 
+  it "records a 19.99 EUR amount as 1999 cents" do
+    csv = "#{header}\n#{csv_row(amount: '19.99')}"
+
+    described_class.new(csv_content: csv).call
+
+    expect(Person.find_by(member_number: "25C001").payments.sole.total_cents).to eq(1999)
+  end
+
   it "does not create a history entry when the row has no member_number" do
     csv = "#{header}\n#{csv_row(member_number: '')}"
 
