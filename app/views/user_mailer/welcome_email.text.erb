@@ -1,15 +1,14 @@
-Bienvenue au Circographe !
+<%= t("mailers.user_mailer.welcome_email.title") %>
 
-Bonjour <%= @user.first_name %> <%= @user.last_name %>,
+<%= t("mailers.user_mailer.welcome_email.greeting", name: @user.full_name.presence || t("mailers.user_mailer.welcome_email.fallback_name")) %>
 
-Merci d'avoir rejoint le Circographe. Nous sommes heureux de vous compter parmi nos membres.
+<%= t("mailers.user_mailer.welcome_email.intro") %>
 
+<%= render "membership_info", membership: @membership, member_number: @user.person&.member_number %>
+<%= t("mailers.user_mailer.welcome_email.cta") %> : <%= @url %>
 <% if @user.newsletter_subscribed && @unsubscribe_url %>
-Vous êtes également inscrit à notre newsletter ! 🎉 Vous recevrez toutes nos dernières actualités et nos recommandations directement dans votre boîte mail.
-Si vous souhaitez vous désinscrire de notre newsletter, cliquez sur le lien suivant : <%= @unsubscribe_url %>
+
+<%= t("mailers.user_mailer.newsletter.subscribed") %> <%= t("mailers.user_mailer.newsletter.unsubscribe") %> : <%= @unsubscribe_url %>
 <% end %>
 
-
-À bientôt !
-
-🌟 L'équipe du Circographe 🌟
+<%= t("mailers.user_mailer.signature") %>
