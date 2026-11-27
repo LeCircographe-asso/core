@@ -14,6 +14,37 @@ en:
       success: "✅ Compte revendiqué ! Votre historique est maintenant disponible."
       rate_limited_alert: Trop de tentatives de confirmation. Veuillez réessayer dans 24 heures.
   admin:
+    feature_flags:
+      index:
+        title: Features
+        subtitle: Live state of the application switches in this environment (read-only).
+        enabled: Enabled
+        disabled: Disabled
+        open_toggle: Change
+        columns:
+          flag: Feature
+          state: State
+          how_to_change: How to change it
+        sources:
+          env: Environment variable %{setting}, applied on next deploy.
+          database: Database setting (%{setting}), changes apply immediately.
+          environment: Set by the environment (enabled only in %{setting}).
+        flags:
+          public_registration:
+            name: Public sign-up
+            description: Account creation from the website.
+          account_claim:
+            name: Account claim
+            description: Link an existing member record to a web account.
+          mailer_deliveries:
+            name: Email delivery
+            description: Emails are actually sent (otherwise only built and logged).
+          bug_report_widget:
+            name: Bug report widget
+            description: Report button shown to users.
+          umami_session_replay:
+            name: Umami session replay
+            description: Browsing session replay (analytics).
     base:
       unauthorized_alert: You do not have access to this page.
       sign_in_required_alert: Sign in with an authorized account to access the administration area.

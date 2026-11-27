@@ -125,6 +125,12 @@
             <% end %>
         </li>
         <% end %>
+        <% if current_user.super_admin? %>
+        <li><%= link_to admin_feature_flags_path, class: "sidebar-link flex items-center" do %>
+              <i class="fas fa-toggle-on mr-2 sidebar-icon"></i> <span class="sidebar-text" data-sidebar-target="text"><%= t("admin.feature_flags.index.title") %></span>
+            <% end %>
+        </li>
+        <% end %>
       </ul>
     </div>
 
