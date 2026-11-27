@@ -220,78 +220,7 @@ class Person < ApplicationRecord
     true
   end
 
-  def renew_membership!(membership_type, recorded_by:, payment_method: :cash, custom_amount_cents: nil, offer_reason: nil)
-    ActiveRecord::Base.transaction do
-      current = current_membership
-      raise "Adhésion encore active jusqu'au #{current.ended_at}. Renouvellement impossible." if current&.active?
-
-      current&.update!(status: :expired)
-
-      creation_result = People::MembershipCreator.new(
-        person: self,
-        membership_type_id: membership_type.id,
-        payment_method: payment_method.to_s,
-        recorded_by_id: recorded_by.id,
-        custom_amount_cents: custom_amount_cents,
-        offer_reason: offer_reason
-      ).call
-
-      raise "Cette personne a déjà une adhésion active" if creation_result.success? && creation_result.already_existed
-      raise creation_result.message unless creation_result.success?
-
-      old_number = member_number
-      new_number = MemberManagementService.generate_member_number(get_membership_type_code(membership_type))
-
-      create_member_number_change_history!(
-        old_member_number: old_number,
-        new_member_number: new_number,
-        old_type: current ? get_membership_type_code(current.membership_type) : "AUCUN",
-        new_type: get_membership_type_code(membership_type),
-        recorded_by: recorded_by
-      )
-
-      update!(member_number: new_number)
-
-      {
-        membership: creation_result.membership,
-        payment: creation_result.payment,
-        renewed: true,
-        old_member_number: old_number,
-        new_member_number: new_number
-      }
-    end
-  end
-
   private
-
-  def get_membership_type_code(membership_type)
-    case membership_type.category
-    when "circus"
-      "CIRQUE"
-    when "basic"
-      "BASIQUE"
-    else
-      "BASIQUE"
-    end
-  end
-
-  def create_member_number_change_history!(old_member_number:, new_member_number:, old_type:, new_type:, recorded_by:)
-    if old_member_number.present?
-      old_history = member_number_histories.where(member_number: old_member_number, replaced_at: nil).first
-      old_history&.mark_as_replaced!
-    end
-
-    old_type_name = old_type == "CIRQUE" ? "Cirque" : "Basique"
-    new_type_name = new_type == "CIRQUE" ? "Cirque" : "Basique"
-
-    member_number_histories.create!(
-      member_number: new_member_number,
-      membership_type: new_type_name,
-      year: Date.current.year,
-      notes: "Changement automatique lors de l'upgrade d'adhésion (#{old_type_name} → #{new_type_name}) - Enregistré par #{recorded_by.email}",
-      assigned_at: Time.current
-    )
-  end
 
   def must_have_active_membership
     return if new_record?

@@ -39,7 +39,7 @@
 
 #### Adhésion — `Membership`
 - **Définition** : contrat annuel donnant à une `Person` le statut de membre de l'association, lié à un `MembershipType` (Basic / Cirque Plein / Cirque Réduit). Statuts : `pending → active → inactive → expired`. Une seule adhésion active par personne (validation d'overlap).
-- **Cycle de vie** : créée via `People::MembershipCreator`, upgrade via `People::MembershipUpgrader` (plein tarif du nouveau type, pas de prorata), renouvellement via `Person#renew_membership!` (nouveau numéro d'adhérent annuel).
+- **Cycle de vie** : créée via `People::MembershipCreator`, upgrade via `People::MembershipUpgrader` (plein tarif du nouveau type, pas de prorata), renouvellement via `People::MembershipCreator` + `MemberManagementService.reissue_member_number!` (nouveau numéro d'adhérent annuel).
 - **Usage correct** :
   - « Adhésion Cirque Tarif Réduit active jusqu'au 31/12/2026 ».
   - « Upgrade Basic → Circus : 7 € (plein tarif Cirque Réduit) ».
