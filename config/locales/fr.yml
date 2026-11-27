@@ -446,6 +446,7 @@ fr:
     create:
       success_notice: Inscription réussie !
   sessions:
+    idle_expired_alert: "Votre session a expiré après une période d'inactivité. Reconnectez-vous pour reprendre où vous en étiez."
     already_signed_in_notice: Tu es déjà connecté·e. Déconnecte-toi pour te connecter avec un autre compte.
     new:
       sign_up_prompt: Pas encore de compte ? S'inscrire
