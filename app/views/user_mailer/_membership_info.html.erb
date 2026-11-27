@@ -1,0 +1,12 @@
+<% if membership %>
+  <p style="background: #f0fdfa; border-left: 4px solid #1F5C55; padding: 12px 16px; margin: 16px 0;">
+    <%= t("mailers.user_mailer.membership_info.active_html",
+          type: membership.membership_type.name, ended_at: l(membership.ended_at, format: :long)) %>
+    <% if member_number.present? %><br><%= t("mailers.user_mailer.membership_info.member_number", number: member_number) %><% end %>
+  </p>
+<% else %>
+  <p>
+    <%= t("mailers.user_mailer.membership_info.none") %>
+    <a href="<%= adhesion_url %>" style="color: #1F5C55;"><%= t("mailers.user_mailer.membership_info.none_link") %></a>
+  </p>
+<% end %>
