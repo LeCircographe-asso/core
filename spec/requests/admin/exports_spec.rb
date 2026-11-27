@@ -50,6 +50,13 @@ RSpec.describe 'Admin::Exports', type: :request do
         expect(response.body).to include(admin_export_path('attendances', format: :csv))
       end
 
+      it 'renders the index without missing translations' do
+        get admin_exports_path
+
+        expect(response.body).not_to include('translation_missing')
+        expect(response.body).to include(I18n.t('admin.exports.index.crm_exports.donations.title'))
+      end
+
       it 'downloads a versioned CRM export for the period and audits it' do
         create(:attendance, date: Date.new(2026, 1, 10))
         allow(Rails.logger).to receive(:info).and_call_original

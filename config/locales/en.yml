@@ -14,6 +14,32 @@ en:
       success: "✅ Compte revendiqué ! Votre historique est maintenant disponible."
       rate_limited_alert: Trop de tentatives de confirmation. Veuillez réessayer dans 24 heures.
   admin:
+    exports:
+      index:
+        page_title: Export data
+        page_subtitle: Export association data in CSV format
+        newsletter_subscribers: List of newsletter subscribers
+        all_users: All users
+        crm_exports_title: CRM exports
+        crm_exports_hint: "Stable, versioned columns (the version is part of the filename). Optional period: leave empty to export everything."
+        period_from: From
+        period_to: To
+        crm_exports:
+          payment_lines:
+            title: Payments (line detail)
+            description: One row per paid item (membership, contribution, donation), with payer and beneficiary. Filtered on payment date.
+          memberships:
+            title: Memberships
+            description: Membership history. Filtered on start date.
+          contributions:
+            title: Contributions
+            description: Packs, trimesters, annual plans, with remaining sessions. Filtered on purchase date.
+          attendances:
+            title: Attendances
+            description: One row per attendance, with the contribution used. Filtered on session date.
+          donations:
+            title: Donations
+            description: One row per donation, with the donor and the tax receipt number when issued. Filtered on donation date.
     base:
       unauthorized_alert: You do not have access to this page.
       sign_in_required_alert: Sign in with an authorized account to access the administration area.
@@ -362,32 +388,6 @@ en:
         new_list: New list
       health_reports:
         integrity_report: Integrity report
-      exports:
-        index:
-          page_title: Export data
-          page_subtitle: Export association data in CSV format
-          newsletter_subscribers: List of newsletter subscribers
-          all_users: All users
-          crm_exports_title: CRM exports
-          crm_exports_hint: "Stable, versioned columns (the version is part of the filename). Optional period: leave empty to export everything."
-          period_from: From
-          period_to: To
-          crm_exports:
-            payment_lines:
-              title: Payments (line detail)
-              description: One row per paid item (membership, contribution, donation), with payer and beneficiary. Filtered on payment date.
-            memberships:
-              title: Memberships
-              description: Membership history. Filtered on start date.
-            contributions:
-              title: Contributions
-              description: Packs, trimesters, annual plans, with remaining sessions. Filtered on purchase date.
-            attendances:
-              title: Attendances
-              description: One row per attendance, with the contribution used. Filtered on session date.
-            donations:
-              title: Donations
-              description: One row per donation, with the donor and the tax receipt number when issued. Filtered on donation date.
   layouts:
     application:
       title: Le Circographe
