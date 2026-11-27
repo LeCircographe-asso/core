@@ -21,7 +21,7 @@
         </div>
         <p class="text-gray-600 flex-1"><%= truncate(blog.content.to_plain_text, length: 180) %></p>
         <div>
-          <%= link_to "Lire la suite", blog_path(blog), class: "inline-flex items-center justify-center w-full px-4 py-2 tracking-wide text-white font-semibold bg-[#1F5C55] border-2 border-[#1F5C55] rounded-full shadow hover:bg-gray-100 hover:text-[#1F5C55] hover:border-[#1F5C55] transition-colors duration-300" %>
+          <%= link_to "Lire la suite", blog_path(blog), class: "inline-flex items-center justify-center w-full px-4 py-2 tracking-wide text-white font-semibold bg-brand-primary border-2 border-brand-primary rounded-full shadow hover:bg-gray-100 hover:text-brand-primary hover:border-brand-primary transition-colors duration-300" %>
         </div>
       </div>
     </article>

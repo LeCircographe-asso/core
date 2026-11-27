@@ -12,6 +12,13 @@ RSpec.describe "Admin::Faqs", type: :request do
       get admin_faqs_path
       expect(response).to have_http_status(:success)
     end
+
+    it "opens the edit form in the modal" do
+      faq = create(:faq)
+      get admin_faqs_path
+      link = Nokogiri::HTML(response.body).at_css(%(a[href="#{edit_admin_faq_path(faq)}"]))
+      expect(link["data-turbo-frame"]).to eq("modal")
+    end
   end
 
   describe "GET /admin/faqs/:id/edit" do

@@ -18,7 +18,7 @@
             <%= check_box_tag :enabled, "1", @widget_setting.enabled? %>
             <%= t("admin.bug_reports.widget_toggle.label") %>
           </label>
-          <%= submit_tag t("admin.bug_reports.widget_toggle.submit"), class: "px-3 py-1.5 text-sm font-medium text-white bg-[#1F5C55] hover:bg-[#194A45] rounded-md cursor-pointer" %>
+          <%= submit_tag t("admin.bug_reports.widget_toggle.submit"), class: "px-3 py-1.5 text-sm font-medium text-white bg-brand-primary hover:bg-brand-primary-dark rounded-md cursor-pointer" %>
           <span class="text-xs text-gray-500"><%= t("admin.bug_reports.widget_toggle.hint") %></span>
         <% end %>
       </div>
@@ -27,10 +27,10 @@
     <div class="admin-metric-card p-6">
       <div class="flex flex-wrap gap-2 mb-4">
         <%= link_to t("admin.bug_reports.filters.all"), admin_bug_reports_path,
-            class: "px-3 py-1.5 rounded-full text-sm font-medium #{params[:status].blank? ? 'bg-[#1F5C55] text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}" %>
+            class: "px-3 py-1.5 rounded-full text-sm font-medium #{params[:status].blank? ? 'bg-brand-primary text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}" %>
         <% BugReport.statuses.each_key do |status| %>
           <%= link_to t("admin.bug_reports.statuses.#{status}"), admin_bug_reports_path(status: status, source: params[:source]),
-              class: "px-3 py-1.5 rounded-full text-sm font-medium #{params[:status] == status ? 'bg-[#1F5C55] text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}" %>
+              class: "px-3 py-1.5 rounded-full text-sm font-medium #{params[:status] == status ? 'bg-brand-primary text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}" %>
         <% end %>
       </div>
 
@@ -61,20 +61,20 @@
                   <td class="py-2 pr-4 whitespace-nowrap text-gray-600">
                     <%= l(bug_report.created_at.to_date, format: :short) %>
                     <% if bug_report.automatic? %>
-                      <span class="ml-1 inline-flex items-center rounded-full bg-orange-100 px-2 py-0.5 text-[11px] font-medium text-orange-700"><%= t("admin.bug_reports.sources.automatic") %></span>
+                      <span class="ml-1 inline-flex items-center rounded-full bg-orange-100 px-2 py-0.5 text-xs font-medium text-orange-700"><%= t("admin.bug_reports.sources.automatic") %></span>
                       <% if bug_report.occurrence_count > 1 %>
-                        <span class="ml-1 text-[11px] text-gray-400">×<%= bug_report.occurrence_count %></span>
+                        <span class="ml-1 text-xs text-gray-400">×<%= bug_report.occurrence_count %></span>
                       <% end %>
                     <% end %>
                   </td>
                   <td class="py-2 pr-4 whitespace-nowrap">
                     <% if bug_report.person %>
-                      <%= link_to bug_report.person.full_name, admin_member_path(bug_report.person), class: "text-[#1F5C55] hover:underline" %>
+                      <%= link_to bug_report.person.full_name, admin_member_path(bug_report.person), class: "text-brand-primary hover:underline" %>
                     <% else %>
                       <span class="text-gray-400"><%= t("admin.bug_reports.table.anonymous") %></span>
                     <% end %>
                     <% if bug_report.reporter_role.present? %>
-                      <span class="ml-1 inline-flex items-center rounded-full bg-gray-100 px-2 py-0.5 text-[11px] font-medium text-gray-600">
+                      <span class="ml-1 inline-flex items-center rounded-full bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-600">
                         <%= t("admin.bug_reports.roles.#{bug_report.reporter_role}") %>
                       </span>
                     <% end %>
@@ -89,7 +89,7 @@
                         <span class="text-gray-400">· <%= t("admin.bug_reports.display_modes.#{bug_report.display_mode}") %></span>
                       <% end %>
                       <% if bug_report.viewport_width.present? %>
-                        <div class="text-[11px] text-gray-400"><%= bug_report.viewport_width %>×<%= bug_report.viewport_height %></div>
+                        <div class="text-xs text-gray-400"><%= bug_report.viewport_width %>×<%= bug_report.viewport_height %></div>
                       <% end %>
                     <% else %>
                       <span class="text-gray-400">—</span>
@@ -100,7 +100,7 @@
                     <% if bug_report.js_errors.present? %>
                       <details class="mt-1">
                         <summary class="cursor-pointer text-xs font-medium text-amber-700"><%= t("admin.bug_reports.table.js_errors_toggle", count: bug_report.js_errors.size) %></summary>
-                        <ul class="mt-1 space-y-1 rounded-lg bg-amber-50 p-2 text-[11px] text-amber-900">
+                        <ul class="mt-1 space-y-1 rounded-lg bg-amber-50 p-2 text-xs text-amber-900">
                           <% bug_report.js_errors.each do |err| %>
                             <li class="break-words">
                               <span class="font-mono text-amber-700">[<%= err["type"] %>]</span>
@@ -108,7 +108,7 @@
                               <% if err["source"].present? %>— <%= err["source"] %><%= ":#{err['line']}" if err["line"].present? %><% end %>
                               <% if err["count"].to_i > 1 %><span class="text-amber-600">(×<%= err["count"] %>)</span><% end %>
                               <% if err["stack"].present? %>
-                                <pre class="mt-1 max-h-40 overflow-y-auto rounded bg-white/60 p-1.5 text-[10px] leading-snug text-amber-800"><%= err["stack"] %></pre>
+                                <pre class="mt-1 max-h-40 overflow-y-auto rounded bg-white/60 p-1.5 text-xs leading-snug text-amber-800"><%= err["stack"] %></pre>
                               <% end %>
                             </li>
                           <% end %>
@@ -119,7 +119,7 @@
                   <td class="py-2 pr-4 max-w-xs truncate text-gray-500"><%= bug_report.page_url %></td>
                   <td class="py-2 pr-4">
                     <% if bug_report.screenshot.attached? %>
-                      <%= link_to t("admin.bug_reports.table.view_screenshot"), rails_blob_path(bug_report.screenshot, disposition: "attachment"), class: "text-[#1F5C55] hover:underline", target: "_blank", rel: "noopener" %>
+                      <%= link_to t("admin.bug_reports.table.view_screenshot"), rails_blob_path(bug_report.screenshot, disposition: "attachment"), class: "text-brand-primary hover:underline", target: "_blank", rel: "noopener" %>
                     <% else %>
                       <span class="text-gray-400">—</span>
                     <% end %>
@@ -131,7 +131,7 @@
                           { onchange: "this.form.requestSubmit()", class: "text-sm border border-gray-200 rounded-md px-2 py-1" } %>
                     <% end %>
                     <% if bug_report.updated_by_user.present? %>
-                      <p class="mt-1 text-[11px] text-gray-400"><%= t("admin.bug_reports.table.handled_by", name: bug_report.updated_by_user.full_name) %></p>
+                      <p class="mt-1 text-xs text-gray-400"><%= t("admin.bug_reports.table.handled_by", name: bug_report.updated_by_user.full_name) %></p>
                     <% end %>
                   </td>
                 </tr>

@@ -4,7 +4,7 @@
       <div class="relative">
         <input type="text"
                placeholder="Rechercher une personne..."
-               class="w-full rounded-md border-gray-300 text-sm focus:border-[#1F5C55] focus:ring-[#1F5C55]"
+               class="w-full rounded-md border-gray-300 text-sm focus:border-brand-accent focus:ring-brand-accent"
                data-beneficiary-list-target="searchInput"
                data-action="input->beneficiary-list#search" />
         <p class="mt-0.5 text-xs text-gray-500">Seules les personnes avec une adhésion Cirque active apparaissent.</p>
@@ -22,7 +22,7 @@
 
   <div class="grid gap-2 sm:grid-cols-2">
     <% contribution_formulas.each_with_index do |formula, index| %>
-      <label class="block cursor-pointer rounded-md border border-gray-200 p-2 text-sm transition hover:border-[#1F5C55] has-[:checked]:border-[#1F5C55] has-[:checked]:bg-[#1F5C55]/5">
+      <label class="block cursor-pointer rounded-md border border-gray-200 p-2 text-sm transition hover:border-brand-primary has-[:checked]:border-brand-primary has-[:checked]:bg-brand-primary/5">
         <input type="radio"
                name="contribution[beneficiaries][__INDEX__][contribution_formula_id]"
                value="<%= formula.id %>"
@@ -38,7 +38,7 @@
 
   <label class="flex items-center gap-2 text-sm text-gray-700">
     <%= check_box_tag "contribution[beneficiaries][__INDEX__][record_attendance]", "1", true,
-        class: "rounded border-gray-300 text-[#1F5C55] focus:ring-[#1F5C55]" %>
+        class: "rounded border-gray-300 text-brand-primary focus:ring-brand-accent" %>
     Enregistrer la présence aujourd'hui
   </label>
 </div>

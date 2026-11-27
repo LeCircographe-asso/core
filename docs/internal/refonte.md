@@ -41,7 +41,7 @@
 - Variables globales dans `app/assets/tailwind/application.css` :
   - `--brand-primary` (`#1F5C55`) pour CTA principaux, focus et bordures.
   - `--brand-accent` (`#5836A5`) pour hover, badges et contenus éditoriaux.
-  - Utilisation recommandée avec les classes arbitraires Tailwind : `bg-[color:var(--brand-primary)]`, `text-[color:var(--brand-accent)]`, `border-[color:var(--brand-primary)]`.
+  - Déclarées aussi dans le `@theme` Tailwind : utiliser les jetons `bg-brand-primary`, `text-brand-accent`, `border-brand-primary/20`… (voir `docs/design/color_system.md` §2), pas de hex ni de classe arbitraire qui appelle var().
 - Bibliothèque de composants CSS structurée dans `app/assets/tailwind/components/` (boutons, formulaires, hero, badges, layout, dashboard, timeline, admin sidebar, animations, tooltips, Stripe, events, admin table, flash, actiontext).
 - Tokens utilitaires partagés : `fade-in`, `parallax-background`, `dyslexic-font-enabled`.
 - Garder les vues DRY : privilégier les partials (`shared/*`) et limiter les styles inline ; centraliser les variantes dans Tailwind + variables.

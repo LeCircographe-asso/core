@@ -1,12 +1,18 @@
-<% content_for :title, "Le Circographe - Adhérer" %>
+<% content_for :title, t("views.pages.become_member.page_title") %>
 
 <section class="public-hero-shell mb-8">
   <%= image_tag hero_image(:become_member_hero), class: "absolute inset-0 w-full h-full object-cover hero-img-filter", alt: "" %>
   <div class="hero-overlay"></div>
   <div class="hero-panel public-hero-panel-centered space-y-3 sm:space-y-4">
-    <p class="public-hero-eyebrow">Rejoindre la communauté</p>
-    <h1 class="public-hero-title">Adhérer au Circographe</h1>
-    <p class="public-hero-body">Une rencontre sur place pour rejoindre la communauté, découvrir le lieu et la vie associative.</p>
+    <p class="public-hero-eyebrow"><%= t("views.pages.become_member.eyebrow") %></p>
+    <h1 class="public-hero-title"><%= t("views.pages.become_member.heading") %></h1>
+    <p class="public-hero-body"><%= t("views.pages.become_member.intro") %></p>
+    <%# On adhère sur place : le rendez-vous (créneaux + adresse) est la première chose utile. %>
+    <div class="pt-2">
+      <%= link_to t("views.pages.become_member.see_slots"), "#horaires",
+            class: "btn-primary inline-flex min-h-11 items-center",
+            data: { controller: "smooth-scroll", action: "smooth-scroll#go" } %>
+    </div>
   </div>
 </section>
 
@@ -20,24 +26,19 @@
       <%# Q1 — Pourquoi adhérer (haut-gauche) %>
       <div class="tarif-quad space-y-3 p-6 sm:p-8 border-b md:border-r border-gray-200 bg-white">
         <div class="w-6 h-[3px] rounded-full bg-brand-primary mb-1"></div>
-        <p class="text-xs font-medium uppercase tracking-[0.32em] text-brand-primary/70">Pourquoi adhérer ?</p>
-        <h2 class="text-xl sm:text-2xl font-semibold text-gray-900">Pratiquer, créer, s’entraider</h2>
+        <p class="text-xs font-medium uppercase tracking-[0.32em] text-brand-primary/70"><%= t("views.pages.become_member.why.eyebrow") %></p>
+        <h2 class="text-xl sm:text-2xl font-semibold text-gray-900"><%= t("views.pages.become_member.why.heading") %></h2>
         <p class="text-sm sm:text-base text-gray-600 leading-relaxed max-w-prose">
-          Accès aux entraînements libres cirque, création graphique, temps d’accueil en création et programmation collective. Les bénévoles t’expliquent l’autogestion et t’aident à choisir tes créneaux.
+          <%= t("views.pages.become_member.why.body") %>
         </p>
       </div>
 
       <%# Q2 — En résumé (haut-droite) %>
       <div class="tarif-quad space-y-4 p-6 sm:p-8 border-b border-gray-200 bg-brand-primary/7">
         <div class="w-6 h-[3px] rounded-full bg-brand-primary mb-1"></div>
-        <p class="text-xs font-medium uppercase tracking-[0.32em] text-brand-primary/70">En résumé</p>
+        <p class="text-xs font-medium uppercase tracking-[0.32em] text-brand-primary/70"><%= t("views.pages.become_member.summary.eyebrow") %></p>
         <ul class="space-y-2.5">
-          <% [
-            "Entraînements libres cirque",
-            "Ateliers & temps d’accueil en création (arts graphiques)",
-            "Vie associative & bénévolat",
-            "Communauté & partage de matériel"
-          ].each do |item| %>
+          <% t("views.pages.become_member.summary.items").each do |item| %>
             <li class="flex items-start gap-2.5 text-sm text-gray-700">
               <svg class="shrink-0 mt-0.5 w-4 h-4 text-brand-primary" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                 <circle cx="8" cy="8" r="7.5" stroke="currentColor" stroke-opacity="0.3"/>
@@ -52,34 +53,34 @@
       <%# Q3 — Types & tarifs (bas-gauche) %>
       <div class="tarif-quad space-y-4 p-6 sm:p-8 border-b md:border-b-0 md:border-r border-gray-200 bg-gray-50">
         <div class="w-6 h-[3px] rounded-full bg-gray-400 mb-1"></div>
-        <p class="text-xs font-medium uppercase tracking-[0.32em] text-brand-primary/70">Adhésion annuelle</p>
-        <h2 class="text-xl font-semibold text-gray-900">Types & tarifs</h2>
+        <p class="text-xs font-medium uppercase tracking-[0.32em] text-brand-primary/70"><%= t("views.pages.become_member.memberships.eyebrow") %></p>
+        <h2 class="text-xl font-semibold text-gray-900"><%= t("views.pages.become_member.memberships.heading") %></h2>
 
         <ul class="divide-y divide-gray-200 -mx-1">
           <li class="flex items-center justify-between gap-4 px-1 py-3">
             <div class="min-w-0">
               <div class="flex items-center gap-2 flex-wrap">
-                <span class="text-sm font-semibold text-gray-800">Adhésion visiteur</span>
-                <span class="text-xs font-medium px-2 py-0.5 rounded-full bg-amber-50 border border-amber-200 text-amber-700">don libre</span>
+                <span class="text-sm font-semibold text-gray-800"><%= t("views.pages.become_member.memberships.visitor.name") %></span>
+                <span class="text-xs font-medium px-2 py-0.5 rounded-full bg-amber-50 border border-amber-200 text-amber-700"><%= t("views.pages.become_member.memberships.visitor.badge") %></span>
               </div>
-              <p class="text-xs text-gray-500 mt-0.5 leading-normal">Temps ouverts · sans pratique.</p>
+              <p class="text-sm text-gray-500 mt-0.5 leading-normal"><%= t("views.pages.become_member.memberships.visitor.detail") %></p>
             </div>
             <span class="shrink-0 text-sm font-semibold text-gray-400 tabular-nums">
               <% if @visitor_membership_min_price_cents %>
-                dès <%= number_to_currency(@visitor_membership_min_price_cents / 100.0, unit: "€", format: "%n %u", precision: 0) %>
+                <%= t("views.pages.become_member.memberships.from", price: number_to_currency(@visitor_membership_min_price_cents / 100.0, unit: "€", format: "%n %u", precision: 0)) %>
               <% else %>
                 —
               <% end %>
-              <span class="font-normal text-xs text-gray-400"> / an</span>
+              <span class="font-normal text-xs text-gray-400"> <%= t("views.pages.become_member.memberships.per_year") %></span>
             </span>
           </li>
 
           <li class="flex items-center justify-between gap-4 px-1 py-3">
             <div class="min-w-0">
-              <span class="text-sm font-semibold text-gray-800">Adhésion cirque</span>
-              <p class="text-xs text-gray-500 mt-0.5 leading-normal">Entraînements libres · date à date.</p>
+              <span class="text-sm font-semibold text-gray-800"><%= t("views.pages.become_member.memberships.circus.name") %></span>
+              <p class="text-sm text-gray-500 mt-0.5 leading-normal"><%= t("views.pages.become_member.memberships.circus.detail") %></p>
               <% if (reduced = @circus_membership_types["reduced"]) %>
-                <span class="inline-block mt-1 text-xs px-2 py-0.5 rounded-full border border-gray-200 text-gray-500">Tarif réduit — <%= number_to_currency(reduced.price_euros, unit: "€", format: "%n %u", precision: 0) %></span>
+                <span class="inline-block mt-1 text-xs px-2 py-0.5 rounded-full border border-gray-200 text-gray-500"><%= t("views.pages.become_member.memberships.circus.reduced", price: number_to_currency(reduced.price_euros, unit: "€", format: "%n %u", precision: 0)) %></span>
               <% end %>
             </div>
             <span class="shrink-0 text-sm font-semibold text-brand-primary tabular-nums">
@@ -88,33 +89,33 @@
               <% else %>
                 —
               <% end %>
-              <span class="font-normal text-xs text-gray-400"> / an</span>
+              <span class="font-normal text-xs text-gray-400"> <%= t("views.pages.become_member.memberships.per_year") %></span>
             </span>
           </li>
 
           <li class="flex items-center justify-between gap-4 px-1 py-3 opacity-50">
             <div class="min-w-0">
               <div class="flex items-center gap-2 flex-wrap">
-                <span class="text-sm font-semibold text-gray-800">Adhésion événement</span>
-                <span class="text-xs font-medium px-2 py-0.5 rounded-full bg-gray-100 border border-gray-200 text-gray-500">bientôt</span>
+                <span class="text-sm font-semibold text-gray-800"><%= t("views.pages.become_member.memberships.event.name") %></span>
+                <span class="text-xs font-medium px-2 py-0.5 rounded-full bg-gray-100 border border-gray-200 text-gray-500"><%= t("views.pages.become_member.memberships.event.badge") %></span>
               </div>
-              <p class="text-xs text-gray-400 mt-0.5 leading-normal">Accès aux événements publics du lieu.</p>
+              <p class="text-sm text-gray-400 mt-0.5 leading-normal"><%= t("views.pages.become_member.memberships.event.detail") %></p>
             </div>
             <span class="shrink-0 text-xs text-gray-400">—</span>
           </li>
         </ul>
 
-        <p class="text-xs text-gray-500 bg-brand-primary/5 border border-brand-primary/20 rounded-lg px-3 py-2 leading-normal">
-          Paiement sur place — CB ou espèces. Reçu fiscal sur demande.
+        <p class="text-sm text-gray-600 bg-brand-primary/5 border border-brand-primary/20 rounded-lg px-3 py-2 leading-normal">
+          <%= t("views.pages.become_member.memberships.payment") %>
         </p>
       </div>
 
       <%# Q4 — Cotisations (bas-droite) %>
       <div class="tarif-quad space-y-4 p-6 sm:p-8 bg-brand-accent/4">
         <div class="w-6 h-[3px] rounded-full mb-1 bg-brand-accent"></div>
-        <p class="text-xs font-medium uppercase tracking-[0.32em] text-brand-primary/70">Cotisations</p>
-        <h2 class="text-xl font-semibold text-gray-900">Autogestion du lieu</h2>
-        <p class="text-xs text-gray-500">Choisis la formule qui colle à ta pratique.</p>
+        <p class="text-xs font-medium uppercase tracking-[0.32em] text-brand-primary/70"><%= t("views.pages.become_member.contributions.eyebrow") %></p>
+        <h2 class="text-xl font-semibold text-gray-900"><%= t("views.pages.become_member.contributions.heading") %></h2>
+        <p class="text-sm text-gray-500"><%= t("views.pages.become_member.contributions.intro") %></p>
 
         <% day_formula = @contribution_formulas["day"]
            pack10_formula = @contribution_formulas["pack10"]
@@ -122,25 +123,25 @@
            annual_formula = @contribution_formulas["annual"] %>
         <ul class="space-y-2 text-sm">
           <li class="flex items-center justify-between py-2 border-b border-gray-50">
-            <span class="text-gray-600">Séance libre</span>
+            <span class="text-gray-600"><%= t("views.pages.become_member.contributions.day") %></span>
             <span class="font-semibold text-gray-800 tabular-nums"><%= day_formula ? number_to_currency(day_formula.price_euros, unit: "€", format: "%n %u", precision: 0) : "—" %></span>
           </li>
-          <li class="flex items-center justify-between px-3 py-2 rounded-xl border border-[#5836A5]/20 bg-[#5836A5]/5">
+          <li class="flex items-center justify-between px-3 py-2 rounded-xl border border-brand-accent/20 bg-brand-accent/5">
             <div class="min-w-0">
-              <span class="font-semibold text-gray-900">Carnet 10 séances</span>
-              <span class="ml-2 text-xs font-medium px-1.5 py-0.5 rounded-full bg-[#5836A5]/10 text-[#5836A5]">Populaire</span>
-              <p class="text-xs text-gray-500 mt-0.5">Sans expiration.</p>
+              <span class="font-semibold text-gray-900"><%= t("views.pages.become_member.contributions.pack10") %></span>
+              <span class="ml-2 text-xs font-medium px-1.5 py-0.5 rounded-full bg-brand-accent/10 text-brand-accent"><%= t("views.pages.become_member.contributions.popular") %></span>
+              <p class="text-sm text-gray-500 mt-0.5"><%= t("views.pages.become_member.contributions.pack10_detail") %></p>
             </div>
-            <span class="font-bold text-[#5836A5] tabular-nums shrink-0 ml-3"><%= pack10_formula ? number_to_currency(pack10_formula.price_euros, unit: "€", format: "%n %u", precision: 0) : "—" %></span>
+            <span class="font-bold text-brand-accent tabular-nums shrink-0 ml-3"><%= pack10_formula ? number_to_currency(pack10_formula.price_euros, unit: "€", format: "%n %u", precision: 0) : "—" %></span>
           </li>
           <li class="flex items-center justify-between py-2 border-b border-gray-50">
-            <span class="text-gray-600">Trimestre (3 mois)</span>
+            <span class="text-gray-600"><%= t("views.pages.become_member.contributions.trimester") %></span>
             <span class="font-semibold text-gray-800 tabular-nums"><%= trimester_formula ? number_to_currency(trimester_formula.price_euros, unit: "€", format: "%n %u", precision: 0) : "—" %></span>
           </li>
           <li class="flex items-center justify-between px-3 py-2 rounded-xl border border-brand-primary/20 bg-brand-primary/5">
             <div class="min-w-0">
-              <span class="font-semibold text-gray-900">Cotisation annuelle</span>
-              <p class="text-xs text-gray-500 mt-0.5">Date à date.</p>
+              <span class="font-semibold text-gray-900"><%= t("views.pages.become_member.contributions.annual") %></span>
+              <p class="text-sm text-gray-500 mt-0.5"><%= t("views.pages.become_member.contributions.annual_detail") %></p>
             </div>
             <span class="font-bold text-brand-primary tabular-nums shrink-0 ml-3"><%= annual_formula ? number_to_currency(annual_formula.price_euros, unit: "€", format: "%n %u", precision: 0) : "—" %></span>
           </li>
@@ -151,10 +152,10 @@
 
     <%# Bande "À retenir" %>
     <div class="tarif-note border-t border-gray-200 px-6 sm:px-8 py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-      <p class="text-xs text-gray-600 leading-relaxed max-w-prose">
-        <strong class="text-gray-800">À retenir :</strong> l’adhésion et la cotisation cirque sont deux paiements distincts. Les formules ci-dessus supposent une <strong>adhésion cirque</strong> active.
+      <p class="text-sm text-gray-600 leading-relaxed max-w-prose">
+        <%= t("views.pages.become_member.note_html") %>
       </p>
-      <%= link_to "Bénévolat & autogestion →", page_path("association", anchor: "fonctionnement"),
+      <%= link_to t("views.pages.become_member.volunteering_link"), page_path("association", anchor: "fonctionnement"),
                   class: "shrink-0 text-xs font-semibold text-brand-primary hover:underline underline-offset-2 whitespace-nowrap" %>
     </div>
 
@@ -185,22 +186,22 @@
     <%# FAQ — colonne gauche %>
     <%= render "shared/faq_section",
                id: "adhesion-faq",
-               label: "Questions fréquentes",
-               title: "Avant de te déplacer",
-               subtitle: "Quelques repères pour préparer ton adhésion.",
+               label: t("views.pages.become_member.faq.label"),
+               title: t("views.pages.become_member.faq.title"),
+               subtitle: t("views.pages.become_member.faq.subtitle"),
                faqs: @avant_visite_faqs,
-               footer: "Besoin d’un coup de main ? Écris-nous ou passe pendant un créneau d’ouverture.",
+               footer: t("views.pages.become_member.faq.footer"),
                card_class: "public-soft-section",
                header_align: "left" %>
 
     <%# Panneau latéral : Horaires + Accès dans une seule carte %>
     <% schedule = @opening_hours %>
-    <div class="relative rounded-2xl border border-gray-100 bg-white shadow-sm overflow-hidden">
+    <div class="relative rounded-2xl border border-gray-100 bg-white shadow-sm overflow-hidden max-lg:order-first">
       <%= render "shared/exceptional_closure_ribbon" if @exceptional_closure&.in_effect? %>
 
       <%# ── En-tête horaires ── %>
       <div class="px-4 pt-4 pb-3 border-b border-gray-100">
-        <p class="text-xs font-semibold uppercase tracking-[0.2em] text-gray-500 mb-1">Créneaux d’accueil</p>
+        <p class="text-xs font-semibold uppercase tracking-[0.2em] text-gray-500 mb-1"><%= t("views.pages.become_member.slots.heading") %></p>
         <div class="flex items-center justify-between gap-3">
           <p class="text-base font-bold text-gray-900 tabular-nums">
             <%= Date.current.beginning_of_week.day %>
@@ -210,12 +211,12 @@
           <button type="button"
                   class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg border border-amber-200 bg-amber-50 text-amber-800 text-xs font-semibold hover:bg-amber-100 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500"
                   data-controller="tooltip"
-                  data-tooltip-content-value="Créneaux assurés par des bénévoles, susceptibles d’évoluer chaque semaine (généralement mis à jour le lundi soir). Vérifiez avant de vous déplacer.">
+                  data-tooltip-content-value="<%= t("views.pages.become_member.slots.tooltip") %>">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="w-3 h-3 shrink-0" aria-hidden="true">
               <path fill-rule="evenodd" d="M15 8A7 7 0 1 1 1 8a7 7 0 0 1 14 0ZM9 5a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM6.75 8a.75.75 0 0 0 0 1.5h.75v1.75a.75.75 0 0 0 1.5 0v-2.5A.75.75 0 0 0 8.25 8h-1.5Z" clip-rule="evenodd"/>
             </svg>
-            Bénévoles
-            <span class="sr-only">— créneaux volatils</span>
+            <%= t("views.pages.become_member.slots.volunteers") %>
+            <span class="sr-only"><%= t("views.pages.become_member.slots.volunteers_sr") %></span>
           </button>
         </div>
         <div class="mt-3 h-px tarif-divider-gradient"></div>
@@ -226,16 +227,16 @@
 
       <%# ── Accès (intégré dans la même carte) ── %>
       <div class="border-t border-gray-100 px-4 py-4 space-y-3 bg-gray-50/60">
-        <p class="text-xs font-semibold uppercase tracking-[0.2em] text-gray-500">Accès</p>
+        <p class="text-xs font-semibold uppercase tracking-[0.2em] text-gray-500"><%= t("views.pages.become_member.access.heading") %></p>
         <div>
-          <p class="text-sm font-semibold text-gray-900">97 bis bd de Suisse</p>
-          <p class="text-sm text-gray-600">31200 Toulouse</p>
-          <p class="text-xs text-gray-500 mt-0.5">Bus 15 Tisséo · boulevard de Suisse</p>
+          <p class="text-sm font-semibold text-gray-900"><%= t("views.pages.become_member.access.street") %></p>
+          <p class="text-sm text-gray-600"><%= t("views.pages.become_member.access.city") %></p>
+          <p class="text-sm text-gray-500 mt-0.5"><%= t("views.pages.become_member.access.bus") %></p>
         </div>
         <div class="flex gap-2">
-          <%= link_to "Carte & contact", page_path("contact_us", anchor: "map"),
-                      class: "flex-1 inline-flex items-center justify-center px-3 py-2 text-sm font-semibold text-white bg-[#1F5C55] rounded-lg hover:bg-[#194A45] transition-colors" %>
-          <%= link_to "Écrire", page_path("contact_us", anchor: "contact-form"),
+          <%= link_to t("views.pages.become_member.access.map"), page_path("contact_us", anchor: "map"),
+                      class: "flex-1 inline-flex items-center justify-center px-3 py-2 text-sm font-semibold text-white bg-brand-primary rounded-lg hover:bg-brand-primary-dark transition-colors" %>
+          <%= link_to t("views.pages.become_member.access.write"), page_path("contact_us", anchor: "contact-form"),
                       class: "flex-1 inline-flex items-center justify-center px-3 py-2 text-sm font-semibold text-gray-700 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors" %>
         </div>
       </div>

@@ -14,7 +14,7 @@
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
       <!-- Import Section -->
       <div class="surface-card">
-        <div class="bg-gradient-to-r from-[#1F5C55] to-[#194A45] px-4 py-3">
+        <div class="bg-gradient-to-r from-brand-primary to-brand-primary-dark px-4 py-3">
           <h2 class="text-base font-semibold text-white flex items-center">
             <i class="fas fa-upload mr-2"></i> Import Adhérents
           </h2>
@@ -40,7 +40,7 @@
             </ul>
           </div>
 
-          <button type="button" class="w-full bg-[#1F5C55] hover:bg-[#194A45] text-white font-medium py-2 rounded-lg transition-colors cursor-pointer" data-action="click->import-modal#open">
+          <button type="button" class="w-full bg-brand-primary hover:bg-brand-primary-dark text-white font-medium py-2 rounded-lg transition-colors cursor-pointer" data-action="click->import-modal#open">
             <i class="fas fa-upload mr-2"></i> Importer un fichier
           </button>
         </div>
@@ -48,7 +48,7 @@
 
       <!-- Export Section -->
       <div class="surface-card">
-        <div class="bg-gradient-to-r from-[#1F5C55] to-[#194A45] px-4 py-3">
+        <div class="bg-gradient-to-r from-brand-primary to-brand-primary-dark px-4 py-3">
           <h2 class="text-base font-semibold text-white flex items-center">
             <i class="fas fa-download mr-2"></i> Export Données
           </h2>
@@ -77,10 +77,10 @@
     </div>
 
     <!-- Info Box -->
-    <div class="mt-6 surface-card border-l-4 border-l-[#1F5C55]">
+    <div class="mt-6 surface-card border-l-4 border-l-brand-primary">
       <div class="p-4">
         <h3 class="text-sm font-semibold text-gray-900 mb-2">
-          <i class="fas fa-info-circle text-[#1F5C55] mr-2"></i> Notes
+          <i class="fas fa-info-circle text-brand-primary mr-2"></i> Notes
         </h3>
         <ul class="text-xs text-gray-600 space-y-1">
           <li>• Les doublons (email/téléphone existants) sont automatiquement ignorés</li>
@@ -100,7 +100,7 @@
   >
     <div class="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[85vh] overflow-hidden flex flex-col">
       <!-- Header -->
-      <div class="bg-gradient-to-r from-[#1F5C55] to-[#194A45] px-6 py-4 flex items-center justify-between flex-shrink-0">
+      <div class="bg-gradient-to-r from-brand-primary to-brand-primary-dark px-6 py-4 flex items-center justify-between flex-shrink-0">
         <h2 class="text-lg font-bold text-white">Import adhérents</h2>
         <button type="button" class="text-white/80 hover:text-white" data-action="click->import-modal#close">
           <i class="fas fa-times text-xl"></i>
@@ -123,7 +123,7 @@
 
       <!-- Loading state -->
       <div data-import-modal-target="loading" class="hidden p-12 text-center">
-        <i class="fas fa-circle-notch fa-spin text-4xl text-[#1F5C55] mb-4"></i>
+        <i class="fas fa-circle-notch fa-spin text-4xl text-brand-primary mb-4"></i>
         <p class="text-gray-700 font-medium">Import en cours...</p>
         <p class="text-gray-500 text-sm mt-1" data-import-modal-target="fileName"></p>
       </div>

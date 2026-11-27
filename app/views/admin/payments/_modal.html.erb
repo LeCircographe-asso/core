@@ -41,7 +41,7 @@
                 ),
                 { prompt: "Sélectionner une personne" },
                 { 
-                  class: "w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-[#1F5C55] focus:border-[#1F5C55]",
+                  class: "w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-brand-accent focus:border-brand-accent",
                   data: { payment_modal_target: "personSelect" }
                 } %>
           </div>
@@ -53,7 +53,7 @@
                 step: 0.01,
                 min: 0,
                 placeholder: "0.00",
-                class: "w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-[#1F5C55] focus:border-[#1F5C55]" %>
+                class: "w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-brand-accent focus:border-brand-accent" %>
           </div>
 
           <!-- Méthode de paiement -->
@@ -69,7 +69,7 @@
                 ]),
                 {},
                 {
-                  class: "w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-[#1F5C55] focus:border-[#1F5C55]",
+                  class: "w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-brand-accent focus:border-brand-accent",
                   data: { offer_fields_target: "paymentMethod", action: "change->offer-fields#refresh" }
                 } %>
           </div>
@@ -79,7 +79,7 @@
             <%= f.text_area :offer_reason,
                 rows: 2,
                 placeholder: "Ex: Bénévolat, geste commercial, partenariat...",
-                class: "w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-[#1F5C55] focus:border-[#1F5C55]",
+                class: "w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-brand-accent focus:border-brand-accent",
                 data: { offer_fields_target: "offerReasonInput" } %>
           </div>
 
@@ -89,17 +89,17 @@
             <%= f.text_area :notes,
                 rows: 3,
                 placeholder: "Notes optionnelles...",
-                class: "w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-[#1F5C55] focus:border-[#1F5C55]" %>
+                class: "w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-brand-accent focus:border-brand-accent" %>
           </div>
 
           <div class="flex justify-end space-x-3 mt-6">
             <button type="button"
                     data-action="click->payment-modal#close"
-                    class="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1F5C55]">
+                    class="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-accent">
               Annuler
             </button>
             <%= f.submit "Créer le paiement",
-                class: "px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#1F5C55] hover:bg-[#194A45] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1F5C55]" %>
+                class: "px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-brand-primary hover:bg-brand-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-accent" %>
           </div>
         <% end %>
       </div>

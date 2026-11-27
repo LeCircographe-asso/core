@@ -7,7 +7,7 @@
     
     <!-- Header avec gradient -->
     <div class="surface-card mb-6">
-      <div class="bg-gradient-to-r from-[#1F5C55] to-[#194A45] px-6 py-4">
+      <div class="bg-gradient-to-r from-brand-primary to-brand-primary-dark px-6 py-4">
         <h1 class="text-2xl font-bold text-white">Historique des paiements</h1>
         <p class="text-white/80 mt-1">
           Gestion et suivi de tous les paiements de l'association
@@ -40,7 +40,7 @@
                     id: "search",
                     value: params[:search],
                     placeholder: "Nom, email, montant... (Ctrl+K pour focus)",
-                    class: "search-input pl-10 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#1F5C55] focus:ring-[#1F5C55] sm:text-sm" %>
+                    class: "search-input pl-10 block w-full rounded-md border-gray-300 shadow-sm focus:border-brand-accent focus:ring-brand-accent sm:text-sm" %>
                 <% if params[:search].present? %>
                   <button type="button" 
                           data-action="click->admin-payments#clearSearch"
@@ -65,7 +65,7 @@
                   ], params[:status]),
                   {},
                   { 
-                    class: "block w-full rounded-md border-gray-300 shadow-sm focus:border-[#1F5C55] focus:ring-[#1F5C55] sm:text-sm",
+                    class: "block w-full rounded-md border-gray-300 shadow-sm focus:border-brand-accent focus:ring-brand-accent sm:text-sm",
                     onchange: "this.form.submit()"
                   } %>
             </div>
@@ -74,14 +74,14 @@
               <label for="start_date" class="block text-sm font-medium text-gray-700 mb-1">Date début</label>
               <%= form.date_field :start_date, 
                   value: params[:start_date], 
-                  class: "block w-full rounded-md border-gray-300 shadow-sm focus:border-[#1F5C55] focus:ring-[#1F5C55] sm:text-sm" %>
+                  class: "block w-full rounded-md border-gray-300 shadow-sm focus:border-brand-accent focus:ring-brand-accent sm:text-sm" %>
             </div>
 
             <div class="md:w-48">
               <label for="end_date" class="block text-sm font-medium text-gray-700 mb-1">Date fin</label>
               <%= form.date_field :end_date,
                   value: params[:end_date],
-                  class: "block w-full rounded-md border-gray-300 shadow-sm focus:border-[#1F5C55] focus:ring-[#1F5C55] sm:text-sm" %>
+                  class: "block w-full rounded-md border-gray-300 shadow-sm focus:border-brand-accent focus:ring-brand-accent sm:text-sm" %>
             </div>
 
             <div class="md:w-48">
@@ -97,7 +97,7 @@
                   ], params[:payment_method]),
                   {},
                   {
-                    class: "block w-full rounded-md border-gray-300 shadow-sm focus:border-[#1F5C55] focus:ring-[#1F5C55] sm:text-sm",
+                    class: "block w-full rounded-md border-gray-300 shadow-sm focus:border-brand-accent focus:ring-brand-accent sm:text-sm",
                     onchange: "this.form.submit()"
                   } %>
             </div>
@@ -201,7 +201,7 @@
                     <label for="items-per-page" class="text-sm text-gray-700">Par page:</label>
                     <select id="items-per-page" 
                             data-action="change->admin-payments#changeItemsPerPage"
-                            class="border border-gray-300 rounded-md px-2 py-1 text-sm focus:ring-[#1F5C55] focus:border-[#1F5C55]">
+                            class="border border-gray-300 rounded-md px-2 py-1 text-sm focus:ring-brand-accent focus:border-brand-accent">
                       <option value="10" <%= 'selected' if params[:items] == '10' %>>10</option>
                       <option value="15" <%= 'selected' if params[:items] == '15' || params[:items].blank? %>>15</option>
                       <option value="25" <%= 'selected' if params[:items] == '25' %>>25</option>
@@ -223,7 +223,7 @@
                     <% @pagy.series.each do |item| %>
                       <% if item.is_a?(Integer) %>
                         <%= link_to item, admin_payments_path(page: item, search: params[:search], status: params[:status], start_date: params[:start_date], end_date: params[:end_date]), 
-                            class: "relative inline-flex items-center px-4 py-2 border text-sm font-medium #{item == @pagy.page ? 'z-10 bg-[#1F5C55] border-[#1F5C55] text-white' : 'bg-white border-gray-300 text-gray-500 hover:bg-gray-50'}" %>
+                            class: "relative inline-flex items-center px-4 py-2 border text-sm font-medium #{item == @pagy.page ? 'z-10 bg-brand-primary border-brand-primary text-white' : 'bg-white border-gray-300 text-gray-500 hover:bg-gray-50'}" %>
                       <% elsif item == :gap %>
                         <span class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700">
                           ...

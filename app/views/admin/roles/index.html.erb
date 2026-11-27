@@ -29,10 +29,10 @@
         <%= form.search_field :search,
                               value: @search,
                               placeholder: t("admin.roles.index.search_placeholder"),
-                              class: "flex-1 min-w-0 rounded-md border-gray-300 text-sm shadow-sm focus:border-[#1F5C55] focus:ring-[#1F5C55]" %>
+                              class: "flex-1 min-w-0 rounded-md border-gray-300 text-sm shadow-sm focus:border-brand-accent focus:ring-brand-accent" %>
         <%= form.submit t("admin.roles.index.search_submit"),
                         name: nil,
-                        class: "rounded-md bg-[#1F5C55] px-4 py-2 text-sm font-medium text-white hover:bg-[#194A45]" %>
+                        class: "rounded-md bg-brand-primary px-4 py-2 text-sm font-medium text-white hover:bg-brand-primary-dark" %>
       <% end %>
 
       <% if @search.present? %>

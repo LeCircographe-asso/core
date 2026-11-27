@@ -39,7 +39,7 @@
                 membership_type_options,
                 { selected: current_membership_type },
                 { 
-                  class: "w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-[#1F5C55] focus:border-[#1F5C55]",
+                  class: "w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-brand-accent focus:border-brand-accent",
                   data: { "member-number-change-target": "membershipTypeSelect", "action": "change->member-number-change#updateSuggestedNumber" }
                 } %>
           </div>
@@ -56,7 +56,7 @@
                      class="flex-1 border border-gray-300 rounded-md px-3 py-2 text-sm bg-gray-50 text-gray-600"
                      data-member-number-change-target="suggestedNumber">
               <button type="button" 
-                      class="px-3 py-2 text-sm font-medium text-[#1F5C55] hover:text-[#194A45] border border-[#1F5C55] rounded-md hover:bg-[#1F5C55] hover:text-white transition-colors duration-200"
+                      class="px-3 py-2 text-sm font-medium text-brand-primary hover:text-brand-primary-dark border border-brand-primary rounded-md hover:bg-brand-primary hover:text-white transition-colors duration-200"
                       data-action="click->member-number-change#generateNewNumber">
                 Générer
               </button>
@@ -70,7 +70,7 @@
             </label>
             <%= form.text_field :member_number, 
                 placeholder: "Ex: 25C001",
-                class: "w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-[#1F5C55] focus:border-[#1F5C55]",
+                class: "w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-brand-accent focus:border-brand-accent",
                 data: { "member-number-change-target": "customNumber" } %>
             <p class="text-xs text-gray-500 mt-1">
               Format: YYTNNN (ex: 25C001 pour Cirque, 25U001 pour Basique)
@@ -85,7 +85,7 @@
             <%= form.text_area :change_notes, 
                 placeholder: "Raison du changement...",
                 rows: 2,
-                class: "w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-[#1F5C55] focus:border-[#1F5C55]" %>
+                class: "w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-brand-accent focus:border-brand-accent" %>
           </div>
         </div>
 
@@ -97,7 +97,7 @@
             Annuler
           </button>
           <button type="submit" 
-                  class="px-4 py-2 text-sm font-medium text-white bg-[#1F5C55] border border-transparent rounded-md hover:bg-[#194A45] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1F5C55]">
+                  class="px-4 py-2 text-sm font-medium text-white bg-brand-primary border border-transparent rounded-md hover:bg-brand-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-accent">
             Changer le numéro
           </button>
         </div>

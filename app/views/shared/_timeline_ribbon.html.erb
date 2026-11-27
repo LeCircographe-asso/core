@@ -1,0 +1,77 @@
+<%#
+  Ruban d'années (téléphone) : les années défilent horizontalement, celle du centre est
+  sélectionnée (violet, comme les filtres du site) et sa carte s'affiche dessous.
+  Mêmes entrées que shared/timeline ; affichées de gauche à droite dans l'ordre chronologique,
+  en partant de l'année en cours.
+  Locals :
+    entries     — Array<{ year:, title:, body:, status: :past|:present|:future }>
+    show_future — Boolean (default: true)
+%>
+<% entries     ||= [] %>
+<% show_future = local_assigns.fetch(:show_future, true) %>
+<% visible     = (show_future ? entries : entries.reject { |e| e[:status] == :future }).sort_by { |e| e[:year].to_s } %>
+<% start_index = visible.index { |e| e[:status] == :present } || visible.rindex { |e| e[:status] != :future } || 0 %>
+<% uid = "tl-ribbon-#{SecureRandom.hex(3)}" %>
+
+<div data-controller="timeline-ribbon"
+     data-timeline-ribbon-index-value="<%= start_index %>"
+     aria-label="<%= t("views.shared.timeline.label") %>">
+  <div class="relative flex items-center gap-1">
+    <button type="button"
+            class="tl-ribbon-arrow"
+            data-timeline-ribbon-target="prev"
+            data-action="timeline-ribbon#previous"
+            aria-label="<%= t("views.shared.timeline.previous_year") %>">
+      <svg class="h-5 w-5" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M10 12L6 8L10 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" /></svg>
+    </button>
+
+    <div class="tl-ribbon-track"
+         role="tablist"
+         aria-label="<%= t("views.shared.timeline.years") %>"
+         data-timeline-ribbon-target="track"
+         data-action="scroll->timeline-ribbon#scrolled keydown->timeline-ribbon#key">
+      <% visible.each_with_index do |entry, i| %>
+        <button type="button"
+                role="tab"
+                id="<%= uid %>-tab-<%= i %>"
+                aria-controls="<%= uid %>-panel-<%= i %>"
+                aria-selected="<%= i == start_index %>"
+                tabindex="<%= i == start_index ? 0 : -1 %>"
+                class="faq-tab tl-ribbon-year <%= 'tl-ribbon-year--future' if entry[:status] == :future %>"
+                <%= "data-active" if i == start_index %>
+                data-timeline-ribbon-target="year"
+                data-action="timeline-ribbon#choose"
+                data-index="<%= i %>"><%= entry[:year] %></button>
+      <% end %>
+    </div>
+
+    <button type="button"
+            class="tl-ribbon-arrow"
+            data-timeline-ribbon-target="next"
+            data-action="timeline-ribbon#next"
+            aria-label="<%= t("views.shared.timeline.next_year") %>">
+      <svg class="h-5 w-5" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M6 12L10 8L6 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" /></svg>
+    </button>
+  </div>
+
+  <div class="mt-4"
+       data-action="touchstart->timeline-ribbon#touchStart touchend->timeline-ribbon#touchEnd">
+    <% visible.each_with_index do |entry, i| %>
+      <% status = (entry[:status] || :past).to_sym %>
+      <div id="<%= uid %>-panel-<%= i %>"
+           role="tabpanel"
+           aria-labelledby="<%= uid %>-tab-<%= i %>"
+           class="tl-card tl-card--<%= status %> tl-ribbon-panel"
+           data-timeline-ribbon-target="panel"
+           <%= "hidden" unless i == start_index %>>
+        <% if status == :present %>
+          <span class="tl-badge tl-badge--present"><%= t("views.shared.timeline.present") %></span>
+        <% elsif status == :future %>
+          <span class="tl-badge tl-badge--future"><%= t("views.shared.timeline.future") %></span>
+        <% end %>
+        <h3 class="text-base font-semibold text-gray-800 leading-snug mb-1.5"><%= entry[:title] %></h3>
+        <p class="text-sm text-gray-600 leading-relaxed"><%= entry[:body] %></p>
+      </div>
+    <% end %>
+  </div>
+</div>

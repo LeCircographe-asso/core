@@ -1,9 +1,14 @@
 <div id="confirm-modal"
-     class="hidden fixed inset-0 z-[120] flex items-center justify-center px-4 py-6"
+     class="hidden fixed inset-0 z-[120] items-center justify-center px-4 py-6"
      role="dialog"
      aria-modal="true"
      aria-labelledby="confirm-modal-title"
-     aria-describedby="confirm-modal-message">
+     aria-describedby="confirm-modal-message"
+     data-default-title="<%= t("views.shared.confirm_modal.title") %>"
+     data-default-body="<%= t("views.shared.confirm_modal.body") %>"
+     data-default-message="<%= t("views.shared.confirm_modal.message") %>"
+     data-confirm-text="<%= t("views.shared.confirm_modal.confirm") %>"
+     data-cancel-text="<%= t("views.shared.confirm_modal.cancel") %>">
   <div id="confirm-modal-backdrop" class="absolute inset-0 bg-gray-900/65"></div>
 
   <div class="relative w-full max-w-md rounded-2xl bg-white shadow-2xl ring-1 ring-gray-200 focus:outline-none"
@@ -12,11 +17,11 @@
     <div class="px-6 py-5 space-y-4">
       <header class="space-y-2">
         <p class="text-xs font-medium uppercase tracking-[0.35em] text-brand-primary/70" id="confirm-modal-title">
-          Confirmation
+          <%= t("views.shared.confirm_modal.title") %>
         </p>
         <div id="confirm-modal-message" class="space-y-3 text-gray-700">
           <p class="text-base leading-relaxed">
-            Êtes-vous sûr de vouloir poursuivre cette action&nbsp;?
+            <%= t("views.shared.confirm_modal.body_html") %>
           </p>
         </div>
       </header>
@@ -25,12 +30,12 @@
         <button type="button"
                 id="confirm-modal-cancel"
                 class="inline-flex items-center justify-center rounded-full border border-gray-300 px-4 py-2 text-sm font-semibold text-gray-600 transition hover:border-gray-400 hover:bg-gray-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-400">
-          Annuler
+          <%= t("views.shared.confirm_modal.cancel") %>
         </button>
         <button type="button"
                 id="confirm-modal-confirm"
                 class="btn-primary px-4 py-2">
-          Confirmer
+          <%= t("views.shared.confirm_modal.confirm") %>
         </button>
       </div>
     </div>

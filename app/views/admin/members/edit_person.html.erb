@@ -42,27 +42,27 @@
             <div>
               <%= form.label :first_name, "Prénom", class: "block text-sm font-medium text-gray-700" %>
               <%= form.text_field :first_name, 
-                  class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#1F5C55] focus:ring-[#1F5C55] sm:text-sm" %>
+                  class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-brand-accent focus:ring-brand-accent sm:text-sm" %>
             </div>
 
             <div>
               <%= form.label :last_name, "Nom", class: "block text-sm font-medium text-gray-700" %>
               <%= form.text_field :last_name, 
-                  class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#1F5C55] focus:ring-[#1F5C55] sm:text-sm" %>
+                  class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-brand-accent focus:ring-brand-accent sm:text-sm" %>
             </div>
           </div>
 
           <div>
             <%= form.label :email, "Email", class: "block text-sm font-medium text-gray-700" %>
             <%= form.email_field :email, 
-                class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#1F5C55] focus:ring-[#1F5C55] sm:text-sm" %>
+                class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-brand-accent focus:ring-brand-accent sm:text-sm" %>
             <p class="mt-1 text-sm text-gray-500">Optionnel - requis seulement pour la newsletter</p>
           </div>
 
           <div>
             <%= form.label :phone, "Téléphone", class: "block text-sm font-medium text-gray-700" %>
             <%= form.telephone_field :phone, 
-                class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#1F5C55] focus:ring-[#1F5C55] sm:text-sm" %>
+                class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-brand-accent focus:ring-brand-accent sm:text-sm" %>
           </div>
 
           <%= render "address_fields", form: form %>
@@ -70,7 +70,7 @@
           <div>
             <%= form.label :birth_date, "Date de naissance", class: "block text-sm font-medium text-gray-700" %>
             <%= form.date_field :birth_date,
-                class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#1F5C55] focus:ring-[#1F5C55] sm:text-sm",
+                class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-brand-accent focus:ring-brand-accent sm:text-sm",
                 data: { minor_calculator_target: "birthDate", action: "change->minor-calculator#updateDisplay" } %>
             <div class="mt-1">
               <span data-minor-calculator-target="statusDisplay" class="hidden"></span>
@@ -81,37 +81,37 @@
             <div>
               <%= form.label :emergency_contact_name, "Contact d'urgence", class: "block text-sm font-medium text-gray-700" %>
               <%= form.text_field :emergency_contact_name, 
-                  class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#1F5C55] focus:ring-[#1F5C55] sm:text-sm" %>
+                  class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-brand-accent focus:ring-brand-accent sm:text-sm" %>
             </div>
 
             <div>
               <%= form.label :emergency_contact_phone, "Téléphone d'urgence", class: "block text-sm font-medium text-gray-700" %>
               <%= form.telephone_field :emergency_contact_phone, 
-                  class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#1F5C55] focus:ring-[#1F5C55] sm:text-sm" %>
+                  class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-brand-accent focus:ring-brand-accent sm:text-sm" %>
             </div>
           </div>
 
           <div>
             <%= form.label :notes, "Notes", class: "block text-sm font-medium text-gray-700" %>
             <%= form.text_area :notes, rows: 3,
-                class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#1F5C55] focus:ring-[#1F5C55] sm:text-sm" %>
+                class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-brand-accent focus:ring-brand-accent sm:text-sm" %>
           </div>
 
           <div class="space-y-4">
             <h3 class="text-sm font-medium text-gray-700">Préférences</h3>
             
             <div class="flex items-center">
-              <%= form.check_box :newsletter_subscribed, { class: "h-4 w-4 text-[#1F5C55] focus:ring-[#1F5C55] border-gray-300 rounded", checked: @person.newsletter_subscribed? }, "1", "0" %>
+              <%= form.check_box :newsletter_subscribed, { class: "h-4 w-4 text-brand-primary focus:ring-brand-accent border-gray-300 rounded", checked: @person.newsletter_subscribed? }, "1", "0" %>
               <%= form.label :newsletter_subscribed, "S'abonner à la newsletter", class: "ml-2 block text-sm text-gray-700" %>
             </div>
 
             <div class="flex items-center">
-              <%= form.check_box :get_involved, class: "h-4 w-4 text-[#1F5C55] focus:ring-[#1F5C55] border-gray-300 rounded" %>
+              <%= form.check_box :get_involved, class: "h-4 w-4 text-brand-primary focus:ring-brand-accent border-gray-300 rounded" %>
               <%= form.label :get_involved, "Souhaite s'impliquer", class: "ml-2 block text-sm text-gray-700" %>
             </div>
 
             <div class="flex items-center">
-              <%= form.check_box :image_rights, class: "h-4 w-4 text-[#1F5C55] focus:ring-[#1F5C55] border-gray-300 rounded" %>
+              <%= form.check_box :image_rights, class: "h-4 w-4 text-brand-primary focus:ring-brand-accent border-gray-300 rounded" %>
               <%= form.label :image_rights, "Droits à l'image", class: "ml-2 block text-sm text-gray-700" %>
             </div>
 
@@ -121,7 +121,7 @@
           <!-- Reduced Rate Section -->
           <div class="pt-4 border-t border-gray-200" data-controller="reduced-rate">
             <div class="flex items-center">
-              <%= form.check_box :reduced_rate_eligible, class: "h-4 w-4 text-[#1F5C55] focus:ring-[#1F5C55] border-gray-300 rounded", data: { reduced_rate_target: "checkbox", action: "change->reduced-rate#checkboxChanged" } %>
+              <%= form.check_box :reduced_rate_eligible, class: "h-4 w-4 text-brand-primary focus:ring-brand-accent border-gray-300 rounded", data: { reduced_rate_target: "checkbox", action: "change->reduced-rate#checkboxChanged" } %>
               <%= form.label :reduced_rate_eligible, "Tarif réduit éligible", class: "ml-2 block text-sm text-gray-700" %>
             </div>
             
@@ -130,7 +130,7 @@
               <%= form.select :reduced_rate_reason,
                   options_for_select(['RSA', 'Mineur', 'Situation Handicap', 'Étudiant', 'Autre']),
                   { include_blank: "Sélectionner..." },
-                  { class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#1F5C55] focus:ring-[#1F5C55] sm:text-sm",
+                  { class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-brand-accent focus:ring-brand-accent sm:text-sm",
                     data: { reduced_rate_target: "reason", action: "change->reduced-rate#reasonChanged" } } %>
             </div>
 
@@ -138,15 +138,15 @@
               <%= form.label :reduced_rate_proof, "Précision", class: "block text-sm font-medium text-gray-700" %>
               <%= form.text_field :reduced_rate_proof,
                   placeholder: "Préciser le motif ou le justificatif",
-                  class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#1F5C55] focus:ring-[#1F5C55] sm:text-sm" %>
+                  class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-brand-accent focus:ring-brand-accent sm:text-sm" %>
             </div>
           </div>
 
           <div class="flex justify-end space-x-3">
             <%= link_to "Annuler", admin_member_path(@person),
-                class: "inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1F5C55]" %>
+                class: "inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-accent" %>
             <%= form.submit "Mettre à jour",
-                class: "inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#1F5C55] hover:bg-[#194A45] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1F5C55]" %>
+                class: "inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-brand-primary hover:bg-brand-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-accent" %>
           </div>
         <% end %>
       </div>

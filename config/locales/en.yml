@@ -374,6 +374,67 @@ en:
       description: Le Circographe, a living circus venue for training, meetups and workshops in Toulouse.
   views:
     shared:
+      pwa_install_banner:
+        label: Install suggestion
+        close: Close
+        tagline: Opening hours · Directions · Association info
+        add: Add to home screen
+        later: Install later
+        android:
+          heading: 'In Chrome on Android:'
+          step1_before: Tap
+          step1_after_html: <strong>⋮</strong> at the top right of Chrome
+          step2_html: Choose <strong>Add to Home screen</strong>
+          step3_html: Tap <strong>Add</strong> to confirm
+        ios:
+          button: Install on iPhone / iPad
+          heading: 'How to do it in Safari:'
+          step1_before: Tap the
+          step1_after_html: <strong>Share</strong> icon at the bottom of the screen
+          step2_html: Choose <strong>Add to Home Screen</strong>
+          step3_html: Tap <strong>Add</strong> at the top right
+      whatsapp_qr_modal:
+        heading: Join the community
+        close: Close
+        qr_alt: QR code — Le Circographe community WhatsApp
+        body: Scan the code with your phone or click the link to join Le Circographe's WhatsApp community.
+        button: Join on WhatsApp
+      confirm_modal:
+        title: Confirmation
+        body: Are you sure you want to go ahead with this action?
+        body_html: Are you sure you want to go ahead with this action?
+        message: Are you sure you want to continue?
+        confirm: Confirm
+        cancel: Cancel
+      opening_hours:
+        week: Week of %{from} to %{to}
+        caption: This week's opening hours
+        day: Day
+        hours: Hours
+        today: Today
+        closed: Closed
+        none_yet: No opening hours available yet.
+        none: No opening hours available.
+        exceptional_closure: Exceptional closure
+        until: until %{date}
+        updated: Updated %{time}
+      events:
+        see: See the event
+        empty: It's quiet for now. No event is planned in the near future, but we're preparing what comes next. Come back soon or sign up for the newsletter to hear about the next dates.
+      timeline:
+        label: Timeline of the association
+        years: Years
+        previous_year: Previous year
+        next_year: Next year
+        newer_year: More recent year
+        older_year: Earlier year
+        present: Ongoing
+        future: Coming next
+      carousel_arrows:
+        previous: Previous
+        next: Next
+      faq_section:
+        all_faq: The whole FAQ →
       flash:
         close: Close
       navbar:
@@ -449,6 +510,7 @@ en:
     pages:
       about:
         page_title: Le Circographe - About
+        eyebrow: Learning together
         heading: About Le Circographe
         hero_description: A laboratory of shared artistic practices where circus and graphic arts meet — self-management and solidarity.
         join: Join us
@@ -457,6 +519,309 @@ en:
         mission_heading: A shared and accessible creative space
         mission_text_1: Provide a space for practice, creation and transmission that is accessible to everyone.
         mission_text_2: 'Self-managed governance: members volunteer, share responsibilities, and co-program the life of the venue.'
+        values_eyebrow: Our values
+        values:
+          - Accessibility
+          - Transmission
+          - Experimentation
+          - Solidarity
+        board:
+          eyebrow: The board
+          heading: The people who keep Le Circographe going
+          intro: The board coordinates self-management and supports the volunteers day to day.
+          social_label: "%{name}'s %{platform} profile"
+          volunteer: Dedicated volunteer
+        history:
+          eyebrow: Our story
+          heading: Milestones
+          y2027:
+            title: Coming next
+            body: Projects to be defined with the community — to be updated here.
+          y2026:
+            title: Ongoing
+            body: 'Active season: new collaborations, company residencies and ongoing projects.'
+          y2025:
+            title: New partnerships & beyond our walls
+            body: Outdoor actions, collaborations and touring projects.
+          y2024:
+            title: Self-management strengthened
+            body: A wider board and structured volunteer teams.
+          y2023:
+            title: First public events
+            body: Shared stages, exhibitions and workshops open to the neighbourhood.
+          y2022:
+            title: The hangar opens
+            body: First training slots and the graphic workshops set up.
+        partners:
+          eyebrow: Partners & supporters
+          heading: They make the adventure possible
+          intro: A few featured partners — the full list changes with the projects of the place.
+          default_bio: Partner of Le Circographe.
+          website_label: "%{name} website"
+          label: Partner
+          previous: Previous partner
+          next: Next partner
+      gallery:
+        page_title: Le Circographe - Gallery
+        eyebrow: The place in pictures
+        heading: Photo gallery
+        intro: Circus, graphic arts, community life — snapshots of Le Circographe.
+        photo_alt: Photo of Le Circographe
+        enlarged_alt: Enlarged photo of Le Circographe
+        enlarge: Enlarge photo %{position} of %{total}
+        lightbox_label: Enlarged photo
+        close_lightbox: Close the enlarged photo
+        previous: Previous photo
+        next: Next photo
+        close: Close
+      newsletter_unsubscribe_success:
+        heading: You have unsubscribed from the newsletter
+        thanks: Thank you for letting us keep you informed about our news and special offers.
+        back: You can now go back to our website and keep browsing.
+      faq:
+        page_title: Le Circographe - FAQ
+        heading: Frequently asked questions
+        intro: No fluff — just the useful info, in the voice of the place.
+        search_label: Search a question
+        search_placeholder: Search (price, opening hours…)
+        categories_label: FAQ categories
+        no_result: No question matches this search.
+        try_examples: 'Try for instance:'
+        not_found_title: Didn't find your answer?
+        not_found_body: Write to us, we'll be happy to answer.
+        write_us: Write to us
+      contact:
+        page_title: Le Circographe - Contact
+        eyebrow: Write to us
+        heading: Contact
+        intro: 'Membership, contribution (circus access), creative residencies or premises: drop by during opening hours or write via the form below.'
+        practical_eyebrow: Practical info
+        practical_heading: Opening hours, directions and form
+        practical_body_html: "We answer messages within a few working days;<br class=\"hidden sm:block\"> advice on site during opening hours."
+        facebook_label: Circographe on Facebook (opens in a new tab)
+        instagram_label: Circographe on Instagram (opens in a new tab)
+        whatsapp_label: WhatsApp contact
+        access: Directions
+        address: 97 bis boulevard de Suisse — 31200 Toulouse
+        bus: Bus 15 (Tisséo) · get off at the stop closest to your direction
+        hours_heading: Opening hours
+        hours_detail: Tuesday to Sunday · depending on volunteers' availability
+        quick_question: A quick question?
+        quick_question_body: 'During opening hours: quick guidance (membership, creation, technical).'
+        faq_link: Frequently asked questions
+        faq_contact_link: Contact & projects
+        form:
+          heading: Write to us
+          intro: A question, a creative residency project or a partnership? We answer within a few working days.
+          name_label: Full name
+          name_placeholder: First and last name
+          email_label: Email address
+          email_placeholder: address@example.com
+          category_label: Category
+          category_prompt: Choose a category
+          categories:
+            general: General question
+            technical: Technical / access
+            creative_hosting: Creative residency
+            partnership: Partnership
+          message_label: Message
+          message_placeholder: Tell us about your project, your question or what you need…
+          submit: Send the message
+      association:
+        page_title: Le Circographe - The association
+        eyebrow: Create, practise, share — self-managed
+        heading: Welcome to Le Circographe
+        intro: 'Non-profit association: circus, graphic arts and artistic projects, run by volunteers and members.'
+        join: Join
+        activities_link: Our activities
+        photos_link: See the photos
+        poles:
+          eyebrow: Two hubs, one place
+          heading: Circus & graphic arts
+          intro: One hangar for training, workshops and creation — a shared space where know-how circulates.
+          circus:
+            image_alt: Circus training at Le Circographe
+            badge: Circus arts
+            title: Open training & company residencies
+            body: 'All levels: open training and exchanges; occasional residencies for companies.'
+            link: Explore the circus side
+          graphics:
+            image_alt: Graphic workshop at Le Circographe
+            badge: Graphic arts
+            title: Graphic arts & workshops
+            body: 'Street art, collective works and workshops: the community brings the walls and visual projects to life.'
+            link: Dive into the graphic workshop
+        engagement:
+          eyebrow: Self-management & volunteering
+          heading: The place runs on commitment
+          intro: 'Opening slots, technical work, exhibitions, welcome desk: every member can contribute in their own way.'
+          decide:
+            title: Deciding together
+            body: 'Annual general meeting and meetings: use of the hall, programming, collective decisions.'
+          volunteer:
+            title: Volunteering in action
+            body: Welcome desk, maintenance, workshops, communication… a variety of tasks depending on what you like and what you know.
+          join:
+            title: Join on site
+            body: 'Membership during a visit: tour of the place, safety, questions — and an introduction to the community.'
+          project_html: 'A project in the hall or volunteering: %{link} — we build it with you.'
+          project_link: drop by during opening hours
+        cta:
+          body: Want to join the place? Membership is done on site with the volunteers.
+          button: Join Le Circographe
+      news:
+        page_title: Le Circographe - Our activities
+        eyebrow: Programme
+        heading: Our activities
+        intro: 'Classes, company residencies, exhibitions, events: what happens at the place.'
+        circus:
+          eyebrow: Regular practice
+          heading: Circus
+          intro: 'Open training is available with a membership and supports experienced practitioners in developing their discipline: aerial, juggling, balance, acrobatics, Cyr wheel, contortion and much more.'
+          autonomy:
+            title: Supported autonomy
+            body: Each slot has a lead team that reminds everyone of the safety rules, helps duos get together and shares technical tips. Everyone progresses at their own pace, together.
+          companies:
+            title: Company residencies
+            body: Local circus companies come to polish their acts thanks to occasional use of the hall. It's a chance to try new ideas in front of the community.
+        graphics:
+          image_alt: Graphic practice at Le Circographe
+          eyebrow: Visual practice
+          heading: Graphic arts
+          body_1: 'The graphic space hosts independent practice time, collaborative workshops and printing labs. Illustrators, screen printers, drawing collectives: everyone finds the right format to explore and combine their techniques.'
+          body_2: 'We also make the space available for collective projects: posters, fanzines, participatory workshops or pop-up exhibitions shared with the circus.'
+        events:
+          eyebrow: Shared moments
+          heading: Events and news
+          intro: All year round, Le Circographe hosts exhibitions, shared stages, open ring nights and community gatherings open to the neighbourhood. Filter the news to plan your next visit.
+          filter_eyebrow: Programme
+          filter_heading: Filter the activities you're interested in
+          filter_label: Activity filters
+          tabs:
+            upcoming: Upcoming
+            past: Past
+            news: News
+        projects:
+          eyebrow: Other projects
+          heading: Workshops, outreach and hybrid projects
+          intro: 'Beyond the regular slots, we come up with formats that mix disciplines and audiences: teaching workshops, school outreach, screenings, open graphic stages and meetings with visiting artists.'
+          workshops:
+            title: Tailor-made workshops
+            body: For cultural organisations, neighbourhood associations or schools, we create workshops combining circus practice and graphic exploration.
+          meetings:
+            title: Public meetings
+            body: Discussions with the artists in residence, friendly showings and participatory formats that open the hall to everyone.
+          capsules:
+            title: Visual capsules
+            body: 'We document the hybrid projects of the place to build our collective memory: photo books, short videos, volunteer spotlights and illustrated postcards.'
+        photos:
+          alt: Photo of Le Circographe %{position}
+          previous: Previous photo
+          next: Next photo
+          all: See all the photos
+        cta:
+          body: Want to try a slot or come and watch?
+          button: See the next slots
+      become_member:
+        page_title: Le Circographe - Join
+        eyebrow: Join the community
+        heading: Join Le Circographe
+        intro: An on-site meeting to join the community, discover the place and community life.
+        see_slots: See the welcome slots
+        why:
+          eyebrow: Why join?
+          heading: Practise, create, help each other
+          body: Access to open circus training, graphic creation, creative residencies and collective programming. The volunteers explain self-management and help you choose your slots.
+        summary:
+          eyebrow: In short
+          items:
+            - Open circus training
+            - Workshops & creative residencies (graphic arts)
+            - Community life & volunteering
+            - Community & shared equipment
+        memberships:
+          eyebrow: Annual membership
+          heading: Types & prices
+          from: from %{price}
+          per_year: / year
+          payment: Payment on site — card or cash. Tax receipt on request.
+          visitor:
+            name: Visitor membership
+            badge: pay what you want
+            detail: Open sessions · no practice.
+          circus:
+            name: Circus membership
+            detail: Open training · 12 months from the date of joining.
+            reduced: Reduced price — %{price}
+          event:
+            name: Event membership
+            badge: coming soon
+            detail: Access to the place's public events.
+        contributions:
+          eyebrow: Contributions
+          heading: Self-management of the place
+          intro: Pick the formula that suits your practice.
+          day: Single session
+          pack10: 10-session pass
+          popular: Popular
+          pack10_detail: Never expires.
+          trimester: Quarter (3 months)
+          annual: Annual contribution
+          annual_detail: 12 months from the start date.
+        note_html: '<strong class="text-gray-800">Good to know:</strong> the membership and the circus contribution are two separate payments. The formulas above require an active <strong>circus membership</strong>.'
+        volunteering_link: Volunteering & self-management →
+        faq:
+          label: Frequently asked questions
+          title: Before you come
+          subtitle: A few pointers to prepare your membership.
+          footer: Need a hand? Write to us or drop by during an opening slot.
+        slots:
+          heading: Welcome slots
+          tooltip: Slots run by volunteers, which may change every week (usually updated on Monday evening). Check before you come.
+          volunteers: Volunteers
+          volunteers_sr: — slots may change
+        access:
+          heading: Directions
+          street: 97 bis bd de Suisse
+          city: 31200 Toulouse
+          bus: Bus 15 Tisséo · boulevard de Suisse
+          map: Map & contact
+          write: Write
+    home:
+      upcoming_events:
+        heading: Upcoming events
+        badge: Next event
+        demo_badge: UX/UI demo
+        demo_notice: Fictional content shown to demonstrate the interface.
+        discover: Discover the event
+        date_tbd_line_1: Date
+        date_tbd_line_2: to come
+        empty_html: "It's quiet for now. No event is planned in the near future. Sign up for %{link} to hear about the next dates."
+        newsletter_link: the newsletter
+      index:
+        page_title: Le Circographe - Home
+        meta_description: 'Le Circographe: a living circus venue in Toulouse. Training, workshops, encounters and community life for every level.'
+        kicker: Toulouse · Circus · Workshop · Community life
+        intro: A living place to train and meet.
+        discover_association: Discover the association
+        see_opening_hours: See opening hours
+        key_information: Key information
+        hours_eyebrow: Opening hours
+        hours_heading: When can you drop by?
+        hours_intro: Check this week's opening slots and plan your next visit to Le Circographe.
+        self_management_cta: Discover self-management & volunteering
+        find_us: Find us
+        address: 97 bis Boulevard de Suisse, 31200 Toulouse
+        find_us_body: 'Open training, walls painted by the artists of the place and a warm atmosphere: drop by whenever you like, you are welcome.'
+        map_and_access: See the map and directions
+        install:
+          dismiss: Dismiss the suggestion
+          eyebrow: Quick access
+          heading: Add Le Circographe to your home screen
+          body: Handy to find opening hours, directions and useful info in one tap.
+          button: Install the app
+          status: Available when your browser allows installation.
+          ios_help_html: 'On iPhone: open the Share menu, then choose <strong>Add to Home Screen</strong>.'
   services:
     base:
       success_default: "Operation completed successfully"

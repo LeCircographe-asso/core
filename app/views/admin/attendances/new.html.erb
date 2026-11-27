@@ -9,11 +9,11 @@
     <div class="mb-6">
       <div class="flex items-center">
         <% if @attendance_list %>
-          <%= link_to admin_attendance_list_path(@attendance_list), class: "mr-4 text-gray-500 hover:text-[#1F5C55]" do %>
+          <%= link_to admin_attendance_list_path(@attendance_list), class: "mr-4 text-gray-500 hover:text-brand-primary" do %>
             <i class="fas fa-arrow-left"></i>
           <% end %>
         <% else %>
-          <%= link_to admin_attendances_path, class: "mr-4 text-gray-500 hover:text-[#1F5C55]" do %>
+          <%= link_to admin_attendances_path, class: "mr-4 text-gray-500 hover:text-brand-primary" do %>
             <i class="fas fa-arrow-left"></i>
           <% end %>
         <% end %>
@@ -42,8 +42,8 @@
             <li class="flex items-center justify-between hover:bg-gray-50 px-6 py-4">
               <div class="flex items-center">
                 <div class="flex-shrink-0 h-10 w-10">
-                  <div class="h-10 w-10 rounded-full bg-[#1F5C55]/10 flex items-center justify-center">
-                    <span class="text-[#1F5C55] font-medium">
+                  <div class="h-10 w-10 rounded-full bg-brand-primary/10 flex items-center justify-center">
+                    <span class="text-brand-primary font-medium">
                       <%= "#{person.first_name&.first}#{person.last_name&.first}".strip.presence || "?" %>
                     </span>
                   </div>
@@ -69,7 +69,7 @@
                         attendance_list_id: @attendance_list&.id
                       }
                     },
-                    class: "px-3 py-1.5 bg-[#1F5C55] hover:bg-[#194A45] text-white text-sm font-medium rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1F5C55] flex items-center"
+                    class: "px-3 py-1.5 bg-brand-primary hover:bg-brand-primary-dark text-white text-sm font-medium rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-accent flex items-center"
                   ) do %>
                 <i class="fas fa-plus mr-1.5"></i> Ajouter
               <% end %>
@@ -83,7 +83,7 @@
             <p class="text-gray-500">Toutes les personnes ont déjà été ajoutées à cette liste</p>
             <% if @attendance_list %>
               <p class="mt-1 text-xs text-gray-500">
-                <%= link_to "Retour à la liste des participants", admin_attendance_list_path(@attendance_list), class: "text-[#1F5C55] hover:underline" %>
+                <%= link_to "Retour à la liste des participants", admin_attendance_list_path(@attendance_list), class: "text-brand-primary hover:underline" %>
               </p>
             <% end %>
           </div>

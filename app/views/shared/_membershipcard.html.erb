@@ -12,7 +12,7 @@
 
   <%# ━━━ BANDEAU + AVATAR — NE PAS TOUCHER ━━━ %>
   <div class="relative w-full">
-    <div class="h-24 w-full bg-gradient-to-r from-[#1F5C55] to-[#194A45] rounded-t-xl">
+    <div class="h-24 w-full bg-gradient-to-r from-brand-primary to-brand-primary-dark rounded-t-xl">
       <div class="absolute top-3 left-3 sm:left-4 z-10 px-3 py-1.5 rounded-lg bg-white/15 backdrop-blur-sm border border-white/20 text-left shadow-sm max-w-[calc(100%-7rem)] sm:max-w-none">
         <span class="block text-xs uppercase tracking-wider text-white/80 font-medium leading-tight"><%= t("users.space.membership_card.member_number_label") %></span>
         <span class="block text-sm font-semibold text-white tabular-nums tracking-tight truncate" title="<%= person&.formatted_member_number %>"><%= person&.formatted_member_number %></span>
@@ -61,11 +61,11 @@
          data-section-edit-no-label-value="<%= t("users.space.no") %>">
 
       <div class="flex items-center justify-between gap-3 mb-2 sm:mb-2.5">
-        <p class="text-xs font-semibold uppercase tracking-widest text-[#1F5C55]/70"><%= t("users.space.contact_heading") %></p>
+        <p class="text-xs font-semibold uppercase tracking-widest text-brand-primary/70"><%= t("users.space.contact_heading") %></p>
         <div class="flex items-center gap-3">
           <div data-section-edit-target="modifyWrap">
             <button type="button" data-section-edit-target="modifyButton" data-action="section-edit#handleModifyClick"
-                    class="text-sm font-medium text-[#1F5C55] hover:underline disabled:opacity-40">
+                    class="text-sm font-medium text-brand-primary hover:underline disabled:opacity-40">
               <%= t("users.space.edit") %>
             </button>
           </div>
@@ -78,7 +78,7 @@
           <div data-section-edit-target="acceptWrap" class="hidden">
             <button type="button" data-section-edit-target="acceptButton" data-action="section-edit#handleAcceptClick"
                     data-loading-text="<%= t("users.space.saving") %>"
-                    class="inline-flex items-center rounded-md px-3 py-1 text-sm font-medium text-white bg-[#1F5C55] hover:bg-[#1F5C55]/90 shadow-sm">
+                    class="inline-flex items-center rounded-md px-3 py-1 text-sm font-medium text-white bg-brand-primary hover:bg-brand-primary/90 shadow-sm">
               <%= t("users.space.accept") %>
             </button>
           </div>
@@ -116,7 +116,7 @@
 
   <%# ── Newsletter ── %>
   <div class="border-b border-gray-200 px-4 py-2 sm:px-5 sm:py-2.5 flex justify-between items-center gap-3">
-    <span class="text-xs font-semibold uppercase tracking-widest text-[#1F5C55]/70"><%= t("users.space.newsletter_row_label") %></span>
+    <span class="text-xs font-semibold uppercase tracking-widest text-brand-primary/70"><%= t("users.space.newsletter_row_label") %></span>
     <span class="text-sm font-semibold <%= @user.newsletter_subscribed ? 'text-green-700' : 'text-gray-400' %>">
       <%= @user.newsletter_subscribed ? t("users.space.newsletter_subscribed_yes") : t("users.space.newsletter_subscribed_no") %>
     </span>
@@ -125,12 +125,12 @@
   <%# ── Actions ── %>
   <div class="px-3 py-2.5 sm:px-4 sm:py-3 flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:gap-2">
     <% if defined?(form) && form.present? %>
-      <%= form.submit "Enregistrer", class: "flex-1 text-center py-2.5 px-4 rounded-lg text-sm font-medium text-white bg-[#1F5C55] hover:bg-[#1F5C55]/90 shadow-sm" %>
+      <%= form.submit "Enregistrer", class: "flex-1 text-center py-2.5 px-4 rounded-lg text-sm font-medium text-white bg-brand-primary hover:bg-brand-primary/90 shadow-sm" %>
     <% else %>
       <% unless current_membership.present? %>
         <%= link_to(membership_lapsed ? "Renouveler mon adhésion" : "Adhérer",
             page_path("become_member"),
-            class: "flex-1 flex items-center justify-center py-2.5 px-4 rounded-lg text-sm font-semibold text-white bg-[#1F5C55] hover:bg-[#1F5C55]/90 shadow-sm") %>
+            class: "flex-1 flex items-center justify-center py-2.5 px-4 rounded-lg text-sm font-semibold text-white bg-brand-primary hover:bg-brand-primary/90 shadow-sm") %>
       <% end %>
       <% if @user.can_access_admin_zone? %>
         <%= link_to "Espace administration", admin_root_path,

@@ -1,10 +1,5 @@
 <%
-  default_message = <<~TEXT.squish
-    C'est calme pour le moment. Aucun événement n'est planifié dans l'immédiat,
-    mais nous préparons la suite. Reviens bientôt ou inscris-toi à la newsletter
-    pour être averti·e des prochaines dates.
-  TEXT
-  message = local_assigns.fetch(:message, default_message)
+  message = local_assigns.fetch(:message) { t("views.shared.events.empty") }
   variant = local_assigns.fetch(:variant, :default).to_sym
 
   wrapper_classes, text_classes =

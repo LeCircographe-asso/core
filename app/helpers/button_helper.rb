@@ -14,7 +14,7 @@ module ButtonHelper
                   disabled: true,
                   title: options[:disabled_reason] || "Fonctionnalité temporairement désactivée"
     else
-      active_classes = options[:classes] || "text-white bg-[#1F5C55] hover:bg-[#194A45] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1F5C55]"
+      active_classes = options[:classes] || "text-white bg-brand-primary hover:bg-brand-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-accent"
       all_classes = "#{base_classes} #{active_classes}"
 
       content_tag :button, text,
@@ -36,7 +36,7 @@ module ButtonHelper
                   class: all_classes,
                   title: options[:disabled_reason] || "Fonctionnalité temporairement désactivée"
     else
-      active_classes = options[:classes] || "text-white bg-[#1F5C55] hover:bg-[#194A45] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1F5C55]"
+      active_classes = options[:classes] || "text-white bg-brand-primary hover:bg-brand-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-accent"
       all_classes = "#{base_classes} #{active_classes}"
 
       link_to text, url,

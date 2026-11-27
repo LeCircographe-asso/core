@@ -8,18 +8,18 @@
     <%= form.label :note, t("bug_reports.form.note_label"), class: "block mb-1.5 text-sm font-medium text-gray-700" %>
     <%= form.text_area :note, value: local_assigns[:note], rows: 4, required: true,
         placeholder: t("bug_reports.form.note_placeholder"),
-        class: "block w-full px-3 py-2 text-sm text-gray-800 bg-white border border-gray-200 rounded-xl focus:border-[#1F5C55] focus:ring-2 focus:ring-[#1F5C55]/25 focus:outline-none resize-y min-h-[6rem]" %>
+        class: "block w-full px-3 py-2 text-sm text-gray-800 bg-white border border-gray-200 rounded-xl focus:border-brand-accent focus:ring-2 focus:ring-brand-accent/25 focus:outline-none resize-y min-h-[6rem]" %>
   </div>
 
   <div>
     <%= form.label :screenshot, t("bug_reports.form.screenshot_label"), class: "block mb-1.5 text-sm font-medium text-gray-700" %>
     <%= form.file_field :screenshot, accept: "image/png,image/jpeg,image/webp,image/gif",
-        class: "block w-full text-sm text-gray-600 file:mr-3 file:rounded-full file:border-0 file:bg-[#1F5C55]/10 file:px-3 file:py-1.5 file:text-sm file:font-medium file:text-[#1F5C55] hover:file:bg-[#1F5C55]/20" %>
+        class: "block w-full text-sm text-gray-600 file:mr-3 file:rounded-full file:border-0 file:bg-brand-primary/10 file:px-3 file:py-1.5 file:text-sm file:font-medium file:text-brand-primary hover:file:bg-brand-primary/20" %>
     <p class="mt-1 text-xs text-gray-500"><%= t("bug_reports.form.screenshot_hint") %></p>
   </div>
 
   <div class="flex justify-end pt-1">
     <%= form.submit t("bug_reports.form.submit"),
-        class: "inline-flex items-center justify-center rounded-full bg-[#1F5C55] px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-[#17433e] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1F5C55] cursor-pointer" %>
+        class: "inline-flex items-center justify-center rounded-full bg-brand-primary px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-brand-primary-dark focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-primary cursor-pointer" %>
   </div>
 <% end %>

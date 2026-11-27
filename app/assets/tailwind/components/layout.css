@@ -1,9 +1,4 @@
 @layer components {
-  .footer-divider {
-    margin-top: 2rem !important;
-    margin-bottom: 2rem !important;
-  }
-
   .page-container {
     @apply mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8;
   }
@@ -40,10 +35,6 @@
     @apply rounded-[28px] border border-white/80 bg-white/95 shadow-lg;
   }
 
-  .public-soft-card {
-    @apply rounded-2xl border border-gray-100 bg-white shadow-md;
-  }
-
   .public-section-shell {
     @apply rounded-[28px] bg-white/95 px-4 py-10 shadow-lg sm:px-8 sm:py-14 lg:py-16;
   }
@@ -78,9 +69,9 @@
   }
 
   /* Typography primitives */
+  /* Petite ligne en majuscules au-dessus des titres de section (pages publiques). */
   .section-eyebrow {
-    @apply text-sm font-medium uppercase tracking-[0.3em];
-    color: rgba(31, 92, 85, 0.7);
+    @apply text-sm font-medium uppercase tracking-[0.3em] text-brand-primary/70;
   }
 
   .hero-title {
@@ -102,10 +93,6 @@
 
   .body-text-lg {
     @apply text-base text-gray-700 leading-relaxed sm:text-lg;
-  }
-
-  .outline-contrast-primary {
-    outline-color: rgba(31, 92, 85, 0.85);
   }
 
   .nav-active-link {

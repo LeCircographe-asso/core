@@ -2,7 +2,7 @@
 
 > **Statut** : stable
 > **Public cible** : contributeur, design
-> **Dernière vérification** : 2026-04-27
+> **Dernière vérification** : 2026-11-26
 > **Sources de vérité** : `app/assets/tailwind/application.css`, `app/assets/tailwind/components/`.
 
 ## 1. Brand Palette
@@ -27,27 +27,20 @@ For dark overlays, pair with `#FFFFFF` text + drop shadow for readability.
 
 ## 2. Tailwind Tokens
 
-Add the palette to `tailwind.config.js`:
+Tailwind v4 (pas de `tailwind.config.js`) : les couleurs de marque sont déclarées dans le bloc
+`@theme` en haut de `app/assets/tailwind/application.css` :
 
-```js
-// tailwind.config.js
-module.exports = {
-  theme: {
-    extend: {
-      colors: {
-        'brand-primary': '#1F5C55',
-        'brand-primary-dark': '#174A44',
-        'brand-accent': '#5836A5',
-        'brand-accent-dark': '#4C2D8A',
-        'surface-light': '#F7FAFC',
-        'surface-card': '#FFFFFF',
-        'text-main': '#0B1220',
-        'text-muted': '#1F2937'
-      }
-    }
-  }
+```css
+@theme {
+  --color-brand-primary: #1F5C55;
+  --color-brand-accent: #5836A5;
 }
 ```
+
+Tailwind en tire toutes les utilitaires et leurs opacités : `bg-brand-primary`, `text-brand-accent`,
+`border-brand-primary/20`, `focus:ring-brand-accent`, `hover:bg-brand-primary/10`… Écrire ces
+classes plutôt que des hex (`bg-[#1F5C55]`), et ne pas les redéclarer à la main dans un
+`@layer utilities`.
 
 ## 4. Typography
 
@@ -84,7 +77,6 @@ Create reusable classes in `app/assets/tailwind/application.css` (Tailwind @laye
   }
 
   .text-shadow-hero { text-shadow: 0 4px 16px rgba(0,0,0,0.6); }
-  .bg-overlay-dark { background: linear-gradient(135deg, rgba(12,18,43,0.55), rgba(12,18,43,0.15)); }
 
   .btn-primary {
     @apply inline-flex items-center gap-2 rounded-full border-2 border-brand-primary bg-brand-primary text-white hover:bg-white hover:text-brand-primary transition;
@@ -156,7 +148,7 @@ Use `.hero-overlay` + `.hero-panel` pour FAQ/About et futures pages publiques qu
 | Champ standard | `form-control` (optionnel) + `focus-accent` | Halo violet `#5836A5` 1px, fond blanc, bords arrondis. |
 | Champ accentué | `focus-accent-strong` | Halo violet plus prononcé (anneau 2px). |
 
-> Les projets antérieurs utilisaient `focus:border-[#1F5C55]` / `focus:ring-[#1F5C55]`. Un override dans `application.css` force désormais ces classes à pointer sur `#5836A5`. Pas besoin de réécrire le legacy, mais privilégie `focus-accent` pour les nouveaux écrans.
+> Le focus des champs est **violet** : écrire `focus:border-brand-accent` / `focus:ring-brand-accent` (ou `focus-accent`). L'ancien override qui transformait `focus:border-[#1F5C55]` en violet a été retiré (2026-11) et toutes les vues ont été réécrites avec les jetons : un `focus:ring-[#1F5C55]` afficherait désormais du vert.
 
 Exemple :
 
@@ -180,14 +172,11 @@ Exemple :
 5. **Run Lighthouse / axe** to verify contrast on critical pages.
 6. **Document** usage in README or DESIGN docs (link to this file).
 
-## 9. Branch Strategy
+## 9. Vérifier un changement de style
 
-1. Créer une branche dédiée (ex. `feature/ui-color-harmonization`).  
-2. Appliquer les étapes ci-dessus progressivement (commit par step).  
-3. Tester en local :
-   - `bin/dev` + vérifier pages `home`, `faq`, `about`, `news`, formulaires.  
-   - `bundle exec rspec` pour s’assurer qu’aucune régression applicative.  
-4. Ouvrir une PR pour revue, intégrer feedback, merger une fois validé.
+- Sur téléphone d'abord, avec de vraies captures d'écran défilé (le fond fixe n'apparaît pas sur une capture « page entière »).
+- Pour un ménage CSS censé ne rien changer : comparer les styles calculés des pages avant/après (aucune différence attendue).
+- `bin/test` pour la non-régression applicative.
 
 ## 10. Bonnes Pratiques
 
@@ -197,7 +186,20 @@ Exemple :
 - Respecter `text-white` + `text-shadow-hero` si besoin sur backgrounds sombres.  
 - Garder `#FF9119` uniquement pour notifications/accents, pas pour CTA principaux.  
 
-## 11. Contrast Checklist
+## 11. Fond figé et encarts translucides (charte)
+
+Les pages publiques ont une **photo de fond fixe** : elle ne défile pas, ce sont les encarts qui glissent par-dessus.
+
+- Le fond est posé une seule fois par `layouts/application.html.erb` : `div.fixed.inset-0.-z-10.public-bg-image`. Chaque page choisit sa photo avec `content_for :background_image`.
+- Les encarts sont **blancs à 95 %** pour que la photo transparaisse : `.public-surface` / `.public-surface-bordered` (`bg-white/95`, voir `components/layout.css`). Pour un nouvel encart public, réutiliser ces classes plutôt qu'un `bg-white` opaque.
+- **À ne jamais faire** :
+  - remplacer ou faire défiler ce fond ;
+  - rendre les encarts opaques sur tout le site ;
+  - mettre un `overflow`, un `transform` ou un `filter` sur `html`/`body` (ça casse le `position: fixed`/`sticky`, cf. l'ancien `overflow-x: auto` de `admin_table.css`).
+- L'espace membre (`users#show`, réglages) garde un fond blanc uni : c'est voulu.
+- **Le pied de page est blanc opaque**, jamais transparent : la transparence est réservée aux encarts au-dessus de lui. Sur téléphone, il forme une seule tuile de la hauteur de l'écran (`min-h-[100svh]`) : le dernier scroll montre tout le pied de page et rien d'autre.
+
+## 12. Contrast Checklist
 
 1. **Automatique** : `bin/rails tailwindcss:build` échoue si une classe inconnue est ajoutée. 
 2. **Audit manuel** : utiliser Lighthouse ou `npx @axe-core/cli http://127.0.0.1:3001/` pour vérifier les ratios.

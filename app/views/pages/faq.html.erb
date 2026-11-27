@@ -1,4 +1,4 @@
-<% content_for :title, "Le Circographe - FAQ" %>
+<% content_for :title, t("views.pages.faq.page_title") %>
 
 <%# Une seule page, tout visible : groupes dans l'ordre d'un parcours, raccourcis collants,
     recherche instantanée, questions en <details> natifs (fonctionnent sans JS) et liables
@@ -9,16 +9,16 @@
     <%= image_tag hero_image(:faq_hero), class: "absolute inset-0 w-full h-full object-cover hero-img-filter", alt: "" %>
     <div class="hero-overlay"></div>
     <div class="hero-panel public-hero-panel-centered">
-      <h1 class="public-hero-title">Questions fréquentes</h1>
-      <p class="public-hero-body max-sm:hidden">Peu de blabla — les infos utiles, avec le ton du lieu.</p>
+      <h1 class="public-hero-title"><%= t("views.pages.faq.heading") %></h1>
+      <p class="public-hero-body max-sm:hidden"><%= t("views.pages.faq.intro") %></p>
       <div class="mt-5 w-full max-w-md mx-auto">
-        <label for="faq-search" class="sr-only">Rechercher une question</label>
+        <label for="faq-search" class="sr-only"><%= t("views.pages.faq.search_label") %></label>
         <input type="search" id="faq-search"
-               placeholder="Rechercher : horaires, tarifs, matériel…"
+               placeholder="<%= t("views.pages.faq.search_placeholder") %>"
                autocomplete="off"
                data-faq-search-target="input"
                data-action="input->faq-search#filter keydown.esc->faq-search#clear"
-               class="w-full min-h-12 rounded-full border-0 bg-white/95 px-5 text-base text-gray-900 shadow-lg placeholder:text-gray-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#5836A5]">
+               class="w-full min-h-12 rounded-full border-0 bg-white/95 px-5 text-base text-gray-900 shadow-lg placeholder:text-gray-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-accent">
       </div>
     </div>
   </section>
@@ -29,10 +29,13 @@
    <div class="public-surface bg-white px-4 pb-6 sm:px-8 sm:pb-8">
     <%# Raccourcis : restent visibles en haut de l'écran, sous la barre de navigation si elle colle
         (décalage --faq-sticky-top calculé par le contrôleur ; pas de style en ligne : CSP). %>
-    <nav aria-label="Catégories de la FAQ"
+    <nav aria-label="<%= t("views.pages.faq.categories_label") %>"
          data-faq-search-target="chips"
          class="sticky top-[var(--faq-sticky-top,0px)] z-30 -mx-4 mb-4 rounded-t-[28px] bg-white/95 px-4 py-3 backdrop-blur sm:-mx-8 sm:px-8">
-      <ul class="flex gap-2 overflow-x-auto [scrollbar-width:none] sm:flex-wrap sm:justify-center">
+      <%# Téléphone : la rangée défile sur toute la largeur de l'encart (-mx-4 px-4) et s'efface en
+          fondu sur les bords au lieu d'être coupée net ; à partir de sm, elle passe à la ligne. %>
+      <ul class="-mx-4 flex gap-2 overflow-x-auto px-4 scroll-px-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden [mask-image:linear-gradient(to_right,transparent,#000_1rem,#000_calc(100%-1rem),transparent)] sm:mx-0 sm:flex-wrap sm:justify-center sm:px-0 sm:[mask-image:none]"
+          data-faq-search-target="chipRow">
         <%# .faq-tab = style des anciens onglets (contour vert ; violet quand data-active) :
             le premier est actif d'emblée, le contrôleur suit ensuite la section lue. %>
         <% @faq_groups.each_with_index do |(label, _faqs), index| %>
@@ -49,41 +52,29 @@
 
     <p class="sr-only" aria-live="polite" data-faq-search-target="status"></p>
 
-    <%# Ancre = question en slug (/faq#horaires) ; en cas de doublon (questions identiques ou
-        qui ne diffèrent que par la ponctuation), on ajoute l'id pour garder chaque lien unique. %>
     <% anchors = Set.new %>
     <% @faq_groups.each do |label, faqs| %>
       <section id="faq-<%= label.dasherize %>" class="mb-8 scroll-mt-24" data-faq-search-target="group" aria-labelledby="faq-<%= label.dasherize %>-title">
-        <h2 id="faq-<%= label.dasherize %>-title" class="mb-1 text-xl font-semibold text-[#1F5C55] sm:text-2xl"><%= Faq::LABEL_NAMES.fetch(label) %></h2>
-        <div class="divide-y divide-gray-200 border-b border-gray-200">
-          <% faqs.each do |faq| %>
-            <% slug = faq.question.parameterize.presence || "question" %>
-            <% anchor = anchors.include?(slug) ? "#{slug}-#{faq.id}" : slug %>
-            <% anchors << anchor %>
-            <details id="<%= anchor %>" class="group scroll-mt-24" data-faq-search-target="item">
-              <summary class="flex min-h-12 cursor-pointer list-none items-center justify-between gap-4 py-3 text-left font-semibold text-gray-900 hover:text-[#1F5C55] focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[#5836A5] [&::-webkit-details-marker]:hidden">
-                <span><%= faq.question %></span>
-                <svg class="h-4 w-4 shrink-0 text-gray-500 transition-transform group-open:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
-                  <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4" />
-                </svg>
-              </summary>
-              <div class="pb-4 text-gray-700 leading-relaxed [&_a]:text-[#1F5C55] [&_a]:underline">
-                <%= sanitize(faq.answer) %>
-              </div>
-            </details>
-          <% end %>
-        </div>
+        <h2 id="faq-<%= label.dasherize %>-title" class="mb-1 text-xl font-semibold text-brand-primary sm:text-2xl"><%= Faq::LABEL_NAMES.fetch(label) %></h2>
+        <%= render "shared/faq_list", faqs: faqs, anchors: anchors, searchable: true %>
       </section>
     <% end %>
 
-    <p class="hidden py-6 text-center text-gray-700" data-faq-search-target="empty">
-      Aucune question ne correspond à cette recherche.
-    </p>
+    <div class="hidden py-6 text-center text-gray-700" data-faq-search-target="empty">
+      <p><%= t("views.pages.faq.no_result") %></p>
+      <p class="mt-3 text-sm text-gray-500"><%= t("views.pages.faq.try_examples") %></p>
+      <div class="mt-2 flex flex-wrap justify-center gap-2">
+        <%# Mots de recherche (en français, comme le contenu de la FAQ et les synonymes de faq_search_controller.js). %>
+        <% %w[tarif horaires adresse matériel adhésion bénévole].each do |term| %>
+          <button type="button" class="tab-filter" data-action="faq-search#suggest" data-term="<%= term %>"><%= term %></button>
+        <% end %>
+      </div>
+    </div>
 
-    <div class="mt-2 rounded-2xl bg-[#1F5C55] px-6 py-6 text-center text-white">
-      <p class="text-lg font-semibold">Pas trouvé ta réponse ?</p>
-      <p class="mt-1 text-white/85">Écris-nous, on te répond avec plaisir.</p>
-      <%= link_to "Nous écrire", page_path("contact_us", anchor: "contact-form"), class: "mt-4 inline-flex min-h-11 items-center rounded-full bg-white px-6 font-semibold text-[#1F5C55] hover:bg-gray-100" %>
+    <div class="mt-2 rounded-2xl bg-brand-primary px-6 py-6 text-center text-white">
+      <p class="text-lg font-semibold"><%= t("views.pages.faq.not_found_title") %></p>
+      <p class="mt-1 text-white/85"><%= t("views.pages.faq.not_found_body") %></p>
+      <%= link_to t("views.pages.faq.write_us"), page_path("contact_us", anchor: "contact-form"), class: "mt-4 inline-flex min-h-11 items-center rounded-full bg-white px-6 font-semibold text-brand-primary hover:bg-gray-100" %>
     </div>
    </div>
   </div>

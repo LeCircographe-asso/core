@@ -17,6 +17,10 @@
     <meta name="apple-mobile-web-app-title" content="Circographe">
     <meta name="mobile-web-app-capable" content="yes">
     <%= csrf_meta_tags %>
+    <%# Pas d'aperçu Turbo : sinon, en revenant sur une page déjà vue, Turbo affiche sa copie en
+        cache puis la vraie page, et les animations d'apparition se jouent deux fois (effet de
+        va-et-vient). Le retour arrière du navigateur utilise toujours le cache. %>
+    <meta name="turbo-cache-control" content="no-preview">
     <%= csp_meta_tag %>
     <%= yield :head %>
 
@@ -31,14 +35,12 @@
                  crossorigin: "anonymous",
                  "data-turbo-track": "reload" %>
     <%= stylesheet_link_tag "tailwind", "data-turbo-track": "reload" %>
-    <%= stylesheet_link_tag "flowbite", "data-turbo-track": "reload" %>
     <%= stylesheet_link_tag "application", media: "all", "data-turbo-track": "reload" %>
     <%# Removed legacy :app stylesheet link to avoid 404/preload issues %>
     <%= javascript_importmap_tags %>
 
     <!-- External services -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <%= javascript_include_tag "flowbite.turbo.min", "data-turbo-track": "reload" %>
 
     <%# Umami analytics — public site only, not the admin backoffice. Self-hosted,
         cookieless, no consent banner needed. See docs/operations/analytics.md. %>
@@ -52,7 +54,7 @@
 
 <body class="<%= 'dyslexic-font-enabled' if current_user&.dyslexic_font %> <%= controller_name %>-<%= action_name %> flex flex-col min-h-[100dvh] leading-normal">
 
-<a href="#main-content" class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[9999] focus:rounded-md focus:bg-white focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-[#1F5C55] focus:shadow-md focus:ring-2 focus:ring-[#1F5C55]">Aller au contenu principal</a>
+<a href="#main-content" class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[9999] focus:rounded-md focus:bg-white focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-brand-primary focus:shadow-md focus:ring-2 focus:ring-brand-accent">Aller au contenu principal</a>
 
     <% if controller_path.start_with?('admin/') %>
     <div class="admin-layout" data-controller="sidebar">

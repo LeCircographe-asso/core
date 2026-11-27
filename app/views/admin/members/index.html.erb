@@ -7,7 +7,7 @@
     
     <!-- Header avec gradient -->
     <div class="surface-card mb-6">
-      <div class="bg-gradient-to-r from-[#1F5C55] to-[#194A45] px-6 py-4">
+      <div class="bg-gradient-to-r from-brand-primary to-brand-primary-dark px-6 py-4">
         <h1 class="text-2xl font-bold text-white"><%= t("views.admin.users.index.page_title") %></h1>
         <p class="text-white/80 mt-1">
           <%= t("views.admin.users.index.page_subtitle") %>
@@ -110,7 +110,7 @@
                       admin_users_index_target: "searchInput",
                       action: "input->admin-users-index#debouncedSearch"
                     },
-                    class: "search-input pl-10 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#1F5C55] focus:ring-[#1F5C55] sm:text-sm" %>
+                    class: "search-input pl-10 block w-full rounded-md border-gray-300 shadow-sm focus:border-brand-accent focus:ring-brand-accent sm:text-sm" %>
                 <% if params[:search].present? %>
                   <button type="button" 
                           data-action="click->admin-users-index#clearSearch"
@@ -139,7 +139,7 @@
                   ], params[:filter]),
                   {},
                   { 
-                    class: "block w-full rounded-md border-gray-300 shadow-sm focus:border-[#1F5C55] focus:ring-[#1F5C55] sm:text-sm",
+                    class: "block w-full rounded-md border-gray-300 shadow-sm focus:border-brand-accent focus:ring-brand-accent sm:text-sm",
                     onchange: "this.form.submit()"
                   } %>
             </div>
@@ -170,7 +170,7 @@
               <tbody class="bg-white divide-y divide-gray-200">
                 <% if @people.any? %>
                   <% @people.each do |person| %>
-                    <tr class="table-row cursor-pointer hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-[#1F5C55]"
+                    <tr class="table-row cursor-pointer hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-brand-accent"
                         data-admin-users-target="tableRow"
                         data-controller="clickable-row"
                         data-clickable-row-url-value="<%= admin_member_path(person) %>"
@@ -270,7 +270,7 @@
                     <select id="items-per-page"
                             data-admin-users-index-target="itemsPerPage"
                             data-action="change->admin-users-index#changeItemsPerPage"
-                            class="border border-gray-300 rounded-md px-2 py-1 text-sm focus:ring-[#1F5C55] focus:border-[#1F5C55]">
+                            class="border border-gray-300 rounded-md px-2 py-1 text-sm focus:ring-brand-accent focus:border-brand-accent">
                       <option value="10" <%= 'selected' if params[:items] == '10' %>>10</option>
                       <option value="15" <%= 'selected' if params[:items] == '15' || params[:items].blank? %>>15</option>
                       <option value="25" <%= 'selected' if params[:items] == '25' %>>25</option>
@@ -292,7 +292,7 @@
                     <% @pagy.series.each do |item| %>
                       <% if item.is_a?(Integer) %>
                         <%= link_to item, admin_members_path(page: item, search: params[:search], filter: params[:filter]), 
-                            class: "relative inline-flex items-center px-4 py-2 border text-sm font-medium #{item == @pagy.page ? 'z-10 bg-[#1F5C55] border-[#1F5C55] text-white' : 'bg-white border-gray-300 text-gray-500 hover:bg-gray-50'}" %>
+                            class: "relative inline-flex items-center px-4 py-2 border text-sm font-medium #{item == @pagy.page ? 'z-10 bg-brand-primary border-brand-primary text-white' : 'bg-white border-gray-300 text-gray-500 hover:bg-gray-50'}" %>
                       <% elsif item == :gap %>
                         <span class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700">
                           ...

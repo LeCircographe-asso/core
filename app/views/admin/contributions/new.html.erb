@@ -5,7 +5,7 @@
     <%= render "shared/breadcrumbs" %>
 
     <div class="mb-4 overflow-hidden rounded-lg bg-white shadow-lg">
-      <div class="bg-gradient-to-r from-[#1F5C55] to-[#194A45] px-4 py-3 sm:px-5">
+      <div class="bg-gradient-to-r from-brand-primary to-brand-primary-dark px-4 py-3 sm:px-5">
         <h1 class="text-lg font-bold text-white sm:text-xl">Nouvelle cotisation</h1>
         <p class="mt-1 text-sm text-white/80">
           Pour <%= @person.full_name %>
@@ -126,7 +126,7 @@
 
               <div class="grid gap-2 lg:grid-cols-2">
                 <% @contribution_formulas.each_with_index do |contribution_formula, index| %>
-                  <label class="block cursor-pointer rounded-lg border border-gray-200 p-3 transition hover:border-[#1F5C55] hover:bg-gray-50 has-[:checked]:border-[#1F5C55] has-[:checked]:bg-[#1F5C55]/5">
+                  <label class="block cursor-pointer rounded-lg border border-gray-200 p-3 transition hover:border-brand-primary hover:bg-gray-50 has-[:checked]:border-brand-primary has-[:checked]:bg-brand-primary/5">
                     <%= form.radio_button :contribution_formula_id,
                         contribution_formula.id,
                         checked: index.zero?,
@@ -151,7 +151,7 @@
                       </div>
 
                       <div class="shrink-0 rounded-md bg-gray-50 px-3 py-2 text-right">
-                        <p class="text-lg font-bold text-[#1F5C55]"><%= contribution_formula.price_euros %> €</p>
+                        <p class="text-lg font-bold text-brand-primary"><%= contribution_formula.price_euros %> €</p>
                       </div>
                     </div>
                   </label>
@@ -176,7 +176,7 @@
 
               <button type="button"
                   data-action="beneficiary-list#addRow"
-                  class="text-sm font-medium text-[#1F5C55] hover:text-[#194A45]">
+                  class="text-sm font-medium text-brand-primary hover:text-brand-primary-dark">
                 + Ajouter un bénéficiaire
               </button>
             </section>
@@ -191,7 +191,7 @@
                     <span data-contribution-purchase-target="summaryConstraint"><%= formula_constraint.call(selected_formula) %></span>
                   </p>
                 </div>
-                <p class="text-lg font-bold text-[#1F5C55]" data-contribution-purchase-target="summaryPrice"><%= selected_formula.price_euros %> €</p>
+                <p class="text-lg font-bold text-brand-primary" data-contribution-purchase-target="summaryPrice"><%= selected_formula.price_euros %> €</p>
               </div>
               <p class="text-xs text-gray-500">
                 Montant pour <%= @person.full_name %> ci-dessus. Total du paiement (avec bénéficiaires additionnels) :
@@ -204,7 +204,7 @@
                   <%= form.select :payment_method,
                       options_for_select(payment_method_options),
                       { selected: "cash" },
-                      { class: "w-full rounded-md border-gray-300 text-sm focus:border-[#1F5C55] focus:ring-[#1F5C55]",
+                      { class: "w-full rounded-md border-gray-300 text-sm focus:border-brand-accent focus:ring-brand-accent",
                         data: { offer_fields_target: "paymentMethod", action: "change->offer-fields#refresh" } } %>
                 </div>
 
@@ -214,7 +214,7 @@
                       step: 0.01,
                       min: 0,
                       placeholder: "0.00",
-                      class: "w-full rounded-md border-gray-300 text-sm focus:border-[#1F5C55] focus:ring-[#1F5C55]" %>
+                      class: "w-full rounded-md border-gray-300 text-sm focus:border-brand-accent focus:ring-brand-accent" %>
                 </div>
               </div>
 
@@ -224,7 +224,7 @@
                     step: 0.01,
                     min: 0,
                     placeholder: "0.00",
-                    class: "w-full rounded-md border-gray-300 text-sm focus:border-[#1F5C55] focus:ring-[#1F5C55]" %>
+                    class: "w-full rounded-md border-gray-300 text-sm focus:border-brand-accent focus:ring-brand-accent" %>
               </div>
 
                 <div class="hidden" data-offer-fields-target="offerReason">
@@ -232,7 +232,7 @@
                   <%= form.text_area :offer_reason,
                     rows: 2,
                     placeholder: "Ex : bénévolat, geste commercial, partenariat...",
-                    class: "w-full rounded-md border-gray-300 text-sm focus:border-[#1F5C55] focus:ring-[#1F5C55]",
+                    class: "w-full rounded-md border-gray-300 text-sm focus:border-brand-accent focus:ring-brand-accent",
                     data: { offer_fields_target: "offerReasonInput" } %>
                 </div>
 
@@ -241,14 +241,14 @@
               </div>
 
               <div class="flex items-center gap-2">
-                <%= form.check_box :record_attendance, { checked: true, class: "rounded border-gray-300 text-[#1F5C55] focus:ring-[#1F5C55]" }, "1", "0" %>
+                <%= form.check_box :record_attendance, { checked: true, class: "rounded border-gray-300 text-brand-primary focus:ring-brand-accent" }, "1", "0" %>
                 <%= form.label :record_attendance, "Enregistrer la présence aujourd'hui", class: "text-sm text-gray-700" %>
               </div>
 
               <div class="flex flex-col gap-3 border-t border-gray-200 pt-4 sm:flex-row sm:items-center sm:justify-between">
                 <p class="text-sm text-gray-500">Retour ensuite sur la fiche personne.</p>
                 <%= form.submit "Acheter la cotisation",
-                    class: "inline-flex items-center justify-center rounded-md border border-transparent bg-[#1F5C55] px-4 py-2 text-sm font-medium text-white hover:bg-[#194A45] focus:outline-none focus:ring-2 focus:ring-[#1F5C55] focus:ring-offset-2" %>
+                    class: "inline-flex items-center justify-center rounded-md border border-transparent bg-brand-primary px-4 py-2 text-sm font-medium text-white hover:bg-brand-primary-dark focus:outline-none focus:ring-2 focus:ring-brand-accent focus:ring-offset-2" %>
               </div>
             </section>
             <% end %>

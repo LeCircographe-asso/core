@@ -5,62 +5,62 @@
     <%= render 'shared/breadcrumbs' %>
     
     <div class="form-container surface-card p-6">
-      <h1 class="text-2xl font-bold text-[#1F5C55] mb-4">Créer un événement</h1>
+      <h1 class="text-2xl font-bold text-brand-primary mb-4">Créer un événement</h1>
 
       <%= form_with model: @event, url: admin_events_path, method: "post" do |form| %>
         <div class="space-y-4">
           <!-- Title Field -->
           <div class="form-group">
             <%= form.label :title, class: "block text-sm font-medium text-gray-700 mb-1" %>
-            <%= form.text_field :title, required: true, placeholder: "ex.: Concert Super Cool", maxlength: 72, class: "w-full p-3 border border-gray-300 rounded-md bg-gray-50 focus:ring-[#1F5C55] focus:border-[#1F5C55]" %>
+            <%= form.text_field :title, required: true, placeholder: "ex.: Concert Super Cool", maxlength: 72, class: "w-full p-3 border border-gray-300 rounded-md bg-gray-50 focus:ring-brand-accent focus:border-brand-accent" %>
           </div>
 
           <!-- Field Description High -->
           <div class="form-group">
             <%= form.label :upper_description, class: "block text-sm font-medium text-gray-700 mb-1" %>
-            <%= form.text_area :upper_description, required: false, placeholder: "Description haute", maxlength: 72, class: "w-full p-3 border border-gray-300 rounded-md bg-gray-50 focus:ring-[#1F5C55] focus:border-[#1F5C55]" %>
+            <%= form.text_area :upper_description, required: false, placeholder: "Description haute", maxlength: 72, class: "w-full p-3 border border-gray-300 rounded-md bg-gray-50 focus:ring-brand-accent focus:border-brand-accent" %>
           </div>
 
           <!-- Field Description Middle -->
           <div class="form-group">
             <%= form.label :middle_description, class: "block text-sm font-medium text-gray-700 mb-1" %>
-            <%= form.text_area :middle_description, required: true, placeholder: "Description milieu", maxlength: 72, class: "w-full p-3 border border-gray-300 rounded-md bg-gray-50 focus:ring-[#1F5C55] focus:border-[#1F5C55]" %>
+            <%= form.text_area :middle_description, required: true, placeholder: "Description milieu", maxlength: 72, class: "w-full p-3 border border-gray-300 rounded-md bg-gray-50 focus:ring-brand-accent focus:border-brand-accent" %>
           </div>
 
           <!-- Field Description Low -->
           <div class="form-group">
             <%= form.label :bottom_description, class: "block text-sm font-medium text-gray-700 mb-1" %>
-            <%= form.text_area :bottom_description, required: false, placeholder: "Description basse", maxlength: 72, class: "w-full p-3 border border-gray-300 rounded-md bg-gray-50 focus:ring-[#1F5C55] focus:border-[#1F5C55]" %>
+            <%= form.text_area :bottom_description, required: false, placeholder: "Description basse", maxlength: 72, class: "w-full p-3 border border-gray-300 rounded-md bg-gray-50 focus:ring-brand-accent focus:border-brand-accent" %>
           </div>
 
           <!-- Field Location -->
           <div class="form-group">
             <%= form.label :location, class: "block text-sm font-medium text-gray-700 mb-1" %>
-            <%= form.text_field :location, required: true, placeholder: "ex.: Toulouse", maxlength: 72, class: "w-full p-3 border border-gray-300 rounded-md bg-gray-50 focus:ring-[#1F5C55] focus:border-[#1F5C55]" %>
+            <%= form.text_field :location, required: true, placeholder: "ex.: Toulouse", maxlength: 72, class: "w-full p-3 border border-gray-300 rounded-md bg-gray-50 focus:ring-brand-accent focus:border-brand-accent" %>
           </div>
 
           <!-- Date Field -->
           <div class="form-group">
             <%= form.label :date, class: "block text-sm font-medium text-gray-700 mb-1" %>
-            <%= form.date_field :date, required: true, maxlength: 72, class: "w-full p-3 border border-gray-300 rounded-md bg-gray-50 focus:ring-[#1F5C55] focus:border-[#1F5C55]" %>
+            <%= form.date_field :date, required: true, maxlength: 72, class: "w-full p-3 border border-gray-300 rounded-md bg-gray-50 focus:ring-brand-accent focus:border-brand-accent" %>
           </div>
 
           <!-- Status Field -->
           <div class="form-group">
             <%= form.label :status, t("admin.events.publication.status_label"), class: "block text-sm font-medium text-gray-700 mb-1" %>
-            <%= form.select :status, Event.statuses.keys.map { |status| [t("admin.events.publication.statuses.#{status}"), status] }, { selected: "draft" }, class: "w-full p-3 border border-gray-300 rounded-md bg-gray-50 focus:ring-[#1F5C55] focus:border-[#1F5C55]" %>
+            <%= form.select :status, Event.statuses.keys.map { |status| [t("admin.events.publication.statuses.#{status}"), status] }, { selected: "draft" }, class: "w-full p-3 border border-gray-300 rounded-md bg-gray-50 focus:ring-brand-accent focus:border-brand-accent" %>
             <p class="mt-1 text-xs text-gray-500"><%= t("admin.events.publication.status_hint") %></p>
           </div>
 
           <!-- Demo Field -->
           <div class="form-group flex items-center gap-2">
-            <%= form.check_box :is_demo, checked: true, class: "h-4 w-4 rounded border-gray-300 text-[#1F5C55] focus:ring-[#1F5C55]" %>
+            <%= form.check_box :is_demo, checked: true, class: "h-4 w-4 rounded border-gray-300 text-brand-primary focus:ring-brand-accent" %>
             <%= form.label :is_demo, t("admin.events.publication.is_demo_label"), class: "text-sm font-medium text-gray-700" %>
           </div>
 
           <!-- Submit button -->
           <div class="mt-6">
-            <%= form.submit "Créer l'événement", class: "inline-flex items-center px-6 py-3 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#1F5C55] hover:bg-[#194A45] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1F5C55]" %>
+            <%= form.submit "Créer l'événement", class: "inline-flex items-center px-6 py-3 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-brand-primary hover:bg-brand-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-accent" %>
           </div>
         </div>
       <% end %>
